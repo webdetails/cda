@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file:///home/pedro/tex/pentaho/cda/cda">
+      <sourceFolder url="file:///home/pedro/tex/pentaho/cda/cda/src" isTestSource="false" />
+      <sourceFolder url="file:///home/pedro/tex/pentaho/cda/cda/resources" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file:///home/pedro/tex/pentaho/cda/cda/lib" />
+          <root url="file:///home/pedro/tex/pentaho/cda/cda/lib/jdbc" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file:///home/pedro/tex/pentaho/cda/cda/lib" recursive="false" />
+        <jarDirectory url="file:///home/pedro/tex/pentaho/cda/cda/lib/jdbc" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jdbc">
+        <CLASSES>
+          <root url="file:///home/pedro/tex/pentaho/cda/cda/lib/jdbc" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file:///home/pedro/tex/pentaho/cda/cda/lib/jdbc" recursive="false" />
+      </library>
+    </orderEntry>
+  </component>
+</module>
+
