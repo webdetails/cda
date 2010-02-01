@@ -19,19 +19,19 @@
 
         <!--  pentaho dependencies -->
         <!--  internal dependencies -->
-        <dependency org="${ivy.artifact.group}" name="pentaho-reporting-engine-classic-extensions"
+        <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions"
                     rev="${dependency.pentaho-reporting.revision}" changing="true"/>
-        <dependency org="${pentaho-platform.group}" name="pentaho-bi-platform-plugin-services"
-                    rev="${dependency.pentaho-platform.revision}" changing="true"/>
-        <dependency org="${pentaho-platform.group}" name="pentaho-bi-platform-plugin-actions"
-                    rev="${dependency.pentaho-platform.revision}" changing="true"/>
-        <dependency org="${ivy.artifact.group}" name="pentaho-reporting-engine-classic-extensions-mondrian"
+        <dependency org="pentaho" name="pentaho-bi-platform-plugin-services"
+                    rev="${dependency.bi-platform.revision}" changing="true"/>
+        <dependency org="pentaho" name="pentaho-bi-platform-plugin-actions"
+                    rev="${dependency.bi-platform.revision}" changing="true"/>
+        <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-mondrian"
                     rev="${dependency.pentaho-reporting.revision}" transitive="true" changing="true"/>
-        <dependency org="${ivy.artifact.group}" name="pentaho-reporting-engine-classic-extensions-olap4j"
+        <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-olap4j"
                     rev="${dependency.pentaho-reporting.revision}" transitive="true" changing="true"/>
-        <dependency org="${ivy.artifact.group}" name="pentaho-reporting-engine-classic-extensions-pmd"
+        <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-pmd"
                     rev="${dependency.pentaho-reporting.revision}" transitive="true" changing="true"/>
-        <dependency org="${ivy.artifact.group}" name="pentaho-reporting-engine-classic-extensions-kettle"
+        <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-kettle"
                     rev="${dependency.pentaho-reporting.revision}" transitive="true" changing="true"/>
 
 
