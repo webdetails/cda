@@ -2,32 +2,32 @@
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file:///home/pedro/tex/pentaho/cda/cda">
-      <sourceFolder url="file:///home/pedro/tex/pentaho/cda/cda/src" isTestSource="false" />
-      <sourceFolder url="file:///home/pedro/tex/pentaho/cda/cda/resources" isTestSource="false" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/resources" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="file:///home/pedro/tex/pentaho/cda/cda/lib" />
-          <root url="file:///home/pedro/tex/pentaho/cda/cda/lib/jdbc" />
+          <root url="file://$MODULE_DIR$/lib" />
+          <root url="file://$MODULE_DIR$/lib/jdbc" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
-        <jarDirectory url="file:///home/pedro/tex/pentaho/cda/cda/lib" recursive="false" />
-        <jarDirectory url="file:///home/pedro/tex/pentaho/cda/cda/lib/jdbc" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jdbc" recursive="false" />
       </library>
     </orderEntry>
     <orderEntry type="module-library">
       <library name="jdbc">
         <CLASSES>
-          <root url="file:///home/pedro/tex/pentaho/cda/cda/lib/jdbc" />
+          <root url="file://$MODULE_DIR$/lib/jdbc" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
-        <jarDirectory url="file:///home/pedro/tex/pentaho/cda/cda/lib/jdbc" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jdbc" recursive="false" />
       </library>
     </orderEntry>
   </component>

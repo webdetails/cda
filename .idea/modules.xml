@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file:///storage/home/pedro/tex/pentaho/cda/cda/CDA - Community Data Access.iml" filepath="/storage/home/pedro/tex/pentaho/cda/cda/CDA - Community Data Access.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CDA - Community Data Access.iml" filepath="$PROJECT_DIR$/CDA - Community Data Access.iml" />
     </modules>
   </component>
 </project>
