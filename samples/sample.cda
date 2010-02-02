@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="utf8"?>
 <CDADescriptor>
     <!-- DataSource definition. 
 	
@@ -14,11 +14,11 @@
             <User>pentaho_user</User>
             <Pass>password</Pass>
         </Connection>
-        <Connection id="2" type="jndi">
+        <!--Connection id="2" type="jndi">
             <Jndi>sampledata</Jndi>
             <Catalog>./sampledata.mondrian.xml</Catalog>
             <Cube>SteelWheelsSales</Cube>
-        </Connection>
+        </Connection-->
     </DataSources>
     <!-- DataAccess object controls the query itself
 

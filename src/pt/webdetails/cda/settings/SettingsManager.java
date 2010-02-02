@@ -4,7 +4,9 @@ import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
+import pt.webdetails.cda.connections.UnsupportedConnectionException;
 
 import java.io.InputStream;
 
@@ -46,16 +48,21 @@ public class SettingsManager {
    * @param id The identifier for this settings file.
    * @param in InputStream where the file is located
    */
-  public CdaSettings parseSettingsFile(String id, InputStream in){
+  public CdaSettings parseSettingsFile(String id, InputStream in) throws DocumentException, UnsupportedConnectionException {
 
     // Do we have this on cache?
 
     if (settingsCache.containsKey(id)){
-      return settingsCache.get(id);
+      return (CdaSettings) settingsCache.get(id);
     }
 
     final SAXReader saxReader = new SAXReader();
-    Document settings = saxReader.read(settingsFile);
+    Document doc = saxReader.read(in);
+
+
+    CdaSettings settings = new CdaSettings(id, doc);
+
+    return settings;
 
 
   }

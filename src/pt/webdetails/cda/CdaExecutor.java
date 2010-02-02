@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
+import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.utils.Util;
@@ -54,18 +55,17 @@ public class CdaExecutor {
       final File settingsFile = new File("samples/sample.cda");
       CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath(), new FileInputStream(settingsFile));
 
-
-      
-
-
+      /*
       logger.debug("Doing query on Cda - Initializing CdaEngine");
       final CdaEngine engine = CdaEngine.getInstance();
-      
+      */
 
     } catch (DocumentException e) {
       logger.fatal("Unable to parse settings dom: " + Util.getExceptionDescription(e));
     } catch (FileNotFoundException e) {
-      logger.fatal("File not found: " + Util.getExceptionDescription(e))
+      logger.fatal("File not found: " + Util.getExceptionDescription(e));
+    } catch (UnsupportedConnectionException e) {
+      logger.fatal("ConnectionException " + e.getMessage());
     }
 
 

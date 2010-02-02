@@ -33,7 +33,20 @@
         <option name="CONDITION" value="" />
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/pt/webdetails/cda/CdaExecutor.java" line="29" class="pt.webdetails.cda.CdaExecutor" package="pt.webdetails.cda">
+      <breakpoint url="file://$PROJECT_DIR$/src/pt/webdetails/cda/settings/CdaSettings.java" line="67" class="pt.webdetails.cda.settings.CdaSettings" package="pt.webdetails.cda.settings">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="false" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/pt/webdetails/cda/settings/SettingsManager.java" line="62" class="pt.webdetails.cda.settings.SettingsManager" package="pt.webdetails.cda.settings">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -88,10 +101,37 @@
   <component name="FileColors" enabled="true" enabledForTabs="true" />
   <component name="FileEditorManager">
     <leaf>
+      <file leaf-file-name="CdaEngine.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/CdaEngine.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="17" column="0" selection-start="357" selection-end="428" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SettingsManager.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/settings/SettingsManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="62" column="27" selection-start="1544" selection-end="1544" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="CdaExecutor.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/CdaExecutor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="56" column="0" selection-start="1305" selection-end="1305" vertical-scroll-proportion="0.0">
+            <state line="67" column="60" selection-start="1863" selection-end="1863" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CdaSettings.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/settings/CdaSettings.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="42" column="4" selection-start="1087" selection-end="1087" vertical-scroll-proportion="0.48387095">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -99,55 +139,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Util.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/utils/Util.java">
+      <file leaf-file-name="UnsupportedConnectionException.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/connections/UnsupportedConnectionException.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="0" selection-start="543" selection-end="543" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="log4j.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/log4j.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="43" column="27" selection-start="1923" selection-end="1923" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CdaEngine.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/CdaEngine.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="32" column="20" selection-start="668" selection-end="668" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SettingsManager.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/settings/SettingsManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="62" column="5" selection-start="1365" selection-end="1365" vertical-scroll-proportion="0.39215687">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CdaSettings.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/settings/CdaSettings.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="27" selection-start="354" selection-end="354" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="UnknownDataAccessException.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/settings/UnknownDataAccessException.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="47" selection-start="237" selection-end="237" vertical-scroll-proportion="0.0">
+            <state line="8" column="61" selection-start="194" selection-end="194" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -156,25 +151,47 @@
       <file leaf-file-name="UnknownConnectionException.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/settings/UnknownConnectionException.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="13" selection-start="251" selection-end="251" vertical-scroll-proportion="0.0">
+            <state line="8" column="57" selection-start="178" selection-end="187" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ConnectionSettings.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/settings/ConnectionSettings.java">
+      <file leaf-file-name="Connection.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/connections/Connection.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="0" selection-start="273" selection-end="273" vertical-scroll-proportion="0.0">
+            <state line="16" column="0" selection-start="336" selection-end="336" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DataAccessSettings.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/settings/DataAccessSettings.java">
+      <file leaf-file-name="JdbcConnection.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/connections/JdbcConnection.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="24" column="0" selection-start="327" selection-end="327" vertical-scroll-proportion="0.0">
+            <state line="28" column="17" selection-start="653" selection-end="653" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AbstractConnection.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/connections/AbstractConnection.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="23" column="0" selection-start="490" selection-end="490" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SqlQueryTest.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/tests/SqlQueryTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="31" column="27" selection-start="797" selection-end="797" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -190,21 +207,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/pt/webdetails/viw/tests/SqlQueryTest.java" />
-        <option value="$PROJECT_DIR$/src/pt/webdetails/cda/tests/SqlQueryTest.java" />
-        <option value="$PROJECT_DIR$/build.xml" />
-        <option value="$PROJECT_DIR$/build.properties" />
-        <option value="$PROJECT_DIR$/ivy.xml" />
         <option value="$PROJECT_DIR$/resources/log4j.xml" />
         <option value="$PROJECT_DIR$/src/pt/webdetails/cda/settings/ConnectionSettings.java" />
         <option value="$PROJECT_DIR$/src/pt/webdetails/cda/settings/DataAccessSettings.java" />
         <option value="$PROJECT_DIR$/src/pt/webdetails/cda/CdaEngine.java" />
-        <option value="$PROJECT_DIR$/src/pt/webdetails/cda/settings/UnknownConnectionException.java" />
         <option value="$PROJECT_DIR$/src/pt/webdetails/cda/settings/UnknownDataAccessException.java" />
-        <option value="$PROJECT_DIR$/src/pt/webdetails/cda/settings/CdaSettings.java" />
         <option value="$PROJECT_DIR$/src/pt/webdetails/cda/utils/Util.java" />
-        <option value="$PROJECT_DIR$/src/pt/webdetails/cda/CdaExecutor.java" />
+        <option value="$PROJECT_DIR$/src/pt/webdetails/cda/connections/ConnectionSettings.java" />
+        <option value="$PROJECT_DIR$/src/pt/webdetails/cda/connections/AbstractConnection.java" />
+        <option value="$PROJECT_DIR$/src/pt/webdetails/cda/connections/ConnectionsManager.java" />
+        <option value="$PROJECT_DIR$/src/pt/webdetails/cda/connections/Connection.java" />
+        <option value="$PROJECT_DIR$/src/pt/webdetails/cda/connections/JdbcConnection.java" />
+        <option value="$PROJECT_DIR$/src/pt/webdetails/cda/settings/UnknownConnectionException.java" />
+        <option value="$PROJECT_DIR$/src/pt/webdetails/cda/connections/UnsupportedConnectionException.java" />
         <option value="$PROJECT_DIR$/src/pt/webdetails/cda/settings/SettingsManager.java" />
+        <option value="$PROJECT_DIR$/src/pt/webdetails/cda/CdaExecutor.java" />
+        <option value="$PROJECT_DIR$/src/pt/webdetails/cda/settings/CdaSettings.java" />
       </list>
     </option>
   </component>
@@ -301,22 +319,59 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="tests" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pentaho-cda" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="CDA - Community Data Access" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pt.webdetails.cda" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="settings" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pentaho-cda" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="CDA - Community Data Access" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pt.webdetails.cda" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="connections" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane />
       </pane>
-      <pane id="Scope" />
       <pane id="Favorites" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="project.structure.last.edited" value="Modules" />
     <property name="GoToFile.includeJavaFiles" value="false" />
+    <property name="OverrideImplement.combined" value="true" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="recentsLimit" value="5" />
@@ -327,15 +382,20 @@
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.searchVisible" value="true" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="dynamic.classpath" value="false" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="pt.webdetails.cda.connections" />
+    </key>
     <key name="CreateClassDialog.RecentsKey">
+      <recent name="pt.webdetails.cda.connections" />
       <recent name="pt.webdetails.cda.settings" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="pt.webdetails.cda.connections" />
       <recent name="pt.webdetails.cda" />
     </key>
   </component>
@@ -496,27 +556,27 @@
     <supportedVersion>125</supportedVersion>
   </component>
   <component name="ToolWindowManager">
-    <frame x="112" y="42" width="1519" height="934" extended-state="0" />
+    <frame x="139" y="84" width="1519" height="934" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21311475" sideWeight="0.0" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30815348" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32839507" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21311475" sideWeight="0.591358" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.591358" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30617285" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32903227" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.6827161" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsManagerConfiguration">
@@ -552,21 +612,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/ivysettings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/override.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="0" selection-start="258" selection-end="258" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ivy.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="22" column="39" selection-start="961" selection-end="961" vertical-scroll-proportion="0.41704035" />
@@ -575,16 +620,6 @@
     <entry file="file://$PROJECT_DIR$/build.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="8" selection-start="8" selection-end="8" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/tests/SqlQueryTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="64" column="0" selection-start="1671" selection-end="1715" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/CdaExecutor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="56" column="0" selection-start="1305" selection-end="1305" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/utils/Util.java">
@@ -597,29 +632,9 @@
         <state line="43" column="27" selection-start="1923" selection-end="1923" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/CdaEngine.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="20" selection-start="668" selection-end="668" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/settings/CdaSettings.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="27" selection-start="354" selection-end="354" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/settings/UnknownDataAccessException.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="9" column="47" selection-start="237" selection-end="237" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/settings/UnknownConnectionException.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="13" selection-start="251" selection-end="251" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/settings/ConnectionSettings.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="0" selection-start="273" selection-end="273" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/settings/DataAccessSettings.java">
@@ -627,10 +642,79 @@
         <state line="24" column="0" selection-start="327" selection-end="327" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/tests/SqlQueryTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="31" column="27" selection-start="797" selection-end="797" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/CdaEngine.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="0" selection-start="357" selection-end="428" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/connections/AbstractConnection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="0" selection-start="490" selection-end="490" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/connections/Connection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="0" selection-start="336" selection-end="336" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/connections/JdbcConnection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="17" selection-start="653" selection-end="653" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/connections/UnsupportedConnectionException.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="61" selection-start="194" selection-end="194" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/settings/UnknownConnectionException.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="57" selection-start="178" selection-end="187" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/settings/SettingsManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="5" selection-start="1365" selection-end="1365" vertical-scroll-proportion="0.39215687">
+        <state line="62" column="27" selection-start="1544" selection-end="1544" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/CdaExecutor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="67" column="60" selection-start="1863" selection-end="1863" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pt/webdetails/cda/settings/CdaSettings.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="4" selection-start="1087" selection-end="1087" vertical-scroll-proportion="0.48387095">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
