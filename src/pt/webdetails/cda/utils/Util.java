@@ -19,6 +19,7 @@ public class Util {
       out.append(e.getCause().getMessage());
     }
 
+    e.printStackTrace();
     return out.toString();
 
   }

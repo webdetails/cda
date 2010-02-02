@@ -31,7 +31,7 @@ public class CdaSettings {
   private HashMap<String, DataAccessSettings> dataAccessMap;
 
 
-  public CdaSettings(String id, final Document doc) throws UnsupportedConnectionException {
+  public CdaSettings(final Document doc) throws UnsupportedConnectionException {
 
     this.id = id;
     this.doc = doc;
@@ -82,7 +82,7 @@ public class CdaSettings {
         clazz.getConstructor(params).newInstance(new Object[]{element});
 
       } catch (Exception e) {
-        throw new UnsupportedConnectionException("Error initializing connection class: " + Util.getExceptionDescription(e));
+        throw new UnsupportedConnectionException("Error initializing connection class: " + Util.getExceptionDescription(e),e);
       }
 
 
@@ -106,7 +106,7 @@ public class CdaSettings {
   public Connection getConnection(final String id) throws UnknownConnectionException {
 
     if (!connectionsMap.containsKey(id)) {
-      throw new UnknownConnectionException("Unknown connection with id " + id);
+      throw new UnknownConnectionException("Unknown connection with id " + id , null);
     }
     return connectionsMap.get(id);
   }
@@ -114,7 +114,7 @@ public class CdaSettings {
   public DataAccessSettings getDataAccess(final String id) throws UnknownDataAccessException {
 
     if (!connectionsMap.containsKey(id)) {
-      throw new UnknownDataAccessException("Unknown dataAccess with id " + id);
+      throw new UnknownDataAccessException("Unknown dataAccess with id " + id , null);
     }
     return dataAccessMap.get(id);
   }

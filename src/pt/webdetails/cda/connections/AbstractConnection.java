@@ -14,7 +14,7 @@ public abstract class AbstractConnection implements Connection {
   private String id;
 
 
-  public AbstractConnection(final Element connection) {
+  public AbstractConnection(final Element connection) throws InvalidConnectionException {
 
     id = connection.attributeValue("id");
 
@@ -22,7 +22,7 @@ public abstract class AbstractConnection implements Connection {
 
   }
 
-  protected abstract void initializeConnection(Element connection);
+  protected abstract void initializeConnection(Element connection) throws InvalidConnectionException;
 
 
   @Override

@@ -60,7 +60,7 @@ public class SettingsManager {
     Document doc = saxReader.read(in);
 
 
-    CdaSettings settings = new CdaSettings(id, doc);
+    CdaSettings settings = new CdaSettings(doc);
 
     return settings;
 
