@@ -2,6 +2,16 @@ package pt.webdetails.cda;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.io.SAXReader;
+import pt.webdetails.cda.settings.CdaSettings;
+import pt.webdetails.cda.settings.SettingsManager;
+import pt.webdetails.cda.utils.Util;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 /**
  * Main class to test and execute the CDA in standalone mode
@@ -16,14 +26,13 @@ public class CdaExecutor {
 
 
   public CdaExecutor() {
-    
-    logger.debug("Initializing CdaExecutor");
 
+    logger.debug("Initializing CdaExecutor");
 
 
   }
 
-  public static void main(String[] args) {
+  public static void main(final String[] args) {
 
 
     final CdaExecutor cdaExecutor = CdaExecutor.getInstance();
@@ -34,9 +43,30 @@ public class CdaExecutor {
 
   private void doQuery() {
 
-    logger.debug("Doing query on Cda - Initializing CdaEngine");
 
-    CdaEngine engine = CdaEngine.getInstance();
+    logger.debug("Building DOM settings from sample file");
+
+
+    try {
+
+      SettingsManager settingsManager = SettingsManager.getInstance();
+
+      final File settingsFile = new File("samples/sample.cda");
+      CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath(), new FileInputStream(settingsFile));
+
+
+      
+
+
+      logger.debug("Doing query on Cda - Initializing CdaEngine");
+      final CdaEngine engine = CdaEngine.getInstance();
+      
+
+    } catch (DocumentException e) {
+      logger.fatal("Unable to parse settings dom: " + Util.getExceptionDescription(e));
+    } catch (FileNotFoundException e) {
+      logger.fatal("File not found: " + Util.getExceptionDescription(e))
+    }
 
 
   }

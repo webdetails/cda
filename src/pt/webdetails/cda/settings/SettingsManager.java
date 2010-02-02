@@ -1,10 +1,19 @@
 package pt.webdetails.cda.settings;
 
+import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Document;
+import org.dom4j.io.SAXReader;
+
+import java.io.InputStream;
 
 /**
- * Created by IntelliJ IDEA.
+ *
+ * This file is responsible to build / keep the different cda settings.
+ *
+ * Works mostly with inputStreams 
+ *
  * User: pedro
  * Date: Feb 2, 2010
  * Time: 2:40:12 PM
@@ -15,6 +24,56 @@ public class SettingsManager {
   private static final Log logger = LogFactory.getLog(SettingsManager.class);
   private static SettingsManager _instance;
 
+  private LRUMap settingsCache;
+
+  /**
+   * This class controls how the different .cda files will be read
+   * and cached.
+   */
+  public SettingsManager() {
+    
+    // TODO - Read the cache size from disk. Eventually move to ehcache, if necessary
+
+    logger.debug("Initializing SettingsManager.");
+
+    settingsCache = new LRUMap(50);
+
+  }
+
+
+  /**
+   *
+   * @param id The identifier for this settings file.
+   * @param in InputStream where the file is located
+   */
+  public CdaSettings parseSettingsFile(String id, InputStream in){
+
+    // Do we have this on cache?
+
+    if (settingsCache.containsKey(id)){
+      return settingsCache.get(id);
+    }
+
+    final SAXReader saxReader = new SAXReader();
+    Document settings = saxReader.read(settingsFile);
+
+
+  }
+
+  /**
+   * Forces removal of settings file from cache. This method must be called
+   * when we update the .cda file
+   *
+   * @param id
+   */
+
+  public void clearEntryFromCache(String id){
+
+    if(settingsCache.containsKey(id)){
+      settingsCache.remove(id);
+    }
+
+  }
 
 
   public static SettingsManager getInstance() {
@@ -24,4 +83,5 @@ public class SettingsManager {
 
     return _instance;
   }
+
 }
