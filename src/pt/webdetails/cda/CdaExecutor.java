@@ -19,6 +19,8 @@ public class CdaExecutor {
     
     logger.debug("Initializing CdaExecutor");
 
+
+
   }
 
   public static void main(String[] args) {
@@ -32,12 +34,15 @@ public class CdaExecutor {
 
   private void doQuery() {
 
-    logger.info("Doing query on Cda");
+    logger.debug("Doing query on Cda - Initializing CdaEngine");
+
+    CdaEngine engine = CdaEngine.getInstance();
+
 
   }
 
 
-  private static CdaExecutor getInstance() {
+  public static CdaExecutor getInstance() {
 
     if (_instance == null)
       _instance = new CdaExecutor();
