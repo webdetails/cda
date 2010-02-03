@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import pt.webdetails.cda.settings.CdaSettings;
+import pt.webdetails.cda.settings.UnknownDataAccessException;
 
 /**
  * Main engine class that will answer to calls
@@ -27,7 +28,7 @@ public class CdaEngine {
   }
 
 
-  public void doQuery(CdaSettings cdaSettings, String dataAccessId) {
+  public void doQuery(CdaSettings cdaSettings, String dataAccessId) throws UnknownDataAccessException {
 
     logger.debug("Doing query on CdaSettings [ " + cdaSettings.getId() +" ("+ dataAccessId +")]");
 

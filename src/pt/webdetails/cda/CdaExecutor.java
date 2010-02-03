@@ -9,6 +9,7 @@ import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
+import pt.webdetails.cda.settings.UnknownDataAccessException;
 import pt.webdetails.cda.utils.Util;
 
 import java.io.File;
@@ -70,6 +71,8 @@ public class CdaExecutor {
       logger.fatal("ConnectionException " + Util.getExceptionDescription(e));
     } catch (UnsupportedDataAccessException e) {
       logger.fatal("DataAccessException " + Util.getExceptionDescription(e));
+    } catch (UnknownDataAccessException e) {
+      logger.fatal("DataAccess id not found " + Util.getExceptionDescription(e));
     }
 
 
