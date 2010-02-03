@@ -7,7 +7,7 @@ package pt.webdetails.cda.connections;
  * Time: 5:39:10 PM
  */
 public class UnsupportedConnectionException extends Exception {
-  public UnsupportedConnectionException(String s, Exception cause) {
+  public UnsupportedConnectionException(final String s, final Exception cause) {
     super(s,cause);
   }
 }

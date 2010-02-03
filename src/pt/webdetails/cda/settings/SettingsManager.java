@@ -7,6 +7,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
+import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
 
 import java.io.InputStream;
 
@@ -48,7 +49,7 @@ public class SettingsManager {
    * @param id The identifier for this settings file.
    * @param in InputStream where the file is located
    */
-  public CdaSettings parseSettingsFile(String id, InputStream in) throws DocumentException, UnsupportedConnectionException {
+  public CdaSettings parseSettingsFile(final String id, final InputStream in) throws DocumentException, UnsupportedConnectionException, UnsupportedDataAccessException {
 
     // Do we have this on cache?
 
@@ -57,10 +58,10 @@ public class SettingsManager {
     }
 
     final SAXReader saxReader = new SAXReader();
-    Document doc = saxReader.read(in);
+    final Document doc = saxReader.read(in);
 
 
-    CdaSettings settings = new CdaSettings(doc);
+    final CdaSettings settings = new CdaSettings(doc);
 
     return settings;
 
@@ -74,7 +75,7 @@ public class SettingsManager {
    * @param id
    */
 
-  public void clearEntryFromCache(String id){
+  public void clearEntryFromCache(final String id){
 
     if(settingsCache.containsKey(id)){
       settingsCache.remove(id);

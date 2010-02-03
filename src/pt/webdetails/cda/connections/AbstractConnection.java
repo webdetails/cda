@@ -13,7 +13,6 @@ public abstract class AbstractConnection implements Connection {
 
   private String id;
 
-
   public AbstractConnection(final Element connection) throws InvalidConnectionException {
 
     id = connection.attributeValue("id");
@@ -31,7 +30,10 @@ public abstract class AbstractConnection implements Connection {
   }
 
   @Override
-  public abstract ConnectionProvider getConnectionProvider();
+  public abstract String getType();
+
+  @Override
+  public abstract ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException;
 
 
 }

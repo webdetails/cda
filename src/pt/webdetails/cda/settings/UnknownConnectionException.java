@@ -7,7 +7,7 @@ package pt.webdetails.cda.settings;
  * Time: 3:12:17 PM
  */
 public class UnknownConnectionException extends Exception {
-  public UnknownConnectionException(String s, Exception cause) {
+  public UnknownConnectionException(final String s, final Exception cause) {
     super(s,cause);
   }
 }

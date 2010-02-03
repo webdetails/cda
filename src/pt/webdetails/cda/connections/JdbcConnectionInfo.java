@@ -10,7 +10,7 @@ public class JdbcConnectionInfo {
   private String pass;
 
 
-  public JdbcConnectionInfo(Element connection) {
+  public JdbcConnectionInfo(final Element connection) {
 
     setDriver((String) connection.selectObject("string(./Driver)"));
     setUrl((String) connection.selectObject("string(./Url)"));
@@ -24,7 +24,7 @@ public class JdbcConnectionInfo {
     return driver;
   }
 
-  public void setDriver(String driver) {
+  public void setDriver(final String driver) {
     this.driver = driver;
   }
 
@@ -32,7 +32,7 @@ public class JdbcConnectionInfo {
     return url;
   }
 
-  public void setUrl(String url) {
+  public void setUrl(final String url) {
     this.url = url;
   }
 
@@ -40,7 +40,7 @@ public class JdbcConnectionInfo {
     return user;
   }
 
-  public void setUser(String user) {
+  public void setUser(final String user) {
     this.user = user;
   }
 
@@ -48,7 +48,7 @@ public class JdbcConnectionInfo {
     return pass;
   }
 
-  public void setPass(String pass) {
+  public void setPass(final String pass) {
     this.pass = pass;
   }
 

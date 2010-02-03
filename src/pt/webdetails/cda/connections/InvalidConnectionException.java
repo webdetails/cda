@@ -7,7 +7,7 @@ package pt.webdetails.cda.connections;
  * Time: 6:38:21 PM
  */
 public class InvalidConnectionException extends Exception {
-  public InvalidConnectionException(String s, Exception cause) {
+  public InvalidConnectionException(final String s, final Exception cause) {
     super(s,cause);
   }
 }

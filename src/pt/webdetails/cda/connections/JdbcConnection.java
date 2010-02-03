@@ -18,8 +18,11 @@ import java.sql.SQLException;
 public class JdbcConnection extends AbstractConnection {
 
   private static final Log logger = LogFactory.getLog(JdbcConnection.class);
+  public static final String TYPE = "jdbc";
+
 
   private ConnectionProvider connectionProvider;
+  private JdbcConnectionInfo connectionInfo;
 
   public JdbcConnection(final Element connection) throws InvalidConnectionException {
 
@@ -29,16 +32,27 @@ public class JdbcConnection extends AbstractConnection {
 
 
   @Override
-  protected void initializeConnection(Element connection) throws InvalidConnectionException {
+  protected void initializeConnection(final Element connection) throws InvalidConnectionException {
 
-    JdbcConnectionInfo connectionInfo = new JdbcConnectionInfo(connection);
+    connectionInfo = new JdbcConnectionInfo(connection);
+
+  }
+
+  @Override
+  public String getType() {
+    return TYPE;
+  }
+
+
+  @Override
+  public ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException {
+
 
     logger.debug("Creating new jdbc connection");
 
-    DriverConnectionProvider connectionProvider = new DriverConnectionProvider();
+    final DriverConnectionProvider connectionProvider = new DriverConnectionProvider();
     connectionProvider.setDriver(connectionInfo.getDriver());
     connectionProvider.setUrl(connectionInfo.getUrl());
-
     logger.debug("Opening connection");
     try {
       connectionProvider.createConnection(connectionInfo.getUser(), connectionInfo.getPass());
@@ -49,12 +63,7 @@ public class JdbcConnection extends AbstractConnection {
 
     logger.debug("Connection opened");
 
-  }
-
-
-  @Override
-  public ConnectionProvider getConnectionProvider() {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return connectionProvider;
   }
 
 

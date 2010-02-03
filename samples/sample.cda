@@ -39,22 +39,21 @@
             <Parameter name="status" type="String" default="Shipped"/>
             <Parameter name="orderDate" type="Date" pattern="yyyy-MM-dd" default="2003-03-01"/>
         </Parameters>
-        <!-- Settings block here overrides defaults and general settings 
-		
+        <!-- 
 		Columns block allow specifying name and CalculatedColumn the creation of new
 		columns based on formulas
-
 		-->
+		<Columns>
+			<Column idx="0">
+				<Name>Year</Name>
+			</Column>
+			<CalculatedColumn>
+				<Name>Test</Name>
+				<Formula>=[1]/100</Formula>
+			</CalculatedColumn>
+		</Columns>
+        <!-- Settings block here overrides defaults and general settings -->
         <Settings>
-            <Columns>
-                <Column idx="0">
-                    <Name>Year</Name>
-                </Column>
-                <CalculatedColumn>
-                    <Name>Test</Name>
-                    <Formula>=[1]/100</Formula>
-                </CalculatedColumn>
-            </Columns>
             <Export type="xls" includeTotals="true">
                 <Column idx="0" aggregator="None"/>
                 <Column idx="1" aggregator="Average"/>
@@ -63,7 +62,7 @@
         <!-- Output controls what is outputed and by what order. Defaults to everything -->
         <Output indexes="1,0,2"/>
     </DataAccess>
-    <DataAccess id="2" connection="2" type="mdx" access="public">
+    <!--DataAccess id="2" connection="2" type="mdx" access="public">
         <Query>
 			select {[Measures].[Sales]} ON COLUMNS,
 			NON EMPTY  [Time].Children ON ROWS
@@ -73,7 +72,7 @@
         <Parameters>
             <Parameter name="status" type="String" default="In Process"/>
         </Parameters>
-    </DataAccess>
+    </DataAccess-->
     <!-- CompoundDataAccess can be used to join queries. Some types are
 	supported, and the user is responsible for assuring the different dataaccess
 	are compatible:
@@ -83,17 +82,13 @@
 	sorted by those keys.
 
 	-->
-    <CompoundDataAccess id="3">
-        <Union>
-            <Source id="1"/>
-            <Source id="2"/>
-        </Union>
+    <!--CompoundDataAccess id="3" type="union">
+		<Source id="1"/>
+		<Source id="2"/>
     </CompoundDataAccess>
-    <CompoundDataAccess>
-        <Join>
-            <Left keys="0"/>
-            <Right keys="0"/>
-        </Join>
+    <CompoundDataAccess id="4" type="join">
+		<Left keys="0"/>
+		<Right keys="0"/>
         <Output indexes="0,2,3"/>
-    </CompoundDataAccess>
+    </CompoundDataAccess-->
 </CDADescriptor>

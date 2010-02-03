@@ -14,6 +14,8 @@ public interface Connection {
 
   public String getId();
 
-  public ConnectionProvider getConnectionProvider();
+  public String getType();
+
+  public ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException;
 
 }

@@ -37,7 +37,7 @@ public class SqlQueryTest {
 
     try {
 
-      DriverConnectionProvider jdbcConnectionProvider = new DriverConnectionProvider();
+      final DriverConnectionProvider jdbcConnectionProvider = new DriverConnectionProvider();
       jdbcConnectionProvider.setDriver("com.mysql.jdbc.Driver");
       jdbcConnectionProvider.setUrl("jdbc:mysql://localhost:3306/metrics?defaultFetchSize=500&useCursorFetch=true");
 

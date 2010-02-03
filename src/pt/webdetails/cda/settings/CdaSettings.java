@@ -6,6 +6,8 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
+import pt.webdetails.cda.dataaccess.DataAccess;
+import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
 import pt.webdetails.cda.utils.Util;
 
 import java.util.HashMap;
@@ -23,31 +25,25 @@ public class CdaSettings {
 
   private static final Log logger = LogFactory.getLog(CdaSettings.class);
 
-  private String id;
-  private Document doc;
   private Element root;
 
   private HashMap<String, Connection> connectionsMap;
-  private HashMap<String, DataAccessSettings> dataAccessMap;
+  private HashMap<String, DataAccess> dataAccessMap;
 
 
-  public CdaSettings(final Document doc) throws UnsupportedConnectionException {
+  public CdaSettings(final Document doc) throws UnsupportedConnectionException, UnsupportedDataAccessException {
 
-    this.id = id;
-    this.doc = doc;
     this.root = doc.getRootElement();
 
     connectionsMap = new HashMap<String, Connection>();
-    dataAccessMap = new HashMap<String, DataAccessSettings>();
+    dataAccessMap = new HashMap<String, DataAccess>();
 
-    
     parseDocument();
-
 
   }
 
 
-  private void parseDocument() throws UnsupportedConnectionException {
+  private void parseDocument() throws UnsupportedConnectionException, UnsupportedDataAccessException {
 
     // 1 - Parse Connections
     // 2 - Parse DataAccesses
@@ -56,6 +52,49 @@ public class CdaSettings {
 
     parseConnections();
 
+    parseDataAccess();
+
+
+    logger.debug("CdaSettings created successfully");
+
+
+  }
+
+  private void parseDataAccess() throws UnsupportedDataAccessException {
+
+    // Parsing DataAccess.
+
+    // 1 - Parse data access, and then parse the CompoundDataAccess
+
+
+    final List<Element> dataAccessesList = root.selectNodes("/CDADescriptor/DataAccess | /CDADescriptor/CompoundDataAccess");
+
+    for (final Element element : dataAccessesList) {
+
+      final String elementName = element.getName();
+      final String id = element.attributeValue("id");
+      final String type = element.attributeValue("type");
+
+      // Initialize this ConnectionType
+
+      try {
+
+        final String className = "pt.webdetails.cda.dataaccess." +
+            type.substring(0, 1).toUpperCase() + type.substring(1, type.length()) + elementName;
+
+        Class clazz = Class.forName(className);
+        final Class[] params = {Element.class};
+
+        final DataAccess dataAccess = (DataAccess) clazz.getConstructor(params).newInstance(new Object[]{element});
+        addDataAccess(dataAccess);
+
+      } catch (Exception e) {
+        throw new UnsupportedDataAccessException("Error initializing connection class: " + Util.getExceptionDescription(e), e);
+      }
+
+
+    }
+
 
   }
 
@@ -63,10 +102,10 @@ public class CdaSettings {
 
     final List<Element> connectionList = root.selectNodes("/CDADescriptor/DataSources/Connection");
 
-    for (Element element : connectionList) {
+    for (final Element element : connectionList) {
 
-      String id = element.attributeValue("id");
-      String type = element.attributeValue("type");
+      final String id = element.attributeValue("id");
+      final String type = element.attributeValue("type");
 
       // Initialize this ConnectionType
 
@@ -75,14 +114,14 @@ public class CdaSettings {
         final String className = "pt.webdetails.cda.connections." +
             type.substring(0, 1).toUpperCase() + type.substring(1, type.length()) + "Connection";
 
-        Class clazz = null;
-        clazz = Class.forName(className);
-
+        Class clazz = Class.forName(className);
         final Class[] params = {Element.class};
-        clazz.getConstructor(params).newInstance(new Object[]{element});
+
+        final Connection connection = (Connection) clazz.getConstructor(params).newInstance(new Object[]{element});
+        addConnection(connection);
 
       } catch (Exception e) {
-        throw new UnsupportedConnectionException("Error initializing connection class: " + Util.getExceptionDescription(e),e);
+        throw new UnsupportedConnectionException("Error initializing connection class: " + Util.getExceptionDescription(e), e);
       }
 
 
@@ -97,24 +136,24 @@ public class CdaSettings {
 
   }
 
-  private void addDataAccess(final DataAccessSettings dataAccessSettings) {
+  private void addDataAccess(final DataAccess dataAccess) {
 
-    dataAccessMap.put(dataAccessSettings.getId(), dataAccessSettings);
+    dataAccessMap.put(dataAccess.getId(), dataAccess);
 
   }
 
   public Connection getConnection(final String id) throws UnknownConnectionException {
 
     if (!connectionsMap.containsKey(id)) {
-      throw new UnknownConnectionException("Unknown connection with id " + id , null);
+      throw new UnknownConnectionException("Unknown connection with id " + id, null);
     }
     return connectionsMap.get(id);
   }
 
-  public DataAccessSettings getDataAccess(final String id) throws UnknownDataAccessException {
+  public DataAccess getDataAccess(final String id) throws UnknownDataAccessException {
 
     if (!connectionsMap.containsKey(id)) {
-      throw new UnknownDataAccessException("Unknown dataAccess with id " + id , null);
+      throw new UnknownDataAccessException("Unknown dataAccess with id " + id, null);
     }
     return dataAccessMap.get(id);
   }
