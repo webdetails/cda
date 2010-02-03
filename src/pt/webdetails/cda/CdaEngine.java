@@ -3,6 +3,7 @@ package pt.webdetails.cda;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
+import pt.webdetails.cda.dataaccess.QueryException;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 
@@ -28,7 +29,7 @@ public class CdaEngine {
   }
 
 
-  public void doQuery(CdaSettings cdaSettings, String dataAccessId) throws UnknownDataAccessException {
+  public void doQuery(CdaSettings cdaSettings, String dataAccessId) throws UnknownDataAccessException, QueryException {
 
     logger.debug("Doing query on CdaSettings [ " + cdaSettings.getId() +" ("+ dataAccessId +")]");
 

@@ -28,7 +28,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess {
   }
 
   @Override
-  public abstract TableModel queryData();
+  public abstract TableModel queryData() throws QueryException;
 
 
   public String getQuery() {

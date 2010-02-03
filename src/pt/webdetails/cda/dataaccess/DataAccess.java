@@ -1,5 +1,7 @@
 package pt.webdetails.cda.dataaccess;
 
+import pt.webdetails.cda.settings.CdaSettings;
+
 import javax.swing.table.TableModel;
 
 /**
@@ -20,7 +22,10 @@ public interface DataAccess {
 
   public int getCacheDuration();
 
-  public TableModel queryData();
+  public TableModel queryData() throws QueryException;
 
+  public CdaSettings getCdaSettings();
+
+  public void setCdaSettings(CdaSettings cdaSettings);
 
 }

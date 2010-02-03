@@ -3,6 +3,7 @@ package pt.webdetails.cda.dataaccess;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import pt.webdetails.cda.settings.CdaSettings;
 
 import javax.swing.table.TableModel;
 
@@ -17,6 +18,7 @@ public abstract class AbstractDataAccess implements DataAccess {
 
   private static final Log logger = LogFactory.getLog(AbstractDataAccess.class);
 
+  private CdaSettings cdaSettings;
   private String id;
   private DataAccessEnums.ACCESS_TYPE access = DataAccessEnums.ACCESS_TYPE.PUBLIC;
   private boolean cache = false;
@@ -44,7 +46,7 @@ public abstract class AbstractDataAccess implements DataAccess {
   }
 
   @Override
-  public abstract TableModel queryData();
+  public abstract TableModel queryData() throws QueryException;
 
 
   public DataAccessEnums.ACCESS_TYPE getAccess() {
@@ -58,4 +60,13 @@ public abstract class AbstractDataAccess implements DataAccess {
   public int getCacheDuration() {
     return cacheDuration;
   }
+
+  public CdaSettings getCdaSettings() {
+    return cdaSettings;
+  }
+
+  public void setCdaSettings(CdaSettings cdaSettings) {
+    this.cdaSettings = cdaSettings;
+  }
+  
 }

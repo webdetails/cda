@@ -6,6 +6,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
+import pt.webdetails.cda.dataaccess.QueryException;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
@@ -47,8 +48,6 @@ public class CdaExecutor {
   private void doQuery() {
 
 
-
-
     try {
 
       logger.info("Building CDA settings from sample file");
@@ -73,6 +72,8 @@ public class CdaExecutor {
       logger.fatal("DataAccessException " + Util.getExceptionDescription(e));
     } catch (UnknownDataAccessException e) {
       logger.fatal("DataAccess id not found " + Util.getExceptionDescription(e));
+    } catch (QueryException e) {
+      logger.fatal("QueryException " + Util.getExceptionDescription(e));
     }
 
 

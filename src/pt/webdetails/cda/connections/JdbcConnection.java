@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.DriverConnectionProvider;
+import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.utils.Util;
 
 import java.sql.SQLException;
@@ -20,7 +21,7 @@ public class JdbcConnection extends AbstractConnection {
   private static final Log logger = LogFactory.getLog(JdbcConnection.class);
   public static final String TYPE = "jdbc";
 
-
+  private CdaSettings cdaSettings;
   private ConnectionProvider connectionProvider;
   private JdbcConnectionInfo connectionInfo;
 
@@ -64,6 +65,11 @@ public class JdbcConnection extends AbstractConnection {
     logger.debug("Connection opened");
 
     return connectionProvider;
+  }
+
+  @Override
+  public void setCdaSettings(CdaSettings cdaSettings) {
+    this.cdaSettings = cdaSettings;
   }
 
 

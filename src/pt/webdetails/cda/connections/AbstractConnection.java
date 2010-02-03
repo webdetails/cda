@@ -2,6 +2,7 @@ package pt.webdetails.cda.connections;
 
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
+import pt.webdetails.cda.settings.CdaSettings;
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,6 +13,7 @@ import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.Co
 public abstract class AbstractConnection implements Connection {
 
   private String id;
+  private CdaSettings cdaSettings;
 
   public AbstractConnection(final Element connection) throws InvalidConnectionException {
 
@@ -35,5 +37,8 @@ public abstract class AbstractConnection implements Connection {
   @Override
   public abstract ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException;
 
+  public CdaSettings getCdaSettings() {
+    return cdaSettings;
+  }
 
 }

@@ -89,6 +89,7 @@ public class CdaSettings {
         final Class[] params = {Element.class};
 
         final DataAccess dataAccess = (DataAccess) clazz.getConstructor(params).newInstance(new Object[]{element});
+        dataAccess.setCdaSettings(this);
         addDataAccess(dataAccess);
 
       } catch (Exception e) {
@@ -121,6 +122,7 @@ public class CdaSettings {
         final Class[] params = {Element.class};
 
         final Connection connection = (Connection) clazz.getConstructor(params).newInstance(new Object[]{element});
+        connection.setCdaSettings(this);
         addConnection(connection);
 
       } catch (Exception e) {
