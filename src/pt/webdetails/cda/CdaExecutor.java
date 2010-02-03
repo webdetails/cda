@@ -46,21 +46,22 @@ public class CdaExecutor {
   private void doQuery() {
 
 
-    logger.debug("Building DOM settings from sample file");
 
 
     try {
+
+      logger.info("Building CDA settings from sample file");
 
       final SettingsManager settingsManager = SettingsManager.getInstance();
 
       final File settingsFile = new File("samples/sample.cda");
       final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath(), new FileInputStream(settingsFile));
 
-      /*
       logger.debug("Doing query on Cda - Initializing CdaEngine");
       final CdaEngine engine = CdaEngine.getInstance();
-      */
+      engine.doQuery(cdaSettings,"1");
 
+      
     } catch (DocumentException e) {
       logger.fatal("Unable to parse settings dom: " + Util.getExceptionDescription(e));
     } catch (FileNotFoundException e) {

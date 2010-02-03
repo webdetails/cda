@@ -25,14 +25,17 @@ public class CdaSettings {
 
   private static final Log logger = LogFactory.getLog(CdaSettings.class);
 
+  private String id;
+
   private Element root;
 
   private HashMap<String, Connection> connectionsMap;
   private HashMap<String, DataAccess> dataAccessMap;
 
 
-  public CdaSettings(final Document doc) throws UnsupportedConnectionException, UnsupportedDataAccessException {
+  public CdaSettings(final Document doc, String id) throws UnsupportedConnectionException, UnsupportedDataAccessException {
 
+    this.id = id;
     this.root = doc.getRootElement();
 
     connectionsMap = new HashMap<String, Connection>();
@@ -157,5 +160,10 @@ public class CdaSettings {
     }
     return dataAccessMap.get(id);
   }
+
+  public String getId() {
+    return id;
+  }
+
 
 }

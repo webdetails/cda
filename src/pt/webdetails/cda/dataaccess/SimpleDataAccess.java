@@ -22,7 +22,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess {
   public SimpleDataAccess(final Element element) {
 
     super(element);
-    connectionId = element.attributeValue("connectionId");
+    connectionId = element.attributeValue("connection");
     query = element.selectSingleNode("./Query").getText();
 
   }

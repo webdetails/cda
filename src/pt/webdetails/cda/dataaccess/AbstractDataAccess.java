@@ -30,7 +30,7 @@ public abstract class AbstractDataAccess implements DataAccess {
     if (element.attributeValue("access") != null && element.attributeValue("access").equals("private"))
       access = DataAccessEnums.ACCESS_TYPE.PRIVATE;
 
-    if (element.attributeValue("cache") != null && element.attributeValue("cache").equals("true0"))
+    if (element.attributeValue("cache") != null && element.attributeValue("cache").equals("true"))
       cache = true;
 
     if (element.attribute("cacheDuration") != null)

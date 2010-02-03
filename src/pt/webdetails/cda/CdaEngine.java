@@ -3,6 +3,7 @@ package pt.webdetails.cda;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
+import pt.webdetails.cda.settings.CdaSettings;
 
 /**
  * Main engine class that will answer to calls
@@ -26,11 +27,12 @@ public class CdaEngine {
   }
 
 
-  private void doQuery() {
+  public void doQuery(CdaSettings cdaSettings, String dataAccessId) {
 
-    logger.debug("Doing query on Cda - Initializing CdaEngine");
+    logger.debug("Doing query on CdaSettings [ " + cdaSettings.getId() +" ("+ dataAccessId +")]");
 
-    final CdaEngine engine = CdaEngine.getInstance();
+    cdaSettings.getDataAccess(dataAccessId).queryData();
+
 
   }
 
