@@ -6,7 +6,9 @@ import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
+import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.engine.classic.core.states.CachingDataFactory;
+import org.pentaho.reporting.engine.classic.core.util.CloseableTableModel;
 import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFactory;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKeyCreationException;
@@ -45,14 +47,14 @@ public abstract class PREDataAccess extends SimpleDataAccess {
 
     try {
 
-      DataFactory dataFactory = new CachingDataFactory(getDataFactory());
+      CachingDataFactory dataFactory = new CachingDataFactory(getDataFactory());
 
       ResourceManager resourceManager = new ResourceManager();
       resourceManager.registerDefaults();
       final ResourceKey contextKey = resourceManager.createKey(new File(getCdaSettings().getId()));
 
 
-      /*
+
       dataFactory.initialize(ClassicEngineBoot.getInstance().getGlobalConfig(), resourceManager,
               contextKey,
               new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
@@ -60,7 +62,7 @@ public abstract class PREDataAccess extends SimpleDataAccess {
       // you may give it some real parameters via the constructor of parameter-datarow ...
       final ParameterDataRow parameters = new ParameterDataRow();
       // fire the query. you always get a tablemodel or an exception.
-      final TableModel tableModel = reportDataFactory.queryData("Query 1", parameters);
+      final TableModel tableModel = dataFactory.queryData("Query 1", parameters);
 
       // process your data as you like
 
@@ -71,8 +73,8 @@ public abstract class PREDataAccess extends SimpleDataAccess {
       }
 
       // and finally shut down the datafactory to free any connection that may be open.
-      reportDataFactory.close();
-      */
+      dataFactory.close();
+
 
 
     } catch (UnknownConnectionException e) {
@@ -82,6 +84,10 @@ public abstract class PREDataAccess extends SimpleDataAccess {
     } catch (ResourceKeyCreationException e) {
       throw new QueryException("ResourceKeyCreateException", e);
     }
+    catch (ReportDataFactoryException e)
+    {
+      throw new QueryException("ResourceKeyCreateException", e);
+    }
 
 
     logger.fatal("Not Implemented Yet!!");
@@ -89,23 +95,5 @@ public abstract class PREDataAccess extends SimpleDataAccess {
 
 
   }
-
-  private static ResourceKey createContextKey(final ResourceManager resourceManager,
-                                              final String dashboardDefinitionPath) throws ResourceKeyCreationException {
-
-    /*
-    HashMap helperObjects = new HashMap();
-    // add the runtime context so that PentahoResourceData class can get access
-    // to the solution repo
-    helperObjects.put(new FactoryParameterKey(RepositoryResourceData.PENTAHO_REPOSITORY_KEY), PentahoSystem.get(ISolutionRepository.class, pentahoSession));
-
-    ResourceKey key = resourceManager.createKey(RepositoryResourceLoader.SOLUTION_SCHEMA_NAME + RepositoryResourceLoader.SCHEMA_SEPARATOR
-        + dashboardDefinitionPath, helperObjects);
-    */
-
-    ResourceKey key = resourceManager.createKey(dashboardDefinitionPath);
-    return key;
-  }
-
 
 }
