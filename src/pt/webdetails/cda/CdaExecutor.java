@@ -80,7 +80,7 @@ public class CdaExecutor {
   }
 
 
-  public static CdaExecutor getInstance() {
+  public static synchronized CdaExecutor getInstance() {
 
     if (_instance == null)
       _instance = new CdaExecutor();

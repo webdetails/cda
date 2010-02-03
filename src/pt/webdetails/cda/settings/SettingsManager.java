@@ -49,7 +49,7 @@ public class SettingsManager {
    * @param id The identifier for this settings file.
    * @param in InputStream where the file is located
    */
-  public CdaSettings parseSettingsFile(final String id, final InputStream in) throws DocumentException, UnsupportedConnectionException, UnsupportedDataAccessException {
+  public synchronized CdaSettings parseSettingsFile(final String id, final InputStream in) throws DocumentException, UnsupportedConnectionException, UnsupportedDataAccessException {
 
     // Do we have this on cache?
 
@@ -75,7 +75,7 @@ public class SettingsManager {
    * @param id
    */
 
-  public void clearEntryFromCache(final String id){
+  public synchronized void clearEntryFromCache(final String id){
 
     if(settingsCache.containsKey(id)){
       settingsCache.remove(id);
@@ -84,7 +84,7 @@ public class SettingsManager {
   }
 
 
-  public static SettingsManager getInstance() {
+  public static synchronized SettingsManager getInstance() {
 
     if (_instance == null)
       _instance = new SettingsManager();

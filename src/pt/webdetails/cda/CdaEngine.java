@@ -48,7 +48,7 @@ public class CdaEngine {
 
 
 
-  public static CdaEngine getInstance() {
+  public static synchronized CdaEngine getInstance() {
 
     if (_instance == null)
       _instance = new CdaEngine();
