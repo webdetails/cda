@@ -1,8 +1,9 @@
 package pt.webdetails.cda.dataaccess;
 
-import pt.webdetails.cda.settings.CdaSettings;
-
+import java.util.ArrayList;
 import javax.swing.table.TableModel;
+
+import pt.webdetails.cda.settings.CdaSettings;
 
 /**
  * DataAccess interface
@@ -12,12 +13,13 @@ import javax.swing.table.TableModel;
  * Date: Feb 2, 2010
  * Time: 2:44:01 PM
  */
-public interface DataAccess {
+public interface DataAccess
+{
 
   public String getId();
 
   public DataAccessEnums.ACCESS_TYPE getAccess();
- 
+
   public boolean isCache();
 
   public int getCacheDuration();
@@ -27,4 +29,10 @@ public interface DataAccess {
   public void setCdaSettings(CdaSettings cdaSettings);
 
   public TableModel doQuery() throws QueryException;
+
+  public ArrayList<ColumnDefinition> getColumns();
+
+  public ArrayList<ColumnDefinition> getCalculatedColumns();
+
+
 }

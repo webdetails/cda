@@ -34,7 +34,7 @@ public class CdaSettings {
   private HashMap<String, DataAccess> dataAccessMap;
 
 
-  public CdaSettings(final Document doc, String id, final ResourceKey key) throws UnsupportedConnectionException, UnsupportedDataAccessException {
+  public CdaSettings(final Document doc, final String id, final ResourceKey key) throws UnsupportedConnectionException, UnsupportedDataAccessException {
 
     this.contextKey = key;
     this.id = id;
@@ -87,7 +87,7 @@ public class CdaSettings {
         final String className = "pt.webdetails.cda.dataaccess." +
             type.substring(0, 1).toUpperCase() + type.substring(1, type.length()) + elementName;
 
-        Class clazz = Class.forName(className);
+        final Class clazz = Class.forName(className);
         final Class[] params = {Element.class};
 
         final DataAccess dataAccess = (DataAccess) clazz.getConstructor(params).newInstance(new Object[]{element});
@@ -120,7 +120,7 @@ public class CdaSettings {
         final String className = "pt.webdetails.cda.connections." +
             type.substring(0, 1).toUpperCase() + type.substring(1, type.length()) + "Connection";
 
-        Class clazz = Class.forName(className);
+        final Class clazz = Class.forName(className);
         final Class[] params = {Element.class};
 
         final Connection connection = (Connection) clazz.getConstructor(params).newInstance(new Object[]{element});

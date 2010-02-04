@@ -29,7 +29,7 @@ public class CdaEngine {
   }
 
 
-  public void doQuery(CdaSettings cdaSettings, String dataAccessId) throws UnknownDataAccessException, QueryException {
+  public void doQuery(final CdaSettings cdaSettings, final String dataAccessId) throws UnknownDataAccessException, QueryException {
 
     logger.debug("Doing query on CdaSettings [ " + cdaSettings.getId() +" ("+ dataAccessId +")]");
 

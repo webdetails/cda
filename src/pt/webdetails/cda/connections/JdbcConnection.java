@@ -68,7 +68,7 @@ public class JdbcConnection extends AbstractConnection {
   }
 
   @Override
-  public void setCdaSettings(CdaSettings cdaSettings) {
+  public void setCdaSettings(final CdaSettings cdaSettings) {
     this.cdaSettings = cdaSettings;
   }
 

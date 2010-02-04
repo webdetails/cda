@@ -32,8 +32,8 @@ public class SqlDataAccess extends PREDataAccess {
 
     logger.debug("Creating SQLReportDataFactory");
 
-    Connection connection = getCdaSettings().getConnection(getConnectionId());
-    SQLReportDataFactory reportDataFactory = new SQLReportDataFactory(connection.getInitializedConnectionProvider());
+    final Connection connection = getCdaSettings().getConnection(getConnectionId());
+    final SQLReportDataFactory reportDataFactory = new SQLReportDataFactory(connection.getInitializedConnectionProvider());
 
     reportDataFactory.setQuery("query", getQuery());
 

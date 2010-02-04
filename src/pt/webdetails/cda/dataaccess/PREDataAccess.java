@@ -49,9 +49,9 @@ public abstract class PREDataAccess extends SimpleDataAccess {
 
     try {
 
-      CachingDataFactory dataFactory = new CachingDataFactory(getDataFactory());
+      final CachingDataFactory dataFactory = new CachingDataFactory(getDataFactory());
 
-      ResourceManager resourceManager = new ResourceManager();
+      final ResourceManager resourceManager = new ResourceManager();
       resourceManager.registerDefaults();
       final ResourceKey contextKey = getCdaSettings().getContextKey();
 
@@ -63,7 +63,7 @@ public abstract class PREDataAccess extends SimpleDataAccess {
       // you may give it some real parameters via the constructor of parameter-datarow ...
       final ParameterDataRow parameters = new ParameterDataRow();
       // fire the query. you always get a tablemodel or an exception.
-      TableModel tableModel = dataFactory.queryData("query", parameters);
+      final TableModel tableModel = dataFactory.queryData("query", parameters);
 
       // Store this variable so that we can close it later
       setLocalDataFactory(dataFactory);
@@ -87,7 +87,7 @@ public abstract class PREDataAccess extends SimpleDataAccess {
 
     // and at the end, close your tablemodel if it holds on to resources like a resultset
     if (getTableModel() instanceof CloseableTableModel) {
-      CloseableTableModel ctm = (CloseableTableModel) getTableModel();
+      final CloseableTableModel ctm = (CloseableTableModel) getTableModel();
       ctm.close();
     }
 
@@ -101,7 +101,7 @@ public abstract class PREDataAccess extends SimpleDataAccess {
     return tableModel;
   }
 
-  public void setTableModel(TableModel tableModel) {
+  public void setTableModel(final TableModel tableModel) {
     this.tableModel = tableModel;
   }
 
@@ -109,7 +109,7 @@ public abstract class PREDataAccess extends SimpleDataAccess {
     return localDataFactory;
   }
 
-  public void setLocalDataFactory(CachingDataFactory localDataFactory) {
+  public void setLocalDataFactory(final CachingDataFactory localDataFactory) {
     this.localDataFactory = localDataFactory;
   }
 

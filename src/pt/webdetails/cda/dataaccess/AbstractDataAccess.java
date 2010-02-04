@@ -1,11 +1,12 @@
 package pt.webdetails.cda.dataaccess;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.table.TableModel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.utils.TableModelUtils;
 
@@ -26,11 +27,21 @@ public abstract class AbstractDataAccess implements DataAccess
   private DataAccessEnums.ACCESS_TYPE access = DataAccessEnums.ACCESS_TYPE.PUBLIC;
   private boolean cache = false;
   private int cacheDuration = 3600;
+  private ArrayList<Parameter> parameters = new ArrayList<Parameter>();
+  private ArrayList<Integer> outputs = new ArrayList<Integer>();
+  private ArrayList<ColumnDefinition> columnDefinitions = new ArrayList<ColumnDefinition>();
 
 
   protected AbstractDataAccess(final Element element)
   {
 
+    parseOptions(element);
+
+  }
+
+
+  private void parseOptions(final Element element)
+  {
     id = element.attributeValue("id");
 
     if (element.attributeValue("access") != null && element.attributeValue("access").equals("private"))
@@ -48,6 +59,34 @@ public abstract class AbstractDataAccess implements DataAccess
       cacheDuration = Integer.parseInt(element.attributeValue("cacheDuration"));
     }
 
+
+    // Parse parameters
+    final List<Element> parameterNodes = element.selectNodes("Parameters/Parameter");
+
+    for (final Element p : parameterNodes)
+    {
+      parameters.add(new Parameter(p));
+    }
+
+    // Parse outputs
+    final Element outputNode = (Element) element.selectSingleNode("Output");
+    if (outputNode != null)
+    {
+      final String[] indexes = outputNode.attributeValue("indexes").split(",");
+      for (final String index : indexes)
+      {
+        outputs.add(Integer.parseInt(index));
+      }
+    }
+
+    // Parse Columns
+    final List<Element> columnNodes = element.selectNodes("Columns/*");
+
+    for (final Element p : columnNodes)
+    {
+      columnDefinitions.add(new ColumnDefinition(p));
+    }
+
   }
 
   @Override
@@ -55,10 +94,11 @@ public abstract class AbstractDataAccess implements DataAccess
   {
 
 
-    TableModel tableModel, newTableModel;
+    final TableModel tableModel;
+    final TableModel newTableModel;
 
     logger.warn("TODO - Implement cache");
-    boolean isCached = false;
+    final boolean isCached = false;
 
     if (isCached)
     {
@@ -71,17 +111,45 @@ public abstract class AbstractDataAccess implements DataAccess
 
     // Handle the TableModel
 
-    TableModelUtils tableModelUtils = TableModelUtils.getInstance();
+    final TableModelUtils tableModelUtils = TableModelUtils.getInstance();
     newTableModel = tableModelUtils.transformTableModel(this, tableModel);
 
     // Close it
-    if(!isCached){
+    if (!isCached)
+    {
       closeDataSource();
     }
 
-    logger.debug("Query " + getId() +  " done successfully - returning tableModel");
+    logger.debug("Query " + getId() + " done successfully - returning tableModel");
     return tableModel;
 
+  }
+
+
+  public ArrayList<ColumnDefinition> getColumns()
+  {
+
+    ArrayList<ColumnDefinition> list = (ArrayList<ColumnDefinition>) columnDefinitions.clone();
+
+    for (ColumnDefinition definition : list)
+    {
+      if (definition.getType() != ColumnDefinition.TYPE.COLUMN)
+            list.remove(definition);
+    }
+    return list;
+
+  }
+
+  public ArrayList<ColumnDefinition> getCalculatedColumns()
+  {
+    ArrayList<ColumnDefinition> list = (ArrayList<ColumnDefinition>) columnDefinitions.clone();
+
+    for (ColumnDefinition definition : list)
+    {
+      if (definition.getType() != ColumnDefinition.TYPE.CALCULATED_COLUMN)
+            list.remove(definition);
+    }
+    return list;
   }
 
 
@@ -117,10 +185,18 @@ public abstract class AbstractDataAccess implements DataAccess
     return cdaSettings;
   }
 
-  public void setCdaSettings(CdaSettings cdaSettings)
+  public void setCdaSettings(final CdaSettings cdaSettings)
   {
     this.cdaSettings = cdaSettings;
   }
 
+  public ArrayList<Parameter> getParameters()
+  {
+    return parameters;
+  }
 
+  public ArrayList<Integer> getOutputs()
+  {
+    return outputs;
+  }
 }

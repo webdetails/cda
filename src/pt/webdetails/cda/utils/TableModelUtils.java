@@ -28,7 +28,7 @@ public class TableModelUtils
   }
 
 
-  public TableModel transformTableModel(DataAccess dataAccess /*, QueryOptions queryOptions*/ , TableModel tableModel){
+  public TableModel transformTableModel(final DataAccess dataAccess /*, QueryOptions queryOptions*/ , final TableModel tableModel){
 
 
     logger.warn("transformTableModel Not implemented yet"); 
@@ -38,7 +38,7 @@ public class TableModelUtils
   }
 
 
-  private TableModel copyTableModel(TableModel t)
+  private TableModel copyTableModel(final TableModel t)
   {
     final int count = t.getColumnCount();
     final Class[] colTypes = new Class[count];
