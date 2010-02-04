@@ -1,5 +1,9 @@
 package pt.webdetails.cda.dataaccess;
 
+import java.util.Locale;
+import java.util.TimeZone;
+import javax.swing.table.TableModel;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
@@ -11,15 +15,9 @@ import org.pentaho.reporting.engine.classic.core.states.CachingDataFactory;
 import org.pentaho.reporting.engine.classic.core.util.CloseableTableModel;
 import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFactory;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
-import org.pentaho.reporting.libraries.resourceloader.ResourceKeyCreationException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.settings.UnknownConnectionException;
-
-import javax.swing.table.TableModel;
-import java.io.File;
-import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * This is the DataAccess implementation for PentahoReportingEngine based queries.
@@ -28,14 +26,16 @@ import java.util.TimeZone;
  * Date: Feb 3, 2010
  * Time: 2:18:19 PM
  */
-public abstract class PREDataAccess extends SimpleDataAccess {
+public abstract class PREDataAccess extends SimpleDataAccess
+{
 
   private static final Log logger = LogFactory.getLog(PREDataAccess.class);
 
   private TableModel tableModel;
   private CachingDataFactory localDataFactory;
 
-  public PREDataAccess(final Element element) {
+  public PREDataAccess(final Element element)
+  {
 
     super(element);
 
@@ -44,10 +44,10 @@ public abstract class PREDataAccess extends SimpleDataAccess {
 
   public abstract DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException;
 
-  @Override
-  public TableModel queryDataSource() throws QueryException {
-
-    try {
+  protected TableModel performRawQuery(final ParameterDataRow parameterDataRow) throws QueryException
+  {
+    try
+    {
 
       final CachingDataFactory dataFactory = new CachingDataFactory(getDataFactory());
 
@@ -61,32 +61,42 @@ public abstract class PREDataAccess extends SimpleDataAccess {
           new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
 
       // you may give it some real parameters via the constructor of parameter-datarow ...
-      final ParameterDataRow parameters = new ParameterDataRow();
       // fire the query. you always get a tablemodel or an exception.
-      final TableModel tableModel = dataFactory.queryData("query", parameters);
+      final TableModel tableModel = dataFactory.queryData("query", parameterDataRow);
 
       // Store this variable so that we can close it later
       setLocalDataFactory(dataFactory);
 
       return tableModel;
 
-    } catch (UnknownConnectionException e) {
-      throw new QueryException("Unknown connection", e);
-    } catch (InvalidConnectionException e) {
+    }
+    catch (UnknownConnectionException e)
+    {
       throw new QueryException("Unknown connection", e);
     }
-    catch (ReportDataFactoryException e) {
+    catch (InvalidConnectionException e)
+    {
+      throw new QueryException("Unknown connection", e);
+    }
+    catch (ReportDataFactoryException e)
+    {
       throw new QueryException("ResourceKeyCreateException", e);
     }
 
 
   }
 
-  public void closeDataSource() throws QueryException {
+  public void closeDataSource() throws QueryException
+  {
 
+    if (localDataFactory == null)
+    {
+      return;
+    }
 
     // and at the end, close your tablemodel if it holds on to resources like a resultset
-    if (getTableModel() instanceof CloseableTableModel) {
+    if (getTableModel() instanceof CloseableTableModel)
+    {
       final CloseableTableModel ctm = (CloseableTableModel) getTableModel();
       ctm.close();
     }
@@ -94,10 +104,12 @@ public abstract class PREDataAccess extends SimpleDataAccess {
     // and finally shut down the datafactory to free any connection that may be open.
     getLocalDataFactory().close();
 
+    localDataFactory = null;
   }
 
 
-  public TableModel getTableModel() {
+  public TableModel getTableModel()
+  {
     return tableModel;
   }
 
@@ -105,7 +117,8 @@ public abstract class PREDataAccess extends SimpleDataAccess {
     this.tableModel = tableModel;
   }
 
-  public CachingDataFactory getLocalDataFactory() {
+  public CachingDataFactory getLocalDataFactory()
+  {
     return localDataFactory;
   }
 

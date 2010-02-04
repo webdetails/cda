@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.TableModel;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheException;
+import net.sf.ehcache.CacheManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.utils.TableModelUtils;
 
@@ -19,8 +23,9 @@ import pt.webdetails.cda.utils.TableModelUtils;
  */
 public abstract class AbstractDataAccess implements DataAccess
 {
-
   private static final Log logger = LogFactory.getLog(AbstractDataAccess.class);
+
+  private static CacheManager cacheManager;
 
   private CdaSettings cdaSettings;
   private String id;
@@ -89,42 +94,45 @@ public abstract class AbstractDataAccess implements DataAccess
 
   }
 
+  protected static synchronized Cache getCache() throws CacheException
+  {
+    if (cacheManager == null)
+    {
+      cacheManager = CacheManager.create();
+    }
+
+    if (cacheManager.cacheExists("pentaho-cda-dataaccess") == false)
+    {
+      cacheManager.addCache("pentaho-cda-dataaccess");
+    }
+    return cacheManager.getCache("pentaho-cda-dataaccess");
+  }
+
   @Override
   public TableModel doQuery() throws QueryException
   {
 
-
-    final TableModel tableModel;
-    final TableModel newTableModel;
-
-    logger.warn("TODO - Implement cache");
+    final ParameterDataRow parameterDataRow = new ParameterDataRow();
     final boolean isCached = false;
 
-    if (isCached)
-    {
-      tableModel = null; // TODO - change this
-    }
-    else
-    {
-      tableModel = queryDataSource();
-    }
+    TableModel tableModel = queryDataSource(parameterDataRow);
 
     // Handle the TableModel
 
     final TableModelUtils tableModelUtils = TableModelUtils.getInstance();
-    newTableModel = tableModelUtils.transformTableModel(this, tableModel);
+    TableModel newTableModel = tableModelUtils.transformTableModel(this, tableModel);
 
-    // Close it
-    if (!isCached)
-    {
-      closeDataSource();
-    }
+    // Close it - the data-access implementation takes care of whether a real close is needed.
+    closeDataSource();
 
     logger.debug("Query " + getId() + " done successfully - returning tableModel");
-    return tableModel;
+    return newTableModel;
 
   }
 
+  protected abstract TableModel queryDataSource(ParameterDataRow parameterDataRow) throws QueryException;
+
+  protected abstract void closeDataSource() throws QueryException;
 
   public ArrayList<ColumnDefinition> getColumns()
   {
@@ -134,7 +142,9 @@ public abstract class AbstractDataAccess implements DataAccess
     for (ColumnDefinition definition : list)
     {
       if (definition.getType() != ColumnDefinition.TYPE.COLUMN)
-            list.remove(definition);
+      {
+        list.remove(definition);
+      }
     }
     return list;
 
@@ -147,16 +157,12 @@ public abstract class AbstractDataAccess implements DataAccess
     for (ColumnDefinition definition : list)
     {
       if (definition.getType() != ColumnDefinition.TYPE.CALCULATED_COLUMN)
-            list.remove(definition);
+      {
+        list.remove(definition);
+      }
     }
     return list;
   }
-
-
-  public abstract TableModel queryDataSource() throws QueryException;
-
-  public abstract void closeDataSource() throws QueryException;
-
 
   @Override
   public String getId()

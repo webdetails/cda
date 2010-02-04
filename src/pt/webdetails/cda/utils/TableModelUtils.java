@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 import pt.webdetails.cda.dataaccess.DataAccess;
-import pt.webdetails.cda.settings.CdaSettings;
 
 /**
  * Utility class to handle TableModel operations
@@ -28,17 +27,20 @@ public class TableModelUtils
   }
 
 
-  public TableModel transformTableModel(final DataAccess dataAccess /*, QueryOptions queryOptions*/ , final TableModel tableModel){
+  public TableModel transformTableModel(final DataAccess dataAccess
+                                        /*, QueryOptions queryOptions*/,
+                                        final TableModel tableModel)
+  {
 
 
-    logger.warn("transformTableModel Not implemented yet"); 
+    logger.warn("transformTableModel Not implemented yet");
 
     return copyTableModel(tableModel);
 
   }
 
 
-  private TableModel copyTableModel(final TableModel t)
+  public TableModel copyTableModel(TableModel t)
   {
     final int count = t.getColumnCount();
     final Class[] colTypes = new Class[count];
