@@ -55,7 +55,7 @@ public class CdaExecutor {
       final SettingsManager settingsManager = SettingsManager.getInstance();
 
       final File settingsFile = new File("samples/sample.cda");
-      final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath(), new FileInputStream(settingsFile));
+      final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
 
       logger.debug("Doing query on Cda - Initializing CdaEngine");
       final CdaEngine engine = CdaEngine.getInstance();
@@ -64,8 +64,6 @@ public class CdaExecutor {
       
     } catch (DocumentException e) {
       logger.fatal("Unable to parse settings dom: " + Util.getExceptionDescription(e));
-    } catch (FileNotFoundException e) {
-      logger.fatal("File not found: " + Util.getExceptionDescription(e));
     } catch (UnsupportedConnectionException e) {
       logger.fatal("ConnectionException " + Util.getExceptionDescription(e));
     } catch (UnsupportedDataAccessException e) {
