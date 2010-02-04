@@ -5,11 +5,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
-import org.dom4j.io.SAXReader;
+import org.dom4j.io.DOMReader;
+import org.pentaho.reporting.libraries.resourceloader.Resource;
+import org.pentaho.reporting.libraries.resourceloader.ResourceException;
+import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
 
-import java.io.InputStream;
+import java.io.File;
 
 /**
  *
@@ -47,9 +50,8 @@ public class SettingsManager {
   /**
    *
    * @param id The identifier for this settings file.
-   * @param in InputStream where the file is located
    */
-  public synchronized CdaSettings parseSettingsFile(final String id, final InputStream in) throws DocumentException, UnsupportedConnectionException, UnsupportedDataAccessException {
+  public synchronized CdaSettings parseSettingsFile(final String id) throws DocumentException, UnsupportedConnectionException, UnsupportedDataAccessException {
 
     // Do we have this on cache?
 
@@ -57,14 +59,23 @@ public class SettingsManager {
       return (CdaSettings) settingsCache.get(id);
     }
 
-    final SAXReader saxReader = new SAXReader();
-    final Document doc = saxReader.read(in);
+    try
+    {
+      final ResourceManager resourceManager = new ResourceManager();
+      resourceManager.registerDefaults();
+      final Resource resource = resourceManager.createDirectly(new File(id), Document.class);
+       final org.w3c.dom.Document document = (org.w3c.dom.Document) resource.getResource();
+      final DOMReader saxReader = new DOMReader();
+      final Document doc = saxReader.read(document);
 
-
-    final CdaSettings settings = new CdaSettings(doc, id);
-
-    return settings;
-
+      final CdaSettings settings = new CdaSettings(doc, id, resource.getSource());
+      settingsCache.put(id, settings);
+      return settings;
+    }
+    catch (ResourceException re)
+    {
+      throw new UnsupportedDataAccessException("Failed: ResourceException", re);
+    }
 
   }
 

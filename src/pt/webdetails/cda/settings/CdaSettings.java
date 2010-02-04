@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.DataAccess;
@@ -26,15 +27,16 @@ public class CdaSettings {
   private static final Log logger = LogFactory.getLog(CdaSettings.class);
 
   private String id;
-
+  private ResourceKey contextKey;
   private Element root;
 
   private HashMap<String, Connection> connectionsMap;
   private HashMap<String, DataAccess> dataAccessMap;
 
 
-  public CdaSettings(final Document doc, String id) throws UnsupportedConnectionException, UnsupportedDataAccessException {
+  public CdaSettings(final Document doc, String id, final ResourceKey key) throws UnsupportedConnectionException, UnsupportedDataAccessException {
 
+    this.contextKey = key;
     this.id = id;
     this.root = doc.getRootElement();
 
@@ -167,5 +169,8 @@ public class CdaSettings {
     return id;
   }
 
-
+  public ResourceKey getContextKey()
+  {
+    return contextKey;
+  }
 }

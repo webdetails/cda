@@ -53,7 +53,7 @@ public abstract class PREDataAccess extends SimpleDataAccess {
 
       ResourceManager resourceManager = new ResourceManager();
       resourceManager.registerDefaults();
-      final ResourceKey contextKey = resourceManager.createKey(new File(getCdaSettings().getId()));
+      final ResourceKey contextKey = getCdaSettings().getContextKey();
 
 
       dataFactory.initialize(ClassicEngineBoot.getInstance().getGlobalConfig(), resourceManager,
@@ -74,8 +74,6 @@ public abstract class PREDataAccess extends SimpleDataAccess {
       throw new QueryException("Unknown connection", e);
     } catch (InvalidConnectionException e) {
       throw new QueryException("Unknown connection", e);
-    } catch (ResourceKeyCreationException e) {
-      throw new QueryException("ResourceKeyCreateException", e);
     }
     catch (ReportDataFactoryException e) {
       throw new QueryException("ResourceKeyCreateException", e);
