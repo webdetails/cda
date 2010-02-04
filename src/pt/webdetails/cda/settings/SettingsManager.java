@@ -63,7 +63,7 @@ public class SettingsManager {
     {
       final ResourceManager resourceManager = new ResourceManager();
       resourceManager.registerDefaults();
-      final Resource resource = resourceManager.createDirectly(new File(id), Document.class);
+      final Resource resource = resourceManager.createDirectly(new File(id), org.w3c.dom.Document.class);
        final org.w3c.dom.Document document = (org.w3c.dom.Document) resource.getResource();
       final DOMReader saxReader = new DOMReader();
       final Document doc = saxReader.read(document);
