@@ -22,10 +22,9 @@ public interface DataAccess {
 
   public int getCacheDuration();
 
-  public TableModel queryData() throws QueryException;
-
   public CdaSettings getCdaSettings();
 
   public void setCdaSettings(CdaSettings cdaSettings);
 
+  public TableModel doQuery() throws QueryException;
 }

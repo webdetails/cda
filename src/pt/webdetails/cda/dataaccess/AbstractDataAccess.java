@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 import pt.webdetails.cda.settings.CdaSettings;
+import pt.webdetails.cda.utils.TableModelUtils;
 
 /**
  * This is the top level implementation of a DataAccess. Only the common methods are used here
@@ -50,13 +51,50 @@ public abstract class AbstractDataAccess implements DataAccess
   }
 
   @Override
+  public TableModel doQuery() throws QueryException
+  {
+
+
+    TableModel tableModel, newTableModel;
+
+    logger.warn("TODO - Implement cache");
+    boolean isCached = false;
+
+    if (isCached)
+    {
+      tableModel = null; // TODO - change this
+    }
+    else
+    {
+      tableModel = queryDataSource();
+    }
+
+    // Handle the TableModel
+
+    TableModelUtils tableModelUtils = TableModelUtils.getInstance();
+    newTableModel = tableModelUtils.transformTableModel(this, tableModel);
+
+    // Close it
+    if(!isCached){
+      closeDataSource();
+    }
+
+    logger.debug("Query " + getId() +  " done successfully - returning tableModel");
+    return tableModel;
+
+  }
+
+
+  public abstract TableModel queryDataSource() throws QueryException;
+
+  public abstract void closeDataSource() throws QueryException;
+
+
+  @Override
   public String getId()
   {
     return id;
   }
-
-  @Override
-  public abstract TableModel queryData() throws QueryException;
 
 
   public DataAccessEnums.ACCESS_TYPE getAccess()
@@ -84,26 +122,5 @@ public abstract class AbstractDataAccess implements DataAccess
     this.cdaSettings = cdaSettings;
   }
 
-  protected static TableModel copyTableModel(TableModel t)
-  {
-    final int count = t.getColumnCount();
-    final Class[] colTypes = new Class[count];
-    final String[] colNames = new String[count];
-    for (int i = 0; i < count; i++)
-    {
-      colTypes[i] = t.getColumnClass(i);
-      colNames[i] = t.getColumnName(i);
-    }
-    final int rowCount = t.getRowCount();
-    final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
-    for (int r = 0; r < rowCount; r++)
-    {
-      for (int c = 0; c < count; c++)
-      {
-        typedTableModel.setValueAt(t.getValueAt(r, c), r, c);
-      }
-    }
-    return typedTableModel;
-  }
 
 }

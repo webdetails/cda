@@ -33,7 +33,7 @@ public class CdaEngine {
 
     logger.debug("Doing query on CdaSettings [ " + cdaSettings.getId() +" ("+ dataAccessId +")]");
 
-    cdaSettings.getDataAccess(dataAccessId).queryData();
+    cdaSettings.getDataAccess(dataAccessId).doQuery();
 
 
   }

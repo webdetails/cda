@@ -31,22 +31,6 @@ public abstract class SimpleDataAccess extends AbstractDataAccess {
 
   }
 
-  @Override
-  public TableModel queryData() throws QueryException{
-
-
-    TableModel tableModel = queryDataSource();
-
-    // Copy the tableModel and cache it
-    logger.warn("TODO - Handle the datasource (copy, cache, manipulate");
-
-
-    closeDataSource();
-
-
-    return tableModel;
-  }
-
 
   public abstract TableModel queryDataSource() throws QueryException;
 
