@@ -16,6 +16,7 @@ public class Parameter
   private String type;
   private String defaultValue;
   private String pattern;
+  private String value;
 
   public Parameter()
   {
@@ -77,5 +78,15 @@ public class Parameter
   public void setPattern(final String pattern)
   {
     this.pattern = pattern;
+  }
+
+  public String getValue()
+  {
+    return value;
+  }
+
+  public void setValue(final String value)
+  {
+    this.value = value;
   }
 }
