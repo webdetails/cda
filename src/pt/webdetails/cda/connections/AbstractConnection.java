@@ -41,4 +41,12 @@ public abstract class AbstractConnection implements Connection {
     return cdaSettings;
   }
 
+
+  @Override
+  public abstract int hashCode();
+
+  @Override
+  public abstract boolean equals(final Object obj);
+
+
 }

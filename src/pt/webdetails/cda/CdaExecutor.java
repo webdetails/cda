@@ -62,16 +62,25 @@ public class CdaExecutor
       logger.debug("Doing query on Cda - Initializing CdaEngine");
       final CdaEngine engine = CdaEngine.getInstance();
 
-      final QueryOptions queryOptions = new QueryOptions();
+      QueryOptions queryOptions = new QueryOptions();
       queryOptions.setDataAccessId("1");
-      queryOptions.addParameter("date", "2003-04-01");
+      queryOptions.addParameter("orderDate", "2003-04-01");
       // queryOptions.addParameter("status","In Process");
 
       logger.info("Doing first query");
       engine.doQuery(cdaSettings, queryOptions);
 
+      logger.info("Doing query with different parameters");
+      queryOptions = new QueryOptions();
+      queryOptions.setDataAccessId("1");
+      queryOptions.addParameter("orderDate", "2004-01-01");
+      engine.doQuery(cdaSettings, queryOptions);
+
       // Querying 2nd time to test cache
-      logger.info("Doing second query - Cache should be used");
+      logger.info("Doing query using the initial parameters - Cache should be used");
+      queryOptions = new QueryOptions();
+      queryOptions.setDataAccessId("1");
+      queryOptions.addParameter("orderDate", "2003-04-01");
       engine.doQuery(cdaSettings, queryOptions);
 
       // Querying 2nd time to test cache

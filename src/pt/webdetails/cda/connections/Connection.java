@@ -24,4 +24,6 @@ public interface Connection {
 
   public void setCdaSettings(CdaSettings cdaSettings);
 
+  
+
 }

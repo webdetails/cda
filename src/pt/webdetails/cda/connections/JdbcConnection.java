@@ -73,4 +73,29 @@ public class JdbcConnection extends AbstractConnection {
   }
 
 
+  public boolean equals(final Object o)
+  {
+    if (this == o)
+    {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass())
+    {
+      return false;
+    }
+
+    final JdbcConnection that = (JdbcConnection) o;
+
+    if (connectionInfo != null ? !connectionInfo.equals(that.connectionInfo) : that.connectionInfo != null)
+    {
+      return false;
+    }
+
+    return true;
+  }
+
+  public int hashCode()
+  {
+    return connectionInfo != null ? connectionInfo.hashCode() : 0;
+  }
 }
