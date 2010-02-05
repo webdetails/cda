@@ -1,6 +1,7 @@
 package pt.webdetails.cda;
 
 import java.io.File;
+import java.io.OutputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,6 +53,9 @@ public class CdaExecutor
     try
     {
 
+      // Define an outputStream
+      OutputStream out = System.out;
+
       logger.info("Building CDA settings from sample file");
 
       final SettingsManager settingsManager = SettingsManager.getInstance();
@@ -68,20 +72,20 @@ public class CdaExecutor
       // queryOptions.addParameter("status","In Process");
 
       logger.info("Doing first query");
-      engine.doQuery(cdaSettings, queryOptions);
+      engine.doQuery(out, cdaSettings, queryOptions);
 
       logger.info("Doing query with different parameters");
       queryOptions = new QueryOptions();
       queryOptions.setDataAccessId("1");
       queryOptions.addParameter("orderDate", "2004-01-01");
-      engine.doQuery(cdaSettings, queryOptions);
+      engine.doQuery(out, cdaSettings, queryOptions);
 
       // Querying 2nd time to test cache
       logger.info("Doing query using the initial parameters - Cache should be used");
       queryOptions = new QueryOptions();
       queryOptions.setDataAccessId("1");
       queryOptions.addParameter("orderDate", "2003-04-01");
-      engine.doQuery(cdaSettings, queryOptions);
+      engine.doQuery(out, cdaSettings, queryOptions);
 
       // Querying 2nd time to test cache
       logger.info("Doing query again to see if cache expires");
@@ -93,7 +97,7 @@ public class CdaExecutor
       {
         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
       }
-      engine.doQuery(cdaSettings, queryOptions);
+      engine.doQuery(out, cdaSettings, queryOptions);
 
 
     }

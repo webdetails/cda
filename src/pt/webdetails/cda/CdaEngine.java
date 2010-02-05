@@ -1,5 +1,8 @@
 package pt.webdetails.cda;
 
+import java.io.OutputStream;
+import javax.swing.table.TableModel;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
@@ -30,11 +33,15 @@ public class CdaEngine {
   }
 
 
-  public void doQuery(final CdaSettings cdaSettings, final QueryOptions queryOptions) throws UnknownDataAccessException, QueryException {
+  public void doQuery(final OutputStream out, final CdaSettings cdaSettings, final QueryOptions queryOptions) throws UnknownDataAccessException, QueryException {
 
     logger.debug("Doing query on CdaSettings [ " + cdaSettings.getId() +" ("+ queryOptions.getDataAccessId() +")]");
 
-    cdaSettings.getDataAccess(queryOptions.getDataAccessId()).doQuery(queryOptions);
+    TableModel tableModel = cdaSettings.getDataAccess(queryOptions.getDataAccessId()).doQuery(queryOptions);
+
+    // Handle the exports
+
+    
 
 
   }
