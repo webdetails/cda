@@ -1,6 +1,7 @@
 package pt.webdetails.cda.dataaccess;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.table.TableModel;
 
@@ -13,7 +14,6 @@ import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
-import pt.webdetails.cda.utils.TableModelUtils;
 
 /**
  * This is the top level implementation of a DataAccess. Only the common methods are used here
@@ -33,13 +33,18 @@ public abstract class AbstractDataAccess implements DataAccess
   private DataAccessEnums.ACCESS_TYPE access = DataAccessEnums.ACCESS_TYPE.PUBLIC;
   private boolean cache = false;
   private int cacheDuration = 3600;
-  private ArrayList<Parameter> parameters = new ArrayList<Parameter>();
-  private ArrayList<Integer> outputs = new ArrayList<Integer>();
-  private ArrayList<ColumnDefinition> columnDefinitions = new ArrayList<ColumnDefinition>();
-
+  private ArrayList<Parameter> parameters;
+  private ArrayList<Integer> outputs;
+  private ArrayList<ColumnDefinition> columnDefinitions;
+  private HashMap<Integer, ColumnDefinition> columnDefinitionIndexMap;
 
   protected AbstractDataAccess(final Element element)
   {
+
+    columnDefinitionIndexMap = new HashMap<Integer, ColumnDefinition>();
+    columnDefinitions = new ArrayList<ColumnDefinition>();
+    outputs = new ArrayList<Integer>();
+    parameters = new ArrayList<Parameter>();
 
     parseOptions(element);
 
@@ -93,6 +98,13 @@ public abstract class AbstractDataAccess implements DataAccess
       columnDefinitions.add(new ColumnDefinition(p));
     }
 
+    // Build the columnDefinitionIndexMap
+    final ArrayList<ColumnDefinition> cols = getColumns();
+    for (final ColumnDefinition columnDefinition : cols)
+    {
+      columnDefinitionIndexMap.put(columnDefinition.getIndex(), columnDefinition);
+    }
+
   }
 
   protected static synchronized Cache getCache() throws CacheException
@@ -122,8 +134,9 @@ public abstract class AbstractDataAccess implements DataAccess
     for (final Parameter parameter : parameters)
     {
       final Parameter parameterPassed = queryOptions.getParameter(parameter.getName());
-      if (parameterPassed != null){
-        parameter.setStringValue(parameterPassed.getStringValue());        
+      if (parameterPassed != null)
+      {
+        parameter.setStringValue(parameterPassed.getStringValue());
       }
     }
 
@@ -137,7 +150,7 @@ public abstract class AbstractDataAccess implements DataAccess
     {
       throw new QueryException("Error parsing parameters ", e);
     }
-    
+
     tableModel = queryDataSource(parameterDataRow);
 
     logger.debug("Query " + getId() + " done successfully - returning tableModel");
@@ -149,16 +162,16 @@ public abstract class AbstractDataAccess implements DataAccess
   private ParameterDataRow createParameterDataRowFromParameters(final ArrayList<Parameter> parameters) throws InvalidParameterException
   {
 
-    ArrayList<String> names = new ArrayList<String>();
-    ArrayList<Object> values = new ArrayList<Object>();
+    final ArrayList<String> names = new ArrayList<String>();
+    final ArrayList<Object> values = new ArrayList<Object>();
 
-    for (Parameter parameter : parameters)
+    for (final Parameter parameter : parameters)
     {
       names.add(parameter.getName());
       values.add(parameter.getValue());
     }
 
-    final ParameterDataRow parameterDataRow = new ParameterDataRow( names.toArray(new String[]{}), values.toArray());
+    final ParameterDataRow parameterDataRow = new ParameterDataRow(names.toArray(new String[]{}), values.toArray());
 
     return parameterDataRow;
 
@@ -172,31 +185,42 @@ public abstract class AbstractDataAccess implements DataAccess
   public ArrayList<ColumnDefinition> getColumns()
   {
 
-    final ArrayList<ColumnDefinition> list = (ArrayList<ColumnDefinition>) columnDefinitions.clone();
+    final ArrayList<ColumnDefinition> list = new ArrayList<ColumnDefinition>();
 
-    for (final ColumnDefinition definition : list)
+    for (final ColumnDefinition definition : columnDefinitions)
     {
-      if (definition.getType() != ColumnDefinition.TYPE.COLUMN)
+      if (definition.getType() == ColumnDefinition.TYPE.COLUMN)
       {
-        list.remove(definition);
+        list.add(definition);
       }
     }
     return list;
 
   }
 
+
+  public ColumnDefinition getColumnDefinition(final int idx)
+  {
+
+    return columnDefinitionIndexMap.get(new Integer(idx));
+
+  }
+
+
   public ArrayList<ColumnDefinition> getCalculatedColumns()
   {
-    final ArrayList<ColumnDefinition> list = (ArrayList<ColumnDefinition>) columnDefinitions.clone();
 
-    for (final ColumnDefinition definition : list)
+    final ArrayList<ColumnDefinition> list = new ArrayList<ColumnDefinition>();
+
+    for (final ColumnDefinition definition : columnDefinitions)
     {
-      if (definition.getType() != ColumnDefinition.TYPE.CALCULATED_COLUMN)
+      if (definition.getType() == ColumnDefinition.TYPE.CALCULATED_COLUMN)
       {
-        list.remove(definition);
+        list.add(definition);
       }
     }
     return list;
+
   }
 
 

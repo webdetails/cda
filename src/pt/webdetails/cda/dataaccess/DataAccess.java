@@ -31,7 +31,7 @@ public interface DataAccess
 
   public TableModel doQuery(QueryOptions queryOptions) throws QueryException;
 
-  public ArrayList<ColumnDefinition> getColumns();
+  public ColumnDefinition getColumnDefinition(int idx);
 
   public ArrayList<ColumnDefinition> getCalculatedColumns();
 

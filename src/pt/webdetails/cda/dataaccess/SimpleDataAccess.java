@@ -136,7 +136,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     // Copy the tableModel and cache it
     // Handle the TableModel
 
-    final TableModel tableModelCopy = TableModelUtils.getInstance().copyTableModel(tableModel);
+    final TableModel tableModelCopy = TableModelUtils.getInstance().copyTableModel(this, tableModel);
 
     closeDataSource();
 

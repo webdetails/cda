@@ -50,8 +50,8 @@
 				<Name>Year</Name>
 			</Column>
 			<CalculatedColumn>
-				<Name>Test</Name>
-				<Formula>=[1]/100</Formula>
+				<Name>Ano</Name>
+				<Formula>=[2]/1000000</Formula>
 			</CalculatedColumn>
 		</Columns>
         <!-- Settings block here overrides defaults and general settings -->

@@ -1,10 +1,12 @@
 package pt.webdetails.cda.utils;
 
+import java.util.ArrayList;
 import javax.swing.table.TableModel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
+import pt.webdetails.cda.dataaccess.ColumnDefinition;
 import pt.webdetails.cda.dataaccess.DataAccess;
 
 /**
@@ -35,30 +37,36 @@ public class TableModelUtils
 
     logger.warn("transformTableModel Not implemented yet");
 
-    return copyTableModel(tableModel);
+    return copyTableModel(dataAccess, tableModel);
 
   }
 
 
-  public TableModel copyTableModel(final TableModel t)
+  public TableModel copyTableModel(final DataAccess dataAccess, final TableModel t)
   {
+
+
+    ArrayList<ColumnDefinition> calulatedColumnsList = dataAccess.getCalculatedColumns();
+    if (calulatedColumnsList.size() > 0)
+    {
+      logger.warn("Todo: Implement " + calulatedColumnsList.size() + " Calculated Columns");
+    }
+
     final int count = t.getColumnCount();
+
     final Class[] colTypes = new Class[count];
     final String[] colNames = new String[count];
+
     for (int i = 0; i < count; i++)
     {
       colTypes[i] = t.getColumnClass(i);
-      colNames[i] = t.getColumnName(i);
+
+      final ColumnDefinition col = dataAccess.getColumnDefinition(i);
+      colNames[i] = col != null ? col.getName() : t.getColumnName(i);
     }
     final int rowCount = t.getRowCount();
-    if (rowCount == 0)
-    {
-      logger.debug("No data found");
-    }
-    else
-    {
-      logger.debug("Found " + rowCount + " rows");
-    }
+    logger.debug(rowCount == 0 ? "No data found" : "Found " + rowCount + " rows");
+
 
     final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
     for (int r = 0; r < rowCount; r++)
