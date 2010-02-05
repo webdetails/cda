@@ -122,11 +122,22 @@ public abstract class AbstractDataAccess implements DataAccess
     for (final Parameter parameter : parameters)
     {
       final Parameter parameterPassed = queryOptions.getParameter(parameter.getName());
-      parameter.setStringValue(parameterPassed == null ? parameter.getDefaultValue() : parameterPassed.getStringValue());
+      if (parameterPassed != null){
+        parameter.setStringValue(parameterPassed.getStringValue());        
+      }
     }
 
 
-    final ParameterDataRow parameterDataRow = createParameterDataRowFromParameters(parameters);
+    final ParameterDataRow parameterDataRow;
+    try
+    {
+      parameterDataRow = createParameterDataRowFromParameters(parameters);
+    }
+    catch (InvalidParameterException e)
+    {
+      throw new QueryException("Error parsing parameters ", e);
+    }
+    
     tableModel = queryDataSource(parameterDataRow);
 
     logger.debug("Query " + getId() + " done successfully - returning tableModel");
@@ -134,11 +145,22 @@ public abstract class AbstractDataAccess implements DataAccess
 
   }
 
-  private ParameterDataRow createParameterDataRowFromParameters(final ArrayList<Parameter> parameters)
+
+  private ParameterDataRow createParameterDataRowFromParameters(final ArrayList<Parameter> parameters) throws InvalidParameterException
   {
 
-    logger.fatal("FATAL - Need to implement createParameterDataRowFromParameters");
-    return new ParameterDataRow();
+    ArrayList<String> names = new ArrayList<String>();
+    ArrayList<Object> values = new ArrayList<Object>();
+
+    for (Parameter parameter : parameters)
+    {
+      names.add(parameter.getName());
+      values.add(parameter.getValue());
+    }
+
+    final ParameterDataRow parameterDataRow = new ParameterDataRow( names.toArray(new String[]{}), values.toArray());
+
+    return parameterDataRow;
 
   }
 

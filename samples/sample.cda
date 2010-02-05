@@ -26,7 +26,7 @@
 	be used from a Compound datasource only
 
 	-->
-    <DataAccess id="1" connection="1" type="sql" access="public" cache="true" cacheDuration="3600">
+    <DataAccess id="1" connection="1" type="sql" access="public" cache="true" cacheDuration="5">
         <Query>
 			select o.YEAR_ID, o.STATUS, sum(o.TOTALPRICE) as price from orderfact o
 			where o.STATUS = ${status} and o.ORDERDATE &gt; ${orderDate}
@@ -34,6 +34,8 @@
 		</Query>
         <!-- All parameters are passed as string from the outside. Their
 		type is defined here. If needed, a conversion pattern must be specified
+
+		Supported types: String, Date, Integer, Numeric
 		-->
         <Parameters>
             <Parameter name="status" type="String" default="Shipped"/>

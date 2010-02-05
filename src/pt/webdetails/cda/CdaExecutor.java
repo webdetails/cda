@@ -64,9 +64,26 @@ public class CdaExecutor
 
       final QueryOptions queryOptions = new QueryOptions();
       queryOptions.setDataAccessId("1");
-      queryOptions.addParameter("date","2003-04-01");
-      queryOptions.addParameter("status","In Process");
+      queryOptions.addParameter("date", "2003-04-01");
+      // queryOptions.addParameter("status","In Process");
 
+      logger.info("Doing first query");
+      engine.doQuery(cdaSettings, queryOptions);
+
+      // Querying 2nd time to test cache
+      logger.info("Doing second query - Cache should be used");
+      engine.doQuery(cdaSettings, queryOptions);
+
+      // Querying 2nd time to test cache
+      logger.info("Doing query again to see if cache expires");
+      try
+      {
+        Thread.sleep(10000);
+      }
+      catch (InterruptedException e)
+      {
+        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+      }
       engine.doQuery(cdaSettings, queryOptions);
 
 

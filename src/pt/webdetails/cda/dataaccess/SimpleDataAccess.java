@@ -82,10 +82,9 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
   }
 
 
-  protected TableModel queryDataSource(final ParameterDataRow parameter) throws QueryException
+  protected TableModel queryDataSource(final ParameterDataRow parameterDataRow) throws QueryException
   {
 
-    final ParameterDataRow parameterDataRow = new ParameterDataRow();
     final Cache cache = getCache();
 
     // create the cache-key which is both query and parameter values
@@ -100,6 +99,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
         if (cachedTableModel != null)
         {
           // we have a entry in the cache ... great!
+          logger.debug("Found tableModel in cache. Returning");
           return cachedTableModel;
         }
       }
@@ -110,15 +110,15 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     // Copy the tableModel and cache it
     // Handle the TableModel
 
-    final TableModel tableModelCopy = TableModelUtils.getInstance().transformTableModel(this, tableModel);
+    final TableModel tableModelCopy = TableModelUtils.getInstance().copyTableModel(tableModel);
 
     closeDataSource();
 
     // put the copy into the cache ...
     if (isCache())
     {
-
       final net.sf.ehcache.Element storeElement = new net.sf.ehcache.Element(key, tableModelCopy);
+      storeElement.setTimeToLive(getCacheDuration());
       cache.put(storeElement);
     }
 

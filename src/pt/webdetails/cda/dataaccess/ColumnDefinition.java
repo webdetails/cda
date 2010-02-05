@@ -31,7 +31,7 @@ public class ColumnDefinition
 
     this();
 
-    setName(p.selectSingleNode("Node").getText());
+    setName(p.selectSingleNode("Name").getText());
 
     if (p.getName().equals("CalculatedColumn"))
     {

@@ -1,5 +1,8 @@
 package pt.webdetails.cda.dataaccess;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import org.dom4j.Element;
 
 /**
@@ -44,6 +47,44 @@ public class Parameter
     this.name = name;
     this.stringValue = stringValue;
   }
+
+
+  public Object getValue() throws InvalidParameterException
+  {
+    // This depends on the value
+    final String localValue = getStringValue() == null ? getDefaultValue() : getStringValue();
+
+    if (getType().equals("String"))
+    {
+      return localValue;
+    }
+    else if (getType().equals("Integer"))
+    {
+      return Integer.parseInt(localValue);
+    }
+    else if (getType().equals("Numeric"))
+    {
+      return Double.parseDouble(localValue);
+    }
+    else if (getType().equals("Date"))
+    {
+      SimpleDateFormat format = new SimpleDateFormat(getPattern());
+      try
+      {
+        return format.parse(localValue);
+      }
+      catch (ParseException e)
+      {
+        throw new InvalidParameterException("Unable to parse date " + localValue + " with pattern " + getPattern() , e);
+      }
+    }
+    else{
+      throw  new InvalidParameterException("Parameter type " + getType() + " unknown, can't continue",null);
+    }
+
+
+  }
+
 
   public String getName()
   {
@@ -94,4 +135,5 @@ public class Parameter
   {
     this.stringValue = stringValue;
   }
+
 }
