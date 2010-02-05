@@ -14,14 +14,21 @@ public class QueryOptions
 {
 
   private String dataAccessId;
-  private boolean paginate = false;
-  private int pageSize = 20;
-  private int pageStart = 0;
-  private ArrayList<Integer> sortBy = new ArrayList<Integer>();
-  private ArrayList<Parameter> parameters = new ArrayList<Parameter>();
+  private boolean paginate;
+  private int pageSize;
+  private int pageStart;
+  private ArrayList<Integer> sortBy;
+  private ArrayList<Parameter> parameters;
+  private String outputType;
 
   public QueryOptions()
   {
+    paginate = false;
+    pageSize = 20;
+    pageStart = 0;
+    sortBy = new ArrayList<Integer>();
+    parameters = new ArrayList<Parameter>();
+    outputType = "json";
   }
 
 
@@ -81,22 +88,36 @@ public class QueryOptions
   }
 
 
-  public void addParameter(final String name, final String value){
+  public void addParameter(final String name, final String value)
+  {
 
-    final Parameter p = new Parameter(name,value);
+    final Parameter p = new Parameter(name, value);
     parameters.add(p);
 
   }
 
-  public Parameter getParameter(final String name){
+  public Parameter getParameter(final String name)
+  {
 
     for (final Parameter parameter : parameters)
     {
-      if(parameter.getName().equals(name))
+      if (parameter.getName().equals(name))
+      {
         return parameter;
+      }
     }
 
     return null;
 
+  }
+
+  public String getOutputType()
+  {
+    return outputType;
+  }
+
+  public void setOutputType(final String outputType)
+  {
+    this.outputType = outputType;
   }
 }
