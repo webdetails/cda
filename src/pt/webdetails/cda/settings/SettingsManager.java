@@ -50,6 +50,10 @@ public class SettingsManager
 
   /**
    * @param id The identifier for this settings file.
+   * @throws pt.webdetails.cda.dataaccess.UnsupportedDataAccessException
+   * @throws org.dom4j.DocumentException
+   * @throws pt.webdetails.cda.connections.UnsupportedConnectionException
+   * @return
    */
   public synchronized CdaSettings parseSettingsFile(final String id) throws DocumentException, UnsupportedConnectionException, UnsupportedDataAccessException
   {

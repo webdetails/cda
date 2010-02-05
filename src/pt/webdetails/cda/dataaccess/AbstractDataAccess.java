@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
+import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.utils.TableModelUtils;
 
@@ -109,37 +110,49 @@ public abstract class AbstractDataAccess implements DataAccess
   }
 
   @Override
-  public TableModel doQuery() throws QueryException
+  public TableModel doQuery(final QueryOptions queryOptions) throws QueryException
   {
 
-    final ParameterDataRow parameterDataRow = new ParameterDataRow();
-    final boolean isCached = false;
+    final TableModel tableModel;
+    final TableModel newTableModel;
 
-    TableModel tableModel = queryDataSource(parameterDataRow);
+    // Get parameters from definition and apply it's values
+    final ArrayList<Parameter> parameters = (ArrayList<Parameter>) getParameters().clone();
 
-    // Handle the TableModel
+    for (final Parameter parameter : parameters)
+    {
+      final Parameter parameterPassed = queryOptions.getParameter(parameter.getName());
+      parameter.setStringValue(parameterPassed == null ? parameter.getDefaultValue() : parameterPassed.getStringValue());
+    }
 
-    final TableModelUtils tableModelUtils = TableModelUtils.getInstance();
-    TableModel newTableModel = tableModelUtils.transformTableModel(this, tableModel);
 
-    // Close it - the data-access implementation takes care of whether a real close is needed.
-    closeDataSource();
+    final ParameterDataRow parameterDataRow = createParameterDataRowFromParameters(parameters);
+    tableModel = queryDataSource(parameterDataRow);
 
     logger.debug("Query " + getId() + " done successfully - returning tableModel");
-    return newTableModel;
+    return tableModel;
 
   }
 
-  protected abstract TableModel queryDataSource(ParameterDataRow parameterDataRow) throws QueryException;
+  private ParameterDataRow createParameterDataRowFromParameters(final ArrayList<Parameter> parameters)
+  {
 
-  protected abstract void closeDataSource() throws QueryException;
+    logger.fatal("FATAL - Need to implement createParameterDataRowFromParameters");
+    return new ParameterDataRow();
+
+  }
+
+  protected abstract TableModel queryDataSource(final ParameterDataRow parameter) throws QueryException;
+
+  public abstract void closeDataSource() throws QueryException;
+
 
   public ArrayList<ColumnDefinition> getColumns()
   {
 
-    ArrayList<ColumnDefinition> list = (ArrayList<ColumnDefinition>) columnDefinitions.clone();
+    final ArrayList<ColumnDefinition> list = (ArrayList<ColumnDefinition>) columnDefinitions.clone();
 
-    for (ColumnDefinition definition : list)
+    for (final ColumnDefinition definition : list)
     {
       if (definition.getType() != ColumnDefinition.TYPE.COLUMN)
       {
@@ -152,9 +165,9 @@ public abstract class AbstractDataAccess implements DataAccess
 
   public ArrayList<ColumnDefinition> getCalculatedColumns()
   {
-    ArrayList<ColumnDefinition> list = (ArrayList<ColumnDefinition>) columnDefinitions.clone();
+    final ArrayList<ColumnDefinition> list = (ArrayList<ColumnDefinition>) columnDefinitions.clone();
 
-    for (ColumnDefinition definition : list)
+    for (final ColumnDefinition definition : list)
     {
       if (definition.getType() != ColumnDefinition.TYPE.CALCULATED_COLUMN)
       {
@@ -163,6 +176,7 @@ public abstract class AbstractDataAccess implements DataAccess
     }
     return list;
   }
+
 
   @Override
   public String getId()

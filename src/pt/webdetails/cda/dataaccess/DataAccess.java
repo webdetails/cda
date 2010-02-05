@@ -3,6 +3,7 @@ package pt.webdetails.cda.dataaccess;
 import java.util.ArrayList;
 import javax.swing.table.TableModel;
 
+import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 
 /**
@@ -28,7 +29,7 @@ public interface DataAccess
 
   public void setCdaSettings(CdaSettings cdaSettings);
 
-  public TableModel doQuery() throws QueryException;
+  public TableModel doQuery(QueryOptions queryOptions) throws QueryException;
 
   public ArrayList<ColumnDefinition> getColumns();
 

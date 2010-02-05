@@ -11,12 +11,11 @@ import org.dom4j.Element;
 public class Parameter
 {
 
-
   private String name;
   private String type;
   private String defaultValue;
   private String pattern;
-  private String value;
+  private String stringValue;
 
   public Parameter()
   {
@@ -38,6 +37,12 @@ public class Parameter
         p.attributeValue("default"),
         p.attributeValue("pattern")
     );
+  }
+
+  public Parameter(final String name, final String stringValue)
+  {
+    this.name = name;
+    this.stringValue = stringValue;
   }
 
   public String getName()
@@ -80,13 +85,13 @@ public class Parameter
     this.pattern = pattern;
   }
 
-  public String getValue()
+  public String getStringValue()
   {
-    return value;
+    return stringValue;
   }
 
-  public void setValue(final String value)
+  public void setStringValue(final String stringValue)
   {
-    this.value = value;
+    this.stringValue = stringValue;
   }
 }

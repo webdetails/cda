@@ -13,6 +13,7 @@ import pt.webdetails.cda.dataaccess.Parameter;
 public class QueryOptions
 {
 
+  private String dataAccessId;
   private boolean paginate = false;
   private int pageSize = 20;
   private int pageStart = 0;
@@ -69,4 +70,33 @@ public class QueryOptions
     return parameters;
   }
 
+  public String getDataAccessId()
+  {
+    return dataAccessId;
+  }
+
+  public void setDataAccessId(final String dataAccessId)
+  {
+    this.dataAccessId = dataAccessId;
+  }
+
+
+  public void addParameter(final String name, final String value){
+
+    final Parameter p = new Parameter(name,value);
+    parameters.add(p);
+
+  }
+
+  public Parameter getParameter(final String name){
+
+    for (final Parameter parameter : parameters)
+    {
+      if(parameter.getName().equals(name))
+        return parameter;
+    }
+
+    return null;
+
+  }
 }

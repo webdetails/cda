@@ -55,12 +55,8 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       {
         return false;
       }
-      if (!query.equals(that.query))
-      {
-        return false;
-      }
+      return query.equals(that.query);
 
-      return true;
     }
 
     public int hashCode()
@@ -85,6 +81,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
 
   }
 
+
   protected TableModel queryDataSource(final ParameterDataRow parameter) throws QueryException
   {
 
@@ -94,27 +91,36 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     // create the cache-key which is both query and parameter values
     final TableCacheKey key = new TableCacheKey(getQuery(), parameterDataRow);
 
-    final net.sf.ehcache.Element element = cache.get(key);
-    if (element != null)
+    if (isCache())
     {
-      final TableModel cachedTableModel = (TableModel) element.getObjectValue();
-      if (cachedTableModel != null)
+      final net.sf.ehcache.Element element = cache.get(key);
+      if (element != null)
       {
-        // we have a entry in the cache ... great!
-        return cachedTableModel;
+        final TableModel cachedTableModel = (TableModel) element.getObjectValue();
+        if (cachedTableModel != null)
+        {
+          // we have a entry in the cache ... great!
+          return cachedTableModel;
+        }
       }
     }
 
     final TableModel tableModel = performRawQuery(parameterDataRow);
 
     // Copy the tableModel and cache it
-    final TableModel tableModelCopy = TableModelUtils.getInstance().copyTableModel(tableModel);
+    // Handle the TableModel
+
+    final TableModel tableModelCopy = TableModelUtils.getInstance().transformTableModel(this, tableModel);
 
     closeDataSource();
 
     // put the copy into the cache ...
-    final net.sf.ehcache.Element storeElement = new net.sf.ehcache.Element(key, tableModelCopy);
-    cache.put(storeElement);
+    if (isCache())
+    {
+
+      final net.sf.ehcache.Element storeElement = new net.sf.ehcache.Element(key, tableModelCopy);
+      cache.put(storeElement);
+    }
 
     // and finally return the copy.
     return tableModelCopy;

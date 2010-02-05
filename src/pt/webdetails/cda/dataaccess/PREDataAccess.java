@@ -44,6 +44,7 @@ public abstract class PREDataAccess extends SimpleDataAccess
 
   public abstract DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException;
 
+  @Override
   protected TableModel performRawQuery(final ParameterDataRow parameterDataRow) throws QueryException
   {
     try
@@ -60,7 +61,7 @@ public abstract class PREDataAccess extends SimpleDataAccess
           contextKey,
           new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
 
-      // you may give it some real parameters via the constructor of parameter-datarow ...
+
       // fire the query. you always get a tablemodel or an exception.
       final TableModel tableModel = dataFactory.queryData("query", parameterDataRow);
 
@@ -113,7 +114,8 @@ public abstract class PREDataAccess extends SimpleDataAccess
     return tableModel;
   }
 
-  public void setTableModel(final TableModel tableModel) {
+  public void setTableModel(final TableModel tableModel)
+  {
     this.tableModel = tableModel;
   }
 
@@ -122,7 +124,8 @@ public abstract class PREDataAccess extends SimpleDataAccess
     return localDataFactory;
   }
 
-  public void setLocalDataFactory(final CachingDataFactory localDataFactory) {
+  public void setLocalDataFactory(final CachingDataFactory localDataFactory)
+  {
     this.localDataFactory = localDataFactory;
   }
 

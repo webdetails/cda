@@ -8,6 +8,7 @@ import org.dom4j.DocumentException;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.QueryException;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
+import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
@@ -60,7 +61,13 @@ public class CdaExecutor
 
       logger.debug("Doing query on Cda - Initializing CdaEngine");
       final CdaEngine engine = CdaEngine.getInstance();
-      engine.doQuery(cdaSettings, "1");
+
+      final QueryOptions queryOptions = new QueryOptions();
+      queryOptions.setDataAccessId("1");
+      queryOptions.addParameter("date","2003-04-01");
+      queryOptions.addParameter("status","In Process");
+
+      engine.doQuery(cdaSettings, queryOptions);
 
 
     }
