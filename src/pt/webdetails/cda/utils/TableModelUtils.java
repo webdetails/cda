@@ -45,14 +45,14 @@ public class TableModelUtils
   public TableModel copyTableModel(final DataAccess dataAccess, final TableModel t)
   {
 
+    final int count =  t.getColumnCount();
 
-    ArrayList<ColumnDefinition> calulatedColumnsList = dataAccess.getCalculatedColumns();
-    if (calulatedColumnsList.size() > 0)
+    ArrayList<ColumnDefinition> calculatedColumnsList = dataAccess.getCalculatedColumns();
+
+    if (calculatedColumnsList.size() > 0)
     {
-      logger.warn("Todo: Implement " + calulatedColumnsList.size() + " Calculated Columns");
+      logger.warn("Todo: Implement " + calculatedColumnsList.size() + " Calculated Columns");
     }
-
-    final int count = t.getColumnCount();
 
     final Class[] colTypes = new Class[count];
     final String[] colNames = new String[count];
