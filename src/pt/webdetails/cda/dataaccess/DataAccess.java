@@ -35,5 +35,7 @@ public interface DataAccess
 
   public ArrayList<ColumnDefinition> getCalculatedColumns();
 
+  public ArrayList<Integer> getOutputs();
+
 
 }

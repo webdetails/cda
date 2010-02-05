@@ -14,6 +14,7 @@ import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
+import pt.webdetails.cda.utils.TableModelUtils;
 
 /**
  * This is the top level implementation of a DataAccess. Only the common methods are used here
@@ -125,9 +126,6 @@ public abstract class AbstractDataAccess implements DataAccess
   public TableModel doQuery(final QueryOptions queryOptions) throws QueryException
   {
 
-    final TableModel tableModel;
-    final TableModel newTableModel;
-
     // Get parameters from definition and apply it's values
     final ArrayList<Parameter> parameters = (ArrayList<Parameter>) getParameters().clone();
 
@@ -151,7 +149,19 @@ public abstract class AbstractDataAccess implements DataAccess
       throw new QueryException("Error parsing parameters ", e);
     }
 
-    tableModel = queryDataSource(parameterDataRow);
+    TableModel tableModel = queryDataSource(parameterDataRow);
+
+    /*
+    *  Do the tableModel PostProcessing
+    *  1. Sort (todo)
+    *  2. Show only the output columns
+    *  3. Paginate
+    *  4. Call the appropriate exporter
+    *
+    */
+
+    TableModel outputTableModel = TableModelUtils.getInstance().postProcessTableModel();
+
 
     logger.debug("Query " + getId() + " done successfully - returning tableModel");
     return tableModel;

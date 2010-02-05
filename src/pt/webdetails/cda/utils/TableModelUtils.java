@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 import pt.webdetails.cda.dataaccess.ColumnDefinition;
 import pt.webdetails.cda.dataaccess.DataAccess;
+import pt.webdetails.cda.query.QueryOptions;
 
 /**
  * Utility class to handle TableModel operations
@@ -29,11 +30,47 @@ public class TableModelUtils
   }
 
 
-  public TableModel transformTableModel(final DataAccess dataAccess
-                                        /*, QueryOptions queryOptions*/,
-                                        final TableModel tableModel)
+  public TableModel postProcessTableModel(final DataAccess dataAccess,
+                                          QueryOptions queryOptions,
+                                          final TableModel tableModel)
   {
 
+    // We will:
+    //  1. Show only the output columns we want;
+    //  2. return the correct pagination
+
+    ArrayList<Integer> outputIndexes = dataAccess.getOutputs();
+
+    final int count = outputIndexes.size();
+
+    final Class[] colTypes = new Class[count];
+    final String[] colNames = new String[count];
+
+    for (Integer outputIndex : outputIndexes)
+    {
+
+    }
+
+    for (int i = 0; i < count; i++)
+    {
+      colTypes[i] = t.getColumnClass(i);
+
+      final ColumnDefinition col = dataAccess.getColumnDefinition(i);
+      colNames[i] = col != null ? col.getName() : t.getColumnName(i);
+    }
+    final int rowCount = t.getRowCount();
+    logger.debug(rowCount == 0 ? "No data found" : "Found " + rowCount + " rows");
+
+
+    final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
+    for (int r = 0; r < rowCount; r++)
+    {
+      for (int c = 0; c < count; c++)
+      {
+        typedTableModel.setValueAt(t.getValueAt(r, c), r, c);
+      }
+    }
+    return typedTableModel;
 
     logger.warn("transformTableModel Not implemented yet");
 
@@ -45,7 +82,7 @@ public class TableModelUtils
   public TableModel copyTableModel(final DataAccess dataAccess, final TableModel t)
   {
 
-    final int count =  t.getColumnCount();
+    final int count = t.getColumnCount();
 
     ArrayList<ColumnDefinition> calculatedColumnsList = dataAccess.getCalculatedColumns();
 
