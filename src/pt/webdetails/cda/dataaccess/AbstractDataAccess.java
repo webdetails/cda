@@ -14,6 +14,7 @@ import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
+import pt.webdetails.cda.utils.TableModelException;
 import pt.webdetails.cda.utils.TableModelUtils;
 
 /**
@@ -160,7 +161,14 @@ public abstract class AbstractDataAccess implements DataAccess
     *
     */
 
-    TableModel outputTableModel = TableModelUtils.getInstance().postProcessTableModel();
+    try
+    {
+      TableModel outputTableModel = TableModelUtils.getInstance().postProcessTableModel(this,queryOptions,tableModel);
+    }
+    catch (TableModelException e)
+    {
+      throw new QueryException("Could not create outputTableModel ", e);
+    }
 
 
     logger.debug("Query " + getId() + " done successfully - returning tableModel");
