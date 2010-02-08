@@ -31,7 +31,7 @@ public class ExporterEngine
   }
 
 
-  public Exporter getExporter(String outputType) throws UnsupportedExporterException
+  public Exporter getExporter(final String outputType) throws UnsupportedExporterException
   {
 
     try

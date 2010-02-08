@@ -187,7 +187,7 @@ public class CalculatedTableModel implements MetaTableModel
     }
     catch (Exception e)
     {
-      throw new IllegalStateException(e);
+      throw new IllegalStateException(new CalculatedColumnException("Error in calculated column position (" + rowIndex + "," + columnIndex + ");",e));
     }
   }
 

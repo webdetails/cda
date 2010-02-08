@@ -37,17 +37,9 @@ public class TableModelUtils
   {
 
     // We will:
-    //  1. Show only the output columns we want;
-    //  2. return the correct pagination
-
-
-    // First we need to check if there's nothing to do.
-    final ArrayList<Integer> outputIndexes = dataAccess.getOutputs();
-    if (queryOptions.isPaginate() == false && outputIndexes.isEmpty() && queryOptions.getSortBy().isEmpty())
-    {
-      // No, the original one is good enough
-      return rawTableModel;
-    }
+    //  1. Evaluate Calculated columns
+    //  2. Show only the output columns we want;
+    //  3. return the correct pagination
 
     final TableModel t;
     final ArrayList<ColumnDefinition> columnDefinitions = dataAccess.getCalculatedColumns();
@@ -58,6 +50,14 @@ public class TableModelUtils
     else
     {
       t = new CalculatedTableModel(rawTableModel, columnDefinitions.toArray(new ColumnDefinition[columnDefinitions.size()]));
+    }
+
+    // First we need to check if there's nothing to do.
+    final ArrayList<Integer> outputIndexes = dataAccess.getOutputs();
+    if (queryOptions.isPaginate() == false && outputIndexes.isEmpty() && queryOptions.getSortBy().isEmpty())
+    {
+      // No, the original one is good enough
+      return t;
     }
 
     final int columnCount = outputIndexes.size();

@@ -47,8 +47,6 @@ public class CdaEngine {
 
     ExporterEngine.getInstance().getExporter(queryOptions.getOutputType()).export(out,tableModel);
     
-
-
   }
 
 

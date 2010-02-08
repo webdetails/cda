@@ -71,6 +71,7 @@ public class CdaExecutor
       QueryOptions queryOptions = new QueryOptions();
       queryOptions.setDataAccessId("1");
       queryOptions.addParameter("orderDate", "2003-04-01");
+      queryOptions.setOutputType("xml");
       // queryOptions.addParameter("status","In Process");
 
       logger.info("Doing first query");
@@ -93,7 +94,7 @@ public class CdaExecutor
       logger.info("Doing query again to see if cache expires");
       try
       {
-        Thread.sleep(10000);
+        Thread.sleep(6000);
       }
       catch (InterruptedException e)
       {
@@ -101,6 +102,7 @@ public class CdaExecutor
       }
       engine.doQuery(out, cdaSettings, queryOptions);
 
+      
 
     }
     catch (DocumentException e)
