@@ -32,8 +32,8 @@ public class TableModelUtils
 
 
   public TableModel postProcessTableModel(final DataAccess dataAccess,
-                                          QueryOptions queryOptions,
-                                          final TableModel t) throws TableModelException
+                                          final QueryOptions queryOptions,
+                                          final TableModel rawTableModel) throws TableModelException
   {
 
     // We will:
@@ -42,18 +42,25 @@ public class TableModelUtils
 
 
     // First we need to check if there's nothing to do.
-    if (queryOptions.isPaginate() == false && dataAccess.getOutputs().size() == 0 && queryOptions.getSortBy().size() == 0)
+    final ArrayList<Integer> outputIndexes = dataAccess.getOutputs();
+    if (queryOptions.isPaginate() == false && outputIndexes.isEmpty() && queryOptions.getSortBy().isEmpty())
     {
       // No, the original one is good enough
-      return t;
+      return rawTableModel;
     }
 
+    final TableModel t;
+    final ArrayList<ColumnDefinition> columnDefinitions = dataAccess.getCalculatedColumns();
+    if (columnDefinitions.isEmpty())
+    {
+      t = rawTableModel;
+    }
+    else
+    {
+      t = new CalculatedTableModel(rawTableModel, columnDefinitions.toArray(new ColumnDefinition[columnDefinitions.size()]));
+    }
 
-    ArrayList<Integer> outputIndexes = dataAccess.getOutputs();
-
-    Collections.max(outputIndexes);
-
-    final int count = outputIndexes.size();
+    final int columnCount = outputIndexes.size();
 
     if (Collections.max(outputIndexes) > t.getColumnCount() - 1)
     {
@@ -61,15 +68,14 @@ public class TableModelUtils
 
     }
 
-    final Class[] colTypes = new Class[count];
-    final String[] colNames = new String[count];
+    final Class[] colTypes = new Class[columnCount];
+    final String[] colNames = new String[columnCount];
 
-    int i = 0;
-    for (Integer outputIndex : outputIndexes)
+    for (int i = 0; i < outputIndexes.size(); i++)
     {
-      colTypes[i] = t.getColumnClass(outputIndex.intValue());
-      colNames[i] = t.getColumnName(outputIndex.intValue());
-      i++;
+      final int outputIndex = outputIndexes.get(i);
+      colTypes[i] = t.getColumnClass(outputIndex);
+      colNames[i] = t.getColumnName(outputIndex);
     }
 
     final int rowCount;
@@ -88,12 +94,10 @@ public class TableModelUtils
     final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
     for (int r = 0; r < rowCount; r++)
     {
-      int j = 0;
-      for (Integer outputIndex : outputIndexes)
+      for (int j = 0; j < outputIndexes.size(); j++)
       {
-
-        j++;
-        typedTableModel.setValueAt(t.getValueAt(r + queryOptions.getPageStart(), outputIndex.intValue()), r, j);
+        final int outputIndex = outputIndexes.get(j);
+        typedTableModel.setValueAt(t.getValueAt(r + queryOptions.getPageStart(), outputIndex), r, j);
       }
     }
     return typedTableModel;
@@ -107,9 +111,9 @@ public class TableModelUtils
     // We're removing the ::table-index:: cols
     final int count = t.getColumnCount()/2;
 
-    ArrayList<ColumnDefinition> calculatedColumnsList = dataAccess.getCalculatedColumns();
+    final ArrayList<ColumnDefinition> calculatedColumnsList = dataAccess.getCalculatedColumns();
 
-    if (calculatedColumnsList.size() > 0)
+    if (!calculatedColumnsList.isEmpty())
     {
       logger.warn("Todo: Implement " + calculatedColumnsList.size() + " Calculated Columns");
     }

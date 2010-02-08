@@ -35,6 +35,11 @@ public abstract class AbstractExporter implements Exporter
     {
       return "Date";
     }
+    else if (columnClass.equals(Object.class) )
+    {
+      // todo: Quick and dirty hack, as the formula never knows what type is returned. 
+      return "String";
+    }
     else{
 
       throw new ExporterException("Unknown class: " + columnClass.toString(), null);

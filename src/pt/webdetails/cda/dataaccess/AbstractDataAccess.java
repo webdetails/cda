@@ -150,7 +150,6 @@ public abstract class AbstractDataAccess implements DataAccess
       throw new QueryException("Error parsing parameters ", e);
     }
 
-    TableModel tableModel = queryDataSource(parameterDataRow);
 
     /*
     *  Do the tableModel PostProcessing
@@ -163,7 +162,10 @@ public abstract class AbstractDataAccess implements DataAccess
 
     try
     {
-      TableModel outputTableModel = TableModelUtils.getInstance().postProcessTableModel(this,queryOptions,tableModel);
+      final TableModel tableModel = queryDataSource(parameterDataRow);
+      final TableModel outputTableModel = TableModelUtils.getInstance().postProcessTableModel(this,queryOptions,tableModel);
+      logger.debug("Query " + getId() + " done successfully - returning tableModel");
+      return outputTableModel;
     }
     catch (TableModelException e)
     {
@@ -171,8 +173,6 @@ public abstract class AbstractDataAccess implements DataAccess
     }
 
 
-    logger.debug("Query " + getId() + " done successfully - returning tableModel");
-    return tableModel;
 
   }
 
