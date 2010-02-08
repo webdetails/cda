@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import pt.webdetails.cda.dataaccess.QueryException;
 import pt.webdetails.cda.exporter.ExporterEngine;
+import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.exporter.UnsupportedExporterException;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
@@ -35,7 +36,7 @@ public class CdaEngine {
   }
 
 
-  public void doQuery(final OutputStream out, final CdaSettings cdaSettings, final QueryOptions queryOptions) throws UnknownDataAccessException, QueryException, UnsupportedExporterException
+  public void doQuery(final OutputStream out, final CdaSettings cdaSettings, final QueryOptions queryOptions) throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
   {
 
     logger.debug("Doing query on CdaSettings [ " + cdaSettings.getId() +" ("+ queryOptions.getDataAccessId() +")]");

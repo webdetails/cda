@@ -9,6 +9,7 @@ import org.dom4j.DocumentException;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.QueryException;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
+import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.exporter.UnsupportedExporterException;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
@@ -125,6 +126,10 @@ public class CdaExecutor
     catch (UnsupportedExporterException e)
     {
       logger.fatal("UnsupportedExporterException " + Util.getExceptionDescription(e));
+    }
+    catch (ExporterException e)
+    {
+      logger.fatal("ExporterException " + Util.getExceptionDescription(e));
     }
 
 

@@ -104,7 +104,8 @@ public class TableModelUtils
   public TableModel copyTableModel(final DataAccess dataAccess, final TableModel t)
   {
 
-    final int count = t.getColumnCount();
+    // We're removing the ::table-index:: cols
+    final int count = t.getColumnCount()/2;
 
     ArrayList<ColumnDefinition> calculatedColumnsList = dataAccess.getCalculatedColumns();
 

@@ -12,6 +12,6 @@ import javax.swing.table.TableModel;
 public interface Exporter
 {
 
-  public void export(OutputStream out, final TableModel tableModel);
+  public void export(OutputStream out, final TableModel tableModel) throws ExporterException;
 
 }
