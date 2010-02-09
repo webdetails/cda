@@ -74,7 +74,12 @@ public class CdaContentGenerator extends BaseContentGenerator {
 
     // get the CDA definitions File
     String cdaFilePath = pathParams.getStringParameter("cdaFile", "");
-    CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(cdaFilePath);
+    PentahoSystem.getApplicationContext().getSolutionPath("system/");
+
+    String path = PentahoSystem.getApplicationContext().getSolutionPath(getRelativePath(pathParams));
+
+    final ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
+    CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
 
     // Handle paging options
     // We assume that any paging options found mean that the user actively wants paging.
@@ -124,5 +129,11 @@ public class CdaContentGenerator extends BaseContentGenerator {
   @Override
   public Log getLogger() {
     return logger;
+  }
+
+  private String getRelativePath(final IParameterProvider pathParams) {
+    final String path = pathParams.getStringParameter("solution", "") + "/" + pathParams.getStringParameter("path", "") + "/" + pathParams.getStringParameter("file", "");
+    return path.replaceAll("//+", "/");
+
   }
 }
