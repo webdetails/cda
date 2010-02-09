@@ -39,7 +39,7 @@ public class MdxDataAccess extends PREDataAccess
 
     final BandedMDXDataFactory mdxDataFactory = new BandedMDXDataFactory();
     mdxDataFactory.setDataSourceProvider(connection.getInitializedDataSourceProvider());
-    mdxDataFactory.setCubeFileProvider(new DefaultCubeFileProvider(connection.getConnectionInfo().getCube()));
+    mdxDataFactory.setCubeFileProvider(new DefaultCubeFileProvider(connection.getConnectionInfo().getCatalog()));
          
 
     if (connection instanceof JdbcConnection){

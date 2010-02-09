@@ -22,7 +22,7 @@ public class JdbcConnection extends AbstractMondrianConnection
   public static final String TYPE = "mondrianJdbc";
 
   private CdaSettings cdaSettings;
-  private DataSourceProvider connectionProvider;
+  private DriverDataSourceProvider connectionProvider;
   private JdbcConnectionInfo connectionInfo;
 
   public JdbcConnection(final Element connection) throws InvalidConnectionException
@@ -55,9 +55,9 @@ public class JdbcConnection extends AbstractMondrianConnection
 
     logger.debug("Creating new jdbc connection");
 
-    final DriverDataSourceProvider provider = new DriverDataSourceProvider();
-    provider.setDriver(connectionInfo.getDriver());
-    provider.setUrl(connectionInfo.getUrl());
+    connectionProvider = new DriverDataSourceProvider();
+    connectionProvider.setDriver(connectionInfo.getDriver());
+    connectionProvider.setUrl(connectionInfo.getUrl());
 
 
     logger.debug("Opening connection");

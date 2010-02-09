@@ -77,6 +77,18 @@
         <Parameters>
             <Parameter name="status" type="String" default="In Process"/>
         </Parameters>
+		<Columns>
+			<Column idx="1">
+				<Name>Year</Name>
+			</Column>
+			<Column idx="2">
+				<Name>price</Name>
+			</Column>
+			<CalculatedColumn>
+				<Name>PriceInK</Name>
+				<Formula>=[price]/1000000</Formula>
+			</CalculatedColumn>
+		</Columns>
     </DataAccess>
     <!-- CompoundDataAccess can be used to join queries. Some types are
 	supported, and the user is responsible for assuring the different dataaccess

@@ -156,7 +156,7 @@ public class CdaExecutor
       QueryOptions queryOptions = new QueryOptions();
       queryOptions.setDataAccessId("2");
       queryOptions.setOutputType("json");
-      // queryOptions.addParameter("status","In Process");
+      queryOptions.addParameter("status","Shipped");
 
       logger.info("Doing query");
       engine.doQuery(out, cdaSettings, queryOptions);
