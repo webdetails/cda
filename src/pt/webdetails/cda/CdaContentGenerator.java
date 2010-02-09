@@ -74,7 +74,6 @@ public class CdaContentGenerator extends BaseContentGenerator {
 
     // get the CDA definitions File
     String cdaFilePath = pathParams.getStringParameter("cdaFile", "");
-    PentahoSystem.getApplicationContext().getSolutionPath("system/");
 
     String path = PentahoSystem.getApplicationContext().getSolutionPath(getRelativePath(pathParams));
 
@@ -99,12 +98,14 @@ public class CdaContentGenerator extends BaseContentGenerator {
     queryOptions.setOutputType(pathParams.getStringParameter("outputType", "json"));
     queryOptions.setDataAccessId(pathParams.getStringParameter("dataAccessId", "<blank>"));
     ArrayList<Integer> sortBy = new ArrayList<Integer>();
-    Integer[] def = {};
-    for (Object obj : pathParams.getArrayParameter("sortBy", def)) {
-      sortBy.add(Integer.parseInt((String) obj));
+//    Integer[] def = {};
+//    for (Object obj : pathParams.getArrayParameter("sortBy", def)) {
+//      sortBy.add(Integer.parseInt((String) obj));
+//    }
+//    queryOptions.setSortBy(sortBy);
+    if (pathParams.getStringParameter("sortBy", null) != null) {
+      logger.warn("sortBy not implemented yet");
     }
-    queryOptions.setSortBy(sortBy);
-
     // ... and the query parameters
     // We identify any pathParams starting with "param" as query parameters
     Iterator<String> params = (Iterator<String>) pathParams.getParameterNames();
