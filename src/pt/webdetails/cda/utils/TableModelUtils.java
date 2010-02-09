@@ -110,8 +110,8 @@ public class TableModelUtils {
       logger.warn("Todo: Implement " + calculatedColumnsList.size() + " Calculated Columns");
     }
 
-    Class[] colTypes = namedColumnsClasses.toArray(new Class[] {});
-    String[] colNames = namedColumns.toArray(new String[] {});
+    final Class[] colTypes = namedColumnsClasses.toArray(new Class[] {});
+    final String[] colNames = namedColumns.toArray(new String[] {});
 
     for (int i = 0; i < count; i++) {
       colTypes[i] = t.getColumnClass(i);
