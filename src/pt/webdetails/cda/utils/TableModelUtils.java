@@ -89,15 +89,15 @@ public class TableModelUtils {
 
   public TableModel copyTableModel(final DataAccess dataAccess, final TableModel t) {
 
-    // We're removing the ::table-index:: cols
+    // We're removing the ::table-by-index:: cols
 
 
-    // Build an array of column indexes whose name is different from ::table-index::.*
+    // Build an array of column indexes whose name is different from ::table-by-index::.*
     ArrayList<String> namedColumns = new ArrayList<String>();
     ArrayList<Class> namedColumnsClasses = new ArrayList<Class>();
     for (int i = 0; i < t.getColumnCount(); i++) {
       String colName = t.getColumnName(i);
-      if (!colName.startsWith("::table-index::")) {
+      if (!colName.startsWith("::table-by-index::")) {
         namedColumns.add(colName);
         namedColumnsClasses.add(t.getColumnClass(i));
       }
