@@ -1,10 +1,12 @@
-package pt.webdetails.cda.connections;
+package pt.webdetails.cda.connections.sql;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.DriverConnectionProvider;
+import pt.webdetails.cda.connections.InvalidConnectionException;
+import pt.webdetails.cda.connections.sql.AbstractSqlConnection;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.utils.Util;
 
@@ -16,16 +18,18 @@ import java.sql.SQLException;
  * Date: Feb 2, 2010
  * Time: 5:09:18 PM
  */
-public class JdbcConnection extends AbstractConnection {
+public class JdbcConnection extends AbstractSqlConnection
+{
 
   private static final Log logger = LogFactory.getLog(JdbcConnection.class);
-  public static final String TYPE = "jdbc";
+  public static final String TYPE = "sqlJdbc";
 
   private CdaSettings cdaSettings;
   private ConnectionProvider connectionProvider;
   private JdbcConnectionInfo connectionInfo;
 
-  public JdbcConnection(final Element connection) throws InvalidConnectionException {
+  public JdbcConnection(final Element connection) throws InvalidConnectionException
+  {
 
     super(connection);
 

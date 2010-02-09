@@ -1,5 +1,6 @@
 package pt.webdetails.cda.connections;
 
+import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import pt.webdetails.cda.settings.CdaSettings;
 
@@ -17,13 +18,10 @@ public interface Connection {
 
   public String getType();
 
-  public ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException;
-
-
   public CdaSettings getCdaSettings();
 
   public void setCdaSettings(CdaSettings cdaSettings);
 
-  
+
 
 }

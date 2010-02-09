@@ -15,6 +15,10 @@ public abstract class AbstractConnection implements Connection {
   private String id;
   private CdaSettings cdaSettings;
 
+  public AbstractConnection()
+  {
+  }
+  
   public AbstractConnection(final Element connection) throws InvalidConnectionException {
 
     id = connection.attributeValue("id");
@@ -22,6 +26,7 @@ public abstract class AbstractConnection implements Connection {
     initializeConnection(connection);
 
   }
+
 
   protected abstract void initializeConnection(Element connection) throws InvalidConnectionException;
 
@@ -34,8 +39,6 @@ public abstract class AbstractConnection implements Connection {
   @Override
   public abstract String getType();
 
-  @Override
-  public abstract ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException;
 
   public CdaSettings getCdaSettings() {
     return cdaSettings;

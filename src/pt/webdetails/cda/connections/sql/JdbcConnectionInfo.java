@@ -1,4 +1,4 @@
-package pt.webdetails.cda.connections;
+package pt.webdetails.cda.connections.sql;
 
 import org.dom4j.Element;
 
