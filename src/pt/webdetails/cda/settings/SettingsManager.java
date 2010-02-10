@@ -102,6 +102,14 @@ public class SettingsManager
 
   }
 
+  public synchronized void clearCache()
+  {
+
+    logger.info("Cleaning CDA settings cache");
+     settingsCache.clear();
+
+  }
+
 
   public static synchronized SettingsManager getInstance()
   {
