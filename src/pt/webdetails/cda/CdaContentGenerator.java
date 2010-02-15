@@ -9,7 +9,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.repository.IContentItem;
-import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
 import pt.webdetails.cda.query.QueryOptions;
@@ -72,6 +71,11 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   public void doquery(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
+
+
+    // Init CDA  - TODO: put in a startup listener 
+    CdaBoot.getInstance().start();
+
     CdaEngine engine = CdaEngine.getInstance();
     QueryOptions queryOptions = new QueryOptions();
 
@@ -127,7 +131,8 @@ public class CdaContentGenerator extends BaseContentGenerator
   }
 
 
-  public void clearcache(final IParameterProvider pathParams, final OutputStream out) throws Exception{
+  public void clearcache(final IParameterProvider pathParams, final OutputStream out) throws Exception
+  {
 
     SettingsManager.getInstance().clearCache();
 

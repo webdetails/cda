@@ -52,7 +52,8 @@ public class CdaEngine {
 
   private void init() {
 
-    // Start ClassicEngineBoot 
+    // Start ClassicEngineBoot
+    CdaBoot.getInstance().start();
     ClassicEngineBoot.getInstance().start();
 
   }

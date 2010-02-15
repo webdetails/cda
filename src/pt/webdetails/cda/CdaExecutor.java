@@ -42,6 +42,7 @@ public class CdaExecutor
   {
 
 
+
     final CdaExecutor cdaExecutor = CdaExecutor.getInstance();
 
     cdaExecutor.doQuery();
@@ -55,6 +56,10 @@ public class CdaExecutor
     try
     {
 
+      // Init CDA      
+      CdaBoot.getInstance().start();
+
+
       // Define an outputStream
       OutputStream out = System.out;
 
@@ -65,9 +70,9 @@ public class CdaExecutor
       final File settingsFile = new File("samples/sample.cda");
       final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
 
-      // testSqlQuery(out, cdaSettings);
+      testSqlQuery(out, cdaSettings);
 
-      testMondrianQuery(out, cdaSettings);
+      // testMondrianQuery(out, cdaSettings);
       
 
     }

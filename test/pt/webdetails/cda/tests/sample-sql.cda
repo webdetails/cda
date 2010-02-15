@@ -11,9 +11,9 @@
     <DataSources>
         <Connection id="1" type="sql.jdbc">
             <Driver>org.hsqldb.jdbcDriver</Driver>
-            <Url>jdbc:hsqldb:hsql://localhost:9001/sampledata</Url>
-            <User>pentaho_user</User>
-            <Pass>password</Pass>
+            <Url>jdbc:hsqldb:mem:SampleData</Url>
+            <User>sa</User>
+            <Pass></Pass>
         </Connection>
         <!--Connection id="2" type="mondrian.jdbc">
             <Driver>org.hsqldb.jdbcDriver</Driver>

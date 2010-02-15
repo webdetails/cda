@@ -81,7 +81,7 @@ public abstract class PREDataAccess extends SimpleDataAccess
     }
     catch (ReportDataFactoryException e)
     {
-      throw new QueryException("ResourceKeyCreateException", e);
+      throw new QueryException("ReportDataFactoryException", e);
     }
 
 

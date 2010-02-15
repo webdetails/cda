@@ -33,6 +33,8 @@
                     rev="${dependency.pentaho-reporting.revision}" transitive="true" changing="true"/>
         <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-kettle"
                     rev="${dependency.pentaho-reporting.revision}" transitive="true" changing="true"/>
+        <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-sampledata"
+                    rev="${dependency.pentaho-reporting.revision}" transitive="true" changing="true"/>
 
 
 
