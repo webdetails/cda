@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
+import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.BandedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DefaultCubeFileProvider;
 import pt.webdetails.cda.connections.InvalidConnectionException;
@@ -22,19 +23,16 @@ public class MdxDataAccess extends PREDataAccess
 {
 
   private static final Log logger = LogFactory.getLog(MdxDataAccess.class);
-  private static final String TYPE = "mdx";
 
   public MdxDataAccess(final Element element)
   {
     super(element);
   }
 
-  
-  public String getType()
+  protected AbstractNamedMDXDataFactory createDataFactory()
   {
-    return TYPE;
+    return new BandedMDXDataFactory();
   }
-
 
   @Override
   public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException
@@ -44,16 +42,15 @@ public class MdxDataAccess extends PREDataAccess
 
     final MondrianConnection connection = (MondrianConnection) getCdaSettings().getConnection(getConnectionId());
 
-    final BandedMDXDataFactory mdxDataFactory = new BandedMDXDataFactory();
+    final AbstractNamedMDXDataFactory mdxDataFactory = createDataFactory();
     mdxDataFactory.setDataSourceProvider(connection.getInitializedDataSourceProvider());
     mdxDataFactory.setCubeFileProvider(new DefaultCubeFileProvider(connection.getConnectionInfo().getCatalog()));
+         
 
+    if (connection instanceof JdbcConnection){
 
-    if (connection instanceof JdbcConnection)
-    {
-
-      mdxDataFactory.setJdbcUser(((JdbcConnection) connection).getConnectionInfo().getUser());
-      mdxDataFactory.setJdbcPassword(((JdbcConnection) connection).getConnectionInfo().getPass());
+      mdxDataFactory.setJdbcUser( ((JdbcConnection) connection).getConnectionInfo().getUser() );
+      mdxDataFactory.setJdbcPassword( ((JdbcConnection) connection).getConnectionInfo().getPass() );
 
     }
 
@@ -64,5 +61,8 @@ public class MdxDataAccess extends PREDataAccess
 
   }
 
-
+  public String getType()
+  {
+    return "mdx";
+  }
 }

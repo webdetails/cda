@@ -1,16 +1,15 @@
 package pt.webdetails.cda.connections.sql;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.DriverConnectionProvider;
 import pt.webdetails.cda.connections.InvalidConnectionException;
-import pt.webdetails.cda.connections.sql.AbstractSqlConnection;
-import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.utils.Util;
-
-import java.sql.SQLException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,8 +23,6 @@ public class JdbcConnection extends AbstractSqlConnection
   private static final Log logger = LogFactory.getLog(JdbcConnection.class);
   public static final String TYPE = "sqlJdbc";
 
-  private CdaSettings cdaSettings;
-  private ConnectionProvider connectionProvider;
   private JdbcConnectionInfo connectionInfo;
 
   public JdbcConnection(final Element connection) throws InvalidConnectionException
@@ -37,18 +34,23 @@ public class JdbcConnection extends AbstractSqlConnection
 
 
   @Override
-  protected void initializeConnection(final Element connection) throws InvalidConnectionException {
+  protected void initializeConnection(final Element connection) throws InvalidConnectionException
+  {
 
     connectionInfo = new JdbcConnectionInfo(connection);
 
   }
 
   @Override
-  public String getType() {
+  public String getType()
+  {
     return TYPE;
   }
 
-  public ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException {
+
+  @Override
+  public ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException
+  {
 
 
     logger.debug("Creating new jdbc connection");
@@ -57,9 +59,13 @@ public class JdbcConnection extends AbstractSqlConnection
     connectionProvider.setDriver(connectionInfo.getDriver());
     connectionProvider.setUrl(connectionInfo.getUrl());
     logger.debug("Opening connection");
-    try {
-      connectionProvider.createConnection(connectionInfo.getUser(), connectionInfo.getPass());
-    } catch (SQLException e) {
+    try
+    {
+      final Connection connection = connectionProvider.createConnection(connectionInfo.getUser(), connectionInfo.getPass());
+      connection.close();
+    }
+    catch (SQLException e)
+    {
 
       throw new InvalidConnectionException("JdbcConnection: Found SQLException: " + Util.getExceptionDescription(e), e);
     }
@@ -68,11 +74,6 @@ public class JdbcConnection extends AbstractSqlConnection
 
     return connectionProvider;
   }
-
-  public void setCdaSettings(final CdaSettings cdaSettings) {
-    this.cdaSettings = cdaSettings;
-  }
-
 
   public boolean equals(final Object o)
   {

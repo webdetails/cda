@@ -6,8 +6,6 @@ import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DataSourceProvider;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.JndiDataSourceProvider;
 import pt.webdetails.cda.connections.InvalidConnectionException;
-import pt.webdetails.cda.settings.CdaSettings;
-import pt.webdetails.cda.utils.Util;
 
 /**
  * Created by IntelliJ IDEA.
@@ -21,8 +19,6 @@ public class JndiConnection extends AbstractMondrianConnection
   private static final Log logger = LogFactory.getLog(JndiConnection.class);
   public static final String TYPE = "mondrianJndi";
 
-  private CdaSettings cdaSettings;
-  private JndiDataSourceProvider connectionProvider;
   private JndiConnectionInfo connectionInfo;
 
   public JndiConnection(final Element connection) throws InvalidConnectionException
@@ -47,20 +43,15 @@ public class JndiConnection extends AbstractMondrianConnection
     return TYPE;
   }
 
+
+  @Override
   public DataSourceProvider getInitializedDataSourceProvider() throws InvalidConnectionException
   {
 
 
     logger.debug("Creating new jndi connection");
 
-    connectionProvider = new JndiDataSourceProvider(connectionInfo.getJndi());
-
-    return connectionProvider;
-  }
-
-  public void setCdaSettings(final CdaSettings cdaSettings)
-  {
-    this.cdaSettings = cdaSettings;
+    return new JndiDataSourceProvider(connectionInfo.getJndi());
   }
 
   public JndiConnectionInfo getConnectionInfo()

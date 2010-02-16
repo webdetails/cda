@@ -6,7 +6,6 @@ import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DataSourceProvider;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DriverDataSourceProvider;
 import pt.webdetails.cda.connections.InvalidConnectionException;
-import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.utils.Util;
 
 /**
@@ -21,8 +20,6 @@ public class JdbcConnection extends AbstractMondrianConnection
   private static final Log logger = LogFactory.getLog(JdbcConnection.class);
   public static final String TYPE = "mondrianJdbc";
 
-  private CdaSettings cdaSettings;
-  private DriverDataSourceProvider connectionProvider;
   private JdbcConnectionInfo connectionInfo;
 
   public JdbcConnection(final Element connection) throws InvalidConnectionException
@@ -47,13 +44,15 @@ public class JdbcConnection extends AbstractMondrianConnection
     return TYPE;
   }
 
+
+  @Override
   public DataSourceProvider getInitializedDataSourceProvider() throws InvalidConnectionException
   {
 
 
     logger.debug("Creating new jdbc connection");
 
-    connectionProvider = new DriverDataSourceProvider();
+    final DriverDataSourceProvider connectionProvider = new DriverDataSourceProvider();
     connectionProvider.setDriver(connectionInfo.getDriver());
     connectionProvider.setUrl(connectionInfo.getUrl());
 
@@ -72,11 +71,6 @@ public class JdbcConnection extends AbstractMondrianConnection
     logger.debug("Connection opened");
 
     return connectionProvider;
-  }
-
-  public void setCdaSettings(final CdaSettings cdaSettings)
-  {
-    this.cdaSettings = cdaSettings;
   }
 
   public JdbcConnectionInfo getConnectionInfo()

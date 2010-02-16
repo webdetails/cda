@@ -1,7 +1,6 @@
 package pt.webdetails.cda.connections;
 
 import org.dom4j.Element;
-import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import pt.webdetails.cda.settings.CdaSettings;
 
 /**
@@ -41,6 +40,10 @@ public abstract class AbstractConnection implements Connection {
     return cdaSettings;
   }
 
+  public void setCdaSettings(final CdaSettings cdaSettings)
+  {
+    this.cdaSettings = cdaSettings;
+  }
 
   @Override
   public abstract int hashCode();
