@@ -47,8 +47,6 @@ public class JndiConnection extends AbstractMondrianConnection
     return TYPE;
   }
 
-
-  @Override
   public DataSourceProvider getInitializedDataSourceProvider() throws InvalidConnectionException
   {
 
@@ -60,7 +58,6 @@ public class JndiConnection extends AbstractMondrianConnection
     return connectionProvider;
   }
 
-  @Override
   public void setCdaSettings(final CdaSettings cdaSettings)
   {
     this.cdaSettings = cdaSettings;

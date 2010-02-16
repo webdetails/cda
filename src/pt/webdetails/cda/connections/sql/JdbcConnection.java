@@ -48,8 +48,6 @@ public class JdbcConnection extends AbstractSqlConnection
     return TYPE;
   }
 
-
-  @Override
   public ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException {
 
 
@@ -71,7 +69,6 @@ public class JdbcConnection extends AbstractSqlConnection
     return connectionProvider;
   }
 
-  @Override
   public void setCdaSettings(final CdaSettings cdaSettings) {
     this.cdaSettings = cdaSettings;
   }

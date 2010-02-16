@@ -30,13 +30,10 @@ public abstract class AbstractConnection implements Connection {
 
   protected abstract void initializeConnection(Element connection) throws InvalidConnectionException;
 
-
-  @Override
   public String getId() {
     return id;
   }
 
-  @Override
   public abstract String getType();
 
 

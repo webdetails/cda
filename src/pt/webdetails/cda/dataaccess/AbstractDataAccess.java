@@ -134,7 +134,6 @@ public abstract class AbstractDataAccess implements DataAccess
     return cacheManager.getCache("pentaho-cda-dataaccess");
   }
 
-  @Override
   public TableModel doQuery(final QueryOptions queryOptions) throws QueryException
   {
 
@@ -262,8 +261,6 @@ public abstract class AbstractDataAccess implements DataAccess
 
   }
 
-
-  @Override
   public String getId()
   {
     return id;
