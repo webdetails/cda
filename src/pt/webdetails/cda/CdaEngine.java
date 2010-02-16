@@ -100,6 +100,10 @@ public class CdaEngine
 
   }
 
+  public boolean isStandalone()
+  {
+    return "true".equals(CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.Standalone"));
+  }
 
   private void init()
   {

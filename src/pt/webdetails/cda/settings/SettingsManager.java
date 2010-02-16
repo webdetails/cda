@@ -1,5 +1,6 @@
 package pt.webdetails.cda.settings;
 
+import java.io.File;
 import java.util.HashMap;
 
 import org.apache.commons.collections.map.LRUMap;
@@ -12,6 +13,7 @@ import org.pentaho.reporting.libraries.resourceloader.Resource;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
 
@@ -57,10 +59,12 @@ public class SettingsManager
 
   /**
    * @param id The identifier for this settings file.
+   * @return
    * @throws pt.webdetails.cda.dataaccess.UnsupportedDataAccessException
+   *
    * @throws org.dom4j.DocumentException
    * @throws pt.webdetails.cda.connections.UnsupportedConnectionException
-   * @return
+   *
    */
   public synchronized CdaSettings parseSettingsFile(final String id) throws DocumentException, UnsupportedConnectionException, UnsupportedDataAccessException
   {
@@ -79,7 +83,15 @@ public class SettingsManager
       final HashMap helperObjects = new HashMap();
       // add the runtime context so that PentahoResourceData class can get access
       // to the solution repo
-      final ResourceKey key = resourceManager.createKey(SOLUTION_SCHEMA_NAME + SCHEMA_SEPARATOR + id, helperObjects);
+      final ResourceKey key;
+      if (CdaEngine.getInstance().isStandalone())
+      {
+        key = resourceManager.createKey(new File(id));
+      }
+      else
+      {
+        key = resourceManager.createKey(SOLUTION_SCHEMA_NAME + SCHEMA_SEPARATOR + id, helperObjects);
+      }
       final Resource resource = resourceManager.create(key, null, org.w3c.dom.Document.class);
       final org.w3c.dom.Document document = (org.w3c.dom.Document) resource.getResource();
       final DOMReader saxReader = new DOMReader();
@@ -117,7 +129,7 @@ public class SettingsManager
   {
 
     logger.info("Cleaning CDA settings cache");
-     settingsCache.clear();
+    settingsCache.clear();
 
   }
 

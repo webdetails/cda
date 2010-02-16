@@ -5,6 +5,9 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DataSourceProvider;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.JndiDataSourceProvider;
+import org.pentaho.reporting.platform.plugin.connection.PentahoMondrianDataSourceProvider;
+import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.connections.AbstractConnection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 
 /**
@@ -13,7 +16,7 @@ import pt.webdetails.cda.connections.InvalidConnectionException;
  * Date: Feb 2, 2010
  * Time: 5:09:18 PM
  */
-public class JndiConnection extends AbstractMondrianConnection
+public class JndiConnection extends AbstractConnection implements MondrianConnection
 {
 
   private static final Log logger = LogFactory.getLog(JndiConnection.class);
@@ -47,11 +50,15 @@ public class JndiConnection extends AbstractMondrianConnection
   @Override
   public DataSourceProvider getInitializedDataSourceProvider() throws InvalidConnectionException
   {
-
-
     logger.debug("Creating new jndi connection");
-
-    return new JndiDataSourceProvider(connectionInfo.getJndi());
+    if (CdaEngine.getInstance().isStandalone())
+    {
+      return new JndiDataSourceProvider(connectionInfo.getJndi());
+    }
+    else
+    {
+      return new PentahoMondrianDataSourceProvider(connectionInfo.getJndi());
+    }
   }
 
   public JndiConnectionInfo getConnectionInfo()

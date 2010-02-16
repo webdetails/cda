@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DataSourceProvider;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DriverDataSourceProvider;
+import pt.webdetails.cda.connections.AbstractConnection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.utils.Util;
 
@@ -14,7 +15,7 @@ import pt.webdetails.cda.utils.Util;
  * Date: Feb 2, 2010
  * Time: 5:09:18 PM
  */
-public class JdbcConnection extends AbstractMondrianConnection
+public class JdbcConnection extends AbstractConnection implements MondrianConnection
 {
 
   private static final Log logger = LogFactory.getLog(JdbcConnection.class);

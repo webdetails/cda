@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.JndiConnectionProvider;
+import org.pentaho.reporting.platform.plugin.connection.PentahoJndiDatasourceConnectionProvider;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.AbstractConnection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.utils.Util;
@@ -30,9 +32,19 @@ public class JndiConnection extends AbstractConnection implements SqlConnection
 
   public ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException
   {
-
-    final JndiConnectionProvider connectionProvider = new JndiConnectionProvider();
-    connectionProvider.setConnectionPath(connectionInfo.getJndi());
+    final ConnectionProvider connectionProvider;
+    if (CdaEngine.getInstance().isStandalone())
+    {
+      final JndiConnectionProvider provider = new JndiConnectionProvider();
+      provider.setConnectionPath(connectionInfo.getJndi());
+      connectionProvider = provider;
+    }
+    else
+    {
+      final PentahoJndiDatasourceConnectionProvider provider = new PentahoJndiDatasourceConnectionProvider();
+      provider.setJndiName(connectionInfo.getJndi());
+      connectionProvider = provider;
+    }
 
     try
     {

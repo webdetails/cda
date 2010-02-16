@@ -10,6 +10,5 @@ public interface MondrianConnectionInfo
 {
   
   public String getCatalog();
-  public String getCube();
 
 }

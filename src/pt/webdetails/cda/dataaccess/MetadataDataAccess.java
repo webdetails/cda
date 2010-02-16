@@ -4,6 +4,8 @@ import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.pmd.PmdConnectionProvider;
 import org.pentaho.reporting.engine.classic.extensions.datasources.pmd.PmdDataFactory;
+import org.pentaho.reporting.platform.plugin.connection.PentahoPmdConnectionProvider;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.metadata.MetadataConnection;
 import pt.webdetails.cda.settings.UnknownConnectionException;
@@ -30,7 +32,14 @@ public class MetadataDataAccess extends PREDataAccess
     final PmdDataFactory returnDataFactory = new PmdDataFactory();
     returnDataFactory.setXmiFile(connection.getMetadataConnectionInfo().getXmiFile());
     returnDataFactory.setDomainId(connection.getMetadataConnectionInfo().getDomainId());
-    returnDataFactory.setConnectionProvider(new PmdConnectionProvider());
+    if (CdaEngine.getInstance().isStandalone())
+    {
+      returnDataFactory.setConnectionProvider(new PmdConnectionProvider());
+    }
+    else
+    {
+      returnDataFactory.setConnectionProvider(new PentahoPmdConnectionProvider());
+    }
     returnDataFactory.setQuery("query", getQuery());
 
     return returnDataFactory;

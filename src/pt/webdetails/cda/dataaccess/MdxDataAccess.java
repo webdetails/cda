@@ -7,6 +7,8 @@ import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.BandedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DefaultCubeFileProvider;
+import org.pentaho.reporting.platform.plugin.connection.PentahoCubeFileProvider;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.mondrian.JdbcConnection;
 import pt.webdetails.cda.connections.mondrian.MondrianConnection;
@@ -44,13 +46,21 @@ public class MdxDataAccess extends PREDataAccess
 
     final AbstractNamedMDXDataFactory mdxDataFactory = createDataFactory();
     mdxDataFactory.setDataSourceProvider(connection.getInitializedDataSourceProvider());
-    mdxDataFactory.setCubeFileProvider(new DefaultCubeFileProvider(connection.getConnectionInfo().getCatalog()));
-         
+    if (CdaEngine.getInstance().isStandalone())
+    {
+      mdxDataFactory.setCubeFileProvider(new DefaultCubeFileProvider(connection.getConnectionInfo().getCatalog()));
+    }
+    else
+    {
+      mdxDataFactory.setCubeFileProvider(new PentahoCubeFileProvider(connection.getConnectionInfo().getCatalog()));
+    }
 
-    if (connection instanceof JdbcConnection){
 
-      mdxDataFactory.setJdbcUser( ((JdbcConnection) connection).getConnectionInfo().getUser() );
-      mdxDataFactory.setJdbcPassword( ((JdbcConnection) connection).getConnectionInfo().getPass() );
+    if (connection instanceof JdbcConnection)
+    {
+
+      mdxDataFactory.setJdbcUser(((JdbcConnection) connection).getConnectionInfo().getUser());
+      mdxDataFactory.setJdbcPassword(((JdbcConnection) connection).getConnectionInfo().getPass());
 
     }
 
