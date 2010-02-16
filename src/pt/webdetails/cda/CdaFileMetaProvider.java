@@ -1,6 +1,7 @@
 package pt.webdetails.cda;
 
 import java.io.InputStream;
+
 import org.dom4j.Document;
 import org.pentaho.platform.api.engine.IFileInfo;
 import org.pentaho.platform.api.engine.ISolutionFile;

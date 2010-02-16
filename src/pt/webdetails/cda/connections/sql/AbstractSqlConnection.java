@@ -1,7 +1,6 @@
 package pt.webdetails.cda.connections.sql;
 
 import org.dom4j.Element;
-import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import pt.webdetails.cda.connections.AbstractConnection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 

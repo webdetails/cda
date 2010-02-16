@@ -1,9 +1,5 @@
 package pt.webdetails.cda.discovery;
 
-import java.util.ArrayList;
-
-import pt.webdetails.cda.dataaccess.Parameter;
-
 /**
  * Created by IntelliJ IDEA.
  * User: pedro

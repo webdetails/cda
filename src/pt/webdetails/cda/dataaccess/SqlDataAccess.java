@@ -5,12 +5,9 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.SQLReportDataFactory;
-import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.sql.SqlConnection;
 import pt.webdetails.cda.settings.UnknownConnectionException;
-
-import javax.swing.table.TableModel;
 
 /**
  * Implementation of a DataAccess that will get data from a SQL database

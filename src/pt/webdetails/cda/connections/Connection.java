@@ -1,7 +1,5 @@
 package pt.webdetails.cda.connections;
 
-import org.dom4j.Element;
-import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import pt.webdetails.cda.settings.CdaSettings;
 
 /**

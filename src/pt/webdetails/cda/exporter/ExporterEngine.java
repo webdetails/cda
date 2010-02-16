@@ -2,9 +2,6 @@ package pt.webdetails.cda.exporter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.dom4j.Element;
-import pt.webdetails.cda.dataaccess.DataAccess;
-import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
 import pt.webdetails.cda.utils.Util;
 
 /**

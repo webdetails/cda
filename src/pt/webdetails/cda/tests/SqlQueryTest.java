@@ -1,14 +1,11 @@
 package pt.webdetails.cda.tests;
 
+import java.sql.SQLException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.DriverConnectionProvider;
-
-import java.sql.SQLException;
-import java.util.logging.Level;
-
-import static org.apache.commons.logging.LogFactory.getLog;
 
 
 /**

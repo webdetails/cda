@@ -1,6 +1,5 @@
 package pt.webdetails.cda.settings;
 
-import java.io.File;
 import java.util.HashMap;
 
 import org.apache.commons.collections.map.LRUMap;

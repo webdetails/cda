@@ -2,7 +2,6 @@ package pt.webdetails.cda.settings;
 
 import java.util.HashMap;
 import java.util.List;
-
 import javax.swing.table.TableModel;
 
 import org.apache.commons.logging.Log;

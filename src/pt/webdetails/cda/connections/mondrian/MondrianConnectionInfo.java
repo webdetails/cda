@@ -1,7 +1,5 @@
 package pt.webdetails.cda.connections.mondrian;
 
-import org.dom4j.Element;
-
 /**
  * Created by IntelliJ IDEA.
  * User: pedro

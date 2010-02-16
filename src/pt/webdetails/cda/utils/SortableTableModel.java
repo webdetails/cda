@@ -1,7 +1,6 @@
 package pt.webdetails.cda.utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
