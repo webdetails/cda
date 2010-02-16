@@ -91,12 +91,12 @@ public class CdaEngine
 
   }
 
-  public void getCdaList(final OutputStream out, final IPentahoSession userSession)
+  public void getCdaList(final OutputStream out, final DiscoveryOptions discoveryOptions, final IPentahoSession userSession) throws UnsupportedExporterException, ExporterException
   {
 
     final TableModel tableModel = SolutionRepositoryUtils.getInstance().getCdaList(userSession);
 
-
+    ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).export(out, tableModel);
 
   }
 

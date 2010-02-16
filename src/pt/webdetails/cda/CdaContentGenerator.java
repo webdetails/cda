@@ -128,7 +128,6 @@ public class CdaContentGenerator extends BaseContentGenerator
 
 
     final CdaEngine engine = CdaEngine.getInstance();
-    final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
 
     final String path = PentahoSystem.getApplicationContext().getSolutionPath(getRelativePath(pathParams)).replaceAll("//+", "/");
 
@@ -137,6 +136,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
 
     // Handle the query itself and its output format...
+    final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
     discoveryOptions.setOutputType(pathParams.getStringParameter("outputType", "json"));
 
     engine.listQueries(out, cdaSettings, discoveryOptions);
@@ -168,7 +168,10 @@ public class CdaContentGenerator extends BaseContentGenerator
 
     final CdaEngine engine = CdaEngine.getInstance();
 
-    engine.getCdaList(out, userSession);
+    final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
+    discoveryOptions.setOutputType(pathParams.getStringParameter("outputType", "json"));
+
+    engine.getCdaList(out, discoveryOptions, userSession);
 
 
   }

@@ -14,7 +14,7 @@ import pt.webdetails.cda.dataaccess.QueryException;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
 import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.exporter.UnsupportedExporterException;
-import pt.webdetails.cda.discovery.DiscoveryOptions;
+import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
@@ -25,17 +25,17 @@ import pt.webdetails.cda.settings.UnknownDataAccessException;
  * Date: Feb 15, 2010
  * Time: 7:53:13 PM
  */
-public class DiscoveryGetQueriesTest extends TestCase
+public class CompoundJoinTest extends TestCase
 {
 
-  private static final Log logger = LogFactory.getLog(DiscoveryGetQueriesTest.class);
+  private static final Log logger = LogFactory.getLog(CompoundJoinTest.class);
 
-  public DiscoveryGetQueriesTest()
+  public CompoundJoinTest()
   {
     super();
   }
 
-  public DiscoveryGetQueriesTest(final String name)
+  public CompoundJoinTest(final String name)
   {
     super(name);
   }
@@ -50,7 +50,7 @@ public class DiscoveryGetQueriesTest extends TestCase
   }
 
 
-  public void testGetQueries() throws UnsupportedConnectionException, DocumentException, UnsupportedDataAccessException, ExporterException, UnknownDataAccessException, UnsupportedExporterException, QueryException
+  public void testCompoundQuery() throws ExporterException, UnknownDataAccessException, UnsupportedExporterException, QueryException, UnsupportedConnectionException, DocumentException, UnsupportedDataAccessException
   {
 
 
@@ -61,18 +61,18 @@ public class DiscoveryGetQueriesTest extends TestCase
 
     final SettingsManager settingsManager = SettingsManager.getInstance();
 
-    final File settingsFile = new File("test/pt/webdetails/cda/tests/sample-discovery.cda");
+    final File settingsFile = new File("test/pt/webdetails/cda/tests/sample-join.cda");
     final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
-
-    logger.debug("Getting parameters info on CDA file");
+    logger.debug("Doing query on Cda - Initializing CdaEngine");
     final CdaEngine engine = CdaEngine.getInstance();
 
-    final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
-    discoveryOptions.setOutputType("xml");
+    QueryOptions queryOptions = new QueryOptions();
+    queryOptions.setDataAccessId("4");
+    queryOptions.setOutputType("json");
+    // queryOptions.addParameter("status","In Process");
 
-
-    logger.info("Doing discovery");
-    engine.listQueries(out, cdaSettings, discoveryOptions);
+    logger.info("Doing query");
+    engine.doQuery(out, cdaSettings, queryOptions);
 
 
   }

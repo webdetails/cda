@@ -47,7 +47,6 @@ public class JndiConnection extends AbstractConnection implements MondrianConnec
   }
 
 
-  @Override
   public DataSourceProvider getInitializedDataSourceProvider() throws InvalidConnectionException
   {
     logger.debug("Creating new jndi connection");
