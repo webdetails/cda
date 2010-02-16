@@ -61,8 +61,14 @@ public class XmlExporter extends AbstractExporter
       for (int colIdx = 0; colIdx < columnCount; colIdx++)
       {
         final Element col = row.addElement("Col");
-        // col.setData(tableModel.getValueAt(rowIdx, colIdx));
-        col.setText(tableModel.getValueAt(rowIdx, colIdx).toString());
+        
+        if (tableModel.getValueAt(rowIdx, colIdx) != null)
+        {
+          col.setText(tableModel.getValueAt(rowIdx, colIdx).toString());
+        }
+        else{
+          col.addAttribute("isNull","true");
+        }
 
       }
     }

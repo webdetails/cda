@@ -12,9 +12,9 @@ import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.QueryException;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
+import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.exporter.UnsupportedExporterException;
-import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
@@ -25,17 +25,17 @@ import pt.webdetails.cda.settings.UnknownDataAccessException;
  * Date: Feb 15, 2010
  * Time: 7:53:13 PM
  */
-public class DiscoveryGetQueriesTest extends TestCase
+public class DiscoveryGetParametersTest extends TestCase
 {
 
-  private static final Log logger = LogFactory.getLog(DiscoveryGetQueriesTest.class);
+  private static final Log logger = LogFactory.getLog(DiscoveryGetParametersTest.class);
 
-  public DiscoveryGetQueriesTest()
+  public DiscoveryGetParametersTest()
   {
     super();
   }
 
-  public DiscoveryGetQueriesTest(final String name)
+  public DiscoveryGetParametersTest(final String name)
   {
     super(name);
   }
@@ -50,7 +50,7 @@ public class DiscoveryGetQueriesTest extends TestCase
   }
 
 
-  public void testGetQueries() throws UnsupportedConnectionException, DocumentException, UnsupportedDataAccessException, ExporterException, UnknownDataAccessException, UnsupportedExporterException, QueryException
+  public void testGetParameters() throws ExporterException, UnknownDataAccessException, UnsupportedExporterException, QueryException, UnsupportedConnectionException, DocumentException, UnsupportedDataAccessException
   {
 
 
@@ -63,15 +63,21 @@ public class DiscoveryGetQueriesTest extends TestCase
 
     final File settingsFile = new File("test/pt/webdetails/cda/tests/sample-discovery.cda");
     final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
-
-    logger.debug("Getting parameters info on CDA file");
+    logger.debug("Doing discovery on the file");
     final CdaEngine engine = CdaEngine.getInstance();
 
+
+    // JSON
+
     final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
+    discoveryOptions.setDataAccessId("2");
     discoveryOptions.setOutputType("xml");
+    logger.info("Doing discovery, return xml");
+    engine.listParameters(out, cdaSettings, discoveryOptions);
 
-
-    logger.info("Doing discovery");
+    // XML
+    discoveryOptions.setOutputType("json");
+    logger.info("Doing discovery, return json");
     engine.listParameters(out, cdaSettings, discoveryOptions);
 
 

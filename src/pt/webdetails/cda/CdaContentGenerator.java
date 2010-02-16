@@ -10,7 +10,9 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
+import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
@@ -69,16 +71,16 @@ public class CdaContentGenerator extends BaseContentGenerator
   public void doquery(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
 
-    CdaEngine engine = CdaEngine.getInstance();
-    QueryOptions queryOptions = new QueryOptions();
-    
+    final CdaEngine engine = CdaEngine.getInstance();
+    final QueryOptions queryOptions = new QueryOptions();
+
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(getRelativePath(pathParams));
 
     // Handle paging options
     // We assume that any paging options found mean that the user actively wants paging.
-    long pageSize = pathParams.getLongParameter("pageSize", 0);
-    long pageStart = pathParams.getLongParameter("pageStart", 0);
-    boolean paginate = pathParams.getStringParameter("paginate", "false").equals("true") ? true : false;
+    final long pageSize = pathParams.getLongParameter("pageSize", 0);
+    final long pageStart = pathParams.getLongParameter("pageStart", 0);
+    final boolean paginate = pathParams.getStringParameter("paginate", "false").equals("true") ? true : false;
     if (pageSize > 0 || pageStart > 0 || paginate)
     {
       if (pageSize > Integer.MAX_VALUE || pageStart > Integer.MAX_VALUE)
@@ -93,7 +95,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     // Handle the query itself and its output format...
     queryOptions.setOutputType(pathParams.getStringParameter("outputType", "json"));
     queryOptions.setDataAccessId(pathParams.getStringParameter("dataAccessId", "<blank>"));
-    ArrayList<Integer> sortBy = new ArrayList<Integer>();
+    final ArrayList<Integer> sortBy = new ArrayList<Integer>();
 //    Integer[] def = {};
 //    for (Object obj : pathParams.getArrayParameter("sortBy", def)) {
 //      sortBy.add(Integer.parseInt((String) obj));
@@ -105,10 +107,10 @@ public class CdaContentGenerator extends BaseContentGenerator
     }
     // ... and the query parameters
     // We identify any pathParams starting with "param" as query parameters
-    Iterator<String> params = (Iterator<String>) pathParams.getParameterNames();
+    final Iterator<String> params = (Iterator<String>) pathParams.getParameterNames();
     while (params.hasNext())
     {
-      String param = params.next();
+      final String param = params.next();
 
       if (param.startsWith("param"))
       {
@@ -117,6 +119,57 @@ public class CdaContentGenerator extends BaseContentGenerator
     }
     // Finally, pass the query to the engine
     engine.doQuery(out, cdaSettings, queryOptions);
+
+  }
+
+
+  public void listqueries(final IParameterProvider pathParams, final OutputStream out) throws Exception
+  {
+
+
+    final CdaEngine engine = CdaEngine.getInstance();
+    final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
+
+    final String path = PentahoSystem.getApplicationContext().getSolutionPath(getRelativePath(pathParams)).replaceAll("//+", "/");
+
+    // final ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
+    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
+
+
+    // Handle the query itself and its output format...
+    discoveryOptions.setOutputType(pathParams.getStringParameter("outputType", "json"));
+
+    engine.listQueries(out, cdaSettings, discoveryOptions);
+
+  }
+
+
+  public void listparameters(final IParameterProvider pathParams, final OutputStream out) throws Exception
+  {
+
+
+    final CdaEngine engine = CdaEngine.getInstance();
+    final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
+
+    final String path = PentahoSystem.getApplicationContext().getSolutionPath(getRelativePath(pathParams)).replaceAll("//+", "/");
+
+    // final ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
+    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
+    discoveryOptions.setDataAccessId(pathParams.getStringParameter("dataAccessId", "<blank>"));
+    discoveryOptions.setOutputType(pathParams.getStringParameter("outputType", "json"));
+
+    engine.listParameters(out, cdaSettings, discoveryOptions);
+
+  }
+
+
+  public void getcdalist(final IParameterProvider pathParams, final OutputStream out) throws Exception
+  {
+
+    final CdaEngine engine = CdaEngine.getInstance();
+
+    engine.getCdaList(out, userSession);
+
 
   }
 

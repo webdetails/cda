@@ -191,8 +191,7 @@ public abstract class AbstractDataAccess implements DataAccess
   public TableModel listParameters(final DiscoveryOptions discoveryOptions)
   {
 
-    throw new IllegalStateException("Not implemented yet");
-    
+    return TableModelUtils.getInstance().dataAccessParametersToTableModel(getParameters());
 
   }
 

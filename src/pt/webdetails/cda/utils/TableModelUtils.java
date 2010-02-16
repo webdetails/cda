@@ -11,6 +11,7 @@ import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 import pt.webdetails.cda.dataaccess.ColumnDefinition;
 import pt.webdetails.cda.dataaccess.DataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessEnums;
+import pt.webdetails.cda.dataaccess.Parameter;
 import pt.webdetails.cda.query.QueryOptions;
 
 /**
@@ -163,8 +164,8 @@ public class TableModelUtils
     int rowCount = dataAccessMap.size();
 
     // Define names and types
-    String[] colNames = {"id", "name", "type"};
-    Class[] colTypes = {String.class, String.class, String.class};
+    final String[] colNames = {"id", "name", "type"};
+    final Class[] colTypes = {String.class, String.class, String.class};
 
 
     final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
@@ -191,5 +192,28 @@ public class TableModelUtils
     }
 
     return _instance;
+  }
+
+  public TableModel dataAccessParametersToTableModel(final ArrayList<Parameter> parameters)
+  {
+
+    int rowCount = parameters.size();
+
+    // Define names and types
+    final String[] colNames = {"name", "type", "defaultValue", "pattern"};
+    final Class[] colTypes = {String.class, String.class, String.class, String.class};
+
+
+    final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
+
+    for (Parameter p : parameters)
+    {
+      typedTableModel.addRow(new Object[]{p.getName(), p.getType(), p.getDefaultValue(), p.getPattern()});
+    }
+
+
+    return typedTableModel;
+
+
   }
 }
