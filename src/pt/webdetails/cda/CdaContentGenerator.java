@@ -8,9 +8,12 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IParameterProvider;
+import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.api.repository.IContentItem;
+import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
+
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
@@ -23,9 +26,6 @@ public class CdaContentGenerator extends BaseContentGenerator
   public static final String PLUGIN_NAME = "pentaho-cda";
   private static final long serialVersionUID = 1L;
   private static final String MIME_TYPE = "text/html";
-  private static final String DATA_URL_TAG = "cdf-structure.js";
-  private static final String DATA_URL_VALUE = "/" + PentahoSystem.getApplicationContext().getBaseUrl().split("[/]+")[2] + "/content/pentaho-cda/Syncronize";
-  private static final String SERVER_URL_VALUE = "/" + PentahoSystem.getApplicationContext().getBaseUrl().split("[/]+")[2] + "/content/pentaho-cda/";
   private static final int DEFAULT_PAGE_SIZE = 20;
   private static final int DEFAULT_START_PAGE = 0;
 
@@ -72,17 +72,10 @@ public class CdaContentGenerator extends BaseContentGenerator
   public void doquery(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
 
-
-    // Init CDA  - TODO: put in a startup listener 
-    CdaBoot.getInstance().start();
-
     CdaEngine engine = CdaEngine.getInstance();
     QueryOptions queryOptions = new QueryOptions();
-
-    final String path = PentahoSystem.getApplicationContext().getSolutionPath(getRelativePath(pathParams)).replaceAll("//+", "/");
-
-    // final ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
-    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
+    
+    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(getRelativePath(pathParams));
 
     // Handle paging options
     // We assume that any paging options found mean that the user actively wants paging.
@@ -155,8 +148,9 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   private String getRelativePath(final IParameterProvider pathParams)
   {
-    final String path = pathParams.getStringParameter("solution", "") + "/" + pathParams.getStringParameter("path", "") + "/" + pathParams.getStringParameter("file", "");
-    return path.replaceAll("//+", "/");
-
+    return ActionInfo.buildSolutionPath(
+        pathParams.getStringParameter("solution", ""),
+        pathParams.getStringParameter("path", ""),
+        pathParams.getStringParameter("file", ""));
   }
 }

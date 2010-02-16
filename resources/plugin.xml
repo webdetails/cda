@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin title="Pentaho Community Data Access">
+
+    <lifecycle-listener class="pt.webdetails.cda.CdaLifecycleListener"/>
+    <!--
 	<content-types>
 		<content-type type="cda" mime-type="text/html">
         	<title>Dashboard</title>
@@ -8,7 +11,7 @@
 	        <operations>
     	    	<operation>
         			<id>RUN</id>
-        			<command>content/pentaho-cdf/RenderXCDF?solution={solution}&amp;path={path}&amp;action={name}&amp;template=mantle</command>
+        			<command>content/cda/RenderXCDF?solution={solution}&amp;path={path}&amp;action={name}&amp;template=mantle</command>
         		</operation>
     	    	<operation>
         			<id>NEWWINDOW</id>
@@ -17,10 +20,11 @@
 	        </operations>
     	</content-type>
 	</content-types>
-
+    -->
+    
     <content-generator scope="local" id="cda" type="cda" url="">
         <classname>pt.webdetails.cda.CdaContentGenerator</classname>
-        <fileinfo-classname>pt.webdetails.cda.CdaFileInfoGenerator</fileinfo-classname>
+        <fileinfo-classname>pt.webdetails.cda.CdaFileMetaProvider</fileinfo-classname>
         <title>CDA</title>
     </content-generator>
     

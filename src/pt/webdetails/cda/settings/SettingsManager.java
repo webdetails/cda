@@ -1,6 +1,7 @@
 package pt.webdetails.cda.settings;
 
 import java.io.File;
+import java.util.HashMap;
 
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
@@ -10,6 +11,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.io.DOMReader;
 import org.pentaho.reporting.libraries.resourceloader.Resource;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
+import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
@@ -25,6 +27,12 @@ import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
  */
 public class SettingsManager
 {
+
+  // TODO: These are defined in 
+  // org.pentaho.reporting.platform.plugin.RepositoryResourceLoader
+  // we should see if there is a way to have plugins use other plugin classes
+  public static final String SOLUTION_SCHEMA_NAME = "pentaho2"; //$NON-NLS-1$
+  public static final String SCHEMA_SEPARATOR = "://"; //$NON-NLS-1$
 
 
   private static final Log logger = LogFactory.getLog(SettingsManager.class);
@@ -69,7 +77,11 @@ public class SettingsManager
     {
       final ResourceManager resourceManager = new ResourceManager();
       resourceManager.registerDefaults();
-      final Resource resource = resourceManager.createDirectly(new File(id), org.w3c.dom.Document.class);
+      final HashMap helperObjects = new HashMap();
+      // add the runtime context so that PentahoResourceData class can get access
+      // to the solution repo
+      final ResourceKey key = resourceManager.createKey(SOLUTION_SCHEMA_NAME + SCHEMA_SEPARATOR + id, helperObjects);
+      final Resource resource = resourceManager.create(key, null, org.w3c.dom.Document.class);
       final org.w3c.dom.Document document = (org.w3c.dom.Document) resource.getResource();
       final DOMReader saxReader = new DOMReader();
       final Document doc = saxReader.read(document);
