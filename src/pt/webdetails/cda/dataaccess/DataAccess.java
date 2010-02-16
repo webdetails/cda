@@ -3,6 +3,7 @@ package pt.webdetails.cda.dataaccess;
 import java.util.ArrayList;
 import javax.swing.table.TableModel;
 
+import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 
@@ -18,6 +19,10 @@ public interface DataAccess
 {
 
   public String getId();
+
+  public String getName();
+
+  public String getType();
 
   public DataAccessEnums.ACCESS_TYPE getAccess();
 
@@ -37,5 +42,5 @@ public interface DataAccess
 
   public ArrayList<Integer> getOutputs();
 
-
+  public TableModel listParameters(DiscoveryOptions discoveryOptions);
 }

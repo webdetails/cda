@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
+import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.utils.TableModelException;
@@ -32,6 +33,7 @@ public abstract class AbstractDataAccess implements DataAccess
 
   private CdaSettings cdaSettings;
   private String id;
+  private String name;
   private DataAccessEnums.ACCESS_TYPE access = DataAccessEnums.ACCESS_TYPE.PUBLIC;
   private boolean cache = false;
   private int cacheDuration = 3600;
@@ -43,6 +45,7 @@ public abstract class AbstractDataAccess implements DataAccess
   protected AbstractDataAccess(final Element element)
   {
 
+    name = "";
     columnDefinitionIndexMap = new HashMap<Integer, ColumnDefinition>();
     columnDefinitions = new ArrayList<ColumnDefinition>();
     outputs = new ArrayList<Integer>();
@@ -53,9 +56,17 @@ public abstract class AbstractDataAccess implements DataAccess
   }
 
 
+  public abstract String getType();
+  
+
   private void parseOptions(final Element element)
   {
     id = element.attributeValue("id");
+
+    final Element nameElement = (Element) element.selectSingleNode("./Name");
+    if(nameElement != null){
+      name = nameElement.getTextTrim();
+    }
 
     if (element.attributeValue("access") != null && element.attributeValue("access").equals("private"))
     {
@@ -177,6 +188,16 @@ public abstract class AbstractDataAccess implements DataAccess
   }
 
 
+  
+  public TableModel listParameters(final DiscoveryOptions discoveryOptions)
+  {
+
+    throw new IllegalStateException("Not implemented yet");
+    
+
+  }
+
+
   private ParameterDataRow createParameterDataRowFromParameters(final ArrayList<Parameter> parameters) throws InvalidParameterException
   {
 
@@ -248,6 +269,15 @@ public abstract class AbstractDataAccess implements DataAccess
     return id;
   }
 
+  public String getName()
+  {
+    return name;
+  }
+
+  public void setName(final String name)
+  {
+    this.name = name;
+  }
 
   public DataAccessEnums.ACCESS_TYPE getAccess()
   {

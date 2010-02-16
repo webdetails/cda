@@ -22,10 +22,17 @@ public class MdxDataAccess extends PREDataAccess
 {
 
   private static final Log logger = LogFactory.getLog(MdxDataAccess.class);
+  private static final String TYPE = "mdx";
 
   public MdxDataAccess(final Element element)
   {
     super(element);
+  }
+
+  
+  public String getType()
+  {
+    return TYPE;
   }
 
 
@@ -40,12 +47,13 @@ public class MdxDataAccess extends PREDataAccess
     final BandedMDXDataFactory mdxDataFactory = new BandedMDXDataFactory();
     mdxDataFactory.setDataSourceProvider(connection.getInitializedDataSourceProvider());
     mdxDataFactory.setCubeFileProvider(new DefaultCubeFileProvider(connection.getConnectionInfo().getCatalog()));
-         
 
-    if (connection instanceof JdbcConnection){
 
-      mdxDataFactory.setJdbcUser( ((JdbcConnection) connection).getConnectionInfo().getUser() );
-      mdxDataFactory.setJdbcPassword( ((JdbcConnection) connection).getConnectionInfo().getPass() );
+    if (connection instanceof JdbcConnection)
+    {
+
+      mdxDataFactory.setJdbcUser(((JdbcConnection) connection).getConnectionInfo().getUser());
+      mdxDataFactory.setJdbcPassword(((JdbcConnection) connection).getConnectionInfo().getPass());
 
     }
 

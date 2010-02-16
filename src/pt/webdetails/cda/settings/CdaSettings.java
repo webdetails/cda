@@ -3,6 +3,8 @@ package pt.webdetails.cda.settings;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.table.TableModel;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -12,6 +14,8 @@ import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.DataAccess;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
+import pt.webdetails.cda.discovery.DiscoveryOptions;
+import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.Util;
 
 /**
@@ -50,6 +54,16 @@ public class CdaSettings
     parseDocument();
 
   }
+
+
+
+  public TableModel listQueries(DiscoveryOptions discoveryOptions){
+
+
+    return TableModelUtils.getInstance().dataAccessMapToTableModel(dataAccessMap);
+
+  }
+
 
 
   private void parseDocument() throws UnsupportedConnectionException, UnsupportedDataAccessException

@@ -22,9 +22,15 @@ import javax.swing.table.TableModel;
 public class SqlDataAccess extends PREDataAccess {
 
   private static final Log logger = LogFactory.getLog(SqlDataAccess.class);
+  private static final String TYPE = "sql";
 
   public SqlDataAccess(final Element element) {
     super(element);
+  }
+
+  public String getType()
+  {
+    return TYPE;
   }
 
 

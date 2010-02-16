@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import pt.webdetails.cda.dataaccess.QueryException;
+import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.exporter.ExporterEngine;
 import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.exporter.UnsupportedExporterException;
@@ -47,6 +48,36 @@ public class CdaEngine {
 
     ExporterEngine.getInstance().getExporter(queryOptions.getOutputType()).export(out,tableModel);
     
+  }
+
+
+  public void getQueries(final OutputStream out, final CdaSettings cdaSettings, final DiscoveryOptions discoveryOptions) throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
+  {
+
+    logger.debug("Getting list of queries on CdaSettings [ " + cdaSettings.getId() + ")]");
+
+
+    TableModel tableModel = cdaSettings.listQueries(discoveryOptions);
+
+    // Handle the exports
+
+    ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).export(out,tableModel);
+
+  }
+
+
+  public void getParameters(final OutputStream out, final CdaSettings cdaSettings, final DiscoveryOptions discoveryOptions) throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
+  {
+
+    logger.debug("Getting list of queries on CdaSettings [ " + cdaSettings.getId() + ")]");
+
+
+    TableModel tableModel = cdaSettings.getDataAccess(discoveryOptions.getDataAccessId()).listParameters(discoveryOptions);
+
+    // Handle the exports
+
+    ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).export(out,tableModel);
+
   }
 
 
