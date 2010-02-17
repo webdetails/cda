@@ -195,7 +195,7 @@ public class CdaSettings
   public DataAccess getDataAccess(final String id) throws UnknownDataAccessException
   {
 
-    if (!connectionsMap.containsKey(id))
+    if (!dataAccessMap.containsKey(id))
     {
       throw new UnknownDataAccessException("Unknown dataAccess with id " + id, null);
     }
