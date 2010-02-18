@@ -4,7 +4,7 @@
     <lifecycle-listener class="pt.webdetails.cda.CdaLifecycleListener"/>
     <!--
 	<content-types>
-<!--		<content-type type="cda" mime-type="text/html">
+		<content-type type="cda" mime-type="text/html">
         	<title>Dashboard</title>
         	<description>Community Dashboard File</description>
 	        <icon-url>content/pentaho-cdf/resources/cdfFileType.png</icon-url>
@@ -18,7 +18,7 @@
         			<command>content/pentaho-cdf/RenderXCDF?solution={solution}&amp;path={path}&amp;action={name}&amp;template=mantle</command>
         		</operation>        		
 	        </operations>
-    	</content-type> -->
+    	</content-type> 
 	</content-types>
     -->
     

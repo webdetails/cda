@@ -74,7 +74,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     final CdaEngine engine = CdaEngine.getInstance();
     final QueryOptions queryOptions = new QueryOptions();
 
-    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(getRelativePath(pathParams));
+    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(PentahoSystem.getApplicationContext().getSolutionPath(getRelativePath(pathParams)));
 
     // Handle paging options
     // We assume that any paging options found mean that the user actively wants paging.
