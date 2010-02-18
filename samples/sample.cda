@@ -61,7 +61,7 @@
 		</Columns>
         <!-- Settings block here overrides defaults and general settings -->
         <Settings>
-            <Export type="xls" includeTotals="true">
+            <Export type="csv" includeTotals="true">
                 <Column idx="0" aggregator="None"/>
                 <Column idx="1" aggregator="Average"/>
             </Export>

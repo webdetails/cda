@@ -118,7 +118,7 @@ public class CdaExecutor
     QueryOptions queryOptions = new QueryOptions();
     queryOptions.setDataAccessId("1");
     queryOptions.addParameter("orderDate", "2003-04-01");
-    queryOptions.setOutputType("xml");
+    queryOptions.setOutputType("csv");
     // queryOptions.addParameter("status","In Process");
 
     logger.info("Doing first query");
