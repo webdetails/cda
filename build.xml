@@ -39,31 +39,32 @@
     </target>
 
     <property name="plugin.name"
-              value="cda"
-              description="Name of the plugin"/>
+		value="cda"
+		description="Name of the plugin"/>
 
-    <property name="resource.dir"
-              value="resources"
-              description="Name of the resource directory"/>
+	<property name="resource.dir"
+		value="resources"
+		description="Name of the resource directory"/>
 
-    <property name="stage.dir"
-              value="${bin.dir}/stage"
-              description="Name of the resource directory"/>
+	<property name="stage.dir"
+		value="${bin.dir}/stage"
+		description="Name of the resource directory"/>
 
-    <!--property name="samples.stage.dir"
-                  value="${bin.dir}/stage-samples"
-                  description="Name of the resource directory" />
+	<property name="samples.stage.dir"
+		value="${bin.dir}/stage-samples"
+		description="Name of the resource directory" />
 
+    <!--
         <property name="solution.stage.dir"
                   value="${bin.dir}/stage-solution"
                   description="Name of the resource directory" /-->
 
-    <target name="dist" depends="resolve,jar,dist-plugin"/>
+    <target name="dist" depends="resolve,jar,dist-plugin,dist-samples"/>
     <target name="dist-compile" depends="jar,dist-plugin"/>
 
     <property name="plugin.artifact.id" value="${plugin.name}"/>
     <property name="plugin.zipfile" value="${plugin.artifact.id}-${project.revision}.zip"/>
-    <!--property name="plugin.samples.zipfile" value="${plugin.artifact.id}-samples-${project.revision}.zip"/-->
+    <property name="plugin.samples.zipfile" value="${plugin.artifact.id}-samples-${project.revision}.zip"/>
     <property name="plugin.solution.zipfile" value="${plugin.artifact.id}-solution-${project.revision}.zip"/>
 
 
@@ -110,25 +111,54 @@
              excludes="**/Thumbs.db"/>
     </target>
 
+    <!--=======================================================================
+              dist-samples
+
+              Creates a distribution of this project's samples
+              ====================================================================-->
+	<target name="dist-samples" depends="init">
+
+		<mkdir dir="${samples.stage.dir}"/>
+
+		<!-- copy over all the xactions within the cdf-samples folder -->
+		<copy todir="${samples.stage.dir}/bi-developers" overwrite="true" >
+			<fileset dir="solution/bi-developers"></fileset>
+		</copy>
+
+		<zip zipfile="${dist.dir}/${plugin.samples.zipfile}"
+			basedir="${samples.stage.dir}"
+			includes="**/*"
+			excludes="**/Thumbs.db" 
+			/>
+	</target>
+
 
     <!--=======================================================================
               install-plugin
 
               Installs the plugin locally
               ====================================================================-->
-    <target name="install-plugin" depends="dist-plugin" description="Installs the plugin locally">
+    <target name="install-plugin" depends="dist-plugin,dist-samples" description="Installs the plugin locally">
 
         <fail message="plugin.local.install.solutions.dir not set - cannot copy"
-              unless="plugin.local.install.solutions.dir"/>
+			unless="plugin.local.install.solutions.dir"/>
 
-        <delete dir="${plugin.local.install.solutions.dir}/system/${plugin.name}"/>
-        <copy todir="${plugin.local.install.solutions.dir}/system/${plugin.name}">
-            <fileset dir="${stage.dir}/${plugin.name}">
-                <include name="**/*"/>
-            </fileset>
-        </copy>
-        <get src="http://127.0.0.1:8080/pentaho/Publish?publish=now&amp;class=org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter&amp;userid=${plugin.local.install.user}&amp;password=${plugin.local.install.pass}"
-             dest="${stage.dir}/blah.html"/>
+		<delete dir="${plugin.local.install.solutions.dir}/system/${plugin.name}"/>
+		<copy todir="${plugin.local.install.solutions.dir}/system/${plugin.name}">
+			<fileset dir="${stage.dir}/${plugin.name}">
+				<include name="**/*"/>
+			</fileset>
+		</copy>
+
+		<!-- Copy samples -->
+		<copy todir="${plugin.local.install.solutions.dir}/">
+			<fileset dir="${samples.stage.dir}/">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		<get src="http://127.0.0.1:8080/pentaho/Publish?publish=now&amp;class=org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter&amp;userid=${plugin.local.install.user}&amp;password=${plugin.local.install.pass}"
+			dest="${stage.dir}/blah.html"/>
 
     </target>
 
