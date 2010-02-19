@@ -130,8 +130,10 @@ public class CdaContentGenerator extends BaseContentGenerator
     final CdaEngine engine = CdaEngine.getInstance();
     final QueryOptions queryOptions = new QueryOptions();
 
-    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile
-        (PentahoSystem.getApplicationContext().getSolutionPath(getRelativePath(pathParams)));
+    final String path = getRelativePath(pathParams);
+    logger.error("Do Query: getRelativePath:" + path);
+    logger.error("Do Query: getSolPath:" + PentahoSystem.getApplicationContext().getSolutionPath(path));
+    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
 
     // Handle paging options
     // We assume that any paging options found mean that the user actively wants paging.
@@ -186,9 +188,9 @@ public class CdaContentGenerator extends BaseContentGenerator
 
     final CdaEngine engine = CdaEngine.getInstance();
 
-    final String path = PentahoSystem.getApplicationContext().getSolutionPath(getRelativePath(pathParams)).replaceAll("//+", "/");
-
-    // final ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
+    final String path = getRelativePath(pathParams);
+    logger.error("Do Query: getRelativePath:" + path);
+    logger.error("Do Query: getSolPath:" + PentahoSystem.getApplicationContext().getSolutionPath(path));
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
 
 
@@ -208,10 +210,12 @@ public class CdaContentGenerator extends BaseContentGenerator
     final CdaEngine engine = CdaEngine.getInstance();
     final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
 
-    final String path = PentahoSystem.getApplicationContext().getSolutionPath(getRelativePath(pathParams)).replaceAll("//+", "/");
+    final String path = getRelativePath(pathParams);
+    logger.error("Do Query: getRelativePath:" + path);
+    logger.error("Do Query: getSolPath:" + PentahoSystem.getApplicationContext().getSolutionPath(path));
+    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
 
     // final ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
-    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
     discoveryOptions.setDataAccessId(pathParams.getStringParameter("dataAccessId", "<blank>"));
     discoveryOptions.setOutputType(pathParams.getStringParameter("outputType", "json"));
 
