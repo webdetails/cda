@@ -22,9 +22,9 @@ public class CdaContentGenerator extends BaseContentGenerator
 {
 
   private static Log logger = LogFactory.getLog(CdaContentGenerator.class);
-  public static final String PLUGIN_NAME = "pentaho-cda";
+  public static final String PLUGIN_NAME = "cda";
   private static final long serialVersionUID = 1L;
-  private static final String MIME_TYPE = "text/html";
+  private static final String MIME_TYPE = "text/xml";
   private static final int DEFAULT_PAGE_SIZE = 20;
   private static final int DEFAULT_START_PAGE = 0;
 
@@ -49,13 +49,31 @@ public class CdaContentGenerator extends BaseContentGenerator
       final Class[] params = {IParameterProvider.class, OutputStream.class};
 
       final String method = pathParams.getStringParameter("path", null).replace("/", "").toLowerCase();
-
-      try
+      if ("doQuery".equals(method))
       {
-        final Method mthd = this.getClass().getMethod(method, params);
-        mthd.invoke(this, requestParams, out);
+        doQuery(requestParams, out);
       }
-      catch (NoSuchMethodException e)
+      else if ("listQueries".equals(method))
+      {
+        listQueries(requestParams, out);
+      }
+      else if ("getCdaList".equals(method))
+      {
+        getCdaList(requestParams, out);
+      }
+      else if ("listParameters".equals(method))
+      {
+        listParameters(requestParams, out);
+      }
+      else if ("clearCache".equals(method))
+      {
+        clearCache(requestParams, out);
+      }
+      else if ("synchronize".equals(method))
+      {
+        syncronize(requestParams, out);
+      }
+      else
       {
         logger.error(Messages.getErrorString("DashboardDesignerContentGenerator.ERROR_001_INVALID_METHOD_EXCEPTION") + " : " + method);
       }
@@ -68,7 +86,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
-  public void doquery(final IParameterProvider pathParams, final OutputStream out) throws Exception
+  public void doQuery(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
 
     final CdaEngine engine = CdaEngine.getInstance();
@@ -80,7 +98,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     // We assume that any paging options found mean that the user actively wants paging.
     final long pageSize = pathParams.getLongParameter("pageSize", 0);
     final long pageStart = pathParams.getLongParameter("pageStart", 0);
-    final boolean paginate = pathParams.getStringParameter("paginate", "false").equals("true") ? true : false;
+    final boolean paginate = "true".equals(pathParams.getStringParameter("paginate", "false"));
     if (pageSize > 0 || pageStart > 0 || paginate)
     {
       if (pageSize > Integer.MAX_VALUE || pageStart > Integer.MAX_VALUE)
@@ -123,7 +141,7 @@ public class CdaContentGenerator extends BaseContentGenerator
   }
 
 
-  public void listqueries(final IParameterProvider pathParams, final OutputStream out) throws Exception
+  public void listQueries(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
 
 
@@ -144,7 +162,7 @@ public class CdaContentGenerator extends BaseContentGenerator
   }
 
 
-  public void listparameters(final IParameterProvider pathParams, final OutputStream out) throws Exception
+  public void listParameters(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
 
 
@@ -163,7 +181,7 @@ public class CdaContentGenerator extends BaseContentGenerator
   }
 
 
-  public void getcdalist(final IParameterProvider pathParams, final OutputStream out) throws Exception
+  public void getCdaList(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
 
     final CdaEngine engine = CdaEngine.getInstance();
@@ -177,7 +195,7 @@ public class CdaContentGenerator extends BaseContentGenerator
   }
 
 
-  public void clearcache(final IParameterProvider pathParams, final OutputStream out) throws Exception
+  public void clearCache(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
 
     SettingsManager.getInstance().clearCache();
