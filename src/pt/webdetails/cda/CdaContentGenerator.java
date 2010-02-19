@@ -1,9 +1,9 @@
 package pt.webdetails.cda;
 
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,20 +35,27 @@ public class CdaContentGenerator extends BaseContentGenerator
   @Override
   public void createContent() throws Exception
   {
-
-    final IParameterProvider pathParams = parameterProviders.get("path");
-    final IParameterProvider requestParams = parameterProviders.get("request");
-
-    final IContentItem contentItem = outputHandler.getOutputContentItem("response", "content", "", instanceId, MIME_TYPE);
-
-    final OutputStream out = contentItem.getOutputStream(null);
-
+    final HttpServletResponse response = (HttpServletResponse) parameterProviders.get("path").getParameter("httpresponse"); //$NON-NLS-1$ //$NON-NLS-2$
     try
     {
+      final IParameterProvider pathParams = parameterProviders.get("path");
+      final IParameterProvider requestParams = parameterProviders.get("request");
 
-      final Class[] params = {IParameterProvider.class, OutputStream.class};
+      final IContentItem contentItem = outputHandler.getOutputContentItem("response", "content", "", instanceId, MIME_TYPE);
 
-      final String method = pathParams.getStringParameter("path", null).replace("/", "").toLowerCase();
+      final OutputStream out = contentItem.getOutputStream(null);
+
+
+      final String pathString = pathParams.getStringParameter("path", null);
+      if (pathString.indexOf('/') > -1)
+      {
+        if (response != null)
+        {
+          response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        }
+        throw new IllegalArgumentException("Invalid method");
+      }
+      final String method = pathString.replace("/", "");
       if ("doQuery".equals(method))
       {
         doQuery(requestParams, out);
@@ -75,13 +82,23 @@ public class CdaContentGenerator extends BaseContentGenerator
       }
       else
       {
-        logger.error(Messages.getErrorString("DashboardDesignerContentGenerator.ERROR_001_INVALID_METHOD_EXCEPTION") + " : " + method);
+        if (response != null)
+        {
+          response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        }
+        logger.error(("DashboardDesignerContentGenerator.ERROR_001_INVALID_METHOD_EXCEPTION") + " : " + method);
+        throw new IllegalArgumentException("Invalid method");
       }
     }
     catch (Exception e)
     {
-      final String message = e.getCause() != null ? e.getCause().getClass().getName() + " - " + e.getCause().getMessage() : e.getClass().getName() + " - " + e.getMessage();
-      logger.error(message);
+      if (response != null)
+      {
+        response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+      }
+
+      logger.error("Failed to execute", e);
+      throw e;
     }
 
   }
