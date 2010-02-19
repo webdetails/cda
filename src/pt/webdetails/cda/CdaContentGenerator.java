@@ -12,6 +12,7 @@ import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
+import org.pentaho.reporting.libraries.base.util.StringUtils;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
@@ -32,6 +33,25 @@ public class CdaContentGenerator extends BaseContentGenerator
   {
   }
 
+  private String extractMethod(final String pathString)
+  {
+    if (StringUtils.isEmpty(pathString))
+    {
+      return null;
+    }
+    final String pathWithoutSlash = pathString.substring(1);
+    if (pathWithoutSlash.indexOf('/') > -1)
+    {
+      return null;
+    }
+    final int queryStart = pathWithoutSlash.indexOf('?');
+    if (queryStart < 0)
+    {
+      return pathWithoutSlash;
+    }
+    return pathWithoutSlash.substring(0, queryStart);
+  }
+
   @Override
   public void createContent() throws Exception
   {
@@ -47,15 +67,17 @@ public class CdaContentGenerator extends BaseContentGenerator
 
 
       final String pathString = pathParams.getStringParameter("path", null);
-      if (pathString.indexOf('/') > -1)
+
+      final String method = extractMethod(pathString);
+      if (method == null)
       {
+        logger.error(("DashboardDesignerContentGenerator.ERROR_001_INVALID_METHOD_EXCEPTION") + " : " + method);
         if (response != null)
         {
           response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }
-        throw new IllegalArgumentException("Invalid method");
+        return;
       }
-      final String method = pathString.replace("/", "");
       if ("doQuery".equals(method))
       {
         doQuery(requestParams, out);
@@ -87,7 +109,7 @@ public class CdaContentGenerator extends BaseContentGenerator
           response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }
         logger.error(("DashboardDesignerContentGenerator.ERROR_001_INVALID_METHOD_EXCEPTION") + " : " + method);
-        throw new IllegalArgumentException("Invalid method");
+        return;
       }
     }
     catch (Exception e)
@@ -98,7 +120,6 @@ public class CdaContentGenerator extends BaseContentGenerator
       }
 
       logger.error("Failed to execute", e);
-      throw e;
     }
 
   }
@@ -109,7 +130,8 @@ public class CdaContentGenerator extends BaseContentGenerator
     final CdaEngine engine = CdaEngine.getInstance();
     final QueryOptions queryOptions = new QueryOptions();
 
-    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(PentahoSystem.getApplicationContext().getSolutionPath(getRelativePath(pathParams)));
+    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile
+        (PentahoSystem.getApplicationContext().getSolutionPath(getRelativePath(pathParams)));
 
     // Handle paging options
     // We assume that any paging options found mean that the user actively wants paging.
@@ -236,8 +258,14 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   private String getRelativePath(final IParameterProvider pathParams)
   {
+    final String solution = pathParams.getStringParameter("solution", "");
+    if (StringUtils.isEmpty(solution))
+    {
+      return pathParams.getStringParameter("path", "");
+    }
+    
     return ActionInfo.buildSolutionPath(
-        pathParams.getStringParameter("solution", ""),
+        solution,
         pathParams.getStringParameter("path", ""),
         pathParams.getStringParameter("file", ""));
   }
