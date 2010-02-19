@@ -13,6 +13,7 @@ import org.pentaho.reporting.libraries.resourceloader.Resource;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
+import org.pentaho.reporting.platform.plugin.RepositoryResourceLoader;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
@@ -32,8 +33,8 @@ public class SettingsManager
   // TODO: These are defined in 
   // org.pentaho.reporting.platform.plugin.RepositoryResourceLoader
   // we should see if there is a way to have plugins use other plugin classes
-  public static final String SOLUTION_SCHEMA_NAME = "pentaho2"; //$NON-NLS-1$
-  public static final String SCHEMA_SEPARATOR = "://"; //$NON-NLS-1$
+  public static final String SOLUTION_SCHEMA_NAME = RepositoryResourceLoader.SOLUTION_SCHEMA_NAME; //$NON-NLS-1$
+  public static final String SCHEMA_SEPARATOR = RepositoryResourceLoader.SCHEMA_SEPARATOR; //$NON-NLS-1$
 
 
   private static final Log logger = LogFactory.getLog(SettingsManager.class);
@@ -80,7 +81,6 @@ public class SettingsManager
     {
       final ResourceManager resourceManager = new ResourceManager();
       resourceManager.registerDefaults();
-      final HashMap helperObjects = new HashMap();
       // add the runtime context so that PentahoResourceData class can get access
       // to the solution repo
       final ResourceKey key;
@@ -90,6 +90,7 @@ public class SettingsManager
       }
       else
       {
+        final HashMap helperObjects = new HashMap();
         key = resourceManager.createKey(SOLUTION_SCHEMA_NAME + SCHEMA_SEPARATOR + id, helperObjects);
       }
       final Resource resource = resourceManager.create(key, null, org.w3c.dom.Document.class);
