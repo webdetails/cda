@@ -15,14 +15,14 @@
             <User>pentaho_user</User>
             <Pass>password</Pass>
         </Connection>
-        <!--Connection id="2" type="mondrian.jdbc">
+        <Connection id="2" type="mondrian.jdbc">
             <Driver>org.hsqldb.jdbcDriver</Driver>
             <Url>jdbc:hsqldb:hsql://localhost:9001/sampledata</Url>
             <User>pentaho_user</User>
             <Pass>password</Pass>
-			<Catalog>./steelwheels.mondrian.xml</Catalog>
-			<Cube>SteelWheelsSales</Cube>
-        </Connection-->
+			      <Catalog>./steelwheels.mondrian.xml</Catalog>
+			      <Cube>SteelWheelsSales</Cube>
+        </Connection>
     </DataSources>
     <!-- DataAccess object controls the query itself
 
@@ -69,7 +69,7 @@
         <!-- Output controls what is outputed and by what order. Defaults to everything -->
         <Output indexes="1,0,2,3"/>
     </DataAccess>
-    <!--DataAccess id="2" connection="2" type="mdx" access="public">
+    <DataAccess id="2" connection="2" type="mdx" access="public">
         <Query>
 			select {[Measures].[Sales]} ON COLUMNS,
 			NON EMPTY  [Time].Children ON ROWS
@@ -91,7 +91,7 @@
 				<Formula>=[price]/1000000</Formula>
 			</CalculatedColumn>
 		</Columns>
-    </DataAccess-->
+    </DataAccess>
     <!-- CompoundDataAccess can be used to join queries. Some types are
 	supported, and the user is responsible for assuring the different dataaccess
 	are compatible:
