@@ -131,8 +131,6 @@ public class CdaContentGenerator extends BaseContentGenerator
     final QueryOptions queryOptions = new QueryOptions();
 
     final String path = getRelativePath(pathParams);
-    logger.error("Do Query: getRelativePath:" + path);
-    logger.error("Do Query: getSolPath:" + PentahoSystem.getApplicationContext().getSolutionPath(path));
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
 
     // Handle paging options
