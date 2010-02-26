@@ -12,6 +12,7 @@ import javax.swing.table.TableModel;
 public interface Exporter
 {
 
+  public String getMimeType();
   public void export(OutputStream out, final TableModel tableModel) throws ExporterException;
 
 }

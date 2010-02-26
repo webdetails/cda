@@ -62,6 +62,11 @@ public class CsvExporter extends AbstractExporter {
 
   }
 
+  public String getMimeType()
+  {
+    return "text/csv";
+  }
+
   public boolean isDouble(String obj) {
     try {
       Double.parseDouble(obj);

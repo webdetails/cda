@@ -79,4 +79,9 @@ public class JsonExporter extends AbstractExporter
 
   }
 
+  public String getMimeType()
+  {
+    return "application/json";
+  }
+
 }

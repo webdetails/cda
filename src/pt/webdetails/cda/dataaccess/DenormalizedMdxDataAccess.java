@@ -29,6 +29,6 @@ public class DenormalizedMdxDataAccess extends MdxDataAccess
 
   public String getType()
   {
-    return "DenormalizedMdx";
+    return "denormalizedMdx";
   }
 }

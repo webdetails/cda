@@ -18,11 +18,11 @@ import pt.webdetails.cda.utils.Util;
  *
  * @author Thomas Morgner.
  */
-public class DriverConnection extends AbstractConnection implements Olap4JConnection
+public class JdbcConnection extends AbstractConnection implements Olap4JConnection
 {
-  private DriverConnectionInfo connectionInfo;
+  private JdbcConnectionInfo connectionInfo;
 
-  public DriverConnection(final Element connection)
+  public JdbcConnection(final Element connection)
       throws InvalidConnectionException
   {
     super(connection);
@@ -32,7 +32,7 @@ public class DriverConnection extends AbstractConnection implements Olap4JConnec
   @Override
   protected void initializeConnection(final Element connection) throws InvalidConnectionException
   {
-    connectionInfo = new DriverConnectionInfo(connection);
+    connectionInfo = new JdbcConnectionInfo(connection);
   }
 
   public String getType()
@@ -51,7 +51,7 @@ public class DriverConnection extends AbstractConnection implements Olap4JConnec
       return false;
     }
 
-    final DriverConnection that = (DriverConnection) o;
+    final JdbcConnection that = (JdbcConnection) o;
 
     if (!connectionInfo.equals(that.connectionInfo))
     {

@@ -14,6 +14,7 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
+import pt.webdetails.cda.exporter.ExporterEngine;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
@@ -174,6 +175,10 @@ public class CdaContentGenerator extends BaseContentGenerator
         queryOptions.addParameter(param.substring(5), pathParams.getStringParameter(param, ""));
       }
     }
+
+    // Make sure we have the correct mime type
+    final HttpServletResponse response = (HttpServletResponse) parameterProviders.get("path").getParameter("httpresponse");
+    response.setHeader("Content-Type", ExporterEngine.getInstance().getExporter(queryOptions.getOutputType()).getMimeType());
     // Finally, pass the query to the engine
     engine.doQuery(out, cdaSettings, queryOptions);
 
@@ -265,7 +270,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     {
       return pathParams.getStringParameter("path", "");
     }
-    
+
     return ActionInfo.buildSolutionPath(
         solution,
         pathParams.getStringParameter("path", ""),

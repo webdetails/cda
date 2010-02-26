@@ -10,7 +10,7 @@ import org.dom4j.Element;
  *
  * @author Thomas Morgner.
  */
-public class DriverConnectionInfo
+public class JdbcConnectionInfo
 {
 
   private String driver;
@@ -19,7 +19,7 @@ public class DriverConnectionInfo
   private String pass;
 
 
-  public DriverConnectionInfo(final Element connection) {
+  public JdbcConnectionInfo(final Element connection) {
 
     setDriver((String) connection.selectObject("string(./Driver)"));
     setUrl((String) connection.selectObject("string(./Url)"));
@@ -73,7 +73,7 @@ public class DriverConnectionInfo
       return false;
     }
 
-    final DriverConnectionInfo that = (DriverConnectionInfo) o;
+    final JdbcConnectionInfo that = (JdbcConnectionInfo) o;
 
     if (driver != null ? !driver.equals(that.driver) : that.driver != null)
     {

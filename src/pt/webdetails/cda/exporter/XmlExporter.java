@@ -88,4 +88,9 @@ public class XmlExporter extends AbstractExporter
     }
 
   }
+
+  public String getMimeType()
+  {
+    return "text/xml";
+  }
 }
