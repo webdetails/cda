@@ -18,9 +18,9 @@ import pt.webdetails.cda.settings.UnknownConnectionException;
  *
  * @author Thomas Morgner.
  */
-public class MetadataDataAccess extends PREDataAccess
+public class MqlDataAccess extends PREDataAccess
 {
-  public MetadataDataAccess(final Element element)
+  public MqlDataAccess(final Element element)
   {
     super(element);
   }
@@ -47,6 +47,6 @@ public class MetadataDataAccess extends PREDataAccess
 
   public String getType()
   {
-    return "metadata";
+    return "mql";
   }
 }

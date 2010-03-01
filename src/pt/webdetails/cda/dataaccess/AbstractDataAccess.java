@@ -57,14 +57,15 @@ public abstract class AbstractDataAccess implements DataAccess
 
 
   public abstract String getType();
-  
+
 
   private void parseOptions(final Element element)
   {
     id = element.attributeValue("id");
 
     final Element nameElement = (Element) element.selectSingleNode("./Name");
-    if(nameElement != null){
+    if (nameElement != null)
+    {
       name = nameElement.getTextTrim();
     }
 
@@ -134,6 +135,14 @@ public abstract class AbstractDataAccess implements DataAccess
     return cacheManager.getCache("pentaho-cda-dataaccess");
   }
 
+  public static synchronized void clearCache() throws CacheException
+  {
+    if (cacheManager != null && cacheManager.cacheExists("pentaho-cda-dataaccess"))
+    {
+      cacheManager.removeCache("pentaho-cda-dataaccess");
+    }
+  }
+
   public TableModel doQuery(final QueryOptions queryOptions) throws QueryException
   {
 
@@ -173,7 +182,7 @@ public abstract class AbstractDataAccess implements DataAccess
     try
     {
       final TableModel tableModel = queryDataSource(parameterDataRow);
-      final TableModel outputTableModel = TableModelUtils.getInstance().postProcessTableModel(this,queryOptions,tableModel);
+      final TableModel outputTableModel = TableModelUtils.getInstance().postProcessTableModel(this, queryOptions, tableModel);
       logger.debug("Query " + getId() + " done successfully - returning tableModel");
       return outputTableModel;
     }
@@ -183,11 +192,9 @@ public abstract class AbstractDataAccess implements DataAccess
     }
 
 
-
   }
 
 
-  
   public TableModel listParameters(final DiscoveryOptions discoveryOptions)
   {
 

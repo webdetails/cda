@@ -17,7 +17,7 @@ public class MetadataConnectionInfo
 
   public MetadataConnectionInfo(final Element connection)
   {
-    domainId = ((String) connection.selectObject("string(./DomainID)"));
+    domainId = ((String) connection.selectObject("string(./DomainId)"));
     xmiFile = ((String) connection.selectObject("string(./XmiFile)"));
   }
 

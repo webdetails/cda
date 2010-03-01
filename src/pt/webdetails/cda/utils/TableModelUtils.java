@@ -126,10 +126,6 @@ public class TableModelUtils
     final int count = namedColumns.size();
     final ArrayList<ColumnDefinition> calculatedColumnsList = dataAccess.getCalculatedColumns();
 
-    if (!calculatedColumnsList.isEmpty())
-    {
-      logger.warn("Todo: Implement " + calculatedColumnsList.size() + " Calculated Columns");
-    }
 
     final Class[] colTypes = namedColumnsClasses.toArray(new Class[]{});
     final String[] colNames = namedColumns.toArray(new String[]{});

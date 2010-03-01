@@ -13,6 +13,7 @@ import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
+import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.exporter.ExporterEngine;
 import pt.webdetails.cda.query.QueryOptions;
@@ -179,6 +180,10 @@ public class CdaContentGenerator extends BaseContentGenerator
     // Make sure we have the correct mime type
     final HttpServletResponse response = (HttpServletResponse) parameterProviders.get("path").getParameter("httpresponse");
     response.setHeader("Content-Type", ExporterEngine.getInstance().getExporter(queryOptions.getOutputType()).getMimeType());
+
+    // We can't cache this requests
+    response.setHeader("Cache-Control", "max-age=0, no-store");
+
     // Finally, pass the query to the engine
     engine.doQuery(out, cdaSettings, queryOptions);
 
@@ -245,7 +250,7 @@ public class CdaContentGenerator extends BaseContentGenerator
   {
 
     SettingsManager.getInstance().clearCache();
-
+    AbstractDataAccess.clearCache();
 
   }
 

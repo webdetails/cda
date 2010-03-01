@@ -1,93 +1,127 @@
 <STYLE type="text/css">
-    .contents, .shadow {
-        position: relative;
-        bottom: 4px;
-        right: 4px;
-        min-width:700x
-    }
-    .shadow { background-color: #ccc; }
-    .contents {
-        background-color: #fff;
-        color: #000;
-        border: 1px solid #000;
-        padding: 0.5em;
-        min-width:700px
-    }
+	.contents, .shadow {
+		position: relative;
+		bottom: 4px;
+		right: 4px;
+		min-width:700px
+	}
+	.shadow { background-color: #ccc; }
+	.contents {
+		background-color: #fff;
+		color: #000;
+		border: 1px solid #000;
+		padding: 0.5em;
+		min-width:700px
+	}
+
+	.testTable {
+		width: 500px
+		background-color: #0ff;
+		border: 1px solid;
+	}
+
+	.testTable tr td:nth-child(1) {
+		font-family: monospace;
+	}
+
+	.testTable tr td:nth-child(3) {
+		font-style: italic;
+		color: blue
+	}
+
+
 </style>
 <div class="shadow">
-    <div class="contents">
-        <h2>Community Dashboard Framework - Home</h2>
+	<div class="contents">
+		<h2>Community Data Access</h2>
 
 
 		<p>
 
-		Community Dashboard Framework (CDF) is a project that provides an easy to
-		use and powerful dashboard framework on top of the Pentaho BI server. It
-		allows BI developers to quickly and easily create dynamic dashboards that
-		allow users to explore and understand large amounts of data using a variety
-		of charts and tables and then "drill in" to the exact data they want.
+		CDA is a new Data Access project for Pentaho project. Aims to solve the
+		problem of data extraction. The details are described <a
+			href="http://tinyurl.com/ydfzw4u">in this blog post</a>.
 
 		</p>
 
 		<p>
 
-		CDF brings together the reports, charts, and tables that the Pentaho BI
-		server provides into a cohesive framework that the developer can use to
-		create visually appealing and incredibly useful dashboards using simple
-		HTML and Javascript.  New components can be integrated into the framework,
-		and a "MetaLayer" allows developers to save time and prevent copy-and-paste
-		errors by collecting business logic into well organized units that can be
-		shared among dashboards.
+		This page lists not only the available datasources but serves as test
+		page and reference to the way they work.
 
 		</p>
 
-        <table>
-            <tr>
-                <td>
-                    <h3>Standalone Mode</h3>
-                    <ul>
-                        </li>
-                        You can use CDF in standalone mode. Try opening 
-                        <a
-                            href="RenderXCDF?solution=bi-developers&path=/cdf-samples/10-cdf&action=information_dashboard.xcdf">this
-                        link</a> in a new window.
-                        </li>
-                    </ul>
+		<h3>Datasource test</h3>
 
-                    <h3>Links</h3>
-                    <ul>
-                        <li>
-                        <a href="http://wiki.pentaho.com/display/COM/Community+Dashboard+Framework">Community Dashboard Framework Homepage</a>
-                        </li>
-                        <li>
-                        <a href="http://forums.pentaho.org/forumdisplay.php?f=80">Pentaho Forums</a>
-                        </li>
-                        <li>
-                        <a href="http://code.google.com/p/pentaho-cdf/">CDF - Google Code</a>
-                        </li>
-                    </ul>
-                    <td>
-                        <td>
-                            <image width="300" height="230" src="resources/style/images/dashboards.png">
-                        </td>
-                    </tr>
-                </table>
+		<table class="testTable" cellpadding="0" cellspacing="0">
 
-            </div>
-        </div>
-        <script language="javascript" type="text/javascript">
+			<tr>
+				<th>Access method</th>
+				<th>Description</th>
+				<th>Result</th>
+			</tr>
+			<tr>
 
-            var components = [];
+				<td>sql.jdbc</td>
+				<td>Sql query over a jdbc datasource</td>
+				<td>testing</td>
+			</tr>
+			<tr>
+				<td>sql.jndi</td>
+				<td>Sql query over a jndi datasource</td>
 
-            </script>
+				<td>testing</td>
+			</tr>
+			<tr>
+				<td>mondrian.jdbc</td>
+				<td>Mdx query over a jdbc mondrian connection</td>
+				<td>testing</td>
+			</tr>
 
-            <script language="javascript" type="text/javascript">
+			<tr>
+				<td>mondrian.jndi</td>
+				<td>Jndi query over a jndi mondrian connectino</td>
+				<td>testing</td>
+			</tr>
+		</table>
 
-                function load(){
-                      Dashboards.init(components);
-                }
+
+	</div>
+</div>
+<script language="javascript" type="text/javascript">
+
+	var components = [];
+
+	</script>
+
+	<script language="javascript" type="text/javascript">
+
+		function load(){
+			Dashboards.init(components);
+		}
 
 
 load();
 
+var URLs = [
+   "../cda/doQuery?solution=bi-developers&path=/cda/cdafiles/sample.cda&dataAccessId=1",
+   "../cda/doQuery?solution=bi-developers&path=/cda/cdafiles/sample.cda&dataAccessId=2",
+   "../cda/doQuery?solution=bi-developers&path=/cda/cdafiles/sample.cda&dataAccessId=3",
+   "../cda/doQuery?solution=bi-developers&path=/cda/cdafiles/sample.cda&dataAccessId=4"
+]
+
+var makeCall = function(idx){
+	console.log("Making call on idx " + idx);
+	var localIdx = idx;
+	var myself = this;
+	$.getJSON(URLs[idx],function(data){
+		console.log("Ok, got data on call of " + myself.localIdx + ": " + data.resultset.length);
+	})
+
+}
+
+makeCall(1);
+
+
 </script>
+
