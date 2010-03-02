@@ -1,4 +1,4 @@
-package pt.webdetails.cda.dataaccess.kettle;
+package pt.webdetails.cda.utils.kettle.kettle;
 
 import java.util.ArrayList;
 import java.util.List;

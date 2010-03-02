@@ -20,9 +20,9 @@ import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.steps.mergejoin.MergeJoinMeta;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 
-import pt.webdetails.cda.dataaccess.kettle.KettleUtils;
-import pt.webdetails.cda.dataaccess.kettle.RowMetaToTableModel;
-import pt.webdetails.cda.dataaccess.kettle.TableModelInput;
+import pt.webdetails.cda.utils.kettle.kettle.KettleUtils;
+import pt.webdetails.cda.utils.kettle.kettle.RowMetaToTableModel;
+import pt.webdetails.cda.utils.kettle.kettle.TableModelInput;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 
