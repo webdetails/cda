@@ -14,19 +14,29 @@
 		min-width:700px
 	}
 
-	.testTable {
+	#testTable {
 		width: 500px
 		background-color: #0ff;
 		border: 1px solid;
 	}
 
-	.testTable tr td:nth-child(1) {
+	#testTable tr td:nth-child(1) {
 		font-family: monospace;
 	}
 
-	.testTable tr td:nth-child(3) {
+	#testTable td.testPending{
 		font-style: italic;
 		color: blue
+	}
+
+	#testTable td.testPassed {
+		font-style: italic;
+		color: green
+	}
+
+	#testTable td.testFailed {
+		font-style: italic;
+		color: red
 	}
 
 
@@ -53,35 +63,13 @@
 
 		<h3>Datasource test</h3>
 
-		<table class="testTable" cellpadding="0" cellspacing="0">
+		<table id="testTable" cellpadding="0" cellspacing="0">
 
 			<tr>
 				<th>Access method</th>
 				<th>Description</th>
+				<th>Sample</th>
 				<th>Result</th>
-			</tr>
-			<tr>
-
-				<td>sql.jdbc</td>
-				<td>Sql query over a jdbc datasource</td>
-				<td>testing</td>
-			</tr>
-			<tr>
-				<td>sql.jndi</td>
-				<td>Sql query over a jndi datasource</td>
-
-				<td>testing</td>
-			</tr>
-			<tr>
-				<td>mondrian.jdbc</td>
-				<td>Mdx query over a jdbc mondrian connection</td>
-				<td>testing</td>
-			</tr>
-
-			<tr>
-				<td>mondrian.jndi</td>
-				<td>Jndi query over a jndi mondrian connectino</td>
-				<td>testing</td>
 			</tr>
 		</table>
 
@@ -103,24 +91,121 @@
 
 load();
 
-var URLs = [
-   "../cda/doQuery?solution=bi-developers&path=/cda/cdafiles/sample.cda&dataAccessId=1",
-   "../cda/doQuery?solution=bi-developers&path=/cda/cdafiles/sample.cda&dataAccessId=2",
-   "../cda/doQuery?solution=bi-developers&path=/cda/cdafiles/sample.cda&dataAccessId=3",
-   "../cda/doQuery?solution=bi-developers&path=/cda/cdafiles/sample.cda&dataAccessId=4"
-]
 
-var makeCall = function(idx){
-	console.log("Making call on idx " + idx);
-	var localIdx = idx;
-	var myself = this;
-	$.getJSON(URLs[idx],function(data){
-		console.log("Ok, got data on call of " + myself.localIdx + ": " + data.resultset.length);
-	})
+// To add test cases, just edit this array
 
+var testCases = [
+{
+	type: "sql.jdbc",
+	desc: "Sql query over a jdbc datasource",
+	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/sql-jdbc.cda",
+	expectedCols: 4,
+	expectedRows: 3
+},
+{
+	type: "sql.jndi",
+	desc: "Sql query over a jndi datasource",
+	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/sql-jndi.cda",
+	expectedCols: 4,
+	expectedRows: 2
+},
+{
+	type: "mondrian.jdbc",
+	desc: "Mdx query over a jdbc mondrian connection",
+	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/mondrian-jdbc.cda",
+	expectedCols: 4,
+	expectedRows: 1
+},
+{
+	type: "mondrian.jndi",
+	desc: "Mdx query over a jndi mondrian connection",
+	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/mondrian-jndi.cda",
+	expectedCols: 4,
+	expectedRows: 3
+}/*,
+{
+	url: "../cda/doQuery?path=/bi-developers/cda/cdafiles/sample.cda&dataAccessId=5",
+	expectedCols: 3,
+	expectedRows: 4
+},
+{
+	url: "../cda/doQuery?path=/bi-developers/cda/cdafiles/sample.cda&dataAccessId=6",
+	expectedCols: 3,
+	expectedRows: 4
+}*/
+];
+
+
+// Init table
+
+
+// Build code to execute
+
+var Caller = Base.extend({
+		idx: -1,
+		testInfo: {},
+
+		constructor: function(idx){
+			this.idx = idx;
+			this.testInfo = testCases[idx];
+
+			this.init();
+		},
+
+		init: function(){
+			// Add this line to the table
+			var sampleFile = this.testInfo.url.match(/cdafiles\/(.*)/)[0];
+			$("#testTable").append("<tr><td>" + this.testInfo.type + "</td><td>"+this.testInfo.desc+"</td><td>"+ sampleFile+"</td><td class='testPending'>testing...</td></tr>");
+		},
+
+		makeCall:  function(){
+			var myself = this;
+			$.getJSON(this.testInfo.url,function(data){
+					myself.verifyData(data);
+				});
+
+		},
+
+
+		verifyData: function(data){
+			var valid = true;
+			var statusText = "";
+			var cssClass;
+
+			if(data.resultset.length != this.testInfo.expectedRows){
+				valid = false;	
+				statusText += "Unexpected number of rows; ";
+			}
+			if(data.metadata.length != this.testInfo.expectedCols){
+				valid = false;	
+				statusText += "Unexpected number of columns; ";
+			}
+
+			if(valid){
+				statusText = "Ok";
+				cssClass="testPassed";
+			}
+			else{
+				cssClass="testFailed";
+			}
+
+			// Update status
+			var statusCell = $("#testTable tr:eq(" + (this.idx + 1) + ") td:eq(3)");
+			statusCell.text(statusText);
+			statusCell.removeClass("testPending");
+			statusCell.addClass(cssClass);
+
+		}
+
+	});
+
+
+// Call it
+
+for( var i = 0; i< testCases.length; i++){
+	var c = new Caller(i);
+	c.makeCall();
 }
-
-makeCall(1);
 
 
 </script>

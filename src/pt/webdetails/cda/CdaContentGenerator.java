@@ -177,16 +177,23 @@ public class CdaContentGenerator extends BaseContentGenerator
       }
     }
 
-    // Make sure we have the correct mime type
-    final HttpServletResponse response = (HttpServletResponse) parameterProviders.get("path").getParameter("httpresponse");
-    response.setHeader("Content-Type", ExporterEngine.getInstance().getExporter(queryOptions.getOutputType()).getMimeType());
+    String mimeType = ExporterEngine.getInstance().getExporter(queryOptions.getOutputType()).getMimeType();
+    setResponseHeaders(mimeType);
 
-    // We can't cache this requests
-    response.setHeader("Cache-Control", "max-age=0, no-store");
 
     // Finally, pass the query to the engine
     engine.doQuery(out, cdaSettings, queryOptions);
 
+  }
+
+  private void setResponseHeaders(final String mimeType)
+  {
+    // Make sure we have the correct mime type
+    final HttpServletResponse response = (HttpServletResponse) parameterProviders.get("path").getParameter("httpresponse");
+    response.setHeader("Content-Type", mimeType);
+
+    // We can't cache this requests
+    response.setHeader("Cache-Control", "max-age=0, no-store");
   }
 
 
@@ -206,7 +213,10 @@ public class CdaContentGenerator extends BaseContentGenerator
     final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
     discoveryOptions.setOutputType(pathParams.getStringParameter("outputType", "json"));
 
+    String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
+    setResponseHeaders(mimeType);
     engine.listQueries(out, cdaSettings, discoveryOptions);
+
 
   }
 
@@ -227,6 +237,8 @@ public class CdaContentGenerator extends BaseContentGenerator
     discoveryOptions.setDataAccessId(pathParams.getStringParameter("dataAccessId", "<blank>"));
     discoveryOptions.setOutputType(pathParams.getStringParameter("outputType", "json"));
 
+    String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
+    setResponseHeaders(mimeType);
     engine.listParameters(out, cdaSettings, discoveryOptions);
 
   }
@@ -240,6 +252,8 @@ public class CdaContentGenerator extends BaseContentGenerator
     final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
     discoveryOptions.setOutputType(pathParams.getStringParameter("outputType", "json"));
 
+    String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
+    setResponseHeaders(mimeType);
     engine.getCdaList(out, discoveryOptions, userSession);
 
 
@@ -251,6 +265,9 @@ public class CdaContentGenerator extends BaseContentGenerator
 
     SettingsManager.getInstance().clearCache();
     AbstractDataAccess.clearCache();
+
+    setResponseHeaders("text/plain");
+    out.write("Cache cleared".getBytes());
 
   }
 
