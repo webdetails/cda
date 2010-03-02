@@ -27,5 +27,10 @@
         <fileinfo-classname>pt.webdetails.cda.CdaFileMetaProvider</fileinfo-classname>
         <title>CDA</title>
     </content-generator>
+
+	<!-- Menu entry -->
+	<menu-items>
+		<menu-item id="cda_refresh" anchor="tools-refresh-submenu" label="CDA Cache" command="content/cda/clearCache" type="MENU_ITEM" how="LAST_CHILD"/>
+	</menu-items>
     
 </plugin>
