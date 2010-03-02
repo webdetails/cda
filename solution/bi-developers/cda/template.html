@@ -122,17 +122,50 @@ var testCases = [
 	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/mondrian-jndi.cda",
 	expectedCols: 4,
 	expectedRows: 3
-}/*,
-{
-	url: "../cda/doQuery?path=/bi-developers/cda/cdafiles/sample.cda&dataAccessId=5",
-	expectedCols: 3,
-	expectedRows: 4
 },
 {
-	url: "../cda/doQuery?path=/bi-developers/cda/cdafiles/sample.cda&dataAccessId=6",
-	expectedCols: 3,
-	expectedRows: 4
-}*/
+	type: "mondrian.jdbc (denormalized)",
+	desc: "Denormalized Mdx query over a jdbc mondrian connection",
+	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/denormalized-mondrian-jndi.cda",
+	expectedCols: 5,
+	expectedRows: 6
+},
+{
+	type: "mondrian.jndi (denormalized)",
+	desc: "Denormalized Mdx query over a jndi mondrian connection",
+	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/denormalized-mondrian-jndi.cda",
+	expectedCols: 5,
+	expectedRows: 6
+}/*,
+{
+	type: "olap4j.jdbc",
+	desc: "Mdx query over a olap4j jdbc connection",
+	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/olap4j-jdbc.cda",
+	expectedCols: 5,
+	expectedRows: 6
+},
+{
+	type: "olap4j.jndi",
+	desc: "Mdx query over a olap4j jndi connection",
+	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/olap4j-jndi.cda",
+	expectedCols: 5,
+	expectedRows: 6
+}
+{
+	type: "scripting",
+	desc: "Scripting data access",
+	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/scripting.cda",
+	expectedCols: 5,
+	expectedRows: 6
+}
+{
+	type: "metadata",
+	desc: "Mql query over a metadata connection",
+	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/metadata.cda",
+	expectedCols: 5,
+	expectedRows: 6
+}
+*/
 ];
 
 
