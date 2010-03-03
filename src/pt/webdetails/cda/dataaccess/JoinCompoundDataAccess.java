@@ -33,7 +33,7 @@ import pt.webdetails.cda.utils.kettle.kettle.TableModelInput;
 public class JoinCompoundDataAccess extends CompoundDataAccess
 {
 
-  private static final Log logger = LogFactory.getLog(SqlDataAccess.class);
+  private static final Log logger = LogFactory.getLog(JoinCompoundDataAccess.class);
   private static final String TYPE = "sql";
 
   private String leftId;
@@ -44,6 +44,8 @@ public class JoinCompoundDataAccess extends CompoundDataAccess
   public JoinCompoundDataAccess(final Element element)
   {
     super(element);
+
+    logger.warn("TODO - Verify that JoinCompoundDataAccess.TYPE is supposed to be 'sql'");
 
     Element left = (Element) element.selectSingleNode("Left");
     Element right = (Element) element.selectSingleNode("Right");
