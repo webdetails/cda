@@ -41,10 +41,10 @@ import org.pentaho.di.trans.step.StepMetaInterface;
  * 
  * @author Daniel Einspanjer
  */
-public class DynamicTrans
+public class DynamicTransformation
 {
   /**
-   * Enumeration of the possible states of this DynamicTrans
+   * Enumeration of the possible states of this DynamicTransformation
    */
   public enum State {
     INVALID, CREATED, RUNNING, FINISHED_SUCCESS, FINISHED_ERROR
@@ -78,14 +78,14 @@ public class DynamicTrans
    * 
    * @param transConfig
    *          a DynamicTransConfig that will be permanently frozen during
-   *          construction of the DynamicTrans
+   *          construction of the DynamicTransformation
    * @param transMetaConfig
    *          describes the source and settings of the transMeta
    * @throws KettleXMLException
    *           if one of the XML snippits in the config is invalid according to
    *           Kettle
    */
-  public DynamicTrans(final DynamicTransConfig transConfig, final DynamicTransMetaConfig transMetaConfig) throws KettleException
+  public DynamicTransformation(final DynamicTransConfig transConfig, final DynamicTransMetaConfig transMetaConfig) throws KettleException
   {
     if (transConfig == null) throw new IllegalArgumentException("config is null");
     transConfig.freeze();

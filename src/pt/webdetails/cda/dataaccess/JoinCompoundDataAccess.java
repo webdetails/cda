@@ -15,7 +15,7 @@ import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
-import pt.webdetails.cda.utils.kettle.DynamicTrans;
+import pt.webdetails.cda.utils.kettle.DynamicTransformation;
 import pt.webdetails.cda.utils.kettle.DynamicTransConfig;
 import pt.webdetails.cda.utils.kettle.DynamicTransMetaConfig;
 import pt.webdetails.cda.utils.kettle.RowMetaToTableModel;
@@ -112,7 +112,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       RowMetaToTableModel outputListener = new RowMetaToTableModel(false, true, false);
       transConfig.addOutput("mergeJoin", outputListener);
 
-      DynamicTrans trans = new DynamicTrans(transConfig, transMetaConfig);
+      DynamicTransformation trans = new DynamicTransformation(transConfig, transMetaConfig);
       trans.execute(null, null, this);
       logger.info(trans.getReadWriteThroughput());
       output = outputListener.getRowsWritten();
