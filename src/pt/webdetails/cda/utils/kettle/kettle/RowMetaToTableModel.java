@@ -11,32 +11,28 @@ import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.di.trans.step.RowListener;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 
-
 /**
  * Bridge class between Kettle's RowMeta and CDA's TableModel
- *
+ * 
  * @author Daniel Einspanjer
  */
 public class RowMetaToTableModel implements RowListener
 {
-  private boolean recordRowsRead;
-  private AtomicMarkableReference<RowMetaInterface> rowsReadMeta = new AtomicMarkableReference<RowMetaInterface>(null, false);
-  private List<Object[]> rowsRead;
+  private boolean                                         recordRowsRead;
+  private final AtomicMarkableReference<RowMetaInterface> rowsReadMeta    = new AtomicMarkableReference<RowMetaInterface>(null, false);
+  private List<Object[]>                                  rowsRead;
 
-  private boolean recordRowsWritten;
-  private AtomicMarkableReference<RowMetaInterface> rowsWrittenMeta = new AtomicMarkableReference<RowMetaInterface>(null, false);;
-  private List<Object[]> rowsWritten;
+  private boolean                                         recordRowsWritten;
+  private final AtomicMarkableReference<RowMetaInterface> rowsWrittenMeta = new AtomicMarkableReference<RowMetaInterface>(null, false); ;
+  private List<Object[]>                                  rowsWritten;
 
-  private boolean recordRowsError;
-  private AtomicMarkableReference<RowMetaInterface> rowsErrorMeta = new AtomicMarkableReference<RowMetaInterface>(null, false);;
-  private List<Object[]> rowsError;
+  private boolean                                         recordRowsError;
+  private final AtomicMarkableReference<RowMetaInterface> rowsErrorMeta   = new AtomicMarkableReference<RowMetaInterface>(null, false); ;
+  private List<Object[]>                                  rowsError;
 
-  public RowMetaToTableModel(boolean recordRowsRead, boolean recordRowsWritten, boolean recordRowsError)
+  public RowMetaToTableModel(final boolean recordRowsRead, final boolean recordRowsWritten, final boolean recordRowsError)
   {
-    if (!(recordRowsWritten || recordRowsRead || recordRowsError))
-    {
-      throw new IllegalArgumentException("Not recording any output. Must listen to something.");
-    }
+    if (!(recordRowsWritten || recordRowsRead || recordRowsError)) throw new IllegalArgumentException("Not recording any output. Must listen to something.");
     if (recordRowsRead) {
       this.recordRowsRead = true;
       rowsRead = new ArrayList<Object[]>();
@@ -51,7 +47,7 @@ public class RowMetaToTableModel implements RowListener
     }
   }
 
-  public void rowReadEvent(RowMetaInterface rowMeta, Object[] row)
+  public void rowReadEvent(final RowMetaInterface rowMeta, final Object[] row)
   {
     if (recordRowsRead) {
       rowsReadMeta.weakCompareAndSet(null, rowMeta, false, true);
@@ -59,7 +55,7 @@ public class RowMetaToTableModel implements RowListener
     }
   }
 
-  public void rowWrittenEvent(RowMetaInterface rowMeta, Object[] row)
+  public void rowWrittenEvent(final RowMetaInterface rowMeta, final Object[] row)
   {
     if (recordRowsWritten) {
       rowsWrittenMeta.weakCompareAndSet(null, rowMeta, false, true);
@@ -67,7 +63,7 @@ public class RowMetaToTableModel implements RowListener
     }
   }
 
-  public void errorRowWrittenEvent(RowMetaInterface rowMeta, Object[] row)
+  public void errorRowWrittenEvent(final RowMetaInterface rowMeta, final Object[] row)
   {
     if (recordRowsError) {
       rowsErrorMeta.weakCompareAndSet(null, rowMeta, false, true);
@@ -90,29 +86,27 @@ public class RowMetaToTableModel implements RowListener
     return asTableModel(rowsErrorMeta.getReference(), rowsError);
   }
 
-  private TableModel asTableModel(RowMetaInterface rowMeta, List<Object[]> rows)
+  private TableModel asTableModel(final RowMetaInterface rowMeta, final List<Object[]> rows)
   {
-    TypedTableModel output = new TypedTableModel(rowMeta.getFieldNames(), getClassesForFields(rowMeta), rows.size());
-    for (int i = 0; i < rows.size(); i++)
-    {
-      Object[] row = rows.get(i);
-      for (int j = 0; j < row.length; j++)
-      {
+    if (rowMeta == null) return null;
+
+    final TypedTableModel output = new TypedTableModel(rowMeta.getFieldNames(), getClassesForFields(rowMeta), rows.size());
+    for (int i = 0; i < rows.size(); i++) {
+      final Object[] row = rows.get(i);
+      for (int j = 0; j < row.length; j++) {
         output.setValueAt(row[j], i, j);
       }
     }
     return output;
   }
 
-  private Class<?>[] getClassesForFields(RowMetaInterface rowMeta) throws IllegalArgumentException
+  private Class<?>[] getClassesForFields(final RowMetaInterface rowMeta) throws IllegalArgumentException
   {
-    List<ValueMetaInterface> valueMetas = rowMeta.getValueMetaList();
-    Class<?>[] types = new Class[valueMetas.size()];
-    for (int i = 0; i < valueMetas.size(); i++)
-    {
-      ValueMetaInterface valueMeta = valueMetas.get(i);
-      switch (valueMeta.getType())
-      {
+    final List<ValueMetaInterface> valueMetas = rowMeta.getValueMetaList();
+    final Class<?>[] types = new Class[valueMetas.size()];
+    for (int i = 0; i < valueMetas.size(); i++) {
+      final ValueMetaInterface valueMeta = valueMetas.get(i);
+      switch (valueMeta.getType()) {
         case ValueMetaInterface.TYPE_STRING:
           types[i] = String.class;
           break;

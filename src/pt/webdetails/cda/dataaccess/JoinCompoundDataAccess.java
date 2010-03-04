@@ -5,24 +5,24 @@ import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import javax.swing.table.TableModel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-import org.pentaho.di.trans.StepLoader;
-import org.pentaho.di.trans.Trans;
-import org.pentaho.di.trans.TransHopMeta;
-import org.pentaho.di.trans.TransMeta;
-import org.pentaho.di.trans.step.StepInterface;
-import org.pentaho.di.trans.step.StepMeta;
-import org.pentaho.di.trans.steps.mergejoin.MergeJoinMeta;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
+
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
-import pt.webdetails.cda.utils.kettle.kettle.KettleUtils;
+import pt.webdetails.cda.utils.kettle.kettle.DynamicTrans;
+import pt.webdetails.cda.utils.kettle.kettle.DynamicTransConfig;
+import pt.webdetails.cda.utils.kettle.kettle.DynamicTransMetaConfig;
 import pt.webdetails.cda.utils.kettle.kettle.RowMetaToTableModel;
+import pt.webdetails.cda.utils.kettle.kettle.RowProductionManager;
 import pt.webdetails.cda.utils.kettle.kettle.TableModelInput;
+import pt.webdetails.cda.utils.kettle.kettle.DynamicTransConfig.EntryType;
+import pt.webdetails.cda.utils.kettle.kettle.DynamicTransMetaConfig.Type;
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,7 +30,7 @@ import pt.webdetails.cda.utils.kettle.kettle.TableModelInput;
  * Date: Feb 16, 2010
  * Time: 11:38:19 PM
  */
-public class JoinCompoundDataAccess extends CompoundDataAccess
+public class JoinCompoundDataAccess extends CompoundDataAccess implements RowProductionManager
 {
 
   private static final Log logger = LogFactory.getLog(JoinCompoundDataAccess.class);
@@ -40,6 +40,8 @@ public class JoinCompoundDataAccess extends CompoundDataAccess
   private String rightId;
   private String[] leftKeys;
   private String[] rightKeys;
+  private ExecutorService executorService = Executors.newCachedThreadPool();
+  private Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
 
   public JoinCompoundDataAccess(final Element element)
   {
@@ -60,6 +62,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess
 
   public String getType()
   {
+    logger.warn("TODO - Verify that JoinCompoundDataAccess.TYPE is supposed to be 'sql'");
     return TYPE;
   }
 
@@ -67,74 +70,51 @@ public class JoinCompoundDataAccess extends CompoundDataAccess
   protected TableModel queryDataSource(final ParameterDataRow parameter) throws QueryException
   {
     TableModel output = null;
-
+    inputCallables.clear();
+    
     try
     {
       final TableModel tableModelA = this.getCdaSettings().getDataAccess(leftId).doQuery(new QueryOptions());
       final TableModel tableModelB = this.getCdaSettings().getDataAccess(rightId).doQuery(new QueryOptions());
 
       logger.warn("TODO - Grab the correct keys");
-      final String[] leftColumns = new String[leftKeys.length];
-      final String[] rightColumns = new String[leftKeys.length];
 
+      StringBuilder mergeJoinXML = new StringBuilder("<step><name>mergeJoin</name><type>MergeJoin</type><join_type>INNER</join_type><step1>input1</step1><step2>input2</step2>");
+      mergeJoinXML.append("<keys_1>");
       for (int i = 0; i < leftKeys.length; i++)
       {
-        leftColumns[i] = tableModelA.getColumnName(Integer.parseInt(leftKeys[i]));
+        mergeJoinXML.append("<key>").append(tableModelA.getColumnName(Integer.parseInt(leftKeys[i]))).append("</key>");
       }
-
+      mergeJoinXML.append("</keys_1><keys_2>");
       for (int i = 0; i < rightKeys.length; i++)
       {
-        rightColumns[i] = tableModelB.getColumnName(Integer.parseInt(rightKeys[i]));
+        mergeJoinXML.append("<key>").append(tableModelB.getColumnName(Integer.parseInt(rightKeys[i]))).append("</key>");
       }
+      mergeJoinXML.append("</keys_2></step>");
 
+      DynamicTransMetaConfig transMetaConfig = new DynamicTransMetaConfig(Type.EMPTY, "JoinCompoundData", null, null);
+      DynamicTransConfig transConfig = new DynamicTransConfig();
+      
+      transConfig.addConfigEntry(EntryType.STEP, "input1", "<step><name>input1</name><type>Injector</type></step>");
+      transConfig.addConfigEntry(EntryType.STEP, "input2", "<step><name>input2</name><type>Injector</type></step>");
+      transConfig.addConfigEntry(EntryType.STEP, "mergeJoin", mergeJoinXML.toString());
 
-      TransMeta transMeta = KettleUtils.initTransMeta("JoinCompoundData");
-
-      String input1Name = "input1";
-      TableModelInput input1Meta = new TableModelInput(input1Name);
-      StepMeta input1 = input1Meta.getStepMeta();
-      transMeta.addStep(input1);
-
-      String input2Name = "input2";
-      TableModelInput input2Meta = new TableModelInput(input2Name);
-      StepMeta input2 = input2Meta.getStepMeta();
-      transMeta.addStep(input2);
-
-      String mergeJoinName = "mergeJoin";
-      MergeJoinMeta mergeJoinMeta = new MergeJoinMeta();
-      mergeJoinMeta.setStepMeta1(input1);
-      mergeJoinMeta.setKeyFields1(leftColumns);
-      mergeJoinMeta.setStepMeta2(input2);
-      mergeJoinMeta.setKeyFields2(rightColumns);
-      mergeJoinMeta.setJoinType("INNER");
-      StepMeta mergeJoin = new StepMeta(StepLoader.getInstance().getStepPluginID(mergeJoinMeta), mergeJoinName, mergeJoinMeta);
-      transMeta.addStep(mergeJoin);
-
-      transMeta.addTransHop(new TransHopMeta(input1, mergeJoin));
-      transMeta.addTransHop(new TransHopMeta(input2, mergeJoin));
-
-      Trans trans = new Trans(transMeta);
-      trans.prepareExecution(null);
-
+      transConfig.addConfigEntry(EntryType.HOP, "input1", "mergeJoin");
+      transConfig.addConfigEntry(EntryType.HOP, "input2", "mergeJoin");
+      
+      TableModelInput input1 = new TableModelInput();
+      transConfig.addInput("input1", input1);
+      inputCallables.add(input1.getCallableRowProducer(tableModelA, true));
+      TableModelInput input2 = new TableModelInput();
+      transConfig.addInput("input2", input2);
+      inputCallables.add(input2.getCallableRowProducer(tableModelB, true));
+      
       RowMetaToTableModel outputListener = new RowMetaToTableModel(false, true, false);
+      transConfig.addOutput("mergeJoin", outputListener);
 
-      StepInterface si = trans.getStepInterface(mergeJoinName, 0);
-      si.addRowListener(outputListener);
-
-      input1Meta.connectRowProducer(trans);
-      input2Meta.connectRowProducer(trans);
-
-      trans.startThreads();
-
-      // Need to produce rows in another thread, otherwise, we could deadlock
-      ExecutorService executorService = Executors.newCachedThreadPool();
-      Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
-      inputCallables.add(input1Meta.produceRows(tableModelA));
-      inputCallables.add(input2Meta.produceRows(tableModelB));
-      executorService.invokeAll(inputCallables);
-
-      trans.waitUntilFinished();
-
+      DynamicTrans trans = new DynamicTrans(transConfig, transMetaConfig);
+      trans.execute(null, null, this);
+      logger.info(trans.getReadWriteThroughput());
       output = outputListener.getRowsWritten();
     }
     catch (UnknownDataAccessException e)
@@ -147,5 +127,19 @@ public class JoinCompoundDataAccess extends CompoundDataAccess
     }
 
     return output;
+  }
+
+  @Override
+  public void startRowProduction()
+  {
+    try
+    {
+      executorService.invokeAll(inputCallables);
+    }
+    catch (InterruptedException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 }
