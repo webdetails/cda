@@ -1,4 +1,4 @@
-package pt.webdetails.cda.utils.kettle.kettle;
+package pt.webdetails.cda.utils.kettle;
 
 import org.pentaho.di.core.util.EnvUtil;
 import org.pentaho.di.trans.TransMeta;

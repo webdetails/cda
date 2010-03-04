@@ -1,4 +1,4 @@
-package pt.webdetails.cda.utils.kettle.kettle;
+package pt.webdetails.cda.utils.kettle;
 
 import static org.pentaho.di.core.Const.isEmpty;
 import static org.pentaho.di.core.Const.trim;

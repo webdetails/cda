@@ -15,14 +15,14 @@ import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
-import pt.webdetails.cda.utils.kettle.kettle.DynamicTrans;
-import pt.webdetails.cda.utils.kettle.kettle.DynamicTransConfig;
-import pt.webdetails.cda.utils.kettle.kettle.DynamicTransMetaConfig;
-import pt.webdetails.cda.utils.kettle.kettle.RowMetaToTableModel;
-import pt.webdetails.cda.utils.kettle.kettle.RowProductionManager;
-import pt.webdetails.cda.utils.kettle.kettle.TableModelInput;
-import pt.webdetails.cda.utils.kettle.kettle.DynamicTransConfig.EntryType;
-import pt.webdetails.cda.utils.kettle.kettle.DynamicTransMetaConfig.Type;
+import pt.webdetails.cda.utils.kettle.DynamicTrans;
+import pt.webdetails.cda.utils.kettle.DynamicTransConfig;
+import pt.webdetails.cda.utils.kettle.DynamicTransMetaConfig;
+import pt.webdetails.cda.utils.kettle.RowMetaToTableModel;
+import pt.webdetails.cda.utils.kettle.RowProductionManager;
+import pt.webdetails.cda.utils.kettle.TableModelInput;
+import pt.webdetails.cda.utils.kettle.DynamicTransConfig.EntryType;
+import pt.webdetails.cda.utils.kettle.DynamicTransMetaConfig.Type;
 
 /**
  * Created by IntelliJ IDEA.

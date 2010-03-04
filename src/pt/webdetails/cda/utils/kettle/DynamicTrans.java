@@ -1,4 +1,4 @@
-package pt.webdetails.cda.utils.kettle.kettle;
+package pt.webdetails.cda.utils.kettle;
 
 import java.util.List;
 import java.util.Map;
