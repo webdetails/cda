@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="getCssResource?resource=editor/BespinEmbedded.css" type="text/css" rel="stylesheet"/>
+		<script type="text/javascript" src="getJsResource?resource=editor/BespinEmbedded.js"></script>
+		<script type="text/javascript" src="getJsResource?resource=editor/jquery.js"></script>
+
+		<script language="javascript">
+loadFile = function() {
+$.get("getCdaFile",{path:$("#fileName").val()},
+function(data) {
+bespin.setContent(data)
+})
+}
+
+saveFile = function() {
+$.get("writeCdaFile",{path: $("#fileName").val(),data:bespin.getContent()})
+}
+
+
+/*
+ *  pageParams: get the request variables passed in the url 
+ */
+pageParams = function() {
+	var url = document.location.href;
+	var output = {};
+	var index = url.indexOf('?');
+	if (index < 0) {
+		return null;
+	} else {
+		// First we get the part of the url with the parameters in it (i.e. after the '?'), and partition
+		// it into individual 'var=value' pieces. Then we split those pieces and add them to the output object
+		args = url.slice(index + 1).split('&');
+		for(i = 0; i < args.length; i++) {
+			pair = args[i].split('=');
+			output[pair[0]] = pair[1];
+		}
+		return output;
+	}
+}
+		</script>
+		<style>
+		  body { padding: 20px; font-family: Calibri, Helvetica, Arial; }
+		  h1 { border-bottom: 1px solid #ddd; font-size:120%; color: white}
+		  .bespin { margin: 0; padding: 0; border: 0; height: 300px; border: 10px solid #ddd; -moz-border-radius: 10px; -webkit-border-radius: 10px; }
+		  .header {padding-top: 10px;padding-bottom:10px; color:white;}
+		</style>
+	</head>
+<body>
+
+<h1>CDA Editor</h1>
+
+<div>
+<span class="header">Filename: <input type="text" id="fileName"/><br /></span>
+<input type="button" value="Load" onclick="loadFile()" /> <input type="button" value="Save" onclick="saveFile()"/>
+</div>
+
+<div id="editor" class="bespin" data-bespinoptions='{ "settings": { "strictlines": true }, "stealFocus": true }'>// The text of this div shows up in the editor.
+Sample Text
+</div>
+<script>
+window.onBespinLoad = function() {
+    bespin = document.getElementById("editor").bespin;
+    params = pageParams();
+    var path = null;
+    if (params.solution != undefined) {
+	// If we have fully qualified path, concatenate the pieces together.
+	// We mustn't forget to account for double slashes
+        path = params.solution + '/' + params.path + '/'+ params.file; 
+	path = path.replace(/\/\//g,"/");
+    } else {
+        path = params.path;
+    }
+    if (path != null) {
+	$("#fileName").val(path);
+    }
+    loadFile();
+};
+
+</script>
+</body>
+</html>
