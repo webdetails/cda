@@ -67,7 +67,7 @@ public class CompoundJoinTest extends TestCase
     final CdaEngine engine = CdaEngine.getInstance();
 
     QueryOptions queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("4");
+    queryOptions.setDataAccessId("3");
     queryOptions.setOutputType("json");
     // queryOptions.addParameter("status","In Process");
 
