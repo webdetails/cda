@@ -112,7 +112,8 @@ public class TableModelInput extends RowProducerBridge
         }
       }
       if (columnClass == Object.class)
-        throw new IllegalArgumentException(String.format("No type conversion found for Column %d %s", i, tableModel.getColumnName(i)));
+        //TODO Maybe a warning log entry or something for this case?
+        rowMeta.addValueMeta(new ValueMeta(tableModel.getColumnName(i), ValueMetaInterface.TYPE_STRING));
     }
 
     return rowMeta;
