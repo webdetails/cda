@@ -136,7 +136,15 @@ var testCases = [
 	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/denormalized-mondrian-jndi.cda",
 	expectedCols: 5,
 	expectedRows: 6
-}/*,
+},
+{
+	type: "Compound join",
+	desc: "Joining 2 different datasets",
+	url: "../cda/doQuery?dataAccessId=3&path=/bi-developers/cda/cdafiles/compoundJoin.cda",
+	expectedCols: 3,
+	expectedRows: 12
+}
+/*,
 {
 	type: "olap4j.jdbc",
 	desc: "Mdx query over a olap4j jdbc connection",
@@ -188,7 +196,7 @@ var Caller = Base.extend({
 		init: function(){
 			// Add this line to the table
 			var sampleFile = this.testInfo.url.match(/cdafiles\/(.*)/)[0];
-			$("#testTable").append("<tr><td>" + this.testInfo.type + "</td><td>"+this.testInfo.desc+"</td><td>"+ sampleFile+"</td><td class='testPending'>testing...</td></tr>");
+			$("#testTable").append("<tr><td>" + this.testInfo.type + "</td><td>"+this.testInfo.desc+"</td><td><a href='javascript:showFile(\"" + sampleFile + "\")'>"+sampleFile+"</a></td><td class='testPending'>testing...</td></tr>");
 		},
 
 		makeCall:  function(){
@@ -230,8 +238,12 @@ var Caller = Base.extend({
 
 		}
 
+
 	});
 
+var showFile = function(link){
+	GB_show("Source file",webAppPath + "/content/cda/getCdaFile?path=/bi-developers/cda/" + link, $(window).height() - 50 , $(window).width() - 100);
+}
 
 // Call it
 

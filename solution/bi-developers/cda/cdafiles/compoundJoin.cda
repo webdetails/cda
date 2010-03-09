@@ -25,7 +25,7 @@
     <DataAccess id="1" connection="1" type="sql" access="private" cache="true" cacheDuration="300">
 		<Name>Sql Query on SampleData - Jdbc</Name>
         <Query>
-			select o.YEAR_ID, o.STATUS, sum(o.TOTALPRICE) as price from orderfact o
+			select o.YEAR_ID, o.STATUS as status from orderfact o
 			group by o.YEAR_ID, o.STATUS
 		</Query>
         <!-- Settings block here overrides defaults and general settings -->
@@ -36,14 +36,18 @@
             </Export>
         </Settings>
         <!-- Output controls what is outputed and by what order. Defaults to everything -->
-        <Output indexes="1,0,2"/>
+        <Output indexes="0,1"/>
     </DataAccess>
-    <DataAccess id="2" connection="1" type="sql" access="private" cache="true" cacheDuration="300">
-		<Name>Sql Query on SampleData - Jdbc</Name>
+    <DataAccess id="2" connection="1" type="sql" access="public" cache="true" cacheDuration="5">
+		<Name>Sql Query on SampleData</Name>
         <Query>
-			select o.YEAR_ID, o.STATUS, sum(o.TOTALPRICE) as price from orderfact o
-			group by o.YEAR_ID, o.STATUS
+			select o.YEAR_ID, sum(o.TOTALPRICE) as price from orderfact o
+			group by o.YEAR_ID
 		</Query>
+        <Parameters>
+            <Parameter name="status" type="String" default="Shipped"/>
+            <Parameter name="orderDate" type="Date" pattern="yyyy-MM-dd" default="2003-03-01"/>
+        </Parameters>
         <!-- 
 		Columns block allow specifying name and CalculatedColumn the creation of new
 		columns based on formulas
@@ -57,13 +61,12 @@
 				<Formula>=[PRICE]/1000000</Formula>
 			</CalculatedColumn>
 		</Columns>
-		<!-- Output controls what is outputed and by what order. Defaults to everything -->
-		<Output indexes="1,0,2,3"/>
-	</DataAccess>
+        <!-- Settings block here overrides defaults and general settings -->
+    </DataAccess>
 	<CompoundDataAccess id="3" type="join">
-		<Left id="1" keys="1"/>
-		<Right id="2" keys="1"/>
-		<Output indexes="0,2,3"/>
+		<Left id="1" keys="0"/>
+		<Right id="2" keys="0"/>
+		<Output indexes="0,1,3"/>
 	</CompoundDataAccess>
 
 </CDADescriptor>

@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin title="Pentaho Community Data Access">
 
-    <lifecycle-listener class="pt.webdetails.cda.CdaLifecycleListener"/>
+	<lifecycle-listener class="pt.webdetails.cda.CdaLifecycleListener"/>
 	<content-types>
 		<content-type type="cda" mime-type="text/html">
-        	<title>Data Access</title>
-        	<description>Community Data Access File</description>
-	        <icon-url>content/pentaho-cdf/resources/cdfFileType.png</icon-url>
-	        <operations>
-    	    	<operation>
-        			<id>EDIT</id>
-        			<command>content/cda/editFile?solution={solution}&amp;path={path}&amp;file={name}</command>
-        		</operation>
-    	    	<operation>
-        		</operation>        		
-	        </operations>
-    	</content-type> 
+			<title>Data Access</title>
+			<description>Community Data Access File</description>
+			<icon-url>content/pentaho-cdf/resources/cdfFileType.png</icon-url>
+			<operations>
+				<operation>
+					<id>EDIT</id>
+					<command>content/cda/editFile?solution={solution}&amp;path={path}&amp;file={name}</command>
+				</operation>
+				<operation>
+				</operation>        		
+			</operations>
+		</content-type> 
 	</content-types>
-    
-    <content-generator scope="local" id="cda" type="cda" url="">
-        <classname>pt.webdetails.cda.CdaContentGenerator</classname>
-        <fileinfo-classname>pt.webdetails.cda.CdaFileMetaProvider</fileinfo-classname>
-        <title>CDA</title>
-    </content-generator>
+
+	<content-generator scope="local" id="cda" type="cda" url="">
+		<classname>pt.webdetails.cda.CdaContentGenerator</classname>
+		<fileinfo-classname>pt.webdetails.cda.CdaFileMetaProvider</fileinfo-classname>
+		<title>CDA</title>
+	</content-generator>
 
 	<!-- Menu entry -->
 	<menu-items>
-	<!--	<menu-item id="cda_refresh" anchor="tools-refresh-submenu" label="CDA Cache" command="content/cda/clearCache" type="MENU_ITEM" how="LAST_CHILD"/>-->
+		<menu-item id="cda_refresh" anchor="tools-refresh-submenu" label="CDA Cache" command="content/cda/clearCache" type="MENU_ITEM" how="LAST_CHILD"/>
 	</menu-items>
-    
+
 </plugin>

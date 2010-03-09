@@ -123,7 +123,6 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     return output;
   }
 
-  @Override
   public void startRowProduction()
   {
     long timeout = Long.parseLong(CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout"));
