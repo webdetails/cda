@@ -14,7 +14,7 @@ public class TableModelInput extends RowProducerBridge
   public synchronized Callable<Boolean> getCallableRowProducer(final TableModel tableModel, final boolean markFinished)
   {
     final Callable<Boolean> callable = new Callable<Boolean>() {
-      @Override
+      
       public Boolean call()
       {
         final RowMetaInterface rowMeta = getRowMetaForTableModel(tableModel);

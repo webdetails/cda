@@ -141,8 +141,15 @@ var testCases = [
 	type: "Compound join",
 	desc: "Joining 2 different datasets",
 	url: "../cda/doQuery?dataAccessId=3&path=/bi-developers/cda/cdafiles/compoundJoin.cda",
-	expectedCols: 3,
+	expectedCols: 5,
 	expectedRows: 12
+},
+{
+	type: "Compound Union",
+	desc: "Appending two different unions",
+	url: "../cda/doQuery?dataAccessId=3&path=/bi-developers/cda/cdafiles/compoundUnion.cda",
+	expectedCols: 2,
+	expectedRows: 6
 }
 /*,
 {

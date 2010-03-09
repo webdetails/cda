@@ -212,4 +212,54 @@ public class TableModelUtils
 
 
   }
+
+
+  /**
+   * Method to append a tablemodel into another. We'll make no guarantees about the types
+   *
+   * @param tableModelA TableModel to be modified
+   * @param tableModelB Contents to be appended
+   * #
+   */
+  public TableModel appendTableModel(final TableModel tableModelA, final TableModel tableModelB)
+  {
+
+    // We will believe the data is correct - no type checking
+
+    final Class[] colTypes = new Class[tableModelA.getColumnCount()];
+    final String[] colNames = new String[tableModelA.getColumnCount()];
+
+    for (int i = 0; i < tableModelA.getColumnCount(); i++)
+    {
+      colTypes[i] = tableModelA.getColumnClass(i);
+      colNames[i] = tableModelA.getColumnName(i);
+    }
+
+    int rowCount = tableModelA.getRowCount() + tableModelB.getRowCount();
+
+
+    // Table A
+    final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
+    for (int r = 0; r < tableModelA.getRowCount(); r++)
+    {
+      for (int c = 0; c < colTypes.length; c++)
+      {
+        typedTableModel.setValueAt(tableModelA.getValueAt(r, c), r, c);
+      }
+    }
+
+    // Table B
+    int rowCountOffset = tableModelA.getRowCount();
+    for (int r = 0; r < tableModelB.getRowCount(); r++)
+    {
+      for (int c = 0; c < colTypes.length; c++)
+      {
+        typedTableModel.setValueAt(tableModelB.getValueAt(r, c), r + rowCountOffset, c);
+      }
+    }
+
+
+    return typedTableModel;
+
+  }
 }

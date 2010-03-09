@@ -9,25 +9,23 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
 import javax.swing.table.TableModel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
-
 import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
-import pt.webdetails.cda.utils.kettle.DynamicTransformation;
 import pt.webdetails.cda.utils.kettle.DynamicTransConfig;
+import pt.webdetails.cda.utils.kettle.DynamicTransConfig.EntryType;
 import pt.webdetails.cda.utils.kettle.DynamicTransMetaConfig;
+import pt.webdetails.cda.utils.kettle.DynamicTransMetaConfig.Type;
+import pt.webdetails.cda.utils.kettle.DynamicTransformation;
 import pt.webdetails.cda.utils.kettle.RowMetaToTableModel;
 import pt.webdetails.cda.utils.kettle.RowProductionManager;
 import pt.webdetails.cda.utils.kettle.TableModelInput;
-import pt.webdetails.cda.utils.kettle.DynamicTransConfig.EntryType;
-import pt.webdetails.cda.utils.kettle.DynamicTransMetaConfig.Type;
 
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM
@@ -35,21 +33,19 @@ import pt.webdetails.cda.utils.kettle.DynamicTransMetaConfig.Type;
 public class JoinCompoundDataAccess extends CompoundDataAccess implements RowProductionManager
 {
 
-  private static final Log              logger          = LogFactory.getLog(JoinCompoundDataAccess.class);
-  private static final String           TYPE            = "sql";
+  private static final Log logger = LogFactory.getLog(JoinCompoundDataAccess.class);
+  private static final String TYPE = "join";
 
-  private String                        leftId;
-  private String                        rightId;
-  private String[]                      leftKeys;
-  private String[]                      rightKeys;
-  private ExecutorService               executorService = Executors.newCachedThreadPool();
-  private Collection<Callable<Boolean>> inputCallables  = new ArrayList<Callable<Boolean>>();
+  private String leftId;
+  private String rightId;
+  private String[] leftKeys;
+  private String[] rightKeys;
+  private ExecutorService executorService = Executors.newCachedThreadPool();
+  private Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
 
   public JoinCompoundDataAccess(final Element element)
   {
     super(element);
-
-    logger.warn("TODO - Verify that JoinCompoundDataAccess.TYPE is supposed to be 'sql'");
 
     Element left = (Element) element.selectSingleNode("Left");
     Element right = (Element) element.selectSingleNode("Right");
@@ -63,7 +59,6 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
 
   public String getType()
   {
-    logger.warn("TODO - Verify that JoinCompoundDataAccess.TYPE is supposed to be 'sql'");
     return TYPE;
   }
 
@@ -72,21 +67,39 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     TableModel output = null;
     inputCallables.clear();
 
-    try {
+    try
+    {
       final TableModel tableModelA = this.getCdaSettings().getDataAccess(leftId).doQuery(new QueryOptions());
       final TableModel tableModelB = this.getCdaSettings().getDataAccess(rightId).doQuery(new QueryOptions());
 
-      logger.warn("TODO - Grab the correct keys");
+
+      String[] leftColumnNames = new String[leftKeys.length];
+      for (int i = 0; i < leftKeys.length; i++)
+      {
+        leftColumnNames[i] = tableModelA.getColumnName(Integer.parseInt(leftKeys[i]));
+      }
+
+      String[] rightColumnNames = new String[rightKeys.length];
+      for (int i = 0; i < rightKeys.length; i++)
+      {
+        rightColumnNames[i] = tableModelB.getColumnName(Integer.parseInt(rightKeys[i]));
+      }
+
+      String sortLeftXML = getSortXmlStep("sortLeft", leftColumnNames);
+      String sortRightXML = getSortXmlStep("sortRight", rightColumnNames);
 
       StringBuilder mergeJoinXML = new StringBuilder(
-          "<step><name>mergeJoin</name><type>MergeJoin</type><join_type>INNER</join_type><step1>input1</step1><step2>input2</step2>");
+          "<step><name>mergeJoin</name><type>MergeJoin</type><join_type>FULL OUTER</join_type><step1>sortLeft</step1><step2>sortRight</step2>");
       mergeJoinXML.append("<keys_1>");
-      for (int i = 0; i < leftKeys.length; i++) {
-        mergeJoinXML.append("<key>").append(tableModelA.getColumnName(Integer.parseInt(leftKeys[i]))).append("</key>");
+
+      for (int i = 0; i < leftKeys.length; i++)
+      {
+        mergeJoinXML.append("<key>").append(leftColumnNames[i]).append("</key>");
       }
       mergeJoinXML.append("</keys_1><keys_2>");
-      for (int i = 0; i < rightKeys.length; i++) {
-        mergeJoinXML.append("<key>").append(tableModelB.getColumnName(Integer.parseInt(rightKeys[i]))).append("</key>");
+      for (int i = 0; i < rightKeys.length; i++)
+      {
+        mergeJoinXML.append("<key>").append(rightColumnNames[i]).append("</key>");
       }
       mergeJoinXML.append("</keys_2></step>");
 
@@ -95,10 +108,14 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
 
       transConfig.addConfigEntry(EntryType.STEP, "input1", "<step><name>input1</name><type>Injector</type></step>");
       transConfig.addConfigEntry(EntryType.STEP, "input2", "<step><name>input2</name><type>Injector</type></step>");
+      transConfig.addConfigEntry(EntryType.STEP, "sortLeft", sortLeftXML);
+      transConfig.addConfigEntry(EntryType.STEP, "sortRight", sortRightXML);
       transConfig.addConfigEntry(EntryType.STEP, "mergeJoin", mergeJoinXML.toString());
 
-      transConfig.addConfigEntry(EntryType.HOP, "input1", "mergeJoin");
-      transConfig.addConfigEntry(EntryType.HOP, "input2", "mergeJoin");
+      transConfig.addConfigEntry(EntryType.HOP, "input1", "sortLeft");
+      transConfig.addConfigEntry(EntryType.HOP, "input2", "sortRight");
+      transConfig.addConfigEntry(EntryType.HOP, "sortLeft", "mergeJoin");
+      transConfig.addConfigEntry(EntryType.HOP, "sortRight", "mergeJoin");
 
       TableModelInput input1 = new TableModelInput();
       transConfig.addInput("input1", input1);
@@ -114,14 +131,64 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       trans.execute(null, null, this);
       logger.info(trans.getReadWriteThroughput());
       output = outputListener.getRowsWritten();
-    } catch (UnknownDataAccessException e) {
+    }
+    catch (UnknownDataAccessException e)
+    {
       throw new QueryException("Unknown Data access in CompoundDataAccess ", e);
-    } catch (Exception e) {
+    }
+    catch (Exception e)
+    {
       throw new QueryException("Exception during query ", e);
     }
 
     return output;
   }
+
+
+  private String getSortXmlStep(final String name, final String[] columnNames)
+  {
+
+    StringBuilder sortXML = new StringBuilder(
+        "  <step>\n" +
+            "    <name>" + name + "</name>\n" +
+            "    <type>SortRows</type>\n" +
+            "    <description/>\n" +
+            "    <distribute>Y</distribute>\n" +
+            "    <copies>1</copies>\n" +
+            "         <partitioning>\n" +
+            "           <method>none</method>\n" +
+            "           <schema_name/>\n" +
+            "           </partitioning>\n" +
+            "      <directory>%%java.io.tmpdir%%</directory>\n" +
+            "      <prefix>out</prefix>\n" +
+            "      <sort_size/>\n" +
+            "      <free_memory>25</free_memory>\n" +
+            "      <compress>N</compress>\n" +
+            "      <compress_variable/>\n" +
+            "      <unique_rows>N</unique_rows>\n" +
+            "    <fields>\n");
+
+    for (int i = 0; i < columnNames.length; i++)
+    {
+      sortXML.append("      <field>\n" +
+          "        <name>" + columnNames[i] + "</name>\n" +
+          "        <ascending>Y</ascending>\n" +
+          "        <case_sensitive>N</case_sensitive>\n" +
+          "      </field>\n");
+    }
+
+    sortXML.append("    </fields>\n" +
+        "     <cluster_schema/>\n" +
+        " <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>\n" +
+        "      <xloc>615</xloc>\n" +
+        "      <yloc>188</yloc>\n" +
+        "      <draw>Y</draw>\n" +
+        "      </GUI>\n" +
+        "    </step>\n");
+
+    return sortXML.toString();
+  }
+
 
   public void startRowProduction()
   {
@@ -130,20 +197,27 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     startRowProduction(timeout, unit);
   }
 
-  @Override
+
   public void startRowProduction(long timeout, TimeUnit unit)
   {
-    try {
+    try
+    {
       List<Future<Boolean>> results = executorService.invokeAll(inputCallables, timeout, unit);
-      for (Future<Boolean> result : results) {
+      for (Future<Boolean> result : results)
+      {
         result.get();
       }
-    } catch (InterruptedException e) {
+    }
+    catch (InterruptedException e)
+    {
       // TODO Auto-generated catch block
       e.printStackTrace();
-    } catch (ExecutionException e) {
+    }
+    catch (ExecutionException e)
+    {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 }
+
