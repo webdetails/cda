@@ -26,9 +26,13 @@
 		<Name>Sql Query on SampleData - Jdbc</Name>
         <Query>
 			select o.YEAR_ID, sum(o.TOTALPRICE/1000) from orderfact o
+			where o.YEAR_ID = ${year}
 			group by o.YEAR_ID
 		</Query>
         <!-- Settings block here overrides defaults and general settings -->
+        <Parameters>
+            <Parameter name="year" type="Numeric" default="2003"/>
+        </Parameters>
         <Settings>
             <Export type="csv" includeTotals="true">
                 <Column idx="0" aggregator="None"/>
@@ -46,7 +50,6 @@
 			order by o.YEAR_ID DESC
 		</Query>
         <Parameters>
-            <Parameter name="status" type="String" default="Shipped"/>
             <Parameter name="orderDate" type="Date" pattern="yyyy-MM-dd" default="2003-03-01"/>
         </Parameters>
         <!-- 
@@ -67,6 +70,9 @@
 	<CompoundDataAccess id="3" type="union">
 		<Left id="1" />
 		<Right id="2" />
+        <Parameters>
+            <Parameter name="year" type="Numeric" default="2004"/>
+        </Parameters>
 	</CompoundDataAccess>
 
 </CDADescriptor>

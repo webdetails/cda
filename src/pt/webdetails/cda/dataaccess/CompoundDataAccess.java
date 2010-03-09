@@ -1,9 +1,10 @@
 package pt.webdetails.cda.dataaccess;
 
-import javax.swing.table.TableModel;
+import java.util.ArrayList;
 
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
+import pt.webdetails.cda.query.QueryOptions;
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,4 +23,37 @@ public abstract class CompoundDataAccess extends AbstractDataAccess
   {
     // not needed
   }
+
+
+  public QueryOptions createQueryOptionsFromParameterDataRow(final ParameterDataRow parameterDataRow)
+  {
+
+    QueryOptions options = new QueryOptions();
+    for (String col : parameterDataRow.getColumnNames())
+    {
+      options.addParameter(col,  parameterDataRow.get(col).toString());
+    }
+
+    return options;
+  }
+
+  private ParameterDataRow createParameterDataRowFromParameters(final ArrayList<Parameter> parameters) throws InvalidParameterException
+  {
+
+    final ArrayList<String> names = new ArrayList<String>();
+    final ArrayList<Object> values = new ArrayList<Object>();
+
+    for (final Parameter parameter : parameters)
+    {
+      names.add(parameter.getName());
+      values.add(parameter.getValue());
+    }
+
+    final ParameterDataRow parameterDataRow = new ParameterDataRow(names.toArray(new String[]{}), values.toArray());
+
+    return parameterDataRow;
+
+  }
+
+
 }

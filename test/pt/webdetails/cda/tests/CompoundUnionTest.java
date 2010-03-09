@@ -67,6 +67,7 @@ public class CompoundUnionTest extends TestCase
     final CdaEngine engine = CdaEngine.getInstance();
 
     QueryOptions queryOptions = new QueryOptions();
+    //queryOptions.addParameter("year","2005");
     queryOptions.setDataAccessId("3");
     queryOptions.setOutputType("json");
     // queryOptions.addParameter("status","In Process");

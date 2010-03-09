@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
-import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 import pt.webdetails.cda.utils.TableModelUtils;
 
@@ -50,10 +49,10 @@ public class UnionCompoundDataAccess extends CompoundDataAccess
     try
     {
 
-      final TableModel tableModelA = this.getCdaSettings().getDataAccess(leftId).doQuery(new QueryOptions());
-      final TableModel tableModelB = this.getCdaSettings().getDataAccess(rightId).doQuery(new QueryOptions());
+      final TableModel tableModelA = this.getCdaSettings().getDataAccess(leftId).doQuery(createQueryOptionsFromParameterDataRow(parameter));
+      final TableModel tableModelB = this.getCdaSettings().getDataAccess(rightId).doQuery(createQueryOptionsFromParameterDataRow(parameter));
 
-      return TableModelUtils.getInstance().appendTableModel(tableModelA,tableModelB);
+      return TableModelUtils.getInstance().appendTableModel(tableModelA, tableModelB);
 
     }
     catch (UnknownDataAccessException e)
