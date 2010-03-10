@@ -69,8 +69,8 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
 
     try
     {
-      final TableModel tableModelA = this.getCdaSettings().getDataAccess(leftId).doQuery(new QueryOptions());
-      final TableModel tableModelB = this.getCdaSettings().getDataAccess(rightId).doQuery(new QueryOptions());
+      final TableModel tableModelA = this.getCdaSettings().getDataAccess(leftId).doQuery(createQueryOptionsFromParameterDataRow(parameter));
+      final TableModel tableModelB = this.getCdaSettings().getDataAccess(rightId).doQuery(createQueryOptionsFromParameterDataRow(parameter));
 
 
       String[] leftColumnNames = new String[leftKeys.length];
