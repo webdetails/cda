@@ -1,11 +1,13 @@
 package pt.webdetails.cda.exporter;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -35,7 +37,7 @@ import pt.webdetails.cda.utils.kettle.TableModelInput;
  */
 public abstract class AbstractKettleExporter implements Exporter, RowProductionManager
 {
-  
+
   private static final Log logger = LogFactory.getLog(AbstractKettleExporter.class);
 
   protected ExecutorService executorService = Executors.newCachedThreadPool();
@@ -76,7 +78,8 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
   }
 
 
-  public void export(final OutputStream out, final TableModel tableModel) throws ExporterException  {
+  public void export(final OutputStream out, final TableModel tableModel) throws ExporterException
+  {
 
     TableModel output = null;
     inputCallables.clear();
@@ -98,7 +101,6 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
       inputCallables.add(input.getCallableRowProducer(tableModel, true));
 
 
-
       RowMetaToTableModel outputListener = new RowMetaToTableModel(false, true, false);
       transConfig.addOutput("export", outputListener);
 
@@ -106,6 +108,7 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
       trans.executeCheckedSuccess(null, null, this);
       logger.info(trans.getReadWriteThroughput());
 
+      copyFileToOutputStream(out);
 
       // Transformation executed ok, lets return the file
 
@@ -113,21 +116,45 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
     }
     catch (KettleException e)
     {
-      throw new ExporterException("Kettle exception during " + getType() +  " query ", e);
+      throw new ExporterException("Kettle exception during " + getType() + " query ", e);
     }
     catch (Exception e)
     {
-      throw new ExporterException("Unknown exception during " + getType() +  " query ", e);
+      throw new ExporterException("Unknown exception during " + getType() + " query ", e);
     }
 
 
   }
 
 
-  protected String getFileName(){
+  protected String getFileName()
+  {
 
     filename = "pentaho-cda-" + getType() + "-" + dateFormat.format(Calendar.getInstance().getTime()) + "-" + UUID.randomUUID().toString();
     return filename;
+
+  }
+
+
+  private void copyFileToOutputStream(OutputStream os) throws IOException
+  {
+
+    File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + "." + getType());
+    FileInputStream is = new FileInputStream(file);
+
+    // initialize
+    byte[] buffer = new byte[4096]; // tweaking this number may increase performance
+    int len;
+    while ((len = is.read(buffer)) != -1)
+    {
+      os.write(buffer, 0, len);
+    }
+    os.flush();
+    is.close();
+    os.close();
+
+    // temp file not needed anymore - delete it
+    file.delete();
 
   }
 
