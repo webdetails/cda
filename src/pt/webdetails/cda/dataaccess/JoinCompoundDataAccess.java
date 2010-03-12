@@ -128,7 +128,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       transConfig.addOutput("mergeJoin", outputListener);
 
       DynamicTransformation trans = new DynamicTransformation(transConfig, transMetaConfig);
-      trans.execute(null, null, this);
+      trans.executeCheckedSuccess(null, null, this);
       logger.info(trans.getReadWriteThroughput());
       output = outputListener.getRowsWritten();
     }

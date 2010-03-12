@@ -136,7 +136,13 @@ public class DynamicTransformation
     return trans.getStatus();
   }
 
-  public void execute(final String[] arguments, final Map<String, String> parameters, final RowProductionManager rowProductionManager) throws KettleException
+  public void executeCheckedSuccess(final String[] arguments, final Map<String, String> parameters, final RowProductionManager rowProductionManager) throws KettleException
+  {
+    if (!execute(arguments, parameters, rowProductionManager)) {
+      throw new KettleException(String.format("The transformation execution ended with state %s (%d errors)", state, result.getNrErrors()));
+    }
+  }
+  public boolean execute(final String[] arguments, final Map<String, String> parameters, final RowProductionManager rowProductionManager) throws KettleException
   {
     if (rowProductionManager == null) throw new IllegalArgumentException("rowProductionManager is null");
 
@@ -161,12 +167,22 @@ public class DynamicTransformation
     }
 
     trans.startThreads();
-
+    state = State.RUNNING;
+    
     rowProductionManager.startRowProduction();
 
     trans.waitUntilFinished();
-    result = trans.getResult();
     secondsDuration = (int) (System.currentTimeMillis() - startMillis);
+
+    result = trans.getResult();
+    
+    if (result.getNrErrors() == 0) {
+      state = State.FINISHED_SUCCESS;
+    } else {
+      state = State.FINISHED_ERROR;
+    }
+    
+    return state == State.FINISHED_SUCCESS;
   }
 
   public String getReadWriteThroughput()
