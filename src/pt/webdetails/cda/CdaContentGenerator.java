@@ -243,7 +243,17 @@ public class CdaContentGenerator extends BaseContentGenerator {
     String rootDir = PentahoSystem.getApplicationContext().getSolutionPath("");
     ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
     int status = solutionRepository.publish(rootDir, file[0], file[1], ((String) pathParams.getParameter("data")).getBytes("UTF-8"), true);
-    //cdaFile.
+    if (status == ISolutionRepository.FILE_ADD_SUCCESSFUL) {
+      solutionRepository.synchronizeSolutionWithSolutionSource(userSession);
+      SettingsManager.getInstance().clearCache();
+      setResponseHeaders("text/plain");
+      out.write("File saved".getBytes());
+    } else {
+      setResponseHeaders("text/plain");
+      out.write("Save unsuccessful!".getBytes());
+      logger.error("writeCdaFile: saving " + file + " returned " + new Integer(status).toString());
+
+    }
   }
 
   public void getCdaList(final IParameterProvider pathParams, final OutputStream out) throws Exception {
@@ -296,14 +306,18 @@ public class CdaContentGenerator extends BaseContentGenerator {
   public String getResourceAsString(final String path, final HashMap<String, String> tokens) throws IOException {
     // Read file
     String fullPath = PentahoSystem.getApplicationContext().getSolutionPath(path);
-    final InputStream in = new FileInputStream(fullPath);
+    ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
     final StringBuilder resource = new StringBuilder();
-    int c;
-    while ((c = in.read()) != -1) {
-      resource.append((char) c);
+    if (solutionRepository.resourceExists(path)) {
+      final InputStream in = solutionRepository.getResourceInputStream(path, true);
+      int c;
+      while ((c = in.read()) != -1) {
+        resource.append((char) c);
+      }
+      in.close();
+    } else {
+      resource.append(" ");
     }
-    in.close();
-
     // Make replacement of tokens
     if (tokens != null) {
 

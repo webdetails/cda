@@ -2,6 +2,11 @@
 <plugin title="Pentaho Community Data Access">
 
 	<lifecycle-listener class="pt.webdetails.cda.CdaLifecycleListener"/>
+    <static-paths>
+        <static-path url="/cda/editor" localFolder="editor"/>
+        <static-path url="/cda/resources" localFolder="resources"/>
+    </static-paths> 
+
 	<content-types>
 		<content-type type="cda" mime-type="text/html">
 			<title>Data Access</title>
@@ -20,7 +25,7 @@
 
 	<content-generator scope="local" id="cda" type="cda" url="">
 		<classname>pt.webdetails.cda.CdaContentGenerator</classname>
-		<fileinfo-classname>pt.webdetails.cda.CdaFileMetaProvider</fileinfo-classname>
+		<meta-provider>pt.webdetails.cda.CdaFileMetaProvider</meta-provider>
 		<title>CDA</title>
 	</content-generator>
 

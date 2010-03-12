@@ -1,20 +1,41 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<link href="getCssResource?resource=editor/BespinEmbedded.css" type="text/css" rel="stylesheet"/>
-		<script type="text/javascript" src="getJsResource?resource=editor/BespinEmbedded.js"></script>
-		<script type="text/javascript" src="getJsResource?resource=editor/jquery.js"></script>
+    <head>
+        <link href="editor/BespinEmbedded.css" type="text/css" rel="stylesheet"/>
+        <link href="editor/editor.css" type="text/css" rel="stylesheet"/>
+        <link href="editor/editor-webdetails.css" type="text/css" rel="stylesheet"/>
+        <link href="editor/jquery.jqModal.css" type="text/css" rel="stylesheet"/>
+        <script type="text/javascript" src="editor/BespinEmbedded.js"></script>
+        <script type="text/javascript" src="editor/jquery.js"></script>
+        <script type="text/javascript" src="editor/jquery.blockUI.js"></script>
+        <script type="text/javascript" src="editor/jquery.jqModal.js"></script>
 
-		<script language="javascript">
+        <link href="BespinEmbedded.css" type="text/css" rel="stylesheet"/>
+        <link href="editor.css" type="text/css" rel="stylesheet"/>
+        <link href="editor-webdetails.css" type="text/css" rel="stylesheet"/>
+        <link href="jquery.jqModal.css" type="text/css" rel="stylesheet"/>
+        <script type="text/javascript" src="BespinEmbedded.js"></script>
+        <script type="text/javascript" src="jquery.js"></script>
+        <script type="text/javascript" src="jquery.blockUI.js"></script>
+        <script type="text/javascript" src="jquery.jqModal.js"></script>
+
+        <script language="javascript">
 loadFile = function() {
-$.get("getCdaFile",{path:$("#fileName").val()},
+var fileName =$("#filename").val();
+fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
+$.get("getCdaFile",{path:fileName},
 function(data) {
 bespin.setContent(data)
 })
 }
 
 saveFile = function() {
-$.get("writeCdaFile",{path: $("#fileName").val(),data:bespin.getContent()})
+var fileName =$("#filename").val();
+fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
+$.get("writeCdaFile",{path: fileName,data:bespin.getContent()},function(data){
+$('#notifications').html(data);
+$('#notifications').fadeIn().delay(2000).fadeOut('slow');
+});
 }
 
 
@@ -22,61 +43,127 @@ $.get("writeCdaFile",{path: $("#fileName").val(),data:bespin.getContent()})
  *  pageParams: get the request variables passed in the url 
  */
 pageParams = function() {
-	var url = document.location.href;
-	var output = {};
-	var index = url.indexOf('?');
-	if (index < 0) {
-		return null;
-	} else {
-		// First we get the part of the url with the parameters in it (i.e. after the '?'), and partition
-		// it into individual 'var=value' pieces. Then we split those pieces and add them to the output object
-		args = url.slice(index + 1).split('&');
-		for(i = 0; i < args.length; i++) {
-			pair = args[i].split('=');
-			output[pair[0]] = pair[1];
-		}
-		return output;
-	}
+    var url = document.location.href;
+    var output = {};
+    var index = url.indexOf('?');
+    if (index < 0) {
+        return null;
+    } else {
+        // First we get the part of the url with the parameters in it (i.e. after the '?'), and partition
+        // it into individual 'var=value' pieces. Then we split those pieces and add them to the output object
+        args = url.slice(index + 1).split('&');
+        for(i = 0; i < args.length; i++) {
+            pair = args[i].split('=');
+            output[pair[0]] = pair[1];
+        }
+        return output;
+    }
 }
-		</script>
-		<style>
-		  body { padding: 20px; font-family: Calibri, Helvetica, Arial; }
-		  h1 { border-bottom: 1px solid #ddd; font-size:120%; color: white}
-		  .bespin { margin: 0; padding: 0; border: 0; height: 300px; border: 10px solid #ddd; -moz-border-radius: 10px; -webkit-border-radius: 10px; }
-		  .header {padding-top: 10px;padding-bottom:10px; color:white;}
-		</style>
-	</head>
+        </script>
+    </head>
 <body>
+<input type="hidden" id="staticfile" value="">
+<!--
+HEADER
+-->
+<div class='header'>
 
-<h1>CDA Editor</h1>
-
-<div>
-<span class="header">Filename: <input type="text" id="fileName"/><br /></span>
-<input type="button" value="Load" onclick="loadFile()" /> <input type="button" value="Save" onclick="saveFile()"/>
+<!--Fake Logo -->
+<div style="float:left">
+<span style='font-size:150%'>CDA</span> <br>
+<span style='font-size:120%'>Editor</span>
 </div>
 
-<div id="editor" class="bespin" data-bespinoptions='{ "settings": { "strictlines": true }, "stealFocus": true }'>// The text of this div shows up in the editor.
-Sample Text
+<!--
+<span style="height: 80px;margin-left:15px"><a id='load' class='button' href='#' onclick='loadFile()'>Reload</a><a id='save' class='button' href='#' onclick='saveFile()'>Save</a>
+<span class="button"><a class="input" href="#" onclick="$('#collapseNF').toggle()">New</a><span id="collapseNF">&nbsp;Filename: <input type="text" id="filename"/></span></span>
+<span class="button"><a class="input" href="#" onclick="$('#collapseSA').toggle()">SaveAs</a><span id="collapseSA">&nbsp;Filename: <input type="text" id="filename"/></span></span>
+</span>
+<div class="branding"><img src="editor/img/webdetails.png"/></div>
+</div>
+-->
+<div><span id="controller"></span><br /><span id="notifications" class="notification">&nbsp;</span></div>
+<div class="branding"><img src="editor/img/webdetails.png"/></div>
+</div>
+<div style="position:fixed;top:90px;bottom:15px;left:15px;right:15px">
+<div class="bespin-container"><div id="editor" class="bespin" data-bespinoptions='{ "settings": { "strictlines": true }, "stealFocus": true }'></div>
+
+</div>
+
 </div>
 <script>
+$(document).ready(function(){
+    var params = pageParams();
+    $('#notifications').hide();
+    $('#collapseNF').hide();
+    $('#collapseSA').hide();
+    if (params != null && params.initialState != undefined) { 
+        transitions.shiftState(transition.states[params.initialState])
+    } else {
+        transitions.shiftState(transitions.states.edit)
+    }
+});
 window.onBespinLoad = function() {
     bespin = document.getElementById("editor").bespin;
-    params = pageParams();
+    var params = pageParams();
     var path = null;
-    if (params.solution != undefined) {
-	// If we have fully qualified path, concatenate the pieces together.
-	// We mustn't forget to account for double slashes
+    if (params != null && params.solution != undefined) {
+    // If we have fully qualified path, concatenate the pieces together.
+    // We mustn't forget to account for double slashes
         path = params.solution + '/' + params.path + '/'+ params.file; 
-	path = path.replace(/\/\//g,"/");
-    } else {
+    path = path.replace(/\/\//g,"/");
+    } else if (params != null){
         path = params.path;
     }
     if (path != null) {
-	$("#fileName").val(path);
+    $("#staticfile").val(path);
     }
     loadFile();
 };
 
+
+transitions = {
+    shiftState: function(state) {
+	state = state();
+        var controller = $("#controller");
+        controller.empty();
+        for (var i = 0; i < state.length; i ++){
+           $("#controller").append(state[i]()); 
+        }
+    },
+
+    initialSave: function() {
+      var button = "<a class='button' id='save' href='javascript:transitions.saveAndShift()'>Save</a>"
+      return button;
+    },
+
+    save: function() {
+      var button = "<a id='save' class='button' href='javascript:saveFile()'>Save</a>"
+      return button;
+    },
+
+    saveAs: function() {
+      var button = "<span class='button'><a class='input' href='javascript:$(\"#collapseSA\").toggle()'>SaveAs</a><span id='collapseSA'>&nbsp;Filename: <input type='text' id='filename'/></span></span>"
+      return button;
+    },
+
+    reload: function() {
+      var button = "<a id='save' class='button' href='javascript:loadFile()'>Reload</a>"
+      return button;
+    },
+
+    saveAndShift: function() {
+        saveFile();
+        this.shiftState(this.states.edit);
+    },
+
+    states: {
+        newFile: function() {return [transitions.initialSave]},
+        edit: function() {return [transitions.save, transitions.reload, transitions.saveAs]},
+        exEdit: function() {return [transitions.save, transitions.reload]}
+    }
+
+}
 </script>
 </body>
 </html>
