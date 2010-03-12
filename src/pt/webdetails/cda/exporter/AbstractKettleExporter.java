@@ -85,11 +85,11 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
     {
 
 
-      DynamicTransMetaConfig transMetaConfig = new DynamicTransMetaConfig(DynamicTransMetaConfig.Type.EMPTY, "JoinCompoundData", null, null);
-      DynamicTransConfig transConfig = new DynamicTransConfig();
+      final DynamicTransMetaConfig transMetaConfig = new DynamicTransMetaConfig(DynamicTransMetaConfig.Type.EMPTY, "Exporter", null, null);
+      final DynamicTransConfig transConfig = new DynamicTransConfig();
 
       transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP, "input", "<step><name>input</name><type>Injector</type></step>");
-      transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP, "export", getExportStepDefinition());
+      transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP, "export", getExportStepDefinition("export"));
 
       transConfig.addConfigEntry(DynamicTransConfig.EntryType.HOP, "input", "export");
 
@@ -131,7 +131,7 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
 
   }
 
-  protected abstract String getExportStepDefinition();
+  protected abstract String getExportStepDefinition(String name);
 
 
   public abstract String getMimeType();

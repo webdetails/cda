@@ -16,13 +16,13 @@ public class XlsExporter extends AbstractKettleExporter
   {
   }
 
-  protected String getExportStepDefinition()
+  protected String getExportStepDefinition(String name)
   {
     StringBuilder xml = new StringBuilder();
 
 
     xml.append("<step>\n" +
-        "    <name>Excel Output</name>\n" +
+        "    <name>"+ name + "</name>\n" +
         "    <type>ExcelOutput</type>\n" +
         "    <description/>\n" +
         "    <distribute>Y</distribute>\n" +
