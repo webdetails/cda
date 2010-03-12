@@ -34,7 +34,7 @@ public abstract class AbstractExporter implements Exporter
     {
       return "Numeric";
     }
-    else if (columnClass.equals(Date.class) )
+    else if (columnClass.equals(Date.class) || columnClass.equals(java.sql.Date.class) )
     {
       return "Date";
     }
