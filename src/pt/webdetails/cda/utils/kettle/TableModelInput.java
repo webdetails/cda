@@ -52,7 +52,7 @@ public class TableModelInput extends RowProducerBridge
     switch (valueMeta.getType())
     {
       case ValueMetaInterface.TYPE_STRING:
-        newValue = value;
+        newValue = String.valueOf(value);
         break;
       case ValueMetaInterface.TYPE_NUMBER:
         if (value instanceof Double)
