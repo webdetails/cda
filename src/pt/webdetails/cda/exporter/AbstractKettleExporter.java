@@ -103,7 +103,7 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
       transConfig.addOutput("export", outputListener);
 
       DynamicTransformation trans = new DynamicTransformation(transConfig, transMetaConfig);
-      trans.execute(null, null, this);
+      trans.executeCheckedSuccess(null, null, this);
       logger.info(trans.getReadWriteThroughput());
 
 
