@@ -10,15 +10,6 @@
         <script type="text/javascript" src="editor/jquery.blockUI.js"></script>
         <script type="text/javascript" src="editor/jquery.jqModal.js"></script>
 
-        <link href="BespinEmbedded.css" type="text/css" rel="stylesheet"/>
-        <link href="editor.css" type="text/css" rel="stylesheet"/>
-        <link href="editor-webdetails.css" type="text/css" rel="stylesheet"/>
-        <link href="jquery.jqModal.css" type="text/css" rel="stylesheet"/>
-        <script type="text/javascript" src="BespinEmbedded.js"></script>
-        <script type="text/javascript" src="jquery.js"></script>
-        <script type="text/javascript" src="jquery.blockUI.js"></script>
-        <script type="text/javascript" src="jquery.jqModal.js"></script>
-
         <script language="javascript">
 loadFile = function() {
 var fileName =$("#filename").val();
@@ -66,29 +57,14 @@ pageParams = function() {
 <!--
 HEADER
 -->
-<div class='header'>
+<div class='header branding'>
 
 <!--Fake Logo -->
-<div style="float:left">
-<span style='font-size:150%'>CDA</span> <br>
-<span style='font-size:120%'>Editor</span>
+<img  style='position: absolute; left: 10px; top: 15px; width: 100px' src='editor/img/cda.png'>
+<img style='position: absolute; right: 10px; top: 15px;' src="editor/img/webdetails.png">
+<div style='margin-left: 125px'><span id="controller"></span><span id="notifications" class="notification">&nbsp;</span></div>
 </div>
-
-<!--
-<span style="height: 80px;margin-left:15px"><a id='load' class='button' href='#' onclick='loadFile()'>Reload</a><a id='save' class='button' href='#' onclick='saveFile()'>Save</a>
-<span class="button"><a class="input" href="#" onclick="$('#collapseNF').toggle()">New</a><span id="collapseNF">&nbsp;Filename: <input type="text" id="filename"/></span></span>
-<span class="button"><a class="input" href="#" onclick="$('#collapseSA').toggle()">SaveAs</a><span id="collapseSA">&nbsp;Filename: <input type="text" id="filename"/></span></span>
-</span>
-<div class="branding"><img src="editor/img/webdetails.png"/></div>
-</div>
--->
-<div><span id="controller"></span><br /><span id="notifications" class="notification">&nbsp;</span></div>
-<div class="branding"><img src="editor/img/webdetails.png"/></div>
-</div>
-<div style="position:fixed;top:90px;bottom:15px;left:15px;right:15px">
 <div class="bespin-container"><div id="editor" class="bespin" data-bespinoptions='{ "settings": { "strictlines": true }, "stealFocus": true }'></div>
-
-</div>
 
 </div>
 <script>
@@ -143,7 +119,7 @@ transitions = {
     },
 
     saveAs: function() {
-      var button = "<span class='button'><a class='input' href='javascript:$(\"#collapseSA\").toggle()'>SaveAs</a><span id='collapseSA'>&nbsp;Filename: <input type='text' id='filename'/></span></span>"
+      var button = "<span class='button'><a class='input' href='javascript:(function(){$(\"#collapseSA\").toggle()})()'>SaveAs</a><span id='collapseSA'>&nbsp;Filename: <input type='text' id='filename' class='fileinput'/></span></span>"
       return button;
     },
 

@@ -1,0 +1,131 @@
+body {
+    padding: 20px;
+    font-family: Calibri, Helvetica, Arial;
+    background-color: #c9e576
+}
+
+h1 {
+    font-size:120%
+}
+
+.header {
+    height:60px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid #ddd;
+    color: white;
+    margin-bottom: 10px;
+    position:relative
+}
+
+.bespin-container {
+    padding: 10px;
+    border: 0;
+    background-color: #4c4a41;
+    height: 100%;
+    width: inherit;
+    border: 1px solid #212;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    
+}
+
+.bespin{
+    margin: 0px;
+    padding: 0px;
+    border: 0;
+    height: 380px;
+    
+}
+
+.sidebar {
+    width: 200px;
+    height: 400px;
+    background-color: #4c4a41;
+    float:left;
+    border: 1px solid #212;
+    -moz-border-radius: 10px ;
+    -webkit-border-radius: 10px;
+    
+}
+
+.button {
+    background-color: #4c4a41;
+    padding: 5px;
+    margin: 4px;
+    height:24px;
+    border: 1px solid #ddd;
+    -moz-border-radius: 3px ;
+    -webkit-border-radius: 3px;
+    color:#ddd text-decoration:none;
+    position:relative;
+    top:10px
+}
+
+a.button {
+    background-color: #4c4a41;
+    padding: 5px;
+    margin: 4px;
+    margin-bottom:10px;
+    height:24px border: 1px solid #ddd;
+    -moz-border-radius: 3px ;
+    -webkit-border-radius: 3px;
+    color:#ddd text-decoration:none
+}
+
+a.button:link {
+    color:#ddd;
+    text-decoration:none
+}
+
+a.button:visited {
+    color:#ddd;
+    text-decoration:none
+}
+
+a.button:hover {
+    color:white;
+    text-decoration:bold;
+    border-color: white
+}
+
+a.input {
+    color:#ddd text-decoration:none
+}
+
+a.input:link {
+    color:#ddd;
+    text-decoration:none
+}
+
+a.input:visited {
+    color:#ddd;
+    text-decoration:none
+}
+
+a.input:hover {
+    color:white;
+    text-decoration:bold;
+    border-color: white
+}
+
+
+.notification {
+    background-color: #4c4a41;
+    position:relative;
+    top:10px;
+    padding: 5px;
+    margin: 4px;
+    height:40px;
+    border: 1px solid #fc4;
+    -moz-border-radius: 3px ;
+    -webkit-border-radius: 3px;
+    color:#ddd text-decoration:none
+}
+
+.fileinput {
+    border:1px solid;
+    font-size:12px;
+    position:relative;
+    top:-1px;
+}
+
