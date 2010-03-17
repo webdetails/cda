@@ -23,6 +23,8 @@ bespin.setContent(data)
 saveFile = function() {
 var fileName =$("#filename").val();
 fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
+$('#notifications').html('Saving...');
+$('#notifications').fadeIn().delay(2000).fadeOut('slow');
 $.get("writeCdaFile",{path: fileName,data:bespin.getContent()},function(data){
 $('#notifications').html(data);
 $('#notifications').fadeIn().delay(2000).fadeOut('slow');
@@ -74,7 +76,7 @@ $(document).ready(function(){
     $('#collapseNF').hide();
     $('#collapseSA').hide();
     if (params != null && params.initialState != undefined) { 
-        transitions.shiftState(transition.states[params.initialState])
+        transitions.shiftState(transitions.states[params.initialState])
     } else {
         transitions.shiftState(transitions.states.edit)
     }
