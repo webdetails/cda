@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="previewer/previewer.css" type="text/css" rel="stylesheet"/>
+        <link href="previewer/dataTables/css/demo_table_jui.css" type="text/css" rel="stylesheet"/>
+	<link type="text/css" href="previewer/css/custom-theme/jquery-ui-1.8rc3.custom.css" rel="stylesheet" />	
+	<link type="text/css" href="previewer/fg-menu/fg.menu.css" rel="stylesheet" />	
+
+        <script type="text/javascript" src="previewer/jquery.js"></script>
+	<script type="text/javascript" src="previewer/js/jquery-1.4.2.min.js"></script>
+	<script type="text/javascript" src="previewer/js/jquery-ui-1.8rc3.custom.min.js"></script>
+
+        <script type="text/javascript" src="previewer/dataTables/js/jquery.dataTables.js"></script>
+        <script type="text/javascript" src="previewer/fg-menu/fg.menu.js"></script>
+	<style type="text/css"> 
+	body { font-size:62.5%; margin:0; padding:0; }
+	#menuLog { font-size:1.4em; margin:20px; }
+	.hidden { position:absolute; top:0; left:-9999px; width:1px; height:1px; overflow:hidden; }
+	
+	.fg-button-icon-left { padding-left: 2.1em; }
+	.fg-button-icon-right { padding-right: 2.1em; }
+	.fg-button-icon-left .ui-icon { right: auto; left: .2em; margin-left: 0; }
+	.fg-button-icon-right .ui-icon { left: auto; right: .2em; margin-left: 0; }
+	.fg-button-icon-solo { display:block; width:8px; text-indent: -9999px; }	 /* solo icon buttons must have block properties for the text-indent to work */	
+	
+	.fg-button.ui-state-loading .ui-icon { background: url(spinner_bar.gif) no-repeat 0 0; }
+	</style> 
+
+        <script language="javascript">
+var lastQuery;
+var tableController;
+loadData = function() {
+var fileName =$("#filename").val();
+fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
+$.get("doQuery",{path:fileName},
+function(data) {
+bespin.setContent(data)
+})
+}
+
+saveFile = function() {
+var fileName =$("#filename").val();
+fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
+$('#notifications').html('Saving...');
+$('#notifications').fadeIn().delay(2000).fadeOut('slow');
+$.get("writeCdaFile",{path: fileName,data:bespin.getContent()},function(data){
+$('#notifications').html(data);
+$('#notifications').fadeIn().delay(2000).fadeOut('slow');
+});
+}
+
+
+/*
+ *  pageParams: get the request variables passed in the url 
+ */
+pageParams = function() {
+    var url = document.location.href;
+    var output = {};
+    var startIndex = url.indexOf('?');
+    var endIndex = url.indexOf('#');
+    if (startIndex < 0) {
+        return null;
+    } else {
+        // First we get the part of the url with the parameters in it (i.e. after the '?', but before the '#'), and partition
+        // it into individual 'var=value' pieces. Then we split those pieces and add them to the output object
+        args = endIndex > 0? url.slice(startIndex + 1,endIndex).split('&'):url.slice(startIndex + 1).split('&');
+        for(i = 0; i < args.length; i++) {
+            pair = args[i].split('=');
+            output[pair[0]] = pair[1];
+        }
+        return output;
+    }
+}
+        </script>
+    </head>
+<body style='background-color: #4c4a41'>
+<input type="hidden" id="staticfile" value="">
+<div class='ui-widget-content'>
+<!--
+HEADER
+-->
+<div class='header branding'>
+
+    <img  style='position: absolute; left: 10px; top: 15px; width: 100px' src='previewer/img/cda.png'>
+    <div style='margin-left: 125px'>
+        <span id="controller">
+            <button id='button' onclick='refreshTable(lastQuery)'>Refresh</button>
+            <a tabindex="0" href="#" class="fg-button ui-widget ui-state-default ui-corner-all" id="flat">Data Access<span style='float: right' class="ui-icon ui-icon-triangle-1-s"></span></a> 
+            <div id="search-engines" class="hidden"><ul id = 'queries'></ul></div> 
+        </span>
+        <div id='params'class='params'>&nbsp;</div>
+    </div>
+</div>
+<div id='previewerTable' style="padding:10px"></div>
+</div>
+<script>
+$(document).ready(function(){
+    $('#button').button();
+    var params = pageParams();
+    $('#notifications').hide();
+
+    	// BUTTONS
+    	$('.fg-button').hover(
+    		function(){ $(this).removeClass('ui-state-default').addClass('ui-state-focus'); },
+    		function(){ $(this).removeClass('ui-state-focus').addClass('ui-state-default'); }
+    	);
+    	
+    	// MENUS
+                $('.fg-button').button();    	
+list = $('ul#queries');
+list.empty();
+$.getJSON("listQueries",{path: filename},function(queries){
+var defaultQuery;
+for (query in queries.resultset) {
+    var name = queries.resultset[query][1] != null && queries.resultset[query][1] != ""? queries.resultset[query][1]: "DataAccess ID: " + queries.resultset[query][0];
+    var value = queries.resultset[query][0];
+    defaultQuery = value;
+    list.append('<li><a href="#"><span class="hidden" id="value">'+value+'</span>'+ name + '</a></li>');
+};
+
+		$('#flat').menu({ 
+			content: $('#flat').next().html(), // grab content from this page
+			showSpeed: 400,
+                        callback: function(result) {
+                            refreshTable(result.parent().find('span#value').text());
+                        }
+		});
+;
+refreshTable(defaultQuery);
+});
+ });
+
+refreshTable = function(id){
+// Detect whether the change was triggered by a refresh or a change in DataAccessId
+if (id != lastQuery) {
+    // When we change query, we must drop the table and parameters, and rebuild both
+    lastQuery = id;
+    refreshParams(id);
+    $.getJSON("doQuery",{path:filename, dataAccessId: id},function(data){
+        var tableContents = data.resultset;
+        var columnNames = [];
+        for (column in data.metadata) {
+            columnNames.push({"sTitle": data.metadata[column].colName});
+        }
+        $('#previewerTable').empty();
+        $('#previewerTable').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="contents"></table>' );
+        tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames,"bJQueryUI": true});
+    });
+} else {
+    // Same query, we only need to get the present parameter values and refresh the table
+    var params = getParams();
+    params.path = filename;
+    params.dataAccessId = id;
+    $.getJSON("doQuery",params,function(data){
+        tableController.fnClearTable();
+        tableController.fnAddData(data.resultset);
+    });
+}};
+
+refreshParams = function(id) {
+    $.getJSON("listParameters",{path:filename, dataAccessId: id},function(data){
+        var placeholder = $('#params');
+        placeholder.empty();
+        for (param in data.resultset) {
+            placeholder.append('<span class="param">'+data.resultset[param][0]+':&nbsp;<input id="'+data.resultset[param][0]+'" value="'+data.resultset[param][2]+'"></span>')
+}
+});
+
+};
+
+getParams = function() {
+    var params = {};
+    $('#params input').each(function(index,param){
+        params['param' +$(param).attr('id')] = $(param).val()
+    });
+    return params;
+}
+var filename = function(){
+    var params = pageParams();
+    return params.solution != undefined?
+        (params.solution + '/' +params.path + '/' + params.file).replace(/\/\//g,"/")
+        : params.path}();
+</script>
+</body>
+</html>
