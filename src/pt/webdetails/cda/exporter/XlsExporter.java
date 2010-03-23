@@ -85,5 +85,10 @@ public class XlsExporter extends AbstractKettleExporter
     return "xls";
   }
 
+    public String getAttachmentName()
+  {
+    return "cda-export.xls";
+  }
+
 
 }

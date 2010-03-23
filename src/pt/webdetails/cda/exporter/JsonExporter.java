@@ -84,4 +84,10 @@ public class JsonExporter extends AbstractExporter
     return "application/json";
   }
 
+
+  public String getAttachmentName()
+  {
+    // No attachment required
+    return null;
+  }
 }

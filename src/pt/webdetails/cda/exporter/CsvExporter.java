@@ -80,7 +80,12 @@ public class CsvExporter extends AbstractKettleExporter
 
   public String getMimeType()
   {
-    return "application/vnd.ms-excel";
+    return "text/csv";
+  }
+
+  public String getAttachmentName()
+  {
+    return "cda-export.csv";
   }
 
   public String getType()

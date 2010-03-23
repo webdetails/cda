@@ -13,6 +13,6 @@ public interface Exporter
 {
 
   public String getMimeType();
+  public String getAttachmentName();
   public void export(OutputStream out, final TableModel tableModel) throws ExporterException;
-
 }

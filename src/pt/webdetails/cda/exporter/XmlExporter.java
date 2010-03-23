@@ -93,4 +93,10 @@ public class XmlExporter extends AbstractExporter
   {
     return "text/xml";
   }
+
+  public String getAttachmentName()
+  {
+    // No attachment required
+    return null;
+  }
 }
