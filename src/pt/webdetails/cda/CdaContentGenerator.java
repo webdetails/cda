@@ -26,6 +26,7 @@ import pt.webdetails.cda.exporter.ExporterEngine;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
+import pt.webdetails.cda.utils.Util;
 
 @SuppressWarnings("unchecked")
 public class CdaContentGenerator extends BaseContentGenerator
@@ -156,7 +157,7 @@ public class CdaContentGenerator extends BaseContentGenerator
         response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
       }
 
-      logger.error("Failed to execute", e);
+      logger.error("Failed to execute: " + Util.getExceptionDescription(e), e);
     }
 
   }
@@ -285,14 +286,14 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   public void getCdaFile(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
-    String document = getResourceAsString(getRelativePath(pathParams));
+
+    String document = getResourceAsString(getRelativePath(pathParams), ISolutionRepository.ACTION_UPDATE);
     setResponseHeaders("text/plain", null);
-    out.write(document.getBytes());
+    out.write(document.getBytes("UTF-8"));
   }
 
   private void writeCdaFile(IParameterProvider pathParams, OutputStream out) throws Exception
   {
-    //throw new UnsupportedOperationException("Not yet implemented");
 
     //TODO: Validate the filename in some way, shape or form!
     String[] file = buildFileParameters(getRelativePath(pathParams));
@@ -300,21 +301,33 @@ public class CdaContentGenerator extends BaseContentGenerator
 
     ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
 
-    int status = solutionRepository.publish(rootDir, file[0], file[1], ((String) pathParams.getParameter("data")).getBytes("UTF-8"), true);
-    if (status == ISolutionRepository.FILE_ADD_SUCCESSFUL)
+    // Check if the file exists and we have permissions to write to it
+    String path = getRelativePath(pathParams);
+    if (solutionRepository.getSolutionFile(path, ISolutionRepository.ACTION_UPDATE) != null)
     {
-      solutionRepository.synchronizeSolutionWithSolutionSource(userSession);
-      SettingsManager.getInstance().clearCache();
-      setResponseHeaders("text/plain", null);
-      out.write("File saved".getBytes());
+
+      int status = solutionRepository.publish(rootDir, file[0], file[1], ((String) pathParams.getParameter("data")).getBytes("UTF-8"), true);
+      if (status == ISolutionRepository.FILE_ADD_SUCCESSFUL)
+      {
+        solutionRepository.synchronizeSolutionWithSolutionSource(userSession);
+        SettingsManager.getInstance().clearCache();
+        setResponseHeaders("text/plain", null);
+        out.write("File saved".getBytes());
+      }
+      else
+      {
+        setResponseHeaders("text/plain", null);
+        out.write("Save unsuccessful!".getBytes());
+        logger.error("writeCdaFile: saving " + file + " returned " + new Integer(status).toString());
+
+      }
     }
     else
     {
-      setResponseHeaders("text/plain", null);
-      out.write("Save unsuccessful!".getBytes());
-      logger.error("writeCdaFile: saving " + file + " returned " + new Integer(status).toString());
-
+      throw new AccessDeniedException(path, null);
     }
+
+
   }
 
   public void getCdaList(final IParameterProvider pathParams, final OutputStream out) throws Exception
@@ -412,11 +425,20 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
-  public String getResourceAsString(final String path) throws IOException
+  public String getResourceAsString(final String path, int actionOperation) throws IOException, AccessDeniedException
   {
 
-    return getResourceAsString(path, null);
+    ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
 
+    // Check if the file exists and we have permissions to write to it
+    if (solutionRepository.getSolutionFile(path, actionOperation) != null)
+    {
+      return getResourceAsString(path, null);
+    }
+    else
+    {
+      throw new AccessDeniedException(path, null);
+    }
   }
 
   public void editFile(final IParameterProvider pathParams, final OutputStream out) throws Exception
@@ -425,7 +447,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     SettingsManager.getInstance().clearCache();
     AbstractDataAccess.clearCache();
     setResponseHeaders("text/html", null);
-    out.write(getResourceAsString(editorPath).getBytes());
+    out.write(getResourceAsString(editorPath, ISolutionRepository.ACTION_UPDATE).getBytes("UTF-8"));
 
   }
 
@@ -436,7 +458,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     SettingsManager.getInstance().clearCache();
     AbstractDataAccess.clearCache();
     setResponseHeaders("text/html", null);
-    out.write(getResourceAsString(previewerPath).getBytes());
+    out.write(getResourceAsString(previewerPath, ISolutionRepository.ACTION_EXECUTE).getBytes("UTF-8"));
 
   }
 
@@ -477,9 +499,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
     String resource = pathParams.getStringParameter("resource", null);
     resource = resource.startsWith("/") ? resource : "/" + resource;
-    getResource(
-        out, resource);
-
+    getResource(out, resource);
 
   }
 
