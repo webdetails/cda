@@ -4,6 +4,7 @@
 	<lifecycle-listener class="pt.webdetails.cda.CdaLifecycleListener"/>
     <static-paths>
         <static-path url="/cda/editor" localFolder="editor"/>
+        <static-path url="/cda/previewer" localFolder="previewer"/>
         <static-path url="/cda/resources" localFolder="resources"/>
     </static-paths> 
 
@@ -17,6 +18,11 @@
 					<id>EDIT</id>
 					<command>content/cda/editFile?solution={solution}&amp;path={path}&amp;file={name}</command>
 				</operation>
+                        	<operation>
+					<id>RUN</id>
+					<command>content/cda/previewQuery?solution={solution}&amp;path={path}&amp;file={name}</command>
+				</operation>
+
 				<operation>
 				</operation>        		
 			</operations>
