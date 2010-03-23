@@ -41,6 +41,7 @@ public class CdaContentGenerator extends BaseContentGenerator {
   private static final String MIME_CSS = "text/css";
   private static final String MIME_JS = "text/javascript";
   private static final String EDITOR_SOURCE = "/editor/editor.html";
+  private static final String PREVIEWER_SOURCE = "/previewer/previewer.html";
   private static final int DEFAULT_PAGE_SIZE = 20;
   private static final int DEFAULT_START_PAGE = 0;
 
@@ -86,7 +87,9 @@ public class CdaContentGenerator extends BaseContentGenerator {
       }
       if ("doQuery".equals(method)) {
         doQuery(requestParams, out);
-      } else if ("listQueries".equals(method)) {
+      } else if ("previewQuery".equals(method)) {
+        previewQuery(requestParams, out);
+      }else if ("listQueries".equals(method)) {
         listQueries(requestParams, out);
       } else if ("getCdaList".equals(method)) {
         getCdaList(requestParams, out);
@@ -192,8 +195,8 @@ public class CdaContentGenerator extends BaseContentGenerator {
     final CdaEngine engine = CdaEngine.getInstance();
 
     final String path = getRelativePath(pathParams);
-    logger.error("Do Query: getRelativePath:" + path);
-    logger.error("Do Query: getSolPath:" + PentahoSystem.getApplicationContext().getSolutionPath(path));
+    logger.debug("Do Query: getRelativePath:" + path);
+    logger.debug("Do Query: getSolPath:" + PentahoSystem.getApplicationContext().getSolutionPath(path));
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
 
 
@@ -213,18 +216,17 @@ public class CdaContentGenerator extends BaseContentGenerator {
     final CdaEngine engine = CdaEngine.getInstance();
 
     final String path = getRelativePath(pathParams);
-    logger.error("Do Query: getRelativePath:" + path);
-    logger.error("Do Query: getSolPath:" + PentahoSystem.getApplicationContext().getSolutionPath(path));
+    logger.debug("Do Query: getRelativePath:" + path);
+    logger.debug("Do Query: getSolPath:" + PentahoSystem.getApplicationContext().getSolutionPath(path));
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
-
 
     // Handle the query itself and its output format...
     final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
     discoveryOptions.setOutputType(pathParams.getStringParameter("outputType", "json"));
-
+    discoveryOptions.setDataAccessId(pathParams.getStringParameter("dataAccessId", "<blank>"));
     String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
     setResponseHeaders(mimeType);
-    engine.listQueries(out, cdaSettings, discoveryOptions);
+    engine.listParameters(out, cdaSettings, discoveryOptions);
 
 
   }
@@ -349,6 +351,16 @@ public class CdaContentGenerator extends BaseContentGenerator {
     AbstractDataAccess.clearCache();
     setResponseHeaders("text/html");
     out.write(getResourceAsString(editorPath).getBytes());
+
+  }
+
+
+    public void previewQuery(final IParameterProvider pathParams, final OutputStream out) throws Exception {
+    final String previewerPath = "system/" + PLUGIN_NAME + PREVIEWER_SOURCE;
+    SettingsManager.getInstance().clearCache();
+    AbstractDataAccess.clearCache();
+    setResponseHeaders("text/html");
+    out.write(getResourceAsString(previewerPath).getBytes());
 
   }
 
