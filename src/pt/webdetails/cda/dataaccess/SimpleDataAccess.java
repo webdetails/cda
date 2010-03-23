@@ -1,5 +1,6 @@
 package pt.webdetails.cda.dataaccess;
 
+import java.util.ArrayList;
 import javax.swing.table.TableModel;
 
 import net.sf.ehcache.Cache;
@@ -8,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import pt.webdetails.cda.connections.Connection;
+import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 import pt.webdetails.cda.utils.TableModelUtils;
 
@@ -99,21 +101,45 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
   }
 
 
-  protected TableModel queryDataSource(final ParameterDataRow parameterDataRow) throws QueryException
+  protected TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException
   {
 
     final Cache cache = getCache();
+
+    // Get parameters from definition and apply it's values
+    final ArrayList<Parameter> parameters = (ArrayList<Parameter>) getParameters().clone();
+
+    for (final Parameter parameter : parameters)
+    {
+      final Parameter parameterPassed = queryOptions.getParameter(parameter.getName());
+      if (parameterPassed != null)
+      {
+        parameter.setStringValue(parameterPassed.getStringValue());
+      }
+    }
+
+
+    final ParameterDataRow parameterDataRow;
+    try
+    {
+      parameterDataRow = createParameterDataRowFromParameters(parameters);
+    }
+    catch (InvalidParameterException e)
+    {
+      throw new QueryException("Error parsing parameters ", e);
+    }
+
 
     // create the cache-key which is both query and parameter values
     final TableCacheKey key;
     try
     {
-      key = new TableCacheKey(getCdaSettings().getConnection(getConnectionId()),getQuery(), parameterDataRow);
+      key = new TableCacheKey(getCdaSettings().getConnection(getConnectionId()), getQuery(), parameterDataRow);
     }
     catch (UnknownConnectionException e)
     {
       // I'm sure I'll never be here
-      throw new QueryException("Unable to get a Connection for this dataAccess ",e);
+      throw new QueryException("Unable to get a Connection for this dataAccess ", e);
     }
 
     if (isCache())
@@ -151,6 +177,25 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     // and finally return the copy.
     return tableModelCopy;
   }
+
+  private ParameterDataRow createParameterDataRowFromParameters(final ArrayList<Parameter> parameters) throws InvalidParameterException
+  {
+
+    final ArrayList<String> names = new ArrayList<String>();
+    final ArrayList<Object> values = new ArrayList<Object>();
+
+    for (final Parameter parameter : parameters)
+    {
+      names.add(parameter.getName());
+      values.add(parameter.getValue());
+    }
+
+    final ParameterDataRow parameterDataRow = new ParameterDataRow(names.toArray(new String[]{}), values.toArray());
+
+    return parameterDataRow;
+
+  }
+
 
   protected abstract TableModel performRawQuery(ParameterDataRow parameterDataRow) throws QueryException;
 

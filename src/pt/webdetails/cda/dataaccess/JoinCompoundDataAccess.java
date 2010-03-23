@@ -14,7 +14,6 @@ import javax.swing.table.TableModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
@@ -62,15 +61,15 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     return TYPE;
   }
 
-  protected TableModel queryDataSource(final ParameterDataRow parameter) throws QueryException
+  protected TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException
   {
     TableModel output = null;
     inputCallables.clear();
 
     try
     {
-      final TableModel tableModelA = this.getCdaSettings().getDataAccess(leftId).doQuery(createQueryOptionsFromParameterDataRow(parameter));
-      final TableModel tableModelB = this.getCdaSettings().getDataAccess(rightId).doQuery(createQueryOptionsFromParameterDataRow(parameter));
+      final TableModel tableModelA = this.getCdaSettings().getDataAccess(leftId).doQuery(queryOptions);
+      final TableModel tableModelB = this.getCdaSettings().getDataAccess(rightId).doQuery(queryOptions);
 
 
       String[] leftColumnNames = new String[leftKeys.length];

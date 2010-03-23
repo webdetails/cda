@@ -25,18 +25,6 @@ public abstract class CompoundDataAccess extends AbstractDataAccess
   }
 
 
-  public QueryOptions createQueryOptionsFromParameterDataRow(final ParameterDataRow parameterDataRow)
-  {
-
-    QueryOptions options = new QueryOptions();
-    for (String col : parameterDataRow.getColumnNames())
-    {
-      options.addParameter(col,  parameterDataRow.get(col).toString());
-    }
-
-    return options;
-  }
-
   private ParameterDataRow createParameterDataRowFromParameters(final ArrayList<Parameter> parameters) throws InvalidParameterException
   {
 

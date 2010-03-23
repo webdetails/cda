@@ -42,6 +42,7 @@
 		<Name>Sql Query on SampleData</Name>
         <Query>
 			select o.YEAR_ID, o.status, sum(o.TOTALPRICE * 3) as tripleprice from orderfact o
+			where o.STATUS = ${status} and o.ORDERDATE &gt; ${orderDate}
 			group by o.YEAR_ID, o.STATUS
 			order by o.YEAR_ID DESC, o.STATUS
 		</Query>
@@ -69,6 +70,10 @@
 				<Formula>=[TRIPLEPRICE]-[TOTALPRICE]</Formula>
 			</CalculatedColumn>
 		</Columns>
+		        <Parameters>
+            <Parameter name="status" type="String" default="Shipped"/>
+            <Parameter name="orderDate" type="Date" pattern="yyyy-MM-dd" default="2003-03-01"/>
+        </Parameters>
 		<Output indexes="0,1,2,5,6"/>
 	</CompoundDataAccess>
 

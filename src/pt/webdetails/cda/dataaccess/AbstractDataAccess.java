@@ -146,29 +146,6 @@ public abstract class AbstractDataAccess implements DataAccess
   public TableModel doQuery(final QueryOptions queryOptions) throws QueryException
   {
 
-    // Get parameters from definition and apply it's values
-    final ArrayList<Parameter> parameters = (ArrayList<Parameter>) getParameters().clone();
-
-    for (final Parameter parameter : parameters)
-    {
-      final Parameter parameterPassed = queryOptions.getParameter(parameter.getName());
-      if (parameterPassed != null)
-      {
-        parameter.setStringValue(parameterPassed.getStringValue());
-      }
-    }
-
-
-    final ParameterDataRow parameterDataRow;
-    try
-    {
-      parameterDataRow = createParameterDataRowFromParameters(parameters);
-    }
-    catch (InvalidParameterException e)
-    {
-      throw new QueryException("Error parsing parameters ", e);
-    }
-
 
     /*
     *  Do the tableModel PostProcessing
@@ -181,7 +158,7 @@ public abstract class AbstractDataAccess implements DataAccess
 
     try
     {
-      final TableModel tableModel = queryDataSource(parameterDataRow);
+      final TableModel tableModel = queryDataSource(queryOptions);
       final TableModel outputTableModel = TableModelUtils.getInstance().postProcessTableModel(this, queryOptions, tableModel);
       logger.debug("Query " + getId() + " done successfully - returning tableModel");
       return outputTableModel;
@@ -203,25 +180,7 @@ public abstract class AbstractDataAccess implements DataAccess
   }
 
 
-  private ParameterDataRow createParameterDataRowFromParameters(final ArrayList<Parameter> parameters) throws InvalidParameterException
-  {
-
-    final ArrayList<String> names = new ArrayList<String>();
-    final ArrayList<Object> values = new ArrayList<Object>();
-
-    for (final Parameter parameter : parameters)
-    {
-      names.add(parameter.getName());
-      values.add(parameter.getValue());
-    }
-
-    final ParameterDataRow parameterDataRow = new ParameterDataRow(names.toArray(new String[]{}), values.toArray());
-
-    return parameterDataRow;
-
-  }
-
-  protected abstract TableModel queryDataSource(final ParameterDataRow parameter) throws QueryException;
+  protected abstract TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException;
 
   public abstract void closeDataSource() throws QueryException;
 
