@@ -21,7 +21,7 @@ var fileName =$("#filename").val();
 fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
 $('#notifications').html('Saving...');
 $('#notifications').fadeIn().delay(2000).fadeOut('slow');
-$.get("writeCdaFile",{path: fileName,data:bespin.getContent()},function(data){
+$.post("writeCdaFile",{path: fileName,data:bespin.getContent()},function(data){
 $('#notifications').html(data);
 $('#notifications').fadeIn().delay(2000).fadeOut('slow');
 });
