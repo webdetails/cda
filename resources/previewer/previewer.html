@@ -77,7 +77,7 @@ HEADER
 <span  id='params'class='params'>&nbsp;</span><button id='button' onclick='refreshTable(lastQuery)'>Refresh</button></div>
     </div>
 </div>
-<div id='previewerTable' style="padding:10px"></div>
+<div id='previewerTable' style="padding:10px"><span id='pleaseselect'>Please select a Data Access ID</span></div>
 </div>
 <div class='ui-widget-content'><img src='previewer/img/webdetails.png' style='padding:5px'></div>
 </body>
@@ -118,8 +118,9 @@ for (query in queries.resultset) {
 		});
 
 $('#fileid').text(filename);
-$('#selectorText').text(defaultDescription)
-refreshTable(defaultQuery);
+/* Commented out defaults to test an empty starting state*/
+//$('#selectorText').text(defaultDescription)
+//refreshTable(defaultQuery);
 });
  });
 
