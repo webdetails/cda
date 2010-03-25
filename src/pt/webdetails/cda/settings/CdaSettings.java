@@ -7,6 +7,7 @@ import javax.swing.table.TableModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
+import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import pt.webdetails.cda.connections.Connection;
@@ -38,6 +39,15 @@ public class CdaSettings
   private HashMap<String, DataAccess> dataAccessMap;
 
 
+  /**
+   * Creates a representation of an existing CDA file.
+   *
+   * @param doc - XML document
+   * @param id  - File id
+   * @param key - Context key - representation of the id in the solution rep.
+   * @throws UnsupportedConnectionException
+   * @throws UnsupportedDataAccessException
+   */
   public CdaSettings(final Document doc,
                      final String id,
                      final ResourceKey key) throws UnsupportedConnectionException, UnsupportedDataAccessException
@@ -55,14 +65,41 @@ public class CdaSettings
   }
 
 
+  /**
+   * Creates a representation of a CDA file and handles the xml generation
+   *
+   * @param id
+   * @param key
+   * @throws UnsupportedConnectionException
+   * @throws UnsupportedDataAccessException
+   */
+  public CdaSettings(final String id,
+                     final ResourceKey key) throws UnsupportedConnectionException, UnsupportedDataAccessException
+  {
 
-  public TableModel listQueries(DiscoveryOptions discoveryOptions){
+    this.contextKey = key;
+    this.id = id;
+
+    Document doc = DocumentFactory.getInstance().createDocument("UTF-8");
+
+    doc.addElement("CDADescriptor");
+    this.root = doc.getRootElement();
+    this.root.add(doc.addElement("DataSources"));
+
+    connectionsMap = new HashMap<String, Connection>();
+    dataAccessMap = new HashMap<String, DataAccess>();
+
+
+  }
+
+
+  public TableModel listQueries(DiscoveryOptions discoveryOptions)
+  {
 
 
     return TableModelUtils.getInstance().dataAccessMapToTableModel(dataAccessMap);
 
   }
-
 
 
   private void parseDocument() throws UnsupportedConnectionException, UnsupportedDataAccessException
@@ -113,7 +150,7 @@ public class CdaSettings
 
         final DataAccess dataAccess = (DataAccess) clazz.getConstructor(params).newInstance(new Object[]{element});
         dataAccess.setCdaSettings(this);
-        addDataAccess(dataAccess);
+        addInternalDataAccess(dataAccess);
 
       }
       catch (Exception e)
@@ -154,7 +191,7 @@ public class CdaSettings
 
         final Connection connection = (Connection) clazz.getConstructor(params).newInstance(new Object[]{element});
         connection.setCdaSettings(this);
-        addConnection(connection);
+        addInternalConnection(connection);
 
       }
       catch (Exception e)
@@ -168,14 +205,20 @@ public class CdaSettings
   }
 
 
-  private void addConnection(final Connection connectionSettings)
+  public String asXML(){
+
+    return this.root.asXML();
+
+  }
+
+  private void addInternalConnection(final Connection connectionSettings)
   {
 
     connectionsMap.put(connectionSettings.getId(), connectionSettings);
 
   }
 
-  private void addDataAccess(final DataAccess dataAccess)
+  private void addInternalDataAccess(final DataAccess dataAccess)
   {
 
     dataAccessMap.put(dataAccess.getId(), dataAccess);

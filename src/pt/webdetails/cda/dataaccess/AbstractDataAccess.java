@@ -226,6 +226,13 @@ public abstract class AbstractDataAccess implements DataAccess
 
   }
 
+
+  public void storeDescriptor(DataAccessConnectionDescriptor descriptor){
+
+    ////
+
+  }
+
   public String getId()
   {
     return id;

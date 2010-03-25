@@ -43,4 +43,8 @@ public interface DataAccess
   public ArrayList<Integer> getOutputs();
 
   public TableModel listParameters(DiscoveryOptions discoveryOptions);
+
+  public ArrayList<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors();
+
+  public void storeDescriptor(DataAccessConnectionDescriptor descriptor);
 }

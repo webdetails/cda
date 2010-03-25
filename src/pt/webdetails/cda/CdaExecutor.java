@@ -42,7 +42,6 @@ public class CdaExecutor
   {
 
 
-
     final CdaExecutor cdaExecutor = CdaExecutor.getInstance();
 
     cdaExecutor.doQuery();
@@ -63,17 +62,13 @@ public class CdaExecutor
       // Define an outputStream
       OutputStream out = System.out;
 
-      logger.info("Building CDA settings from sample file");
+      // This will test standard query execution
+      //testQueryExecution(out);
 
-      final SettingsManager settingsManager = SettingsManager.getInstance();
 
-      final File settingsFile = new File("samples/sample.cda");
-      final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
+      // This will test the block creation
+      testBlocks(out);
 
-      testSqlQuery(out, cdaSettings);
-
-      // testMondrianQuery(out, cdaSettings);
-      
 
     }
     catch (DocumentException e)
@@ -105,6 +100,38 @@ public class CdaExecutor
       logger.fatal("ExporterException " + Util.getExceptionDescription(e));
     }
 
+
+  }
+
+  private void testBlocks(final OutputStream out)
+      throws DocumentException, UnsupportedConnectionException, UnsupportedDataAccessException, UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
+  {
+
+    logger.info("Testing CDA file interaction through blocks");
+    final SettingsManager settingsManager = SettingsManager.getInstance();
+
+    final File settingsFile = new File("samples/sample-gen.cda");
+    final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
+
+
+    testSingleSqlQuery(out, cdaSettings);
+
+  }
+
+  private void testQueryExecution(final OutputStream out)
+      throws DocumentException, UnsupportedConnectionException, UnsupportedDataAccessException, UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
+  {
+
+    logger.info("Building CDA settings from sample file");
+
+    final SettingsManager settingsManager = SettingsManager.getInstance();
+
+    final File settingsFile = new File("samples/sample.cda");
+    final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
+
+    testSqlQuery(out, cdaSettings);
+
+    //testMondrianQuery(out, cdaSettings);
 
   }
 
@@ -151,22 +178,36 @@ public class CdaExecutor
   }
 
 
+  private void testSingleSqlQuery(final OutputStream out, final CdaSettings cdaSettings)
+      throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
+  {
+    logger.debug("Doing query on Cda - Initializing CdaEngine");
+    final CdaEngine engine = CdaEngine.getInstance();
+
+    QueryOptions queryOptions = new QueryOptions();
+    queryOptions.setDataAccessId("1");
+    queryOptions.addParameter("orderDate", "2003-04-01");
+    queryOptions.setOutputType("csv");
+
+    engine.doQuery(out, cdaSettings, queryOptions);
+  }
+
 
   private void testMondrianQuery(final OutputStream out, final CdaSettings cdaSettings)
-        throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
-    {
-      logger.debug("Doing query on Cda - Initializing CdaEngine");
-      final CdaEngine engine = CdaEngine.getInstance();
+      throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
+  {
+    logger.debug("Doing query on Cda - Initializing CdaEngine");
+    final CdaEngine engine = CdaEngine.getInstance();
 
-      QueryOptions queryOptions = new QueryOptions();
-      queryOptions.setDataAccessId("2");
-      queryOptions.setOutputType("json");
-      queryOptions.addParameter("status","Shipped");
+    QueryOptions queryOptions = new QueryOptions();
+    queryOptions.setDataAccessId("2");
+    queryOptions.setOutputType("json");
+    queryOptions.addParameter("status", "Shipped");
 
-      logger.info("Doing query");
-      engine.doQuery(out, cdaSettings, queryOptions);
+    logger.info("Doing query");
+    engine.doQuery(out, cdaSettings, queryOptions);
 
-    }
+  }
 
 
   public static synchronized CdaExecutor getInstance()

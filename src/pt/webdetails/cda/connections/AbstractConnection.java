@@ -1,5 +1,7 @@
 package pt.webdetails.cda.connections;
 
+import java.util.HashMap;
+
 import org.dom4j.Element;
 import pt.webdetails.cda.settings.CdaSettings;
 
@@ -13,6 +15,7 @@ public abstract class AbstractConnection implements Connection {
 
   private String id;
   private CdaSettings cdaSettings;
+  
 
   public AbstractConnection()
   {
@@ -26,8 +29,16 @@ public abstract class AbstractConnection implements Connection {
 
   }
 
+  public AbstractConnection(final HashMap settings) throws InvalidConnectionException {
+
+    // TODO
+
+   }
+
+
 
   protected abstract void initializeConnection(Element connection) throws InvalidConnectionException;
+
 
   public String getId() {
     return id;
