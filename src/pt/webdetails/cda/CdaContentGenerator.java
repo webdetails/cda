@@ -303,7 +303,12 @@ public class CdaContentGenerator extends BaseContentGenerator
 
     // Check if the file exists and we have permissions to write to it
     String path = getRelativePath(pathParams);
-    if (solutionRepository.getSolutionFile(path, ISolutionRepository.ACTION_UPDATE) != null)
+
+    // 1 - is it a new file?
+    final boolean resourceExists = solutionRepository.resourceExists(path);
+
+    // 2 - it already exists - let's see if we have permissions
+    if (!resourceExists || solutionRepository.getSolutionFile(path, ISolutionRepository.ACTION_UPDATE) != null)
     {
 
       int status = solutionRepository.publish(rootDir, file[0], file[1], ((String) pathParams.getParameter("data")).getBytes("UTF-8"), true);
@@ -443,11 +448,28 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   public void editFile(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
-    final String editorPath = "system/" + PLUGIN_NAME + EDITOR_SOURCE;
-    SettingsManager.getInstance().clearCache();
-    AbstractDataAccess.clearCache();
-    setResponseHeaders("text/html", null);
-    out.write(getResourceAsString(editorPath, ISolutionRepository.ACTION_UPDATE).getBytes("UTF-8"));
+
+
+    ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
+
+    // Check if the file exists and we have permissions to write to it
+    String path = getRelativePath(pathParams);
+    if (solutionRepository.getSolutionFile(path, ISolutionRepository.ACTION_UPDATE) != null)
+    {
+
+      final String editorPath = "system/" + PLUGIN_NAME + EDITOR_SOURCE;
+      SettingsManager.getInstance().clearCache();
+      AbstractDataAccess.clearCache();
+      setResponseHeaders("text/html", null);
+      out.write(getResourceAsString(editorPath, ISolutionRepository.ACTION_UPDATE).getBytes("UTF-8"));
+    }
+    else
+    {
+
+      setResponseHeaders("text/plain", null);
+      out.write("Access Denied".getBytes());
+    }
+
 
   }
 
