@@ -24,16 +24,23 @@ public class PropertyDescriptor
   private SOURCE source;
   private String value;
 
-  private PropertyDescriptor(final String name)
+  public  PropertyDescriptor(final String name)
   {
     this.name = name;
     setType(TYPE.STRING);
   }
 
-  private PropertyDescriptor(final String name, final TYPE type)
+  public PropertyDescriptor(final String name, final TYPE type)
   {
     this.name = name;
     this.type = type;
+  }
+
+    public PropertyDescriptor(final String name, final TYPE type, final SOURCE source)
+  {
+    this.name = name;
+    this.type = type;
+    this.source = source;
   }
 
   public String getName()

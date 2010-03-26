@@ -25,12 +25,10 @@ import pt.webdetails.cda.utils.TableModelUtils;
  * Date: Feb 3, 2010
  * Time: 11:05:38 AM
  */
-public abstract class AbstractDataAccess implements DataAccess
-{
+public abstract class AbstractDataAccess implements DataAccess {
+
   private static final Log logger = LogFactory.getLog(AbstractDataAccess.class);
-
   private static CacheManager cacheManager;
-
   private CdaSettings cdaSettings;
   private String id;
   private String name;
@@ -42,8 +40,7 @@ public abstract class AbstractDataAccess implements DataAccess
   private ArrayList<ColumnDefinition> columnDefinitions;
   private HashMap<Integer, ColumnDefinition> columnDefinitionIndexMap;
 
-  protected AbstractDataAccess(final Element element)
-  {
+  protected AbstractDataAccess(final Element element) {
 
     name = "";
     columnDefinitionIndexMap = new HashMap<Integer, ColumnDefinition>();
@@ -55,32 +52,25 @@ public abstract class AbstractDataAccess implements DataAccess
 
   }
 
-
   public abstract String getType();
 
-
-  private void parseOptions(final Element element)
-  {
+  private void parseOptions(final Element element) {
     id = element.attributeValue("id");
 
     final Element nameElement = (Element) element.selectSingleNode("./Name");
-    if (nameElement != null)
-    {
+    if (nameElement != null) {
       name = nameElement.getTextTrim();
     }
 
-    if (element.attributeValue("access") != null && element.attributeValue("access").equals("private"))
-    {
+    if (element.attributeValue("access") != null && element.attributeValue("access").equals("private")) {
       access = DataAccessEnums.ACCESS_TYPE.PRIVATE;
     }
 
-    if (element.attributeValue("cache") != null && element.attributeValue("cache").equals("true"))
-    {
+    if (element.attributeValue("cache") != null && element.attributeValue("cache").equals("true")) {
       cache = true;
     }
 
-    if (element.attribute("cacheDuration") != null)
-    {
+    if (element.attribute("cacheDuration") != null) {
       cacheDuration = Integer.parseInt(element.attributeValue("cacheDuration"));
     }
 
@@ -88,18 +78,15 @@ public abstract class AbstractDataAccess implements DataAccess
     // Parse parameters
     final List<Element> parameterNodes = element.selectNodes("Parameters/Parameter");
 
-    for (final Element p : parameterNodes)
-    {
+    for (final Element p : parameterNodes) {
       parameters.add(new Parameter(p));
     }
 
     // Parse outputs
     final Element outputNode = (Element) element.selectSingleNode("Output");
-    if (outputNode != null)
-    {
+    if (outputNode != null) {
       final String[] indexes = outputNode.attributeValue("indexes").split(",");
-      for (final String index : indexes)
-      {
+      for (final String index : indexes) {
         outputs.add(Integer.parseInt(index));
       }
     }
@@ -107,93 +94,75 @@ public abstract class AbstractDataAccess implements DataAccess
     // Parse Columns
     final List<Element> columnNodes = element.selectNodes("Columns/*");
 
-    for (final Element p : columnNodes)
-    {
+    for (final Element p : columnNodes) {
       columnDefinitions.add(new ColumnDefinition(p));
     }
 
     // Build the columnDefinitionIndexMap
     final ArrayList<ColumnDefinition> cols = getColumns();
-    for (final ColumnDefinition columnDefinition : cols)
-    {
+    for (final ColumnDefinition columnDefinition : cols) {
       columnDefinitionIndexMap.put(columnDefinition.getIndex(), columnDefinition);
     }
 
   }
 
-  protected static synchronized Cache getCache() throws CacheException
-  {
-    if (cacheManager == null)
-    {
+  protected static synchronized Cache getCache() throws CacheException {
+    if (cacheManager == null) {
       cacheManager = CacheManager.create();
     }
 
-    if (cacheManager.cacheExists("pentaho-cda-dataaccess") == false)
-    {
+    if (cacheManager.cacheExists("pentaho-cda-dataaccess") == false) {
       cacheManager.addCache("pentaho-cda-dataaccess");
     }
     return cacheManager.getCache("pentaho-cda-dataaccess");
   }
 
-  public static synchronized void clearCache() throws CacheException
-  {
-    if (cacheManager != null && cacheManager.cacheExists("pentaho-cda-dataaccess"))
-    {
+  public static synchronized void clearCache() throws CacheException {
+    if (cacheManager != null && cacheManager.cacheExists("pentaho-cda-dataaccess")) {
       cacheManager.removeCache("pentaho-cda-dataaccess");
     }
   }
 
-  public TableModel doQuery(final QueryOptions queryOptions) throws QueryException
-  {
+  public TableModel doQuery(final QueryOptions queryOptions) throws QueryException {
 
 
     /*
-    *  Do the tableModel PostProcessing
-    *  1. Sort (todo)
-    *  2. Show only the output columns
-    *  3. Paginate
-    *  4. Call the appropriate exporter
-    *
-    */
+     *  Do the tableModel PostProcessing
+     *  1. Sort (todo)
+     *  2. Show only the output columns
+     *  3. Paginate
+     *  4. Call the appropriate exporter
+     *
+     */
 
-    try
-    {
+    try {
       final TableModel tableModel = queryDataSource(queryOptions);
       final TableModel outputTableModel = TableModelUtils.getInstance().postProcessTableModel(this, queryOptions, tableModel);
       logger.debug("Query " + getId() + " done successfully - returning tableModel");
       return outputTableModel;
-    }
-    catch (TableModelException e)
-    {
+    } catch (TableModelException e) {
       throw new QueryException("Could not create outputTableModel ", e);
     }
 
 
   }
 
-
-  public TableModel listParameters(final DiscoveryOptions discoveryOptions)
-  {
+  public TableModel listParameters(final DiscoveryOptions discoveryOptions) {
 
     return TableModelUtils.getInstance().dataAccessParametersToTableModel(getParameters());
 
   }
 
-
   protected abstract TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException;
 
   public abstract void closeDataSource() throws QueryException;
 
-
-  public ArrayList<ColumnDefinition> getColumns()
-  {
+  public ArrayList<ColumnDefinition> getColumns() {
 
     final ArrayList<ColumnDefinition> list = new ArrayList<ColumnDefinition>();
 
-    for (final ColumnDefinition definition : columnDefinitions)
-    {
-      if (definition.getType() == ColumnDefinition.TYPE.COLUMN)
-      {
+    for (final ColumnDefinition definition : columnDefinitions) {
+      if (definition.getType() == ColumnDefinition.TYPE.COLUMN) {
         list.add(definition);
       }
     }
@@ -201,24 +170,18 @@ public abstract class AbstractDataAccess implements DataAccess
 
   }
 
-
-  public ColumnDefinition getColumnDefinition(final int idx)
-  {
+  public ColumnDefinition getColumnDefinition(final int idx) {
 
     return columnDefinitionIndexMap.get(new Integer(idx));
 
   }
 
-
-  public ArrayList<ColumnDefinition> getCalculatedColumns()
-  {
+  public ArrayList<ColumnDefinition> getCalculatedColumns() {
 
     final ArrayList<ColumnDefinition> list = new ArrayList<ColumnDefinition>();
 
-    for (final ColumnDefinition definition : columnDefinitions)
-    {
-      if (definition.getType() == ColumnDefinition.TYPE.CALCULATED_COLUMN)
-      {
+    for (final ColumnDefinition definition : columnDefinitions) {
+      if (definition.getType() == ColumnDefinition.TYPE.CALCULATED_COLUMN) {
         list.add(definition);
       }
     }
@@ -226,60 +189,64 @@ public abstract class AbstractDataAccess implements DataAccess
 
   }
 
-
-  public void storeDescriptor(DataAccessConnectionDescriptor descriptor){
-
+  public void storeDescriptor(DataAccessConnectionDescriptor descriptor) {
     ////
-
   }
 
-  public String getId()
-  {
+  public String getId() {
     return id;
   }
 
-  public String getName()
-  {
+  public String getName() {
     return name;
   }
 
-  public void setName(final String name)
-  {
+  public void setName(final String name) {
     this.name = name;
   }
 
-  public DataAccessEnums.ACCESS_TYPE getAccess()
-  {
+  public DataAccessEnums.ACCESS_TYPE getAccess() {
     return access;
   }
 
-  public boolean isCache()
-  {
+  public boolean isCache() {
     return cache;
   }
 
-  public int getCacheDuration()
-  {
+  public int getCacheDuration() {
     return cacheDuration;
   }
 
-  public CdaSettings getCdaSettings()
-  {
+  public CdaSettings getCdaSettings() {
     return cdaSettings;
   }
 
-  public void setCdaSettings(final CdaSettings cdaSettings)
-  {
+  public void setCdaSettings(final CdaSettings cdaSettings) {
     this.cdaSettings = cdaSettings;
   }
 
-  public ArrayList<Parameter> getParameters()
-  {
+  public ArrayList<Parameter> getParameters() {
     return parameters;
   }
 
-  public ArrayList<Integer> getOutputs()
-  {
+  public ArrayList<Integer> getOutputs() {
     return outputs;
+  }
+
+  public ArrayList<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors() {
+    throw new UnsupportedOperationException("Not implemented yet!");
+  }
+
+  protected HashMap<String, String> getInterface() {
+    throw new UnsupportedOperationException("Not implemented yet!");
+    /*
+    HashMap<String, String> properties = new HashMap<String, String>();
+    properties.put("access", "");
+    properties.put("cache", "");
+    properties.put("cacheDuration", "");
+    properties.put("parameters", "");
+    properties.put("output", "");
+    properties.put("columns", "");
+    return properties;*/
   }
 }

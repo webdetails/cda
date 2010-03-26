@@ -1,5 +1,7 @@
 package pt.webdetails.cda.dataaccess;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 import javax.swing.table.TableModel;
@@ -129,5 +131,20 @@ public abstract class PREDataAccess extends SimpleDataAccess
     this.localDataFactory = localDataFactory;
   }
 
+  public ArrayList<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors() {
+    ArrayList<DataAccessConnectionDescriptor> descriptor = new ArrayList<DataAccessConnectionDescriptor>();
+    DataAccessConnectionDescriptor proto = new DataAccessConnectionDescriptor();
+    proto.addDataAccessProperty(new PropertyDescriptor("Query",PropertyDescriptor.TYPE.STRING,PropertyDescriptor.SOURCE.DATAACCESS));
+    descriptor.add(proto);
+    return descriptor;
+   }
 
+  protected HashMap<String, String> getInterface() {
+    HashMap<String, String> properties = super.getInterface();
+    if (properties == null) {
+      properties = new HashMap<String, String>();
+    }
+    properties.put("query", "");
+    return properties;
+  }
 }

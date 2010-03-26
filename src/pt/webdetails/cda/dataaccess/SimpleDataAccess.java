@@ -1,6 +1,7 @@
 package pt.webdetails.cda.dataaccess;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.table.TableModel;
 
 import net.sf.ehcache.Cache;
@@ -212,5 +213,10 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
   {
     return connectionId;
   }
-
+  protected HashMap<String, String> getInterface() {
+    HashMap<String, String> properties = new HashMap<String, String>();
+    properties.put("connection", "");
+    properties.put("query", "");
+    return properties;
+  }
 }

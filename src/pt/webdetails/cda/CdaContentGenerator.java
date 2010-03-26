@@ -561,4 +561,20 @@ public class CdaContentGenerator extends BaseContentGenerator
     result[1] = fileName;
     return result;
   }
+
+  public void getDataAccessBlock(final IParameterProvider pathParams, final OutputStream out) throws Exception {
+    logger.fatal("Not Implemented yet");
+  }
+
+  public void writeDataAccessBlock(final IParameterProvider pathParams, final OutputStream out) throws Exception {
+    logger.fatal("Not Implemented yet");
+  }
+
+  public void getConnectionBlock(final IParameterProvider pathParams, final OutputStream out) throws Exception {
+    logger.fatal("Not Implemented yet");
+  }
+
+  public void writeConnectionBlock(final IParameterProvider pathParams, final OutputStream out) throws Exception {
+    logger.fatal("Not Implemented yet");
+  }
 }

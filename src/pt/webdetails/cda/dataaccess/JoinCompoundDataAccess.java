@@ -218,5 +218,14 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       e.printStackTrace();
     }
   }
+
+  public ArrayList<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors() {
+    ArrayList<DataAccessConnectionDescriptor> descriptor = new ArrayList<DataAccessConnectionDescriptor>();
+    DataAccessConnectionDescriptor proto = new DataAccessConnectionDescriptor();
+    proto.addDataAccessProperty(new PropertyDescriptor("Left",PropertyDescriptor.TYPE.STRING,PropertyDescriptor.SOURCE.DATAACCESS));
+    proto.addDataAccessProperty(new PropertyDescriptor("Right",PropertyDescriptor.TYPE.STRING,PropertyDescriptor.SOURCE.DATAACCESS));
+    descriptor.add(proto);
+    return descriptor;
+   }
 }
 

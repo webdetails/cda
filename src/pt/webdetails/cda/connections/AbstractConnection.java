@@ -1,8 +1,10 @@
 package pt.webdetails.cda.connections;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.dom4j.Element;
+import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.settings.CdaSettings;
 
 /**
@@ -62,5 +64,8 @@ public abstract class AbstractConnection implements Connection {
   @Override
   public abstract boolean equals(final Object obj);
 
-
+  public ArrayList<PropertyDescriptor> getProperties() {
+    // TODO: Actually implement this
+    throw new UnsupportedOperationException("Not implemented yet!");
+  }
 }
