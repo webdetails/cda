@@ -16,7 +16,11 @@ bespin.setContent(data)
 })
 }
 
+fileChanged = function() {
+    $('a#save').text('Save As');
+}
 saveFile = function() {
+    $('a#save').text('Save');
 var fileName =$("#filename").val();
 fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
 $('#notifications').html('Saving...');
@@ -26,7 +30,10 @@ $('#notifications').html(data);
 $('#notifications').fadeIn().delay(2000).fadeOut('slow');
 });
 }
-
+previewFile = function() {
+var fileName = $("#staticfile").val();
+window.open('previewQuery?path='+fileName);
+}
 
 /*
  *  pageParams: get the request variables passed in the url 
@@ -116,13 +123,18 @@ transitions = {
       return button;
     },
 
-    saveAs: function() {
-      var button = "<span class='button'><a class='input' href='javascript:(function(){$(\"#collapseSA\").toggle()})()'>SaveAs</a><span id='collapseSA'>&nbsp;Filename: <input type='text' id='filename' class='fileinput'/></span></span>"
+    preview: function() {
+      var button = "<a id='preview' class='button' href='javascript:previewFile()'>Preview</a>"
+      return button;
+    },
+
+    fileInput: function() {
+      var button = "<span class='button'>Filename: <input type='text' id='filename' class='fileinput' onchange='fileChanged()'/></span>"
       return button;
     },
 
     reload: function() {
-      var button = "<a id='save' class='button' href='javascript:loadFile()'>Reload</a>"
+      var button = "<a id='reload' class='button' href='javascript:loadFile()'>Reload</a>"
       return button;
     },
 
@@ -133,8 +145,8 @@ transitions = {
 
     states: {
         newFile: function() {return [transitions.initialSave]},
-        edit: function() {return [transitions.save, transitions.reload, transitions.saveAs]},
-        exEdit: function() {return [transitions.save, transitions.reload]}
+        edit: function() {return [transitions.fileInput, transitions.save, transitions.reload, transitions.preview]},
+        exEdit: function() {return [transitions.save, transitions.reload,transitions.preview]}
     }
 
 }
