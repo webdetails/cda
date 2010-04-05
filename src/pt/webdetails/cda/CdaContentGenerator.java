@@ -21,6 +21,7 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
+import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.exporter.ExporterEngine;
 import pt.webdetails.cda.query.QueryOptions;
@@ -29,8 +30,7 @@ import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.utils.Util;
 
 @SuppressWarnings("unchecked")
-public class CdaContentGenerator extends BaseContentGenerator
-{
+public class CdaContentGenerator extends BaseContentGenerator {
 
   private static Log logger = LogFactory.getLog(CdaContentGenerator.class);
   public static final String PLUGIN_NAME = "cda";
@@ -43,35 +43,28 @@ public class CdaContentGenerator extends BaseContentGenerator
   private static final int DEFAULT_PAGE_SIZE = 20;
   private static final int DEFAULT_START_PAGE = 0;
 
-  public CdaContentGenerator()
-  {
+  public CdaContentGenerator() {
   }
 
-  private String extractMethod(final String pathString)
-  {
-    if (StringUtils.isEmpty(pathString))
-    {
+  private String extractMethod(final String pathString) {
+    if (StringUtils.isEmpty(pathString)) {
       return null;
     }
     final String pathWithoutSlash = pathString.substring(1);
-    if (pathWithoutSlash.indexOf('/') > -1)
-    {
+    if (pathWithoutSlash.indexOf('/') > -1) {
       return null;
     }
     final int queryStart = pathWithoutSlash.indexOf('?');
-    if (queryStart < 0)
-    {
+    if (queryStart < 0) {
       return pathWithoutSlash;
     }
     return pathWithoutSlash.substring(0, queryStart);
   }
 
   @Override
-  public void createContent() throws Exception
-  {
+  public void createContent() throws Exception {
     final HttpServletResponse response = (HttpServletResponse) parameterProviders.get("path").getParameter("httpresponse"); //$NON-NLS-1$ //$NON-NLS-2$
-    try
-    {
+    try {
       final IParameterProvider pathParams = parameterProviders.get("path");
       final IParameterProvider requestParams = parameterProviders.get("request");
 
@@ -83,77 +76,48 @@ public class CdaContentGenerator extends BaseContentGenerator
       final String pathString = pathParams.getStringParameter("path", null);
 
       final String method = extractMethod(pathString);
-      if (method == null)
-      {
+      if (method == null) {
         logger.error(("DashboardDesignerContentGenerator.ERROR_001_INVALID_METHOD_EXCEPTION") + " : " + method);
-        if (response != null)
-        {
+        if (response != null) {
           response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }
         return;
       }
-      if ("doQuery".equals(method))
-      {
+      if ("doQuery".equals(method)) {
         doQuery(requestParams, out);
-      }
-      else if ("previewQuery".equals(method))
-      {
+      } else if ("previewQuery".equals(method)) {
         previewQuery(requestParams, out);
-      }
-      else if ("listQueries".equals(method))
-      {
+      } else if ("listQueries".equals(method)) {
         listQueries(requestParams, out);
-      }
-      else if ("getCdaList".equals(method))
-      {
+      } else if ("getCdaList".equals(method)) {
         getCdaList(requestParams, out);
-      }
-      else if ("listParameters".equals(method))
-      {
+      } else if ("listParameters".equals(method)) {
         listParameters(requestParams, out);
-      }
-      else if ("clearCache".equals(method))
-      {
+      } else if ("clearCache".equals(method)) {
         clearCache(requestParams, out);
-      }
-      else if ("synchronize".equals(method))
-      {
+      } else if ("synchronize".equals(method)) {
         syncronize(requestParams, out);
-      }
-      else if ("getCdaFile".equals(method))
-      {
+      } else if ("getCdaFile".equals(method)) {
         getCdaFile(requestParams, out);
-      }
-      else if ("writeCdaFile".equals(method))
-      {
+      } else if ("writeCdaFile".equals(method)) {
         writeCdaFile(requestParams, out);
-      }
-      else if ("editFile".equals(method))
-      {
+      } else if ("editFile".equals(method)) {
         editFile(requestParams, out);
-      }
-      else if ("getJsResource".equals(method))
-      {
+      } else if ("getJsResource".equals(method)) {
         getJsResource(requestParams, out);
-      }
-      else if ("getCssResource".equals(method))
-      {
+      } else if ("getCssResource".equals(method)) {
         getCssResource(requestParams, out);
-      }
-      else
-      {
-        if (response != null)
-        {
+      } else if ("listDataAccessTypes".equals(method)) {
+        listDataAccessTypes(requestParams, out);
+      } else {
+        if (response != null) {
           response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }
         logger.error(("DashboardDesignerContentGenerator.ERROR_001_INVALID_METHOD_EXCEPTION") + " : " + method);
         return;
       }
-    }
-    catch (Exception e)
-    {
-      if (response != null)
-      {
+    } catch (Exception e) {
+      if (response != null) {
         response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
       }
 
@@ -162,8 +126,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
-  public void doQuery(final IParameterProvider pathParams, final OutputStream out) throws Exception
-  {
+  public void doQuery(final IParameterProvider pathParams, final OutputStream out) throws Exception {
 
     final CdaEngine engine = CdaEngine.getInstance();
     final QueryOptions queryOptions = new QueryOptions();
@@ -175,11 +138,9 @@ public class CdaContentGenerator extends BaseContentGenerator
     // We assume that any paging options found mean that the user actively wants paging.
     final long pageSize = pathParams.getLongParameter("pageSize", 0);
     final long pageStart = pathParams.getLongParameter("pageStart", 0);
-    final boolean paginate = "true".equals(pathParams.getStringParameter("paginate", "false"));
-    if (pageSize > 0 || pageStart > 0 || paginate)
-    {
-      if (pageSize > Integer.MAX_VALUE || pageStart > Integer.MAX_VALUE)
-      {
+    final boolean paginate = "true".equals(pathParams.getStringParameter("paginateQuery", "false"));
+    if (pageSize > 0 || pageStart > 0 || paginate) {
+      if (pageSize > Integer.MAX_VALUE || pageStart > Integer.MAX_VALUE) {
         throw new ArithmeticException("Paging values too large");
       }
       queryOptions.setPaginate(true);
@@ -196,19 +157,16 @@ public class CdaContentGenerator extends BaseContentGenerator
 //      sortBy.add(Integer.parseInt((String) obj));
 //    }
 //    queryOptions.setSortBy(sortBy);
-    if (pathParams.getStringParameter("sortBy", null) != null)
-    {
+    if (pathParams.getStringParameter("sortBy", null) != null) {
       logger.warn("sortBy not implemented yet");
     }
     // ... and the query parameters
     // We identify any pathParams starting with "param" as query parameters
     final Iterator<String> params = (Iterator<String>) pathParams.getParameterNames();
-    while (params.hasNext())
-    {
+    while (params.hasNext()) {
       final String param = params.next();
 
-      if (param.startsWith("param"))
-      {
+      if (param.startsWith("param")) {
         queryOptions.addParameter(param.substring(5), pathParams.getStringParameter(param, ""));
       }
     }
@@ -223,14 +181,12 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
-  private void setResponseHeaders(final String mimeType, final String attachmentName)
-  {
+  private void setResponseHeaders(final String mimeType, final String attachmentName) {
     // Make sure we have the correct mime type
     final HttpServletResponse response = (HttpServletResponse) parameterProviders.get("path").getParameter("httpresponse");
     response.setHeader("Content-Type", mimeType);
 
-    if (attachmentName != null)
-    {
+    if (attachmentName != null) {
       response.setHeader("content-disposition", "attachment; filename=" + attachmentName);
     }
 
@@ -238,8 +194,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     response.setHeader("Cache-Control", "max-age=0, no-store");
   }
 
-  public void listQueries(final IParameterProvider pathParams, final OutputStream out) throws Exception
-  {
+  public void listQueries(final IParameterProvider pathParams, final OutputStream out) throws Exception {
 
 
     final CdaEngine engine = CdaEngine.getInstance();
@@ -261,8 +216,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
-  public void listParameters(final IParameterProvider pathParams, final OutputStream out) throws Exception
-  {
+  public void listParameters(final IParameterProvider pathParams, final OutputStream out) throws Exception {
 
     final CdaEngine engine = CdaEngine.getInstance();
 
@@ -284,16 +238,14 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
-  public void getCdaFile(final IParameterProvider pathParams, final OutputStream out) throws Exception
-  {
+  public void getCdaFile(final IParameterProvider pathParams, final OutputStream out) throws Exception {
 
     String document = getResourceAsString(getRelativePath(pathParams), ISolutionRepository.ACTION_UPDATE);
     setResponseHeaders("text/plain", null);
     out.write(document.getBytes("UTF-8"));
   }
 
-  private void writeCdaFile(IParameterProvider pathParams, OutputStream out) throws Exception
-  {
+  private void writeCdaFile(IParameterProvider pathParams, OutputStream out) throws Exception {
 
     //TODO: Validate the filename in some way, shape or form!
     String[] file = buildFileParameters(getRelativePath(pathParams));
@@ -308,35 +260,28 @@ public class CdaContentGenerator extends BaseContentGenerator
     final boolean resourceExists = solutionRepository.resourceExists(path);
 
     // 2 - it already exists - let's see if we have permissions
-    if (!resourceExists || solutionRepository.getSolutionFile(path, ISolutionRepository.ACTION_UPDATE) != null)
-    {
+    if (!resourceExists || solutionRepository.getSolutionFile(path, ISolutionRepository.ACTION_UPDATE) != null) {
 
       int status = solutionRepository.publish(rootDir, file[0], file[1], ((String) pathParams.getParameter("data")).getBytes("UTF-8"), true);
-      if (status == ISolutionRepository.FILE_ADD_SUCCESSFUL)
-      {
+      if (status == ISolutionRepository.FILE_ADD_SUCCESSFUL) {
         solutionRepository.synchronizeSolutionWithSolutionSource(userSession);
         SettingsManager.getInstance().clearCache();
         setResponseHeaders("text/plain", null);
         out.write("File saved".getBytes());
-      }
-      else
-      {
+      } else {
         setResponseHeaders("text/plain", null);
         out.write("Save unsuccessful!".getBytes());
         logger.error("writeCdaFile: saving " + file + " returned " + new Integer(status).toString());
 
       }
-    }
-    else
-    {
+    } else {
       throw new AccessDeniedException(path, null);
     }
 
 
   }
 
-  public void getCdaList(final IParameterProvider pathParams, final OutputStream out) throws Exception
-  {
+  public void getCdaList(final IParameterProvider pathParams, final OutputStream out) throws Exception {
 
     final CdaEngine engine = CdaEngine.getInstance();
 
@@ -350,8 +295,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
-  public void clearCache(final IParameterProvider pathParams, final OutputStream out) throws Exception
-  {
+  public void clearCache(final IParameterProvider pathParams, final OutputStream out) throws Exception {
 
     SettingsManager.getInstance().clearCache();
     AbstractDataAccess.clearCache();
@@ -361,62 +305,50 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
-  public void syncronize(final IParameterProvider pathParams, final OutputStream out) throws Exception
-  {
+  public void syncronize(final IParameterProvider pathParams, final OutputStream out) throws Exception {
     throw new UnsupportedOperationException("Feature not implemented yet");
 //    final SyncronizeCdfStructure syncCdfStructure = new SyncronizeCdfStructure();
 //    syncCdfStructure.syncronize(userSession, out, pathParams);
   }
 
   @Override
-  public Log getLogger()
-  {
+  public Log getLogger() {
     return logger;
   }
 
-  private String getRelativePath(final IParameterProvider pathParams)
-  {
+  private String getRelativePath(final IParameterProvider pathParams) {
     final String solution = pathParams.getStringParameter("solution", "");
-    if (StringUtils.isEmpty(solution))
-    {
+    if (StringUtils.isEmpty(solution)) {
       return pathParams.getStringParameter("path", "");
     }
 
     return ActionInfo.buildSolutionPath(
-        solution,
-        pathParams.getStringParameter("path", ""),
-        pathParams.getStringParameter("file", ""));
+            solution,
+            pathParams.getStringParameter("path", ""),
+            pathParams.getStringParameter("file", ""));
   }
 
-  public String getResourceAsString(final String path, final HashMap<String, String> tokens) throws IOException
-  {
+  public String getResourceAsString(final String path, final HashMap<String, String> tokens) throws IOException {
     // Read file
     String fullPath = PentahoSystem.getApplicationContext().getSolutionPath(path);
     ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
     final StringBuilder resource = new StringBuilder();
-    if (solutionRepository.resourceExists(path))
-    {
+    if (solutionRepository.resourceExists(path)) {
       final InputStream in = solutionRepository.getResourceInputStream(path, true);
       int c;
-      while ((c = in.read()) != -1)
-      {
+      while ((c = in.read()) != -1) {
         resource.append((char) c);
       }
       in.close();
-    }
-    else
-    {
+    } else {
       resource.append(" ");
     }
     // Make replacement of tokens
-    if (tokens != null)
-    {
+    if (tokens != null) {
 
-      for (final String key : tokens.keySet())
-      {
+      for (final String key : tokens.keySet()) {
         final int index = resource.indexOf(key);
-        if (index != -1)
-        {
+        if (index != -1) {
           resource.replace(index, index + key.length(), tokens.get(key));
         }
       }
@@ -430,41 +362,33 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
-  public String getResourceAsString(final String path, int actionOperation) throws IOException, AccessDeniedException
-  {
+  public String getResourceAsString(final String path, int actionOperation) throws IOException, AccessDeniedException {
 
     ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
 
     // Check if the file exists and we have permissions to write to it
-    if (solutionRepository.getSolutionFile(path, actionOperation) != null)
-    {
+    if (solutionRepository.getSolutionFile(path, actionOperation) != null) {
       return getResourceAsString(path, null);
-    }
-    else
-    {
+    } else {
       throw new AccessDeniedException(path, null);
     }
   }
 
-  public void editFile(final IParameterProvider pathParams, final OutputStream out) throws Exception
-  {
+  public void editFile(final IParameterProvider pathParams, final OutputStream out) throws Exception {
 
 
     ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
 
     // Check if the file exists and we have permissions to write to it
     String path = getRelativePath(pathParams);
-    if (solutionRepository.getSolutionFile(path, ISolutionRepository.ACTION_UPDATE) != null)
-    {
+    if (solutionRepository.getSolutionFile(path, ISolutionRepository.ACTION_UPDATE) != null) {
 
       final String editorPath = "system/" + PLUGIN_NAME + EDITOR_SOURCE;
       SettingsManager.getInstance().clearCache();
       AbstractDataAccess.clearCache();
       setResponseHeaders("text/html", null);
       out.write(getResourceAsString(editorPath, ISolutionRepository.ACTION_UPDATE).getBytes("UTF-8"));
-    }
-    else
-    {
+    } else {
 
       setResponseHeaders("text/plain", null);
       out.write("Access Denied".getBytes());
@@ -473,9 +397,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
-
-  public void previewQuery(final IParameterProvider pathParams, final OutputStream out) throws Exception
-  {
+  public void previewQuery(final IParameterProvider pathParams, final OutputStream out) throws Exception {
     final String previewerPath = "system/" + PLUGIN_NAME + PREVIEWER_SOURCE;
     SettingsManager.getInstance().clearCache();
     AbstractDataAccess.clearCache();
@@ -484,13 +406,11 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
-  public void getCssResource(final IParameterProvider pathParams, final OutputStream out) throws Exception
-  {
+  public void getCssResource(final IParameterProvider pathParams, final OutputStream out) throws Exception {
     final IMimeTypeListener mimeTypeListener = outputHandler.getMimeTypeListener();
 
 
-    if (mimeTypeListener != null)
-    {
+    if (mimeTypeListener != null) {
       mimeTypeListener.setMimeType(MIME_CSS);
 
 
@@ -500,13 +420,11 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
-  public void getJsResource(final IParameterProvider pathParams, final OutputStream out) throws Exception
-  {
+  public void getJsResource(final IParameterProvider pathParams, final OutputStream out) throws Exception {
     final IMimeTypeListener mimeTypeListener = outputHandler.getMimeTypeListener();
 
 
-    if (mimeTypeListener != null)
-    {
+    if (mimeTypeListener != null) {
       mimeTypeListener.setMimeType(MIME_JS);
 
 
@@ -516,8 +434,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
-  public void getresource(final IParameterProvider pathParams, final OutputStream out) throws Exception
-  {
+  public void getresource(final IParameterProvider pathParams, final OutputStream out) throws Exception {
 
     String resource = pathParams.getStringParameter("resource", null);
     resource = resource.startsWith("/") ? resource : "/" + resource;
@@ -525,8 +442,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
-  private void getResource(final OutputStream out, final String resource) throws IOException
-  {
+  private void getResource(final OutputStream out, final String resource) throws IOException {
 
 
     final String path = PentahoSystem.getApplicationContext().getSolutionPath("system/" + PLUGIN_NAME + resource); //$NON-NLS-1$ //$NON-NLS-2$
@@ -539,8 +455,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     int n = in.read(buff);
 
 
-    while (n != -1)
-    {
+    while (n != -1) {
       out.write(buff, 0, n);
       n = in.read(buff);
 
@@ -551,8 +466,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
-  private String[] buildFileParameters(String filePath)
-  {
+  private String[] buildFileParameters(String filePath) {
     String[] result = {"", ""};
     String[] file = filePath.split("/");
     String fileName = file[file.length - 1];
@@ -576,5 +490,16 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   public void writeConnectionBlock(final IParameterProvider pathParams, final OutputStream out) throws Exception {
     logger.fatal("Not Implemented yet");
+  }
+
+  public void listDataAccessTypes(final IParameterProvider pathParams, final OutputStream out) throws Exception {
+    DataAccessConnectionDescriptor[] data = SettingsManager.getInstance().getDataAccessDescriptors(((String)pathParams.getStringParameter("refreshCache", "false")).equalsIgnoreCase("true"));
+    StringBuilder output = new StringBuilder("");
+    if (data != null) {
+      for (DataAccessConnectionDescriptor datum : data) {
+        output.append(datum.toString());
+      }
+      out.write(output.toString().getBytes("UTF-8"));
+    }
   }
 }
