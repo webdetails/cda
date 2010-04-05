@@ -493,13 +493,13 @@ public class CdaContentGenerator extends BaseContentGenerator {
   }
 
   public void listDataAccessTypes(final IParameterProvider pathParams, final OutputStream out) throws Exception {
-    DataAccessConnectionDescriptor[] data = SettingsManager.getInstance().getDataAccessDescriptors(((String)pathParams.getStringParameter("refreshCache", "false")).equalsIgnoreCase("true"));
+/*    DataAccessConnectionDescriptor[] data = SettingsManager.getInstance().getDataAccessDescriptors(((String)pathParams.getStringParameter("refreshCache", "false")).equalsIgnoreCase("true"));
     StringBuilder output = new StringBuilder("");
     if (data != null) {
       for (DataAccessConnectionDescriptor datum : data) {
         output.append(datum.toString());
       }
       out.write(output.toString().getBytes("UTF-8"));
-    }
+    }*/
   }
 }
