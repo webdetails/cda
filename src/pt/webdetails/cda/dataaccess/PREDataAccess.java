@@ -28,29 +28,24 @@ import pt.webdetails.cda.settings.UnknownConnectionException;
  * Date: Feb 3, 2010
  * Time: 2:18:19 PM
  */
-public abstract class PREDataAccess extends SimpleDataAccess
-{
+public abstract class PREDataAccess extends SimpleDataAccess {
 
   private static final Log logger = LogFactory.getLog(PREDataAccess.class);
-
   private TableModel tableModel;
   private CachingDataFactory localDataFactory;
 
-  public PREDataAccess(final Element element)
-  {
+  public PREDataAccess() {}
+  public PREDataAccess(final Element element) {
 
     super(element);
 
   }
 
-
   public abstract DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException;
 
   @Override
-  protected TableModel performRawQuery(final ParameterDataRow parameterDataRow) throws QueryException
-  {
-    try
-    {
+  protected TableModel performRawQuery(final ParameterDataRow parameterDataRow) throws QueryException {
+    try {
 
       final CachingDataFactory dataFactory = new CachingDataFactory(getDataFactory());
 
@@ -60,8 +55,8 @@ public abstract class PREDataAccess extends SimpleDataAccess
 
 
       dataFactory.initialize(ClassicEngineBoot.getInstance().getGlobalConfig(), resourceManager,
-          contextKey,
-          new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
+              contextKey,
+              new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
 
 
       // fire the query. you always get a tablemodel or an exception.
@@ -72,34 +67,25 @@ public abstract class PREDataAccess extends SimpleDataAccess
 
       return tableModel;
 
-    }
-    catch (UnknownConnectionException e)
-    {
+    } catch (UnknownConnectionException e) {
       throw new QueryException("Unknown connection", e);
-    }
-    catch (InvalidConnectionException e)
-    {
+    } catch (InvalidConnectionException e) {
       throw new QueryException("Unknown connection", e);
-    }
-    catch (ReportDataFactoryException e)
-    {
+    } catch (ReportDataFactoryException e) {
       throw new QueryException("ReportDataFactoryException", e);
     }
 
 
   }
 
-  public void closeDataSource() throws QueryException
-  {
+  public void closeDataSource() throws QueryException {
 
-    if (localDataFactory == null)
-    {
+    if (localDataFactory == null) {
       return;
     }
 
     // and at the end, close your tablemodel if it holds on to resources like a resultset
-    if (getTableModel() instanceof CloseableTableModel)
-    {
+    if (getTableModel() instanceof CloseableTableModel) {
       final CloseableTableModel ctm = (CloseableTableModel) getTableModel();
       ctm.close();
     }
@@ -110,41 +96,36 @@ public abstract class PREDataAccess extends SimpleDataAccess
     localDataFactory = null;
   }
 
-
-  public TableModel getTableModel()
-  {
+  public TableModel getTableModel() {
     return tableModel;
   }
 
-  public void setTableModel(final TableModel tableModel)
-  {
+  public void setTableModel(final TableModel tableModel) {
     this.tableModel = tableModel;
   }
 
-  public CachingDataFactory getLocalDataFactory()
-  {
+  public CachingDataFactory getLocalDataFactory() {
     return localDataFactory;
   }
 
-  public void setLocalDataFactory(final CachingDataFactory localDataFactory)
-  {
+  public void setLocalDataFactory(final CachingDataFactory localDataFactory) {
     this.localDataFactory = localDataFactory;
   }
+  /*
+  public static ArrayList<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors() {
+  ArrayList<DataAccessConnectionDescriptor> descriptor = new ArrayList<DataAccessConnectionDescriptor>();
+  DataAccessConnectionDescriptor proto = new DataAccessConnectionDescriptor();
+  proto.addDataAccessProperty(new PropertyDescriptor("Query",PropertyDescriptor.TYPE.STRING,PropertyDescriptor.SOURCE.DATAACCESS));
+  descriptor.add(proto);
+  return descriptor;
+  }
+   */
 
-  public ArrayList<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors() {
-    ArrayList<DataAccessConnectionDescriptor> descriptor = new ArrayList<DataAccessConnectionDescriptor>();
-    DataAccessConnectionDescriptor proto = new DataAccessConnectionDescriptor();
-    proto.addDataAccessProperty(new PropertyDescriptor("Query",PropertyDescriptor.TYPE.STRING,PropertyDescriptor.SOURCE.DATAACCESS));
-    descriptor.add(proto);
-    return descriptor;
-   }
-
-  protected HashMap<String, String> getInterface() {
-    HashMap<String, String> properties = super.getInterface();
-    if (properties == null) {
-      properties = new HashMap<String, String>();
-    }
-    properties.put("query", "");
+  @Override
+  public ArrayList<PropertyDescriptor> getInterface() {
+    ArrayList<PropertyDescriptor> properties = super.getInterface();
     return properties;
   }
+
+
 }

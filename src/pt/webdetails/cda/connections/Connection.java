@@ -3,6 +3,7 @@ package pt.webdetails.cda.connections;
 import java.util.ArrayList;
 
 import org.dom4j.Element;
+import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.settings.CdaSettings;
 
@@ -20,11 +21,12 @@ public interface Connection {
 
   public String getType();
 
+  public ConnectionType getGenericType();
+
   public CdaSettings getCdaSettings();
 
   public void setCdaSettings(CdaSettings cdaSettings);
 
   public ArrayList<PropertyDescriptor> getProperties();
-
 
 }

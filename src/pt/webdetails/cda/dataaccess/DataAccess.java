@@ -44,7 +44,5 @@ public interface DataAccess
 
   public TableModel listParameters(DiscoveryOptions discoveryOptions);
 
-  public ArrayList<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors();
-
   public void storeDescriptor(DataAccessConnectionDescriptor descriptor);
 }

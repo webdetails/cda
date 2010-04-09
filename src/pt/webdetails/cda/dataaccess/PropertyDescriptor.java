@@ -9,34 +9,34 @@ package pt.webdetails.cda.dataaccess;
 public class PropertyDescriptor
 {
 
-  public static enum TYPE
+  public static enum Type
   {
-    STRING, NUMERIC
+    STRING, ARRAY, BOOLEAN, NUMERIC
   }
 
-  public static enum SOURCE
+  public static enum Source
   {
     CONNECTION, DATAACCESS
   }
 
   private String name;
-  private TYPE type;
-  private SOURCE source;
+  private Type type;
+  private Source source;
   private String value;
 
   public  PropertyDescriptor(final String name)
   {
     this.name = name;
-    setType(TYPE.STRING);
+    setType(Type.STRING);
   }
 
-  public PropertyDescriptor(final String name, final TYPE type)
+  public PropertyDescriptor(final String name, final Type type)
   {
     this.name = name;
     this.type = type;
   }
 
-    public PropertyDescriptor(final String name, final TYPE type, final SOURCE source)
+    public PropertyDescriptor(final String name, final Type type, final Source source)
   {
     this.name = name;
     this.type = type;
@@ -53,22 +53,22 @@ public class PropertyDescriptor
     this.name = name;
   }
 
-  public TYPE getType()
+  public Type getType()
   {
     return type;
   }
 
-  public void setType(final TYPE type)
+  public void setType(final Type type)
   {
     this.type = type;
   }
 
-  public SOURCE getSource()
+  public Source getSource()
   {
     return source;
   }
 
-  public void setSource(final SOURCE source)
+  public void setSource(final Source source)
   {
     this.source = source;
   }

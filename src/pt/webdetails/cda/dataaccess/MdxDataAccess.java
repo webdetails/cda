@@ -9,6 +9,7 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.Band
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DefaultCubeFileProvider;
 import org.pentaho.reporting.platform.plugin.connection.PentahoCubeFileProvider;
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.mondrian.JdbcConnection;
 import pt.webdetails.cda.connections.mondrian.MondrianConnection;
@@ -21,24 +22,23 @@ import pt.webdetails.cda.settings.UnknownConnectionException;
  * Date: Feb 3, 2010
  * Time: 12:18:05 PM
  */
-public class MdxDataAccess extends PREDataAccess
-{
+public class MdxDataAccess extends PREDataAccess {
 
   private static final Log logger = LogFactory.getLog(MdxDataAccess.class);
 
-  public MdxDataAccess(final Element element)
-  {
+  public MdxDataAccess(final Element element) {
     super(element);
   }
 
-  protected AbstractNamedMDXDataFactory createDataFactory()
-  {
+  public MdxDataAccess() {
+  }
+
+  protected AbstractNamedMDXDataFactory createDataFactory() {
     return new BandedMDXDataFactory();
   }
 
   @Override
-  public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException
-  {
+  public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException {
 
     logger.debug("Creating BandedMDXDataFactory");
 
@@ -46,18 +46,14 @@ public class MdxDataAccess extends PREDataAccess
 
     final AbstractNamedMDXDataFactory mdxDataFactory = createDataFactory();
     mdxDataFactory.setDataSourceProvider(connection.getInitializedDataSourceProvider());
-    if (CdaEngine.getInstance().isStandalone())
-    {
+    if (CdaEngine.getInstance().isStandalone()) {
       mdxDataFactory.setCubeFileProvider(new DefaultCubeFileProvider(connection.getConnectionInfo().getCatalog()));
-    }
-    else
-    {
+    } else {
       mdxDataFactory.setCubeFileProvider(new PentahoCubeFileProvider(connection.getConnectionInfo().getCatalog()));
     }
 
 
-    if (connection instanceof JdbcConnection)
-    {
+    if (connection instanceof JdbcConnection) {
 
       mdxDataFactory.setJdbcUser(((JdbcConnection) connection).getConnectionInfo().getUser());
       mdxDataFactory.setJdbcPassword(((JdbcConnection) connection).getConnectionInfo().getPass());
@@ -71,8 +67,12 @@ public class MdxDataAccess extends PREDataAccess
 
   }
 
-  public String getType()
-  {
+  public String getType() {
     return "mdx";
+  }
+
+  @Override
+  public ConnectionType getConnectionType() {
+    return ConnectionType.MDX;
   }
 }

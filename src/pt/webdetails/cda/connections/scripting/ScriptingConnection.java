@@ -1,8 +1,11 @@
 package pt.webdetails.cda.connections.scripting;
 
+import java.util.ArrayList;
 import org.dom4j.Element;
 import pt.webdetails.cda.connections.AbstractConnection;
+import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
+import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 
 /**
  * Todo: Document me!
@@ -12,55 +15,62 @@ import pt.webdetails.cda.connections.InvalidConnectionException;
  *
  * @author Thomas Morgner.
  */
-public class ScriptingConnection extends AbstractConnection
-{
+public class ScriptingConnection extends AbstractConnection {
 
   private ScriptingConnectionInfo connectionInfo;
 
   public ScriptingConnection(final Element connection)
-      throws InvalidConnectionException
-  {
+          throws InvalidConnectionException {
     super(connection);
   }
 
-  protected void initializeConnection(final Element connection) throws InvalidConnectionException
-  {
+  public ScriptingConnection() {
+  }
+
+  protected void initializeConnection(final Element connection) throws InvalidConnectionException {
     connectionInfo = new ScriptingConnectionInfo(connection);
   }
 
-  public String getType()
-  {
+  public String getType() {
     return "scripting";
   }
 
-  public ScriptingConnectionInfo getScriptingConnectionInfo()
-  {
+  public ScriptingConnectionInfo getScriptingConnectionInfo() {
     return connectionInfo;
   }
 
-  public boolean equals(final Object o)
-  {
-    if (this == o)
-    {
+  public boolean equals(final Object o) {
+    if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass())
-    {
+    if (o == null || getClass() != o.getClass()) {
       return false;
     }
 
     final ScriptingConnection that = (ScriptingConnection) o;
 
-    if (!connectionInfo.equals(that.connectionInfo))
-    {
+    if (!connectionInfo.equals(that.connectionInfo)) {
       return false;
     }
 
     return true;
   }
 
-  public int hashCode()
-  {
+  public int hashCode() {
     return connectionInfo.hashCode();
+  }
+
+  @Override
+  public ConnectionType getGenericType() {
+    return ConnectionType.SCRIPTING;
+  }
+
+  @Override
+  public ArrayList<PropertyDescriptor> getProperties() {
+   ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
+    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING));
+    properties.add(new PropertyDescriptor("language", PropertyDescriptor.Type.STRING));
+    properties.add(new PropertyDescriptor("initscript", PropertyDescriptor.Type.STRING));
+    return properties;
   }
 }

@@ -64,14 +64,23 @@ public class CdaContentGenerator extends BaseContentGenerator {
   @Override
   public void createContent() throws Exception {
     final HttpServletResponse response = (HttpServletResponse) parameterProviders.get("path").getParameter("httpresponse"); //$NON-NLS-1$ //$NON-NLS-2$
+    final IParameterProvider pathParams;
+    final IParameterProvider requestParams;
+    final IContentItem contentItem;
+    final OutputStream out;
     try {
-      final IParameterProvider pathParams = parameterProviders.get("path");
-      final IParameterProvider requestParams = parameterProviders.get("request");
-
-      final IContentItem contentItem = outputHandler.getOutputContentItem("response", "content", "", instanceId, MIME_HTML);
-
-      final OutputStream out = contentItem.getOutputStream(null);
-
+      if (this.callbacks != null && callbacks.size() > 0 && HashMap.class.isInstance(callbacks.get(0))) {
+        HashMap<String, Object> stuff = (HashMap<String, Object>) callbacks.get(0);
+        pathParams = parameterProviders.get("path");
+        requestParams = parameterProviders.get("request");
+        contentItem = outputHandler.getOutputContentItem("response", "content", "", instanceId, MIME_HTML);
+        out = (OutputStream) stuff.get("output");
+      } else {
+        pathParams = parameterProviders.get("path");
+        requestParams = parameterProviders.get("request");
+        contentItem = outputHandler.getOutputContentItem("response", "content", "", instanceId, MIME_HTML);
+        out = contentItem.getOutputStream(null);
+      }
 
       final String pathString = pathParams.getStringParameter("path", null);
 
@@ -476,30 +485,15 @@ public class CdaContentGenerator extends BaseContentGenerator {
     return result;
   }
 
-  public void getDataAccessBlock(final IParameterProvider pathParams, final OutputStream out) throws Exception {
-    logger.fatal("Not Implemented yet");
-  }
-
-  public void writeDataAccessBlock(final IParameterProvider pathParams, final OutputStream out) throws Exception {
-    logger.fatal("Not Implemented yet");
-  }
-
-  public void getConnectionBlock(final IParameterProvider pathParams, final OutputStream out) throws Exception {
-    logger.fatal("Not Implemented yet");
-  }
-
-  public void writeConnectionBlock(final IParameterProvider pathParams, final OutputStream out) throws Exception {
-    logger.fatal("Not Implemented yet");
-  }
-
   public void listDataAccessTypes(final IParameterProvider pathParams, final OutputStream out) throws Exception {
-/*    DataAccessConnectionDescriptor[] data = SettingsManager.getInstance().getDataAccessDescriptors(((String)pathParams.getStringParameter("refreshCache", "false")).equalsIgnoreCase("true"));
+    DataAccessConnectionDescriptor[] data = SettingsManager.getInstance().getDataAccessDescriptors(((String) pathParams.getStringParameter("refreshCache", "false")).equalsIgnoreCase("true"));
     StringBuilder output = new StringBuilder("");
     if (data != null) {
+      output.append("definitions : {\n");
       for (DataAccessConnectionDescriptor datum : data) {
-        output.append(datum.toString());
+        output.append(datum.toJSON() + ",\n");
       }
-      out.write(output.toString().getBytes("UTF-8"));
-    }*/
+      out.write(output.toString().replaceAll(",\n\\z", "\n}").getBytes("UTF-8"));
+    }
   }
 }

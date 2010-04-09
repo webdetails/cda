@@ -6,6 +6,7 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.pmd.PmdConnec
 import org.pentaho.reporting.engine.classic.extensions.datasources.pmd.PmdDataFactory;
 import org.pentaho.reporting.platform.plugin.connection.PentahoPmdConnectionProvider;
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.metadata.MetadataConnection;
 import pt.webdetails.cda.settings.UnknownConnectionException;
@@ -18,26 +19,26 @@ import pt.webdetails.cda.settings.UnknownConnectionException;
  *
  * @author Thomas Morgner.
  */
-public class MqlDataAccess extends PREDataAccess
-{
-  public MqlDataAccess(final Element element)
-  {
+public class MqlDataAccess extends PREDataAccess {
+
+  private static final ConnectionType connectionType = ConnectionType.MQL;
+
+  public MqlDataAccess(final Element element) {
     super(element);
   }
 
-  public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException
-  {
+  public MqlDataAccess() {
+  }
+
+  public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException {
     final MetadataConnection connection = (MetadataConnection) getCdaSettings().getConnection(getConnectionId());
 
     final PmdDataFactory returnDataFactory = new PmdDataFactory();
     returnDataFactory.setXmiFile(connection.getMetadataConnectionInfo().getXmiFile());
     returnDataFactory.setDomainId(connection.getMetadataConnectionInfo().getDomainId());
-    if (CdaEngine.getInstance().isStandalone())
-    {
+    if (CdaEngine.getInstance().isStandalone()) {
       returnDataFactory.setConnectionProvider(new PmdConnectionProvider());
-    }
-    else
-    {
+    } else {
       returnDataFactory.setConnectionProvider(new PentahoPmdConnectionProvider());
     }
     returnDataFactory.setQuery("query", getQuery());
@@ -45,8 +46,12 @@ public class MqlDataAccess extends PREDataAccess
     return returnDataFactory;
   }
 
-  public String getType()
-  {
+  public String getType() {
     return "mql";
+  }
+
+  @Override
+  public ConnectionType getConnectionType() {
+    return ConnectionType.MQL;
   }
 }

@@ -12,6 +12,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
+import pt.webdetails.cda.connections.Connection;
+import pt.webdetails.cda.connections.ConnectionCatalog;
+import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
@@ -39,9 +42,11 @@ public abstract class AbstractDataAccess implements DataAccess {
   private ArrayList<Integer> outputs;
   private ArrayList<ColumnDefinition> columnDefinitions;
   private HashMap<Integer, ColumnDefinition> columnDefinitionIndexMap;
+  private static final ConnectionType connectionType = null;
 
+  protected AbstractDataAccess() {}
+  
   protected AbstractDataAccess(final Element element) {
-
     name = "";
     columnDefinitionIndexMap = new HashMap<Integer, ColumnDefinition>();
     columnDefinitions = new ArrayList<ColumnDefinition>();
@@ -234,19 +239,28 @@ public abstract class AbstractDataAccess implements DataAccess {
   }
 
   public ArrayList<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors() {
-    throw new UnsupportedOperationException("Not implemented yet!");
+    return this.getDataAccessConnectionDescriptors();
   }
 
-  protected HashMap<String, String> getInterface() {
-    throw new UnsupportedOperationException("Not implemented yet!");
-    /*
-    HashMap<String, String> properties = new HashMap<String, String>();
-    properties.put("access", "");
-    properties.put("cache", "");
-    properties.put("cacheDuration", "");
-    properties.put("parameters", "");
-    properties.put("output", "");
-    properties.put("columns", "");
-    return properties;*/
+
+  public ArrayList<PropertyDescriptor> getInterface() {
+    
+    ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
+    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING));
+    properties.add(new PropertyDescriptor("access", PropertyDescriptor.Type.STRING));
+    properties.add(new PropertyDescriptor("parameters", PropertyDescriptor.Type.ARRAY));
+    properties.add(new PropertyDescriptor("output", PropertyDescriptor.Type.ARRAY));
+    properties.add(new PropertyDescriptor("columns", PropertyDescriptor.Type.ARRAY));
+    return properties;
+  }
+
+  public abstract ConnectionType getConnectionType();
+
+  public Connection[] getAvailableConnections() {
+    return ConnectionCatalog.getInstance(false).getConnectionsByType(getConnectionType());
+  }
+
+  public Connection[] getAvailableConnections(boolean skipCache) {
+    return ConnectionCatalog.getInstance(skipCache).getConnectionsByType(getConnectionType());
   }
 }

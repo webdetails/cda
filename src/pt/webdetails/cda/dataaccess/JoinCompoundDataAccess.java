@@ -25,16 +25,14 @@ import plugins.org.pentaho.di.robochef.kettle.DynamicTransformation;
 import pt.webdetails.cda.utils.kettle.RowMetaToTableModel;
 import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
 import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
-
+import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM
  */
-public class JoinCompoundDataAccess extends CompoundDataAccess implements RowProductionManager
-{
+public class JoinCompoundDataAccess extends CompoundDataAccess implements RowProductionManager {
 
   private static final Log logger = LogFactory.getLog(JoinCompoundDataAccess.class);
   private static final String TYPE = "join";
-
   private String leftId;
   private String rightId;
   private String[] leftKeys;
@@ -42,8 +40,10 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   private ExecutorService executorService = Executors.newCachedThreadPool();
   private Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
 
-  public JoinCompoundDataAccess(final Element element)
-  {
+  public JoinCompoundDataAccess() {
+  }
+
+  public JoinCompoundDataAccess(final Element element) {
     super(element);
 
     Element left = (Element) element.selectSingleNode("Left");
@@ -56,31 +56,26 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     rightKeys = right.attributeValue("keys").split(",");
   }
 
-  public String getType()
-  {
+  public String getType() {
     return TYPE;
   }
 
-  protected TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException
-  {
+  protected TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException {
     TableModel output = null;
     inputCallables.clear();
 
-    try
-    {
+    try {
       final TableModel tableModelA = this.getCdaSettings().getDataAccess(leftId).doQuery(queryOptions);
       final TableModel tableModelB = this.getCdaSettings().getDataAccess(rightId).doQuery(queryOptions);
 
 
       String[] leftColumnNames = new String[leftKeys.length];
-      for (int i = 0; i < leftKeys.length; i++)
-      {
+      for (int i = 0; i < leftKeys.length; i++) {
         leftColumnNames[i] = tableModelA.getColumnName(Integer.parseInt(leftKeys[i]));
       }
 
       String[] rightColumnNames = new String[rightKeys.length];
-      for (int i = 0; i < rightKeys.length; i++)
-      {
+      for (int i = 0; i < rightKeys.length; i++) {
         rightColumnNames[i] = tableModelB.getColumnName(Integer.parseInt(rightKeys[i]));
       }
 
@@ -88,16 +83,14 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       String sortRightXML = getSortXmlStep("sortRight", rightColumnNames);
 
       StringBuilder mergeJoinXML = new StringBuilder(
-          "<step><name>mergeJoin</name><type>MergeJoin</type><join_type>FULL OUTER</join_type><step1>sortLeft</step1><step2>sortRight</step2>");
+              "<step><name>mergeJoin</name><type>MergeJoin</type><join_type>FULL OUTER</join_type><step1>sortLeft</step1><step2>sortRight</step2>");
       mergeJoinXML.append("<keys_1>");
 
-      for (int i = 0; i < leftKeys.length; i++)
-      {
+      for (int i = 0; i < leftKeys.length; i++) {
         mergeJoinXML.append("<key>").append(leftColumnNames[i]).append("</key>");
       }
       mergeJoinXML.append("</keys_1><keys_2>");
-      for (int i = 0; i < rightKeys.length; i++)
-      {
+      for (int i = 0; i < rightKeys.length; i++) {
         mergeJoinXML.append("<key>").append(rightColumnNames[i]).append("</key>");
       }
       mergeJoinXML.append("</keys_2></step>");
@@ -130,102 +123,89 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       trans.executeCheckedSuccess(null, null, this);
       logger.info(trans.getReadWriteThroughput());
       output = outputListener.getRowsWritten();
-    }
-    catch (UnknownDataAccessException e)
-    {
+    } catch (UnknownDataAccessException e) {
       throw new QueryException("Unknown Data access in CompoundDataAccess ", e);
-    }
-    catch (Exception e)
-    {
+    } catch (Exception e) {
       throw new QueryException("Exception during query ", e);
     }
 
     return output;
   }
 
-
-  private String getSortXmlStep(final String name, final String[] columnNames)
-  {
+  private String getSortXmlStep(final String name, final String[] columnNames) {
 
     StringBuilder sortXML = new StringBuilder(
-        "  <step>\n" +
-            "    <name>" + name + "</name>\n" +
-            "    <type>SortRows</type>\n" +
-            "    <description/>\n" +
-            "    <distribute>Y</distribute>\n" +
-            "    <copies>1</copies>\n" +
-            "         <partitioning>\n" +
-            "           <method>none</method>\n" +
-            "           <schema_name/>\n" +
-            "           </partitioning>\n" +
-            "      <directory>%%java.io.tmpdir%%</directory>\n" +
-            "      <prefix>out</prefix>\n" +
-            "      <sort_size/>\n" +
-            "      <free_memory>25</free_memory>\n" +
-            "      <compress>N</compress>\n" +
-            "      <compress_variable/>\n" +
-            "      <unique_rows>N</unique_rows>\n" +
-            "    <fields>\n");
+            "  <step>\n"
+            + "    <name>" + name + "</name>\n"
+            + "    <type>SortRows</type>\n"
+            + "    <description/>\n"
+            + "    <distribute>Y</distribute>\n"
+            + "    <copies>1</copies>\n"
+            + "         <partitioning>\n"
+            + "           <method>none</method>\n"
+            + "           <schema_name/>\n"
+            + "           </partitioning>\n"
+            + "      <directory>%%java.io.tmpdir%%</directory>\n"
+            + "      <prefix>out</prefix>\n"
+            + "      <sort_size/>\n"
+            + "      <free_memory>25</free_memory>\n"
+            + "      <compress>N</compress>\n"
+            + "      <compress_variable/>\n"
+            + "      <unique_rows>N</unique_rows>\n"
+            + "    <fields>\n");
 
-    for (int i = 0; i < columnNames.length; i++)
-    {
-      sortXML.append("      <field>\n" +
-          "        <name>" + columnNames[i] + "</name>\n" +
-          "        <ascending>Y</ascending>\n" +
-          "        <case_sensitive>N</case_sensitive>\n" +
-          "      </field>\n");
+    for (int i = 0; i < columnNames.length; i++) {
+      sortXML.append("      <field>\n"
+              + "        <name>" + columnNames[i] + "</name>\n"
+              + "        <ascending>Y</ascending>\n"
+              + "        <case_sensitive>N</case_sensitive>\n"
+              + "      </field>\n");
     }
 
-    sortXML.append("    </fields>\n" +
-        "     <cluster_schema/>\n" +
-        " <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>\n" +
-        "      <xloc>615</xloc>\n" +
-        "      <yloc>188</yloc>\n" +
-        "      <draw>Y</draw>\n" +
-        "      </GUI>\n" +
-        "    </step>\n");
+    sortXML.append("    </fields>\n"
+            + "     <cluster_schema/>\n"
+            + " <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>\n"
+            + "      <xloc>615</xloc>\n"
+            + "      <yloc>188</yloc>\n"
+            + "      <draw>Y</draw>\n"
+            + "      </GUI>\n"
+            + "    </step>\n");
 
     return sortXML.toString();
   }
 
-
-  public void startRowProduction()
-  {
+  public void startRowProduction() {
     long timeout = Long.parseLong(CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout"));
     TimeUnit unit = TimeUnit.valueOf(CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit"));
     startRowProduction(timeout, unit);
   }
 
-
-  public void startRowProduction(long timeout, TimeUnit unit)
-  {
-    try
-    {
+  public void startRowProduction(long timeout, TimeUnit unit) {
+    try {
       List<Future<Boolean>> results = executorService.invokeAll(inputCallables, timeout, unit);
-      for (Future<Boolean> result : results)
-      {
+      for (Future<Boolean> result : results) {
         result.get();
       }
-    }
-    catch (InterruptedException e)
-    {
+    } catch (InterruptedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
-    }
-    catch (ExecutionException e)
-    {
+    } catch (ExecutionException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
-
-  public ArrayList<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors() {
-    ArrayList<DataAccessConnectionDescriptor> descriptor = new ArrayList<DataAccessConnectionDescriptor>();
-    DataAccessConnectionDescriptor proto = new DataAccessConnectionDescriptor();
-    proto.addDataAccessProperty(new PropertyDescriptor("Left",PropertyDescriptor.TYPE.STRING,PropertyDescriptor.SOURCE.DATAACCESS));
-    proto.addDataAccessProperty(new PropertyDescriptor("Right",PropertyDescriptor.TYPE.STRING,PropertyDescriptor.SOURCE.DATAACCESS));
-    descriptor.add(proto);
-    return descriptor;
-   }
+  /*
+  public static ArrayList<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors() {
+  ArrayList<DataAccessConnectionDescriptor> descriptor = new ArrayList<DataAccessConnectionDescriptor>();
+  DataAccessConnectionDescriptor proto = new DataAccessConnectionDescriptor();
+  proto.addDataAccessProperty(new PropertyDescriptor("Left",PropertyDescriptor.TYPE.STRING,PropertyDescriptor.SOURCE.DATAACCESS));
+  proto.addDataAccessProperty(new PropertyDescriptor("Right",PropertyDescriptor.TYPE.STRING,PropertyDescriptor.SOURCE.DATAACCESS));
+  descriptor.add(proto);
+  return descriptor;
+  }*/
+@Override
+  public ConnectionType getConnectionType() {
+    return ConnectionType.NONE;
+  }
 }
 

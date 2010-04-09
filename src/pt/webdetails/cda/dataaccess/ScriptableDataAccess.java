@@ -3,6 +3,7 @@ package pt.webdetails.cda.dataaccess;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.scriptable.ScriptableDataFactory;
+import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.scripting.ScriptingConnection;
 import pt.webdetails.cda.settings.UnknownConnectionException;
@@ -15,15 +16,16 @@ import pt.webdetails.cda.settings.UnknownConnectionException;
  *
  * @author Thomas Morgner.
  */
-public class ScriptableDataAccess extends PREDataAccess
-{
-  public ScriptableDataAccess(final Element element)
-  {
+public class ScriptableDataAccess extends PREDataAccess {
+
+  public ScriptableDataAccess(final Element element) {
     super(element);
   }
 
-  public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException
-  {
+  public ScriptableDataAccess() {
+  }
+
+  public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException {
     final ScriptingConnection connection = (ScriptingConnection) getCdaSettings().getConnection(getConnectionId());
 
     final ScriptableDataFactory dataFactory = new ScriptableDataFactory();
@@ -34,8 +36,12 @@ public class ScriptableDataAccess extends PREDataAccess
     return dataFactory;
   }
 
-  public String getType()
-  {
+  public String getType() {
     return "scriptable";
+  }
+
+  @Override
+  public ConnectionType getConnectionType() {
+    return ConnectionType.SCRIPTING;
   }
 }

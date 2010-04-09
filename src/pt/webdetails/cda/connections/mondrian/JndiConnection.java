@@ -1,5 +1,6 @@
 package pt.webdetails.cda.connections.mondrian;
 
+import java.util.ArrayList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
@@ -8,7 +9,9 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.Jndi
 import org.pentaho.reporting.platform.plugin.connection.PentahoMondrianDataSourceProvider;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.AbstractConnection;
+import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
+import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,78 +19,71 @@ import pt.webdetails.cda.connections.InvalidConnectionException;
  * Date: Feb 2, 2010
  * Time: 5:09:18 PM
  */
-public class JndiConnection extends AbstractConnection implements MondrianConnection
-{
+public class JndiConnection extends AbstractMondrianConnection {
 
   private static final Log logger = LogFactory.getLog(JndiConnection.class);
   public static final String TYPE = "mondrianJndi";
-
   private JndiConnectionInfo connectionInfo;
 
-  public JndiConnection(final Element connection) throws InvalidConnectionException
-  {
+  public JndiConnection(final Element connection) throws InvalidConnectionException {
 
     super(connection);
 
   }
 
+  public JndiConnection() {
+  }
 
   @Override
-  protected void initializeConnection(final Element connection) throws InvalidConnectionException
-  {
+  protected void initializeConnection(final Element connection) throws InvalidConnectionException {
 
     connectionInfo = new JndiConnectionInfo(connection);
 
   }
 
   @Override
-  public String getType()
-  {
+  public String getType() {
     return TYPE;
   }
 
-
-  public DataSourceProvider getInitializedDataSourceProvider() throws InvalidConnectionException
-  {
+  public DataSourceProvider getInitializedDataSourceProvider() throws InvalidConnectionException {
     logger.debug("Creating new jndi connection");
-    if (CdaEngine.getInstance().isStandalone())
-    {
+    if (CdaEngine.getInstance().isStandalone()) {
       return new JndiDataSourceProvider(connectionInfo.getJndi());
-    }
-    else
-    {
+    } else {
       return new PentahoMondrianDataSourceProvider(connectionInfo.getJndi());
     }
   }
 
-  public JndiConnectionInfo getConnectionInfo()
-  {
+  public JndiConnectionInfo getConnectionInfo() {
     return connectionInfo;
   }
 
-  public boolean equals(final Object o)
-  {
-    if (this == o)
-    {
+  public boolean equals(final Object o) {
+    if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass())
-    {
+    if (o == null || getClass() != o.getClass()) {
       return false;
     }
 
     final JndiConnection that = (JndiConnection) o;
 
-    if (connectionInfo != null ? !connectionInfo.equals(that.connectionInfo) : that.connectionInfo != null)
-    {
+    if (connectionInfo != null ? !connectionInfo.equals(that.connectionInfo) : that.connectionInfo != null) {
       return false;
     }
 
     return true;
   }
 
-  public int hashCode()
-  {
+  public int hashCode() {
     return connectionInfo != null ? connectionInfo.hashCode() : 0;
+  }
+
+  @Override
+  public ArrayList<PropertyDescriptor> getProperties() {
+    ArrayList<PropertyDescriptor> properties = super.getProperties();
+    properties.add(new PropertyDescriptor("jndi", PropertyDescriptor.Type.STRING));
+    return properties;
   }
 }

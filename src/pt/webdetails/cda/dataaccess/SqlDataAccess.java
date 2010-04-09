@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.SQLReportDataFactory;
+import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.sql.SqlConnection;
 import pt.webdetails.cda.settings.UnknownConnectionException;
@@ -20,9 +21,12 @@ public class SqlDataAccess extends PREDataAccess {
 
   private static final Log logger = LogFactory.getLog(SqlDataAccess.class);
   private static final String TYPE = "sql";
+  private static final ConnectionType connectionType = ConnectionType.SQL;
 
   public SqlDataAccess(final Element element) {
     super(element);
+  }
+  public SqlDataAccess() {
   }
 
   public String getType()
@@ -44,7 +48,9 @@ public class SqlDataAccess extends PREDataAccess {
     return reportDataFactory;
 
 
+
   }
 
-
+  @Override
+  public ConnectionType getConnectionType() {return ConnectionType.SQL;}
 }

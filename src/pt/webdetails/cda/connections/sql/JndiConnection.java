@@ -2,6 +2,7 @@ package pt.webdetails.cda.connections.sql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
@@ -10,6 +11,7 @@ import org.pentaho.reporting.platform.plugin.connection.PentahoJndiDatasourceCon
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.AbstractConnection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
+import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.utils.Util;
 
 /**
@@ -20,39 +22,34 @@ import pt.webdetails.cda.utils.Util;
  *
  * @author Thomas Morgner.
  */
-public class JndiConnection extends AbstractConnection implements SqlConnection
-{
+public class JndiConnection extends AbstractSqlConnection {
+
   private JndiConnectionInfo connectionInfo;
 
   public JndiConnection(final Element connection)
-      throws InvalidConnectionException
-  {
+          throws InvalidConnectionException {
     super(connection);
   }
 
-  public ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException
-  {
+  public JndiConnection() {
+  }
+
+  public ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException {
     final ConnectionProvider connectionProvider;
-    if (CdaEngine.getInstance().isStandalone())
-    {
+    if (CdaEngine.getInstance().isStandalone()) {
       final JndiConnectionProvider provider = new JndiConnectionProvider();
       provider.setConnectionPath(connectionInfo.getJndi());
       connectionProvider = provider;
-    }
-    else
-    {
+    } else {
       final PentahoJndiDatasourceConnectionProvider provider = new PentahoJndiDatasourceConnectionProvider();
       provider.setJndiName(connectionInfo.getJndi());
       connectionProvider = provider;
     }
 
-    try
-    {
+    try {
       final Connection connection = connectionProvider.createConnection(null, null);
       connection.close();
-    }
-    catch (SQLException e)
-    {
+    } catch (SQLException e) {
 
       throw new InvalidConnectionException("JdbcConnection: Found SQLException: " + Util.getExceptionDescription(e), e);
     }
@@ -60,39 +57,39 @@ public class JndiConnection extends AbstractConnection implements SqlConnection
     return connectionProvider;
   }
 
-  protected void initializeConnection(final Element connection) throws InvalidConnectionException
-  {
+  protected void initializeConnection(final Element connection) throws InvalidConnectionException {
     connectionInfo = new JndiConnectionInfo(connection);
   }
 
-  public String getType()
-  {
+  public String getType() {
     return "sqlJndi";
   }
 
-  public boolean equals(final Object o)
-  {
-    if (this == o)
-    {
+  public boolean equals(final Object o) {
+    if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass())
-    {
+    if (o == null || getClass() != o.getClass()) {
       return false;
     }
 
     final JndiConnection that = (JndiConnection) o;
 
-    if (!connectionInfo.equals(that.connectionInfo))
-    {
+    if (!connectionInfo.equals(that.connectionInfo)) {
       return false;
     }
 
     return true;
   }
 
-  public int hashCode()
-  {
+  public int hashCode() {
     return connectionInfo.hashCode();
+  }
+
+  @Override
+  public ArrayList<PropertyDescriptor> getProperties() {
+    ArrayList<PropertyDescriptor> properties = super.getProperties();
+    properties.add(new PropertyDescriptor("jndi", PropertyDescriptor.Type.STRING));
+    return properties;
   }
 }

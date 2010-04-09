@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
+import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
+import pt.webdetails.cda.dataaccess.PropertyDescriptor.Type;
 import pt.webdetails.cda.query.QueryOptions;
 
 /**
@@ -12,27 +14,25 @@ import pt.webdetails.cda.query.QueryOptions;
  * Date: Feb 16, 2010
  * Time: 11:36:05 PM
  */
-public abstract class CompoundDataAccess extends AbstractDataAccess
-{
-  public CompoundDataAccess(final Element element)
-  {
+public abstract class CompoundDataAccess extends AbstractDataAccess {
+
+  public CompoundDataAccess(final Element element) {
     super(element);
   }
 
-  public void closeDataSource() throws QueryException
-  {
+  public CompoundDataAccess() {
+  }
+
+  public void closeDataSource() throws QueryException {
     // not needed
   }
 
-
-  private ParameterDataRow createParameterDataRowFromParameters(final ArrayList<Parameter> parameters) throws InvalidParameterException
-  {
+  private ParameterDataRow createParameterDataRowFromParameters(final ArrayList<Parameter> parameters) throws InvalidParameterException {
 
     final ArrayList<String> names = new ArrayList<String>();
     final ArrayList<Object> values = new ArrayList<Object>();
 
-    for (final Parameter parameter : parameters)
-    {
+    for (final Parameter parameter : parameters) {
       names.add(parameter.getName());
       values.add(parameter.getValue());
     }
@@ -43,5 +43,18 @@ public abstract class CompoundDataAccess extends AbstractDataAccess
 
   }
 
+  public ConnectionType getConnectionType() {
+    return ConnectionType.NONE;
+  }
+
+  @Override
+  public ArrayList<PropertyDescriptor> getInterface() {
+    ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
+    properties.add(new PropertyDescriptor("id", Type.STRING));
+    properties.add(new PropertyDescriptor("left", Type.STRING));
+    properties.add(new PropertyDescriptor("right", Type.STRING));
+    properties.add(new PropertyDescriptor("parameters", Type.STRING));
+    return properties;
+  }
 
 }

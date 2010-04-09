@@ -6,6 +6,7 @@ import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.olap4j.AbstractNamedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.olap4j.BandedMDXDataFactory;
+import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.olap4j.Olap4JConnection;
 import pt.webdetails.cda.settings.UnknownConnectionException;
@@ -17,25 +18,24 @@ import pt.webdetails.cda.settings.UnknownConnectionException;
  * Date: Feb 3, 2010
  * Time: 12:18:05 PM
  */
-public class Olap4JDataAccess extends PREDataAccess
-{
+public class Olap4JDataAccess extends PREDataAccess {
 
   private static final Log logger = LogFactory.getLog(Olap4JDataAccess.class);
 
-  public Olap4JDataAccess(final Element element)
-  {
+  public Olap4JDataAccess(final Element element) {
     super(element);
   }
 
-  protected AbstractNamedMDXDataFactory createDataFactory() throws UnknownConnectionException, InvalidConnectionException
-  {
+  public Olap4JDataAccess() {
+  }
+
+  protected AbstractNamedMDXDataFactory createDataFactory() throws UnknownConnectionException, InvalidConnectionException {
     final Olap4JConnection connection = (Olap4JConnection) getCdaSettings().getConnection(getConnectionId());
     return new BandedMDXDataFactory(connection.getInitializedConnectionProvider());
   }
 
   @Override
-  public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException
-  {
+  public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException {
 
     logger.debug("Creating BandedMDXDataFactory");
 
@@ -48,8 +48,12 @@ public class Olap4JDataAccess extends PREDataAccess
 
   }
 
-  public String getType()
-  {
+  public String getType() {
     return "olap4J";
+  }
+
+  @Override
+  public ConnectionType getConnectionType() {
+    return ConnectionType.OLAP4J;
   }
 }

@@ -13,22 +13,22 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.Deno
  * Date: Feb 3, 2010
  * Time: 12:18:05 PM
  */
-public class DenormalizedMdxDataAccess extends MdxDataAccess
-{
+public class DenormalizedMdxDataAccess extends MdxDataAccess {
+
   private static final Log logger = LogFactory.getLog(DenormalizedMdxDataAccess.class);
 
-  public DenormalizedMdxDataAccess(final Element element)
-  {
+  public DenormalizedMdxDataAccess(final Element element) {
     super(element);
   }
 
-  protected AbstractNamedMDXDataFactory createDataFactory()
-  {
+  public DenormalizedMdxDataAccess() {
+  }
+
+  protected AbstractNamedMDXDataFactory createDataFactory() {
     return new DenormalizedMDXDataFactory();
   }
 
-  public String getType()
-  {
+  public String getType() {
     return "denormalizedMdx";
   }
 }

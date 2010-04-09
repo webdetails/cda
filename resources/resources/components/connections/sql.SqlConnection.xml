@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<Connection>
+  <Implementation>pt.webdetails.cda.connections.sql.SqlConnection</Implementation>
+  <Type>SQL</Type>
+</Connection>
+
