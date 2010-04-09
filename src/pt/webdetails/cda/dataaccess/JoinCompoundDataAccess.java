@@ -17,14 +17,14 @@ import org.dom4j.Element;
 import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
-import pt.webdetails.cda.utils.kettle.DynamicTransConfig;
-import pt.webdetails.cda.utils.kettle.DynamicTransConfig.EntryType;
-import pt.webdetails.cda.utils.kettle.DynamicTransMetaConfig;
-import pt.webdetails.cda.utils.kettle.DynamicTransMetaConfig.Type;
-import pt.webdetails.cda.utils.kettle.DynamicTransformation;
+import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
+import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig.EntryType;
+import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig;
+import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig.Type;
+import plugins.org.pentaho.di.robochef.kettle.DynamicTransformation;
 import pt.webdetails.cda.utils.kettle.RowMetaToTableModel;
-import pt.webdetails.cda.utils.kettle.RowProductionManager;
-import pt.webdetails.cda.utils.kettle.TableModelInput;
+import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
+import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
 
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM

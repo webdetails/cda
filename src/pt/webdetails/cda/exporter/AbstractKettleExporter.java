@@ -22,12 +22,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.exception.KettleException;
 import pt.webdetails.cda.CdaBoot;
-import pt.webdetails.cda.utils.kettle.DynamicTransConfig;
-import pt.webdetails.cda.utils.kettle.DynamicTransMetaConfig;
-import pt.webdetails.cda.utils.kettle.DynamicTransformation;
+import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
+import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig;
+import plugins.org.pentaho.di.robochef.kettle.DynamicTransformation;
 import pt.webdetails.cda.utils.kettle.RowMetaToTableModel;
-import pt.webdetails.cda.utils.kettle.RowProductionManager;
-import pt.webdetails.cda.utils.kettle.TableModelInput;
+import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
+import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
 
 /**
  * Generic Kettle class to handle exports

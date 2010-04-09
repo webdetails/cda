@@ -1606,6 +1606,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="robochef" />
   </component>
 </module>
 
