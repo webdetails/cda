@@ -72,16 +72,16 @@ public class DataAccessConnectionDescriptor {
   public String toJSON() {
     StringBuilder output = new StringBuilder();
     if (dataAccessInfo.size() > 0) {
-      output.append(name + ": {\n");
+      output.append("\"" + name + "\": {\n");
       if (connectionInfo.size() > 0) {
-        output.append("\tconnection: {\n");
+        output.append("\t\"connection\": {\n");
         for (PropertyDescriptor prop : connectionInfo) {
-          output.append("\t\t" + prop.getName() + ": {type: \"" + prop.getType() + "\"},\n");
+          output.append("\t\t\"" + prop.getName() + "\": {\"type\": \"" + prop.getType() + "\"},\n");
         }
         output.append("\t},\n");
       }
       for (PropertyDescriptor prop : dataAccessInfo) {
-        output.append("\t" + prop.getName() + ": {type: \"" + prop.getType() + "\"},\n");
+        output.append("\t\"" + prop.getName() + "\": {\"type\": \"" + prop.getType() + "\"},\n");
       }
       output.append("}");
     }

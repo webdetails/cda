@@ -489,7 +489,7 @@ public class CdaContentGenerator extends BaseContentGenerator {
     DataAccessConnectionDescriptor[] data = SettingsManager.getInstance().getDataAccessDescriptors(((String) pathParams.getStringParameter("refreshCache", "false")).equalsIgnoreCase("true"));
     StringBuilder output = new StringBuilder("");
     if (data != null) {
-      output.append("definitions : {\n");
+      output.append("{\n");
       for (DataAccessConnectionDescriptor datum : data) {
         output.append(datum.toJSON() + ",\n");
       }
