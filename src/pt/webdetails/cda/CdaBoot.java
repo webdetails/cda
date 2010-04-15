@@ -24,7 +24,7 @@ public class CdaBoot extends AbstractBoot
   private ProjectInformation projectInfo;
 
 
-  public CdaBoot()
+  protected CdaBoot()
   {
     projectInfo = CdaInfo.getInstance();
   }

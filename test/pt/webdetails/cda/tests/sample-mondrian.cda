@@ -71,8 +71,8 @@
     <DataAccess id="2" connection="2" type="mdx" access="public">
 		<Name>Sample query on SteelWheelsSales</Name>
         <Query>
-			select {[Measures].[Sales]} ON COLUMNS,
-			NON EMPTY  [Time].Children ON ROWS
+			select {[Measures].[Sales]} ON Rows,
+			NON EMPTY  Descendants([Time].Children,1) ON COLUMNS
 			from [SteelWheelsSales]
 			where ([Order Status].[${status}])
 		</Query>

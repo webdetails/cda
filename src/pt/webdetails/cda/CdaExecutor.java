@@ -30,7 +30,7 @@ public class CdaExecutor
   private static CdaExecutor _instance;
 
 
-  public CdaExecutor()
+  protected CdaExecutor()
   {
 
     logger.debug("Initializing CdaExecutor");

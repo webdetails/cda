@@ -33,7 +33,7 @@ public class CdaEngine
   private static CdaEngine _instance;
 
 
-  public CdaEngine()
+  protected CdaEngine()
   {
     logger.info("Initializing CdaEngine");
     init();
