@@ -89,11 +89,11 @@ public class JdbcConnection extends AbstractConnection implements Olap4JConnecti
   @Override
   public ArrayList<PropertyDescriptor> getProperties() {
    ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
-    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING));
-    properties.add(new PropertyDescriptor("driver", PropertyDescriptor.Type.STRING));
-    properties.add(new PropertyDescriptor("url", PropertyDescriptor.Type.STRING));
-    properties.add(new PropertyDescriptor("user", PropertyDescriptor.Type.STRING));
-    properties.add(new PropertyDescriptor("password", PropertyDescriptor.Type.STRING));
+    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
+    properties.add(new PropertyDescriptor("driver", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    properties.add(new PropertyDescriptor("url", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    properties.add(new PropertyDescriptor("user", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    properties.add(new PropertyDescriptor("password", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
   }
 }

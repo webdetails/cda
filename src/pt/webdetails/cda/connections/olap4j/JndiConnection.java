@@ -88,8 +88,8 @@ public class JndiConnection extends AbstractConnection implements Olap4JConnecti
   @Override
   public ArrayList<PropertyDescriptor> getProperties() {
    ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
-    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING));
-    properties.add(new PropertyDescriptor("jndi", PropertyDescriptor.Type.STRING));
+    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
+    properties.add(new PropertyDescriptor("jndi", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
   }
 }

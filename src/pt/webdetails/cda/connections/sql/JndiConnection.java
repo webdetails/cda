@@ -89,7 +89,7 @@ public class JndiConnection extends AbstractSqlConnection {
   @Override
   public ArrayList<PropertyDescriptor> getProperties() {
     ArrayList<PropertyDescriptor> properties = super.getProperties();
-    properties.add(new PropertyDescriptor("jndi", PropertyDescriptor.Type.STRING));
+    properties.add(new PropertyDescriptor("jndi", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
   }
 }

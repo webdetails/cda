@@ -44,8 +44,9 @@ public abstract class AbstractDataAccess implements DataAccess {
   private HashMap<Integer, ColumnDefinition> columnDefinitionIndexMap;
   private static final ConnectionType connectionType = null;
 
-  protected AbstractDataAccess() {}
-  
+  protected AbstractDataAccess() {
+  }
+
   protected AbstractDataAccess(final Element element) {
     name = "";
     columnDefinitionIndexMap = new HashMap<Integer, ColumnDefinition>();
@@ -242,15 +243,14 @@ public abstract class AbstractDataAccess implements DataAccess {
     return this.getDataAccessConnectionDescriptors();
   }
 
-
   public ArrayList<PropertyDescriptor> getInterface() {
-    
+
     ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
-    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING));
-    properties.add(new PropertyDescriptor("access", PropertyDescriptor.Type.STRING));
-    properties.add(new PropertyDescriptor("parameters", PropertyDescriptor.Type.ARRAY));
-    properties.add(new PropertyDescriptor("output", PropertyDescriptor.Type.ARRAY));
-    properties.add(new PropertyDescriptor("columns", PropertyDescriptor.Type.ARRAY));
+    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
+    properties.add(new PropertyDescriptor("access", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
+    properties.add(new PropertyDescriptor("parameters", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD));
+    properties.add(new PropertyDescriptor("output", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD));
+    properties.add(new PropertyDescriptor("columns", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD));
     return properties;
   }
 

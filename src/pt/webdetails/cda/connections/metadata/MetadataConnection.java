@@ -70,9 +70,9 @@ public class MetadataConnection extends AbstractConnection {
   @Override
   public ArrayList<PropertyDescriptor> getProperties() {
     ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
-    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING));
-    properties.add(new PropertyDescriptor("xmiFile", PropertyDescriptor.Type.STRING));
-    properties.add(new PropertyDescriptor("domainId", PropertyDescriptor.Type.STRING));
+    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
+    properties.add(new PropertyDescriptor("xmiFile", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    properties.add(new PropertyDescriptor("domainId", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
 
     return properties;
   }

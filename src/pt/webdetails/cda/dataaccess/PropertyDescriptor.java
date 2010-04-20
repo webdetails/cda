@@ -6,80 +6,76 @@ package pt.webdetails.cda.dataaccess;
  * Date: Mar 25, 2010
  * Time: 5:13:33 PM
  */
-public class PropertyDescriptor
-{
+public class PropertyDescriptor {
 
-  public static enum Type
-  {
+  public static enum Type {
+
     STRING, ARRAY, BOOLEAN, NUMERIC
   }
 
-  public static enum Source
-  {
+  public static enum Placement {
+
+    ATTRIB, CHILD
+  }
+
+  public static enum Source {
+
     CONNECTION, DATAACCESS
   }
 
+  public static enum ArrayType {
+
+    INLINE, CHILDREN
+  }
   private String name;
   private Type type;
   private Source source;
+  private Placement placement;
   private String value;
 
-  public  PropertyDescriptor(final String name)
-  {
-    this.name = name;
-    setType(Type.STRING);
-  }
-
-  public PropertyDescriptor(final String name, final Type type)
-  {
+  public PropertyDescriptor(final String name, final Type type, final Placement placement) {
     this.name = name;
     this.type = type;
+    this.placement = placement;
   }
 
-    public PropertyDescriptor(final String name, final Type type, final Source source)
-  {
-    this.name = name;
-    this.type = type;
-    this.source = source;
-  }
-
-  public String getName()
-  {
+  public String getName() {
     return name;
   }
 
-  public void setName(final String name)
-  {
+  public void setName(final String name) {
     this.name = name;
   }
 
-  public Type getType()
-  {
+  public Type getType() {
     return type;
   }
 
-  public void setType(final Type type)
-  {
+  public void setType(final Type type) {
     this.type = type;
   }
 
-  public Source getSource()
-  {
+  public Source getSource() {
     return source;
   }
 
-  public void setSource(final Source source)
-  {
+  public void setSource(final Source source) {
     this.source = source;
   }
 
-  public String getValue()
-  {
+  public String getValue() {
     return value;
   }
 
-  public void setValue(final String value)
-  {
+  public void setValue(final String value) {
     this.value = value;
+  }
+
+  public Placement getPlacement() {
+    return this.placement;
+  }
+
+  public void setPlacement(Placement placement) {
+    this.placement = placement;
   }
 }

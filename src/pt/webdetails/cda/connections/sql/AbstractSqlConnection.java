@@ -32,7 +32,7 @@ public abstract class AbstractSqlConnection extends AbstractConnection implement
   @Override
   public ArrayList<PropertyDescriptor> getProperties() {
     ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
-    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING));
+    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
     return properties;
   }
 }

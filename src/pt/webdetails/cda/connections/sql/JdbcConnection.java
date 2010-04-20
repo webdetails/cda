@@ -93,10 +93,10 @@ public class JdbcConnection extends AbstractSqlConnection {
   @Override
   public ArrayList<PropertyDescriptor> getProperties() {
     ArrayList<PropertyDescriptor> properties = super.getProperties();
-    properties.add(new PropertyDescriptor("driver", PropertyDescriptor.Type.STRING));
-    properties.add(new PropertyDescriptor("url", PropertyDescriptor.Type.STRING));
-    properties.add(new PropertyDescriptor("user", PropertyDescriptor.Type.STRING));
-    properties.add(new PropertyDescriptor("password", PropertyDescriptor.Type.STRING));
+    properties.add(new PropertyDescriptor("driver", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    properties.add(new PropertyDescriptor("url", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    properties.add(new PropertyDescriptor("user", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    properties.add(new PropertyDescriptor("password", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
   }
 }

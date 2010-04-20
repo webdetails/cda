@@ -68,9 +68,9 @@ public class ScriptingConnection extends AbstractConnection {
   @Override
   public ArrayList<PropertyDescriptor> getProperties() {
    ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
-    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING));
-    properties.add(new PropertyDescriptor("language", PropertyDescriptor.Type.STRING));
-    properties.add(new PropertyDescriptor("initscript", PropertyDescriptor.Type.STRING));
+    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
+    properties.add(new PropertyDescriptor("language", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    properties.add(new PropertyDescriptor("initscript", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
   }
 }

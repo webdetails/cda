@@ -20,15 +20,12 @@ import pt.webdetails.cda.settings.SettingsManager;
 public class DataAccessConnectionDescriptor {
 
   private static final Log logger = LogFactory.getLog(SettingsManager.class);
-
   private String name;
   private String dataAccessType;
-  private ArrayList<PropertyDescriptor> dataAccessInfo;
-  private ArrayList<PropertyDescriptor> connectionInfo;
+  private Connection conn;
+  private AbstractDataAccess dataAccess;
 
   public DataAccessConnectionDescriptor() {
-    dataAccessInfo = new ArrayList<PropertyDescriptor>();
-    connectionInfo = new ArrayList<PropertyDescriptor>();
   }
 
   public DataAccessConnectionDescriptor(final String name) {
@@ -36,27 +33,19 @@ public class DataAccessConnectionDescriptor {
     setName(name);
   }
 
-  public void addDataAccessProperty(PropertyDescriptor p) {
-    dataAccessInfo.add(p);
+  public void setConnection(Connection conn) {
+    this.conn = conn;
   }
 
-  public void addConnectionProperty(PropertyDescriptor p) {
-    connectionInfo.add(p);
-  }
-
-  public void addDataAccessProperty(Collection<PropertyDescriptor> p) {
-    dataAccessInfo.addAll(p);
-  }
-
-  public void addConnectionProperty(Collection<PropertyDescriptor> p) {
-    connectionInfo.addAll(p);
+  public void setDataAccess(AbstractDataAccess da) {
+    this.dataAccess = da;
   }
 
   public ArrayList<PropertyDescriptor> getDescriptors() {
 
     ArrayList<PropertyDescriptor> collapsedInfo = new ArrayList<PropertyDescriptor>();
-    collapsedInfo.addAll(connectionInfo);
-    collapsedInfo.addAll(dataAccessInfo);
+    collapsedInfo.addAll(this.conn.getProperties());
+    collapsedInfo.addAll(this.dataAccess.getInterface());
 
     return collapsedInfo;
   }
@@ -70,22 +59,37 @@ public class DataAccessConnectionDescriptor {
   }
 
   public String toJSON() {
+    ArrayList<PropertyDescriptor> dataAccessInfo = this.dataAccess.getInterface();
+    ArrayList<PropertyDescriptor> connectionInfo = this.conn.getProperties();
     StringBuilder output = new StringBuilder();
     if (dataAccessInfo.size() > 0) {
       output.append("\"" + name + "\": {\n");
+      /*
+       * Metadata block
+       */
+      output.append("\t\"metadata\": {\n");
+      output.append("\t\t\"name\": \"" + dataAccess.getType() + (this.conn.getGenericType() != ConnectionType.NONE ? " over " + conn.getType() : "") + "\",\n");
+      output.append("\t\t\"group\": \"" + this.conn.getGenericType().toString() + "\",\n");
+      output.append("\t\t\"groupdesc\": \"" + (this.conn.getGenericType() != ConnectionType.NONE ? this.conn.getGenericType().toString() : "Compound") + " Queries\",\n");
+      output.append("\t},\n");
+      /* 
+       * Definition block
+       */
+      output.append("\t\"definition\": {\n");
       if (connectionInfo.size() > 0) {
-        output.append("\t\"connection\": {\n");
+        output.append("\t\t\"connection\": {\n");
         for (PropertyDescriptor prop : connectionInfo) {
-          output.append("\t\t\"" + prop.getName() + "\": {\"type\": \"" + prop.getType() + "\"},\n");
+          output.append("\t\t\t\"" + prop.getName() + "\": {\"type\": \"" + prop.getType() + "\", \"placement\": \"" + prop.getPlacement() + "\"},\n");
         }
-        output.append("\t},\n");
+        output.append("\t\t},\n");
       }
+      output.append("\t\t\"dataaccess\": {\n");
       for (PropertyDescriptor prop : dataAccessInfo) {
-        output.append("\t\"" + prop.getName() + "\": {\"type\": \"" + prop.getType() + "\"},\n");
+        output.append("\t\t\t\"" + prop.getName() + "\": {\"type\": \"" + prop.getType() + "\", \"placement\": \"" + prop.getPlacement() + "\"},\n");
       }
-      output.append("}");
+      output.append("\t\t}\n\t}\n}");
     }
-    return output.toString().replaceAll(",\n}", "\n}").replaceAll(",\n\t}", "\n\t}");
+    return output.toString().replaceAll(",\n(\t*)}", "\n$1}");
   }
 
   public static DataAccessConnectionDescriptor[] fromClass(Class dataAccess) throws Exception {
@@ -98,8 +102,8 @@ public class DataAccessConnectionDescriptor {
         try {
           String name = sample.getType() + (!(conn.getGenericType().equals(ConnectionType.NONE)) ? ("_" + conn.getType()) : "");
           DataAccessConnectionDescriptor descriptor = new DataAccessConnectionDescriptor(name);
-          descriptor.addDataAccessProperty(props);
-          descriptor.addConnectionProperty(conn.getProperties());
+          descriptor.setDataAccess(sample);
+          descriptor.setConnection(conn);
           descriptors.add(descriptor);
         } catch (UnsupportedOperationException e) {
           logger.warn("Failed to generate a descriptor for " + sample.getType() + "_" + conn.getType());

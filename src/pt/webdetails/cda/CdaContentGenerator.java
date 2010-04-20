@@ -5,11 +5,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import javax.servlet.http.HttpServletResponse;
+
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -66,28 +68,31 @@ public class CdaContentGenerator extends BaseContentGenerator {
 
   @Override
   public void createContent() throws Exception {
-    final HttpServletResponse response = (HttpServletResponse) parameterProviders.get("path").getParameter("httpresponse"); //$NON-NLS-1$ //$NON-NLS-2$
+    HttpServletResponse response = null;
     final IParameterProvider pathParams;
     final IParameterProvider requestParams;
     final IContentItem contentItem;
     final OutputStream out;
+    final String method;
+    final String pathString;
     try {
+      // If callbacks is properly setup, we assume we're being called from another plugin
       if (this.callbacks != null && callbacks.size() > 0 && HashMap.class.isInstance(callbacks.get(0))) {
-        HashMap<String, Object> stuff = (HashMap<String, Object>) callbacks.get(0);
+        HashMap<String, Object> iface = (HashMap<String, Object>) callbacks.get(0);
         pathParams = parameterProviders.get("path");
         requestParams = parameterProviders.get("request");
         contentItem = outputHandler.getOutputContentItem("response", "content", "", instanceId, MIME_HTML);
-        out = (OutputStream) stuff.get("output");
-      } else {
+        out = (OutputStream) iface.get("output");
+        method = (String) iface.get("method");
+      } else { // if not, we handle the request normally
         pathParams = parameterProviders.get("path");
         requestParams = parameterProviders.get("request");
         contentItem = outputHandler.getOutputContentItem("response", "content", "", instanceId, MIME_HTML);
         out = contentItem.getOutputStream(null);
+        pathString = pathParams.getStringParameter("path", null);
+        method = extractMethod(pathString);
+        response = (HttpServletResponse) parameterProviders.get("path").getParameter("httpresponse"); //$NON-NLS-1$ //$NON-NLS-2$
       }
-
-      final String pathString = pathParams.getStringParameter("path", null);
-
-      final String method = extractMethod(pathString);
       if (method == null) {
         logger.error(("DashboardDesignerContentGenerator.ERROR_001_INVALID_METHOD_EXCEPTION") + " : " + method);
         if (response != null) {
