@@ -383,7 +383,8 @@ public class CdaContentGenerator extends BaseContentGenerator {
       // Fill key map with locale definition
       HashMap<String, String> keys = new HashMap();
       Locale locale = LocaleHelper.getLocale();
-      logger.info("Current Pentaho user locale: " + locale.toString());
+      if (logger.isDebugEnabled())
+        logger.debug("Current Pentaho user locale: " + locale.toString());
       keys.put("#{LANGUAGE_CODE}", locale.toString());
       return getResourceAsString(path, keys);
     } else {
