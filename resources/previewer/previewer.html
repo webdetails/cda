@@ -99,10 +99,15 @@ HEADER
 <div class='ui-widget-content'><img src='previewer/img/webdetails.png' style='padding:5px'></div>
 </body>
 <script>
+var oLanguage;
 $(document).ready(function(){
     // Initialize jquery.i18n plugin - load message files
-    var userLocale = '#{LANGUAGE_CODE}';
+		var userLocale = '#{LANGUAGE_CODE}';
     loadMessageBundles(userLocale);
+    // Initialize language support for jQuery dataTables
+    $.getJSON( "previewer/dataTables/languages/Messages_" + userLocale + ".txt", function( json ) { 
+							oLanguage = json; 
+		} );
     $('#button').button();
     var params = pageParams();
     $('#notifications').hide();
@@ -154,7 +159,10 @@ refreshTable = function(id){
         }
         $('#previewerTable').empty();
         $('#previewerTable').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="contents"></table>' );
-        tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames,"bJQueryUI": true});
+       	if (oLanguage == 'undefined')
+	        tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames,"bJQueryUI": true});
+       	else
+	        tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames,"bJQueryUI": true,"oLanguage":oLanguage});
     });
 };
 
