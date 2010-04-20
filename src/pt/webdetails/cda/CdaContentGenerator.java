@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
@@ -19,6 +20,7 @@ import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
+import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
@@ -33,6 +35,7 @@ import pt.webdetails.cda.utils.Util;
 public class CdaContentGenerator extends BaseContentGenerator {
 
   private static Log logger = LogFactory.getLog(CdaContentGenerator.class);
+
   public static final String PLUGIN_NAME = "cda";
   private static final long serialVersionUID = 1L;
   private static final String MIME_HTML = "text/xml";
@@ -377,7 +380,12 @@ public class CdaContentGenerator extends BaseContentGenerator {
 
     // Check if the file exists and we have permissions to write to it
     if (solutionRepository.getSolutionFile(path, actionOperation) != null) {
-      return getResourceAsString(path, null);
+      // Fill key map with locale definition
+      HashMap<String, String> keys = new HashMap();
+      Locale locale = LocaleHelper.getLocale();
+      logger.info("Current Pentaho user locale: " + locale.toString());
+      keys.put("#{LANGUAGE_CODE}", locale.toString());
+      return getResourceAsString(path, keys);
     } else {
       throw new AccessDeniedException(path, null);
     }
