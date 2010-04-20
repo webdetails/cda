@@ -9,10 +9,11 @@
         <script type="text/javascript" src="previewer/jquery.js"></script>
 	<script type="text/javascript" src="previewer/js/jquery-1.4.2.min.js"></script>
 	<script type="text/javascript" src="previewer/js/jquery-ui-1.8rc3.custom.min.js"></script>
+        <script type="text/javascript" src="previewer/js/jquery.i18n.properties.js"></script>
 
         <script type="text/javascript" src="previewer/dataTables/js/jquery.dataTables.js"></script>
         <script type="text/javascript" src="previewer/fg-menu/fg.menu.js"></script>
-	<style type="text/css"> 
+	<style type="text/css">
 	body { font-size:62.5%; margin:0; padding:0; min-height: 500px}
 
 	</style> 
@@ -20,6 +21,22 @@
         <script language="javascript">
 var lastQuery;
 var tableController;
+
+// Init jQuery i18n plugin
+loadMessageBundles = function(lang) {
+
+			jQuery.i18n.properties({
+			    name:'Messages',
+			    path:'previewer/languages/',
+			    mode:'both',
+			    language:(lang == 'browser' ? jQuery.i18n.browserLang() : lang),
+                callback: function() {
+                    $('#button').html(jQuery.i18n.prop('label.refresh'));
+                    $('#pleaseselect').html(jQuery.i18n.prop('label.selectDataAccessID'));    
+                }
+			});
+		}
+
 loadData = function() {
 var fileName =$("#filename").val();
 fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
@@ -70,10 +87,10 @@ HEADER
 
     <img  style='position: absolute; left: 10px; top: 15px; width: 100px' src='previewer/img/cda.png'>
     <div style='margin-left: 125px'>
-        <div id='fileid'></div>
-        <div id="controller">
-                        <a tabindex="0" href="#dataAccessIds" class="fg-button ui-widget ui-state-default ui-corner-all" id="flat"><span id='selectorText'>Data Access</span><span style='float: right' class="ui-icon ui-icon-triangle-1-s"></span></a></span> 
-            <div id='dataAccessIds' class="hidden"><ul id='queries'></ul></div> 
+    <div id='fileid'></div>
+    <div id="controller">
+    <a tabindex="0" href="#dataAccessIds" class="fg-button ui-widget ui-state-default ui-corner-all" id="flat"><span id='selectorText'>Data Access</span><span style='float: right' class="ui-icon ui-icon-triangle-1-s"></span></a></span>
+    <div id='dataAccessIds' class="hidden"><ul id='queries'></ul></div> 
 <span  id='params'class='params'>&nbsp;</span><button id='button' onclick='refreshTable(lastQuery)'>Refresh</button></div>
     </div>
 </div>
@@ -83,6 +100,9 @@ HEADER
 </body>
 <script>
 $(document).ready(function(){
+    // Initialize jquery.i18n plugin - load message files
+    var userLocale = '#{LANGUAGE_CODE}';
+    loadMessageBundles(userLocale);
     $('#button').button();
     var params = pageParams();
     $('#notifications').hide();
