@@ -249,7 +249,8 @@ var Caller = Base.extend({
 	});
 
 var showFile = function(link){
-	GB_show("Source file",webAppPath + "/content/cda/getCdaFile?path=/bi-developers/cda/" + link, $(window).height() - 50 , $(window).width() - 100);
+	$.fancybox({type:"iframe", href:webAppPath + "/content/cda/getCdaFile?path=/bi-developers/cda/" + link, width: $(window).width() - 100, height:$(window).height() - 50});
+//	GB_show("Source file",webAppPath + "/content/cda/getCdaFile?path=/bi-developers/cda/" + link, $(window).height() - 50 , $(window).width() - 100);
 }
 
 // Call it
