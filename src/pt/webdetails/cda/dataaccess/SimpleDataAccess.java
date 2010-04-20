@@ -89,7 +89,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess {
 
   }
 
-  protected TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException {
+  protected synchronized TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException {
 
     final Cache cache = getCache();
 
@@ -100,6 +100,8 @@ public abstract class SimpleDataAccess extends AbstractDataAccess {
       final Parameter parameterPassed = queryOptions.getParameter(parameter.getName());
       if (parameterPassed != null) {
         parameter.setStringValue(parameterPassed.getStringValue());
+      } else {
+        parameter.setStringValue(parameter.getDefaultValue());
       }
     }
 
@@ -184,10 +186,10 @@ public abstract class SimpleDataAccess extends AbstractDataAccess {
   @Override
   public ArrayList<PropertyDescriptor> getInterface() {
     ArrayList<PropertyDescriptor> properties = super.getInterface();
-    properties.add(new PropertyDescriptor("query", PropertyDescriptor.Type.STRING));
-    properties.add(new PropertyDescriptor("connection", PropertyDescriptor.Type.STRING));
-    properties.add(new PropertyDescriptor("cache", PropertyDescriptor.Type.BOOLEAN));
-    properties.add(new PropertyDescriptor("cacheDuration", PropertyDescriptor.Type.NUMERIC));
+    properties.add(new PropertyDescriptor("query", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    properties.add(new PropertyDescriptor("connection", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
+    properties.add(new PropertyDescriptor("cache", PropertyDescriptor.Type.BOOLEAN, PropertyDescriptor.Placement.ATTRIB));
+    properties.add(new PropertyDescriptor("cacheDuration", PropertyDescriptor.Type.NUMERIC, PropertyDescriptor.Placement.ATTRIB));
     return properties;
   }
 }
