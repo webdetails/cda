@@ -150,6 +150,10 @@ $('#fileid').text(filename);
  });
 
 refreshTable = function(id){
+// Detect whether the change was triggered by a refresh or a change in DataAccessId
+if (id != lastQuery) {
+    // When we change query, we must drop the table and parameters, and rebuild both
+    lastQuery = id;
     refreshParams(id);
     $.getJSON("doQuery",{path:filename, dataAccessId: id},function(data){
         var tableContents = data.resultset;
@@ -164,7 +168,27 @@ refreshTable = function(id){
        	else
 	        tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames,"bJQueryUI": true,"oLanguage":oLanguage});
     });
+} else {
+    // Same query, we need to get the present parameter values and rebuild the table
+    var params = getParams();
+    params.path = filename;
+    params.dataAccessId = id;
+   $.getJSON("doQuery",params,function(data){
+        var tableContents = data.resultset;
+        var columnNames = [];
+        for (column in data.metadata) {
+            columnNames.push({"sTitle": data.metadata[column].colName});
+        }
+        $('#previewerTable').empty();
+        $('#previewerTable').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="contents"></table>' );
+       	if (oLanguage == 'undefined')
+	        tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames,"bJQueryUI": true});
+       	else
+	        tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames,"bJQueryUI": true,"oLanguage":oLanguage});
+
+});}
 };
+
 
 refreshParams = function(id) {
     $.getJSON("listParameters",{path:filename, dataAccessId: id},function(data){
