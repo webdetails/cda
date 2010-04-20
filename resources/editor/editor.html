@@ -6,7 +6,21 @@
         <link href="editor/editor-webdetails.css" type="text/css" rel="stylesheet"/>
         <script type="text/javascript" src="editor/BespinEmbedded.js"></script>
         <script type="text/javascript" src="editor/jquery.js"></script>
+        <script type="text/javascript" src="editor/jquery.i18n.properties.js"></script>
         <script language="javascript">
+
+// Load language bundles with jquery plugin
+loadMessageBundles = function(lang) {
+
+			jQuery.i18n.properties({
+			    name:'Messages',
+			    path:'editor/languages/',
+			    mode:'both',
+			    language:(lang == 'browser' ? jQuery.i18n.browserLang() : lang)
+			});
+		}
+
+
 loadFile = function() {
 var fileName =$("#filename").val();
 fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
@@ -74,6 +88,9 @@ HEADER
 </div>
 <script>
 $(document).ready(function(){
+    // Initialize jquery.i18n plugin - load message files
+    var userLocale = '#{LANGUAGE_CODE}';
+    loadMessageBundles(userLocale);
     var params = pageParams();
     $('#notifications').hide();
     $('#collapseNF').hide();
@@ -114,27 +131,27 @@ transitions = {
     },
 
     initialSave: function() {
-      var button = "<a class='button' id='save' href='javascript:transitions.saveAndShift()'>Save</a>"
+      var button = "<a class='button' id='save' href='javascript:transitions.saveAndShift()'>" + jQuery.i18n.prop('label.save') + "</a>"
       return button;
     },
 
     save: function() {
-      var button = "<a id='save' class='button' href='javascript:saveFile()'>Save</a>"
+      var button = "<a id='save' class='button' href='javascript:saveFile()'>" + jQuery.i18n.prop('label.save') + "</a>"
       return button;
     },
 
     preview: function() {
-      var button = "<a id='preview' class='button' href='javascript:previewFile()'>Preview</a>"
+      var button = "<a id='preview' class='button' href='javascript:previewFile()'>" + jQuery.i18n.prop('label.preview') + "</a>"
       return button;
     },
 
     fileInput: function() {
-      var button = "<span class='button'>Filename: <input type='text' id='filename' class='fileinput' onchange='fileChanged()'/></span>"
+      var button = "<span class='button'>" + jQuery.i18n.prop('label.filename') + ": <input type='text' id='filename' class='fileinput' onchange='fileChanged()'/></span>"
       return button;
     },
 
     reload: function() {
-      var button = "<a id='reload' class='button' href='javascript:loadFile()'>Reload</a>"
+      var button = "<a id='reload' class='button' href='javascript:loadFile()'>" + jQuery.i18n.prop('label.reload') + "</a>"
       return button;
     },
 
