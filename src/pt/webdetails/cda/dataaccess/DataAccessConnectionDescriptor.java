@@ -70,6 +70,7 @@ public class DataAccessConnectionDescriptor {
       output.append("\t\"metadata\": {\n");
       output.append("\t\t\"name\": \"" + dataAccess.getType() + (this.conn.getGenericType() != ConnectionType.NONE ? " over " + conn.getType() : "") + "\",\n");
       output.append(this.conn.getGenericType() != ConnectionType.NONE ?"\t\t\"conntype\": \"" + conn.getTypeForFile() + "\",\n" : "") ;
+      output.append("\t\t\"datype\": \"" + dataAccess.getType() + "\",\n") ;
       output.append("\t\t\"group\": \"" + this.conn.getGenericType().toString() + "\",\n");
       output.append("\t\t\"groupdesc\": \"" + (this.conn.getGenericType() != ConnectionType.NONE ? this.conn.getGenericType().toString() : "Compound") + " Queries\",\n");
       output.append("\t},\n");

@@ -263,4 +263,8 @@ public abstract class AbstractDataAccess implements DataAccess {
   public Connection[] getAvailableConnections(boolean skipCache) {
     return ConnectionCatalog.getInstance(skipCache).getConnectionsByType(getConnectionType());
   }
+
+    public String getTypeForFile(){
+    return this.getClass().toString().toLowerCase().replaceAll("class pt.webdetails.cda.dataaccess.(.*)connection", "$1");
+  }
 }
