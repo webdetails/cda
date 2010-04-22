@@ -63,4 +63,8 @@ public abstract class AbstractConnection implements Connection {
     // Let implementors know they're missing something important
     throw new UnsupportedOperationException("Not implemented yet!");
   }
+
+  public String getTypeForFile(){
+    return this.getClass().toString().toLowerCase().replaceAll("class pt.webdetails.cda.connections.(.*)connection", "$1");
+  }
 }

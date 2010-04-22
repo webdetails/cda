@@ -29,4 +29,5 @@ public interface Connection {
 
   public ArrayList<PropertyDescriptor> getProperties();
 
+  public String getTypeForFile();
 }
