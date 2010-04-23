@@ -33,7 +33,6 @@ public abstract class AbstractMondrianConnection extends AbstractConnection impl
   public ArrayList<PropertyDescriptor> getProperties() {
    ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
    properties.add(new PropertyDescriptor("id",PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
-   properties.add(new PropertyDescriptor("cube",PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
    properties.add(new PropertyDescriptor("catalog",PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
    return properties;
   }

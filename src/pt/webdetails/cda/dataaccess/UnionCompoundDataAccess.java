@@ -22,7 +22,7 @@ public class UnionCompoundDataAccess extends CompoundDataAccess {
 
   private static final Log logger = LogFactory.getLog(UnionCompoundDataAccess.class);
   private static final String TYPE = "union";
-  private String leftId;
+  private String topId;
   private String rightId;
 
   public UnionCompoundDataAccess() {
@@ -31,11 +31,11 @@ public class UnionCompoundDataAccess extends CompoundDataAccess {
   public UnionCompoundDataAccess(final Element element) {
     super(element);
 
-    Element left = (Element) element.selectSingleNode("Left");
-    Element right = (Element) element.selectSingleNode("Right");
+    Element top = (Element) element.selectSingleNode("Top");
+    Element bottom = (Element) element.selectSingleNode("Bottom");
 
-    leftId = left.attributeValue("id");
-    rightId = right.attributeValue("id");
+    topId = top.attributeValue("id");
+    rightId = bottom.attributeValue("id");
 
   }
 
@@ -48,7 +48,7 @@ public class UnionCompoundDataAccess extends CompoundDataAccess {
 
     try {
 
-      final TableModel tableModelA = this.getCdaSettings().getDataAccess(leftId).doQuery(queryOptions);
+      final TableModel tableModelA = this.getCdaSettings().getDataAccess(topId).doQuery(queryOptions);
       final TableModel tableModelB = this.getCdaSettings().getDataAccess(rightId).doQuery(queryOptions);
 
       return TableModelUtils.getInstance().appendTableModel(tableModelA, tableModelB);
@@ -61,14 +61,17 @@ public class UnionCompoundDataAccess extends CompoundDataAccess {
   }
 
   @Override
-  public ArrayList<PropertyDescriptor> getInterface() {
-    ArrayList<PropertyDescriptor> properties = super.getInterface();
-    //properties.add(new PropertyDescriptor("query", PropertyDescriptor.Type.STRING,PropertyDescriptor.Placement.ATTRIB));
-    return properties;
+  public ConnectionType getConnectionType() {
+    return ConnectionType.NONE;
   }
 
   @Override
-  public ConnectionType getConnectionType() {
-    return ConnectionType.NONE;
+  public ArrayList<PropertyDescriptor> getInterface() {
+    ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
+    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
+    properties.add(new PropertyDescriptor("top", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    properties.add(new PropertyDescriptor("bottom", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    properties.add(new PropertyDescriptor("parameters", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    return properties;
   }
 }

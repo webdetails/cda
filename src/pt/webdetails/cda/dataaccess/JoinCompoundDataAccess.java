@@ -26,6 +26,7 @@ import pt.webdetails.cda.utils.kettle.RowMetaToTableModel;
 import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
 import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
+
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM
  */
@@ -203,9 +204,19 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   descriptor.add(proto);
   return descriptor;
   }*/
-@Override
+
+  @Override
   public ConnectionType getConnectionType() {
     return ConnectionType.NONE;
+  }
+
+  public ArrayList<PropertyDescriptor> getInterface() {
+    ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
+    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
+    properties.add(new PropertyDescriptor("left", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    properties.add(new PropertyDescriptor("right", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    properties.add(new PropertyDescriptor("parameters", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    return properties;
   }
 }
 
