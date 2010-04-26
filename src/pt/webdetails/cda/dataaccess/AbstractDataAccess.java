@@ -76,7 +76,7 @@ public abstract class AbstractDataAccess implements DataAccess {
       cache = true;
     }
 
-    if (element.attribute("cacheDuration") != null) {
+    if (element.attribute("cacheDuration") != null && !element.attribute("cacheDuration").toString().equals("")) {
       cacheDuration = Integer.parseInt(element.attributeValue("cacheDuration"));
     }
 
@@ -264,7 +264,7 @@ public abstract class AbstractDataAccess implements DataAccess {
     return ConnectionCatalog.getInstance(skipCache).getConnectionsByType(getConnectionType());
   }
 
-    public String getTypeForFile(){
+  public String getTypeForFile() {
     return this.getClass().toString().toLowerCase().replaceAll("class pt.webdetails.cda.dataaccess.(.*)connection", "$1");
   }
 }
