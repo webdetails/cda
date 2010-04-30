@@ -2,6 +2,7 @@ package pt.webdetails.cda.dataaccess;
 
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
+import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.engine.classic.extensions.datasources.pmd.PmdConnectionProvider;
 import org.pentaho.reporting.engine.classic.extensions.datasources.pmd.PmdDataFactory;
 import org.pentaho.reporting.platform.plugin.connection.PentahoPmdConnectionProvider;
