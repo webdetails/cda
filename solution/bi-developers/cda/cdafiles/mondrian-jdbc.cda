@@ -27,25 +27,13 @@
     <DataAccess id="1" connection="1" type="mdx" access="public">
 		<Name>Mdx Query on SampleData - Jdbc</Name>
         <Query>
-			select {[Measures].[Sales]} ON COLUMNS,
+			select {[Measures].[Sales], [Measures].[Quantity]} ON COLUMNS,
 			NON EMPTY  [Time].Children ON ROWS
 			from [SteelWheelsSales]
 			where ([Order Status].[${status}])
 		</Query>
         <Parameters>
-            <Parameter name="status" type="String" default="In Process"/>
+            <Parameter name="status" type="String" default="Shipped"/>
         </Parameters>
-		<Columns>
-			<Column idx="1">
-				<Name>Year</Name>
-			</Column>
-			<Column idx="2">
-				<Name>price</Name>
-			</Column>
-			<CalculatedColumn>
-				<Name>PriceInK</Name>
-				<Formula>=[price]/1000000</Formula>
-			</CalculatedColumn>
-		</Columns>
     </DataAccess>
 </CDADescriptor>

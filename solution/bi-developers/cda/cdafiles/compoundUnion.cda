@@ -67,8 +67,8 @@
         <Output indexes="0,2"/>
     </DataAccess>
     <CompoundDataAccess id="3" type="union">
-        <Left id="2"/>
-        <Right id="1"/>
+        <Top id="2"/>
+        <Bottom id="1"/>
         <Parameters>
             <Parameter name="year" type="Numeric" default="2004"/>
         </Parameters>

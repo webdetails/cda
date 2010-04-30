@@ -27,7 +27,7 @@
     <DataAccess id="1" connection="1" type="denormalizedMdx" access="public">
 		<Name>Denormalized Mdx Query on SampleData - Jdbc</Name>
         <Query>
-			select {[Measures].[Sales]} ON COLUMNS,
+			select {[Measures].[Sales], [Measures].[Quantity]} ON COLUMNS,
 			NON EMPTY  [Time].Children ON ROWS
 			from [SteelWheelsSales]
 			where ([Order Status].[${status}])
