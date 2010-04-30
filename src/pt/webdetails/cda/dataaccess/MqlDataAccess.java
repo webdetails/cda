@@ -43,6 +43,12 @@ public class MqlDataAccess extends PREDataAccess {
     }
     returnDataFactory.setQuery("query", getQuery());
 
+    try {
+			returnDataFactory.open();
+		} catch (ReportDataFactoryException e) {
+			throw new InvalidConnectionException("Error opening mql data factory.", e);
+		}
+
     return returnDataFactory;
   }
 
