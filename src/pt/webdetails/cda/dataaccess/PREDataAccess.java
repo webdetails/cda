@@ -58,7 +58,7 @@ public abstract class PREDataAccess extends SimpleDataAccess {
               contextKey,
               new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
 
-
+      dataFactory.open();
       // fire the query. you always get a tablemodel or an exception.
       final TableModel tableModel = dataFactory.queryData("query", parameterDataRow);
 
