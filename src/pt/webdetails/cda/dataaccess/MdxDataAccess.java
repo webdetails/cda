@@ -8,6 +8,7 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.Abst
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.BandedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DefaultCubeFileProvider;
 import org.pentaho.reporting.platform.plugin.connection.PentahoCubeFileProvider;
+import org.pentaho.reporting.platform.plugin.connection.PentahoMondrianConnectionProvider;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
@@ -45,6 +46,7 @@ public class MdxDataAccess extends PREDataAccess {
     final MondrianConnection connection = (MondrianConnection) getCdaSettings().getConnection(getConnectionId());
 
     final AbstractNamedMDXDataFactory mdxDataFactory = createDataFactory();
+    mdxDataFactory.setMondrianConnectionProvider(new PentahoMondrianConnectionProvider());
     mdxDataFactory.setDataSourceProvider(connection.getInitializedDataSourceProvider());
     if (CdaEngine.getInstance().isStandalone()) {
       mdxDataFactory.setCubeFileProvider(new DefaultCubeFileProvider(connection.getConnectionInfo().getCatalog()));
