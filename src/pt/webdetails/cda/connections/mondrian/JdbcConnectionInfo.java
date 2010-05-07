@@ -1,6 +1,10 @@
 package pt.webdetails.cda.connections.mondrian;
 
+import java.util.List;
+import java.util.Properties;
+
 import org.dom4j.Element;
+import org.pentaho.reporting.libraries.base.util.StringUtils;
 
 public class JdbcConnectionInfo implements MondrianConnectionInfo
 {
@@ -11,20 +15,124 @@ public class JdbcConnectionInfo implements MondrianConnectionInfo
   private String pass;
   private String catalog;
   private String cube;
+  private Properties properties;
 
-
+  private String roleField;
+  private String userField;
+  private String passwordField;
+  private String mondrianRole;
 
   public JdbcConnectionInfo(final Element connection) {
 
-    setDriver((String) connection.selectObject("string(./Driver)"));
-    setUrl((String) connection.selectObject("string(./Url)"));
-    setUser((String) connection.selectObject("string(./User)"));
-    setPass((String) connection.selectObject("string(./Pass)"));
+
+    final String driver = (String) connection.selectObject("string(./Driver)");
+    final String url = (String) connection.selectObject("string(./Url)");
+
+    final String userName = (String) connection.selectObject("string(./User)");
+    final String password = (String) connection.selectObject("string(./Pass)");
+    final String role = (String) connection.selectObject("string(./Role)");
+
+    final String roleFormula = (String) connection.selectObject("string(./RoleField)");
+    final String userFormula = (String) connection.selectObject("string(./UserField)");
+    final String passFormula = (String) connection.selectObject("string(./PassField)");
+
+    if (StringUtils.isEmpty(driver))
+    {
+      throw new IllegalStateException("A driver is mandatory");
+    }
+    if (StringUtils.isEmpty(url))
+    {
+      throw new IllegalStateException("A url is mandatory");
+    }
+
+    setDriver(driver);
+    setUrl(url);
+    if (StringUtils.isEmpty(userName) == false)
+    {
+      setUser(userName);
+    }
+    if (StringUtils.isEmpty(password) == false)
+    {
+      setPass(password);
+    }
+
+    if (StringUtils.isEmpty(role) == false)
+    {
+      setMondrianRole(role);
+    }
+
+    if (StringUtils.isEmpty(userFormula) == false)
+    {
+      setUserField(userFormula);
+    }
+    if (StringUtils.isEmpty(passFormula) == false)
+    {
+      setPasswordField(passFormula);
+    }
+    if (StringUtils.isEmpty(roleFormula) == false)
+    {
+      setRoleField(roleFormula);
+    }
+
+    properties = new Properties();
+    final List list = connection.elements("Property");
+    for (int i = 0; i < list.size(); i++)
+    {
+      final Element childElement = (Element) list.get(i);
+      final String name = childElement.attributeValue("name");
+      final String text = childElement.getText();
+      properties.put(name, text);
+    }
+
     setCatalog((String) connection.selectObject("string(./Catalog)"));
     setCube((String) connection.selectObject("string(./Cube)"));
 
   }
 
+  public void setMondrianRole(final String mondrianRole)
+  {
+    this.mondrianRole = mondrianRole;
+  }
+
+  public String getMondrianRole()
+  {
+    return mondrianRole;
+  }
+
+  public String getRoleField()
+  {
+    return roleField;
+  }
+
+  public void setRoleField(final String roleField)
+  {
+    this.roleField = roleField;
+  }
+
+  public String getUserField()
+  {
+    return userField;
+  }
+
+  public void setUserField(final String userField)
+  {
+    this.userField = userField;
+  }
+
+  public String getPasswordField()
+  {
+    return passwordField;
+  }
+
+  public void setPasswordField(final String passwordField)
+  {
+    this.passwordField = passwordField;
+  }
+
+  public Properties getProperties()
+  {
+    return properties;
+  }
 
   public String getDriver() {
     return driver;

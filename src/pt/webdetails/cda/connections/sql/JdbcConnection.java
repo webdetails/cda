@@ -3,6 +3,8 @@ package pt.webdetails.cda.connections.sql;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,6 +57,16 @@ public class JdbcConnection extends AbstractSqlConnection {
     final DriverConnectionProvider connectionProvider = new DriverConnectionProvider();
     connectionProvider.setDriver(connectionInfo.getDriver());
     connectionProvider.setUrl(connectionInfo.getUrl());
+
+    final Properties properties = connectionInfo.getProperties();
+    final Enumeration<Object> keys = properties.keys();
+    while (keys.hasMoreElements())
+    {
+      final String key = (String) keys.nextElement();
+      final String value = properties.getProperty(key);
+      connectionProvider.setProperty(key, value);
+    }
+    
     logger.debug("Opening connection");
     try {
       final Connection connection = connectionProvider.createConnection(connectionInfo.getUser(), connectionInfo.getPass());
@@ -98,5 +110,15 @@ public class JdbcConnection extends AbstractSqlConnection {
     properties.add(new PropertyDescriptor("user", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     properties.add(new PropertyDescriptor("pass", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
+  }
+
+  public String getPasswordField()
+  {
+    return connectionInfo.getPasswordField();
+  }
+
+  public String getUserField()
+  {
+    return connectionInfo.getUserField();
   }
 }

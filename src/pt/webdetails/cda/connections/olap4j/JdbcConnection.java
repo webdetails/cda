@@ -3,6 +3,8 @@ package pt.webdetails.cda.connections.olap4j;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Properties;
 
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.extensions.datasources.olap4j.connections.DriverConnectionProvider;
@@ -23,7 +25,6 @@ import pt.webdetails.cda.utils.Util;
  */
 public class JdbcConnection extends AbstractConnection implements Olap4JConnection {
 
-  private static final ConnectionType connectionType = ConnectionType.MDX;
   private JdbcConnectionInfo connectionInfo;
 
   public JdbcConnection(final Element connection)
@@ -70,6 +71,15 @@ public class JdbcConnection extends AbstractConnection implements Olap4JConnecti
     connectionProvider.setDriver(connectionInfo.getDriver());
     connectionProvider.setUrl(connectionInfo.getUrl());
 
+    final Properties properties = connectionInfo.getProperties();
+    final Enumeration<Object> keys = properties.keys();
+    while (keys.hasMoreElements())
+    {
+      final String key = (String) keys.nextElement();
+      final String value = properties.getProperty(key);
+      connectionProvider.setProperty(key, value);
+    }
+
     try {
       final Connection connection = connectionProvider.createConnection(connectionInfo.getUser(), connectionInfo.getPass());
       connection.close();
@@ -88,12 +98,27 @@ public class JdbcConnection extends AbstractConnection implements Olap4JConnecti
 
   @Override
   public ArrayList<PropertyDescriptor> getProperties() {
-   ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
+    final ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
     properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
     properties.add(new PropertyDescriptor("driver", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     properties.add(new PropertyDescriptor("url", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     properties.add(new PropertyDescriptor("user", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     properties.add(new PropertyDescriptor("pass", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
+  }
+
+  public String getRoleField()
+  {
+    return connectionInfo.getRoleField();
+  }
+
+  public String getUserField()
+  {
+    return connectionInfo.getUserField();
+  }
+
+  public String getPasswordField()
+  {
+    return connectionInfo.getPasswordField();
   }
 }

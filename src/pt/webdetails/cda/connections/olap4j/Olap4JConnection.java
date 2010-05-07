@@ -15,4 +15,8 @@ import pt.webdetails.cda.connections.InvalidConnectionException;
 public interface Olap4JConnection extends Connection
 {
   public OlapConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException;
+
+  public String getRoleField();
+  public String getUserField();
+  public String getPasswordField();
 }

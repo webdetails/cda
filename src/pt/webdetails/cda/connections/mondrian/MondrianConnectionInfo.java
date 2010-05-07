@@ -10,5 +10,13 @@ public interface MondrianConnectionInfo
 {
   
   public String getCatalog();
+  public String getUser();
+  public String getPass();
+
+  public String getMondrianRole();
+
+  public String getRoleField();
+  public String getUserField();
+  public String getPasswordField();
 
 }

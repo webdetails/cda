@@ -12,8 +12,8 @@ import org.pentaho.reporting.platform.plugin.connection.PentahoMondrianConnectio
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
-import pt.webdetails.cda.connections.mondrian.JdbcConnection;
 import pt.webdetails.cda.connections.mondrian.MondrianConnection;
+import pt.webdetails.cda.connections.mondrian.MondrianConnectionInfo;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 
 /**
@@ -44,22 +44,22 @@ public class MdxDataAccess extends PREDataAccess {
     logger.debug("Creating BandedMDXDataFactory");
 
     final MondrianConnection connection = (MondrianConnection) getCdaSettings().getConnection(getConnectionId());
+    final MondrianConnectionInfo mondrianConnectionInfo = connection.getConnectionInfo();
 
     final AbstractNamedMDXDataFactory mdxDataFactory = createDataFactory();
-    mdxDataFactory.setMondrianConnectionProvider(new PentahoMondrianConnectionProvider());
     mdxDataFactory.setDataSourceProvider(connection.getInitializedDataSourceProvider());
+    mdxDataFactory.setJdbcPassword(mondrianConnectionInfo.getPass());
+    mdxDataFactory.setJdbcUser(mondrianConnectionInfo.getUser());
+    mdxDataFactory.setRole(mondrianConnectionInfo.getMondrianRole());
+    mdxDataFactory.setRoleField(mondrianConnectionInfo.getRoleField());
+    mdxDataFactory.setJdbcPasswordField(mondrianConnectionInfo.getPasswordField());    
+    mdxDataFactory.setJdbcUserField(mondrianConnectionInfo.getUserField());
+    
     if (CdaEngine.getInstance().isStandalone()) {
-      mdxDataFactory.setCubeFileProvider(new DefaultCubeFileProvider(connection.getConnectionInfo().getCatalog()));
+      mdxDataFactory.setCubeFileProvider(new DefaultCubeFileProvider(mondrianConnectionInfo.getCatalog()));
     } else {
-      mdxDataFactory.setCubeFileProvider(new PentahoCubeFileProvider(connection.getConnectionInfo().getCatalog()));
-    }
-
-
-    if (connection instanceof JdbcConnection) {
-
-      mdxDataFactory.setJdbcUser(((JdbcConnection) connection).getConnectionInfo().getUser());
-      mdxDataFactory.setJdbcPassword(((JdbcConnection) connection).getConnectionInfo().getPass());
-
+      mdxDataFactory.setCubeFileProvider(new PentahoCubeFileProvider(mondrianConnectionInfo.getCatalog()));
+      mdxDataFactory.setMondrianConnectionProvider(new PentahoMondrianConnectionProvider());
     }
 
     mdxDataFactory.setQuery("query", getQuery());

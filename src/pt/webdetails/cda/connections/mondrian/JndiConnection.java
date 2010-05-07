@@ -8,8 +8,6 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.Data
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.JndiDataSourceProvider;
 import org.pentaho.reporting.platform.plugin.connection.PentahoMondrianDataSourceProvider;
 import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cda.connections.AbstractConnection;
-import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 
@@ -82,7 +80,7 @@ public class JndiConnection extends AbstractMondrianConnection {
 
   @Override
   public ArrayList<PropertyDescriptor> getProperties() {
-    ArrayList<PropertyDescriptor> properties = super.getProperties();
+    final ArrayList<PropertyDescriptor> properties = super.getProperties();
     properties.add(new PropertyDescriptor("jndi", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
   }

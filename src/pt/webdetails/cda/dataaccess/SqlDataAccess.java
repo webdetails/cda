@@ -21,7 +21,6 @@ public class SqlDataAccess extends PREDataAccess {
 
   private static final Log logger = LogFactory.getLog(SqlDataAccess.class);
   private static final String TYPE = "sql";
-  private static final ConnectionType connectionType = ConnectionType.SQL;
 
   public SqlDataAccess(final Element element) {
     super(element);
@@ -43,6 +42,8 @@ public class SqlDataAccess extends PREDataAccess {
     final SqlConnection connection = (SqlConnection) getCdaSettings().getConnection(getConnectionId());
     final SQLReportDataFactory reportDataFactory = new SQLReportDataFactory(connection.getInitializedConnectionProvider());
 
+    reportDataFactory.setUserField(connection.getUserField());
+    reportDataFactory.setPasswordField(connection.getPasswordField());
     reportDataFactory.setQuery("query", getQuery());
 
     return reportDataFactory;

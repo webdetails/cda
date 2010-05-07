@@ -39,13 +39,14 @@ public class Olap4JDataAccess extends PREDataAccess {
 
     logger.debug("Creating BandedMDXDataFactory");
 
+    final Olap4JConnection connection = (Olap4JConnection) getCdaSettings().getConnection(getConnectionId());
 
     final AbstractNamedMDXDataFactory mdxDataFactory = createDataFactory();
     mdxDataFactory.setQuery("query", getQuery());
-
+    mdxDataFactory.setJdbcPasswordField(connection.getPasswordField());
+    mdxDataFactory.setJdbcUserField(connection.getUserField());
+    mdxDataFactory.setRoleField(connection.getRoleField());
     return mdxDataFactory;
-
-
   }
 
   public String getType() {

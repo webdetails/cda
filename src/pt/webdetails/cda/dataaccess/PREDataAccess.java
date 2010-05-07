@@ -1,7 +1,6 @@
 package pt.webdetails.cda.dataaccess;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 import javax.swing.table.TableModel;
@@ -11,13 +10,19 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
+import org.pentaho.reporting.engine.classic.core.DefaultReportEnvironment;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
+import org.pentaho.reporting.engine.classic.core.ReportEnvironmentDataRow;
+import org.pentaho.reporting.engine.classic.core.parameters.CompoundDataRow;
 import org.pentaho.reporting.engine.classic.core.states.CachingDataFactory;
 import org.pentaho.reporting.engine.classic.core.util.CloseableTableModel;
 import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFactory;
+import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
+import org.pentaho.reporting.platform.plugin.PentahoReportEnvironment;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 
@@ -54,17 +59,30 @@ public abstract class PREDataAccess extends SimpleDataAccess {
       final ResourceKey contextKey = getCdaSettings().getContextKey();
 
 
-      dataFactory.initialize(ClassicEngineBoot.getInstance().getGlobalConfig(), resourceManager,
-              contextKey,
-              new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
+      final Configuration configuration = ClassicEngineBoot.getInstance().getGlobalConfig();
+      dataFactory.initialize(configuration, resourceManager, contextKey,
+              new LibLoaderResourceBundleFactory
+                  (resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
 
       dataFactory.open();
       // fire the query. you always get a tablemodel or an exception.
-      final TableModel tableModel = dataFactory.queryData("query", parameterDataRow);
+
+      final ReportEnvironmentDataRow environmentDataRow;
+      if (CdaEngine.getInstance().isStandalone())
+      {
+        environmentDataRow = new ReportEnvironmentDataRow(new DefaultReportEnvironment(configuration));
+      }
+      else
+      {
+        environmentDataRow = new ReportEnvironmentDataRow(new PentahoReportEnvironment(configuration));
+      }
+
+      final TableModel tableModel = dataFactory.queryData("query",
+          new CompoundDataRow(environmentDataRow, parameterDataRow));
 
       // Store this variable so that we can close it later
       setLocalDataFactory(dataFactory);
-
+      setTableModel(tableModel);
       return tableModel;
 
     } catch (UnknownConnectionException e) {

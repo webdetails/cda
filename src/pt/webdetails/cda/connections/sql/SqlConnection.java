@@ -16,5 +16,7 @@ public interface SqlConnection extends Connection
 
   public ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException;
 
+  public String getUserField();
+  public String getPasswordField();
 
 }

@@ -39,12 +39,17 @@ public class JndiConnection extends AbstractSqlConnection {
     if (CdaEngine.getInstance().isStandalone()) {
       final JndiConnectionProvider provider = new JndiConnectionProvider();
       provider.setConnectionPath(connectionInfo.getJndi());
+      provider.setUsername(connectionInfo.getUser());
+      provider.setPassword(connectionInfo.getPass());
       connectionProvider = provider;
     } else {
       final PentahoJndiDatasourceConnectionProvider provider = new PentahoJndiDatasourceConnectionProvider();
       provider.setJndiName(connectionInfo.getJndi());
+      provider.setUsername(connectionInfo.getUser());
+      provider.setPassword(connectionInfo.getPass());
       connectionProvider = provider;
     }
+
 
     try {
       final Connection connection = connectionProvider.createConnection(null, null);
@@ -91,5 +96,15 @@ public class JndiConnection extends AbstractSqlConnection {
     ArrayList<PropertyDescriptor> properties = super.getProperties();
     properties.add(new PropertyDescriptor("jndi", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
+  }
+
+  public String getPasswordField()
+  {
+    return connectionInfo.getPasswordField();
+  }
+
+  public String getUserField()
+  {
+    return connectionInfo.getUserField();
   }
 }

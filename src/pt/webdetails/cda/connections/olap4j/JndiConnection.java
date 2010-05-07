@@ -10,7 +10,6 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.olap4j.connec
 import pt.webdetails.cda.connections.AbstractConnection;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
-import pt.webdetails.cda.connections.sql.JndiConnectionInfo;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.utils.Util;
 
@@ -25,7 +24,6 @@ import pt.webdetails.cda.utils.Util;
 public class JndiConnection extends AbstractConnection implements Olap4JConnection {
 
   private JndiConnectionInfo connectionInfo;
-  private static final ConnectionType connectionType = ConnectionType.MDX;
 
   public JndiConnection(final Element connection)
           throws InvalidConnectionException {
@@ -39,7 +37,9 @@ public class JndiConnection extends AbstractConnection implements Olap4JConnecti
 
     final JndiConnectionProvider connectionProvider = new JndiConnectionProvider();
     connectionProvider.setConnectionPath(connectionInfo.getJndi());
-
+    connectionProvider.setUsername(connectionInfo.getUser());
+    connectionProvider.setPassword(connectionInfo.getPass());
+    
     try {
       final Connection connection = connectionProvider.createConnection(null, null);
       connection.close();
@@ -91,5 +91,20 @@ public class JndiConnection extends AbstractConnection implements Olap4JConnecti
     properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
     properties.add(new PropertyDescriptor("jndi", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
+  }
+
+  public String getRoleField()
+  {
+    return connectionInfo.getRoleField();
+  }
+
+  public String getUserField()
+  {
+    return connectionInfo.getUserField();
+  }
+
+  public String getPasswordField()
+  {
+    return connectionInfo.getPasswordField();
   }
 }

@@ -1,16 +1,16 @@
 package pt.webdetails.cda.connections.mondrian;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Properties;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DataSourceProvider;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DriverDataSourceProvider;
-import pt.webdetails.cda.connections.AbstractConnection;
-import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
-import pt.webdetails.cda.utils.Util;
 
 /**
  * Created by IntelliJ IDEA.
@@ -55,16 +55,14 @@ public class JdbcConnection extends AbstractMondrianConnection {
     connectionProvider.setDriver(connectionInfo.getDriver());
     connectionProvider.setUrl(connectionInfo.getUrl());
 
-
-    logger.debug("Opening connection");
-    try {
-      // connectionProvider.createConnection(connectionInfo.getUser(), connectionInfo.getPass());
-    } catch (Exception e) {
-
-      throw new InvalidConnectionException("JdbcConnection: Found Exception: " + Util.getExceptionDescription(e), e);
+    final Properties properties = connectionInfo.getProperties();
+    final Enumeration<Object> keys = properties.keys();
+    while (keys.hasMoreElements())
+    {
+      final String key = (String) keys.nextElement();
+      final String value = properties.getProperty(key);
+      connectionProvider.setProperty(key, value);
     }
-
-    logger.debug("Connection opened");
 
     return connectionProvider;
   }
@@ -96,7 +94,7 @@ public class JdbcConnection extends AbstractMondrianConnection {
 
   @Override
   public ArrayList<PropertyDescriptor> getProperties() {
-    ArrayList<PropertyDescriptor> properties = super.getProperties();
+    final ArrayList<PropertyDescriptor> properties = super.getProperties();
     properties.add(new PropertyDescriptor("driver", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     properties.add(new PropertyDescriptor("url", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     properties.add(new PropertyDescriptor("user", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
