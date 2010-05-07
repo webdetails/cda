@@ -34,7 +34,7 @@ public class CdaInfo extends ProjectInformation
   {
     setLicenseName("LGPL");
     setInfo("http://code.google.com/p/pentaho-cda/");
-    setCopyright("(C)opyright 2006-2007, by WebDetails and Contributors");
+    setCopyright("(C)opyright 2009-2010, by WebDetails and Contributors");
 
     setBootClass("pt.webdetails.cda.CdaBoot");
 
