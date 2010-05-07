@@ -104,6 +104,10 @@
             </fileset>
         </copy>
 
+		<!-- create the version file -->
+		<echo file="${stage.dir}/${plugin.name}/VERSION.txt">${project.version}</echo>
+
+
         <!-- create a zip file -->
         <zip zipfile="${dist.dir}/${plugin.zipfile}"
              basedir="${stage.dir}"
