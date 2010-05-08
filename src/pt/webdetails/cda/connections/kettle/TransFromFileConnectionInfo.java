@@ -33,13 +33,20 @@ public class TransFromFileConnectionInfo
     definedArgumentNames = args;
 
     final List varsList = connection.elements("variables");
-    final ParameterMapping[] vars = new ParameterMapping[argsList.size()];
+    final ParameterMapping[] vars = new ParameterMapping[varsList.size()];
     for (int i = 0; i < varsList.size(); i++)
     {
       final Element element = (Element) varsList.get(i);
       final String dataRowName = element.attributeValue("datarow-name");
       final String variableName = element.attributeValue("variable-name");
-      vars[i] = new ParameterMapping(dataRowName, variableName);
+      if (variableName == null)
+      {
+        vars[i] = new ParameterMapping(dataRowName, dataRowName);
+      }
+      else
+      {
+        vars[i] = new ParameterMapping(dataRowName, variableName);
+      }
     }
     definedVariableNames = vars;
   }
