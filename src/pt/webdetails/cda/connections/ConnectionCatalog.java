@@ -27,7 +27,7 @@ public class ConnectionCatalog {
 
   public enum ConnectionType {
 
-    SQL, MQL, MDX, OLAP4J, SCRIPTING, NONE
+    SQL, MQL, MDX, OLAP4J, SCRIPTING, NONE, XPATH, KETTLE
   };
   private static ConnectionCatalog _instance;
   private static Log logger = LogFactory.getLog(ConnectionCatalog.class);
