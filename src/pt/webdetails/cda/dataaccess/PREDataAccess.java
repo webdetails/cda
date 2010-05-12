@@ -77,13 +77,13 @@ public abstract class PREDataAccess extends SimpleDataAccess {
         environmentDataRow = new ReportEnvironmentDataRow(new PentahoReportEnvironment(configuration));
       }
 
-      final TableModel tableModel = dataFactory.queryData("query",
+      final TableModel tm = dataFactory.queryData("query",
           new CompoundDataRow(environmentDataRow, parameterDataRow));
 
       // Store this variable so that we can close it later
       setLocalDataFactory(dataFactory);
-      setTableModel(tableModel);
-      return tableModel;
+      setTableModel(tm);
+      return tm;
 
     } catch (UnknownConnectionException e) {
       throw new QueryException("Unknown connection", e);

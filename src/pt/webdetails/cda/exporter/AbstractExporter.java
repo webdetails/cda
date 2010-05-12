@@ -1,6 +1,7 @@
 package pt.webdetails.cda.exporter;
 
 import java.io.OutputStream;
+import java.sql.Timestamp;
 import java.util.Date;
 import javax.swing.table.TableModel;
 
@@ -30,11 +31,11 @@ public abstract class AbstractExporter implements Exporter
     {
       return "Integer";
     }
-    else if (columnClass.equals(Number.class) || columnClass.equals(Long.class) || columnClass.equals(Double.class) || columnClass.equals(Float.class))
+    else if (columnClass.equals(Number.class) || columnClass.equals(Long.class) || columnClass.equals(Double.class) || columnClass.equals(Float.class) )
     {
       return "Numeric";
     }
-    else if (columnClass.equals(Date.class) || columnClass.equals(java.sql.Date.class) )
+    else if (columnClass.equals(Date.class) || columnClass.equals(java.sql.Date.class) || columnClass.equals(Timestamp.class) )
     {
       return "Date";
     }
