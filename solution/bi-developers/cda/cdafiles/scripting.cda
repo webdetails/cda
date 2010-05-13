@@ -9,7 +9,7 @@
 
 	-->
     <DataSources>
-        <Connection id="2" type="scripting.scripting">
+        <Connection id="1" type="scripting.scripting">
             <Language>beanshell</Language>
             <InitScript/>
         </Connection>
@@ -20,7 +20,7 @@
 	be used from a Compound datasource only
 
 	-->
-  <DataAccess id="2" connection="2" type="scriptable" access="public">
+  <DataAccess id="1" connection="1" type="scriptable" access="public">
 		<Name>Sample query on SteelWheelsSales</Name>
         <Query>
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;

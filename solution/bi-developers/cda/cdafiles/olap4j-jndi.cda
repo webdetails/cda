@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CDADescriptor>
 
-    <!-- DataSource definition. 
-	
+    <!-- DataSource definition.
+
 	Type controls what the datasource type is.
 	The connection and query controls how the data is fetched. These values
 	are specific to each access type
@@ -10,7 +10,13 @@
 	-->
     <DataSources>
         <Connection id="1" type="olap4j.jndi">
-            <Jndi>org.hsqldb.jdbcDriver</Jndi>
+            <Driver>mondrian.olap4j.MondrianOlap4jDriver</Driver>
+            <Url>jdbc:mondrian:</Url>
+            <Property name="JdbcUser">pentaho_user</Property>
+            <Property name="JdbcPassword">password</Property>
+            <Property name="Jdbc">jdbc:hsqldb:hsql://localhost:9001/sampledata</Property>
+            <Property name="JdbcDrivers">org.hsqldb.jdbcDriver</Property>
+            <Property name="Catalog">solution:/steel-wheels/analysis/steelwheels.mondrian.xml</Property>
         </Connection>
     </DataSources>
     <!-- DataAccess object controls the query itself
@@ -19,8 +25,8 @@
 	be used from a Compound datasource only
 
 	-->
-    <DataAccess id="1" connection="1" type="olap4J" access="public">
-		<Name>Olap4J on SampleData - Jndi</Name>
+  <DataAccess id="1" connection="1" type="olap4J" access="public">
+		<Name>Sample query on SteelWheelsSales</Name>
         <Query>
 			select {[Measures].[Sales]} ON COLUMNS,
 			NON EMPTY  [Time].Children ON ROWS
@@ -28,7 +34,20 @@
 			where ([Order Status].[${status}])
 		</Query>
         <Parameters>
-            <Parameter name="status" type="String" default="Shipped"/>
+            <Parameter name="status" type="String" default="In Process"/>
         </Parameters>
-	</DataAccess>
+		<Columns>
+			<Column idx="1">
+				<Name>Year</Name>
+			</Column>
+			<Column idx="2">
+				<Name>price</Name>
+			</Column>
+			<CalculatedColumn>
+				<Name>PriceInK</Name>
+				<Formula>=[price]/1000000</Formula>
+			</CalculatedColumn>
+		</Columns>
+    </DataAccess>
 </CDADescriptor>
+
