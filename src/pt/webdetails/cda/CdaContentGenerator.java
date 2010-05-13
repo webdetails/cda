@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -398,17 +399,21 @@ public class CdaContentGenerator extends BaseContentGenerator
     return logger;
   }
 
-  private String getRelativePath(final IParameterProvider pathParams)
+  private String getRelativePath(final IParameterProvider pathParams) throws UnsupportedEncodingException
   {
+
+    String path = URLDecoder.decode(pathParams.getStringParameter("path", ""),"UTF-8").replaceAll("//", "/");
+
     final String solution = pathParams.getStringParameter("solution", "");
     if (StringUtils.isEmpty(solution))
     {
-      return pathParams.getStringParameter("path", "");
+
+      return path;
     }
 
     return ActionInfo.buildSolutionPath(
             solution,
-            pathParams.getStringParameter("path", ""),
+            path,
             pathParams.getStringParameter("file", ""));
   }
 
@@ -420,7 +425,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     final StringBuilder resource = new StringBuilder();
     if (solutionRepository.resourceExists(path))
     {
-      final InputStream in = solutionRepository.getResourceInputStream(path, true);
+      final InputStream in = solutionRepository.getResourceInputStream(path, true, ISolutionRepository.ACTION_EXECUTE);
       int c;
       while ((c = in.read()) != -1)
       {
