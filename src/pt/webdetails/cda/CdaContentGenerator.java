@@ -420,7 +420,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     final StringBuilder resource = new StringBuilder();
     if (solutionRepository.resourceExists(path))
     {
-      final InputStream in = solutionRepository.getResourceInputStream(path, true);
+      final InputStream in = solutionRepository.getResourceInputStream(path, true, ISolutionRepository.ACTION_EXECUTE);
       int c;
       while ((c = in.read()) != -1)
       {
