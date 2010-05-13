@@ -16,13 +16,13 @@ public class JdbcConnectionInfo implements MondrianConnectionInfo
   private String catalog;
   private String cube;
   private Properties properties;
-
   private String roleField;
   private String userField;
   private String passwordField;
   private String mondrianRole;
 
-  public JdbcConnectionInfo(final Element connection) {
+  public JdbcConnectionInfo(final Element connection)
+  {
 
 
     final String driver = (String) connection.selectObject("string(./Driver)");
@@ -47,11 +47,11 @@ public class JdbcConnectionInfo implements MondrianConnectionInfo
 
     setDriver(driver);
     setUrl(url);
-    if (StringUtils.isEmpty(userName) == false)
+    if (userName != null)
     {
       setUser(userName);
     }
-    if (StringUtils.isEmpty(password) == false)
+    if (password != null)
     {
       setPass(password);
     }
@@ -134,35 +134,43 @@ public class JdbcConnectionInfo implements MondrianConnectionInfo
     return properties;
   }
 
-  public String getDriver() {
+  public String getDriver()
+  {
     return driver;
   }
 
-  public void setDriver(final String driver) {
+  public void setDriver(final String driver)
+  {
     this.driver = driver;
   }
 
-  public String getUrl() {
+  public String getUrl()
+  {
     return url;
   }
 
-  public void setUrl(final String url) {
+  public void setUrl(final String url)
+  {
     this.url = url;
   }
 
-  public String getUser() {
+  public String getUser()
+  {
     return user;
   }
 
-  public void setUser(final String user) {
+  public void setUser(final String user)
+  {
     this.user = user;
   }
 
-  public String getPass() {
+  public String getPass()
+  {
     return pass;
   }
 
-  public void setPass(final String pass) {
+  public void setPass(final String pass)
+  {
     this.pass = pass;
   }
 
@@ -185,7 +193,6 @@ public class JdbcConnectionInfo implements MondrianConnectionInfo
   {
     this.cube = cube;
   }
-
 
   public boolean equals(final Object o)
   {
