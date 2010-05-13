@@ -13,6 +13,7 @@
 			<title>Data Access</title>
 			<description>Community Data Access File</description>
 			<icon-url>content/cda/resources/cdaFileType.png</icon-url>
+            <meta-provider>pt.webdetails.cda.CdaFileMetaProvider</meta-provider>
 			<operations>
 				<operation>
 					<id>EDIT</id>
@@ -32,7 +33,6 @@
 
 	<content-generator scope="local" id="cda" type="dataAccess" url="">
 		<classname>pt.webdetails.cda.CdaContentGenerator</classname>
-		<meta-provider>pt.webdetails.cda.CdaFileMetaProvider</meta-provider>
 		<title>CDA</title>
 	</content-generator>
 
