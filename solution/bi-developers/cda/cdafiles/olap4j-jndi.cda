@@ -10,13 +10,7 @@
 	-->
     <DataSources>
         <Connection id="1" type="olap4j.jndi">
-            <Driver>mondrian.olap4j.MondrianOlap4jDriver</Driver>
-            <Url>jdbc:mondrian:</Url>
-            <Property name="JdbcUser">pentaho_user</Property>
-            <Property name="JdbcPassword">password</Property>
-            <Property name="Jdbc">jdbc:hsqldb:hsql://localhost:9001/sampledata</Property>
-            <Property name="JdbcDrivers">org.hsqldb.jdbcDriver</Property>
-            <Property name="Catalog">solution:/steel-wheels/analysis/steelwheels.mondrian.xml</Property>
+            <Jndi>SampleData</Jndi>
         </Connection>
     </DataSources>
     <!-- DataAccess object controls the query itself
