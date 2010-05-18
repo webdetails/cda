@@ -10,7 +10,7 @@
 	-->
     <DataSources>
       <Connection id="1" type="kettle.TransFromFile">
-        <KtrFile>../cdafiles/sample-trans.ktr</KtrFile>
+        <KtrFile>sample-trans.ktr</KtrFile>
         <variables datarow-name="myRadius"/>
         <variables datarow-name="ZipCode" variable-name="myZip"/>
       </Connection>
