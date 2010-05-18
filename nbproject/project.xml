@@ -7,6 +7,7 @@
             <source-roots>
                 <root id="src.dir"/>
                 <root id="src.cda.dir" name="Solution Samples"/>
+                <root id="src.resources.dir" name="Html resources"/>
             </source-roots>
             <test-roots>
                 <root id="test.src.dir"/>
