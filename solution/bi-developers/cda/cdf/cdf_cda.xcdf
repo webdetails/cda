@@ -5,4 +5,5 @@
 	<description>CDF Dashboard using CDA datasource</description>
 	<icon></icon>
 	<template>template.html</template>
+  <style>clean</style>
 </cdf>
