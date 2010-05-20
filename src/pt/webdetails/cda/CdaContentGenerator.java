@@ -402,7 +402,7 @@ public class CdaContentGenerator extends BaseContentGenerator
   private String getRelativePath(final IParameterProvider pathParams) throws UnsupportedEncodingException
   {
 
-    String path = URLDecoder.decode(pathParams.getStringParameter("path", ""),"UTF-8").replaceAll("//", "/");
+    String path = URLDecoder.decode(pathParams.getStringParameter("path", ""), "UTF-8").replaceAll("//", "/");
 
     final String solution = pathParams.getStringParameter("solution", "");
     if (StringUtils.isEmpty(solution))

@@ -41,7 +41,7 @@ public class XPathDataAccess extends PREDataAccess
 
   public String getType()
   {
-    return "xpath";
+    return "XPath";
   }
 
   @Override

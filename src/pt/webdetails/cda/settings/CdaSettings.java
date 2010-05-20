@@ -26,18 +26,14 @@ import pt.webdetails.cda.utils.Util;
  * Date: Feb 2, 2010
  * Time: 2:41:44 PM
  */
-public class CdaSettings
-{
+public class CdaSettings {
 
   private static final Log logger = LogFactory.getLog(CdaSettings.class);
-
   private String id;
   private ResourceKey contextKey;
   private Element root;
-
   private HashMap<String, Connection> connectionsMap;
   private HashMap<String, DataAccess> dataAccessMap;
-
 
   /**
    * Creates a representation of an existing CDA file.
@@ -49,9 +45,8 @@ public class CdaSettings
    * @throws UnsupportedDataAccessException
    */
   public CdaSettings(final Document doc,
-                     final String id,
-                     final ResourceKey key) throws UnsupportedConnectionException, UnsupportedDataAccessException
-  {
+          final String id,
+          final ResourceKey key) throws UnsupportedConnectionException, UnsupportedDataAccessException {
 
     this.contextKey = key;
     this.id = id;
@@ -64,7 +59,6 @@ public class CdaSettings
 
   }
 
-
   /**
    * Creates a representation of a CDA file and handles the xml generation
    *
@@ -74,8 +68,7 @@ public class CdaSettings
    * @throws UnsupportedDataAccessException
    */
   public CdaSettings(final String id,
-                     final ResourceKey key) throws UnsupportedConnectionException, UnsupportedDataAccessException
-  {
+          final ResourceKey key) throws UnsupportedConnectionException, UnsupportedDataAccessException {
 
     this.contextKey = key;
     this.id = id;
@@ -92,18 +85,14 @@ public class CdaSettings
 
   }
 
-
-  public TableModel listQueries(DiscoveryOptions discoveryOptions)
-  {
+  public TableModel listQueries(DiscoveryOptions discoveryOptions) {
 
 
     return TableModelUtils.getInstance().dataAccessMapToTableModel(dataAccessMap);
 
   }
 
-
-  private void parseDocument() throws UnsupportedConnectionException, UnsupportedDataAccessException
-  {
+  private void parseDocument() throws UnsupportedConnectionException, UnsupportedDataAccessException {
 
     // 1 - Parse Connections
     // 2 - Parse DataAccesses
@@ -120,8 +109,7 @@ public class CdaSettings
 
   }
 
-  private void parseDataAccess() throws UnsupportedDataAccessException
-  {
+  private void parseDataAccess() throws UnsupportedDataAccessException {
 
     // Parsing DataAccess.
 
@@ -130,8 +118,7 @@ public class CdaSettings
 
     final List<Element> dataAccessesList = root.selectNodes("/CDADescriptor/DataAccess | /CDADescriptor/CompoundDataAccess");
 
-    for (final Element element : dataAccessesList)
-    {
+    for (final Element element : dataAccessesList) {
 
       final String elementName = element.getName();
       final String id = element.attributeValue("id");
@@ -139,11 +126,10 @@ public class CdaSettings
 
       // Initialize this ConnectionType
 
-      try
-      {
+      try {
 
-        final String className = "pt.webdetails.cda.dataaccess." +
-            type.substring(0, 1).toUpperCase() + type.substring(1, type.length()) + elementName;
+        final String className = "pt.webdetails.cda.dataaccess."
+                + type.substring(0, 1).toUpperCase() + type.substring(1, type.length()) + elementName;
 
         final Class clazz = Class.forName(className);
         final Class[] params = {Element.class};
@@ -152,9 +138,7 @@ public class CdaSettings
         dataAccess.setCdaSettings(this);
         addInternalDataAccess(dataAccess);
 
-      }
-      catch (Exception e)
-      {
+      } catch (Exception e) {
         throw new UnsupportedDataAccessException("Error initializing connection class: " + Util.getExceptionDescription(e), e);
       }
 
@@ -164,27 +148,24 @@ public class CdaSettings
 
   }
 
-  private void parseConnections() throws UnsupportedConnectionException
-  {
+  private void parseConnections() throws UnsupportedConnectionException {
 
     final List<Element> connectionList = root.selectNodes("/CDADescriptor/DataSources/Connection");
 
-    for (final Element element : connectionList)
-    {
+    for (final Element element : connectionList) {
 
       final String id = element.attributeValue("id");
       final String type = element.attributeValue("type");
 
       // Initialize this ConnectionType
 
-      try
-      {
+      try {
 
         // Convert sql.jdbc to sql.Jdbc
 
         int lastDot = type.lastIndexOf('.');
-        final String className = "pt.webdetails.cda.connections." +
-            type.substring(0, lastDot + 1) + type.substring(lastDot + 1, lastDot + 2).toUpperCase() + type.substring(lastDot + 2, type.length()) + "Connection";
+        final String className = "pt.webdetails.cda.connections."
+                + type.substring(0, lastDot + 1) + type.substring(lastDot + 1, lastDot + 2).toUpperCase() + type.substring(lastDot + 2, type.length()) + "Connection";
 
         final Class clazz = Class.forName(className);
         final Class[] params = {Element.class};
@@ -193,9 +174,7 @@ public class CdaSettings
         connection.setCdaSettings(this);
         addInternalConnection(connection);
 
-      }
-      catch (Exception e)
-      {
+      } catch (Exception e) {
         throw new UnsupportedConnectionException("Error initializing connection class: " + Util.getExceptionDescription(e), e);
       }
 
@@ -204,54 +183,45 @@ public class CdaSettings
 
   }
 
-
-  public String asXML(){
+  public String asXML() {
 
     return this.root.asXML();
 
   }
 
-  private void addInternalConnection(final Connection connectionSettings)
-  {
+  private void addInternalConnection(final Connection connectionSettings) {
 
     connectionsMap.put(connectionSettings.getId(), connectionSettings);
 
   }
 
-  private void addInternalDataAccess(final DataAccess dataAccess)
-  {
+  private void addInternalDataAccess(final DataAccess dataAccess) {
 
     dataAccessMap.put(dataAccess.getId(), dataAccess);
 
   }
 
-  public Connection getConnection(final String id) throws UnknownConnectionException
-  {
+  public Connection getConnection(final String id) throws UnknownConnectionException {
 
-    if (!connectionsMap.containsKey(id))
-    {
+    if (!connectionsMap.containsKey(id)) {
       throw new UnknownConnectionException("Unknown connection with id " + id, null);
     }
     return connectionsMap.get(id);
   }
 
-  public DataAccess getDataAccess(final String id) throws UnknownDataAccessException
-  {
+  public DataAccess getDataAccess(final String id) throws UnknownDataAccessException {
 
-    if (!dataAccessMap.containsKey(id))
-    {
+    if (!dataAccessMap.containsKey(id)) {
       throw new UnknownDataAccessException("Unknown dataAccess with id " + id, null);
     }
     return dataAccessMap.get(id);
   }
 
-  public String getId()
-  {
+  public String getId() {
     return id;
   }
 
-  public ResourceKey getContextKey()
-  {
+  public ResourceKey getContextKey() {
     return contextKey;
   }
 }

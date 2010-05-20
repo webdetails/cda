@@ -1,11 +1,14 @@
 package pt.webdetails.cda.connections.kettle;
 
+import java.util.ArrayList;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleTransFromFileProducer;
 import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleTransformationProducer;
 import pt.webdetails.cda.connections.AbstractConnection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
+import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
+import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 
 /**
  * Todo: Document me!
@@ -17,6 +20,7 @@ import pt.webdetails.cda.connections.InvalidConnectionException;
  */
 public class TransFromFileConnection extends AbstractConnection implements KettleConnection
 {
+
   private TransFromFileConnectionInfo connectionInfo;
 
   public TransFromFileConnection()
@@ -24,7 +28,7 @@ public class TransFromFileConnection extends AbstractConnection implements Kettl
   }
 
   public TransFromFileConnection(final Element connection)
-      throws InvalidConnectionException
+          throws InvalidConnectionException
   {
     super(connection);
   }
@@ -36,7 +40,7 @@ public class TransFromFileConnection extends AbstractConnection implements Kettl
   public KettleTransformationProducer createTransformationProducer(final String query)
   {
     return new KettleTransFromFileProducer("", connectionInfo.getTransformationFile(),
-        query, null, null, connectionInfo.getDefinedArgumentNames(), connectionInfo.getDefinedVariableNames());
+            query, null, null, connectionInfo.getDefinedArgumentNames(), connectionInfo.getDefinedVariableNames());
   }
 
   public ConnectionCatalog.ConnectionType getGenericType()
@@ -78,5 +82,14 @@ public class TransFromFileConnection extends AbstractConnection implements Kettl
   public int hashCode()
   {
     return connectionInfo != null ? connectionInfo.hashCode() : 0;
+  }
+
+  @Override
+  public ArrayList<PropertyDescriptor> getProperties()
+  {
+    final ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
+    properties.add(new PropertyDescriptor("ktrFile", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    properties.add(new PropertyDescriptor("variables", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD));
+    return properties;
   }
 }

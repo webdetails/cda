@@ -1,9 +1,11 @@
 package pt.webdetails.cda.connections.xpath;
 
+import java.util.ArrayList;
 import org.dom4j.Element;
 import pt.webdetails.cda.connections.AbstractConnection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.InvalidConnectionException;
+import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 
 /**
  * Todo: Document me!
@@ -15,10 +17,11 @@ import pt.webdetails.cda.connections.InvalidConnectionException;
  */
 public class XPathConnection extends AbstractConnection
 {
+
   private XPathConnectionInfo connectionInfo;
 
   public XPathConnection(final Element connection)
-      throws InvalidConnectionException
+          throws InvalidConnectionException
   {
     super(connection);
   }
@@ -39,7 +42,7 @@ public class XPathConnection extends AbstractConnection
 
   public String getType()
   {
-    return "xpath";
+    return "xPath";
   }
 
   public String getXqueryDataFile()
@@ -76,4 +79,14 @@ public class XPathConnection extends AbstractConnection
   {
     return connectionInfo != null ? connectionInfo.hashCode() : 0;
   }
+
+  @Override
+  public ArrayList<PropertyDescriptor> getProperties()
+  {
+    ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
+    properties.add(new PropertyDescriptor("dataFile", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    return properties;
+  }
+
+  public String getTypeForFile() {return "xpath.XPath";}
 }
