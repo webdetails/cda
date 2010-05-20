@@ -1,276 +1,367 @@
-<STYLE type="text/css">
-	.contents, .shadow {
-		position: relative;
-		bottom: 4px;
-		right: 4px;
-		min-width:700px
-	}
-	.shadow { background-color: #ccc; }
-	.contents {
-		background-color: #fff;
-		color: #000;
-		border: 1px solid #000;
-		padding: 0.5em;
-		min-width:700px
-	}
+<style type="text/css">
 
-	#testTable {
-		width: 500px
-		background-color: #0ff;
-		border: 1px solid;
-	}
+  body {
+    background-color: white;
+  }
 
-	#testTable tr td:nth-child(1) {
-		font-family: monospace;
-	}
+  .cdalogo{
 
-	#testTable td.testPending{
-		font-style: italic;
-		color: blue
-	}
+    background-image: url("GetCDFResource?resource=/bi-developers/cda/resources/sample_bg.png");
+    background-repeat: no-repeat;
+    height: 360px;
 
-	#testTable td.testPassed {
-		font-style: italic;
-		color: green
-	}
+  }
 
-	#testTable td.testFailed {
-		font-style: italic;
-		color: red
-	}
+  .spacer200{
+    height: 200px;
+  }
+
+  .dsTest{
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+  }
+
+  table#testTable th {
+    font-size: 22px;
+    font-weight: normal;
+    color: black;
+    font-family: Verdana, Helvetica, sans-serif;
+  }
+
+  div.desc p{
+
+    font-family: Verdana, Helvetica, sans-serif;
+    font-size: 12px;
+
+  }
+
+  #testTable {
+    width: 100%;
+    font-family: serif;
+    font-size: 12px;
+  }
+
+  #testTable tr{
+    height: 20px;
+  }
+
+
+  .logo{
+    padding-top: 20px;
+    text-align: center;
+    font-family: Verdana, Helvetica, sans-serif;
+  }
+
+
+  #testTable .testPassed{
+    background-image: url("GetCDFResource?resource=/bi-developers/cda/resources/okq.png");
+  }
+
+  #testTable tr td:nth-child(1) {
+    font-family: monospace;
+  }
+
+  #testTable tr td:nth-child(4) {
+    text-align: center;
+  }
+
+  #testTable td.testPending{
+    font-style: italic;
+    color: blue
+  }
+
+  #testTable td.testPassed {
+    font-style: italic;
+    color: green
+  }
+
+  #testTable td.testFailed {
+    font-style: italic;
+    color: red
+  }
 
 
 </style>
-<div class="shadow">
-	<div class="contents">
-		<h2>Community Data Access</h2>
 
 
-		<p>
+<div class="container">
+  <div class="span-24 clearfix cdalogo">
 
-		CDA is a new Data Access project for Pentaho project. Aims to solve the
-		problem of data extraction. The details are described <a
-			href="http://tinyurl.com/ydfzw4u">in this blog post</a>.
+    <div class="span-20 clearfix last">
 
-		</p>
+      <div class="span-18 spacer200 clearfix last">&nbsp;</div>
 
-		<p>
+      <div class="span-8 clearfix">
+        &nbsp;
+      </div>
+      <div class="span-8 append-4 cdaDesc desc last">
+        <p>
+          CDA is the new <b>Data Access component</b> developed for Pentaho
+        </p>
+        <p>
+          Here you can not only access the available datasources but also use it
+          as a test page and reference to the way CDA works
+        </p>
+      </div>
 
-		This page lists not only the available datasources but serves as test
-		page and reference to the way they work.
+      <div class="span-19 prepend-1 clearfix last dsTest">
+        Datasource Test
+      </div>
 
-		</p>
-
-		<h3>Datasource test</h3>
-
-		<table id="testTable" cellpadding="0" cellspacing="0">
-
-			<tr>
-				<th>Access method</th>
-				<th>Description</th>
-				<th>Sample</th>
-				<th>Result</th>
-			</tr>
-		</table>
+    </div>
 
 
-	</div>
+    <div class="span-4 last logos">
+      <br />
+
+      <div class="logo">
+        <a href="#" target="_blank"
+           <img border="0" src="GetCDFResource?resource=/bi-developers/cda/resources/pastaCDA.png" />
+        </a>
+        <br/>
+        CDA Documentation
+      </div>
+
+
+      <div class="logo">
+        <a href="http://tinyurl.com/ydfzw4u" target="_blank"
+           <img border="0" src="GetCDFResource?resource=/bi-developers/cda/resources/pastaCDA.png" /><br/>
+        </a>
+        Blog Post
+      </div>
+
+      <div class="logo">
+        <a href="#" target="_blank"
+           <img border="0" src="GetCDFResource?resource=/bi-developers/cda/resources/pastaCDA.png" /><br/>
+        </a>
+        PDF Brochure
+      </div>
+    </div>
+
+
+  </div>
+
+
+  <div class="span-22  prepend-1 append-1 clearfix last">
+
+
+    <table id="testTable" cellpadding="0" cellspacing="0">
+
+      <tr>
+        <th>Access method</th>
+        <th>Description</th>
+        <th>Sample</th>
+        <th>Result</th>
+      </tr>
+    </table>
+
+  </div>
+
 </div>
+
+
 <script language="javascript" type="text/javascript">
 
-	var components = [];
+  var components = [];
 
-	</script>
+</script>
 
-	<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript">
 
-		function load(){
-			Dashboards.init(components);
-		}
-
-
-load();
+  function load(){
+    Dashboards.init(components);
+  }
 
 
-// To add test cases, just edit this array
+  load();
 
-var testCases = [
-{
-	type: "sql.jdbc",
-	desc: "Sql query over a jdbc datasource",
-	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/sql-jdbc.cda",
-	expectedCols: 4,
-	expectedRows: 3
-},
-{
-	type: "sql.jndi",
-	desc: "Sql query over a jndi datasource",
-	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/sql-jndi.cda",
-	expectedCols: 4,
-	expectedRows: 2
-},
-{
-	type: "mondrian.jdbc",
-	desc: "Mdx query over a jdbc mondrian connection",
-	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/mondrian-jdbc.cda",
-	expectedCols: 4,
-	expectedRows: 3
-},
-{
-	type: "mondrian.jndi",
-	desc: "Mdx query over a jndi mondrian connection",
-	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/mondrian-jndi.cda",
-	expectedCols: 4,
-	expectedRows: 3
-},
-{
-	type: "mondrian.jdbc (denormalized)",
-	desc: "Denormalized Mdx query over a jdbc mondrian connection",
-	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/denormalized-mondrian-jndi.cda",
-	expectedCols: 5,
-	expectedRows: 6
-},
-{
-	type: "mondrian.jndi (denormalized)",
-	desc: "Denormalized Mdx query over a jndi mondrian connection",
-	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/denormalized-mondrian-jndi.cda",
-	expectedCols: 5,
-	expectedRows: 6
-},
-{
-	type: "olap4j.jdbc",
-	desc: "Mdx query over a olap4j connection",
-	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/olap4j-jdbc.cda",
-	expectedCols: 4,
-	expectedRows: 1
-},
-/*{
-	type: "olap4j.jndi",
-	desc: "Mdx query over a olap4j connection",
-	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/olap4j-jndi.cda",
-	expectedCols: 4,
-	expectedRows: 1
+
+  // To add test cases, just edit this array
+
+  var testCases = [
+    {
+      type: "sql.jdbc",
+      desc: "Sql query over a jdbc datasource",
+      url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/sql-jdbc.cda",
+      expectedCols: 4,
+      expectedRows: 3
+    },
+    {
+      type: "sql.jndi",
+      desc: "Sql query over a jndi datasource",
+      url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/sql-jndi.cda",
+      expectedCols: 4,
+      expectedRows: 2
+    },
+    {
+      type: "mondrian.jdbc",
+      desc: "Mdx query over a jdbc mondrian connection",
+      url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/mondrian-jdbc.cda",
+      expectedCols: 4,
+      expectedRows: 3
+    },
+    {
+      type: "mondrian.jndi",
+      desc: "Mdx query over a jndi mondrian connection",
+      url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/mondrian-jndi.cda",
+      expectedCols: 4,
+      expectedRows: 3
+    },
+    {
+      type: "mondrian.jdbc (denormalized)",
+      desc: "Denormalized Mdx query over a jdbc mondrian connection",
+      url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/denormalized-mondrian-jndi.cda",
+      expectedCols: 5,
+      expectedRows: 6
+    },
+    {
+      type: "mondrian.jndi (denormalized)",
+      desc: "Denormalized Mdx query over a jndi mondrian connection",
+      url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/denormalized-mondrian-jndi.cda",
+      expectedCols: 5,
+      expectedRows: 6
+    },
+    {
+      type: "olap4j.jdbc",
+      desc: "Mdx query over a olap4j connection",
+      url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/olap4j-jdbc.cda",
+      expectedCols: 4,
+      expectedRows: 1
+    },
+    /*{
+type: "olap4j.jndi",
+desc: "Mdx query over a olap4j connection",
+url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/olap4j-jndi.cda",
+expectedCols: 4,
+expectedRows: 1
 },*/
-{
-	type: "kettle",
-	desc: "Kettle transformation",
-	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/kettle.cda",
-	expectedCols: 4,
-	expectedRows: 1
-},
-{
-	type: "metadata",
-	desc: "Mql query over a metadata connection",
-	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/metadata.cda",
-	expectedCols: 2,
-	expectedRows: 198
-},
-{
-	type: "scripting",
-	desc: "Scripting data access",
-	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/scripting.cda",
-	expectedCols: 5,
-	expectedRows: 4
-},
-{
-	type: "xpath",
-	desc: "Xpath data access over XML file",
-	url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/xpath.cda",
-	expectedCols: 2,
-	expectedRows: 122
-},
-{
-	type: "Compound join",
-	desc: "Joining 2 different datasets",
-	url: "../cda/doQuery?dataAccessId=3&path=/bi-developers/cda/cdafiles/compoundJoin.cda",
-	expectedCols: 5,
-	expectedRows: 12
-},
-{
-	type: "Compound Union",
-	desc: "Appending two different unions",
-	url: "../cda/doQuery?dataAccessId=3&path=/bi-developers/cda/cdafiles/compoundUnion.cda",
-	expectedCols: 2,
-	expectedRows: 4
-}
-];
+    {
+      type: "kettle",
+      desc: "Kettle transformation",
+      url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/kettle.cda",
+      expectedCols: 4,
+      expectedRows: 1
+    },
+    {
+      type: "metadata",
+      desc: "Mql query over a metadata connection",
+      url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/metadata.cda",
+      expectedCols: 2,
+      expectedRows: 198
+    },
+    {
+      type: "scripting",
+      desc: "Scripting data access",
+      url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/scripting.cda",
+      expectedCols: 5,
+      expectedRows: 4
+    },
+    {
+      type: "xpath",
+      desc: "Xpath data access over XML file",
+      url: "../cda/doQuery?dataAccessId=1&path=/bi-developers/cda/cdafiles/xpath.cda",
+      expectedCols: 2,
+      expectedRows: 122
+    },
+    {
+      type: "Compound join",
+      desc: "Joining 2 different datasets",
+      url: "../cda/doQuery?dataAccessId=3&path=/bi-developers/cda/cdafiles/compoundJoin.cda",
+      expectedCols: 5,
+      expectedRows: 12
+    },
+    {
+      type: "Compound Union",
+      desc: "Appending two different unions",
+      url: "../cda/doQuery?dataAccessId=3&path=/bi-developers/cda/cdafiles/compoundUnion.cda",
+      expectedCols: 2,
+      expectedRows: 4
+    }
+  ];
 
 
-// Init table
+  // Init table
 
 
-// Build code to execute
+  // Build code to execute
 
-var Caller = Base.extend({
-		idx: -1,
-		testInfo: {},
+  var Caller = Base.extend({
+    idx: -1,
+    testInfo: {},
 
-		constructor: function(idx){
-			this.idx = idx;
-			this.testInfo = testCases[idx];
+    constructor: function(idx){
+      this.idx = idx;
+      this.testInfo = testCases[idx];
 
-			this.init();
-		},
+      this.init();
+    },
 
-		init: function(){
-			// Add this line to the table
-			var sampleFile = this.testInfo.url.match(/cdafiles\/(.*)/)[0];
-			$("#testTable").append("<tr><td>" + this.testInfo.type + "</td><td>"+this.testInfo.desc+"</td><td><a href='javascript:showFile(\"" + sampleFile + "\")'>"+sampleFile+"</a></td><td class='testPending'>testing...</td></tr>");
-		},
+    init: function(){
+      // Add this line to the table
+      var sampleFile = this.testInfo.url.match(/cdafiles\/(.*)/)[0];
+      $("#testTable").append("<tr><td>" + this.testInfo.type + "</td><td>"+
+        this.testInfo.desc+"</td><td><a href='javascript:showFile(\"" + sampleFile +
+        "\")'>"+sampleFile+
+        "</a></td><td class='testResult testPending'><img src=\"GetCDFResource?resource=/bi-developers/cda/resources/testing.png\" /></td></tr>");
+    },
 
-		makeCall:  function(){
-			var myself = this;
-			$.getJSON(this.testInfo.url,function(data){
-					myself.verifyData(data);
-				});
+    makeCall:  function(){
+      var myself = this;
+      $.getJSON(this.testInfo.url,function(data){
+        myself.verifyData(data);
+      });
 
-		},
-
-
-		verifyData: function(data){
-			var valid = true;
-			var statusText = "";
-			var cssClass;
-
-			if(data.resultset.length != this.testInfo.expectedRows){
-				valid = false;	
-				statusText += "Unexpected number of rows; ";
-			}
-			if(data.metadata.length != this.testInfo.expectedCols){
-				valid = false;	
-				statusText += "Unexpected number of columns; ";
-			}
-
-			if(valid){
-				statusText = "Ok";
-				cssClass="testPassed";
-			}
-			else{
-				cssClass="testFailed";
-			}
-
-			// Update status
-			var statusCell = $("#testTable tr:eq(" + (this.idx + 1) + ") td:eq(3)");
-			statusCell.text(statusText);
-			statusCell.removeClass("testPending");
-			statusCell.addClass(cssClass);
-
-		}
+    },
 
 
-	});
+    verifyData: function(data){
+      
+      var valid = true;
+      var statusText = "";
+      var statusImage = "";
+      var cssClass;
 
-var showFile = function(link){
-	$.fancybox({type:"iframe", href:webAppPath + "/content/cda/getCdaFile?path=/bi-developers/cda/" + link, width: $(window).width() - 100, height:$(window).height() - 50});
-//	GB_show("Source file",webAppPath + "/content/cda/getCdaFile?path=/bi-developers/cda/" + link, $(window).height() - 50 , $(window).width() - 100);
-}
+      if(data.resultset.length != this.testInfo.expectedRows){
+        valid = false;
+        statusText += "Unexpected number of rows; ";
+      }
+      if(data.metadata.length != this.testInfo.expectedCols){
+        valid = false;
+        statusText += "Unexpected number of columns; ";
+      }
 
-// Call it
+      if(valid){
+        statusText = "";
+        statusImage = "<img src=\"GetCDFResource?resource=/bi-developers/cda/resources/ok.png\" />"
+        cssClass="testPassed";
+      }
+      else{
+        cssClass="testFailed";
+      }
 
-for( var i = 0; i< testCases.length; i++){
-	var c = new Caller(i);
-	c.makeCall();
-}
+      // Update status
+      var statusCell = $("#testTable tr:eq(" + (this.idx + 1) + ") td:eq(3)");
+      statusImage.length > 0?statusCell.html(statusImage):statusCell.text(statusText);
+      statusCell.removeClass("testPending");
+      statusCell.addClass(cssClass);
+
+    }
+
+
+  });
+
+  var showFile = function(link){
+    $.fancybox({type:"iframe", href:webAppPath + "/content/cda/getCdaFile?path=/bi-developers/cda/" + link, width: $(window).width() - 100, height:$(window).height() - 50});
+    //	GB_show("Source file",webAppPath + "/content/cda/getCdaFile?path=/bi-developers/cda/" + link, $(window).height() - 50 , $(window).width() - 100);
+  }
+
+  // Call it
+
+  for( var i = 0; i< testCases.length; i++){
+    var c = new Caller(i);
+    c.makeCall();
+  }
 
 
 </script>
