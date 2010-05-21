@@ -645,7 +645,9 @@
 		function ( sData )
 		{
 			/* Snaity check that we are dealing with a string or quick return for a number */
-			if ( typeof sData == 'number' )
+			if(sData == undefined) return null;
+      
+      if ( typeof sData == 'number' )
 			{
 				return 'numeric';
 			}
@@ -3785,7 +3787,7 @@
 			
 			for ( var i=0 ; i<oSettings.aoData.length ; i++ )
 			{
-				if ( oSettings.aoData[i]._aData[iCol].length > iMax )
+				if ( oSettings.aoData[i]._aData[iCol] != undefined && oSettings.aoData[i]._aData[iCol].length > iMax )
 				{
 					iMax = oSettings.aoData[i]._aData[iCol].length;
 					iMaxIndex = i;

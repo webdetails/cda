@@ -1,217 +1,234 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link href="previewer/previewer.css" type="text/css" rel="stylesheet"/>
-        <link href="previewer/dataTables/css/demo_table_jui.css" type="text/css" rel="stylesheet"/>
-	<link type="text/css" href="previewer/css/custom-theme/jquery-ui-1.8rc3.custom.css" rel="stylesheet" />	
-	<link type="text/css" href="previewer/fg-menu/fg.menu.css" rel="stylesheet" />	
+  <head>
+    <link href="previewer/previewer.css" type="text/css" rel="stylesheet"/>
+    <link href="previewer/dataTables/css/demo_table_jui.css" type="text/css" rel="stylesheet"/>
+    <link type="text/css" href="previewer/css/custom-theme/jquery-ui-1.8rc3.custom.css" rel="stylesheet" />
+    <link type="text/css" href="previewer/fg-menu/fg.menu.css" rel="stylesheet" />
+    <link type="text/css" href="static/blueprint/screen.css" rel="stylesheet" />
 
-        <script type="text/javascript" src="previewer/jquery.js"></script>
-	<script type="text/javascript" src="previewer/js/jquery-1.4.2.min.js"></script>
-	<script type="text/javascript" src="previewer/js/jquery-ui-1.8rc3.custom.min.js"></script>
-        <script type="text/javascript" src="previewer/js/jquery.i18n.properties.js"></script>
+    <script type="text/javascript" src="previewer/jquery.js"></script>
+    <script type="text/javascript" src="previewer/js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="previewer/js/jquery-ui-1.8rc3.custom.min.js"></script>
+    <script type="text/javascript" src="previewer/js/jquery.i18n.properties.js"></script>
 
-        <script type="text/javascript" src="previewer/dataTables/js/jquery.dataTables.js"></script>
-        <script type="text/javascript" src="previewer/fg-menu/fg.menu.js"></script>
-	<style type="text/css">
-	body { font-size:62.5%; margin:0; padding:0; min-height: 500px}
+    <script type="text/javascript" src="previewer/dataTables/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="previewer/fg-menu/fg.menu.js"></script>
+    <style type="text/css">
+      body { font-size:62.5%; margin:0; padding:0; min-height: 500px}
 
-	</style> 
+    </style>
 
-        <script language="javascript">
-var lastQuery;
-var tableController;
+    <script language="javascript">
+      var lastQuery;
+      var tableController;
 
-// Init jQuery i18n plugin
-loadMessageBundles = function(lang) {
+      // Init jQuery i18n plugin
+      loadMessageBundles = function(lang) {
 
-			jQuery.i18n.properties({
-			    name:'Messages',
-			    path:'previewer/languages/',
-			    mode:'both',
-			    language:(lang == 'browser' ? jQuery.i18n.browserLang() : lang),
-                callback: function() {
-                    $('#button').html(jQuery.i18n.prop('label.refresh'));
-                    $('#pleaseselect').html(jQuery.i18n.prop('label.selectDataAccessID'));    
-                }
-			});
-		}
+        jQuery.i18n.properties({
+          name:'Messages',
+          path:'previewer/languages/',
+          mode:'both',
+          language:(lang == 'browser' ? jQuery.i18n.browserLang() : lang),
+          callback: function() {
+            $('#button').html(jQuery.i18n.prop('label.refresh'));
+            $('#pleaseselect').html(jQuery.i18n.prop('label.selectDataAccessID'));
+          }
+        });
+      }
 
-loadData = function() {
-var fileName =$("#filename").val();
-fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
-$.get("doQuery",{path:fileName},
-function(data) {
-bespin.setContent(data)
-})
-}
+      loadData = function() {
+        var fileName =$("#filename").val();
+        fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
+        $.get("doQuery",{path:fileName},
+        function(data) {
+          bespin.setContent(data)
+        })
+      }
 
-saveFile = function() {
-var fileName =$("#filename").val();
-fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
-$('#notifications').html('Saving...');
-$('#notifications').fadeIn().delay(2000).fadeOut('slow');
-$.get("writeCdaFile",{path: fileName,data:bespin.getContent()},function(data){
-$('#notifications').html(data);
-$('#notifications').fadeIn().delay(2000).fadeOut('slow');
-});
-}
+      saveFile = function() {
+        var fileName =$("#filename").val();
+        fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
+        $('#notifications').html('Saving...');
+        $('#notifications').fadeIn().delay(2000).fadeOut('slow');
+        $.get("writeCdaFile",{path: fileName,data:bespin.getContent()},function(data){
+          $('#notifications').html(data);
+          $('#notifications').fadeIn().delay(2000).fadeOut('slow');
+        });
+      }
 
 
-/*
- *  pageParams: get the request variables passed in the url 
- */
-pageParams = function() {
-    var url = document.location.href;
-    var output = {};
+      /*
+       *  pageParams: get the request variables passed in the url
+       */
+      pageParams = function() {
+        var url = document.location.href;
+        var output = {};
 
-    // The parameters are in the section between '?' and '#' (if any)
-    var startIndex = url.indexOf('?');
-    var endIndex = url.indexOf('#');
-    var params = (endIndex > 0) ? url.slice(startIndex+1,endIndex).split('&'):url.slice(startIndex+1).split('&');
-    for (param in params){
-        var p = params[param].split('=');
-        output[p[0]] = decodeURIComponent(p[1]);
-    }
-    return output;
-}
-        </script>
-    </head>
-<body style='background-color: #4c4a41'>
-<input type="hidden" id="staticfile" value="">
-<div class='ui-widget-content'>
-<!--
-HEADER
--->
-<div class='header branding'>
+        // The parameters are in the section between '?' and '#' (if any)
+        var startIndex = url.indexOf('?');
+        var endIndex = url.indexOf('#');
+        var params = (endIndex > 0) ? url.slice(startIndex+1,endIndex).split('&'):url.slice(startIndex+1).split('&');
+        for (param in params){
+          var p = params[param].split('=');
+          output[p[0]] = decodeURIComponent(p[1]);
+        }
+        return output;
+      }
+    </script>
+  </head>
 
-    <img  style='position: absolute; left: 10px; top: 15px; width: 100px' src='previewer/img/cda.png'>
-    <div style='margin-left: 125px'>
-    <div id='fileid'></div>
-    <div id="controller">
-    <a tabindex="0" href="#dataAccessIds" class="fg-button ui-widget ui-state-default ui-corner-all" id="flat"><span id='selectorText'>Data Access</span><span style='float: right' class="ui-icon ui-icon-triangle-1-s"></span></a></span>
-    <div id='dataAccessIds' class="hidden"><ul id='queries'></ul></div> 
-<span  id='params'class='params'>&nbsp;</span><button id='button' onclick='refreshTable(lastQuery)'>Refresh</button></div>
+  <body >
+    <input type="hidden" id="staticfile" value="">
+
+
+
+
+    <div class="container">
+      <div class="span-24 clearfix cdalogo">
+
+        <div class="span-6 clearfix">&nbsp;</div>
+        <div class="span-18 last filename"><span id="fileid">&nbsp;</span></div>
+
+
+
+        <div class="span-6 clearfix center">
+          &nbsp;
+        </div>
+
+        <div class="span-4 center">
+          <select id="dataAccessSelector" class="cdaButton"><option value="undefined">Data Access</option></select>
+        </div>
+
+        <div id="parameterHolder" class="span-8 center">
+          &nbsp;
+        </div>
+
+        <div class="span-6 center last">
+          <button class="cdaButton" id='button' onclick='refreshTable(lastQuery)'>Refresh</button>
+        </div>
+
+      </div>
+
     </div>
-</div>
-<div id='previewerTable' style="padding:10px"><span id='pleaseselect'>Please select a Data Access ID</span></div>
-</div>
-<div class='ui-widget-content'><img src='previewer/img/webdetails.png' style='padding:5px'></div>
-</body>
-<script>
-var oLanguage;
-$(document).ready(function(){
-    // Initialize jquery.i18n plugin - load message files
-		var userLocale = '#{LANGUAGE_CODE}';
-    loadMessageBundles(userLocale);
-    // Initialize language support for jQuery dataTables
-    $.getJSON( "previewer/dataTables/languages/Messages_" + userLocale + ".txt", function( json ) { 
-							oLanguage = json; 
-		} );
-    $('#button').button();
-    var params = pageParams();
-    $('#notifications').hide();
 
-    	// BUTTONS
-    	$('.fg-button').hover(
-    		function(){ $(this).removeClass('ui-state-default').addClass('ui-state-focus'); },
-    		function(){ $(this).removeClass('ui-state-focus').addClass('ui-state-default'); }
-    	);
-    	
-    	// MENUS
-                $('.fg-button').button();    	
-list = $('ul#queries');
-list.empty();
-$.getJSON("listQueries",{path: filename},function(queries){
-var defaultQuery;
-var defaultDescription;
-for (query in queries.resultset) {
-    var name = queries.resultset[query][1] != null && queries.resultset[query][1] != ""? queries.resultset[query][1]: "DataAccess ID: " + queries.resultset[query][0];
-    var value = queries.resultset[query][0];
-    defaultDescription = name;
-    defaultQuery = value;
-    list.append('<li><a href="#"><span class="hidden" id="value">'+value+'</span><span id="name">'+ name + '</span></a></li>');
-};
 
-		$('#flat').menu({ 
-			content: list.parent().html(),
- 			showSpeed: 400,
-                        callback: function(result) {
-                            $('#selectorText').text(result.parent().find('span#name').text())
-                            refreshTable(result.parent().find('span#value').text());
-                        }
-		});
+    <div id='previewerTable' style="padding:10px"><span id='pleaseselect'>Please select a Data Access ID</span></div>
 
-$('#fileid').text(filename);
-/* Commented out defaults to test an empty starting state*/
-//$('#selectorText').text(defaultDescription)
-//refreshTable(defaultQuery);
-});
- });
+    <div id="footer">&nbsp;</div>
 
-refreshTable = function(id){
-// Detect whether the change was triggered by a refresh or a change in DataAccessId
-if (id != lastQuery) {
-    // When we change query, we must drop the table and parameters, and rebuild both
-    lastQuery = id;
-    refreshParams(id);
-    $.getJSON("doQuery",{path:filename, dataAccessId: id},function(data){
-        var tableContents = data.resultset;
-        var columnNames = [];
-        for (column in data.metadata) {
-            columnNames.push({"sTitle": data.metadata[column].colName});
+  </body>
+  <script type="text/javascript">
+    var oLanguage;
+    $(document).ready(function(){
+      // Initialize jquery.i18n plugin - load message files
+      var userLocale = '#{LANGUAGE_CODE}';
+      loadMessageBundles(userLocale);
+      // Initialize language support for jQuery dataTables
+      $.getJSON( "previewer/dataTables/languages/Messages_" + userLocale + ".txt", function( json ) {
+        oLanguage = json;
+      } );
+      //$('#button').button();
+      var params = pageParams();
+      $('#notifications').hide();
+
+      var sel = $("#dataAccessSelector");
+      sel.bind("change", function(){
+        var val = $(this).val();
+        if(val != "undefined"){
+          refreshTable($(this).val())
         }
-        $('#previewerTable').empty();
-        $('#previewerTable').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="contents"></table>' );
-       	if (oLanguage == 'undefined')
-	        tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames,"bJQueryUI": true});
-       	else
-	        tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames,"bJQueryUI": true,"oLanguage":oLanguage});
+        else{
+          $('#previewerTable').empty().append($("<span id=\"pleaseselect\"></span>").text("Please select a Data Access ID"));
+          $("#params").empty();
+          lastQuery = undefined;
+        }
+      })
+
+      $.getJSON("listQueries",{path: filename},function(queries){
+        var defaultQuery;
+        var defaultDescription;
+        for (query in queries.resultset) {
+          var name = queries.resultset[query][1] != null && queries.resultset[query][1] != ""? queries.resultset[query][1]: "DataAccess ID: " + queries.resultset[query][0];
+          var value = queries.resultset[query][0];
+
+          sel.append($("<option></option>").attr("value",value).text(name));
+        };
+
+        $('#fileid').text(filename);
+      });
+      
     });
-} else {
-    // Same query, we need to get the present parameter values and rebuild the table
-    var params = getParams();
-    params.path = filename;
-    params.dataAccessId = id;
-   $.getJSON("doQuery",params,function(data){
-        var tableContents = data.resultset;
-        var columnNames = [];
-        for (column in data.metadata) {
+    
+
+    refreshTable = function(id){
+      // Detect whether the change was triggered by a refresh or a change in DataAccessId
+      if (id != lastQuery) {
+        // When we change query, we must drop the table and parameters, and rebuild both
+        lastQuery = id;
+        refreshParams(id);
+        $.getJSON("doQuery",{path:filename, dataAccessId: id},function(data){
+          var tableContents = data.resultset;
+          var columnNames = [];
+          for (column in data.metadata) {
             columnNames.push({"sTitle": data.metadata[column].colName});
-        }
-        $('#previewerTable').empty();
-        $('#previewerTable').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="contents"></table>' );
-       	if (oLanguage == 'undefined')
-	        tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames,"bJQueryUI": true});
-       	else
-	        tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames,"bJQueryUI": true,"oLanguage":oLanguage});
+          }
+          $('#previewerTable').empty();
+          $('#previewerTable').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="contents"></table>' );
+          if (oLanguage == 'undefined')
+            tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames});
+          else
+            tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames,"oLanguage":oLanguage});
+        });
+      } else {
+        // Same query, we need to get the present parameter values and rebuild the table
+        var params = getParams();
+        params.path = filename;
+        params.dataAccessId = id;
+        $.getJSON("doQuery",params,function(data){
+          var tableContents = data.resultset;
+          var columnNames = [];
+          for (column in data.metadata) {
+            columnNames.push({"sTitle": data.metadata[column].colName});
+          }
+          $('#previewerTable').empty();
+          $('#previewerTable').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="contents"></table>' );
+          if (oLanguage == 'undefined')
+            tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames});
+          else
+            tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames,"oLanguage":oLanguage});
 
-});}
-};
+        });}
+    };
 
 
-refreshParams = function(id) {
-    $.getJSON("listParameters",{path:filename, dataAccessId: id},function(data){
-        var placeholder = $('#params');
+    refreshParams = function(id) {
+      $.getJSON("listParameters",{path:filename, dataAccessId: id},function(data){
+        var placeholder = $('#parameterHolder');
         placeholder.empty();
         for (param in data.resultset) {
-            placeholder.append('<span class="param">'+data.resultset[param][0]+':&nbsp;<input id="'+data.resultset[param][0]+'" value="'+data.resultset[param][2]+'"></span>')
-}
-});
+          placeholder.append('<div class="param">'+data.resultset[param][0]+
+            ':&nbsp;<input class="cdaButton" id="'+data.resultset[param][0]+
+            '" value="'+data.resultset[param][2]+'"></div>');
 
-};
 
-getParams = function() {
-    var params = {};
-    $('#params input').each(function(index,param){
+        }
+      });
+
+    };
+
+    getParams = function() {
+      var params = {};
+      $('#parameterHolder input').each(function(index,param){
         params['param' +$(param).attr('id')] = $(param).val()
-    });
-    return params;
-}
-var filename = function(){
-    var params = pageParams();
-    return params.solution != undefined?
+      });
+      return params;
+    }
+    var filename = function(){
+      var params = pageParams();
+      return params.solution != undefined?
         (params.solution + '/' +params.path + '/' + params.file).replace(/\/\//g,"/")
-        : params.path}();
-</script>
+      : params.path}();
+  </script>
 </html>
