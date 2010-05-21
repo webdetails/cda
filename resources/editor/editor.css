@@ -1,32 +1,28 @@
 body {
-    padding: 20px;
+    padding: 0px;
     font-family: Calibri, Helvetica, Arial;
-    background-color: #c9e576
+    background-color: #fff
 }
 
 h1 {
     font-size:120%
 }
 
+.cdalogo{
+
+    background-image: url("../static/headerbg.png");
+    background-repeat: no-repeat;
+    height: 112px;
+
+  }
+
 .header {
-    height:60px;
-    padding-bottom: 40px;
+    background-image: url('../static/headerbg.png');
+    height:112px;
     border-bottom: 1px solid #ddd;
     color: white;
     margin-bottom: 10px;
     position:relative
-}
-
-.bespin-container {
-    padding: 10px;
-    border: 0;
-    background-color: #4c4a41;
-    height: 100%;
-    width: inherit;
-    border: 1px solid #212;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    
 }
 
 .bespin{
@@ -34,46 +30,38 @@ h1 {
     padding: 0px;
     border: 0;
     height: 380px;
-    
 }
 
-.sidebar {
-    width: 200px;
-    height: 400px;
-    background-color: #4c4a41;
-    float:left;
-    border: 1px solid #212;
-    -moz-border-radius: 10px ;
-    -webkit-border-radius: 10px;
-    
+.textinputfix {
+    border: 0px;
+    height: 20px;
+    position: relative;
+    margin: 0px;
 }
-
 .button {
-    background-color: #4c4a41;
-    padding: 5px;
-    margin: 4px;
-    height:24px;
-    border: 1px solid #ddd;
-    -moz-border-radius: 3px ;
-    -webkit-border-radius: 3px;
-    color:#ddd text-decoration:none;
-    position:relative;
-    top:10px
+    background-color: #FFF;
+    color:#000 text-decoration:none;
+    height: 20px;
+    vertical-align: middle;
+    text-align: center;
+    margin-right: 10px;
+    border: 0px;
 }
 
+.button-hover {
+    border: 1px;
+    border-style: solid;
+    border-color: white;
+    color: white;
+    background-color: #8ed300;
+}
 a.button {
-    background-color: #4c4a41;
-    padding: 5px;
-    margin: 4px;
-    margin-bottom:10px;
-    height:24px border: 1px solid #ddd;
-    -moz-border-radius: 3px ;
-    -webkit-border-radius: 3px;
-    color:#ddd text-decoration:none
+    font-size: 110%;
+    color:#000 text-decoration:none
 }
 
 a.button:link {
-    color:#ddd;
+    color:#000;
     text-decoration:none
 }
 
@@ -83,7 +71,7 @@ a.button:visited {
 }
 
 a.button:hover {
-    color:white;
+    color: #efe;
     text-decoration:bold;
     border-color: white
 }
@@ -103,23 +91,19 @@ a.input:visited {
 }
 
 a.input:hover {
-    color:white;
+    color:#222;
     text-decoration:bold;
     border-color: white
 }
 
 
 .notification {
-    background-color: #4c4a41;
-    position:relative;
-    top:10px;
-    padding: 5px;
-    margin: 4px;
-    height:40px;
-    border: 1px solid #fc4;
-    -moz-border-radius: 3px ;
-    -webkit-border-radius: 3px;
-    color:#ddd text-decoration:none
+    height:20px;
+    background-color: #28211c;
+    color:#ddd;
+    text-align: center;
+    font-size: 110%;
+     text-decoration:none
 }
 
 .fileinput {
@@ -129,3 +113,12 @@ a.input:hover {
     top:-1px;
 }
 
+.inputlabel {
+    height: 20px;
+    position: relative;
+    text-align: right;
+    font-size: 110%;
+    top: 1px;
+    vertical-align: middle;
+
+}
