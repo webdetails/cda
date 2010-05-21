@@ -1,56 +1,132 @@
 body {
-    padding: 20px;
-    font-family: Calibri, Helvetica, Arial;
-    background-color: #c9e576
+  padding: 20px;
+  font-family: Calibri, Helvetica, Arial;
+  background-color: #c9e576
 }
 
-h1 {
-    font-size:120%
+.center{
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.header {
-    height:60px;
-    padding-bottom: 40px;
-    border-bottom: 1px solid #ddd;
-    color: white;
-    margin-bottom: 10px;
-    position:relative
+.cdalogo {
+
+  background-image: url("../static/headerbg.png");
+  background-repeat: no-repeat;
+  background-color: #8ed300;
+  min-height: 112px;
+
 }
 
 .params {
-color:#222222;
-font-size:115%;
-font-weight:normal;
-padding:10px;
+  color:#222222;
+  font-size:115%;
+  font-weight:normal;
+  padding:10px;
 }
 
+.cdaButton {
+  border: none;
+  background-color: white;
+  width: 150px;
+  /*text-align: center;*/
+  background-image: none;
+  -moz-border-radius: 0px;
+  height: 18px;
+  margin-bottom: 5px;
+}
+
+#selectorText{
+  display: inline
+}
+
+
 .param {
-padding-left: 5px;
+  padding-left: 5px;
 }
 
 #fileid {
-background-color:#FFFFFF;
-color:#222222;
-font-size:14pt;
-margin:20px 20px 10px;
+
+  font-size:12pt;
+
 }
 
 #pleaseselect {
-background-color:#FFFFFF;
-color:#442222;
-font-size:12pt;
-font-style: italic;
-margin:20px 20px 10px;
+  background-color:#FFFFFF;
+  color:#442222;
+  font-size:12pt;
+  font-style: italic;
+  margin:20px 20px 10px;
 }
 
-/*fg-menu stuff*/
-        body { font-size:62.5%; margin:0; padding:0; }
-	#flat { font-size:11px;}
-	.hidden { position:absolute; top:0; left:-9999px; width:1px; height:1px; overflow:hidden; }
-	.fg-button-icon-left { padding-left: 2.1em; }
-	.fg-button-icon-right { padding-right: 2.1em; }
-	.fg-button-icon-left .ui-icon { right: auto; left: .2em; margin-left: 0; }
-	.fg-button-icon-right .ui-icon { left: auto; right: .2em; margin-left: 0; }
-	.fg-button-icon-solo { display:block; width:8px; text-indent: -9999px; }	 /* solo icon buttons must have block properties for the text-indent to work */	
-	
-	.fg-button.ui-state-loading .ui-icon { background: url(fg-menu/spinner_bar.gif) no-repeat 0 0; }
+#previewerTable  {
+  min-height: 300px;
+}
+
+
+#previewerTable tr.odd > td {
+  background-color: #f1f1f1;
+}
+
+#previewerTable tr.even > td {
+  background-color: #f7f7f7;
+}
+
+#previewerTable tr > th {
+  background-color: #e3e2e2;
+  text-align: center;
+  vertical-align: middle;
+  min-height: 50px;
+}
+
+#parameterHolder{
+  text-align: right;
+}
+
+#previewerTable input, #previewerTable select {
+  border: solid #8eD300 1px  ;
+}
+
+#previewerTable .paginate_disabled_next,
+#previewerTable .paginate_enabled_next,
+#previewerTable .paginate_disabled_previous,
+#previewerTable .paginate_enabled_previous{
+  float:left;
+  height:15px;
+  margin-left:3px;
+  width:8px;
+
+}
+
+#previewerTable .paginate_disabled_next{
+  background-image: url("../static/right_inactive.png");
+}
+
+#previewerTable .paginate_enabled_next{
+  background-image: url("../static/right_active.png");
+}
+
+#previewerTable .paginate_disabled_previous{
+  background-image: url("../static/left_inactive.png");
+}
+
+#previewerTable .paginate_enabled_previous{
+  background-image: url("../static/left_active.png");
+
+}
+
+
+
+div#footerContainer{
+  text-align: center;
+
+}
+
+div#footer{
+  width: 950px;
+  background-image: url("../static/brandingbar.png");
+  height: 30px;
+  margin-left: auto;
+  margin-right: auto;
+}
