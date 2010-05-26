@@ -6,7 +6,8 @@ import java.util.Properties;
 import org.dom4j.Element;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
 
-public class JdbcConnectionInfo {
+public class JdbcConnectionInfo
+{
 
   private String driver;
   private String url;
@@ -16,8 +17,8 @@ public class JdbcConnectionInfo {
   private String passwordField;
   private Properties properties;
 
-
-  public JdbcConnectionInfo(final Element connection) {
+  public JdbcConnectionInfo(final Element connection)
+  {
 
 
     final String driver = (String) connection.selectObject("string(./Driver)");
@@ -26,7 +27,7 @@ public class JdbcConnectionInfo {
     final String password = (String) connection.selectObject("string(./Pass)");
     final String userFormula = (String) connection.selectObject("string(./UserField)");
     final String passFormula = (String) connection.selectObject("string(./PassField)");
-  
+
     if (StringUtils.isEmpty(driver))
     {
       throw new IllegalStateException("A driver is mandatory");
@@ -38,13 +39,20 @@ public class JdbcConnectionInfo {
 
     setDriver(driver);
     setUrl(url);
+
+    // For user / pass, we also need to set them im the properties
+    properties = new Properties();
+
     if (StringUtils.isEmpty(userName) == false)
     {
       setUser(userName);
+      properties.setProperty("user", userName);
+
     }
     if (StringUtils.isEmpty(password) == false)
     {
       setPass(password);
+      properties.setProperty("password", password);
     }
     if (StringUtils.isEmpty(userFormula) == false)
     {
@@ -55,7 +63,6 @@ public class JdbcConnectionInfo {
       setPasswordField(passFormula);
     }
 
-    properties = new Properties();
     final List list = connection.elements("Property");
     for (int i = 0; i < list.size(); i++)
     {
@@ -91,38 +98,45 @@ public class JdbcConnectionInfo {
     return properties;
   }
 
-  public String getDriver() {
+  public String getDriver()
+  {
     return driver;
   }
 
-  public void setDriver(final String driver) {
+  public void setDriver(final String driver)
+  {
     this.driver = driver;
   }
 
-  public String getUrl() {
+  public String getUrl()
+  {
     return url;
   }
 
-  public void setUrl(final String url) {
+  public void setUrl(final String url)
+  {
     this.url = url;
   }
 
-  public String getUser() {
+  public String getUser()
+  {
     return user;
   }
 
-  public void setUser(final String user) {
+  public void setUser(final String user)
+  {
     this.user = user;
   }
 
-  public String getPass() {
+  public String getPass()
+  {
     return pass;
   }
 
-  public void setPass(final String pass) {
+  public void setPass(final String pass)
+  {
     this.pass = pass;
   }
-
 
   public boolean equals(final Object o)
   {

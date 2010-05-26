@@ -33,14 +33,19 @@ import pt.webdetails.cda.settings.UnknownConnectionException;
  * Date: Feb 3, 2010
  * Time: 2:18:19 PM
  */
-public abstract class PREDataAccess extends SimpleDataAccess {
+public abstract class PREDataAccess extends SimpleDataAccess
+{
 
   private static final Log logger = LogFactory.getLog(PREDataAccess.class);
   private TableModel tableModel;
   private CachingDataFactory localDataFactory;
 
-  public PREDataAccess() {}
-  public PREDataAccess(final Element element) {
+  public PREDataAccess()
+  {
+  }
+
+  public PREDataAccess(final Element element)
+  {
 
     super(element);
 
@@ -49,8 +54,10 @@ public abstract class PREDataAccess extends SimpleDataAccess {
   public abstract DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException;
 
   @Override
-  protected TableModel performRawQuery(final ParameterDataRow parameterDataRow) throws QueryException {
-    try {
+  protected TableModel performRawQuery(final ParameterDataRow parameterDataRow) throws QueryException
+  {
+    try
+    {
 
       final CachingDataFactory dataFactory = new CachingDataFactory(getDataFactory());
 
@@ -61,8 +68,7 @@ public abstract class PREDataAccess extends SimpleDataAccess {
 
       final Configuration configuration = ClassicEngineBoot.getInstance().getGlobalConfig();
       dataFactory.initialize(configuration, resourceManager, contextKey,
-              new LibLoaderResourceBundleFactory
-                  (resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
+              new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
 
       dataFactory.open();
       // fire the query. you always get a tablemodel or an exception.
@@ -77,33 +83,44 @@ public abstract class PREDataAccess extends SimpleDataAccess {
         environmentDataRow = new ReportEnvironmentDataRow(new PentahoReportEnvironment(configuration));
       }
 
-      final TableModel tm = dataFactory.queryData("query",
-          new CompoundDataRow(environmentDataRow, parameterDataRow));
+      final TableModel tm = dataFactory.queryData"query",
+              new CompoundDataRow(environmentDataRow, parameterDataRow));
 
       // Store this variable so that we can close it later
       setLocalDataFactory(dataFactory);
       setTableModel(tm);
       return tm;
 
-    } catch (UnknownConnectionException e) {
+    }
+    catch (UnknownConnectionException e)
+    {
       throw new QueryException("Unknown connection", e);
-    } catch (InvalidConnectionException e) {
+    }
+    catch (InvalidConnectionException e)
+    {
       throw new QueryException("Unknown connection", e);
-    } catch (ReportDataFactoryException e) {
-      throw new QueryException("ReportDataFactoryException", e);
+    }
+    catch (ReportDataFactoryException e)
+    {
+
+      throw new QueryException("ReportDataFactoryException : " + e.getMessage()
+              + e.getParent()==null?"":("; Parent exception: " + e.getParent().getMessage()), e);
     }
 
 
   }
 
-  public void closeDataSource() throws QueryException {
+  public void closeDataSource() throws QueryException
+  {
 
-    if (localDataFactory == null) {
+    if (localDataFactory == null)
+    {
       return;
     }
 
     // and at the end, close your tablemodel if it holds on to resources like a resultset
-    if (getTableModel() instanceof CloseableTableModel) {
+    if (getTableModel() instanceof CloseableTableModel)
+    {
       final CloseableTableModel ctm = (CloseableTableModel) getTableModel();
       ctm.close();
     }
@@ -114,19 +131,23 @@ public abstract class PREDataAccess extends SimpleDataAccess {
     localDataFactory = null;
   }
 
-  public TableModel getTableModel() {
+  public TableModel getTableModel()
+  {
     return tableModel;
   }
 
-  public void setTableModel(final TableModel tableModel) {
+  public void setTableModel(final TableModel tableModel)
+  {
     this.tableModel = tableModel;
   }
 
-  public CachingDataFactory getLocalDataFactory() {
+  public CachingDataFactory getLocalDataFactory()
+  {
     return localDataFactory;
   }
 
-  public void setLocalDataFactory(final CachingDataFactory localDataFactory) {
+  public void setLocalDataFactory(final CachingDataFactory localDataFactory)
+  {
     this.localDataFactory = localDataFactory;
   }
   /*
@@ -140,10 +161,9 @@ public abstract class PREDataAccess extends SimpleDataAccess {
    */
 
   @Override
-  public ArrayList<PropertyDescriptor> getInterface() {
+  public ArrayList<PropertyDescriptor> getInterface()
+  {
     ArrayList<PropertyDescriptor> properties = super.getInterface();
     return properties;
   }
-
-
 }
