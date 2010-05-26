@@ -1,57 +1,142 @@
 package pt.webdetails.cda.connections.sql;
 
-import org.dom4j.Element;
+import java.util.List;
+import java.util.Properties;
 
-public class JdbcConnectionInfo {
+import org.dom4j.Element;
+import org.pentaho.reporting.libraries.base.util.StringUtils;
+
+public class JdbcConnectionInfo
+{
 
   private String driver;
   private String url;
   private String user;
   private String pass;
+  private String userField;
+  private String passwordField;
+  private Properties properties;
+
+  public JdbcConnectionInfo(final Element connection)
+  {
 
 
-  public JdbcConnectionInfo(final Element connection) {
+    final String driver = (String) connection.selectObject("string(./Driver)");
+    final String url = (String) connection.selectObject("string(./Url)");
+    final String userName = (String) connection.selectObject("string(./User)");
+    final String password = (String) connection.selectObject("string(./Pass)");
+    final String userFormula = (String) connection.selectObject("string(./UserField)");
+    final String passFormula = (String) connection.selectObject("string(./PassField)");
 
-    setDriver((String) connection.selectObject("string(./Driver)"));
-    setUrl((String) connection.selectObject("string(./Url)"));
-    setUser((String) connection.selectObject("string(./User)"));
-    setPass((String) connection.selectObject("string(./Pass)"));
+    if (StringUtils.isEmpty(driver))
+    {
+      throw new IllegalStateException("A driver is mandatory");
+    }
+    if (StringUtils.isEmpty(url))
+    {
+      throw new IllegalStateException("A url is mandatory");
+    }
 
+    setDriver(driver);
+    setUrl(url);
+
+    // For user / pass, we also need to set them im the properties
+    properties = new Properties();
+
+    if (StringUtils.isEmpty(userName) == false)
+    {
+      setUser(userName);
+      properties.setProperty("user", userName);
+
+    }
+    if (StringUtils.isEmpty(password) == false)
+    {
+      setPass(password);
+      properties.setProperty("password", password);
+    }
+    if (StringUtils.isEmpty(userFormula) == false)
+    {
+      setUserField(userFormula);
+    }
+    if (StringUtils.isEmpty(passFormula) == false)
+    {
+      setPasswordField(passFormula);
+    }
+
+    final List list = connection.elements("Property");
+    for (int i = 0; i < list.size(); i++)
+    {
+      final Element childElement = (Element) list.get(i);
+      final String name = childElement.attributeValue("name");
+      final String text = childElement.getText();
+      properties.put(name, text);
+    }
   }
 
+  public String getUserField()
+  {
+    return userField;
+  }
 
-  public String getDriver() {
+  public void setUserField(final String userField)
+  {
+    this.userField = userField;
+  }
+
+  public String getPasswordField()
+  {
+    return passwordField;
+  }
+
+  public void setPasswordField(final String passwordField)
+  {
+    this.passwordField = passwordField;
+  }
+
+  public Properties getProperties()
+  {
+    return properties;
+  }
+
+  public String getDriver()
+  {
     return driver;
   }
 
-  public void setDriver(final String driver) {
+  public void setDriver(final String driver)
+  {
     this.driver = driver;
   }
 
-  public String getUrl() {
+  public String getUrl()
+  {
     return url;
   }
 
-  public void setUrl(final String url) {
+  public void setUrl(final String url)
+  {
     this.url = url;
   }
 
-  public String getUser() {
+  public String getUser()
+  {
     return user;
   }
 
-  public void setUser(final String user) {
+  public void setUser(final String user)
+  {
     this.user = user;
   }
 
-  public String getPass() {
+  public String getPass()
+  {
     return pass;
   }
 
-  public void setPass(final String pass) {
+  public void setPass(final String pass)
+  {
     this.pass = pass;
   }
-
 
   public boolean equals(final Object o)
   {

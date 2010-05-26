@@ -69,7 +69,7 @@ public class SqlTest extends TestCase
     QueryOptions queryOptions = new QueryOptions();
     queryOptions.setDataAccessId("1");
     queryOptions.addParameter("orderDate", "2003-04-01");
-    queryOptions.setOutputType("xls");
+    queryOptions.setOutputType("xml");
     // queryOptions.addParameter("status","In Process");
 
     logger.info("Doing first query");
