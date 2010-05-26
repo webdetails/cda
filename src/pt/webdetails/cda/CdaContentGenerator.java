@@ -339,7 +339,6 @@ public class CdaContentGenerator extends BaseContentGenerator
       int status = solutionRepository.publish(rootDir, file[0], file[1], ((String) pathParams.getParameter("data")).getBytes("UTF-8"), true);
       if (status == ISolutionRepository.FILE_ADD_SUCCESSFUL)
       {
-        solutionRepository.synchronizeSolutionWithSolutionSource(userSession);
         SettingsManager.getInstance().clearCache();
         setResponseHeaders("text/plain", null);
         out.write("File saved".getBytes());
