@@ -83,7 +83,7 @@ public abstract class PREDataAccess extends SimpleDataAccess
         environmentDataRow = new ReportEnvironmentDataRow(new PentahoReportEnvironment(configuration));
       }
 
-      final TableModel tm = dataFactory.queryData"query",
+      final TableModel tm = dataFactory.queryData("query",
               new CompoundDataRow(environmentDataRow, parameterDataRow));
 
       // Store this variable so that we can close it later
