@@ -44,6 +44,7 @@ public class CdaContentGenerator extends BaseContentGenerator
   private static final String MIME_HTML = "text/xml";
   private static final String MIME_CSS = "text/css";
   private static final String MIME_JS = "text/javascript";
+  private static final String MIME_JSON = "application/json";
   private static final String EDITOR_SOURCE = "/editor/editor.html";
   private static final String PREVIEWER_SOURCE = "/previewer/previewer.html";
   private static final int DEFAULT_PAGE_SIZE = 20;
@@ -402,7 +403,7 @@ public class CdaContentGenerator extends BaseContentGenerator
   private String getRelativePath(final IParameterProvider pathParams) throws UnsupportedEncodingException
   {
 
-    String path = URLDecoder.decode(pathParams.getStringParameter("path", ""),"UTF-8").replaceAll("//", "/");
+    String path = URLDecoder.decode(pathParams.getStringParameter("path", ""), "UTF-8").replaceAll("//", "/");
 
     final String solution = pathParams.getStringParameter("solution", "");
     if (StringUtils.isEmpty(solution))
@@ -603,7 +604,10 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   public void listDataAccessTypes(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
-    DataAccessConnectionDescriptor[] data = SettingsManager.getInstance().getDataAccessDescriptors(((String) pathParams.getStringParameter("refreshCache", "false")).equalsIgnoreCase("true"));
+    DataAccessConnectionDescriptor[] data = SettingsManager.getInstance().
+            getDataAccessDescriptors((pathParams.getStringParameter("refreshCache", "false")).equalsIgnoreCase("true"));
+    setResponseHeaders(MIME_JSON, null);
+
     StringBuilder output = new StringBuilder("");
     if (data != null)
     {
