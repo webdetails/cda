@@ -146,7 +146,7 @@
 
               Installs the plugin locally
               ====================================================================-->
-  <target name="install-plugin" depends="clean,all,dist-plugin,dist-samples" description="Installs the plugin locally">
+  <target name="install-plugin" depends="clean,jar,dist-plugin,dist-samples" description="Installs the plugin locally">
 
     <fail message="plugin.local.install.solutions.dir not set - cannot copy"
           unless="plugin.local.install.solutions.dir"/>
