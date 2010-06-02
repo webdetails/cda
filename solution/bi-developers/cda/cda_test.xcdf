@@ -2,7 +2,7 @@
 <cdf>
 	<title>Start Here</title>
 	<author>Webdetails</author>
-	<description>Start Here</description>
+	<description>CDA Unit Tests</description>
 	<icon></icon>
 	<template>template.html</template>
 	<style>clean</style>
