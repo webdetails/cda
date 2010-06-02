@@ -14,7 +14,6 @@
   }
 
   div#footer{
-    background-image: url("GetCDFResource?resource=/bi-developers/cda/resources/footer.png");
     height: 30px;
   }
 
@@ -50,6 +49,7 @@
 
 </style>
 
+<link type="text/css" href="../cda/static/blueprint/screen.css" rel="stylesheet" />
 
 <div class="container">
   <div class="span-24 clearfix cdalogo">
@@ -135,7 +135,8 @@
     type: "tableComponent",
     chartDefinition: MetaLayerHome2.topTenCustomerDefinition,
     listeners: ["dimension"],
-    parameters: [["dimension","dimension"]],
+    parameters: [["dimension","dimension"]], // Valid for cdf 4 or higher
+    cdaParams: [["dimension","dimension"]],  // Valid on cdf 3.6
     htmlObject: "tableObject",
     executeAtStart: true
   };
