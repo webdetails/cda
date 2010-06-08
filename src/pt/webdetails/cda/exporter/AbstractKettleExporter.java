@@ -151,7 +151,6 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
     }
     os.flush();
     is.close();
-    os.close();
 
     // temp file not needed anymore - delete it
     file.delete();

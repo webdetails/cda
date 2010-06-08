@@ -18,6 +18,12 @@ import pt.webdetails.cda.settings.CdaSettings;
 public interface DataAccess
 {
 
+  public enum OutputMode
+  {
+
+    INCLUDE, EXCLUDE
+  };
+
   public String getId();
 
   public String getName();
@@ -41,6 +47,8 @@ public interface DataAccess
   public ArrayList<ColumnDefinition> getCalculatedColumns();
 
   public ArrayList<Integer> getOutputs();
+
+  public OutputMode getOutputMode();
 
   public TableModel listParameters(DiscoveryOptions discoveryOptions);
 

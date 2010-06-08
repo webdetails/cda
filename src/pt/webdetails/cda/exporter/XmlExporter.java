@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.HashMap;
 import javax.swing.table.TableModel;
 
 import org.dom4j.Document;
@@ -22,7 +23,7 @@ import org.dom4j.Element;
 public class XmlExporter extends AbstractExporter
 {
 
-  public XmlExporter()
+  public XmlExporter(HashMap <String,String> extraSettings)
   {
     super();
   }

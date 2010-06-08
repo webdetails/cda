@@ -28,6 +28,7 @@ import org.pentaho.reporting.libraries.base.util.StringUtils;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
+import pt.webdetails.cda.exporter.Exporter;
 import pt.webdetails.cda.exporter.ExporterEngine;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
@@ -237,10 +238,15 @@ public class CdaContentGenerator extends BaseContentGenerator
       {
         queryOptions.addParameter(param.substring(5), pathParams.getStringParameter(param, ""));
       }
+      else if (param.startsWith("setting"))
+      {
+        queryOptions.addSetting(param.substring(7), pathParams.getStringParameter(param, ""));
+      }
     }
 
-    String mimeType = ExporterEngine.getInstance().getExporter(queryOptions.getOutputType()).getMimeType();
-    String attachmentName = ExporterEngine.getInstance().getExporter(queryOptions.getOutputType()).getAttachmentName();
+    Exporter exporter = ExporterEngine.getInstance().getExporter(queryOptions.getOutputType(), queryOptions.getExtraSettings());
+    String mimeType = exporter.getMimeType();
+    String attachmentName = exporter.getAttachmentName();
     setResponseHeaders(mimeType, attachmentName);
 
 

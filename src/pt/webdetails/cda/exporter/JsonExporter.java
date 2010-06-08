@@ -2,6 +2,7 @@ package pt.webdetails.cda.exporter;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import javax.swing.table.TableModel;
 
 import org.json.JSONArray;
@@ -18,7 +19,7 @@ import org.json.JSONObject;
 public class JsonExporter extends AbstractExporter
 {
 
-  public JsonExporter()
+  public JsonExporter(HashMap <String,String> extraSettings)
   {
     super();
   }

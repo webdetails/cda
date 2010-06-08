@@ -1,7 +1,9 @@
 package pt.webdetails.cda.exporter;
 
+import java.util.HashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import pt.webdetails.cda.CdaBoot;
 
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM
@@ -10,10 +12,23 @@ public class CsvExporter extends AbstractKettleExporter
 {
 
   private static final Log logger = LogFactory.getLog(CsvExporter.class);
+  private static final String DEFAULT_CSV_SEPARATOR_SETTING = ";";
+  public static final String CSV_SEPARATOR_SETTING = "csvSeparator";
+  private String separator;
 
-
-  public CsvExporter()
+  public CsvExporter(HashMap <String,String> extraSettings)
   {
+    if(extraSettings.containsKey(CSV_SEPARATOR_SETTING)){
+      this.separator = extraSettings.get(CSV_SEPARATOR_SETTING);
+    }
+    else{
+      String _sep = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.exporter.csv.Separator");
+      this.separator = _sep == null?DEFAULT_CSV_SEPARATOR_SETTING:_sep;
+
+    }
+
+    logger.debug("Initialized CsvExporter with separator '"+ separator + "'");
+    
   }
 
   protected String getExportStepDefinition(final String name)
@@ -31,7 +46,7 @@ public class CsvExporter extends AbstractKettleExporter
         "           <method>none</method>\n" +
         "           <schema_name/>\n" +
         "           </partitioning>\n" +
-        "    <separator>;</separator>\n" +
+        "    <separator>" + this.separator + "</separator>\n" +
         "    <enclosure>&quot;</enclosure>\n" +
         "    <enclosure_forced>N</enclosure_forced>\n" +
         "    <header>Y</header>\n" +

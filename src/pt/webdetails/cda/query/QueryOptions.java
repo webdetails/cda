@@ -1,6 +1,7 @@
 package pt.webdetails.cda.query;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import pt.webdetails.cda.dataaccess.Parameter;
 
@@ -19,6 +20,7 @@ public class QueryOptions
   private int pageStart;
   private ArrayList<Integer> sortBy;
   private ArrayList<Parameter> parameters;
+  private HashMap<String, String> extraSettings;
   private String outputType;
 
   public QueryOptions()
@@ -29,8 +31,8 @@ public class QueryOptions
     sortBy = new ArrayList<Integer>();
     parameters = new ArrayList<Parameter>();
     outputType = "json";
+    extraSettings = new HashMap<String, String>();
   }
-
 
   public boolean isPaginate()
   {
@@ -87,7 +89,6 @@ public class QueryOptions
     this.dataAccessId = dataAccessId;
   }
 
-
   public void addParameter(final String name, final String value)
   {
 
@@ -120,4 +121,19 @@ public class QueryOptions
   {
     this.outputType = outputType;
   }
+
+  public void addSetting(String setting, String value)
+  {
+    extraSettings.put(setting, value);
+  }
+
+  public String getSetting(String setting)
+  {
+    return extraSettings.get(setting);
+  }
+
+  public HashMap<String,String> getExtraSettings(){
+    return extraSettings;
+  }
+
 }

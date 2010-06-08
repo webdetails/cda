@@ -1,5 +1,6 @@
 package pt.webdetails.cda.exporter;
 
+import java.util.HashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -12,7 +13,7 @@ public class XlsExporter extends AbstractKettleExporter
   private static final Log logger = LogFactory.getLog(XlsExporter.class);
 
 
-  public XlsExporter()
+  public XlsExporter(HashMap <String,String> extraSettings)
   {
   }
 

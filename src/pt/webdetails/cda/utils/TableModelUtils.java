@@ -1,6 +1,7 @@
 package pt.webdetails.cda.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import javax.swing.table.TableModel;
@@ -32,8 +33,8 @@ public class TableModelUtils
   }
 
   public TableModel postProcessTableModel(final DataAccess dataAccess,
-                                          final QueryOptions queryOptions,
-                                          final TableModel rawTableModel) throws TableModelException
+          final QueryOptions queryOptions,
+          final TableModel rawTableModel) throws TableModelException
   {
 
     // We will:
@@ -53,12 +54,28 @@ public class TableModelUtils
     }
 
     // First we need to check if there's nothing to do.
-    final ArrayList<Integer> outputIndexes = dataAccess.getOutputs();
+    ArrayList<Integer> outputIndexes = dataAccess.getOutputs();
     if (queryOptions.isPaginate() == false && outputIndexes.isEmpty() && queryOptions.getSortBy().isEmpty())
     {
       // No, the original one is good enough
       return t;
     }
+
+    // If output mode == exclude, we need to translate the outputColunm into
+    if (dataAccess.getOutputMode() == DataAccess.OutputMode.EXCLUDE && outputIndexes.size() > 0)
+    {
+
+      ArrayList<Integer> newOutputIndexes = new ArrayList<Integer>();
+      for (int i = 0; i < t.getColumnCount() - 1; i++)
+      {
+        if (!outputIndexes.contains(i))
+        {
+          newOutputIndexes.add(i);
+        }
+      }
+      outputIndexes = newOutputIndexes;
+    }
+
 
     final int columnCount = outputIndexes.size();
 
@@ -127,8 +144,12 @@ public class TableModelUtils
     final ArrayList<ColumnDefinition> calculatedColumnsList = dataAccess.getCalculatedColumns();
 
 
-    final Class[] colTypes = namedColumnsClasses.toArray(new Class[]{});
-    final String[] colNames = namedColumns.toArray(new String[]{});
+    final Class[] colTypes = namedColumnsClasses.toArray(new Class[]
+            {
+            });
+    final String[] colNames = namedColumns.toArray(new String[]
+            {
+            });
 
     for (int i = 0; i < count; i++)
     {
@@ -152,7 +173,6 @@ public class TableModelUtils
     return typedTableModel;
   }
 
-
   public TableModel dataAccessMapToTableModel(HashMap<String, DataAccess> dataAccessMap)
   {
 
@@ -160,8 +180,14 @@ public class TableModelUtils
     int rowCount = dataAccessMap.size();
 
     // Define names and types
-    final String[] colNames = {"id", "name", "type"};
-    final Class[] colTypes = {String.class, String.class, String.class};
+    final String[] colNames =
+    {
+      "id", "name", "type"
+    };
+    final Class[] colTypes =
+    {
+      String.class, String.class, String.class
+    };
 
 
     final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
@@ -170,14 +196,16 @@ public class TableModelUtils
     {
       if (dataAccess.getAccess() == DataAccessEnums.ACCESS_TYPE.PUBLIC)
       {
-        typedTableModel.addRow(new Object[]{dataAccess.getId(), dataAccess.getName(), dataAccess.getType()});
+        typedTableModel.addRow(new Object[]
+                {
+                  dataAccess.getId(), dataAccess.getName(), dataAccess.getType()
+                });
       }
     }
 
     return typedTableModel;
 
   }
-
 
   public static synchronized TableModelUtils getInstance()
   {
@@ -196,15 +224,24 @@ public class TableModelUtils
     int rowCount = parameters.size();
 
     // Define names and types
-    final String[] colNames = {"name", "type", "defaultValue", "pattern"};
-    final Class[] colTypes = {String.class, String.class, String.class, String.class};
+    final String[] colNames =
+    {
+      "name", "type", "defaultValue", "pattern"
+    };
+    final Class[] colTypes =
+    {
+      String.class, String.class, String.class, String.class
+    };
 
 
     final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
 
     for (Parameter p : parameters)
     {
-      typedTableModel.addRow(new Object[]{p.getName(), p.getType(), p.getDefaultValue(), p.getPattern()});
+      typedTableModel.addRow(new Object[]
+              {
+                p.getName(), p.getType(), p.getDefaultValue(), p.getPattern()
+              });
     }
 
 
@@ -212,7 +249,6 @@ public class TableModelUtils
 
 
   }
-
 
   /**
    * Method to append a tablemodel into another. We'll make no guarantees about the types

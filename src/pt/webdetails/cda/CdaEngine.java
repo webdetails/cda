@@ -52,7 +52,7 @@ public class CdaEngine
 
     // Handle the exports
 
-    ExporterEngine.getInstance().getExporter(queryOptions.getOutputType()).export(out, tableModel);
+    ExporterEngine.getInstance().getExporter(queryOptions.getOutputType(), queryOptions.getExtraSettings()).export(out, tableModel);
 
   }
 
