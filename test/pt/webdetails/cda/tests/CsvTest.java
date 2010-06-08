@@ -72,7 +72,7 @@ public class CsvTest extends TestCase
 
     logger.info("Doing csv export");
     queryOptions.setOutputType("csv");
-    queryOptions.addParameter(CsvExporter.CSV_SEPARATOR_SETTING, ",");
+    queryOptions.addSetting(CsvExporter.CSV_SEPARATOR_SETTING, ",");
     engine.doQuery(out, cdaSettings, queryOptions);
 
     logger.info("Doing xml export");
