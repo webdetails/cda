@@ -60,7 +60,7 @@ public class OutputTest extends TestCase
 
     final SettingsManager settingsManager = SettingsManager.getInstance();
 
-    final File settingsFile = new File("test/pt/webdetails/cda/tests/sample-mondrian.cda");
+    final File settingsFile = new File("test/pt/webdetails/cda/tests/sample-output.cda");
     final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
     logger.debug("Doing query on Cda - Initializing CdaEngine");
     final CdaEngine engine = CdaEngine.getInstance();

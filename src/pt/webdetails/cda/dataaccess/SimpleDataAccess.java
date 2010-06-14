@@ -24,14 +24,16 @@ import pt.webdetails.cda.utils.TableModelUtils;
 public abstract class SimpleDataAccess extends AbstractDataAccess
 {
 
-  private static class TableCacheKey
+  protected static class TableCacheKey
   {
 
     private Connection connection;
     private String query;
     private ParameterDataRow parameterDataRow;
+    private Object extraCacheKey;
 
-    private TableCacheKey(final Connection connection, final String query, final ParameterDataRow parameterDataRow)
+    private TableCacheKey(final Connection connection, final String query,
+            final ParameterDataRow parameterDataRow, final Object extraCacheKey)
     {
       if (connection == null)
       {
@@ -49,6 +51,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       this.connection = connection;
       this.query = query;
       this.parameterDataRow = parameterDataRow;
+      this.extraCacheKey = extraCacheKey;
     }
 
     public boolean equals(final Object o)
@@ -76,6 +79,10 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       {
         return false;
       }
+      if (extraCacheKey != null ? !extraCacheKey.equals(that.extraCacheKey) : that.extraCacheKey != null)
+      {
+        return false;
+      }
 
       return true;
     }
@@ -85,13 +92,14 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       int result = connection != null ? connection.hashCode() : 0;
       result = 31 * result + (query != null ? query.hashCode() : 0);
       result = 31 * result + (parameterDataRow != null ? parameterDataRow.hashCode() : 0);
+      result = 31 * result + (extraCacheKey != null ? extraCacheKey.hashCode() : 0);
       return result;
     }
   }
 
   private static final Log logger = LogFactory.getLog(SimpleDataAccess.class);
-  private String connectionId;
-  private String query;
+  protected String connectionId;
+  protected String query;
 
   public SimpleDataAccess()
   {
@@ -152,7 +160,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       {
         connection = getCdaSettings().getConnection(getConnectionId());
       }
-      key = new TableCacheKey(connection, getQuery(), parameterDataRow);
+      key = new TableCacheKey(connection, getQuery(), parameterDataRow, getExtraCacheKey());
     }
     catch (UnknownConnectionException e)
     {
@@ -175,7 +183,8 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       }
     }
 
-    final TableModel tableModel = performRawQuery(parameterDataRow);
+    final TableModel tableModel = postProcessTableModel(performRawQuery(parameterDataRow));
+
 
     // Copy the tableModel and cache it
     // Handle the TableModel
@@ -208,10 +217,28 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       values.add(parameter.getValue());
     }
 
-    final ParameterDataRow parameterDataRow = new ParameterDataRow(names.toArray(new String[]{}), values.toArray());
+    final ParameterDataRow parameterDataRow = new ParameterDataRow(names.toArray(new String[]
+            {
+            }), values.toArray());
 
     return parameterDataRow;
 
+  }
+
+  protected TableModel postProcessTableModel(TableModel tm)
+  {
+    // we can use this method to override the general behavior. By default, no post processing is done
+    return tm;
+  }
+
+  /**
+   * Extra arguments to be used for the cache key. Defaults to null but classes that
+   * extend SimpleDataAccess may decide to implement it
+   * @return
+   */
+  protected Object getExtraCacheKey()
+  {
+    return null;
   }
 
   protected abstract TableModel performRawQuery(ParameterDataRow parameterDataRow) throws QueryException;

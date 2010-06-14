@@ -61,7 +61,8 @@ public class TableModelUtils
       return t;
     }
 
-    // If output mode == exclude, we need to translate the outputColunm into
+    // If output mode == exclude, we need to translate the excluded outputColuns
+    // into included ones
     if (dataAccess.getOutputMode() == DataAccess.OutputMode.EXCLUDE && outputIndexes.size() > 0)
     {
 
