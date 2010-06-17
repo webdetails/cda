@@ -22,6 +22,7 @@ public class QueryOptions
   private ArrayList<Parameter> parameters;
   private HashMap<String, String> extraSettings;
   private String outputType;
+  private boolean cacheBypass;
 
   public QueryOptions()
   {
@@ -32,6 +33,7 @@ public class QueryOptions
     parameters = new ArrayList<Parameter>();
     outputType = "json";
     extraSettings = new HashMap<String, String>();
+    cacheBypass = false;
   }
 
   public boolean isPaginate()
@@ -134,6 +136,18 @@ public class QueryOptions
 
   public HashMap<String,String> getExtraSettings(){
     return extraSettings;
+  }
+
+
+  public boolean isCacheBypass()
+  {
+    return cacheBypass;
+  }
+
+
+  public void setCacheBypass(boolean cacheBypass)
+  {
+    this.cacheBypass = cacheBypass;
   }
 
 }

@@ -1,5 +1,6 @@
 package pt.webdetails.cda.dataaccess;
 
+import java.util.ArrayList;
 import javax.swing.table.TableModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,6 +39,7 @@ public class MdxDataAccess extends PREDataAccess
   };
   private BANDED_MODE bandedMode = BANDED_MODE.CLASSIC;
 
+
   public MdxDataAccess(final Element element)
   {
     super(element);
@@ -68,9 +70,11 @@ public class MdxDataAccess extends PREDataAccess
 
   }
 
+
   public MdxDataAccess()
   {
   }
+
 
   protected AbstractNamedMDXDataFactory createDataFactory()
   {
@@ -79,10 +83,12 @@ public class MdxDataAccess extends PREDataAccess
       return new BandedMDXDataFactory();
 
     }
-    else{
+    else
+    {
       return new CompactBandedMDXDataFactory();
     }
   }
+
 
   @Override
   public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException
@@ -119,21 +125,25 @@ public class MdxDataAccess extends PREDataAccess
 
   }
 
+
   public BANDED_MODE getBandedMode()
   {
     return bandedMode;
   }
+
 
   public String getType()
   {
     return "mdx";
   }
 
+
   @Override
   public ConnectionType getConnectionType()
   {
     return ConnectionType.MDX;
   }
+
 
   @Override
   protected TableModel postProcessTableModel(TableModel tm)
@@ -149,6 +159,7 @@ public class MdxDataAccess extends PREDataAccess
     return tm;
   }
 
+
   @Override
   protected Object getExtraCacheKey()
   {
@@ -160,10 +171,12 @@ public class MdxDataAccess extends PREDataAccess
 
     private BANDED_MODE bandedMode;
 
+
     public ExtraCacheKey(BANDED_MODE bandedMode)
     {
       this.bandedMode = bandedMode;
     }
+
 
     @Override
     public boolean equals(Object obj)
@@ -184,6 +197,7 @@ public class MdxDataAccess extends PREDataAccess
       return true;
     }
 
+
     @Override
     public int hashCode()
     {
@@ -191,5 +205,14 @@ public class MdxDataAccess extends PREDataAccess
       hash = 71 * hash + (this.bandedMode != null ? this.bandedMode.hashCode() : 0);
       return hash;
     }
+  }
+
+
+  @Override
+  public ArrayList<PropertyDescriptor> getInterface()
+  {
+    ArrayList<PropertyDescriptor> properties = super.getInterface();
+    properties.add(new PropertyDescriptor("bandedMode", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    return properties;
   }
 }

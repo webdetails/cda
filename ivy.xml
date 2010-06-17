@@ -15,9 +15,10 @@
         <dependency org="dom4j" name="dom4j" rev="1.6.1" transitive="false"/>
         <dependency org="commons-lang" name="commons-lang" rev="2.2"/>        
         <dependency org="javax.servlet" name="servlet-api" rev="2.4"/>
-
+        <dependency org="quartz" name="quartz" rev="1.5.2" />
 
         <!--  pentaho dependencies -->
+<dependency org="pentaho" name="pentaho-bi-platform-scheduler" rev="${dependency.bi-platform.revision}" transitive="false" changing="true"/>
         <!--  internal dependencies -->
         <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin"
                     rev="${dependency.bi-platform.revision}" changing="true"/>

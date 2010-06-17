@@ -171,7 +171,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     if (isCache())
     {
       final net.sf.ehcache.Element element = cache.get(key);
-      if (element != null)
+      if (element != null && !queryOptions.isCacheBypass()) // Are we explicitly saying to bypass the cache?
       {
         final TableModel cachedTableModel = (TableModel) element.getObjectValue();
         if (cachedTableModel != null)

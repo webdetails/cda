@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xerces.impl.dtd.models.CMAny;
 import org.pentaho.platform.api.engine.IMimeTypeListener;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.repository.IContentItem;
@@ -25,6 +26,7 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
+import pt.webdetails.cda.cache.CacheManager;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
@@ -166,6 +168,14 @@ public class CdaContentGenerator extends BaseContentGenerator
       else if ("listDataAccessTypes".equals(method))
       {
         listDataAccessTypes(requestParams, out);
+      }
+      else if ("cacheManager".equals(method))
+      {
+        cacheManager(requestParams, out);
+      }
+      else if ("cacheController".equals(method))
+      {
+        cacheController(requestParams, out);
       }
       else
       {
@@ -625,4 +635,16 @@ public class CdaContentGenerator extends BaseContentGenerator
       out.write(output.toString().replaceAll(",\n\\z", "\n}").getBytes("UTF-8"));
     }
   }
+
+  private void cacheManager(IParameterProvider requestParams, OutputStream out)
+  {
+    CacheManager.getInstance().render(requestParams, out);
+  }
+
+  private void cacheController(IParameterProvider requestParams, OutputStream out)
+  {
+    CacheManager.getInstance().handleCall(requestParams, out);
+  }
+
+
 }
