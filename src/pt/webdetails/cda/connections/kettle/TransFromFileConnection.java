@@ -92,4 +92,9 @@ public class TransFromFileConnection extends AbstractConnection implements Kettl
     properties.add(new PropertyDescriptor("variables", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD));
     return properties;
   }
+
+    public String getTypeForFile()
+  {
+    return "kettle.TransFromFile";
+  }
 }

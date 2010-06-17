@@ -88,5 +88,8 @@ public class XPathConnection extends AbstractConnection
     return properties;
   }
 
-  public String getTypeForFile() {return "xpath.XPath";}
+  public String getTypeForFile()
+  {
+    return "xpath.XPath";
+  }
 }
