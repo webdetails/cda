@@ -93,8 +93,8 @@ public class TransFromFileConnection extends AbstractConnection implements Kettl
     return properties;
   }
 
-    public String getTypeForFile()
-  {
+  @Override
+  public String getTypeForFile(){
     return "kettle.TransFromFile";
   }
 }
