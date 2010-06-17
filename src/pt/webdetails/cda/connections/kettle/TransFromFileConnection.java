@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleTransFromFileProducer;
 import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleTransformationProducer;
+import org.pentaho.reporting.platform.plugin.connection.PentahoKettleTransFromFileProducer;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.AbstractConnection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
-import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 
@@ -23,9 +24,11 @@ public class TransFromFileConnection extends AbstractConnection implements Kettl
 
   private TransFromFileConnectionInfo connectionInfo;
 
+
   public TransFromFileConnection()
   {
   }
+
 
   public TransFromFileConnection(final Element connection)
           throws InvalidConnectionException
@@ -33,30 +36,44 @@ public class TransFromFileConnection extends AbstractConnection implements Kettl
     super(connection);
   }
 
+
   /**
    * @param query the name of the transformation step that should be polled.
    * @return the initialized transformation producer.
    */
   public KettleTransformationProducer createTransformationProducer(final String query)
   {
-    return new KettleTransFromFileProducer("", connectionInfo.getTransformationFile(),
-            query, null, null, connectionInfo.getDefinedArgumentNames(), connectionInfo.getDefinedVariableNames());
+    if (CdaEngine.getInstance().isStandalone())
+    {
+      return new KettleTransFromFileProducer("",
+              connectionInfo.getTransformationFile(),
+              query, null, null, connectionInfo.getDefinedArgumentNames(),
+              connectionInfo.getDefinedVariableNames());
+    }
+    return new PentahoKettleTransFromFileProducer("",
+            connectionInfo.getTransformationFile(),
+            query, null, null, connectionInfo.getDefinedArgumentNames(),
+            connectionInfo.getDefinedVariableNames());
   }
+
 
   public ConnectionCatalog.ConnectionType getGenericType()
   {
     return ConnectionCatalog.ConnectionType.KETTLE;
   }
 
+
   protected void initializeConnection(final Element connection) throws InvalidConnectionException
   {
     connectionInfo = new TransFromFileConnectionInfo(connection);
   }
 
+
   public String getType()
   {
     return "kettleTransFromFile";
   }
+
 
   public boolean equals(final Object o)
   {
@@ -79,10 +96,12 @@ public class TransFromFileConnection extends AbstractConnection implements Kettl
     return true;
   }
 
+
   public int hashCode()
   {
     return connectionInfo != null ? connectionInfo.hashCode() : 0;
   }
+
 
   @Override
   public ArrayList<PropertyDescriptor> getProperties()
@@ -93,8 +112,10 @@ public class TransFromFileConnection extends AbstractConnection implements Kettl
     return properties;
   }
 
+
   @Override
-  public String getTypeForFile(){
+  public String getTypeForFile()
+  {
     return "kettle.TransFromFile";
   }
 }
