@@ -27,7 +27,7 @@ public abstract class AbstractExporter implements Exporter
     {
       return "String";
     }
-    else if (columnClass.equals(Integer.class))
+    else if (columnClass.equals(Integer.class) || columnClass.equals(Short.class))
     {
       return "Integer";
     }
