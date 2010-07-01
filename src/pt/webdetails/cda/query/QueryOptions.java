@@ -113,6 +113,20 @@ public class QueryOptions
     return null;
 
   }
+  
+  /**
+   * Substitute existing parameter's value, or add if not there.
+   */
+  public void setParameter(final String name, final String value){
+  	for(Parameter param : parameters){
+  		if(param.getName().equals(name)){
+  			param.setStringValue(value);
+  			return;
+  		}
+  	}
+  	//not found
+  	addParameter(name, value);
+  }
 
   public String getOutputType()
   {

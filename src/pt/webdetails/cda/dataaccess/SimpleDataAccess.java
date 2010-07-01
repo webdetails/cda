@@ -1,5 +1,7 @@
 package pt.webdetails.cda.dataaccess;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import javax.swing.table.TableModel;
 
@@ -12,6 +14,7 @@ import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.DummyConnection;
 import pt.webdetails.cda.query.QueryOptions;
+import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 import pt.webdetails.cda.utils.TableModelUtils;
 
@@ -24,14 +27,55 @@ import pt.webdetails.cda.utils.TableModelUtils;
 public abstract class SimpleDataAccess extends AbstractDataAccess
 {
 
-  protected static class TableCacheKey
+  protected static class TableCacheKey implements Serializable
   {
 
-    private Connection connection;
-    private String query;
-    private ParameterDataRow parameterDataRow;
-    private Object extraCacheKey;
+		private static final long serialVersionUID = 1L;
+		private Connection connection;
+		private String query;
+		private ParameterDataRow parameterDataRow;
+		private Object extraCacheKey;
 
+    /**
+     * For serialization
+     */
+    protected TableCacheKey(){}
+    
+  	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+  		//connection
+  		String cdaSettingsId = connection.getCdaSettings().getId();
+  		String connectionId = connection.getId();
+  		out.writeObject(cdaSettingsId);
+  		out.writeObject(connectionId);
+  		
+  		out.writeObject(query);
+  		out.writeObject(createParametersFromParameterDataRow(parameterDataRow));
+  		out.writeObject(extraCacheKey);
+  	}
+
+		private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+			//connection
+			String cdaSettingsId = (String) in.readObject();
+			String connectionId = (String) in.readObject();
+			try {
+				connection = SettingsManager.getInstance().parseSettingsFile(cdaSettingsId).getConnection(connectionId);
+			} catch (Exception e){//wrap in generic IOException
+				throw new IOException("Error serializing " + TableCacheKey.class.getName() + ".connection" ,e);
+			}
+			//query
+			query = (String) in.readObject();
+			//parameterDataRow
+			try {
+				Object holder = in.readObject();
+				if(holder != null) parameterDataRow = createParameterDataRowFromParameters((ArrayList<Parameter>) (ArrayList) holder );
+				else parameterDataRow = null;
+			} catch (InvalidParameterException e) {
+				parameterDataRow = null;
+			}
+			//extraCacheKey
+			extraCacheKey = in.readObject();
+		}
+    
     private TableCacheKey(final Connection connection, final String query,
             final ParameterDataRow parameterDataRow, final Object extraCacheKey)
     {
@@ -205,7 +249,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     return tableModelCopy;
   }
 
-  private ParameterDataRow createParameterDataRowFromParameters(final ArrayList<Parameter> parameters) throws InvalidParameterException
+  private static ParameterDataRow createParameterDataRowFromParameters(final ArrayList<Parameter> parameters) throws InvalidParameterException
   {
 
     final ArrayList<String> names = new ArrayList<String>();
@@ -223,6 +267,21 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
 
     return parameterDataRow;
 
+  }
+  
+  /**
+   * for serialization
+   **/
+  private static ArrayList<Parameter> createParametersFromParameterDataRow(final ParameterDataRow row){
+  	ArrayList<Parameter> parameters = new ArrayList<Parameter>();
+  	for(String name : row.getColumnNames()){
+  		Object value = row.get(name);
+  		Parameter param = new Parameter(name,value != null ? value.toString() : null);
+  		Parameter.Type type = Parameter.Type.inferTypeFromObject(value);
+  		param.setType(type.toString());
+  		parameters.add(param);
+  	}
+  	return parameters;
   }
 
   protected TableModel postProcessTableModel(TableModel tm)
