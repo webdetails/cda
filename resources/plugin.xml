@@ -37,6 +37,9 @@
 		<title>CDA</title>
 	</content-generator>
 
+    <bean id="CdaQueryComponent" class="pt.webdetails.cda.CdaQueryComponent"/>
+
+
 	<!-- Menu entry -->
 	<menu-items>
 		<menu-item id="cda_refresh" anchor="tools-refresh-submenu" label="CDA Cache" command="content/cda/clearCache" type="MENU_ITEM" how="LAST_CHILD"/>
