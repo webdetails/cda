@@ -1,0 +1,24 @@
+div.tableHeader {
+    font-weight: bold;
+    text-align: center;
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
+}
+
+div.section {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 14pt;
+    margin-bottom: 8px;
+}
+
+div.row {
+    border-bottom: 1px solid silver;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+img.button {
+    position: relative;
+    top: 2px;
+    height: 16px
+}

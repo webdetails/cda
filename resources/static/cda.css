@@ -1,0 +1,55 @@
+body {
+    font-family: Helvetica, Verdana, sans;
+    font-size: 10pt;
+}
+
+div.header {
+    background-image: url('headerbg.png');
+    background-repeat: no-repeat;
+    height: 112px;
+    margin-bottom: 8px;
+}
+
+/*
+ * jqModal window formatting
+ */
+
+.jqmWindow {
+    display: none;
+    
+    position: fixed;
+    top: 17%;
+    left: 50%;
+    
+    margin-left: -300px;
+    width: 600px;
+    
+    background-color: #EEE;
+    color: #333;
+    border: 1px solid black;
+    padding: 12px;
+}
+
+/*
+ * Dialog Formatting
+ */
+
+.dialog {
+    font-family: Helvetica, Verdana, sans;
+
+}
+.dialogTitle {
+    font-size: 15pt;
+    margin-bottom: 10px;
+}
+
+.dialogAction{
+    font-size: 13pt;
+    text-align: right;
+}
+
+.dialogToggle{
+    font-size: 9pt;
+    float: right;
+}
+.dialogText{}

@@ -117,7 +117,7 @@ public class Parameter implements java.io.Serializable
 
     //check if it is a formula
     if(localValue.trim().startsWith(FORMULA_BEGIN)){
-    	processFormula(Util.getContentsBetween(localValue, FORMULA_BEGIN, FORMULA_END));
+    	return processFormula(Util.getContentsBetween(localValue, FORMULA_BEGIN, FORMULA_END));
     }
     
     if (getType().equals("String"))

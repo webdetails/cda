@@ -3,6 +3,7 @@
 
 	<lifecycle-listener class="pt.webdetails.cda.CdaLifecycleListener"/>
 	<static-paths>
+		<static-path url="/cda/cachemanager" localFolder="cachemanager"/>
 		<static-path url="/cda/editor" localFolder="editor"/>
 		<static-path url="/cda/previewer" localFolder="previewer"/>
 		<static-path url="/cda/resources" localFolder="resources"/>
@@ -45,4 +46,5 @@
 		<menu-item id="cda_refresh" anchor="tools-refresh-submenu" label="CDA Cache" command="content/cda/clearCache" type="MENU_ITEM" how="LAST_CHILD"/>
 	</menu-items>
 
+        <bean id="CdaScheduler" class="pt.webdetails.cda.cache.CacheActivator"/>
 </plugin>

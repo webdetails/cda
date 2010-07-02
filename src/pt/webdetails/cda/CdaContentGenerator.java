@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xerces.impl.dtd.models.CMAny;
 import org.pentaho.platform.api.engine.IMimeTypeListener;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.repository.IContentItem;
@@ -25,6 +26,7 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
+import pt.webdetails.cda.cache.CacheManager;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
@@ -48,12 +50,15 @@ public class CdaContentGenerator extends BaseContentGenerator
   private static final String MIME_JSON = "application/json";
   private static final String EDITOR_SOURCE = "/editor/editor.html";
   private static final String PREVIEWER_SOURCE = "/previewer/previewer.html";
+  private static final String CACHEMAN_SOURCE = "/cachemanager/cache.html";
   private static final int DEFAULT_PAGE_SIZE = 20;
   private static final int DEFAULT_START_PAGE = 0;
+
 
   public CdaContentGenerator()
   {
   }
+
 
   private String extractMethod(final String pathString)
   {
@@ -73,6 +78,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     }
     return pathWithoutSlash.substring(0, queryStart);
   }
+
 
   @Override
   public void createContent() throws Exception
@@ -167,6 +173,18 @@ public class CdaContentGenerator extends BaseContentGenerator
       {
         listDataAccessTypes(requestParams, out);
       }
+      else if ("cacheManager".equals(method))
+      {
+        cacheManager(requestParams, out);
+      }
+      else if ("manageCache".equals(method))
+      {
+        manageCache(requestParams, out);
+      }
+      else if ("cacheController".equals(method))
+      {
+        cacheController(requestParams, out);
+      }
       else
       {
         if (response != null)
@@ -188,6 +206,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     }
 
   }
+
 
   public void doQuery(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
@@ -255,6 +274,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
+
   private void setResponseHeaders(final String mimeType, final String attachmentName)
   {
     // Make sure we have the correct mime type
@@ -269,6 +289,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     // We can't cache this requests
     response.setHeader("Cache-Control", "max-age=0, no-store");
   }
+
 
   public void listQueries(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
@@ -293,6 +314,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
+
   public void listParameters(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
 
@@ -316,6 +338,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
+
   public void getCdaFile(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
 
@@ -323,6 +346,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     setResponseHeaders("text/plain", null);
     out.write(document.getBytes("UTF-8"));
   }
+
 
   private void writeCdaFile(IParameterProvider pathParams, OutputStream out) throws Exception
   {
@@ -366,6 +390,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
+
   public void getCdaList(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
 
@@ -381,6 +406,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
+
   public void clearCache(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
 
@@ -392,6 +418,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
+
   public void syncronize(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
     throw new UnsupportedOperationException("Feature not implemented yet");
@@ -399,11 +426,13 @@ public class CdaContentGenerator extends BaseContentGenerator
 //    syncCdfStructure.syncronize(userSession, out, pathParams);
   }
 
+
   @Override
   public Log getLogger()
   {
     return logger;
   }
+
 
   private String getRelativePath(final IParameterProvider pathParams) throws UnsupportedEncodingException
   {
@@ -422,6 +451,7 @@ public class CdaContentGenerator extends BaseContentGenerator
             path,
             pathParams.getStringParameter("file", ""));
   }
+
 
   public String getResourceAsString(final String path, final HashMap<String, String> tokens) throws IOException
   {
@@ -465,6 +495,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
+
   public String getResourceAsString(final String path, int actionOperation) throws IOException, AccessDeniedException
   {
 
@@ -488,6 +519,7 @@ public class CdaContentGenerator extends BaseContentGenerator
       throw new AccessDeniedException(path, null);
     }
   }
+
 
   public void editFile(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
@@ -516,6 +548,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
+
   public void previewQuery(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
     final String previewerPath = "system/" + PLUGIN_NAME + PREVIEWER_SOURCE;
@@ -525,6 +558,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     out.write(getResourceAsString(previewerPath, ISolutionRepository.ACTION_EXECUTE).getBytes("UTF-8"));
 
   }
+
 
   public void getCssResource(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
@@ -542,6 +576,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
+
   public void getJsResource(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
     final IMimeTypeListener mimeTypeListener = outputHandler.getMimeTypeListener();
@@ -558,6 +593,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
+
   public void getresource(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
 
@@ -566,6 +602,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     getResource(out, resource);
 
   }
+
 
   private void getResource(final OutputStream out, final String resource) throws IOException
   {
@@ -593,6 +630,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   }
 
+
   private String[] buildFileParameters(String filePath)
   {
     String[] result =
@@ -606,6 +644,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     result[1] = fileName;
     return result;
   }
+
 
   public void listDataAccessTypes(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
@@ -624,5 +663,45 @@ public class CdaContentGenerator extends BaseContentGenerator
       }
       out.write(output.toString().replaceAll(",\n\\z", "\n}").getBytes("UTF-8"));
     }
+  }
+
+
+  private void cacheManager(IParameterProvider requestParams, OutputStream out)
+  {
+    CacheManager.getInstance().render(requestParams, out);
+  }
+
+
+  private void cacheController(IParameterProvider requestParams, OutputStream out)
+  {
+    CacheManager.getInstance().handleCall(requestParams, out);
+  }
+
+
+  public void manageCache(final IParameterProvider pathParams, final OutputStream out) throws Exception
+  {
+
+
+    ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
+
+    // Check if the file exists and we have permissions to write to it
+    String path = getRelativePath(pathParams);
+    if (solutionRepository.getSolutionFile(path, ISolutionRepository.ACTION_UPDATE) != null)
+    {
+
+      final String cachemanPath = "system/" + PLUGIN_NAME + CACHEMAN_SOURCE;
+      SettingsManager.getInstance().clearCache();
+      AbstractDataAccess.clearCache();
+      setResponseHeaders("text/html", null);
+      out.write(getResourceAsString(cachemanPath, ISolutionRepository.ACTION_UPDATE).getBytes("UTF-8"));
+    }
+    else
+    {
+
+      setResponseHeaders("text/plain", null);
+      out.write("Access Denied".getBytes());
+    }
+
+
   }
 }

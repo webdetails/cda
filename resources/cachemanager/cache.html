@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="static/blueprint/screen.css" type="text/css" rel="stylesheet"/>
+        <link href="static/cda.css" type="text/css" rel="stylesheet"/>
+        <link href="cachemanager/cache.css" type="text/css" rel="stylesheet"/>
+        <link href="static/jquery-ui-1.8rc3.custom.css" type="text/css" rel="stylesheet"/>
+        <script type="text/javascript" src="static/jquery.js"></script>
+        <script type="text/javascript" src="static/cda.js"></script>
+        <script type="text/javascript" src="cachemanager/cache.js"></script>
+        <script type="text/javascript" src="static/jquery.i18n.properties.js"></script>
+        <script type="text/javascript" src="static/jquery-ui-1.8rc3.custom.min.js"></script>
+    </head>
+<body>
+<div class='container'>
+<!-- HEADER -->
+    <div class='header span24 last'></div>
+
+<!-- MAIN TABLE BODY -->
+<div class='section span-24 last'>Cached Queries</div>
+    <div class='span-24 last'>
+        <div class="tableHeader container" id="header">
+            <div class='span-6'>Name</div>
+            <div class='span-16'>&nbsp;</div>
+            <div class='span-2 last'>Delete</div>
+        </div>
+        <div id="lines"></div>
+    </div>
+</div>
+<!-- FOOTER -->
+</body>
+<script>
+$(document).ready(function(){
+    $.getJSON('cacheController?method=list', populateQueries);
+});
+</script>
+</html>

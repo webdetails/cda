@@ -5,10 +5,14 @@
     <link href="previewer/dataTables/css/demo_table_jui.css" type="text/css" rel="stylesheet"/>
     <link type="text/css" href="previewer/fg-menu/fg.menu.css" rel="stylesheet" />
     <link type="text/css" href="static/blueprint/screen.css" rel="stylesheet" />
+    <link type="text/css" href="static/cda.css" rel="stylesheet" />
+    <link type="text/css" href="static/jquery.jqModal.css" rel="stylesheet" />
 
     <script type="text/javascript" src="previewer/js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="static/jquery.jqModal.js"></script>
     <script type="text/javascript" src="static/jquery-ui-1.8rc3.custom.min.js"></script>
     <script type="text/javascript" src="previewer/js/jquery.i18n.properties.js"></script>
+    <script type="text/javascript" src="previewer/previewer.js"></script>
 
     <script type="text/javascript" src="previewer/dataTables/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="previewer/fg-menu/fg.menu.js"></script>
@@ -35,46 +39,7 @@
           }
         });
       }
-
-      loadData = function() {
-        var fileName =$("#filename").val();
-        fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
-        $.get("doQuery",{path:fileName},
-        function(data) {
-          bespin.setContent(data)
-        })
-      }
-
-      saveFile = function() {
-        var fileName =$("#filename").val();
-        fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
-        $('#notifications').html('Saving...');
-        $('#notifications').fadeIn().delay(2000).fadeOut('slow');
-        $.get("writeCdaFile",{path: fileName,data:bespin.getContent()},function(data){
-          $('#notifications').html(data);
-          $('#notifications').fadeIn().delay(2000).fadeOut('slow');
-        });
-      }
-
-
-      /*
-       *  pageParams: get the request variables passed in the url
-       */
-      pageParams = function() {
-        var url = document.location.href;
-        var output = {};
-
-        // The parameters are in the section between '?' and '#' (if any)
-        var startIndex = url.indexOf('?');
-        var endIndex = url.indexOf('#');
-        var params = (endIndex > 0) ? url.slice(startIndex+1,endIndex).split('&'):url.slice(startIndex+1).split('&');
-        for (param in params){
-          var p = params[param].split('=');
-          output[p[0]] = decodeURIComponent(p[1]);
-        }
-        return output;
-      }
-    </script>
+  </script>
   </head>
 
   <body >
@@ -106,7 +71,7 @@
         <div class="span-6 center last">
           <button class="cdaButton" id='button' onclick='refreshTable(lastQuery)'>Refresh</button>
         </div>
-
+        <div class='span-6 center prepend-18 last'><button class='cdaButton' onclick='$("#dialog").jqmShow()'>Cache this</div>
       </div>
 
     </div>
@@ -116,6 +81,11 @@
 
     <div id="footer">&nbsp;</div>
 
+    <div id='dialog' class='jqmWindow'>
+    <p class='dialogTitle'>What schedule should this query run on? <a href='javascript:toggleAdvanced()' class='dialogToggle'>(advanced)</a></p>
+    <div id='dialogInput'><input id='cron'></input></div>
+    <div class='dialogAction'><a href='javascript:cacheThis()'>Ok</a> <a href='#' class='jqmClose'>Cancel</a></div>
+    </div>
   </body>
   <script type="text/javascript">
     var oLanguage;
@@ -143,7 +113,7 @@
           lastQuery = undefined;
         }
       })
-
+      $("#dialog").jqm({modal:true});
       $.getJSON("listQueries",{path: filename},function(queries){
         var defaultQuery;
         var defaultDescription;
@@ -160,73 +130,5 @@
     });
     
 
-    refreshTable = function(id){
-      // Detect whether the change was triggered by a refresh or a change in DataAccessId
-      if (id != lastQuery) {
-        // When we change query, we must drop the table and parameters, and rebuild both
-        lastQuery = id;
-        refreshParams(id);
-        $.getJSON("doQuery",{path:filename, dataAccessId: id},function(data){
-          var tableContents = data.resultset;
-          var columnNames = [];
-          for (column in data.metadata) {
-            columnNames.push({"sTitle": data.metadata[column].colName});
-          }
-          $('#previewerTable').empty();
-          $('#previewerTable').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="contents"></table>' );
-          if (oLanguage == 'undefined')
-            tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames});
-          else
-            tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames,"oLanguage":oLanguage});
-        });
-      } else {
-        // Same query, we need to get the present parameter values and rebuild the table
-        var params = getParams();
-        params.path = filename;
-        params.dataAccessId = id;
-        $.getJSON("doQuery",params,function(data){
-          var tableContents = data.resultset;
-          var columnNames = [];
-          for (column in data.metadata) {
-            columnNames.push({"sTitle": data.metadata[column].colName});
-          }
-          $('#previewerTable').empty();
-          $('#previewerTable').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="contents"></table>' );
-          if (oLanguage == 'undefined')
-            tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames});
-          else
-            tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames,"oLanguage":oLanguage});
-
-        });}
-    };
-
-
-    refreshParams = function(id) {
-      $.getJSON("listParameters",{path:filename, dataAccessId: id},function(data){
-        var placeholder = $('#parameterHolder');
-        placeholder.empty();
-        for (param in data.resultset) {
-          placeholder.append('<div class="param">'+data.resultset[param][0]+
-            ':&nbsp;<input class="cdaButton" id="'+data.resultset[param][0]+
-            '" value="'+data.resultset[param][2]+'"></div>');
-
-
-        }
-      });
-
-    };
-
-    getParams = function() {
-      var params = {};
-      $('#parameterHolder input').each(function(index,param){
-        params['param' +$(param).attr('id')] = $(param).val()
-      });
-      return params;
-    }
-    var filename = function(){
-      var params = pageParams();
-      return params.solution != undefined?
-        (params.solution + '/' +params.path + '/' + params.file).replace(/\/\//g,"/")
-      : params.path}();
   </script>
 </html>

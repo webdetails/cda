@@ -24,6 +24,14 @@
       FOUND IN common_build.xml.
     -->
 
+<!--
+  <target name='dist-solution'>
+    <copy todir="${solution.stage.dir}" overwrite='true'>
+      <fileset dir='solution'>
+      <include name=''>
+    </copy>
+  </target>
+-->
   <target name="compile.compile" depends="init" description="Performs the actual javac compile">
     <javac destdir="${classes.dir}"
            debug="${javac.debug}"
@@ -53,6 +61,7 @@
   <property name="samples.stage.dir"
             value="${bin.dir}/stage-samples"
             description="Name of the resource directory" />
+
 
   <tstamp/>
 
