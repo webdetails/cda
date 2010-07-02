@@ -59,12 +59,15 @@ public abstract class AbstractDataAccess implements DataAccess
   //private static final ConnectionType connectionType = null;
   
   private static final String CACHE_NAME = "pentaho-cda-dataaccess";
-  private static final String cacheConfigFile = "ehcache.xml";
-  private static final String cacheConfigPath = "system/" + CdaContentGenerator.PLUGIN_NAME + "/";
+  private static final String CACHE_CFG_FILE = "ehcache.xml";
+  private static final String CACHE_CFG_FILE_DIST = "ehcache-dist.xml";
+  private static final String PLUGIN_PATH = "system/" + CdaContentGenerator.PLUGIN_NAME + "/";
   
   private static final String PARAM_ITERATOR_BEGIN = "$FOREACH(";
   private static final String PARAM_ITERATOR_END = ")"; 
   private static final String PARAM_ITERATOR_ARG_SEPARATOR = ","; 
+  
+  private static final String USE_TERRACOTTA_PROPERTY = "pt.webdetails.cda.UseTerracotta";
 
   protected AbstractDataAccess()
   {
@@ -158,28 +161,28 @@ public abstract class AbstractDataAccess implements DataAccess
 
   protected static synchronized Cache getCache() throws CacheException
   {
-  	boolean firstLoad = false;
     if (cacheManager == null)
     {// 'new CacheManager' used instead of 'CacheManager.create' to avoid overriding default cache
-    	firstLoad = true;
-    	//cacheManager = CacheManager.create();
+    	boolean useTerracotta = Boolean.parseBoolean(CdaBoot.getInstance().getGlobalConfig().getConfigProperty(USE_TERRACOTTA_PROPERTY));
+    	String cacheConfigFile = useTerracotta ? CACHE_CFG_FILE_DIST : CACHE_CFG_FILE;
+    	
     	if(CdaEngine.getInstance().isStandalone()){//look for the one under src/jar
     		URL cfgFile = CdaBoot.class.getResource(cacheConfigFile);
     		cacheManager =  new CacheManager(cfgFile);//CacheManager.create(cfgFile);
     	} else {//look at cda folder in pentaho
-    		String cfgFile = PentahoSystem.getApplicationContext().getSolutionPath(cacheConfigPath + cacheConfigFile);
+    		String cfgFile = PentahoSystem.getApplicationContext().getSolutionPath(PLUGIN_PATH + cacheConfigFile);
     		cacheManager = new CacheManager(cfgFile);//CacheManager.create(cfgFile); 
     	}
+			// enable clean shutdown so ehcache's diskPersistent attribute can work
+			if (!useTerracotta) enableCacheProperShutdown(true);
+
     }
 
     if (cacheManager.cacheExists(CACHE_NAME) == false)
     {
       cacheManager.addCache(CACHE_NAME);
     }
-    if(firstLoad){ 
-    	enableCacheProperShutdown(true);//now forcing, only set if unset?.. 
-    }
-    
+
     return cacheManager.getCache(CACHE_NAME);
   }
   
