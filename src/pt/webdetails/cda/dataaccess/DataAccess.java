@@ -3,6 +3,8 @@ package pt.webdetails.cda.dataaccess;
 import java.util.ArrayList;
 import javax.swing.table.TableModel;
 
+import org.pentaho.reporting.libraries.formula.FormulaContext;
+
 import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
@@ -53,4 +55,6 @@ public interface DataAccess
   public TableModel listParameters(DiscoveryOptions discoveryOptions);
 
   public void storeDescriptor(DataAccessConnectionDescriptor descriptor);
+  
+  public void setFormulaContext(FormulaContext formulaContext);
 }

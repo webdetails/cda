@@ -10,6 +10,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
+
+import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.DummyConnection;
@@ -17,6 +19,7 @@ import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 import pt.webdetails.cda.utils.TableModelUtils;
+import pt.webdetails.cda.utils.Util;
 
 /**
  * Implementation of the SimpleDataAccess
@@ -144,6 +147,9 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
   private static final Log logger = LogFactory.getLog(SimpleDataAccess.class);
   protected String connectionId;
   protected String query;
+  
+  private static final String QUERY_TIME_THRESHOLD_PROPERTY = "pt.webdetails.cda.QueryTimeThreshold";
+  private static int queryTimeThreshold = getQueryTimeThresholdFromConfig(3600);//seconds
 
   public SimpleDataAccess()
   {
@@ -157,6 +163,20 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     query = element.selectSingleNode("./Query").getText();
 
   }
+  
+  /**
+   * 
+   * @param id
+   * @param name
+   * @param connectionId
+   * @param query
+   */
+  public SimpleDataAccess(String id, String name, String connectionId, String query){
+  	super(id, name);
+  	this.query = query;
+  	this.connectionId = connectionId;
+  }
+
 
   protected synchronized TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException
   {
@@ -169,7 +189,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     for (final Parameter parameter : parameters)
     {
       final Parameter parameterPassed = queryOptions.getParameter(parameter.getName());
-      if (parameterPassed != null)
+      if (parameter.getAccess().equals(Parameter.Access.PUBLIC) && parameterPassed != null)
       {
         parameter.setStringValue(parameterPassed.getStringValue());
       }
@@ -226,9 +246,13 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
         }
       }
     }
+    
+    //start timing query
+  	long beginTime = System.currentTimeMillis();
 
     final TableModel tableModel = postProcessTableModel(performRawQuery(parameterDataRow));
 
+    logIfDurationAboveThreshold(beginTime, getId(), getQuery(), parameters);
 
     // Copy the tableModel and cache it
     // Handle the TableModel
@@ -248,6 +272,27 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     // and finally return the copy.
     return tableModelCopy;
   }
+
+	/**
+	 * @param parameters
+	 * @param beginTime
+	 */
+	private void logIfDurationAboveThreshold(final long beginTime, final String queryId, final String query, final ArrayList<Parameter> parameters) {
+		long endTime = System.currentTimeMillis();
+    long duration = (endTime - beginTime) / 1000;//precision not an issue: integer op is ok
+    if(duration > queryTimeThreshold){
+    	//log query and duration
+    	String logMsg = "Query " + queryId + " took " + duration + "s.\n";
+    	logMsg += "\t Query contents: << " + query.trim() + " >>\n";
+    	if(parameters.size() > 0){
+    		logMsg +="\t Parameters: \n";
+    		for(Parameter parameter : parameters){
+    			logMsg += "\t\t" +  parameter.toString() + "\n";
+    		}
+    	}
+    	logger.debug(logMsg);
+    }
+	}
 
   private static ParameterDataRow createParameterDataRowFromParameters(final ArrayList<Parameter> parameters) throws InvalidParameterException
   {
@@ -278,7 +323,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
   		Object value = row.get(name);
   		Parameter param = new Parameter(name,value != null ? value.toString() : null);
   		Parameter.Type type = Parameter.Type.inferTypeFromObject(value);
-  		param.setType(type.toString());
+  		param.setType(type != null ? type.toString() : null);
   		parameters.add(param);
   	}
   	return parameters;
@@ -324,4 +369,16 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     properties.add(new PropertyDescriptor("cacheDuration", PropertyDescriptor.Type.NUMERIC, PropertyDescriptor.Placement.ATTRIB));
     return properties;
   }
+  
+  private static int getQueryTimeThresholdFromConfig(int defaultValue){
+  	String strVal = CdaBoot.getInstance().getGlobalConfig().getConfigProperty(QUERY_TIME_THRESHOLD_PROPERTY);
+  	if(!Util.IsNullOrEmpty(strVal)){
+	  	try{
+	  		return Integer.parseInt(strVal);
+	  	}
+	  	catch (NumberFormatException nfe){}//ignore, use default
+  	}
+  	return defaultValue;
+  }
+  
 }

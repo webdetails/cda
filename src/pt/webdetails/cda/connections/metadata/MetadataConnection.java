@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import org.dom4j.Element;
 import pt.webdetails.cda.connections.AbstractConnection;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
+import pt.webdetails.cda.connections.sql.JndiConnectionInfo;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.settings.CdaSettings;
@@ -27,6 +28,17 @@ public class MetadataConnection extends AbstractConnection {
   }
 
   public MetadataConnection() {
+  }
+  
+/**
+ * 
+ * @param id this connection's ID
+ * @param domainId domain ID
+ * @param xmiFile XMI file with metadata definition
+ */
+  public MetadataConnection(String id, String domainId, String xmiFile){
+  	super(id);
+  	this.connectionInfo = new MetadataConnectionInfo(domainId,xmiFile);
   }
 
   protected void initializeConnection(final Element connection) throws InvalidConnectionException {

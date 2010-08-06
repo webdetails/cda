@@ -22,6 +22,10 @@ public abstract class AbstractConnection implements Connection {
 
   public AbstractConnection() {
   }
+  
+  public AbstractConnection(String id){
+  	this.id = id;
+  }
 
   public AbstractConnection(final Element connection) throws InvalidConnectionException {
 

@@ -10,22 +10,31 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletResponse;
 
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xerces.impl.dtd.models.CMAny;
 import org.pentaho.platform.api.engine.IMimeTypeListener;
 import org.pentaho.platform.api.engine.IParameterProvider;
+import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
+import org.pentaho.platform.engine.core.solution.PentahoSessionParameterProvider;
+import org.pentaho.platform.engine.core.solution.SystemSettingsParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.engine.security.SecurityParameterProvider;
 import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
+import org.pentaho.platform.plugin.services.connections.javascript.JavaScriptResultSet;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
+import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
+
 import pt.webdetails.cda.cache.CacheManager;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
@@ -81,7 +90,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
 
   @Override
-  public void createContent() throws Exception
+  public void createContent()
   {
     HttpServletResponse response = null;
     final IParameterProvider pathParams;
@@ -216,6 +225,8 @@ public class CdaContentGenerator extends BaseContentGenerator
 
     final String path = getRelativePath(pathParams);
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
+    //set a formula context for current session
+  	if(userSession != null) cdaSettings.setFormulaContext(new CdaSessionFormulaContext(userSession));
 
     // Handle paging options
     // We assume that any paging options found mean that the user actively wants paging.
@@ -232,11 +243,11 @@ public class CdaContentGenerator extends BaseContentGenerator
       queryOptions.setPageSize(pageSize > 0 ? (int) pageSize : paginate ? DEFAULT_PAGE_SIZE : 0);
       queryOptions.setPageStart(pageStart > 0 ? (int) pageStart : paginate ? DEFAULT_START_PAGE : 0);
     }
-
     // Handle the query itself and its output format...
     queryOptions.setOutputType(pathParams.getStringParameter("outputType", "json"));
     queryOptions.setDataAccessId(pathParams.getStringParameter("dataAccessId", "<blank>"));
-    final ArrayList<Integer> sortBy = new ArrayList<Integer>();
+    
+//    final ArrayList<Integer> sortBy = new ArrayList<Integer>();
 //    Integer[] def = {};
 //    for (Object obj : pathParams.getArrayParameter("sortBy", def)) {
 //      sortBy.add(Integer.parseInt((String) obj));
@@ -556,7 +567,6 @@ public class CdaContentGenerator extends BaseContentGenerator
     AbstractDataAccess.clearCache();
     setResponseHeaders("text/html", null);
     out.write(getResourceAsString(previewerPath, ISolutionRepository.ACTION_EXECUTE).getBytes("UTF-8"));
-
   }
 
 
@@ -704,4 +714,51 @@ public class CdaContentGenerator extends BaseContentGenerator
 
 
   }
+  
+  //allows access to session parameters within formulas
+  private class CdaSessionFormulaContext extends DefaultFormulaContext {
+  	Map<String,IParameterProvider> providers;
+  	private static final String SECURITY_PREFIX = "security:";
+  	private static final String SESSION_PREFIX = "session:";
+  	private static final String SYSTEM_PREFIX = "system:";
+  	
+  	CdaSessionFormulaContext(IPentahoSession session){
+  		providers = new HashMap<String, IParameterProvider>();
+  		if(session != null){
+	  		providers.put(SECURITY_PREFIX, new SecurityParameterProvider(session));
+	  		providers.put(SESSION_PREFIX, new PentahoSessionParameterProvider(session));
+  		}
+  		providers.put(SYSTEM_PREFIX, new SystemSettingsParameterProvider());
+  	}
+  	
+  	@Override public Object resolveReference(final Object name){
+    	if(name instanceof String ){
+    		String paramName = ((String) name).trim();
+    		for(String prefix : providers.keySet()){
+    			if(paramName.startsWith(prefix)){
+    				paramName = paramName.substring(prefix.length());
+    				Object value = providers.get(prefix).getParameter(paramName);
+    				if(value instanceof JavaScriptResultSet){//needs special treatment, convert to array
+    					JavaScriptResultSet resultSet = (JavaScriptResultSet) value;
+    					return convertToArray(resultSet);
+    				}
+    				return value;
+    			}
+    		}
+    	}
+  		return super.resolveReference(name);
+  	}
+
+		private Object[] convertToArray(final JavaScriptResultSet resultSet) {
+			List result = new ArrayList();
+			for(int i =0; i < resultSet.getRowCount();i++){
+				for(int j = 0; j < resultSet.getColumnCount(); j++){
+					result.add(resultSet.getValueAt(i, j));
+				}
+			}
+			return result.toArray();
+		}
+	
+  }
+  
 }

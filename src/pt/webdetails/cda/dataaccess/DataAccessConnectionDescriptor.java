@@ -1,10 +1,6 @@
 package pt.webdetails.cda.dataaccess;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
 import pt.webdetails.cda.connections.Connection;

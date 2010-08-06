@@ -37,6 +37,11 @@ body {
   margin-bottom: 5px;
 }
 
+input[readonly]{
+  background-color: lightgrey;
+  font-style:italic;
+}
+
 #selectorText{
   display: inline
 }

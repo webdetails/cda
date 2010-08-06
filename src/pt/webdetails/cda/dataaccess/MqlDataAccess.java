@@ -29,6 +29,17 @@ public class MqlDataAccess extends PREDataAccess {
 
   public MqlDataAccess() {
   }
+  
+  /**
+   * 
+   * @param id
+   * @param name
+   * @param connectionId
+   * @param query
+   */
+  public MqlDataAccess(String id, String name, String connectionId, String query){
+  	super(id,name, connectionId, query);
+  }
 
   public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException {
     final MetadataConnection connection = (MetadataConnection) getCdaSettings().getConnection(getConnectionId());

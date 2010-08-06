@@ -20,6 +20,11 @@ public class MetadataConnectionInfo
     domainId = ((String) connection.selectObject("string(./DomainId)"));
     xmiFile = ((String) connection.selectObject("string(./XmiFile)"));
   }
+  
+  public MetadataConnectionInfo(String domainId, String xmiFile){
+  	this.domainId = domainId;
+  	this.xmiFile = xmiFile;
+  }
 
   public String getDomainId()
   {

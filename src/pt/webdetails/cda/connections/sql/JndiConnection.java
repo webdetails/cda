@@ -33,6 +33,15 @@ public class JndiConnection extends AbstractSqlConnection {
 
   public JndiConnection() {
   }
+  
+  /**
+   * TODO:new API
+   * @param jndi the connection name as defined in the <code>datasources.xml</code> file
+   */
+  public JndiConnection(String id, String jndi){
+  	super(id);
+  	this.connectionInfo = new JndiConnectionInfo(jndi,null,null,null,null);
+  }
 
   public ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException {
     final ConnectionProvider connectionProvider;

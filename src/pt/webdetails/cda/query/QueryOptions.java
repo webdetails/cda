@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import pt.webdetails.cda.dataaccess.Parameter;
+import pt.webdetails.cda.exporter.ExporterEngine;
 
 /**
  * Created by IntelliJ IDEA.
@@ -136,6 +137,10 @@ public class QueryOptions
   public void setOutputType(final String outputType)
   {
     this.outputType = outputType;
+  }
+  
+  public void setOutputType(final ExporterEngine.OutputType outputType){
+  	this.outputType = outputType.toString();
   }
 
   public void addSetting(String setting, String value)

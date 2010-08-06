@@ -60,10 +60,9 @@ refreshParams = function(id) {
     placeholder.empty();
     for (param in data.resultset) {
       placeholder.append('<div class="param">'+data.resultset[param][0]+
-        ':&nbsp;<input class="cdaButton" id="'+data.resultset[param][0]+
-        '" value="'+data.resultset[param][2]+'"></div>');
-
-
+        ':&nbsp;<input class="cdaButton" id="'+data.resultset[param][0]+ '"' +
+        ((data.resultset[param][4] == 'private')? ' readonly="readonly"' : '') +
+        ' value="'+data.resultset[param][2]+'"></div>');
     }
   });
 

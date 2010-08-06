@@ -50,6 +50,17 @@ public abstract class PREDataAccess extends SimpleDataAccess
     super(element);
 
   }
+  
+  /**
+   * 
+   * @param id
+   * @param name
+   * @param connectionId
+   * @param query
+   */
+  public PREDataAccess(String id, String name, String connectionId, String query){
+  	super(id, name, connectionId, query);
+  }
 
   public abstract DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException;
 
@@ -102,9 +113,8 @@ public abstract class PREDataAccess extends SimpleDataAccess
     }
     catch (ReportDataFactoryException e)
     {
-
       throw new QueryException("ReportDataFactoryException : " + e.getMessage()
-              + e.getParent()==null?"":("; Parent exception: " + e.getParent().getMessage()), e);
+  				+ ((e.getParentThrowable() == null) ? "" : ("; Parent exception: " + e.getParentThrowable().getMessage())), e);
     }
 
 

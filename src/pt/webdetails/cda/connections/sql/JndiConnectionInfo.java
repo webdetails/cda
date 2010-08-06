@@ -3,6 +3,8 @@ package pt.webdetails.cda.connections.sql;
 import org.dom4j.Element;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
 
+import pt.webdetails.cda.utils.Util;
+
 /**
  * Todo: Document me!
  * <p/>
@@ -44,6 +46,14 @@ public class JndiConnectionInfo
     {
       setPasswordField(passFormula);
     }
+  }
+  
+  public JndiConnectionInfo(String jndi, String userName, String password, String userFormula, String passFormula){
+  	this.jndi = jndi;
+    if (!StringUtils.isEmpty(userName)) setUser(userName);
+    if (!StringUtils.isEmpty(password)) setPass(password);
+    if (!StringUtils.isEmpty(userFormula))  setUserField(userFormula);
+    if (!StringUtils.isEmpty(passFormula)) setPasswordField(passFormula);
   }
 
   public String getUser()

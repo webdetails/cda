@@ -2,6 +2,7 @@ package pt.webdetails.cda.dataaccess;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.reporting.libraries.formula.FormulaContext;
 
 import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.CdaContentGenerator;
@@ -57,6 +59,7 @@ public abstract class AbstractDataAccess implements DataAccess
   private ArrayList<ColumnDefinition> columnDefinitions;
   private HashMap<Integer, ColumnDefinition> columnDefinitionIndexMap;
   //private static final ConnectionType connectionType = null;
+  private FormulaContext formulaContext;
   
   private static final String CACHE_NAME = "pentaho-cda-dataaccess";
   private static final String CACHE_CFG_FILE = "ehcache.xml";
@@ -84,6 +87,39 @@ public abstract class AbstractDataAccess implements DataAccess
 
     parseOptions(element);
 
+  }
+  
+  /**
+   * @param id
+   * @param name
+   */
+  protected AbstractDataAccess(String id, String name){
+  	this.name = name;
+  	this.id = id;
+  	
+    columnDefinitionIndexMap = new HashMap<Integer, ColumnDefinition>();
+    columnDefinitions = new ArrayList<ColumnDefinition>();
+    outputs = new ArrayList<Integer>();
+    parameters = new ArrayList<Parameter>();
+    outputMode = OutputMode.INCLUDE;
+  }
+  
+  /**
+   * 
+   * @param params
+   */
+  public void setParameters(Collection<Parameter> params){
+  	if(this.formulaContext != null){
+  		for(Parameter param: params) param.setFormulaContext(this.formulaContext);
+  	}
+  	
+  	this.parameters.clear();
+  	this.parameters.addAll(params);
+  }
+  
+  public void setFormulaContext(FormulaContext formulaContext){
+  	this.formulaContext = formulaContext;
+  	for(Parameter param : this.parameters) param.setFormulaContext(formulaContext);
   }
 
   public abstract String getType();
@@ -346,6 +382,14 @@ public abstract class AbstractDataAccess implements DataAccess
   public ArrayList<Integer> getOutputs()
   {
     return outputs;
+  }
+  
+  /**
+   * 
+   * @param outputIndexes indexes of columns to output
+   */
+  public void setOutputs(ArrayList<Integer> outputIndexes){
+  	this.outputs = outputIndexes;
   }
 
   public OutputMode getOutputMode()

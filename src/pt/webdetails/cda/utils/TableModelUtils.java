@@ -227,11 +227,11 @@ public class TableModelUtils
     // Define names and types
     final String[] colNames =
     {
-      "name", "type", "defaultValue", "pattern"
+      "name", "type", "defaultValue", "pattern", "access"
     };
     final Class[] colTypes =
     {
-      String.class, String.class, String.class, String.class
+      String.class, String.class, String.class, String.class, String.class
     };
 
 
@@ -241,7 +241,7 @@ public class TableModelUtils
     {
       typedTableModel.addRow(new Object[]
               {
-                p.getName(), p.getType(), p.getDefaultValue(), p.getPattern()
+                p.getName(), p.getType(), p.getDefaultValue(), p.getPattern(), p.getAccess().toString()
               });
     }
 

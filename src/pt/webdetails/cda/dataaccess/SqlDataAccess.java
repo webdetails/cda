@@ -27,6 +27,17 @@ public class SqlDataAccess extends PREDataAccess {
   }
   public SqlDataAccess() {
   }
+  
+  /**
+   * 
+   * @param id
+   * @param name
+   * @param connectionId
+   * @param query
+   */
+  public SqlDataAccess(String id, String name, String connectionId, String query){
+  	super(id,name, connectionId, query);
+  }
 
   public String getType()
   {

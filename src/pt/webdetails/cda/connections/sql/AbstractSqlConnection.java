@@ -23,6 +23,14 @@ public abstract class AbstractSqlConnection extends AbstractConnection implement
 
   public AbstractSqlConnection() {
   }
+  
+  /**
+   * 
+   * @param id this connection's ID
+   */
+  public AbstractSqlConnection(String id){
+  	super(id);
+  }
 
   @Override
   public ConnectionType getGenericType() {

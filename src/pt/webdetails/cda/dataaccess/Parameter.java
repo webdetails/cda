@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 import org.pentaho.reporting.libraries.formula.Formula;
+import org.pentaho.reporting.libraries.formula.FormulaContext;
 
 import org.dom4j.Element;
 
@@ -27,9 +28,35 @@ public class Parameter implements java.io.Serializable
   private String defaultValue;
   private String pattern;
   private String stringValue;
+  private Access access; 
+  //private boolean readonly=false;
+  
+  public enum Access {
+  	PRIVATE("private"),
+  	PUBLIC("public");
+  	
+  	private String name;
+  	
+  	Access(String name){ this.name = name; }
+  	
+  	public static Access parse(String text){
+  		for(Access type : Access.values()){
+  			if(text != null && type.name.equals(text.trim().toLowerCase())){
+  				return type;
+  			}
+  		}
+  		return PUBLIC;//default
+  	}
+  	public String toString(){ return this.name;}
+  }
   
   private final static String FORMULA_BEGIN = "${";
   private final static String FORMULA_END = "}";
+  
+  private FormulaContext formulaContext;
+  public void setFormulaContext(FormulaContext context){
+  	formulaContext = context;
+  }
   
   enum Type{
   	
@@ -85,12 +112,13 @@ public class Parameter implements java.io.Serializable
   {
   }
 
-  public Parameter(final String name, final String type, final String defaultValue, final String pattern)
+  public Parameter(final String name, final String type, final String defaultValue, final String pattern, final String access)
   {
     this.name = name;
     this.type = type;
     this.defaultValue = defaultValue;
     this.pattern = pattern;
+    this.access = Access.parse(access);//defaults to public
   }
 
   public Parameter(final Element p)
@@ -99,7 +127,8 @@ public class Parameter implements java.io.Serializable
         p.attributeValue("name"),
         p.attributeValue("type"),
         p.attributeValue("default"),
-        p.attributeValue("pattern")
+        p.attributeValue("pattern"),
+        p.attributeValue("access")
     );
   }
 
@@ -116,8 +145,8 @@ public class Parameter implements java.io.Serializable
     final String localValue = getStringValue() == null ? getDefaultValue() : getStringValue();
 
     //check if it is a formula
-    if(localValue.trim().startsWith(FORMULA_BEGIN)){
-    	return processFormula(Util.getContentsBetween(localValue, FORMULA_BEGIN, FORMULA_END));
+    if(localValue != null && localValue.trim().startsWith(FORMULA_BEGIN)){
+    	return processFormula(Util.getContentsBetween(localValue, FORMULA_BEGIN, FORMULA_END), this.formulaContext);
     }
     
     if (getType().equals("String"))
@@ -151,11 +180,13 @@ public class Parameter implements java.io.Serializable
 
   }
 
-
-  private static Object processFormula(String localValue) throws InvalidParameterException {
-  	try {
+  private static Object processFormula(String localValue, FormulaContext formulaContext) throws InvalidParameterException {
+  	try {	
 			Formula formula = new Formula(localValue);
-			formula.initialize(new DefaultFormulaContext());
+			//set context if available
+			if(formulaContext != null) formula.initialize(formulaContext);
+			else  formula.initialize(new DefaultFormulaContext());
+			//evaluate
 			return formula.evaluate();
 		} catch (org.pentaho.reporting.libraries.formula.parser.ParseException e) {
 			throw new InvalidParameterException("Unable to parse expression " + localValue, e);
@@ -213,6 +244,10 @@ public class Parameter implements java.io.Serializable
   public void setStringValue(final String stringValue)
   {
     this.stringValue = stringValue;
+  }
+  
+  public Access getAccess(){
+  	return this.access;
   }
   
   /**

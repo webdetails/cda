@@ -18,6 +18,18 @@ public class ExporterEngine
 
   private static final Log logger = LogFactory.getLog(ExporterEngine.class);
   private static ExporterEngine _instance;
+  
+  public enum OutputType{
+  	
+  	JSON("json"),
+  	XML("xml"),
+  	CSV("csv"),
+  	XLS("xls");
+  	
+  	private String type;
+  	OutputType(String type){this.type = type;}
+  	public String toString(){ return type;}
+  }
 
   public ExporterEngine()
   {
