@@ -44,6 +44,7 @@
 	<!-- Menu entry -->
 	<menu-items>
 		<menu-item id="cda_refresh" anchor="tools-refresh-submenu" label="CDA Cache" command="content/cda/clearCache" type="MENU_ITEM" how="LAST_CHILD"/>
+		<menu-item id="cda_cacheman" anchor="tools-submenu-classic" label="CDA Cache Manager" command="content/cda/manageCache" type="MENU_ITEM" how="LAST_CHILD"/>
 	</menu-items>
 
         <bean id="CdaScheduler" class="pt.webdetails.cda.cache.CacheActivator"/>

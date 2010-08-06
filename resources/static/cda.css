@@ -28,8 +28,18 @@ div.header {
     color: #333;
     border: 1px solid black;
     padding: 12px;
+    text-size: 10pt;
 }
 
+.helpWindow {
+    font-size: 10pt;
+}
+
+dt {
+    font-weight: bold;
+}
+dd {
+}
 /*
  * Dialog Formatting
  */

@@ -59,11 +59,12 @@ refreshParams = function(id) {
     var placeholder = $('#parameterHolder');
     placeholder.empty();
     for (param in data.resultset) {
-      placeholder.append('<div class="param">'+data.resultset[param][0]+
-        ':&nbsp;<input class="cdaButton" id="'+data.resultset[param][0]+ '"' +
-        ((data.resultset[param][4] == 'private')? ' readonly="readonly"' : '') +
-        ' value="'+data.resultset[param][2]+'"></div>');
+      placeholder.append('<div class="param span-8 last"><div class="span-4">'+data.resultset[param][0]+
+        ':&nbsp;</div><div class="cdaInputWrapper span-4 last"><input class="cdaButton cdaButtonShort" id="'+data.resultset[param][0]+
+        '" value="'+data.resultset[param][2]+((data.resultset[param][4] == 'private')? ' readonly="readonly"' : '')+ '"><div class="helpButton">?</div></div></div>');
     }
+    placeholder.find("div.helpButton").click(helpPopup).hide();
+    placeholder.find("input").focus(inputFocus).blur(inputBlur);
   });
 
 };
@@ -104,21 +105,57 @@ periodicity = [
 ]
 
 toggleAdvanced = function(advanced){
-    var contents = '';
     if(advanced==false) {
         var selector = "<select id='periodType'>";
         for (option in periodicity) {
-            selector += "<option value='"+option+">"+periodicity[option].name+"</option>"
+            selector += "<option value='"+option+"'>"+periodicity[option].name+"</option>"
         }
         selector += '</select>';
-        contents += '<span>'+selector+'</span>';
+        contents =$( '<span>'+selector+'<span>on the</span><input id="startAt"><span id="granularity">th '+periodicity[0].granularity +'</span></span>');
+        contents.find('select#periodType').change(function(){
+            $(this).parent().find('#granularity')
+                .text(periodicity[$(this).attr('value')].granularity);
+        });
     } else {
-        contents +='<span>: <input></input></span>';
+        contents ='<span>Cron Expression: <input></input></span>';
     }
 
     $("#dialogInput").empty().append(contents);
     $("p.dialogTitle .dialogToggle").html(advanced?"(basic)":"(advanced)").attr("href","javascript:toggleAdvanced("+!advanced+")");
 }
 
-updateSelector = function() {
+updateCron = function() {
+    var selector = document.getElementById('periodType');
+    if(selector !== null) {
+        var val = $(selector).attr("value");
+        var startAt = $("#startAt").attr("value");
+        if (val == 0) { // Weekly
+            return "0 0 0 ? * " + startAt;
+        } else {
+           
+        }
+    } else{
+        return $("#cron").attr("value");
+    }
+};
+
+var inputFocus = function(event){
+    $(this).attr("style","width:130px"); 
+    $(this).parent().find("div.helpButton").show();
+};
+
+var inputBlur = function(event){
+    // we need to delay this evaluation ever so slightly, so that
+    // we don't hide the help button before it registers the click
+    var myself = this;
+    setTimeout(
+        function(){
+            $(myself).attr("style","");
+            $(myself).parent().find("div.helpButton").hide();
+        },
+        100);
+};
+helpPopup = function(){
+$("#help").jqmShow();
 }
+

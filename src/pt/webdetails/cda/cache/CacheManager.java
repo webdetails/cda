@@ -47,7 +47,7 @@ public class CacheManager
   enum functions
   {
 
-    LIST, CHANGE, RELOAD, DELETE, PERSIST, MONITOR, DETAILS, TEST, EXECUTE
+    LIST, CHANGE, RELOAD, DELETE, PERSIST, MONITOR, DETAILS, TEST, EXECUTE, IMPORT
   }
   private static CacheManager _instance;
 
@@ -92,6 +92,8 @@ public class CacheManager
           break;
         case DELETE:
           delete(requestParams, out);
+        case IMPORT:
+          importQueries(requestParams, out);
       }
     }
     catch (Exception e)
@@ -273,6 +275,42 @@ public class CacheManager
     catch (Exception e)
     {
       logger.error(e);
+    }
+  }
+
+
+  private void importQueries(IParameterProvider requestParams, OutputStream out) throws Exception
+  {
+    String jsonString = requestParams.getParameter("object").toString();
+    JSONTokener jsonTokener = new JSONTokener(jsonString);
+    try
+    {
+      Query q;
+      JSONObject json;
+      Session s = getHibernateSession();
+      JSONArray ja = new JSONArray(jsonTokener);
+      for (int i = 0; i < ja.length(); i++)
+      {
+        json = ja.getJSONObject(i);
+        if (json.has("cronString"))
+        {
+          q = new CachedQuery(json);
+          queue.add((CachedQuery) q);
+          CacheActivator.reschedule(queue);
+        }
+        else
+        {
+          q = new UncachedQuery(json);
+        }
+        s.save(q);
+      }
+
+
+      s.flush();
+    }
+    catch (JSONException jse)
+    {
+      out.write("".getBytes("UTF-8"));
     }
   }
 

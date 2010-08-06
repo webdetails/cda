@@ -28,6 +28,8 @@ body {
 
 .cdaButton {
   border: none;
+  padding-left: 0px;
+  padding-right: 0px;
   background-color: white;
   width: 150px;
   /*text-align: center;*/
@@ -133,4 +135,21 @@ div#footer{
   height: 30px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.helpButton {
+    text-align: center;
+    font-size: 14px;
+    float: right;
+    background: #92d600;
+    height:18px;
+    width:18px;
+    border:1px solid white;
+    color:white;
+    font-weight:bold
+}
+
+.helpButton:hover {
+    background: white;
+    color:#92d600;
 }

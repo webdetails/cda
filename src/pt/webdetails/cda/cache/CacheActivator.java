@@ -37,6 +37,10 @@ public class CacheActivator implements IAcceptsRuntimeInputs
 
   public boolean execute() throws Exception
   {
+    ClassLoader contextCL = Thread.currentThread().getContextClassLoader();
+    try
+    {
+      Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
     Session s = HibernateUtil.getSession();
     PriorityQueue<CachedQuery> queue = CacheManager.getInstance().getQueue();
     Date rightNow = new Date();
@@ -46,8 +50,15 @@ public class CacheActivator implements IAcceptsRuntimeInputs
     }
     reschedule(queue);
     s.flush();
-    return true;
-
+    return true;}
+    catch (Exception e)
+    {
+    }
+    finally
+    {
+      Thread.currentThread().setContextClassLoader(contextCL);
+      return true;
+    }
   }
 
 

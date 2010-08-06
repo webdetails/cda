@@ -70,10 +70,9 @@
 
         <div class="span-6 center last">
           <button class="cdaButton" id='button' onclick='refreshTable(lastQuery)'>Refresh</button>
-        </div>
-        <div class='span-6 center prepend-18 last'><button class='cdaButton' onclick='$("#dialog").jqmShow()'>Cache this</div>
-      </div>
+          <button class='cdaButton' onclick='$("#dialog").jqmShow()'>Cache this</div>
 
+        </div>
     </div>
 
 
@@ -81,6 +80,17 @@
 
     <div id="footer">&nbsp;</div>
 
+    <div id='help' class='jqmWindow helpWindow'>
+        <h2 class='dialogTitle'>Parameter formulas</h2>
+        <p>You can use formulas instead of fixed values for CDA parameters. Here are some useful examples:
+        <dl>
+            <dt><code>${TODAY()}</code></dt><dd>Today's date</dd>
+            <dt><code>${YESTERDAY()}</code></dt><dd>Yesterday's date</dd>
+            <dt><code>$FOREACH(dataAccess,colIdx,param1=val1,...,paramn=valn)</code></dt><dd>Iterate over the values for <code>colIdx</code> in query <code>dataAccess</code> with the given parameters. Queries using this construct return no values, and its main purpose is to provide parameter ranges for cache warming.</dd>
+        </dl></p>
+        <p>Please refer to the Pentaho Reporting Engine <a href='http://wiki.pentaho.com/display/Reporting/9.+Report+Designer+Formula+Expressions' target='_blank'>documentation</a> for a full description of the syntax.</p>
+        <div class='dialogAction'><a href='#' class='jqmClose'>Close</a></div>
+    </div>
     <div id='dialog' class='jqmWindow'>
     <p class='dialogTitle'>What schedule should this query run on? <a href='javascript:toggleAdvanced()' class='dialogToggle'>(advanced)</a></p>
     <div id='dialogInput'><input id='cron'></input></div>
@@ -114,6 +124,8 @@
         }
       })
       $("#dialog").jqm({modal:true});
+      $('#help').jqm({modal:true});
+      toggleAdvanced(false);
       $.getJSON("listQueries",{path: filename},function(queries){
         var defaultQuery;
         var defaultDescription;
