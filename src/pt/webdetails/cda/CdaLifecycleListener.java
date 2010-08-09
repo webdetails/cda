@@ -3,6 +3,7 @@ package pt.webdetails.cda;
 import org.pentaho.platform.api.engine.IPluginLifecycleListener;
 import org.pentaho.platform.api.engine.PluginLifecycleException;
 import pt.webdetails.cda.cache.CacheManager;
+import pt.webdetails.cda.utils.PluginHibernateUtil;
 
 /**
  * This class inits Cda plugin within the bi-platform
@@ -16,6 +17,7 @@ public class CdaLifecycleListener implements IPluginLifecycleListener
   {
     // boot cda
     CdaBoot.getInstance().start();
+    PluginHibernateUtil.initialize();
   }
 
 

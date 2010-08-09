@@ -7,10 +7,10 @@ import org.hibernate.Session;
 import org.pentaho.platform.api.engine.IAcceptsRuntimeInputs;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.repository.hibernate.HibernateUtil;
 import org.pentaho.platform.scheduler.QuartzSystemListener;
 import org.pentaho.platform.scheduler.SchedulerHelper;
 import org.quartz.Scheduler;
+import pt.webdetails.cda.utils.PluginHibernateUtil;
 
 /**
  *
@@ -41,16 +41,17 @@ public class CacheActivator implements IAcceptsRuntimeInputs
     try
     {
       Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-    Session s = HibernateUtil.getSession();
-    PriorityQueue<CachedQuery> queue = CacheManager.getInstance().getQueue();
-    Date rightNow = new Date();
-    while (queue.peek().getNextExecution().before(rightNow))
-    {
-      processQueries(queue);
+      Session s = PluginHibernateUtil.getSession();
+      PriorityQueue<CachedQuery> queue = CacheManager.getInstance().getQueue();
+      Date rightNow = new Date();
+      while (queue.peek().getNextExecution().before(rightNow))
+      {
+        processQueries(queue);
+      }
+      reschedule(queue);
+      s.flush();
+      return true;
     }
-    reschedule(queue);
-    s.flush();
-    return true;}
     catch (Exception e)
     {
     }

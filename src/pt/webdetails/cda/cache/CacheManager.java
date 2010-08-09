@@ -14,7 +14,6 @@ import java.util.PriorityQueue;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.cfg.Configuration;
-import org.pentaho.platform.repository.hibernate.HibernateUtil;
 
 import org.hibernate.Session;
 import org.pentaho.platform.api.engine.IParameterProvider;
@@ -26,11 +25,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.scheduler.SchedulerHelper;
 import org.quartz.CronExpression;
+import pt.webdetails.cda.PluginHibernateException;
+import pt.webdetails.cda.utils.PluginHibernateUtil;
+import pt.webdetails.cda.utils.Util;
 
 /**
  *
@@ -113,12 +111,12 @@ public class CacheManager
     try
     {
       initHibernate();
+      initQueue();
     }
-    catch (Exception e)
+    catch (PluginHibernateException ex)
     {
-      // this stuff throws exceptions because of duplicate mappings. Moving swiftly on!
+      logger.warn("Found PluginHibernateException while initializing CacheManager " + Util.getExceptionDescription(ex));
     }
-    initQueue();
   }
 
 
@@ -127,7 +125,7 @@ public class CacheManager
   }
 
 
-  public void test(IParameterProvider requestParams, OutputStream out)
+  public void test(IParameterProvider requestParams, OutputStream out) throws PluginHibernateException
   {
     CachedQuery cq = new CachedQuery();
 
@@ -166,7 +164,7 @@ public class CacheManager
   }
 
 
-  public Query loadQuery(Long id)
+  public Query loadQuery(Long id) throws PluginHibernateException
   {
     Session s = getHibernateSession();
 
@@ -259,7 +257,7 @@ public class CacheManager
   }
 
 
-  private void list(IParameterProvider requestParams, OutputStream out)
+  private void list(IParameterProvider requestParams, OutputStream out) throws PluginHibernateException
   {
     JSONArray queries = new JSONArray();
     Session s = getHibernateSession();
@@ -315,7 +313,7 @@ public class CacheManager
   }
 
 
-  private void execute(IParameterProvider requestParams, OutputStream out)
+  private void execute(IParameterProvider requestParams, OutputStream out) throws PluginHibernateException
   {
     Long id = Long.decode(requestParams.getParameter("id").toString());
     Session s = getHibernateSession();
@@ -337,7 +335,7 @@ public class CacheManager
   }
 
 
-  private void delete(IParameterProvider requestParams, OutputStream out)
+  private void delete(IParameterProvider requestParams, OutputStream out) throws PluginHibernateException
   {
     Long id = Long.decode(requestParams.getParameter("id").toString());
     Session s = getHibernateSession();
@@ -346,10 +344,10 @@ public class CacheManager
   }
 
 
-  private Session getHibernateSession()
+  private Session getHibernateSession() throws PluginHibernateException
   {
 
-    return HibernateUtil.getSession();
+    return PluginHibernateUtil.getSession();
 
   }
 
@@ -363,7 +361,7 @@ public class CacheManager
   }
 
 
-  private void initQueue()
+  private void initQueue() throws PluginHibernateException
   {
     Session s = getHibernateSession();
     List l = s.createQuery("from CachedQuery").list();
@@ -391,7 +389,7 @@ public class CacheManager
   }
 
 
-  public static void initHibernate()
+  public static void initHibernate() throws PluginHibernateException
   {
 
     // Get hbm file
@@ -399,14 +397,14 @@ public class CacheManager
     InputStream in = resLoader.getResourceAsStream(CdaContentGenerator.class, "cachemanager.hbm.xml");
 
     // Close session and rebuild
-    HibernateUtil.closeSession();
-    Configuration configuration = HibernateUtil.getConfiguration();
+    PluginHibernateUtil.closeSession();
+    Configuration configuration = PluginHibernateUtil.getConfiguration();
     //if (configuration.getClassMapping(CachedQuery.class.getCanonicalName()) == null)
     //{
     configuration.addInputStream(in);
     try
     {
-      HibernateUtil.rebuildSessionFactory();
+      PluginHibernateUtil.rebuildSessionFactory();
     }
     catch (Exception e)
     {
@@ -420,7 +418,7 @@ public class CacheManager
    * Initializes the CacheManager from a cold boot. Ensures all essential cached queries
    * are populated at boot time, and sets up the first query timer.
    */
-  public void coldInit()
+  public void coldInit() throws PluginHibernateException
   {
     // run all queries
     Session s = getHibernateSession();

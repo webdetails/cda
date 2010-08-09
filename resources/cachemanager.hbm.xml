@@ -19,8 +19,8 @@
     <property name="missCount" type="int">
       <column name="missCount"/>
     </property>
-    <property name="timeElapsed" type="double" >
-      <column name="timeElapsed" />
+    <property name="timeElapsed" type="double">
+      <column name="timeElapsed"/>
     </property>
     <list cascade="all" lazy="false" name="parameters">
       <key column="paramid"/>

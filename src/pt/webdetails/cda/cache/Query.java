@@ -15,11 +15,12 @@ import org.hibernate.Session;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.pentaho.platform.repository.hibernate.HibernateUtil;
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.PluginHibernateException;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
+import pt.webdetails.cda.utils.PluginHibernateUtil;
 
 /**
  *
@@ -208,7 +209,7 @@ public class Query implements Serializable
 
   protected void executeQuery() throws Exception
   {
-    HibernateUtil.getSession().merge(this);
+    PluginHibernateUtil.getSession().merge(this);
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(getCdaFile());
 
     final QueryOptions queryOptions = new QueryOptions();
@@ -230,11 +231,11 @@ public class Query implements Serializable
   }
 
 
-  public void save()
+  public void save() throws PluginHibernateException
   {
     if (getId() == 0)
     {
-      Session s = HibernateUtil.getSession();
+      Session s = PluginHibernateUtil.getSession();
       s.save(this);
     }
   }
