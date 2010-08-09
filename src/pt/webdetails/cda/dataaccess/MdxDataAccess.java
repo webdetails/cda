@@ -15,6 +15,7 @@ import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
+import pt.webdetails.cda.connections.mondrian.AbstractMondrianConnection;
 import pt.webdetails.cda.connections.mondrian.MondrianConnection;
 import pt.webdetails.cda.connections.mondrian.MondrianConnectionInfo;
 import pt.webdetails.cda.settings.UnknownConnectionException;
@@ -163,18 +164,30 @@ public class MdxDataAccess extends PREDataAccess
   @Override
   protected Object getExtraCacheKey()
   {
-    return new ExtraCacheKey(bandedMode);
+    MondrianConnectionInfo mci;
+    try
+    {
+      mci = ((AbstractMondrianConnection) getCdaSettings().getConnection(getConnectionId())).getConnectionInfo();
+    }
+    catch (Exception e)
+    {
+      logger.error("Failed to get a connection info for cache key");
+      mci = null;
+    }
+    return new ExtraCacheKey(bandedMode, mci.getMondrianRole());
   }
 
   protected static class ExtraCacheKey
   {
 
     private BANDED_MODE bandedMode;
+    private String roles;
 
 
-    public ExtraCacheKey(BANDED_MODE bandedMode)
+    public ExtraCacheKey(BANDED_MODE bandedMode, String roles)
     {
       this.bandedMode = bandedMode;
+      this.roles = roles;
     }
 
 
@@ -194,6 +207,10 @@ public class MdxDataAccess extends PREDataAccess
       {
         return false;
       }
+      else if (this.roles == null ? other.roles != null : !this.roles.equals(other.roles))
+      {
+        return false;
+      }
       return true;
     }
 
@@ -202,7 +219,8 @@ public class MdxDataAccess extends PREDataAccess
     public int hashCode()
     {
       int hash = 7;
-      hash = 71 * hash + (this.bandedMode != null ? this.bandedMode.hashCode() : 0);
+      hash = 83 * hash + (this.bandedMode != null ? this.bandedMode.hashCode() : 0);
+      hash = 83 * hash + (this.roles != null ? this.roles.hashCode() : 0);
       return hash;
     }
   }

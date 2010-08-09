@@ -17,8 +17,8 @@ public class JndiConnectionInfo implements MondrianConnectionInfo
   private String pass;
 
 
-
-  public JndiConnectionInfo(final Element connection) {
+  public JndiConnectionInfo(final Element connection)
+  {
 
     setJndi((String) connection.selectObject("string(./Jndi)"));
 
@@ -32,7 +32,7 @@ public class JndiConnectionInfo implements MondrianConnectionInfo
     final String roleFormula = (String) connection.selectObject("string(./RoleField)");
     final String userFormula = (String) connection.selectObject("string(./UserField)");
     final String passFormula = (String) connection.selectObject("string(./PassField)");
-    
+
     if (StringUtils.isEmpty(userName) == false)
     {
       setUser(userName);
@@ -61,95 +61,114 @@ public class JndiConnectionInfo implements MondrianConnectionInfo
     }
   }
 
+
   public String getRoleField()
   {
     return roleField;
   }
+
 
   public void setRoleField(final String roleField)
   {
     this.roleField = roleField;
   }
 
+
   public String getUserField()
   {
     return userField;
   }
+
 
   public void setUserField(final String userField)
   {
     this.userField = userField;
   }
 
+
   public String getPasswordField()
   {
     return passwordField;
   }
+
 
   public void setPasswordField(final String passwordField)
   {
     this.passwordField = passwordField;
   }
 
+
   public String getMondrianRole()
   {
     return mondrianRole;
   }
+
 
   public void setMondrianRole(final String mondrianRole)
   {
     this.mondrianRole = mondrianRole;
   }
 
+
   public String getUser()
   {
     return user;
   }
+
 
   public void setUser(final String user)
   {
     this.user = user;
   }
 
+
   public String getPass()
   {
     return pass;
   }
+
 
   public void setPass(final String pass)
   {
     this.pass = pass;
   }
 
+
   public String getJndi()
   {
     return jndi;
   }
+
 
   public void setJndi(final String jndi)
   {
     this.jndi = jndi;
   }
 
+
   public String getCatalog()
   {
     return catalog;
   }
+
 
   public void setCatalog(final String catalog)
   {
     this.catalog = catalog;
   }
 
+
   public String getCube()
   {
     return cube;
   }
 
+
   public void setCube(final String cube)
   {
     this.cube = cube;
   }
+
 
   public boolean equals(final Object o)
   {
