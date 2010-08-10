@@ -1,5 +1,6 @@
 package pt.webdetails.cda.dataaccess;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import javax.swing.table.TableModel;
 import org.apache.commons.logging.Log;
@@ -177,7 +178,7 @@ public class MdxDataAccess extends PREDataAccess
     return new ExtraCacheKey(bandedMode, mci.getMondrianRole());
   }
 
-  protected static class ExtraCacheKey
+  protected static class ExtraCacheKey implements Serializable
   {
 
     private BANDED_MODE bandedMode;
