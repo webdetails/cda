@@ -44,8 +44,10 @@ public class TableModelUtils
     // We will:
     //  1. Evaluate Calculated columns
     //  2. Show only the output columns we want;
-    //  3. return the correct pagination
+    //  3. Sort
+    //  3. Pagination
 
+    // 1
     TableModel t;
     final ArrayList<ColumnDefinition> columnDefinitions = dataAccess.getCalculatedColumns();
     if (columnDefinitions.isEmpty())
@@ -65,6 +67,7 @@ public class TableModelUtils
       return t;
     }
 
+    // 2
     // If output mode == exclude, we need to translate the excluded outputColuns
     // into included ones
     if (dataAccess.getOutputMode() == DataAccess.OutputMode.EXCLUDE && outputIndexes.size() > 0)
@@ -85,10 +88,6 @@ public class TableModelUtils
     final int columnCount = outputIndexes.size();
     if (columnCount != 0)
     {
-      // No outputs were specified, we'll create the same
-
-
-      // If columnCount == 0 we need to create a new outputIndexes
 
       if ((Collections.max(outputIndexes) > t.getColumnCount() - 1))
       {
@@ -106,16 +105,7 @@ public class TableModelUtils
         colNames[i] = t.getColumnName(outputIndex);
       }
 
-      final int rowCount;
-      if (queryOptions.isPaginate())
-      {
-        rowCount = Math.min(queryOptions.getPageSize(), t.getRowCount() - queryOptions.getPageStart());
-      }
-      else
-      {
-        rowCount = t.getRowCount();
-      }
-
+      final int rowCount = t.getRowCount();
       logger.debug(rowCount == 0 ? "No data found" : "Found " + rowCount + " rows");
 
 
@@ -133,14 +123,17 @@ public class TableModelUtils
     }
 
     // Now, handle sorting
-    
-    if (queryOptions.getSortBy().isEmpty()){
+
+    if (!queryOptions.getSortBy().isEmpty())
+    {
 
       // no action
-      return t;
+      t = (new SortTableModel()).doSort(t, queryOptions.getSortBy());
     }
 
-    return (new SortTableModel()).doSort(t, queryOptions.getSortBy());
+
+    // Paginate
+    return paginateTableModel(t, queryOptions);
 
 
   }
@@ -325,6 +318,42 @@ public class TableModelUtils
 
 
     return typedTableModel;
+
+  }
+
+
+  private TableModel paginateTableModel(TableModel t, QueryOptions queryOptions)
+  {
+
+    if (!queryOptions.isPaginate() || (queryOptions.getPageSize() == 0 && queryOptions.getPageStart() == 0))
+    {
+      return t;
+    }
+
+
+    final int rowCount = Math.min(queryOptions.getPageSize(), t.getRowCount() - queryOptions.getPageStart());
+    logger.debug("Paginating " + queryOptions.getPageSize() + " pages from page " + queryOptions.getPageStart());
+
+
+    final Class[] colTypes = new Class[t.getColumnCount()];
+    final String[] colNames = new String[t.getColumnCount()];
+
+    for (int i = 0; i < t.getColumnCount(); i++)
+    {
+      colTypes[i] = t.getColumnClass(i);
+      colNames[i] = t.getColumnName(i);
+    }
+
+    final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
+    for (int r = 0; r < rowCount; r++)
+    {
+      for (int j = 0; j < t.getColumnCount(); j++)
+      {
+        typedTableModel.setValueAt(t.getValueAt(r + queryOptions.getPageStart(), j), r, j);
+      }
+    }
+    return typedTableModel;
+
 
   }
 }
