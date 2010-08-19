@@ -27,17 +27,17 @@ import pt.webdetails.cda.settings.UnknownDataAccessException;
  * Date: Feb 15, 2010
  * Time: 7:53:13 PM
  */
-public class MdxJdbcCompactTest extends TestCase
+public class SortTest extends TestCase
 {
 
-  private static final Log logger = LogFactory.getLog(MdxJdbcCompactTest.class);
+  private static final Log logger = LogFactory.getLog(SortTest.class);
 
-  public MdxJdbcCompactTest()
+  public SortTest()
   {
     super();
   }
 
-  public MdxJdbcCompactTest(final String name)
+  public SortTest(final String name)
   {
     super(name);
   }
@@ -70,20 +70,21 @@ public class MdxJdbcCompactTest extends TestCase
     queryOptions.setOutputType("json");
     queryOptions.addParameter("status", "Shipped");
 
-    logger.info("Doing query 1");
+    logger.info("Doing query with 2 column sort");
     queryOptions.setDataAccessId("1");
+    queryOptions.setSortBy(new ArrayList(Arrays.asList( new String[]{"0D" , "1A"})));
     engine.doQuery(out, cdaSettings, queryOptions);
 
-    logger.info("\nDoing query 2");
-    queryOptions.setDataAccessId("2");
+    logger.info("\nDoing query with no sort");
+    queryOptions.setSortBy(new ArrayList(Arrays.asList( new String[]{})));
     engine.doQuery(out, cdaSettings, queryOptions);
 
-    logger.info("\nDoing query 3");
-    queryOptions.setDataAccessId("3");
+    logger.info("\nDoing query with all combinations");
+    queryOptions.setSortBy(new ArrayList(Arrays.asList( new String[]{"0D" , "2", "1A"})));
     engine.doQuery(out, cdaSettings, queryOptions);
 
-    logger.info("\nDoing query 4");
-    queryOptions.setDataAccessId("4");
+    logger.info("\nDoing query with only one sort");
+    queryOptions.setSortBy(new ArrayList(Arrays.asList( new String[]{"1A"})));
     engine.doQuery(out, cdaSettings, queryOptions);
 
   }

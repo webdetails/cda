@@ -14,6 +14,8 @@ import pt.webdetails.cda.dataaccess.DataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessEnums;
 import pt.webdetails.cda.dataaccess.Parameter;
 import pt.webdetails.cda.query.QueryOptions;
+import pt.webdetails.cda.utils.kettle.SortException;
+import pt.webdetails.cda.utils.kettle.SortTableModel;
 
 /**
  * Utility class to handle TableModel operations
@@ -28,13 +30,15 @@ public class TableModelUtils
   private static final Log logger = LogFactory.getLog(TableModelUtils.class);
   private static TableModelUtils _instance;
 
+
   public TableModelUtils()
   {
   }
 
+
   public TableModel postProcessTableModel(final DataAccess dataAccess,
           final QueryOptions queryOptions,
-          final TableModel rawTableModel) throws TableModelException
+          final TableModel rawTableModel) throws TableModelException, SortException
   {
 
     // We will:
@@ -42,7 +46,7 @@ public class TableModelUtils
     //  2. Show only the output columns we want;
     //  3. return the correct pagination
 
-    final TableModel t;
+    TableModel t;
     final ArrayList<ColumnDefinition> columnDefinitions = dataAccess.getCalculatedColumns();
     if (columnDefinitions.isEmpty())
     {
@@ -79,48 +83,68 @@ public class TableModelUtils
 
 
     final int columnCount = outputIndexes.size();
-
-    if (Collections.max(outputIndexes) > t.getColumnCount() - 1)
+    if (columnCount != 0)
     {
-      throw new TableModelException("Output index higher than number of columns in tableModel", null);
-
-    }
-
-    final Class[] colTypes = new Class[columnCount];
-    final String[] colNames = new String[columnCount];
-
-    for (int i = 0; i < outputIndexes.size(); i++)
-    {
-      final int outputIndex = outputIndexes.get(i);
-      colTypes[i] = t.getColumnClass(outputIndex);
-      colNames[i] = t.getColumnName(outputIndex);
-    }
-
-    final int rowCount;
-    if (queryOptions.isPaginate())
-    {
-      rowCount = Math.min(queryOptions.getPageSize(), t.getRowCount() - queryOptions.getPageStart());
-    }
-    else
-    {
-      rowCount = t.getRowCount();
-    }
-
-    logger.debug(rowCount == 0 ? "No data found" : "Found " + rowCount + " rows");
+      // No outputs were specified, we'll create the same
 
 
-    final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
-    for (int r = 0; r < rowCount; r++)
-    {
-      for (int j = 0; j < outputIndexes.size(); j++)
+      // If columnCount == 0 we need to create a new outputIndexes
+
+      if ((Collections.max(outputIndexes) > t.getColumnCount() - 1))
       {
-        final int outputIndex = outputIndexes.get(j);
-        typedTableModel.setValueAt(t.getValueAt(r + queryOptions.getPageStart(), outputIndex), r, j);
+        throw new TableModelException("Output index higher than number of columns in tableModel", null);
+
       }
+
+      final Class[] colTypes = new Class[columnCount];
+      final String[] colNames = new String[columnCount];
+
+      for (int i = 0; i < outputIndexes.size(); i++)
+      {
+        final int outputIndex = outputIndexes.get(i);
+        colTypes[i] = t.getColumnClass(outputIndex);
+        colNames[i] = t.getColumnName(outputIndex);
+      }
+
+      final int rowCount;
+      if (queryOptions.isPaginate())
+      {
+        rowCount = Math.min(queryOptions.getPageSize(), t.getRowCount() - queryOptions.getPageStart());
+      }
+      else
+      {
+        rowCount = t.getRowCount();
+      }
+
+      logger.debug(rowCount == 0 ? "No data found" : "Found " + rowCount + " rows");
+
+
+      final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
+      for (int r = 0; r < rowCount; r++)
+      {
+        for (int j = 0; j < outputIndexes.size(); j++)
+        {
+          final int outputIndex = outputIndexes.get(j);
+          typedTableModel.setValueAt(t.getValueAt(r + queryOptions.getPageStart(), outputIndex), r, j);
+        }
+      }
+      t = typedTableModel;
+
     }
-    return typedTableModel;
+
+    // Now, handle sorting
+    
+    if (queryOptions.getSortBy().isEmpty()){
+
+      // no action
+      return t;
+    }
+
+    return (new SortTableModel()).doSort(t, queryOptions.getSortBy());
+
 
   }
+
 
   public TableModel copyTableModel(final DataAccess dataAccess, final TableModel t)
   {
@@ -174,6 +198,7 @@ public class TableModelUtils
     return typedTableModel;
   }
 
+
   public TableModel dataAccessMapToTableModel(HashMap<String, DataAccess> dataAccessMap)
   {
 
@@ -208,6 +233,7 @@ public class TableModelUtils
 
   }
 
+
   public static synchronized TableModelUtils getInstance()
   {
 
@@ -218,6 +244,7 @@ public class TableModelUtils
 
     return _instance;
   }
+
 
   public TableModel dataAccessParametersToTableModel(final ArrayList<Parameter> parameters)
   {
@@ -250,6 +277,7 @@ public class TableModelUtils
 
 
   }
+
 
   /**
    * Method to append a tablemodel into another. We'll make no guarantees about the types

@@ -101,6 +101,9 @@ public class CdaContentGenerator extends BaseContentGenerator
     final String pathString;
     try
     {
+
+
+
       // If callbacks is properly setup, we assume we're being called from another plugin
       if (this.callbacks != null && callbacks.size() > 0 && HashMap.class.isInstance(callbacks.get(0)))
       {
@@ -226,7 +229,10 @@ public class CdaContentGenerator extends BaseContentGenerator
     final String path = getRelativePath(pathParams);
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
     //set a formula context for current session
-  	if(userSession != null) cdaSettings.setFormulaContext(new CdaSessionFormulaContext(userSession));
+    if (userSession != null)
+    {
+      cdaSettings.setFormulaContext(new CdaSessionFormulaContext(userSession));
+    }
 
     // Handle paging options
     // We assume that any paging options found mean that the user actively wants paging.
@@ -246,17 +252,18 @@ public class CdaContentGenerator extends BaseContentGenerator
     // Handle the query itself and its output format...
     queryOptions.setOutputType(pathParams.getStringParameter("outputType", "json"));
     queryOptions.setDataAccessId(pathParams.getStringParameter("dataAccessId", "<blank>"));
-    
-//    final ArrayList<Integer> sortBy = new ArrayList<Integer>();
-//    Integer[] def = {};
-//    for (Object obj : pathParams.getArrayParameter("sortBy", def)) {
-//      sortBy.add(Integer.parseInt((String) obj));
-//    }
-//    queryOptions.setSortBy(sortBy);
-    if (pathParams.getStringParameter("sortBy", null) != null)
+
+    final ArrayList<String> sortBy = new ArrayList<String>();
+    String[] def =
     {
-      logger.warn("sortBy not implemented yet");
+    };
+    for (Object obj : pathParams.getArrayParameter("sortBy", def))
+    {
+      sortBy.add((String) obj);
     }
+    queryOptions.setSortBy(sortBy);
+
+
     // ... and the query parameters
     // We identify any pathParams starting with "param" as query parameters
     final Iterator<String> params = (Iterator<String>) pathParams.getParameterNames();
@@ -714,51 +721,65 @@ public class CdaContentGenerator extends BaseContentGenerator
 
 
   }
-  
-  //allows access to session parameters within formulas
-  private class CdaSessionFormulaContext extends DefaultFormulaContext {
-  	Map<String,IParameterProvider> providers;
-  	private static final String SECURITY_PREFIX = "security:";
-  	private static final String SESSION_PREFIX = "session:";
-  	private static final String SYSTEM_PREFIX = "system:";
-  	
-  	CdaSessionFormulaContext(IPentahoSession session){
-  		providers = new HashMap<String, IParameterProvider>();
-  		if(session != null){
-	  		providers.put(SECURITY_PREFIX, new SecurityParameterProvider(session));
-	  		providers.put(SESSION_PREFIX, new PentahoSessionParameterProvider(session));
-  		}
-  		providers.put(SYSTEM_PREFIX, new SystemSettingsParameterProvider());
-  	}
-  	
-  	@Override public Object resolveReference(final Object name){
-    	if(name instanceof String ){
-    		String paramName = ((String) name).trim();
-    		for(String prefix : providers.keySet()){
-    			if(paramName.startsWith(prefix)){
-    				paramName = paramName.substring(prefix.length());
-    				Object value = providers.get(prefix).getParameter(paramName);
-    				if(value instanceof JavaScriptResultSet){//needs special treatment, convert to array
-    					JavaScriptResultSet resultSet = (JavaScriptResultSet) value;
-    					return convertToArray(resultSet);
-    				}
-    				return value;
-    			}
-    		}
-    	}
-  		return super.resolveReference(name);
-  	}
 
-		private Object[] convertToArray(final JavaScriptResultSet resultSet) {
-			List result = new ArrayList();
-			for(int i =0; i < resultSet.getRowCount();i++){
-				for(int j = 0; j < resultSet.getColumnCount(); j++){
-					result.add(resultSet.getValueAt(i, j));
-				}
-			}
-			return result.toArray();
-		}
-	
+  //allows access to session parameters within formulas
+  private class CdaSessionFormulaContext extends DefaultFormulaContext
+  {
+
+    Map<String, IParameterProvider> providers;
+    private static final String SECURITY_PREFIX = "security:";
+    private static final String SESSION_PREFIX = "session:";
+    private static final String SYSTEM_PREFIX = "system:";
+
+
+    CdaSessionFormulaContext(IPentahoSession session)
+    {
+      providers = new HashMap<String, IParameterProvider>();
+      if (session != null)
+      {
+        providers.put(SECURITY_PREFIX, new SecurityParameterProvider(session));
+        providers.put(SESSION_PREFIX, new PentahoSessionParameterProvider(session));
+      }
+      providers.put(SYSTEM_PREFIX, new SystemSettingsParameterProvider());
+    }
+
+
+    @Override
+    public Object resolveReference(final Object name)
+    {
+      if (name instanceof String)
+      {
+        String paramName = ((String) name).trim();
+        for (String prefix : providers.keySet())
+        {
+          if (paramName.startsWith(prefix))
+          {
+            paramName = paramName.substring(prefix.length());
+            Object value = providers.get(prefix).getParameter(paramName);
+            if (value instanceof JavaScriptResultSet)
+            {//needs special treatment, convert to array
+              JavaScriptResultSet resultSet = (JavaScriptResultSet) value;
+              return convertToArray(resultSet);
+            }
+            return value;
+          }
+        }
+      }
+      return super.resolveReference(name);
+    }
+
+
+    private Object[] convertToArray(final JavaScriptResultSet resultSet)
+    {
+      List result = new ArrayList();
+      for (int i = 0; i < resultSet.getRowCount(); i++)
+      {
+        for (int j = 0; j < resultSet.getColumnCount(); j++)
+        {
+          result.add(resultSet.getValueAt(i, j));
+        }
+      }
+      return result.toArray();
+    }
   }
-  
 }

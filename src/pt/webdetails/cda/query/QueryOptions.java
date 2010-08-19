@@ -19,7 +19,7 @@ public class QueryOptions
   private boolean paginate;
   private int pageSize;
   private int pageStart;
-  private ArrayList<Integer> sortBy;
+  private ArrayList<String> sortBy;
   private ArrayList<Parameter> parameters;
   private HashMap<String, String> extraSettings;
   private String outputType;
@@ -30,7 +30,7 @@ public class QueryOptions
     paginate = false;
     pageSize = 20;
     pageStart = 0;
-    sortBy = new ArrayList<Integer>();
+    sortBy = new ArrayList<String>();
     parameters = new ArrayList<Parameter>();
     outputType = "json";
     extraSettings = new HashMap<String, String>();
@@ -67,12 +67,12 @@ public class QueryOptions
     this.pageStart = pageStart;
   }
 
-  public ArrayList<Integer> getSortBy()
+  public ArrayList<String> getSortBy()
   {
     return sortBy;
   }
 
-  public void setSortBy(final ArrayList<Integer> sortBy)
+  public void setSortBy(final ArrayList<String> sortBy)
   {
     this.sortBy = sortBy;
   }
