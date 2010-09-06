@@ -134,6 +134,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       return true;
     }
 
+    @Override
     public int hashCode()
     {
       int result = connection != null ? connection.hashCode() : 0;

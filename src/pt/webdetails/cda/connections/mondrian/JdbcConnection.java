@@ -82,7 +82,7 @@ public class JdbcConnection extends AbstractMondrianConnection
   }
 
 
-  public JdbcConnectionInfo getConnectionInfo()
+  public synchronized JdbcConnectionInfo getConnectionInfo()
   {
     JdbcConnectionInfo ci = new JdbcConnectionInfo(this.connection);
     ci.setMondrianRole(assembleRole(ci.getCatalog()));

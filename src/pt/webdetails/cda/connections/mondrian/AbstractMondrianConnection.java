@@ -59,7 +59,7 @@ public abstract class AbstractMondrianConnection extends AbstractConnection impl
       {
       }
       final String[] validMondrianRolesForUser =
-              mondrianUserRoleMapper.mapConnectionRoles(PentahoSessionHolder.getSession(), "solution:" + catalog);
+              mondrianUserRoleMapper.mapConnectionRoles(PentahoSessionHolder.getSession(), "solution:" + catalog.replaceAll("solution/",""));
       if ((validMondrianRolesForUser != null) && (validMondrianRolesForUser.length > 0))
       {
         final StringBuffer buff = new StringBuffer();

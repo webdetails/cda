@@ -292,7 +292,7 @@ public abstract class AbstractDataAccess implements DataAccess
 
     /*
      *  Do the tableModel PostProcessing
-     *  1. Sort (todo)
+     *  1. Sort
      *  2. Show only the output columns
      *  3. Paginate
      *  4. Call the appropriate exporter
