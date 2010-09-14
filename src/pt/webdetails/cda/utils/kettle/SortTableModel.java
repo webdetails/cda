@@ -47,40 +47,48 @@ public class SortTableModel implements RowProductionManager
   public TableModel doSort(TableModel unsorted, ArrayList<String> sortBy) throws SortException
   {
 
-    TableModel output = null;
-    inputCallables.clear();
-
-    try
+    if (unsorted == null || unsorted.getRowCount() == 0)
     {
-
-      String sort = getSortXmlStep(unsorted, sortBy);
-
-      DynamicTransMetaConfig transMetaConfig = new DynamicTransMetaConfig(Type.EMPTY, "JoinCompoundData", null, null);
-      DynamicTransConfig transConfig = new DynamicTransConfig();
-
-      transConfig.addConfigEntry(EntryType.STEP, "input", "<step><name>input</name><type>Injector</type></step>");
-      transConfig.addConfigEntry(EntryType.STEP, "sort", sort);
-      transConfig.addConfigEntry(EntryType.HOP, "input", "sort");
-
-      TableModelInput input = new TableModelInput();
-      transConfig.addInput("input", input);
-      inputCallables.add(input.getCallableRowProducer(unsorted, true));
-
-
-      RowMetaToTableModel outputListener = new RowMetaToTableModel(false, true, false);
-      transConfig.addOutput("sort", outputListener);
-
-      DynamicTransformation trans = new DynamicTransformation(transConfig, transMetaConfig);
-      trans.executeCheckedSuccess(null, null, this);
-      logger.info(trans.getReadWriteThroughput());
-      output = outputListener.getRowsWritten();
-
-      return output;
-
+      return unsorted;
     }
-    catch (Exception e)
+    else
     {
-      throw new SortException("Exception during sorting ", e);
+      TableModel output = null;
+      inputCallables.clear();
+
+
+      try
+      {
+
+        String sort = getSortXmlStep(unsorted, sortBy);
+
+        DynamicTransMetaConfig transMetaConfig = new DynamicTransMetaConfig(Type.EMPTY, "JoinCompoundData", null, null);
+        DynamicTransConfig transConfig = new DynamicTransConfig();
+
+        transConfig.addConfigEntry(EntryType.STEP, "input", "<step><name>input</name><type>Injector</type></step>");
+        transConfig.addConfigEntry(EntryType.STEP, "sort", sort);
+        transConfig.addConfigEntry(EntryType.HOP, "input", "sort");
+
+        TableModelInput input = new TableModelInput();
+        transConfig.addInput("input", input);
+        inputCallables.add(input.getCallableRowProducer(unsorted, true));
+
+
+        RowMetaToTableModel outputListener = new RowMetaToTableModel(false, true, false);
+        transConfig.addOutput("sort", outputListener);
+
+        DynamicTransformation trans = new DynamicTransformation(transConfig, transMetaConfig);
+        trans.executeCheckedSuccess(null, null, this);
+        logger.info(trans.getReadWriteThroughput());
+        output = outputListener.getRowsWritten();
+
+        return output;
+
+      }
+      catch (Exception e)
+      {
+        throw new SortException("Exception during sorting ", e);
+      }
     }
 
 

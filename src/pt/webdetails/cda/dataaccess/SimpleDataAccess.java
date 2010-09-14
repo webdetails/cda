@@ -33,52 +33,72 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
   protected static class TableCacheKey implements Serializable
   {
 
-		private static final long serialVersionUID = 1L;
-		private Connection connection;
-		private String query;
-		private ParameterDataRow parameterDataRow;
-		private Object extraCacheKey;
+    private static final long serialVersionUID = 1L;
+    private Connection connection;
+    private String query;
+    private ParameterDataRow parameterDataRow;
+    private Object extraCacheKey;
+
 
     /**
      * For serialization
      */
-    protected TableCacheKey(){}
-    
-  	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
-  		//connection
-  		String cdaSettingsId = connection.getCdaSettings().getId();
-  		String connectionId = connection.getId();
-  		out.writeObject(cdaSettingsId);
-  		out.writeObject(connectionId);
-  		
-  		out.writeObject(query);
-  		out.writeObject(createParametersFromParameterDataRow(parameterDataRow));
-  		out.writeObject(extraCacheKey);
-  	}
+    protected TableCacheKey()
+    {
+    }
 
-		private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
-			//connection
-			String cdaSettingsId = (String) in.readObject();
-			String connectionId = (String) in.readObject();
-			try {
-				connection = SettingsManager.getInstance().parseSettingsFile(cdaSettingsId).getConnection(connectionId);
-			} catch (Exception e){//wrap in generic IOException
-				throw new IOException("Error serializing " + TableCacheKey.class.getName() + ".connection" ,e);
-			}
-			//query
-			query = (String) in.readObject();
-			//parameterDataRow
-			try {
-				Object holder = in.readObject();
-				if(holder != null) parameterDataRow = createParameterDataRowFromParameters((ArrayList<Parameter>) (ArrayList) holder );
-				else parameterDataRow = null;
-			} catch (InvalidParameterException e) {
-				parameterDataRow = null;
-			}
-			//extraCacheKey
-			extraCacheKey = in.readObject();
-		}
-    
+
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException
+    {
+      //connection
+      String cdaSettingsId = connection.getCdaSettings().getId();
+      String connectionId = connection.getId();
+      out.writeObject(cdaSettingsId);
+      out.writeObject(connectionId);
+
+      out.writeObject(query);
+      out.writeObject(createParametersFromParameterDataRow(parameterDataRow));
+      out.writeObject(extraCacheKey);
+    }
+
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
+      //connection
+      String cdaSettingsId = (String) in.readObject();
+      String connectionId = (String) in.readObject();
+      try
+      {
+        connection = SettingsManager.getInstance().parseSettingsFile(cdaSettingsId).getConnection(connectionId);
+      }
+      catch (Exception e)
+      {//wrap in generic IOException
+        throw new IOException("Error serializing " + TableCacheKey.class.getName() + ".connection", e);
+      }
+      //query
+      query = (String) in.readObject();
+      //parameterDataRow
+      try
+      {
+        Object holder = in.readObject();
+        if (holder != null)
+        {
+          parameterDataRow = createParameterDataRowFromParameters((ArrayList<Parameter>) (ArrayList) holder);
+        }
+        else
+        {
+          parameterDataRow = null;
+        }
+      }
+      catch (InvalidParameterException e)
+      {
+        parameterDataRow = null;
+      }
+      //extraCacheKey
+      extraCacheKey = in.readObject();
+    }
+
+
     private TableCacheKey(final Connection connection, final String query,
             final ParameterDataRow parameterDataRow, final Object extraCacheKey)
     {
@@ -100,6 +120,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       this.parameterDataRow = parameterDataRow;
       this.extraCacheKey = extraCacheKey;
     }
+
 
     public boolean equals(final Object o)
     {
@@ -134,6 +155,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       return true;
     }
 
+
     @Override
     public int hashCode()
     {
@@ -144,17 +166,17 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       return result;
     }
   }
-
   private static final Log logger = LogFactory.getLog(SimpleDataAccess.class);
   protected String connectionId;
   protected String query;
-  
   private static final String QUERY_TIME_THRESHOLD_PROPERTY = "pt.webdetails.cda.QueryTimeThreshold";
   private static int queryTimeThreshold = getQueryTimeThresholdFromConfig(3600);//seconds
+
 
   public SimpleDataAccess()
   {
   }
+
 
   public SimpleDataAccess(final Element element)
   {
@@ -164,7 +186,8 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     query = element.selectSingleNode("./Query").getText();
 
   }
-  
+
+
   /**
    * 
    * @param id
@@ -172,10 +195,11 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
    * @param connectionId
    * @param query
    */
-  public SimpleDataAccess(String id, String name, String connectionId, String query){
-  	super(id, name);
-  	this.query = query;
-  	this.connectionId = connectionId;
+  public SimpleDataAccess(String id, String name, String connectionId, String query)
+  {
+    super(id, name);
+    this.query = query;
+    this.connectionId = connectionId;
   }
 
 
@@ -211,56 +235,65 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       throw new QueryException("Error parsing parameters ", e);
     }
 
-
     // create the cache-key which is both query and parameter values
-    final TableCacheKey key;
+    TableCacheKey key;
+    TableModel tableModelCopy;
     try
     {
-      final Connection connection;
-      if (getConnectionType() == ConnectionCatalog.ConnectionType.NONE)
+      try
       {
-        connection = new DummyConnection();
-      }
-      else
-      {
-        connection = getCdaSettings().getConnection(getConnectionId());
-      }
-      key = new TableCacheKey(connection, getQuery(), parameterDataRow, getExtraCacheKey());
-    }
-    catch (UnknownConnectionException e)
-    {
-      // I'm sure I'll never be here
-      throw new QueryException("Unable to get a Connection for this dataAccess ", e);
-    }
-
-    if (isCache())
-    {
-      final net.sf.ehcache.Element element = cache.get(key);
-      if (element != null && !queryOptions.isCacheBypass()) // Are we explicitly saying to bypass the cache?
-      {
-        final TableModel cachedTableModel = (TableModel) element.getObjectValue();
-        if (cachedTableModel != null)
+        final Connection connection;
+        if (getConnectionType() == ConnectionCatalog.ConnectionType.NONE)
         {
-          // we have a entry in the cache ... great!
-          logger.debug("Found tableModel in cache. Returning");
-          return cachedTableModel;
+          connection = new DummyConnection();
+        }
+        else
+        {
+          connection = getCdaSettings().getConnection(getConnectionId());
+        }
+        key = new TableCacheKey(connection, getQuery(), parameterDataRow, getExtraCacheKey());
+      }
+      catch (UnknownConnectionException e)
+      {
+        // I'm sure I'll never be here
+        throw new QueryException("Unable to get a Connection for this dataAccess ", e);
+      }
+
+      if (isCache())
+      {
+        final net.sf.ehcache.Element element = cache.get(key);
+        if (element != null && !queryOptions.isCacheBypass()) // Are we explicitly saying to bypass the cache?
+        {
+          final TableModel cachedTableModel = (TableModel) element.getObjectValue();
+          if (cachedTableModel != null)
+          {
+            // we have a entry in the cache ... great!
+            logger.debug("Found tableModel in cache. Returning");
+            return cachedTableModel;
+          }
         }
       }
+
+      //start timing query
+      long beginTime = System.currentTimeMillis();
+
+      final TableModel tableModel = postProcessTableModel(performRawQuery(parameterDataRow));
+
+      logIfDurationAboveThreshold(beginTime, getId(), getQuery(), parameters);
+
+      // Copy the tableModel and cache it
+      // Handle the TableModel
+
+      tableModelCopy = TableModelUtils.getInstance().copyTableModel(this, tableModel);
     }
-    
-    //start timing query
-  	long beginTime = System.currentTimeMillis();
-
-    final TableModel tableModel = postProcessTableModel(performRawQuery(parameterDataRow));
-
-    logIfDurationAboveThreshold(beginTime, getId(), getQuery(), parameters);
-
-    // Copy the tableModel and cache it
-    // Handle the TableModel
-
-    final TableModel tableModelCopy = TableModelUtils.getInstance().copyTableModel(this, tableModel);
-
-    closeDataSource();
+    catch (Exception e)
+    {
+      throw new QueryException("Found an unhandled exception:", e);
+    }
+    finally
+    {
+      closeDataSource();
+    }
 
     // put the copy into the cache ...
     if (isCache())
@@ -274,26 +307,32 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     return tableModelCopy;
   }
 
-	/**
-	 * @param parameters
-	 * @param beginTime
-	 */
-	private void logIfDurationAboveThreshold(final long beginTime, final String queryId, final String query, final ArrayList<Parameter> parameters) {
-		long endTime = System.currentTimeMillis();
+
+  /**
+   * @param parameters
+   * @param beginTime
+   */
+  private void logIfDurationAboveThreshold(final long beginTime, final String queryId, final String query, final ArrayList<Parameter> parameters)
+  {
+    long endTime = System.currentTimeMillis();
     long duration = (endTime - beginTime) / 1000;//precision not an issue: integer op is ok
-    if(duration > queryTimeThreshold){
-    	//log query and duration
-    	String logMsg = "Query " + queryId + " took " + duration + "s.\n";
-    	logMsg += "\t Query contents: << " + query.trim() + " >>\n";
-    	if(parameters.size() > 0){
-    		logMsg +="\t Parameters: \n";
-    		for(Parameter parameter : parameters){
-    			logMsg += "\t\t" +  parameter.toString() + "\n";
-    		}
-    	}
-    	logger.debug(logMsg);
+    if (duration > queryTimeThreshold)
+    {
+      //log query and duration
+      String logMsg = "Query " + queryId + " took " + duration + "s.\n";
+      logMsg += "\t Query contents: << " + query.trim() + " >>\n";
+      if (parameters.size() > 0)
+      {
+        logMsg += "\t Parameters: \n";
+        for (Parameter parameter : parameters)
+        {
+          logMsg += "\t\t" + parameter.toString() + "\n";
+        }
+      }
+      logger.debug(logMsg);
     }
-	}
+  }
+
 
   private static ParameterDataRow createParameterDataRowFromParameters(final ArrayList<Parameter> parameters) throws InvalidParameterException
   {
@@ -314,27 +353,32 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     return parameterDataRow;
 
   }
-  
+
+
   /**
    * for serialization
    **/
-  private static ArrayList<Parameter> createParametersFromParameterDataRow(final ParameterDataRow row){
-  	ArrayList<Parameter> parameters = new ArrayList<Parameter>();
-  	for(String name : row.getColumnNames()){
-  		Object value = row.get(name);
-  		Parameter param = new Parameter(name,value != null ? value.toString() : null);
-  		Parameter.Type type = Parameter.Type.inferTypeFromObject(value);
-  		param.setType(type != null ? type.toString() : null);
-  		parameters.add(param);
-  	}
-  	return parameters;
+  private static ArrayList<Parameter> createParametersFromParameterDataRow(final ParameterDataRow row)
+  {
+    ArrayList<Parameter> parameters = new ArrayList<Parameter>();
+    for (String name : row.getColumnNames())
+    {
+      Object value = row.get(name);
+      Parameter param = new Parameter(name, value != null ? value.toString() : null);
+      Parameter.Type type = Parameter.Type.inferTypeFromObject(value);
+      param.setType(type != null ? type.toString() : null);
+      parameters.add(param);
+    }
+    return parameters;
   }
+
 
   protected TableModel postProcessTableModel(TableModel tm)
   {
     // we can use this method to override the general behavior. By default, no post processing is done
     return tm;
   }
+
 
   /**
    * Extra arguments to be used for the cache key. Defaults to null but classes that
@@ -346,19 +390,24 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     return null;
   }
 
+
   protected abstract TableModel performRawQuery(ParameterDataRow parameterDataRow) throws QueryException;
 
+
   public abstract void closeDataSource() throws QueryException;
+
 
   public String getQuery()
   {
     return query;
   }
 
+
   public String getConnectionId()
   {
     return connectionId;
   }
+
 
   @Override
   public ArrayList<PropertyDescriptor> getInterface()
@@ -370,16 +419,21 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     properties.add(new PropertyDescriptor("cacheDuration", PropertyDescriptor.Type.NUMERIC, PropertyDescriptor.Placement.ATTRIB));
     return properties;
   }
-  
-  private static int getQueryTimeThresholdFromConfig(int defaultValue){
-  	String strVal = CdaBoot.getInstance().getGlobalConfig().getConfigProperty(QUERY_TIME_THRESHOLD_PROPERTY);
-  	if(!Util.IsNullOrEmpty(strVal)){
-	  	try{
-	  		return Integer.parseInt(strVal);
-	  	}
-	  	catch (NumberFormatException nfe){}//ignore, use default
-  	}
-  	return defaultValue;
+
+
+  private static int getQueryTimeThresholdFromConfig(int defaultValue)
+  {
+    String strVal = CdaBoot.getInstance().getGlobalConfig().getConfigProperty(QUERY_TIME_THRESHOLD_PROPERTY);
+    if (!Util.IsNullOrEmpty(strVal))
+    {
+      try
+      {
+        return Integer.parseInt(strVal);
+      }
+      catch (NumberFormatException nfe)
+      {
+      }//ignore, use default
+    }
+    return defaultValue;
   }
-  
 }

@@ -259,7 +259,8 @@ public class CdaContentGenerator extends BaseContentGenerator
     };
     for (Object obj : pathParams.getArrayParameter("sortBy", def))
     {
-      sortBy.add((String) obj);
+      if (!((String) obj).equals("")) {
+      sortBy.add((String) obj);}
     }
     queryOptions.setSortBy(sortBy);
 
