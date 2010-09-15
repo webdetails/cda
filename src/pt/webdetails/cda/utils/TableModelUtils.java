@@ -151,7 +151,8 @@ public class TableModelUtils
     for (int i = 0; i < t.getColumnCount(); i++)
     {
       String colName = t.getColumnName(i);
-      if (!colName.startsWith("::table-by-index::"))
+      if (!colName.startsWith("::table-by-index::") && 
+		  !colName.startsWith("::column::"))
       {
         namedColumns.add(colName);
         namedColumnsClasses.add(t.getColumnClass(i));

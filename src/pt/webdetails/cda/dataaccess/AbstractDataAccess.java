@@ -227,8 +227,16 @@ public abstract class AbstractDataAccess implements DataAccess
       }
       else
       {//look at cda folder in pentaho
-        String cfgFile = PentahoSystem.getApplicationContext().getSolutionPath(PLUGIN_PATH + cacheConfigFile);
-        cacheManager = new CacheManager(cfgFile);//CacheManager.create(cfgFile);
+        try
+		{
+    	 String cfgFile = PentahoSystem.getApplicationContext().getSolutionPath(PLUGIN_PATH + cacheConfigFile);
+    	 cacheManager = new CacheManager(cfgFile);
+    	}
+    	catch(CacheException exc)
+		{//fallback to standalone 
+    	  URL cfgFile = CdaBoot.class.getResource(cacheConfigFile);
+    	  cacheManager = new CacheManager(cfgFile);
+    	}
       }
       // enable clean shutdown so ehcache's diskPersistent attribute can work
       if (!useTerracotta)

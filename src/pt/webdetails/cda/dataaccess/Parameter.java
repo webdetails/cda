@@ -28,8 +28,7 @@ public class Parameter implements java.io.Serializable
   private String defaultValue;
   private String pattern;
   private String stringValue;
-  private Access access; 
-  //private boolean readonly=false;
+  private Access access = Access.PUBLIC; 
   
   public enum Access {
   	PRIVATE("private"),
