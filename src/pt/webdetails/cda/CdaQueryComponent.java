@@ -80,6 +80,9 @@ public class CdaQueryComponent {
     final QueryOptions queryOptions = new QueryOptions();
 
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(file);
+    
+    final String CDA_PARAMS = "cdaParameterString";
+    final String CDA_PARAM_SEPARATOR = ";";
 
     // page info
     
@@ -102,7 +105,19 @@ public class CdaQueryComponent {
     
     // params and settings
     
-    for (String param : inputs.keySet()) {
+    //process parameter string "name1=value1;name2=value2"
+    String cdaParamString = inputsGetString(CDA_PARAMS, null);
+    if (cdaParamString != null) {
+      String[] cdaParams = cdaParamString.split(CDA_PARAM_SEPARATOR);
+      for (String cdaParam : cdaParams) {
+        String[] nameValue = cdaParam.split("=");
+        if (nameValue.length == 2) {
+          queryOptions.addParameter(nameValue[0], nameValue[1]);
+        }
+      }
+    }
+    
+	for (String param : inputs.keySet()) {
       if (param.startsWith("param")) {
         queryOptions.addParameter(param.substring(5), inputsGetString(param, ""));
       } else if (param.startsWith("setting")) {
