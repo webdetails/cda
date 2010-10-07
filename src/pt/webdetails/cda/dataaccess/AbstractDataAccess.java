@@ -517,7 +517,7 @@ public abstract class AbstractDataAccess implements DataAccess
 
     for (Parameter param : queryOptions.getParameters())
     {
-      String value = (param.getStringValue() == null) ? param.getDefaultValue() : param.getStringValue();
+      String value = param.getStringValue();
       if (value != null && value.startsWith(PARAM_ITERATOR_BEGIN))
       {
         String[] args = Util.getContentsBetween(value, PARAM_ITERATOR_BEGIN, PARAM_ITERATOR_END).split(PARAM_ITERATOR_ARG_SEPARATOR);
@@ -562,7 +562,7 @@ public abstract class AbstractDataAccess implements DataAccess
 
         if (paramValues == null)
         {//no values, clear so it can fallback to default (if any)
-          param.setStringValue(null);
+          param.setValue(null);
         }
         else
         {

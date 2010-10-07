@@ -262,7 +262,7 @@ public class TableModelUtils
     {
       typedTableModel.addRow(new Object[]
               {
-                p.getName(), p.getType(), p.getDefaultValue(), p.getPattern(), p.getAccess().toString()
+                p.getName(), p.getTypeAsString(), p.getDefaultValue(), p.getPattern(), p.getAccess().toString()
               });
     }
 

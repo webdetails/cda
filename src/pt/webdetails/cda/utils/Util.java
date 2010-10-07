@@ -41,7 +41,7 @@ public class Util {
   	return source.substring(startIdx, endIdx);
   }
   
-  public static final boolean IsNullOrEmpty(final String str){
+  public static final boolean isNullOrEmpty(final String str){
   	return (str == null || str.trim().length() == 0);
   }
 

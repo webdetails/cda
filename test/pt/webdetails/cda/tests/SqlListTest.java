@@ -1,12 +1,14 @@
 package pt.webdetails.cda.tests;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 
-import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentException;
+
 import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
@@ -19,24 +21,18 @@ import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
-/**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 15, 2010
- * Time: 7:53:13 PM
- */
-public class SqlTest extends TestCase
-{
-
+public class SqlListTest extends TestCase {
   private static final Log logger = LogFactory.getLog(SqlTest.class);
 
-  public SqlTest()
+  public SqlListTest()
   {
     super();
   }
 
-  public SqlTest(final String name)
+  public SqlListTest(final String name)
   {
     super(name);
   }
@@ -57,50 +53,41 @@ public class SqlTest extends TestCase
 
     // Define an outputStream
     OutputStream out = System.out;
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
     logger.info("Building CDA settings from sample file");
 
     final SettingsManager settingsManager = SettingsManager.getInstance();
 
-    final File settingsFile = new File("test/pt/webdetails/cda/tests/sample-sql.cda");
+    final File settingsFile = new File("test/pt/webdetails/cda/tests/sample-sql-list.cda");
     final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
     logger.debug("Doing query on Cda - Initializing CdaEngine");
     final CdaEngine engine = CdaEngine.getInstance();
 
     QueryOptions queryOptions = new QueryOptions();
     queryOptions.setDataAccessId("1");
-    queryOptions.addParameter("orderDate", "2003-04-01");
+    queryOptions.addParameter("status", "Shipped;Cancelled");
     queryOptions.setOutputType(ExporterEngine.OutputType.XML);
-    // queryOptions.addParameter("status","In Process");
 
-    logger.info("Doing first query");
+    logger.info("Shipped,Cancelled through string");
     engine.doQuery(out, cdaSettings, queryOptions);
+    engine.doQuery(baos, cdaSettings, queryOptions);
+    String testRes = new String(baos.toByteArray(),Charset.defaultCharset());
+    assertTrue(testRes.contains("Shipped"));
+    assertTrue(testRes.contains("Cancelled"));
+    baos = new ByteArrayOutputStream();
 
-    logger.info("Doing query with different parameters");
     queryOptions = new QueryOptions();
     queryOptions.setDataAccessId("1");
-    queryOptions.addParameter("orderDate", "2004-01-01");
-    engine.doQuery(out, cdaSettings, queryOptions);
+    queryOptions.addParameter("status", new String[]{"Shipped","Cancelled"});
+    queryOptions.setOutputType(ExporterEngine.OutputType.XML);
 
-    // Querying 2nd time to test cache
-    logger.info("Doing query using the initial parameters - Cache should be used");
-    queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("1");
-    queryOptions.addParameter("orderDate", "2003-04-01");
+    logger.info("\nShipped,Cancelled through string[]");
     engine.doQuery(out, cdaSettings, queryOptions);
-
-    // Querying 2nd time to test cache
-    logger.info("Doing query again to see if cache expires");
-    try
-    {
-      Thread.sleep(6000);
-    }
-    catch (InterruptedException e)
-    {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-    }
-    engine.doQuery(out, cdaSettings, queryOptions);
+    engine.doQuery(baos, cdaSettings, queryOptions);
+    testRes = new String(baos.toByteArray(),Charset.defaultCharset());
+    assertTrue(testRes.contains("Shipped"));
+    assertTrue(testRes.contains("Cancelled"));
 
   }
-
 }

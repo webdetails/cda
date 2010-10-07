@@ -68,8 +68,8 @@
         <!-- Settings block here overrides defaults and general settings -->
     </DataAccess>
 	<CompoundDataAccess id="3" type="union">
-		<Left id="1" />
-		<Right id="2" />
+		<Top id="1" />
+		<Bottom id="2" />
         <Parameters>
             <Parameter name="year" type="Numeric" default="2004"/>
         </Parameters>

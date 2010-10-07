@@ -216,11 +216,19 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       final Parameter parameterPassed = queryOptions.getParameter(parameter.getName());
       if (parameter.getAccess().equals(Parameter.Access.PUBLIC) && parameterPassed != null)
       {
-        parameter.setStringValue(parameterPassed.getStringValue());
+        //parameter.setStringValue(parameterPassed.getStringValue());
+        try
+        {
+          parameterPassed.inheritDefaults(parameter);
+          parameter.setValue(parameterPassed.getValue());
+        }
+        catch (InvalidParameterException e){
+          throw new QueryException("Error parsing parameters ", e);
+        }
       }
       else
       {
-        parameter.setStringValue(parameter.getDefaultValue());
+        parameter.setValue(parameter.getDefaultValue());
       }
     }
 
@@ -366,7 +374,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       Object value = row.get(name);
       Parameter param = new Parameter(name, value != null ? value.toString() : null);
       Parameter.Type type = Parameter.Type.inferTypeFromObject(value);
-      param.setType(type != null ? type.toString() : null);
+      param.setType(type);
       parameters.add(param);
     }
     return parameters;
@@ -424,7 +432,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
   private static int getQueryTimeThresholdFromConfig(int defaultValue)
   {
     String strVal = CdaBoot.getInstance().getGlobalConfig().getConfigProperty(QUERY_TIME_THRESHOLD_PROPERTY);
-    if (!Util.IsNullOrEmpty(strVal))
+    if (!Util.isNullOrEmpty(strVal))
     {
       try
       {

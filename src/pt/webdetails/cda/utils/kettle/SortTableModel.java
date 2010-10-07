@@ -26,6 +26,7 @@ import plugins.org.pentaho.di.robochef.kettle.DynamicTransformation;
 import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
 import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
 import pt.webdetails.cda.CdaBoot;
+import pt.webdetails.cda.utils.Util;
 
 /**
  *
@@ -37,6 +38,9 @@ public class SortTableModel implements RowProductionManager
   private static final Log logger = LogFactory.getLog(SortTableModel.class);
   private ExecutorService executorService = Executors.newCachedThreadPool();
   private Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
+  
+  private static final long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
+  private static final TimeUnit DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT = TimeUnit.SECONDS;
 
 
   public SortTableModel()
@@ -97,8 +101,10 @@ public class SortTableModel implements RowProductionManager
 
   public void startRowProduction()
   {
-    long timeout = Long.parseLong(CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout"));
-    TimeUnit unit = TimeUnit.valueOf(CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit"));
+    String timeoutStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout");
+    long timeout = Util.isNullOrEmpty(timeoutStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
+    String unitStr =  CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
+    TimeUnit unit = Util.isNullOrEmpty(unitStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
     startRowProduction(timeout, unit);
   }
 

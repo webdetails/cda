@@ -274,7 +274,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
       if (param.startsWith("param"))
       {
-        queryOptions.addParameter(param.substring(5), pathParams.getStringParameter(param, ""));
+        queryOptions.addParameter(param.substring(5), pathParams.getParameter(param));
       }
       else if (param.startsWith("setting"))
       {

@@ -92,7 +92,7 @@ public class QueryOptions
     this.dataAccessId = dataAccessId;
   }
 
-  public void addParameter(final String name, final String value)
+  public void addParameter(final String name, final Object value)
   {
 
     final Parameter p = new Parameter(name, value);
