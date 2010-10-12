@@ -54,6 +54,30 @@ refreshTable = function(id){
 };
 
 
+export = function(id){
+  // Detect whether the change was triggered by a refresh or a change in DataAccessId
+  if (id != lastQuery) {
+    // When we change query, we must rebuild parameters
+    lastQuery = id;
+    refreshParams(id);
+    
+    var url = document.location.href;
+    
+    var newWindow = window.open(url.replace('previewQuery', 'doQuery') + '&' + $.param({dataAccessId: id, outputType: "xls"}), 'CDA Export');
+  } else {
+    // Same query, we need to get the present parameter values and rebuild the table
+    var params = getParams();
+
+    params.dataAccessId = id;
+    params.outputType = "xls";
+
+    var url = document.location.href;
+    
+    var newWindow = window.open(url.replace('previewQuery', 'doQuery') + '&' + $.param(params), 'CDA Export');
+  }	
+};
+
+
 refreshParams = function(id) {
   $.getJSON("listParameters",{path:filename, dataAccessId: id},function(data){
     var placeholder = $('#parameterHolder');
