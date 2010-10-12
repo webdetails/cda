@@ -45,6 +45,7 @@ import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.utils.Util;
+import pt.webdetails.cda.CdaSessionFormulaContext;
 
 @SuppressWarnings("unchecked")
 public class CdaContentGenerator extends BaseContentGenerator
@@ -722,65 +723,5 @@ public class CdaContentGenerator extends BaseContentGenerator
 
 
   }
-
-  //allows access to session parameters within formulas
-  private class CdaSessionFormulaContext extends DefaultFormulaContext
-  {
-
-    Map<String, IParameterProvider> providers;
-    private static final String SECURITY_PREFIX = "security:";
-    private static final String SESSION_PREFIX = "session:";
-    private static final String SYSTEM_PREFIX = "system:";
-
-
-    CdaSessionFormulaContext(IPentahoSession session)
-    {
-      providers = new HashMap<String, IParameterProvider>();
-      if (session != null)
-      {
-        providers.put(SECURITY_PREFIX, new SecurityParameterProvider(session));
-        providers.put(SESSION_PREFIX, new PentahoSessionParameterProvider(session));
-      }
-      providers.put(SYSTEM_PREFIX, new SystemSettingsParameterProvider());
-    }
-
-
-    @Override
-    public Object resolveReference(final Object name)
-    {
-      if (name instanceof String)
-      {
-        String paramName = ((String) name).trim();
-        for (String prefix : providers.keySet())
-        {
-          if (paramName.startsWith(prefix))
-          {
-            paramName = paramName.substring(prefix.length());
-            Object value = providers.get(prefix).getParameter(paramName);
-            if (value instanceof JavaScriptResultSet)
-            {//needs special treatment, convert to array
-              JavaScriptResultSet resultSet = (JavaScriptResultSet) value;
-              return convertToArray(resultSet);
-            }
-            return value;
-          }
-        }
-      }
-      return super.resolveReference(name);
-    }
-
-
-    private Object[] convertToArray(final JavaScriptResultSet resultSet)
-    {
-      List result = new ArrayList();
-      for (int i = 0; i < resultSet.getRowCount(); i++)
-      {
-        for (int j = 0; j < resultSet.getColumnCount(); j++)
-        {
-          result.add(resultSet.getValueAt(i, j));
-        }
-      }
-      return result.toArray();
-    }
-  }
+  
 }

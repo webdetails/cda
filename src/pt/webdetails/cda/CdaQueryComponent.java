@@ -12,10 +12,15 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.commons.connection.memory.MemoryResultSet;
+import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 
+
+import pt.webdetails.cda.CdaSessionFormulaContext;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
+
 
 /**
  * This is a CDA Pojo Component that can be used in XActions or anywhere else.
@@ -80,6 +85,14 @@ public class CdaQueryComponent {
     final QueryOptions queryOptions = new QueryOptions();
 
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(file);
+    
+  //set a formula context for current session
+    IPentahoSession userSession = null;
+    userSession = PentahoSessionHolder.getSession();
+    if (userSession != null)
+    {
+      cdaSettings.setFormulaContext(new CdaSessionFormulaContext(userSession));
+    }
     
     final String CDA_PARAMS = "cdaParameterString";
     final String CDA_PARAM_SEPARATOR = ";";
