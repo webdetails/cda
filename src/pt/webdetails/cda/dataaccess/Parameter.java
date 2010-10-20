@@ -239,7 +239,11 @@ public class Parameter implements java.io.Serializable {
       if (formulaContext != null) formula.initialize(formulaContext);
       else formula.initialize(new DefaultFormulaContext());
       // evaluate
-      return formula.evaluate();
+      Object result = formula.evaluate();
+      if(result instanceof ArrayList){//TODO: this returns Object[] with no specific type
+          result = ((ArrayList) result).toArray();
+      }
+      return result;
     } catch (org.pentaho.reporting.libraries.formula.parser.ParseException e) {
       throw new InvalidParameterException("Unable to parse expression " + localValue, e);
     } catch (org.pentaho.reporting.libraries.formula.EvaluationException e) {

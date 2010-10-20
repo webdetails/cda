@@ -25,11 +25,8 @@
     <DataAccess id="1" connection="1" type="sql" access="public" cache="true" cacheDuration="5">
 		<Name>Sql Query on SampleData</Name>
         <Query>select distinct ${param} as inputParam from orderfact</Query>
-        <!-- All parameters are passed as string from the outside. Their
-		type is defined here. If needed, a conversion pattern must be specified
-
-		Supported types: String, Date, Integer, Numeric
-		-->
+				<!--for other security params:
+						http://wiki.pentaho.com/display/ServerDoc1x/04.+Using+Security+from+Action+Sequences-->
         <Parameters>
             <Parameter name="param" type="String" default="${[security:principalName]}" access="private"/>
         </Parameters>
