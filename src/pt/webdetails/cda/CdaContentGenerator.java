@@ -260,8 +260,10 @@ public class CdaContentGenerator extends BaseContentGenerator
     };
     for (Object obj : pathParams.getArrayParameter("sortBy", def))
     {
-      if (!((String) obj).equals("")) {
-      sortBy.add((String) obj);}
+      if (!((String) obj).equals(""))
+      {
+        sortBy.add((String) obj);
+      }
     }
     queryOptions.setSortBy(sortBy);
 
@@ -286,7 +288,11 @@ public class CdaContentGenerator extends BaseContentGenerator
     Exporter exporter = ExporterEngine.getInstance().getExporter(queryOptions.getOutputType(), queryOptions.getExtraSettings());
     String mimeType = exporter.getMimeType();
     String attachmentName = exporter.getAttachmentName();
-    setResponseHeaders(mimeType, attachmentName);
+
+    if (this.parameterProviders != null)
+    {
+      setResponseHeaders(mimeType, attachmentName);
+    }
 
 
     // Finally, pass the query to the engine
@@ -723,5 +729,4 @@ public class CdaContentGenerator extends BaseContentGenerator
 
 
   }
-  
 }
