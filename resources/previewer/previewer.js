@@ -145,7 +145,7 @@ toggleAdvanced = function(advanced){
     }
 
     $("#dialogInput").empty().append(contents);
-    $("p.dialogTitle .dialogToggle").html(advanced?"(basic)":"(advanced)").attr("href","javascript:toggleAdvanced("+!advanced+")");
+    $("p.dialogTitle .dialogToggle").html(advanced?"(advanced)":"(basic)").attr("href","javascript:toggleAdvanced("+!advanced+")");
 }
 
 updateCron = function() {
