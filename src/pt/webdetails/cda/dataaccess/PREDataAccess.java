@@ -8,6 +8,10 @@ import javax.swing.table.TableModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.DefaultReportEnvironment;
@@ -40,9 +44,11 @@ public abstract class PREDataAccess extends SimpleDataAccess
   private TableModel tableModel;
   private CachingDataFactory localDataFactory;
 
+
   public PREDataAccess()
   {
   }
+
 
   public PREDataAccess(final Element element)
   {
@@ -50,7 +56,8 @@ public abstract class PREDataAccess extends SimpleDataAccess
     super(element);
 
   }
-  
+
+
   /**
    * 
    * @param id
@@ -58,11 +65,14 @@ public abstract class PREDataAccess extends SimpleDataAccess
    * @param connectionId
    * @param query
    */
-  public PREDataAccess(String id, String name, String connectionId, String query){
-  	super(id, name, connectionId, query);
+  public PREDataAccess(String id, String name, String connectionId, String query)
+  {
+    super(id, name, connectionId, query);
   }
 
+
   public abstract DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException;
+
 
   @Override
   protected TableModel performRawQuery(final ParameterDataRow parameterDataRow) throws QueryException
@@ -91,6 +101,11 @@ public abstract class PREDataAccess extends SimpleDataAccess
       }
       else
       {
+        // Make sure we have the env. correctly inited
+        if (SolutionReposHelper.getSolutionRepositoryThreadVariable() == null && PentahoSystem.getObjectFactory().objectDefined(ISolutionRepository.class.getSimpleName()))
+        {
+          SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession()));
+        }
         environmentDataRow = new ReportEnvironmentDataRow(new PentahoReportEnvironment(configuration));
       }
 
@@ -114,11 +129,12 @@ public abstract class PREDataAccess extends SimpleDataAccess
     catch (ReportDataFactoryException e)
     {
       throw new QueryException("ReportDataFactoryException : " + e.getMessage()
-  				+ ((e.getParentThrowable() == null) ? "" : ("; Parent exception: " + e.getParentThrowable().getMessage())), e);
+              + ((e.getParentThrowable() == null) ? "" : ("; Parent exception: " + e.getParentThrowable().getMessage())), e);
     }
 
 
   }
+
 
   public void closeDataSource() throws QueryException
   {
@@ -141,20 +157,24 @@ public abstract class PREDataAccess extends SimpleDataAccess
     localDataFactory = null;
   }
 
+
   public TableModel getTableModel()
   {
     return tableModel;
   }
+
 
   public void setTableModel(final TableModel tableModel)
   {
     this.tableModel = tableModel;
   }
 
+
   public CachingDataFactory getLocalDataFactory()
   {
     return localDataFactory;
   }
+
 
   public void setLocalDataFactory(final CachingDataFactory localDataFactory)
   {
@@ -169,6 +189,7 @@ public abstract class PREDataAccess extends SimpleDataAccess
   return descriptor;
   }
    */
+
 
   @Override
   public ArrayList<PropertyDescriptor> getInterface()

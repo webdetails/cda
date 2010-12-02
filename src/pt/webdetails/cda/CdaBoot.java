@@ -14,6 +14,7 @@ import org.pentaho.reporting.libraries.base.versioning.ProjectInformation;
  */
 public class CdaBoot extends AbstractBoot
 {
+
   /**
    * The singleton instance of the Boot class.
    */
@@ -29,6 +30,7 @@ public class CdaBoot extends AbstractBoot
     projectInfo = CdaInfo.getInstance();
   }
 
+
   /**
    * Returns the singleton instance of the boot utility class.
    *
@@ -43,6 +45,7 @@ public class CdaBoot extends AbstractBoot
     return instance;
   }
 
+
   /**
    * Loads the configuration. This will be called exactly once.
    *
@@ -50,10 +53,10 @@ public class CdaBoot extends AbstractBoot
    */
   protected Configuration loadConfiguration()
   {
-    return createDefaultHierarchicalConfiguration
-        ("/pt/webdetails/cda/cda.properties",
+    return createDefaultHierarchicalConfiguration("/pt/webdetails/cda/cda.properties",
             "/cda.properties", true, CdaBoot.class);
   }
+
 
   /**
    * Performs the boot.
@@ -61,7 +64,10 @@ public class CdaBoot extends AbstractBoot
   protected void performBoot()
   {
     // any manual init work goes in here ...
+
+
   }
+
 
   /**
    * Returns the project info.
