@@ -5,9 +5,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import javax.swing.table.TableModel;
 
+import org.apache.axis2.databinding.types.xsd.Decimal;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -64,8 +68,14 @@ public class XmlExporter extends AbstractExporter
         final Element col = row.addElement("Col");
 
         final Object value = tableModel.getValueAt(rowIdx, colIdx);
-        if (value != null)
+        if (value instanceof Date)
         {
+          final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSzzzz");
+          col.setText(format.format(value));
+        }
+        else if (value != null)
+        {
+          // numbers can be safely converted via toString, as they use a well-defined format there
           col.setText(value.toString());
         }
         else{
