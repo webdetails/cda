@@ -9,6 +9,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import javax.swing.table.TableModel;
 
 import org.apache.axis2.databinding.types.xsd.Decimal;
@@ -57,6 +58,7 @@ public class XmlExporter extends AbstractExporter
 
     }
 
+    final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
     final Element resultSet = root.addElement("ResultSet");
     for (int rowIdx = 0; rowIdx < rowCount; rowIdx++)
     {
@@ -70,7 +72,6 @@ public class XmlExporter extends AbstractExporter
         final Object value = tableModel.getValueAt(rowIdx, colIdx);
         if (value instanceof Date)
         {
-          final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSzzzz");
           col.setText(format.format(value));
         }
         else if (value != null)
