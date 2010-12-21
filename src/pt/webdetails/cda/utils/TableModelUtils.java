@@ -74,7 +74,7 @@ public class TableModelUtils
     {
 
       ArrayList<Integer> newOutputIndexes = new ArrayList<Integer>();
-      for (int i = 0; i < t.getColumnCount() - 1; i++)
+      for (int i = 0; i < t.getColumnCount() ; i++)
       {
         if (!outputIndexes.contains(i))
         {
