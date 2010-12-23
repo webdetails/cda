@@ -48,7 +48,7 @@ public class CsvExporter extends AbstractKettleExporter
         "           </partitioning>\n" +
         "    <separator>" + this.separator + "</separator>\n" +
         "    <enclosure>&quot;</enclosure>\n" +
-        "    <enclosure_forced>N</enclosure_forced>\n" +
+        "    <enclosure_forced>Y</enclosure_forced>\n" +
         "    <header>Y</header>\n" +
         "    <footer>N</footer>\n" +
         "    <format>DOS</format>\n" +
