@@ -6,10 +6,13 @@ import javax.swing.table.TableModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.pentaho.platform.api.engine.ObjectFactoryException;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.BandedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DefaultCubeFileProvider;
+import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.MondrianConnectionProvider;
 import org.pentaho.reporting.platform.plugin.connection.PentahoCubeFileProvider;
 import org.pentaho.reporting.platform.plugin.connection.PentahoMondrianConnectionProvider;
 import pt.webdetails.cda.CdaBoot;
@@ -117,7 +120,11 @@ public class MdxDataAccess extends PREDataAccess
     else
     {
       mdxDataFactory.setCubeFileProvider(new PentahoCubeFileProvider(mondrianConnectionInfo.getCatalog()));
-      mdxDataFactory.setMondrianConnectionProvider(new PentahoMondrianConnectionProvider());
+      try{
+        mdxDataFactory.setMondrianConnectionProvider((MondrianConnectionProvider) PentahoSystem.getObjectFactory().get(PentahoMondrianConnectionProvider.class, "MondrianConnectionProvider", null));
+      } catch(ObjectFactoryException e){//couldn't get object
+        mdxDataFactory.setMondrianConnectionProvider(new PentahoMondrianConnectionProvider());
+      }
     }
 
     mdxDataFactory.setQuery("query", getQuery());

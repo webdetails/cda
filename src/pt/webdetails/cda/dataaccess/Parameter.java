@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
 import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 import org.pentaho.reporting.libraries.formula.Formula;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
@@ -23,7 +24,7 @@ public class Parameter implements java.io.Serializable {
 
   private static final long serialVersionUID = 1L;
   
-  final static String ARRAY_SEPERATOR = ";";
+  final static String DEFAULT_ARRAY_SEPERATOR = ";";
 
   private String name;
   private Type type;
@@ -31,6 +32,8 @@ public class Parameter implements java.io.Serializable {
   private String pattern;
   private Object value;
   private Access access = Access.PUBLIC;
+  
+  private String separator = DEFAULT_ARRAY_SEPERATOR;
   
   public enum Access {
   	PRIVATE("private"),
@@ -82,6 +85,18 @@ public class Parameter implements java.io.Serializable {
   	
   	public String toString(){
   		return name;
+  	}
+  	
+  	public boolean isArrayType(){
+  	  switch(this){
+  	    case STRING_ARRAY:
+  	    case INTEGER_ARRAY:
+  	    case NUMERIC_ARRAY:
+  	    case DATE_ARRAY:
+  	      return true;
+  	    default:
+  	      return false;
+  	  }
   	}
   	
     public static Type parse(String typeString) {// throws ParseException{ //TODO: -> valueOf
@@ -154,15 +169,12 @@ public class Parameter implements java.io.Serializable {
   public void inheritDefaults(Parameter defaultParameter){
     if(this.type == null) this.setType(defaultParameter.getType());
     if(this.type == Type.DATE || this.type == Type.DATE_ARRAY) this.setPattern(defaultParameter.getPattern());
+    this.setSeparator(defaultParameter.getSeparator());
   }
 
 
   public Object getValue() throws InvalidParameterException
   {
-    // This depends on the value
-    
-  //  final Object objectValue = value == null ? getDefaultValue() : value;
-    //final String localValue = getStringValue() == null ? getDefaultValue() : getStringValue();
     final Object objValue = value == null ? getDefaultValue() : value;
 
     if(objValue instanceof String){//may be a string or a parsed value
@@ -222,12 +234,11 @@ public class Parameter implements java.io.Serializable {
 
   private Object[] parseToArray(String arrayAsString, Type elementType) throws InvalidParameterException
   {    
-    String[] strArray = arrayAsString.split(ARRAY_SEPERATOR);
-    if(elementType == null || elementType == Type.STRING) return strArray;
+    CSVTokenizer tokenizer = new CSVTokenizer(arrayAsString, getSeparator());
     
     ArrayList<Object> result = new ArrayList<Object>();
-    for(String str : strArray){
-      result.add(getValueFromString(str, elementType));
+    while( tokenizer.hasMoreTokens()){
+      result.add(getValueFromString(tokenizer.nextToken(), elementType));
     }
     return result.toArray();
   }
@@ -300,6 +311,9 @@ public class Parameter implements java.io.Serializable {
   }
 
   public String getStringValue() {
+    String separator = getSeparator();
+    if(separator == null) separator = DEFAULT_ARRAY_SEPERATOR;
+      
     if (value == null) {
       if (getDefaultValue() != null) return getDefaultValue().toString();
       else return null;
@@ -313,7 +327,7 @@ public class Parameter implements java.io.Serializable {
           int i = 0;
           StringBuilder strBuild = new StringBuilder();
           for (Object o : arr) {
-            if (i++ > 0) strBuild.append(ARRAY_SEPERATOR);
+            if (i++ > 0) strBuild.append(separator);
             strBuild.append(o);
           }
           return strBuild.toString();
@@ -343,6 +357,13 @@ public class Parameter implements java.io.Serializable {
   	return this.access;
   }
   
+  public void setSeparator(String separator){
+    this.separator = separator;
+  }
+  public String getSeparator(){
+    if(this.separator == null) return DEFAULT_ARRAY_SEPERATOR;
+    else return this.separator;
+  }
   /**
    * For debugging purposes
    */

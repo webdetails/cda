@@ -61,7 +61,7 @@ public class CdaSessionFormulaContext extends DefaultFormulaContext
 
     private Object[] convertToArray(final JavaScriptResultSet resultSet)
     {
-      List result = new ArrayList();
+      List<Object> result = new ArrayList<Object>();
       for (int i = 0; i < resultSet.getRowCount(); i++)
       {
         for (int j = 0; j < resultSet.getColumnCount(); j++)

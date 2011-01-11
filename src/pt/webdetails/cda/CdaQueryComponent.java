@@ -14,6 +14,7 @@ import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.commons.connection.memory.MemoryResultSet;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
+import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
 
 
 import pt.webdetails.cda.CdaSessionFormulaContext;
@@ -121,42 +122,29 @@ public class CdaQueryComponent {
     //process parameter string "name1=value1;name2=value2"
     String cdaParamString = inputsGetString(CDA_PARAMS, null);
     if (cdaParamString != null && cdaParamString.trim().length() > 0) {
-      String escaped = CDA_PARAM_SEPARATOR+CDA_PARAM_SEPARATOR;
-      boolean hasEscaped = cdaParamString.indexOf(escaped) >= 0;
       
-      String[] cdaParams = cdaParamString.split(CDA_PARAM_SEPARATOR);
-      
-      //de-escape doubled separators
-      if(hasEscaped){ 
-        int j = -1;
-        List<String> newCdaParams = new ArrayList<String>();
-        for (int i = 0; i < cdaParams.length; i++) {
-          String cdaParam = cdaParams[i];
-          if(cdaParam.length() == 0) {//double separator causes this
-            if(j >= 0){//append with next to previous
-              newCdaParams.set(j, newCdaParams.get(j) + ";");
-            }
-            else newCdaParams.add(";");
-            
-            if(i+1 < cdaParams.length){
-              i++;
-              newCdaParams.set(j, newCdaParams.get(j) + cdaParams[i]);
-            }
-          }
-          else {
-            j++;
-            newCdaParams.add(cdaParam);
-          }
-        }
-        cdaParams = newCdaParams.toArray(new String[j+1]);
+      List<String> cdaParams = new ArrayList<String>();
+      //split to 'name=val' tokens
+      CSVTokenizer tokenizer = new CSVTokenizer(cdaParamString, CDA_PARAM_SEPARATOR);
+      while(tokenizer.hasMoreTokens()){
+        cdaParams.add(tokenizer.nextToken());
       }
       
-      for (int i = 0; i < cdaParams.length; i++){
-        String cdaParam = cdaParams[i];
-        String[] nameValue = cdaParam.split("=");
-        if (nameValue.length == 2) {
-          queryOptions.addParameter(nameValue[0], nameValue[1]);
+      //split '='
+      for(String nameValue : cdaParams){
+        int i = 0;
+        CSVTokenizer nameValSeparator = new CSVTokenizer(nameValue, "=");
+        String name=null, value=null;
+        while(nameValSeparator.hasMoreTokens()){
+          if(i++ == 0){
+            name = nameValSeparator.nextToken();
+          }
+          else {
+            value = nameValSeparator.nextToken();
+            break;
+          }
         }
+        if(name != null) queryOptions.addParameter(name, value);
       }
     }
     

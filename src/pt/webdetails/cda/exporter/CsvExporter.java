@@ -13,22 +13,45 @@ public class CsvExporter extends AbstractKettleExporter
 
   private static final Log logger = LogFactory.getLog(CsvExporter.class);
   private static final String DEFAULT_CSV_SEPARATOR_SETTING = ";";
+  private static final String DEFAULT_CSV_ENCLOSURE_SETTING = "&quot;";
   public static final String CSV_SEPARATOR_SETTING = "csvSeparator";
+  public static final String ATTACHMENT_NAME_SETTING = "attachmentName";
+  public static final String COLUMN_HEADERS_SETTING = "columnHeaders";
   private String separator;
 
-  public CsvExporter(HashMap <String,String> extraSettings)
-  {
-    if(extraSettings.containsKey(CSV_SEPARATOR_SETTING)){
+  private String enclosure;
+  private String attachmentName;
+  private String showColumnHeaders;
+  
+  public CsvExporter(HashMap<String, String> extraSettings) {
+    if (extraSettings.containsKey(CSV_SEPARATOR_SETTING)) {
       this.separator = extraSettings.get(CSV_SEPARATOR_SETTING);
-    }
-    else{
-      String _sep = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.exporter.csv.Separator");
-      this.separator = _sep == null?DEFAULT_CSV_SEPARATOR_SETTING:_sep;
-
+    } else {
+      String sep = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.exporter.csv.Separator");
+      this.separator = sep == null ? DEFAULT_CSV_SEPARATOR_SETTING : sep;
     }
 
-    logger.debug("Initialized CsvExporter with separator '"+ separator + "'");
-    
+    if (extraSettings.containsKey(ATTACHMENT_NAME_SETTING)) {
+      this.attachmentName = extraSettings.get(ATTACHMENT_NAME_SETTING);
+    } else {
+      this.attachmentName = "cda-export.csv";
+    }
+
+    if (extraSettings.containsKey(COLUMN_HEADERS_SETTING)) {
+      this.showColumnHeaders = extraSettings.get(COLUMN_HEADERS_SETTING).equalsIgnoreCase("false") ? "N" : "Y";
+    } else {
+      this.showColumnHeaders = "Y";
+    }   
+
+    String enc = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.exporter.csv.Enclosure");
+    this.enclosure = enc == null ? DEFAULT_CSV_ENCLOSURE_SETTING : enc;
+
+    logger.debug("Initialized CsvExporter with attachement filename '" + attachmentName + "'");
+    logger.debug("Initialized CsvExporter with enclosure '" + enclosure + "'");
+    logger.debug("Initialized CsvExporter with show columns '" + showColumnHeaders.toString() + "'");
+
+    logger.debug("Initialized CsvExporter with separator '" + separator + "'");
+
   }
 
   protected String getExportStepDefinition(final String name)
@@ -47,9 +70,9 @@ public class CsvExporter extends AbstractKettleExporter
         "           <schema_name/>\n" +
         "           </partitioning>\n" +
         "    <separator>" + this.separator + "</separator>\n" +
-        "    <enclosure>&quot;</enclosure>\n" +
+        "    <enclosure>" + this.enclosure + "</enclosure>\n" +
         "    <enclosure_forced>Y</enclosure_forced>\n" +
-        "    <header>Y</header>\n" +
+        "    <header>" + this.showColumnHeaders + "</header>\n" +
         "    <footer>N</footer>\n" +
         "    <format>DOS</format>\n" +
         "    <compression>None</compression>\n" +
@@ -100,7 +123,7 @@ public class CsvExporter extends AbstractKettleExporter
 
   public String getAttachmentName()
   {
-    return "cda-export.csv";
+    return this.attachmentName;
   }
 
   public String getType()

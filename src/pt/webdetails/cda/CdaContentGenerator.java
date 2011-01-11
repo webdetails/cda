@@ -10,9 +10,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,23 +19,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IMimeTypeListener;
 import org.pentaho.platform.api.engine.IParameterProvider;
-import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
-import org.pentaho.platform.engine.core.solution.PentahoSessionParameterProvider;
-import org.pentaho.platform.engine.core.solution.SystemSettingsParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.security.SecurityParameterProvider;
 import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
-import org.pentaho.platform.plugin.services.connections.javascript.JavaScriptResultSet;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
-import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 
 import pt.webdetails.cda.cache.CacheManager;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
+import pt.webdetails.cda.dataaccess.Parameter;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.exporter.Exporter;
 import pt.webdetails.cda.exporter.ExporterEngine;
@@ -63,6 +56,11 @@ public class CdaContentGenerator extends BaseContentGenerator
   private static final String CACHEMAN_SOURCE = "/cachemanager/cache.html";
   private static final int DEFAULT_PAGE_SIZE = 20;
   private static final int DEFAULT_START_PAGE = 0;
+  
+  private static final String PREFIX_PARAMETER = "param";
+  private static final String PREFIX_SETTING = "setting";
+  
+  private static final String FORCE_ARRAY_SETTING = PREFIX_SETTING + "ForceArray";
 
 
   public CdaContentGenerator()
@@ -271,17 +269,30 @@ public class CdaContentGenerator extends BaseContentGenerator
     // ... and the query parameters
     // We identify any pathParams starting with "param" as query parameters
     final Iterator<String> params = (Iterator<String>) pathParams.getParameterNames();
+    String[] paramsToForceArray = null;
     while (params.hasNext())
     {
       final String param = params.next();
 
-      if (param.startsWith("param"))
+      if (param.startsWith(PREFIX_PARAMETER))
       {
-        queryOptions.addParameter(param.substring(5), pathParams.getParameter(param));
+        queryOptions.addParameter(param.substring(PREFIX_PARAMETER.length()), pathParams.getParameter(param));
       }
-      else if (param.startsWith("setting"))
+      else if (param.equals(FORCE_ARRAY_SETTING)){//special case when single string value needs to be a string array
+        Object val = pathParams.getParameter(FORCE_ARRAY_SETTING);
+        if(val instanceof String) paramsToForceArray = new String[]{ (String) val };
+        else paramsToForceArray = (String[]) val;
+      }
+      else if (param.startsWith(PREFIX_SETTING))
       {
-        queryOptions.addSetting(param.substring(7), pathParams.getStringParameter(param, ""));
+        queryOptions.addSetting(param.substring(PREFIX_SETTING.length()), pathParams.getStringParameter(param, ""));
+      }
+    }
+    
+    if(paramsToForceArray != null) {
+      for (String paramName : paramsToForceArray) {// treat special case
+        Parameter param = queryOptions.getParameter(paramName);
+        param.setValue(new String[] { param.getStringValue() });
       }
     }
 
@@ -293,8 +304,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     {
       setResponseHeaders(mimeType, attachmentName);
     }
-
-
+    
     // Finally, pass the query to the engine
     engine.doQuery(out, cdaSettings, queryOptions);
 
@@ -312,7 +322,7 @@ public class CdaContentGenerator extends BaseContentGenerator
       response.setHeader("content-disposition", "attachment; filename=" + attachmentName);
     }
 
-    // We can't cache this requests
+    // We can't cache this request
     response.setHeader("Cache-Control", "max-age=0, no-store");
   }
 

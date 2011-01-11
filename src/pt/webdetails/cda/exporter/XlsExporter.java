@@ -11,10 +11,18 @@ public class XlsExporter extends AbstractKettleExporter
 {
 
   private static final Log logger = LogFactory.getLog(XlsExporter.class);
-
+  public static final String ATTACHMENT_NAME_SETTING = "attachmentName";
+  private String attachmentName;
 
   public XlsExporter(HashMap <String,String> extraSettings)
   {
+    
+    if (extraSettings.containsKey(ATTACHMENT_NAME_SETTING)) {
+      this.attachmentName = extraSettings.get(ATTACHMENT_NAME_SETTING);
+    } else {
+      this.attachmentName = "cda-export." + getType();
+    }
+    
   }
 
   protected String getExportStepDefinition(String name)
@@ -88,7 +96,7 @@ public class XlsExporter extends AbstractKettleExporter
 
     public String getAttachmentName()
   {
-    return "cda-export.xls";
+      return this.attachmentName;
   }
 
 
