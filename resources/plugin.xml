@@ -33,7 +33,7 @@
 		</content-type> 
 	</content-types>
 
-	<content-generator scope="local" id="cda" type="dataAccess" url="">
+	<content-generator scope="local" id="cda" type="cda" url="">
 		<classname>pt.webdetails.cda.CdaContentGenerator</classname>
 		<title>CDA</title>
 	</content-generator>
