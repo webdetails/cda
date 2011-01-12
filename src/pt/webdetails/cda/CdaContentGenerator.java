@@ -60,7 +60,6 @@ public class CdaContentGenerator extends BaseContentGenerator
   private static final String PREFIX_PARAMETER = "param";
   private static final String PREFIX_SETTING = "setting";
   
-  private static final String FORCE_ARRAY_SETTING = PREFIX_SETTING + "ForceArray";
 
 
   public CdaContentGenerator()
@@ -269,7 +268,6 @@ public class CdaContentGenerator extends BaseContentGenerator
     // ... and the query parameters
     // We identify any pathParams starting with "param" as query parameters
     final Iterator<String> params = (Iterator<String>) pathParams.getParameterNames();
-    String[] paramsToForceArray = null;
     while (params.hasNext())
     {
       final String param = params.next();
@@ -278,21 +276,9 @@ public class CdaContentGenerator extends BaseContentGenerator
       {
         queryOptions.addParameter(param.substring(PREFIX_PARAMETER.length()), pathParams.getParameter(param));
       }
-      else if (param.equals(FORCE_ARRAY_SETTING)){//special case when single string value needs to be a string array
-        Object val = pathParams.getParameter(FORCE_ARRAY_SETTING);
-        if(val instanceof String) paramsToForceArray = new String[]{ (String) val };
-        else paramsToForceArray = (String[]) val;
-      }
       else if (param.startsWith(PREFIX_SETTING))
       {
         queryOptions.addSetting(param.substring(PREFIX_SETTING.length()), pathParams.getStringParameter(param, ""));
-      }
-    }
-    
-    if(paramsToForceArray != null) {
-      for (String paramName : paramsToForceArray) {// treat special case
-        Parameter param = queryOptions.getParameter(paramName);
-        param.setValue(new String[] { param.getStringValue() });
       }
     }
 
