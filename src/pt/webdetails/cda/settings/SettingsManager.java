@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.lang.UnsupportedOperationException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.collections.map.LRUMap;
@@ -17,19 +17,21 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.DOMReader;
+import org.pentaho.platform.api.engine.IPentahoAclEntry;
+import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.ISolutionFile;
+import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.reporting.libraries.resourceloader.Resource;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 import org.pentaho.reporting.platform.plugin.RepositoryResourceLoader;
+import org.slf4j.helpers.MessageFormatter;
 import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cda.connections.Connection;
-import pt.webdetails.cda.connections.ConnectionCatalog;
-import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
-import pt.webdetails.cda.dataaccess.DataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
 
@@ -53,6 +55,9 @@ public class SettingsManager {
   private static final Log logger = LogFactory.getLog(SettingsManager.class);
   private static SettingsManager _instance;
   private LRUMap settingsCache;
+  private Map<String, Long> settingsTimestamps;
+  
+  private static final int MAX_SETTINGS_CACHE_SIZE = 50;
 
   /**
    * This class controls how the different .cda files will be read
@@ -64,12 +69,13 @@ public class SettingsManager {
 
     logger.debug("Initializing SettingsManager.");
 
-    settingsCache = new LRUMap(50);
+    settingsCache = new LRUMap(MAX_SETTINGS_CACHE_SIZE);
+    settingsTimestamps = new HashMap<String, Long>();
 
   }
 
   /**
-   * @param id The identifier for this settings file.
+   * @param id The identifier for this settings file (path to file).
    * @return
    * @throws pt.webdetails.cda.dataaccess.UnsupportedDataAccessException
    *
@@ -82,7 +88,23 @@ public class SettingsManager {
     // Do we have this on cache?
 
     if (settingsCache.containsKey(id)) {
-      return (CdaSettings) settingsCache.get(id);
+      CdaSettings cachedCda = (CdaSettings) settingsCache.get(id);
+      
+      if(!settingsTimestamps.containsKey(id)){
+       //something went very wrong
+        logger.error(MessageFormatter.format("No cache timestamp found for item {0}, cache bypassed.", id));
+      }
+      else {
+        // Is cache up to date?
+        long cachedTime = settingsTimestamps.get(id);
+        Long savedFileTime = getLastSaveTime(id);
+        
+        if (savedFileTime != null && //don't cache on-the-fly items 
+            savedFileTime <= cachedTime){
+          // Up-to-date, use cache
+          return cachedCda; 
+        }
+      }
     }
 
     try {
@@ -103,12 +125,46 @@ public class SettingsManager {
       final Document doc = saxReader.read(document);
 
       final CdaSettings settings = new CdaSettings(doc, id, resource.getSource());
-      settingsCache.put(id, settings);
+      addToCache(settings);
+      
       return settings;
     } catch (ResourceException re) {
       throw new UnsupportedDataAccessException("Failed: ResourceException", re);
     }
 
+  }
+
+  /**
+   * Returns time of last save if id is a file.
+   * @param id CdaSettings ID
+   * @param savedFileTime 
+   * @return null if not a file
+   */
+  private Long getLastSaveTime(final String id) {
+    //check if it's a saved file and get its timestamp
+    if(CdaEngine.getInstance().isStandalone()) {
+      File cdaFile = new File(id);
+      if(cdaFile.exists()){
+        return cdaFile.lastModified();
+      }
+    }
+    else {
+      IPentahoSession session = PentahoSessionHolder.getSession();
+      final ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, session);
+      ISolutionFile savedCda = solutionRepository.getSolutionFile(id, IPentahoAclEntry.PERM_NOTHING);
+      if(savedCda != null) return savedCda.getLastModified();
+    }
+    return null;
+  }
+  
+  /**
+   * (use in synchronized methods)
+   * @param settings
+   */
+  private void addToCache(CdaSettings settings){
+    String id = settings.getId();
+    settingsCache.put(id, settings);
+    settingsTimestamps.put(id, System.currentTimeMillis());
   }
 
   /**
@@ -122,14 +178,16 @@ public class SettingsManager {
     if (settingsCache.containsKey(id)) {
       settingsCache.remove(id);
     }
-
+    if(settingsTimestamps.containsKey(id)){
+      settingsTimestamps.remove(id);
+    }
   }
 
   public synchronized void clearCache() {
 
     logger.info("Cleaning CDA settings cache");
     settingsCache.clear();
-
+    settingsTimestamps.clear();
   }
 
   public static synchronized SettingsManager getInstance() {
@@ -142,8 +200,8 @@ public class SettingsManager {
   }
 
   public DataAccessConnectionDescriptor[] getDataAccessDescriptors(boolean refreshCache) throws Exception {
-    Method getDescriptors;
-    Method getConnectionType;
+//    Method getDescriptors;
+//    Method getConnectionType;
     ArrayList<DataAccessConnectionDescriptor> descriptors = new ArrayList<DataAccessConnectionDescriptor>();
     // First we need a list of all the data accesses. We're getting that from a .properties file, as a comma-separated array.
     final File file = new File(PentahoSystem.getApplicationContext().getSolutionPath("system/cda/resources/components.properties"));

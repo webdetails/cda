@@ -32,7 +32,7 @@ public class Query implements Serializable
   private long id;
   private String cdaFile;
   private String dataAccessId;
-  private List parameters;
+  private List<CachedParam> parameters;
   private Double timeElapsed;
   private int hitCount, missCount;
 
@@ -53,7 +53,7 @@ public class Query implements Serializable
     if (json.has("parameters"))
     {
       JSONArray params = json.getJSONArray("parameters");
-      this.parameters = new ArrayList();
+      this.parameters = new ArrayList<CachedParam>();
       for (int i = 0; i < params.length(); i++)
       {
         this.parameters.add(new CachedParam((JSONObject) params.get(i)));
@@ -122,13 +122,13 @@ public class Query implements Serializable
   }
 
 
-  public List getParameters()
+  public List<CachedParam> getParameters()
   {
     return parameters;
   }
 
 
-  public void setParameters(List parameters)
+  public void setParameters(List<CachedParam> parameters)
   {
     this.parameters = parameters;
   }
@@ -138,7 +138,7 @@ public class Query implements Serializable
   {
     if (parameters == null)
     {
-      this.parameters = new ArrayList();
+      this.parameters = new ArrayList<CachedParam>();
     }
     this.parameters.add(p);
   }
@@ -163,9 +163,8 @@ public class Query implements Serializable
     JSONObject params = new JSONObject();
     try
     {
-      for (Object o : getParameters())
+      for (CachedParam param : getParameters())
       {
-        CachedParam param = (CachedParam) o;
         params.put(param.getName(), param.getValue());
       }
     }
