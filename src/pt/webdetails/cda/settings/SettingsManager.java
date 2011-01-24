@@ -28,7 +28,7 @@ import org.pentaho.reporting.libraries.resourceloader.ResourceException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 import org.pentaho.reporting.platform.plugin.RepositoryResourceLoader;
-import org.slf4j.helpers.MessageFormatter;
+import java.text.MessageFormat;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
@@ -92,7 +92,7 @@ public class SettingsManager {
       
       if(!settingsTimestamps.containsKey(id)){
        //something went very wrong
-        logger.error(MessageFormatter.format("No cache timestamp found for item {0}, cache bypassed.", id));
+        logger.error(MessageFormat.format("No cache timestamp found for item {0}, cache bypassed.", id));
       }
       else {
         // Is cache up to date?
