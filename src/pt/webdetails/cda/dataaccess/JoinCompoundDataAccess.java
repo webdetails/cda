@@ -14,6 +14,8 @@ import javax.swing.table.TableModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.pentaho.di.core.util.StringUtil;
+
 import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
@@ -34,6 +36,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
 
   private static final Log logger = LogFactory.getLog(JoinCompoundDataAccess.class);
   private static final String TYPE = "join";
+
   private String leftId;
   private String rightId;
   private String[] leftKeys;
@@ -41,6 +44,9 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   private ExecutorService executorService = Executors.newCachedThreadPool();
   private Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
 
+  private static final long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
+  private static TimeUnit DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT = TimeUnit.SECONDS;
+  
   public JoinCompoundDataAccess() {
   }
 
@@ -176,8 +182,11 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   }
 
   public void startRowProduction() {
-    long timeout = Long.parseLong(CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout"));
-    TimeUnit unit = TimeUnit.valueOf(CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit"));
+    
+    String timeoutStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout");
+    long timeout = StringUtil.isEmpty(timeoutStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
+    String unitStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
+    TimeUnit unit = StringUtil.isEmpty(unitStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
     startRowProduction(timeout, unit);
   }
 

@@ -21,6 +21,8 @@ import javax.swing.table.TableModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.exception.KettleException;
+import org.pentaho.di.core.util.StringUtil;
+
 import pt.webdetails.cda.CdaBoot;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig;
@@ -45,12 +47,17 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
 
   private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmssZ");
   private String filename;
+  
+  private static long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
+  private static TimeUnit DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT = TimeUnit.SECONDS;
 
 
   public void startRowProduction()
   {
-    long timeout = Long.parseLong(CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout"));
-    TimeUnit unit = TimeUnit.valueOf(CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit"));
+    String timeoutStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout");
+    long timeout = StringUtil.isEmpty(timeoutStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
+    String unitStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
+    TimeUnit unit = StringUtil.isEmpty(unitStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
     startRowProduction(timeout, unit);
   }
 
@@ -80,13 +87,11 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
 
   public void export(final OutputStream out, final TableModel tableModel) throws ExporterException
   {
-
     TableModel output = null;
     inputCallables.clear();
 
     try
     {
-
 
       final DynamicTransMetaConfig transMetaConfig = new DynamicTransMetaConfig(DynamicTransMetaConfig.Type.EMPTY, "Exporter", null, null);
       final DynamicTransConfig transConfig = new DynamicTransConfig();
@@ -129,10 +134,8 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
 
   protected String getFileName()
   {
-
     filename = "pentaho-cda-" + getType() + "-" + dateFormat.format(Calendar.getInstance().getTime()) + "-" + UUID.randomUUID().toString();
     return filename;
-
   }
 
 
