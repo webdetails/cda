@@ -8,6 +8,7 @@ import javax.swing.table.TableModel;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import pt.webdetails.cda.utils.MetadataTableModel;
 
 /**
  * JsonExporter
@@ -19,7 +20,7 @@ import org.json.JSONObject;
 public class JsonExporter extends AbstractExporter
 {
 
-  public JsonExporter(HashMap <String,String> extraSettings)
+  public JsonExporter(HashMap<String, String> extraSettings)
   {
     super();
   }
@@ -33,7 +34,7 @@ public class JsonExporter extends AbstractExporter
       JSONObject json = new JSONObject();
 
       // Generate metadata
-
+      final JSONObject queryInfo = new JSONObject();
       final JSONArray metadataArray = new JSONArray();
 
       final int columnCount = tableModel.getColumnCount();
@@ -49,6 +50,10 @@ public class JsonExporter extends AbstractExporter
       }
       json.put("metadata", metadataArray);
 
+      if (tableModel instanceof MetadataTableModel)
+      {
+        json.put("queryInfo", ((MetadataTableModel)tableModel).getAllMetadata());
+      }
       final JSONArray valuesArray = new JSONArray();
       for (int rowIdx = 0; rowIdx < rowCount; rowIdx++)
       {
@@ -57,7 +62,7 @@ public class JsonExporter extends AbstractExporter
         valuesArray.put(rowArray);
         for (int colIdx = 0; colIdx < columnCount; colIdx++)
         {
-          rowArray.put(tableModel.getValueAt(rowIdx,colIdx));
+          rowArray.put(tableModel.getValueAt(rowIdx, colIdx));
         }
       }
       json.put("resultset", valuesArray);
@@ -79,6 +84,7 @@ public class JsonExporter extends AbstractExporter
 
 
   }
+
 
   public String getMimeType()
   {

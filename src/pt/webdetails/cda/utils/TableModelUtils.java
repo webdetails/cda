@@ -61,12 +61,13 @@ public class TableModelUtils
 
     // First we need to check if there's nothing to do.
     ArrayList<Integer> outputIndexes = dataAccess.getOutputs();
+    /*
     if (queryOptions.isPaginate() == false && outputIndexes.isEmpty() && queryOptions.getSortBy().isEmpty())
     {
-      // No, the original one is good enough
-      return t;
+    // No, the original one is good enough
+    return t;
     }
-
+     */
     // 2
     // If output mode == exclude, we need to translate the excluded outputColuns
     // into included ones
@@ -74,7 +75,7 @@ public class TableModelUtils
     {
 
       ArrayList<Integer> newOutputIndexes = new ArrayList<Integer>();
-      for (int i = 0; i < t.getColumnCount() ; i++)
+      for (int i = 0; i < t.getColumnCount(); i++)
       {
         if (!outputIndexes.contains(i))
         {
@@ -115,7 +116,7 @@ public class TableModelUtils
         for (int j = 0; j < outputIndexes.size(); j++)
         {
           final int outputIndex = outputIndexes.get(j);
-          typedTableModel.setValueAt(t.getValueAt(r + queryOptions.getPageStart(), outputIndex), r, j);
+          typedTableModel.setValueAt(t.getValueAt(r, outputIndex), r, j);
         }
       }
       t = typedTableModel;
@@ -132,8 +133,29 @@ public class TableModelUtils
     }
 
 
+    // Create a metadata-aware table model
+
+    final Class[] colTypes = new Class[t.getColumnCount()];
+    final String[] colNames = new String[t.getColumnCount()];
+
+    for (int i = 0; i < t.getColumnCount(); i++)
+    {
+      colTypes[i] = t.getColumnClass(i);
+      colNames[i] = t.getColumnName(i);
+    }
+
+    final int rowCount = t.getRowCount();
+    MetadataTableModel result = new MetadataTableModel(colNames, colTypes, rowCount);
+    result.setMetadata("totalRows", rowCount);
+    for (int r = 0; r < rowCount; r++)
+    {
+      for (int j = 0; j < t.getColumnCount(); j++)
+      {
+        result.setValueAt(t.getValueAt(r, j), r, j);
+      }
+    }
     // Paginate
-    return paginateTableModel(t, queryOptions);
+    return paginateTableModel(result, queryOptions);
 
 
   }
@@ -151,8 +173,8 @@ public class TableModelUtils
     for (int i = 0; i < t.getColumnCount(); i++)
     {
       String colName = t.getColumnName(i);
-      if (!colName.startsWith("::table-by-index::") && 
-		  !colName.startsWith("::column::"))
+      if (!colName.startsWith("::table-by-index::")
+              && !colName.startsWith("::column::"))
       {
         namedColumns.add(colName);
         namedColumnsClasses.add(t.getColumnClass(i));
@@ -323,7 +345,7 @@ public class TableModelUtils
   }
 
 
-  private TableModel paginateTableModel(TableModel t, QueryOptions queryOptions)
+  private TableModel paginateTableModel(MetadataTableModel t, QueryOptions queryOptions)
   {
 
     if (!queryOptions.isPaginate() || (queryOptions.getPageSize() == 0 && queryOptions.getPageStart() == 0))
@@ -345,15 +367,19 @@ public class TableModelUtils
       colNames[i] = t.getColumnName(i);
     }
 
-    final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
+    final MetadataTableModel resultTableModel = new MetadataTableModel(colNames, colTypes, rowCount, t.getAllMetadata());
+    resultTableModel.setMetadata("pageSize", queryOptions.getPageSize());
+    resultTableModel.setMetadata("pageStart", queryOptions.getPageStart());
+
     for (int r = 0; r < rowCount; r++)
     {
       for (int j = 0; j < t.getColumnCount(); j++)
       {
-        typedTableModel.setValueAt(t.getValueAt(r + queryOptions.getPageStart(), j), r, j);
+        resultTableModel.setValueAt(t.getValueAt(r + queryOptions.getPageStart(), j), r, j);
       }
     }
-    return typedTableModel;
+
+    return resultTableModel;
 
 
   }
