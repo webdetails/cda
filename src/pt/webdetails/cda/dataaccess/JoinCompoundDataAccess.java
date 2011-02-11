@@ -72,8 +72,12 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     inputCallables.clear();
 
     try {
-      final TableModel tableModelA = this.getCdaSettings().getDataAccess(leftId).doQuery(queryOptions);
-      final TableModel tableModelB = this.getCdaSettings().getDataAccess(rightId).doQuery(queryOptions);
+      QueryOptions croppedOptions = (QueryOptions) queryOptions.clone();
+      croppedOptions.setSortBy(new ArrayList<String>());
+      croppedOptions.setPageSize(0);
+      croppedOptions.setPageStart(0);
+      final TableModel tableModelA = this.getCdaSettings().getDataAccess(leftId).doQuery(croppedOptions);
+      final TableModel tableModelB = this.getCdaSettings().getDataAccess(rightId).doQuery(croppedOptions);
 
 
       String[] leftColumnNames = new String[leftKeys.length];

@@ -12,7 +12,7 @@ import pt.webdetails.cda.exporter.ExporterEngine;
  * Date: Feb 4, 2010
  * Time: 5:25:53 PM
  */
-public class QueryOptions
+public class QueryOptions implements Cloneable
 {
 
   private String dataAccessId;
@@ -24,6 +24,7 @@ public class QueryOptions
   private HashMap<String, String> extraSettings;
   private String outputType;
   private boolean cacheBypass;
+
 
   public QueryOptions()
   {
@@ -37,60 +38,72 @@ public class QueryOptions
     cacheBypass = false;
   }
 
+
   public boolean isPaginate()
   {
     return paginate;
   }
+
 
   public void setPaginate(final boolean paginate)
   {
     this.paginate = paginate;
   }
 
+
   public int getPageSize()
   {
     return pageSize;
   }
+
 
   public void setPageSize(final int pageSize)
   {
     this.pageSize = pageSize;
   }
 
+
   public int getPageStart()
   {
     return pageStart;
   }
+
 
   public void setPageStart(final int pageStart)
   {
     this.pageStart = pageStart;
   }
 
+
   public ArrayList<String> getSortBy()
   {
     return sortBy;
   }
+
 
   public void setSortBy(final ArrayList<String> sortBy)
   {
     this.sortBy = sortBy;
   }
 
+
   public ArrayList<Parameter> getParameters()
   {
     return parameters;
   }
+
 
   public String getDataAccessId()
   {
     return dataAccessId;
   }
 
+
   public void setDataAccessId(final String dataAccessId)
   {
     this.dataAccessId = dataAccessId;
   }
+
 
   public void addParameter(final String name, final Object value)
   {
@@ -99,6 +112,7 @@ public class QueryOptions
     parameters.add(p);
 
   }
+
 
   public Parameter getParameter(final String name)
   {
@@ -114,46 +128,58 @@ public class QueryOptions
     return null;
 
   }
-  
+
+
   /**
    * Substitute existing parameter's value, or add if not there.
    */
-  public void setParameter(final String name, final String value){
-  	for(Parameter param : parameters){
-  		if(param.getName().equals(name)){
-  			param.setStringValue(value);
-  			return;
-  		}
-  	}
-  	//not found
-  	addParameter(name, value);
+  public void setParameter(final String name, final String value)
+  {
+    for (Parameter param : parameters)
+    {
+      if (param.getName().equals(name))
+      {
+        param.setStringValue(value);
+        return;
+      }
+    }
+    //not found
+    addParameter(name, value);
   }
+
 
   public String getOutputType()
   {
     return outputType;
   }
 
+
   public void setOutputType(final String outputType)
   {
     this.outputType = outputType;
   }
-  
-  public void setOutputType(final ExporterEngine.OutputType outputType){
-  	this.outputType = outputType.toString();
+
+
+  public void setOutputType(final ExporterEngine.OutputType outputType)
+  {
+    this.outputType = outputType.toString();
   }
+
 
   public void addSetting(String setting, String value)
   {
     extraSettings.put(setting, value);
   }
 
+
   public String getSetting(String setting)
   {
     return extraSettings.get(setting);
   }
 
-  public HashMap<String,String> getExtraSettings(){
+
+  public HashMap<String, String> getExtraSettings()
+  {
     return extraSettings;
   }
 
@@ -168,5 +194,12 @@ public class QueryOptions
   {
     this.cacheBypass = cacheBypass;
   }
+
+
+  @Override
+ public Object clone() throws CloneNotSupportedException {
+    return super.clone();
+  }
+
 
 }

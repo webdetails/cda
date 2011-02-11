@@ -18,17 +18,22 @@ import pt.webdetails.cda.utils.TableModelUtils;
  * Date: Mar 9, 2010
  * Time: 1:13:11 PM
  */
-public class UnionCompoundDataAccess extends CompoundDataAccess {
+public class UnionCompoundDataAccess extends CompoundDataAccess
+{
 
   private static final Log logger = LogFactory.getLog(UnionCompoundDataAccess.class);
   private static final String TYPE = "union";
   private String topId;
   private String rightId;
 
-  public UnionCompoundDataAccess() {
+
+  public UnionCompoundDataAccess()
+  {
   }
 
-  public UnionCompoundDataAccess(final Element element) {
+
+  public UnionCompoundDataAccess(final Element element)
+  {
     super(element);
 
     Element top = (Element) element.selectSingleNode("Top");
@@ -39,34 +44,52 @@ public class UnionCompoundDataAccess extends CompoundDataAccess {
 
   }
 
-  public String getType() {
+
+  public String getType()
+  {
     return TYPE;
   }
 
-  protected TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException {
+
+  protected TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException
+  {
 
 
-    try {
-
+    try
+    {
+      QueryOptions croppedOptions = (QueryOptions) queryOptions.clone();
+      croppedOptions.setSortBy(new ArrayList<String>());
+      croppedOptions.setPageSize(0);
+      croppedOptions.setPageStart(0);
       final TableModel tableModelA = this.getCdaSettings().getDataAccess(topId).doQuery(queryOptions);
       final TableModel tableModelB = this.getCdaSettings().getDataAccess(rightId).doQuery(queryOptions);
 
       return TableModelUtils.getInstance().appendTableModel(tableModelA, tableModelB);
 
-    } catch (UnknownDataAccessException e) {
+    }
+    catch (CloneNotSupportedException e)
+    {
+     throw new QueryException("Couldn't clone settings ", e);
+    }
+    catch (UnknownDataAccessException e)
+    {
       throw new QueryException("Unknown Data access in CompoundDataAccess ", e);
     }
 
 
   }
 
+
   @Override
-  public ConnectionType getConnectionType() {
+  public ConnectionType getConnectionType()
+  {
     return ConnectionType.NONE;
   }
 
+
   @Override
-  public ArrayList<PropertyDescriptor> getInterface() {
+  public ArrayList<PropertyDescriptor> getInterface()
+  {
     ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
     properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
     properties.add(new PropertyDescriptor("top", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
