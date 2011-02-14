@@ -17,7 +17,6 @@ public class DataAccessConnectionDescriptor {
 
   private static final Log logger = LogFactory.getLog(SettingsManager.class);
   private String name;
-  private String dataAccessType;
   private Connection conn;
   private AbstractDataAccess dataAccess;
 
@@ -95,7 +94,6 @@ public class DataAccessConnectionDescriptor {
     AbstractDataAccess sample = (AbstractDataAccess) dataAccess.newInstance();
     Connection[] conns = sample.getAvailableConnections();
     if (conns.length > 0) {
-      ArrayList<PropertyDescriptor> props = sample.getInterface();
       for (Connection conn : conns) {
         try {
           String name = sample.getType() + (!(conn.getGenericType().equals(ConnectionType.NONE)) ? ("_" + conn.getType()) : "");

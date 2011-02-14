@@ -9,7 +9,6 @@ import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.Co
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.JndiConnectionProvider;
 import org.pentaho.reporting.platform.plugin.connection.PentahoJndiDatasourceConnectionProvider;
 import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cda.connections.AbstractConnection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.utils.Util;

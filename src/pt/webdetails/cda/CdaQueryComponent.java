@@ -11,9 +11,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.memory.MemoryMetaData;
-import org.pentaho.commons.connection.memory.MemoryResultSet;
+//import org.pentaho.commons.connection.memory.MemoryResultSet;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
+import org.pentaho.platform.plugin.services.connections.javascript.JavaScriptResultSet;
 import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
 
 
@@ -82,7 +83,7 @@ public class CdaQueryComponent {
   }
   
   public boolean execute() throws Exception {
-    final CdaEngine engine = CdaEngine.getInstance();
+
     final QueryOptions queryOptions = new QueryOptions();
 
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(file);
@@ -172,15 +173,17 @@ public class CdaQueryComponent {
       columnNames.add(tableModel.getColumnName(i));
     }
     MemoryMetaData metadata = new MemoryMetaData(columnNames);
-    MemoryResultSet memResultSet = new MemoryResultSet(metadata);
+    
+    JavaScriptResultSet resultSet = new JavaScriptResultSet();
+    resultSet.setMetaData(metadata);
     for (int i = 0; i < tableModel.getRowCount(); i++) {
       Object row[] = new Object[tableModel.getColumnCount()];
       for (int j = 0; j < tableModel.getColumnCount(); j++) {
         row[j] = tableModel.getValueAt(i, j);
       }
-      memResultSet.addRow(row);
+      resultSet.addRow(row);
     }
-    return memResultSet;
+    return resultSet;
   }
   
   public IPentahoResultSet getResultSet() {

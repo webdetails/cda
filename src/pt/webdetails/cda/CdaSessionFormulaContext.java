@@ -22,7 +22,7 @@ public class CdaSessionFormulaContext extends DefaultFormulaContext
     private static final String SYSTEM_PREFIX = "system:";
 
 
-    CdaSessionFormulaContext(IPentahoSession session)
+    public CdaSessionFormulaContext(IPentahoSession session)
     {
       providers = new HashMap<String, IParameterProvider>();
       if (session != null)

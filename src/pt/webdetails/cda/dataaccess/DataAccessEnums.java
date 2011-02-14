@@ -1,5 +1,6 @@
 package pt.webdetails.cda.dataaccess;
 
+
 public class DataAccessEnums {
 
 
@@ -13,5 +14,73 @@ public class DataAccessEnums {
     PRIVATE,
     PUBLIC
   }
-
+  
+  /**
+   * DataAccess instanciation from type.
+   */
+  public enum DataAccessInstanceType {
+    
+    DENORMALIZED_MDX("denormalizedMdx"),
+    DENORMALIZED_OLAP4J("denormalizedOlap4j"),
+    JOIN("join"),
+    KETTLE("kettle"),
+    MDX("mdx"),
+    MQL("mql"),
+    OLAP4J("olap4j"),
+    REFLECTION("reflection"),
+    SCRIPTABLE("scriptable"),
+    SQL("sql"),
+    UNION("union"),
+    XPATH("xPath");
+    
+    private String type;
+    public String getType() { return this.type; }
+    DataAccessInstanceType(String type){
+      this.type = type;
+    }
+    
+    public static DataAccessInstanceType parseType(String type){
+      for (DataAccessInstanceType dataAccess : DataAccessInstanceType.values()) {
+        if (dataAccess.getType().equals(type)) {
+          return dataAccess;
+        }
+      }
+      return null;
+    }
+  }
+  
+  public enum ConnectionInstanceType {
+    
+    Metadata("metadata.metadata"),
+    
+    SQL_JDBC("sql.jdbc"),
+    SQL_JNDI("sql.jndi"),
+    
+    MONDRIAN_JDBC("mondrian.jdbc"),
+    MONDRIAN_JNDI("mondrian.jndi"),
+    
+    OLAP4J_JDBC("olap4j.jdbc"),
+    
+    SCRIPTING("scripting.scripting"),
+    
+    XPATH("xpath.xPath"),
+    
+    KETTLE_TRANS_FROM_FILE("kettle.TransFromFile");
+    
+    private String type;
+    public String getType() { return this.type; }
+    ConnectionInstanceType(String type){
+      this.type = type;
+    }
+    
+    public static ConnectionInstanceType parseType(String type){
+      for (ConnectionInstanceType connection : ConnectionInstanceType.values()) {
+        if (connection.getType().equals(type)) {
+          return connection;
+        }
+      }
+      return null;
+    } 
+  }
+  
 }

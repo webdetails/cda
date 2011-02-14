@@ -18,6 +18,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import javax.swing.table.TableModel;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.exception.KettleException;
@@ -45,7 +46,7 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
   protected ExecutorService executorService = Executors.newCachedThreadPool();
   protected Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
 
-  private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmssZ");
+  private SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmssZ");
   private String filename;
   
   private static long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
@@ -141,19 +142,17 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
 
   private void copyFileToOutputStream(OutputStream os) throws IOException
   {
-
+    
     File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + "." + getType());
     FileInputStream is = new FileInputStream(file);
 
-    // initialize
-    byte[] buffer = new byte[4096]; // tweaking this number may increase performance
-    int len;
-    while ((len = is.read(buffer)) != -1)
-    {
-      os.write(buffer, 0, len);
+    try{
+      IOUtils.copy(is, os);
+    } 
+    finally {
+      IOUtils.closeQuietly(is);
+      IOUtils.closeQuietly(os);
     }
-    os.flush();
-    is.close();
 
     // temp file not needed anymore - delete it
     file.delete();

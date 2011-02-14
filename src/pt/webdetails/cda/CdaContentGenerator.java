@@ -15,6 +15,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletResponse;
 
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IMimeTypeListener;
@@ -25,12 +26,11 @@ import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
 import org.pentaho.platform.util.messages.LocaleHelper;
-import org.pentaho.reporting.libraries.base.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import pt.webdetails.cda.cache.CacheManager;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
-import pt.webdetails.cda.dataaccess.Parameter;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.exporter.Exporter;
 import pt.webdetails.cda.exporter.ExporterEngine;
@@ -99,9 +99,6 @@ public class CdaContentGenerator extends BaseContentGenerator
     final String pathString;
     try
     {
-
-
-
       // If callbacks is properly setup, we assume we're being called from another plugin
       if (this.callbacks != null && callbacks.size() > 0 && HashMap.class.isInstance(callbacks.get(0)))
       {
@@ -315,15 +312,12 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   public void listQueries(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
-
-
     final CdaEngine engine = CdaEngine.getInstance();
 
     final String path = getRelativePath(pathParams);
     logger.debug("Do Query: getRelativePath:" + path);
     logger.debug("Do Query: getSolPath:" + PentahoSystem.getApplicationContext().getSolutionPath(path));
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
-
 
     // Handle the query itself and its output format...
     final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
@@ -332,14 +326,11 @@ public class CdaContentGenerator extends BaseContentGenerator
     String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
     setResponseHeaders(mimeType, null);
     engine.listQueries(out, cdaSettings, discoveryOptions);
-
-
   }
 
 
   public void listParameters(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
-
     final CdaEngine engine = CdaEngine.getInstance();
 
     final String path = getRelativePath(pathParams);
@@ -356,14 +347,11 @@ public class CdaContentGenerator extends BaseContentGenerator
     setResponseHeaders(mimeType, null);
 
     engine.listParameters(out, cdaSettings, discoveryOptions);
-
-
   }
 
 
   public void getCdaFile(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
-
     String document = getResourceAsString(getRelativePath(pathParams), ISolutionRepository.ACTION_UPDATE);
     setResponseHeaders("text/plain", null);
     out.write(document.getBytes("UTF-8"));
@@ -372,7 +360,6 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   private void writeCdaFile(IParameterProvider pathParams, OutputStream out) throws Exception
   {
-
     //TODO: Validate the filename in some way, shape or form!
     String[] file = buildFileParameters(getRelativePath(pathParams));
     String rootDir = PentahoSystem.getApplicationContext().getSolutionPath("");
@@ -388,7 +375,6 @@ public class CdaContentGenerator extends BaseContentGenerator
     // 2 - it already exists - let's see if we have permissions
     if (!resourceExists || solutionRepository.getSolutionFile(path, ISolutionRepository.ACTION_UPDATE) != null)
     {
-
       int status = solutionRepository.publish(rootDir, file[0], file[1], ((String) pathParams.getParameter("data")).getBytes("UTF-8"), true);
       if (status == ISolutionRepository.FILE_ADD_SUCCESSFUL)
       {
@@ -401,21 +387,17 @@ public class CdaContentGenerator extends BaseContentGenerator
         setResponseHeaders("text/plain", null);
         out.write("Save unsuccessful!".getBytes());
         logger.error("writeCdaFile: saving " + file + " returned " + new Integer(status).toString());
-
       }
     }
     else
     {
       throw new AccessDeniedException(path, null);
     }
-
-
   }
 
 
   public void getCdaList(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
-
     final CdaEngine engine = CdaEngine.getInstance();
 
     final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
@@ -424,20 +406,16 @@ public class CdaContentGenerator extends BaseContentGenerator
     String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
     setResponseHeaders(mimeType, null);
     engine.getCdaList(out, discoveryOptions, userSession);
-
-
   }
 
 
   public void clearCache(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
-
     SettingsManager.getInstance().clearCache();
     AbstractDataAccess.clearCache();
 
     setResponseHeaders("text/plain", null);
     out.write("Cache cleared".getBytes());
-
   }
 
 
@@ -478,43 +456,32 @@ public class CdaContentGenerator extends BaseContentGenerator
   public String getResourceAsString(final String path, final HashMap<String, String> tokens) throws IOException
   {
     // Read file
-    String fullPath = PentahoSystem.getApplicationContext().getSolutionPath(path);
     ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
-    final StringBuilder resource = new StringBuilder();
+    
+    String resourceContents = StringUtils.EMPTY;
     if (solutionRepository.resourceExists(path))
     {
-      final InputStream in = solutionRepository.getResourceInputStream(path, true, ISolutionRepository.ACTION_EXECUTE);
-      int c;
-      while ((c = in.read()) != -1)
+      InputStream in = null;
+      try
       {
-        resource.append((char) c);
+        in = solutionRepository.getResourceInputStream(path, true, ISolutionRepository.ACTION_EXECUTE);
+        resourceContents = IOUtils.toString(in);
       }
-      in.close();
+      finally 
+      {
+        IOUtils.closeQuietly(in);
+      }
     }
-    else
-    {
-      resource.append(" ");
-    }
+    
     // Make replacement of tokens
     if (tokens != null)
     {
-
       for (final String key : tokens.keySet())
-      {
-        final int index = resource.indexOf(key);
-        if (index != -1)
-        {
-          resource.replace(index, index + key.length(), tokens.get(key));
-        }
+      { 
+        resourceContents = StringUtils.replace(resourceContents, key, tokens.get(key));
       }
-
     }
-
-
-    final String output = resource.toString();
-
-    return output;
-
+    return resourceContents;
   }
 
 
@@ -584,71 +551,49 @@ public class CdaContentGenerator extends BaseContentGenerator
   public void getCssResource(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
     final IMimeTypeListener mimeTypeListener = outputHandler.getMimeTypeListener();
-
-
     if (mimeTypeListener != null)
     {
       mimeTypeListener.setMimeType(MIME_CSS);
-
-
     }
     getresource(pathParams, out);
-
-
   }
 
 
   public void getJsResource(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
     final IMimeTypeListener mimeTypeListener = outputHandler.getMimeTypeListener();
-
-
     if (mimeTypeListener != null)
     {
       mimeTypeListener.setMimeType(MIME_JS);
-
-
     }
     getresource(pathParams, out);
-
-
   }
 
 
   public void getresource(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
-
     String resource = pathParams.getStringParameter("resource", null);
     resource = resource.startsWith("/") ? resource : "/" + resource;
     getResource(out, resource);
-
   }
 
 
   private void getResource(final OutputStream out, final String resource) throws IOException
   {
-
-
     final String path = PentahoSystem.getApplicationContext().getSolutionPath("system/" + PLUGIN_NAME + resource); //$NON-NLS-1$ //$NON-NLS-2$
 
     final File file = new File(path);
     final InputStream in = new FileInputStream(file);
     final byte[] buff = new byte[4096];
 
-
     int n = in.read(buff);
-
 
     while (n != -1)
     {
       out.write(buff, 0, n);
       n = in.read(buff);
-
-
     }
     in.close();
-
-
   }
 
 
@@ -669,7 +614,6 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   public void listDataAccessTypes(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
-
     DataAccessConnectionDescriptor[] data = SettingsManager.getInstance().
             getDataAccessDescriptors((pathParams.getStringParameter("refreshCache", "false")).equalsIgnoreCase("true"));
     setResponseHeaders(MIME_JSON, null);
@@ -701,15 +645,12 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   public void manageCache(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
-
-
     ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
-
+    
     // Check if the file exists and we have permissions to write to it
     String path = getRelativePath(pathParams);
     if (solutionRepository.getSolutionFile(path, ISolutionRepository.ACTION_UPDATE) != null)
     {
-
       final String cachemanPath = "system/" + PLUGIN_NAME + CACHEMAN_SOURCE;
       SettingsManager.getInstance().clearCache();
       AbstractDataAccess.clearCache();
@@ -718,11 +659,8 @@ public class CdaContentGenerator extends BaseContentGenerator
     }
     else
     {
-
       setResponseHeaders("text/plain", null);
       out.write("Access Denied".getBytes());
     }
-
-
   }
 }

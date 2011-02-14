@@ -1,6 +1,8 @@
 package pt.webdetails.cda.settings;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
+
 import java.util.List;
 
 import javax.naming.OperationNotSupportedException;
@@ -14,9 +16,31 @@ import org.dom4j.Element;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import pt.webdetails.cda.connections.Connection;
+import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
+import pt.webdetails.cda.connections.kettle.TransFromFileConnection;
+import pt.webdetails.cda.connections.metadata.MetadataConnection;
+import pt.webdetails.cda.connections.scripting.ScriptingConnection;
+import pt.webdetails.cda.connections.xpath.XPathConnection;
+
 import pt.webdetails.cda.dataaccess.DataAccess;
+import pt.webdetails.cda.dataaccess.DenormalizedMdxDataAccess;
+import pt.webdetails.cda.dataaccess.DenormalizedOlap4JDataAccess;
+import pt.webdetails.cda.dataaccess.JoinCompoundDataAccess;
+import pt.webdetails.cda.dataaccess.KettleDataAccess;
+import pt.webdetails.cda.dataaccess.MdxDataAccess;
+import pt.webdetails.cda.dataaccess.MqlDataAccess;
+import pt.webdetails.cda.dataaccess.Olap4JDataAccess;
+import pt.webdetails.cda.dataaccess.ReflectionDataAccess;
+import pt.webdetails.cda.dataaccess.ScriptableDataAccess;
+import pt.webdetails.cda.dataaccess.SqlDataAccess;
+import pt.webdetails.cda.dataaccess.UnionCompoundDataAccess;
+import pt.webdetails.cda.dataaccess.XPathDataAccess;
+
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
+
+import pt.webdetails.cda.dataaccess.DataAccessEnums.ConnectionInstanceType;
+import pt.webdetails.cda.dataaccess.DataAccessEnums.DataAccessInstanceType;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.Util;
@@ -38,7 +62,8 @@ public class CdaSettings {
   private HashMap<String, Connection> connectionsMap;
   private HashMap<String, DataAccess> dataAccessMap;
   private FormulaContext formulaContext;
-
+  
+  
   /**
    * Creates a representation of an existing CDA file.
    *
@@ -86,23 +111,18 @@ public class CdaSettings {
     connectionsMap = new HashMap<String, Connection>();
     dataAccessMap = new HashMap<String, DataAccess>();
 
-
   }
   
-	public CdaSettings(final String id, final ResourceKey key, boolean garbage) throws UnsupportedConnectionException, UnsupportedDataAccessException {
-				
-				this.contextKey = key;
-				this.id = id;
-				
-				connectionsMap = new HashMap<String, Connection>();
-				dataAccessMap = new HashMap<String, DataAccess>();
-	}
+  public CdaSettings(final String id, final ResourceKey key, boolean garbage) throws UnsupportedConnectionException, UnsupportedDataAccessException {
+    this.contextKey = key;
+    this.id = id;
+
+    connectionsMap = new HashMap<String, Connection>();
+    dataAccessMap = new HashMap<String, DataAccess>();
+  }
 
   public TableModel listQueries(DiscoveryOptions discoveryOptions) {
-
-
     return TableModelUtils.getInstance().dataAccessMapToTableModel(dataAccessMap);
-
   }
   
   public void setFormulaContext(FormulaContext formulaContext){
@@ -121,51 +141,107 @@ public class CdaSettings {
 
     parseConnections();
 
-    parseDataAccess();
+    parseDataAccesses();
 
 
     logger.debug("CdaSettings created successfully");
 
 
   }
+  
+  
+  private DataAccess parseDataAccess(Element element) {
+    final String typeName = element.attributeValue("type");
+    DataAccessInstanceType type = DataAccessInstanceType.parseType(typeName);
+    if(type != null){
+      switch (type){
+        case DENORMALIZED_MDX:
+          return new DenormalizedMdxDataAccess(element);
+        case JOIN:
+          return new JoinCompoundDataAccess(element);
+        case DENORMALIZED_OLAP4J:
+          return new DenormalizedOlap4JDataAccess(element);
+        case KETTLE:
+          return new KettleDataAccess(element);
+        case MDX:
+          return new MdxDataAccess(element);
+        case MQL:
+          return new MqlDataAccess(element);
+        case OLAP4J:
+          return new Olap4JDataAccess(element);
+        case REFLECTION:
+          return new ReflectionDataAccess(element);
+        case SCRIPTABLE:
+          return new ScriptableDataAccess(element);
+        case SQL:
+          return new SqlDataAccess(element);
+        case UNION:
+          return new UnionCompoundDataAccess(element);
+        case XPATH:
+          return new XPathDataAccess(element);
+      }
+    }
+    return null;
+  }
 
-  private void parseDataAccess() throws UnsupportedDataAccessException {
+  private void parseDataAccesses() throws UnsupportedDataAccessException {
 
     // Parsing DataAccess.
 
     // 1 - Parse data access, and then parse the CompoundDataAccess
-
-
+    
     final List<Element> dataAccessesList = root.selectNodes("/CDADescriptor/DataAccess | /CDADescriptor/CompoundDataAccess");
 
     for (final Element element : dataAccessesList) {
 
-      final String elementName = element.getName();
-      final String id = element.attributeValue("id");
       final String type = element.attributeValue("type");
 
       // Initialize this ConnectionType
 
+      DataAccess dataAccess = null;
       try {
-
-        final String className = "pt.webdetails.cda.dataaccess."
-                + type.substring(0, 1).toUpperCase() + type.substring(1, type.length()) + elementName;
-
-        final Class clazz = Class.forName(className);
-        final Class[] params = {Element.class};
-
-        final DataAccess dataAccess = (DataAccess) clazz.getConstructor(params).newInstance(new Object[]{element});
-        dataAccess.setCdaSettings(this);
-        addInternalDataAccess(dataAccess);
-
+        dataAccess = parseDataAccess(element);
+        if (dataAccess != null) {
+          dataAccess.setCdaSettings(this);
+          addInternalDataAccess(dataAccess);
+        }
       } catch (Exception e) {
-        throw new UnsupportedDataAccessException("Error initializing connection class: " + Util.getExceptionDescription(e), e);
+        throw new UnsupportedDataAccessException("Error parsing DataAccess: " + Util.getExceptionDescription(e), e);
       }
-
-
+      if(dataAccess == null){
+        throw new UnsupportedDataAccessException(MessageFormat.format("Unknown DataAccess type {0}.", type));
+      }
     }
 
-
+  }
+  
+  private Connection parseConnection(String type, Element element) throws InvalidConnectionException {
+    
+    ConnectionInstanceType connType = ConnectionInstanceType.parseType(type); 
+    
+    if(connType != null){
+      switch (connType){
+        case KETTLE_TRANS_FROM_FILE:
+          return new TransFromFileConnection(element);
+        case Metadata:
+          return new MetadataConnection(element);
+        case MONDRIAN_JDBC:
+          return new pt.webdetails.cda.connections.mondrian.JdbcConnection(element);
+        case MONDRIAN_JNDI:
+          return new pt.webdetails.cda.connections.mondrian.JndiConnection(element);
+        case OLAP4J_JDBC:
+          return new pt.webdetails.cda.connections.olap4j.JdbcConnection(element);
+        case SCRIPTING:
+          return new ScriptingConnection(element);
+        case SQL_JDBC:
+          return new pt.webdetails.cda.connections.sql.JdbcConnection(element);
+        case SQL_JNDI:
+          return new pt.webdetails.cda.connections.sql.JndiConnection(element);
+        case XPATH:
+          return new XPathConnection(element);
+      }
+    }
+    return null;
   }
 
   private void parseConnections() throws UnsupportedConnectionException {
@@ -174,39 +250,26 @@ public class CdaSettings {
 
     for (final Element element : connectionList) {
 
-      final String id = element.attributeValue("id");
       final String type = element.attributeValue("type");
-
-      // Initialize this ConnectionType
-
+      
+      Connection connection = null;
       try {
-
-        // Convert sql.jdbc to sql.Jdbc
-
-        int lastDot = type.lastIndexOf('.');
-        final String className = "pt.webdetails.cda.connections."
-                + type.substring(0, lastDot + 1) + type.substring(lastDot + 1, lastDot + 2).toUpperCase() + type.substring(lastDot + 2, type.length()) + "Connection";
-
-        final Class clazz = Class.forName(className);
-        final Class[] params = {Element.class};
-
-        final Connection connection = (Connection) clazz.getConstructor(params).newInstance(new Object[]{element});
-        connection.setCdaSettings(this);
-        addInternalConnection(connection);
-
-      } catch (Exception e) {
-        throw new UnsupportedConnectionException("Error initializing connection class: " + Util.getExceptionDescription(e), e);
+        connection = parseConnection(type, element);
+        if(connection != null){
+          connection.setCdaSettings(this);
+          addInternalConnection(connection);
+        }
+      } catch (InvalidConnectionException e) {
+        throw new UnsupportedConnectionException(MessageFormat.format("Error initializing connection: {0}", Util.getExceptionDescription(e)),e);
       }
-
-
+      if(connection == null){
+        throw new UnsupportedConnectionException(MessageFormat.format("Unrecognized connection type {0}.", type));
+      }
     }
-
   }
 
   public String asXML() throws OperationNotSupportedException {
-
     return this.root.asXML();
-
   }
   
  /**

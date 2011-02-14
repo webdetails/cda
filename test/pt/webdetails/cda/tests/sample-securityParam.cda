@@ -16,19 +16,28 @@
             <Pass></Pass>
         </Connection>
     </DataSources>
-    <!-- DataAccess object controls the query itself
+  <!-- DataAccess object controls the query itself
 
-	Access controls if the datasource can be seen from the outside or is to
-	be used from a Compound datasource only
+      Access controls if the datasource can be seen from the outside or is to
+      be used from a Compound datasource only
 
-	-->
+      -->
     <DataAccess id="1" connection="1" type="sql" access="public" cache="true" cacheDuration="5">
-		<Name>Sql Query on SampleData</Name>
-        <Query>select distinct ${param} as inputParam from orderfact</Query>
-				<!--for other security params:
-						http://wiki.pentaho.com/display/ServerDoc1x/04.+Using+Security+from+Action+Sequences-->
-        <Parameters>
-            <Parameter name="param" type="String" default="${[security:principalName]}" access="private"/>
-        </Parameters>
+      <Name>Sql Query on SampleData</Name>
+      <Query>select distinct ${param} as inputParam from orderfact</Query>
+      <!--for other security params:
+          http://wiki.pentaho.com/display/ServerDoc1x/04.+Using+Security+from+Action+Sequences-->
+      <Parameters>
+        <Parameter name="param" type="String" default="${[security:principalName]}" access="private"/>
+      </Parameters>
+    </DataAccess>
+
+    <DataAccess id="junitDataAccess" connection="1" type="sql" access="public" cache="true" cacheDuration="5">
+    <!-- session variable test -->
+      <Name>Sql Query on SampleData</Name>
+      <Query>select distinct ${param} as inputParam from orderfact</Query>
+      <Parameters>
+        <Parameter name="param" type="String" default="${[session:test]}" />
+      </Parameters>
     </DataAccess>
 </CDADescriptor>

@@ -9,6 +9,7 @@ import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
+import org.apache.commons.io.IOUtils;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -30,14 +31,19 @@ public class Messages {
     Locale locale = LocaleHelper.getLocale();
     ResourceBundle bundle = Messages.locales.get(locale);
     if (bundle == null) {
-      IPentahoSession session = new StandaloneSession( "dashboards messages" ); //$NON-NLS-1$
-        try {
-          InputStream in = PentahoSystem.get(ISolutionRepository.class, session).getResourceInputStream("system/"+CdaContentGenerator.PLUGIN_NAME+"/messages.properties", true, ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$ //$NON-NLS-2$
-          bundle = new PropertyResourceBundle( in );
-          Messages.locales.put(locale, bundle);
-        } catch (Exception e) {
-          Logger.error( Messages.class.getName(), "Could not get localization bundle", e ); //$NON-NLS-1$
-        }
+      IPentahoSession session = new StandaloneSession("dashboards messages"); //$NON-NLS-1$
+      InputStream in = null;
+      String propertiesFile = "system/" + CdaContentGenerator.PLUGIN_NAME + "/messages.properties";//$NON-NLS-1$ //$NON-NLS-2$
+      ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
+      try {
+        in = repository.getResourceInputStream(propertiesFile, true, ISolutionRepository.ACTION_EXECUTE); 
+        bundle = new PropertyResourceBundle(in);
+        Messages.locales.put(locale, bundle);
+      } catch (Exception e) {
+        Logger.error(Messages.class.getName(), "Could not get localization bundle", e); //$NON-NLS-1$
+      } finally {
+        IOUtils.closeQuietly(in);
+      }
     }
     return bundle;
   }

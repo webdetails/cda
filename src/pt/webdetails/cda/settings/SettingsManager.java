@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -114,7 +116,8 @@ public class SettingsManager {
       // to the solution repo
       final ResourceKey key;
       if (CdaEngine.getInstance().isStandalone()) {
-        key = resourceManager.createKey(new File(id));
+        File settingsFile = new File(id);
+        key = resourceManager.createKey(settingsFile);
       } else {
         final HashMap helperObjects = new HashMap();
         key = resourceManager.createKey(SOLUTION_SCHEMA_NAME + SCHEMA_SEPARATOR + id, helperObjects);
@@ -206,15 +209,32 @@ public class SettingsManager {
     // First we need a list of all the data accesses. We're getting that from a .properties file, as a comma-separated array.
     final File file = new File(PentahoSystem.getApplicationContext().getSolutionPath("system/cda/resources/components.properties"));
     final Properties resources = new Properties();
-    resources.load(new FileInputStream(file));
-    String[] dataAccesses = resources.getProperty("dataAccesses").split(",");
+    
+    FileInputStream fin = null;
+    try{
+      fin = new FileInputStream(file);
+      resources.load(fin);
+    }
+    finally {
+      IOUtils.closeQuietly(fin);
+    }
+    String[] dataAccesses = StringUtils.split(StringUtils.defaultString(resources.getProperty("dataAccesses")), ",");
 
     // We apply some sanity checks to the dataAccesses listed:
     //    1. It can't be abstract,
     //    2. It must inherit from AbstractDataAccess
     // For any class that passes those tests, we get its getDataAccessDescripts() method, and use it to get a description.
     for (String dataAccess : dataAccesses) {
-      Class clazz = Class.forName(DATA_ACCESS_PACKAGE + '.' + dataAccess);
+      
+      Class clazz = null;
+      String className = DATA_ACCESS_PACKAGE + '.' + dataAccess;
+      try {
+        clazz = Class.forName(className);
+      } catch (Exception e) {
+        logger.error(MessageFormat.format("Couldn\'t load class {0}!", className));
+        continue;
+      }
+      
       if (Modifier.isAbstract(clazz.getModifiers())) {
         logger.debug(dataAccess + " is abstract: Skipping");
       } else if (AbstractDataAccess.class.isAssignableFrom(clazz)) {
@@ -232,6 +252,7 @@ public class SettingsManager {
           logger.error("DataAccess " + dataAccess + " did something wrong!");
         }
       }
+
     }
     return descriptors.toArray(new DataAccessConnectionDescriptor[descriptors.size()]);
   }

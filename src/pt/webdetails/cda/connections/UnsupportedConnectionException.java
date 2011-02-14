@@ -10,5 +10,8 @@ public class UnsupportedConnectionException extends Exception {
   public UnsupportedConnectionException(final String s, final Exception cause) {
     super(s,cause);
   }
+  public UnsupportedConnectionException(final String msg){
+    super(msg);
+  }
 }
 
