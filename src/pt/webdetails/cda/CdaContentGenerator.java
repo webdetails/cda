@@ -584,16 +584,14 @@ public class CdaContentGenerator extends BaseContentGenerator
 
     final File file = new File(path);
     final InputStream in = new FileInputStream(file);
-    final byte[] buff = new byte[4096];
-
-    int n = in.read(buff);
-
-    while (n != -1)
-    {
-      out.write(buff, 0, n);
-      n = in.read(buff);
+    
+    try{
+      IOUtils.copy(in, out);
     }
-    in.close();
+    finally {
+      IOUtils.closeQuietly(in);
+    }
+    
   }
 
 

@@ -151,7 +151,6 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
     } 
     finally {
       IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(os);
     }
 
     // temp file not needed anymore - delete it

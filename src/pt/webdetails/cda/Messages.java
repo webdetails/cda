@@ -73,7 +73,6 @@ public class Messages {
     return Messages.getEncodedString(rawValue);
   }
   
-  //TODO: ok? is this used?
   public static String getString(final String key, final String... params){
   	if(params.length == 0){
       try {
@@ -85,49 +84,9 @@ public class Messages {
   	return MessageUtil.getString(Messages.getBundle(), key, params);
   }
   
-//public static String getString(final String key) {
-//try {
-//  return Messages.getBundle().getString(key);
-//} catch (MissingResourceException e) {
-//  return '!' + key + '!';
-//}
-//}
-//  public static String getString(final String key, final String param1) {
-//    return MessageUtil.getString(Messages.getBundle(), key, param1);
-//  }
-//
-//  public static String getString(final String key, final String param1, final String param2) {
-//    return MessageUtil.getString(Messages.getBundle(), key, param1, param2);
-//  }
-//
-//  public static String getString(final String key, final String param1, final String param2, final String param3) {
-//    return MessageUtil.getString(Messages.getBundle(), key, param1, param2, param3);
-//  }
-//
-//  public static String getString(final String key, final String param1, final String param2, final String param3,
-//      final String param4) {
-//    return MessageUtil.getString(Messages.getBundle(), key, param1, param2, param3, param4);
-//  }
-  
-//TODO: ok? is this used?
   public static String getErrorString(final String key, final String... params){
   	if (params.length == 0) return MessageUtil.formatErrorMessage(key, Messages.getString(key));
   	else return MessageUtil.getErrorString(Messages.getBundle(), key, params);
   }
 
-//  public static String getErrorString(final String key) {
-//    return MessageUtil.formatErrorMessage(key, Messages.getString(key));
-//  }
-//
-//  public static String getErrorString(final String key, final String param1) {
-//    return MessageUtil.getErrorString(Messages.getBundle(), key, param1);
-//  }
-//
-//  public static String getErrorString(final String key, final String param1, final String param2) {
-//    return MessageUtil.getErrorString(Messages.getBundle(), key, param1, param2);
-//  }
-//
-//  public static String getErrorString(final String key, final String param1, final String param2, final String param3) {
-//    return MessageUtil.getErrorString(Messages.getBundle(), key, param1, param2, param3);
-//  }
 }
