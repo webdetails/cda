@@ -10,4 +10,7 @@ public class UnsupportedDataAccessException extends Exception {
   public UnsupportedDataAccessException(final String s, final Exception cause) {
     super(s,cause);
   }
+  public UnsupportedDataAccessException(String msg) {
+    super(msg);
+  }
 }
