@@ -77,6 +77,9 @@ public abstract class PREDataAccess extends SimpleDataAccess
   @Override
   protected TableModel performRawQuery(final ParameterDataRow parameterDataRow) throws QueryException
   {
+    
+    boolean threadVarSet = false;
+    
     try
     {
 
@@ -104,6 +107,7 @@ public abstract class PREDataAccess extends SimpleDataAccess
         // Make sure we have the env. correctly inited
         if (SolutionReposHelper.getSolutionRepositoryThreadVariable() == null && PentahoSystem.getObjectFactory().objectDefined(ISolutionRepository.class.getSimpleName()))
         {
+          threadVarSet = true;
           SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession()));
         }
         environmentDataRow = new ReportEnvironmentDataRow(new PentahoReportEnvironment(configuration));
@@ -131,7 +135,11 @@ public abstract class PREDataAccess extends SimpleDataAccess
       throw new QueryException("ReportDataFactoryException : " + e.getMessage()
               + ((e.getParentThrowable() == null) ? "" : ("; Parent exception: " + e.getParentThrowable().getMessage())), e);
     }
-
+    finally
+    {
+      //leave thread variable as it was
+      if(threadVarSet) SolutionReposHelper.setSolutionRepositoryThreadVariable(null);
+    }
 
   }
 
