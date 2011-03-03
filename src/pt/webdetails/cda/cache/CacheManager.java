@@ -235,9 +235,23 @@ public class CacheManager
       JSONObject json = new JSONObject(jsonTokener);
       if (json.has("cronString"))
       {
+        String cronString = json.getString("cronString");
+        try
+        {
+          CronExpression ce = new CronExpression(cronString);
+        }
+        catch (Exception e)
+        {
+          logger.error("Failed to parse Cron string \"" + cronString + "\"");
+          out.write("{status: 'error', description: 'failed to parse Cron String'}".getBytes("UTF-8"));
+          return;
+        }
         q = new CachedQuery(json);
-        queue.add((CachedQuery) q);
-        CacheActivator.reschedule(queue);
+        if (q != null)
+        {
+          queue.add((CachedQuery) q);
+          CacheActivator.reschedule(queue);
+        }
       }
       else
       {
@@ -252,8 +266,7 @@ public class CacheManager
       out.write("".getBytes("UTF-8"));
     }
 
-
-    out.write("".getBytes("UTF-8"));
+    out.write("{status: 'ok'}".getBytes("UTF-8"));
   }
 
 

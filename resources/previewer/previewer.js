@@ -141,7 +141,7 @@ toggleAdvanced = function(advanced){
                 .text(periodicity[$(this).attr('value')].granularity);
         });
     } else {
-        contents ='<span>Cron Expression: <input></input></span>';
+        contents ='<span>Cron Expression: <input id="cron"></input></span>';
     }
 
     $("#dialogInput").empty().append(contents);
