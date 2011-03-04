@@ -118,15 +118,23 @@ cacheThis = function() {
     queryDefinition.dataAccessId = $('#dataAccessSelector').val();
     queryDefinition.cronString = $('#cron').val();
     var json = JSON.stringify(queryDefinition);
-    $.getJSON("cacheController",{method: "change", "object": json},function(){$("#dialog").jqmHide();})
-}
+    $.getJSON("cacheController",{method: "change", "object": json}, function(response){
+      if (response.status == 'ok') {
+        $("#dialog").jqmHide();
+      } else {
+        console.log(response.message);
+        $("#dialog").jqmHide();
+      }
+    });
+};
+
 
 periodicity = [
     {name: "every week", granularity: "day of the week (1-7)"},
     {name: "every day", granularity: "hour (0-23)"},
     {name: "every hour", granularity: "minute (0-59)"},
     {name: "every minute", granularity: "second (0-59)"}
-]
+];
 
 toggleAdvanced = function(advanced){
     if(advanced==false) {
@@ -145,7 +153,13 @@ toggleAdvanced = function(advanced){
     }
 
     $("#dialogInput").empty().append(contents);
-    $("p.dialogTitle .dialogToggle").html(advanced?"(advanced)":"(basic)").attr("href","javascript:toggleAdvanced("+!advanced+")");
+    $("p.dialogTitle .dialogToggle")
+      .html(advanced?"(basic)":"(advanced)")
+      .attr("href","javascript:;")
+      .click(function(){
+        toggleAdvanced(!advanced);
+      }
+    );
 }
 
 updateCron = function() {

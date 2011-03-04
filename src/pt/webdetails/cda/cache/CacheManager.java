@@ -243,7 +243,7 @@ public class CacheManager
         catch (Exception e)
         {
           logger.error("Failed to parse Cron string \"" + cronString + "\"");
-          out.write("{status: 'error', description: 'failed to parse Cron String'}".getBytes("UTF-8"));
+          out.write("{status: 'error', message: 'failed to parse Cron String'}".getBytes("UTF-8"));
           return;
         }
         q = new CachedQuery(json);
@@ -352,8 +352,14 @@ public class CacheManager
   {
     Long id = Long.decode(requestParams.getParameter("id").toString());
     Session s = getHibernateSession();
-    s.delete(s.load(Query.class, id));
+    Query q = loadQuery(id);
+    s.delete(q);
     s.flush();
+    for (CachedQuery cq: queue) {
+      if (cq.getId() == id) {
+          queue.remove(cq);
+      }
+    }
   }
 
 

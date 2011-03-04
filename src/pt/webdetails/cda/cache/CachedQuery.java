@@ -156,7 +156,6 @@ public class CachedQuery extends Query
     finally
     {
       setLastExecuted(new Date());
-      //save();
     }
   }
 }
