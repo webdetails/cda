@@ -116,24 +116,28 @@ cacheThis = function() {
     queryDefinition.parameters = params;
     queryDefinition.cdaFile = filename
     queryDefinition.dataAccessId = $('#dataAccessSelector').val();
-    queryDefinition.cronString = $('#cron').val();
+    queryDefinition.cronString = $('#cron').val() || simpleCron();
     var json = JSON.stringify(queryDefinition);
+    var notification = $('#dialog .notification');
+    if (!notification.length) {
+      notification = $("<span class='notification'></span>").appendTo('.dialogAction');
+    }
     $.getJSON("cacheController",{method: "change", "object": json}, function(response){
       if (response.status == 'ok') {
+        notification.text('');
         $("#dialog").jqmHide();
       } else {
-        console.log(response.message);
-        $("#dialog").jqmHide();
+        notification.text(response.message);
       }
     });
 };
 
 
 periodicity = [
-    {name: "every week", granularity: "day of the week (1-7)"},
-    {name: "every day", granularity: "hour (0-23)"},
-    {name: "every hour", granularity: "minute (0-59)"},
-    {name: "every minute", granularity: "second (0-59)"}
+    {name: "every week", granularity: "day of the week (1-7)", cron: "* * * ? * x"},
+    {name: "every day", granularity: "hour (0-23)", cron: "* * x * * ?"},
+    {name: "every hour", granularity: "minute (0-59)", cron: "* x * * * ?"},
+    {name: "every minute", granularity: "second (0-59)",cron: "x * * * * ?"}
 ];
 
 toggleAdvanced = function(advanced){
@@ -153,6 +157,7 @@ toggleAdvanced = function(advanced){
     }
 
     $("#dialogInput").empty().append(contents);
+    $("#dialog .notification").text('');
     $("p.dialogTitle .dialogToggle")
       .html(advanced?"(basic)":"(advanced)")
       .attr("href","javascript:;")
@@ -160,20 +165,18 @@ toggleAdvanced = function(advanced){
         toggleAdvanced(!advanced);
       }
     );
-}
+};
 
-updateCron = function() {
+simpleCron = function() {
     var selector = document.getElementById('periodType');
     if(selector !== null) {
-        var val = $(selector).attr("value");
-        var startAt = $("#startAt").attr("value");
-        if (val == 0) { // Weekly
-            return "0 0 0 ? * " + startAt;
-        } else {
-           
-        }
-    } else{
-        return $("#cron").attr("value");
+        var val = $(selector).attr("value"),
+          startAt = $("#startAt").attr("value"),
+          period = periodicity[val],
+          cronExpression;
+
+        cronExpression = period.cron.replace('x', startAt);
+        return cronExpression;
     }
 };
 

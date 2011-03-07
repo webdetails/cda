@@ -243,7 +243,7 @@ public class CacheManager
         catch (Exception e)
         {
           logger.error("Failed to parse Cron string \"" + cronString + "\"");
-          out.write("{status: 'error', message: 'failed to parse Cron String'}".getBytes("UTF-8"));
+          out.write("{\"status\": \"error\", \"message\": \"failed to parse Cron String\"}".getBytes("UTF-8"));
           return;
         }
         q = new CachedQuery(json);
@@ -266,7 +266,7 @@ public class CacheManager
       out.write("".getBytes("UTF-8"));
     }
 
-    out.write("{status: 'ok'}".getBytes("UTF-8"));
+    out.write("{\"status\": \"ok\"}".getBytes("UTF-8"));
   }
 
 

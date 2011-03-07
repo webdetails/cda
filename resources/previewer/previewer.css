@@ -91,6 +91,9 @@ input[readonly]{
   text-align: right;
 }
 
+.dialogAction .notification {
+    float: left;
+}
 #previewerTable input, #previewerTable select {
   border: solid #8eD300 1px  ;
 }
