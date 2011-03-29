@@ -3,12 +3,15 @@ package pt.webdetails.cda.dataaccess;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javax.swing.table.TableModel;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
+import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.BandedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DefaultCubeFileProvider;
@@ -241,4 +244,28 @@ public class MdxDataAccess extends PREDataAccess
     properties.add(new PropertyDescriptor("bandedMode", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
   }
+  
+  //treat special cases: allow string[]
+  @Override
+  protected TableModel performRawQuery(final ParameterDataRow parameterDataRow) throws QueryException
+  {
+    final String MDX_MULTI_SEPARATOR = ",";
+    
+    String[] columnNames = parameterDataRow.getColumnNames();
+    Object[] values = new Object[columnNames.length];
+    
+    for(int i=0; i<columnNames.length;i++){
+      String colName = columnNames[i];
+      Object value = parameterDataRow.get(colName);
+      if(value != null && value.getClass().isArray()){
+        //translate value
+        value = StringUtils.join( (Object[]) value, MDX_MULTI_SEPARATOR);
+      }
+      values[i] = value;
+    }
+    
+    return super.performRawQuery(new ParameterDataRow(columnNames, values));
+  
+  }
+
 }

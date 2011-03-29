@@ -114,6 +114,11 @@ public class QueryOptions implements Cloneable
   }
 
 
+  /**
+   * 
+   * @param name
+   * @return null if not found
+   */
   public Parameter getParameter(final String name)
   {
 
