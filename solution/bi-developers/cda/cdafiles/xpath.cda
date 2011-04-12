@@ -21,7 +21,7 @@
   -->
   <DataAccess id="1" connection="1" type="xPath" access="public">
     <Name>Sample query on SteelWheelsSales</Name>
-    <Query>/*/*</Query>
+    <Query>/*/*[CUSTOMERS_CUSTOMERNUMBER=103]</Query>
     <Parameters>
       <Parameter name="status" type="String" default="In Process"/>
     </Parameters>
