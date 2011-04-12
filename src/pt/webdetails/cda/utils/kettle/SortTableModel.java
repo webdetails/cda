@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import javax.swing.table.TableModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.reporting.libraries.base.config.Configuration;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig.EntryType;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig;
@@ -38,7 +39,6 @@ public class SortTableModel implements RowProductionManager
   private static final Log logger = LogFactory.getLog(SortTableModel.class);
   private ExecutorService executorService = Executors.newCachedThreadPool();
   private Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
-  
   private static final long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
   private static final TimeUnit DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT = TimeUnit.SECONDS;
 
@@ -49,6 +49,35 @@ public class SortTableModel implements RowProductionManager
 
 
   public TableModel doSort(TableModel unsorted, ArrayList<String> sortBy) throws SortException
+  {
+    Configuration config = CdaBoot.getInstance().getGlobalConfig();
+    String sortType = config.getConfigProperty("pt.webdetails.cda.SortingType");
+    if (sortType.equals("DEFAULT"))
+    {
+      return defaultSort(unsorted, sortBy);
+    }
+    else
+    {
+      return customSort(unsorted, sortBy, sortType);
+    }
+  }
+
+
+  public TableModel customSort(TableModel unsorted, ArrayList<String> sortBy, String comparatorClass) throws SortException
+  {
+    try
+    {
+      Class comp = Class.forName(comparatorClass);
+      SortableTableModel sortable = new SortableTableModel(unsorted);
+      sortable.sort(comp, sortBy);
+      return sortable;
+    } catch (Exception e){
+      throw new SortException("Exception during sorting ", e);
+    }
+  }
+
+
+  public TableModel defaultSort(TableModel unsorted, ArrayList<String> sortBy) throws SortException
   {
 
     if (unsorted == null || unsorted.getRowCount() == 0)
@@ -103,7 +132,7 @@ public class SortTableModel implements RowProductionManager
   {
     String timeoutStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout");
     long timeout = Util.isNullOrEmpty(timeoutStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
-    String unitStr =  CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
+    String unitStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
     TimeUnit unit = Util.isNullOrEmpty(unitStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
     startRowProduction(timeout, unit);
   }

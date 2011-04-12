@@ -127,7 +127,6 @@ public class TableModelUtils
 
     if (!queryOptions.getSortBy().isEmpty())
     {
-
       // no action
       t = (new SortTableModel()).doSort(t, queryOptions.getSortBy());
     }
