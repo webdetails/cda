@@ -56,10 +56,8 @@ public class CdaContentGenerator extends BaseContentGenerator
   private static final String CACHEMAN_SOURCE = "/cachemanager/cache.html";
   private static final int DEFAULT_PAGE_SIZE = 20;
   private static final int DEFAULT_START_PAGE = 0;
-  
   private static final String PREFIX_PARAMETER = "param";
   private static final String PREFIX_SETTING = "setting";
-  
 
 
   public CdaContentGenerator()
@@ -287,7 +285,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     {
       setResponseHeaders(mimeType, attachmentName);
     }
-    
+
     // Finally, pass the query to the engine
     engine.doQuery(out, cdaSettings, queryOptions);
 
@@ -298,6 +296,11 @@ public class CdaContentGenerator extends BaseContentGenerator
   {
     // Make sure we have the correct mime type
     final HttpServletResponse response = (HttpServletResponse) parameterProviders.get("path").getParameter("httpresponse");
+    if (response == null)
+    {
+      return;
+    }
+
     response.setHeader("Content-Type", mimeType);
 
     if (attachmentName != null)
