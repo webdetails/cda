@@ -87,6 +87,7 @@ public class CacheManager
           break;
         case DELETE:
           delete(requestParams, out);
+          break;
         case IMPORT:
           importQueries(requestParams, out);
       }
