@@ -76,9 +76,6 @@ public class CacheManager
         case CHANGE:
           change(requestParams, out);
           break;
-        case TEST:
-          test(requestParams, out);
-          break;
         case RELOAD:
           load(requestParams, out);
           break;
@@ -125,24 +122,6 @@ public class CacheManager
   }
 
 
-  public void test(IParameterProvider requestParams, OutputStream out) throws PluginHibernateException
-  {
-    CachedQuery cq = new CachedQuery();
-
-    cq.setCdaFile("bi-developers/cda/cdafiles/xpath.cda");
-    cq.setDataAccessId("1");
-    cq.setCronString("10/15 0/2 * * * ?");
-    cq.setExecuteAtStart(true);
-    cq.save();
-    queue.add(cq);
-    CacheActivator.reschedule(queue);
-    //initHibernate();
-    //initQueue();
-    //coldInit();
-    //SchedulerHelper.createSimpleTriggerJob(PentahoSessionHolder.getSession(), "system", "cda/actions", "scheduler.xaction", "trigger", "cda", "", new Date(), null, 2, 10000);
-  }
-
-
   private void load(IParameterProvider requestParams, OutputStream out) throws Exception
   {
     Session s = getHibernateSession();
@@ -166,7 +145,6 @@ public class CacheManager
   }
 
 
-
   private void monitor(IParameterProvider requestParams, OutputStream out)
   {
     return; //NYI!
@@ -175,8 +153,11 @@ public class CacheManager
 
   private void persist(IParameterProvider requestParams, OutputStream out) throws Exception
   {
+
     Long id = Long.decode(requestParams.getParameter("id").toString());
     Session s = getHibernateSession();
+    s.beginTransaction();
+
     UncachedQuery uq = (UncachedQuery) s.load(UncachedQuery.class, id);
     CachedQuery cq = uq.cacheMe();
     if (uq != null)
@@ -185,6 +166,8 @@ public class CacheManager
     }
     JSONObject json = uq.toJSON();
     out.write(json.toString(2).getBytes("UTF-8"));
+    s.flush();
+    s.getTransaction().commit();
     s.close();
   }
 
@@ -253,10 +236,14 @@ public class CacheManager
       {
         q = new UncachedQuery(json);
       }
+
       Session s = getHibernateSession();
+      s.beginTransaction();
       s.save(q);
       s.flush();
+      s.getTransaction().commit();
       s.close();
+
     }
     catch (JSONException jse)
     {
@@ -300,6 +287,7 @@ public class CacheManager
       Query q;
       JSONObject json;
       Session s = getHibernateSession();
+      s.beginTransaction();
       JSONArray ja = new JSONArray(jsonTokener);
       for (int i = 0; i < ja.length(); i++)
       {
@@ -315,10 +303,10 @@ public class CacheManager
           q = new UncachedQuery(json);
         }
         s.save(q);
+
       }
-
-
       s.flush();
+      s.getTransaction().commit();
       s.close();
     }
     catch (JSONException jse)
@@ -358,9 +346,11 @@ public class CacheManager
   {
     Long id = Long.decode(requestParams.getParameter("id").toString());
     Session s = getHibernateSession();
+    s.beginTransaction();
+
     Query q = (Query) s.load(Query.class, id);
     s.delete(q);
-    s.flush();
+
     for (CachedQuery cq : queue)
     {
       if (cq.getId() == id)
@@ -368,6 +358,9 @@ public class CacheManager
         queue.remove(cq);
       }
     }
+
+    s.flush();
+    s.getTransaction().commit();
     s.close();
   }
 
@@ -392,6 +385,8 @@ public class CacheManager
   private void initQueue() throws PluginHibernateException
   {
     Session s = getHibernateSession();
+    s.beginTransaction();
+    
     List l = s.createQuery("from CachedQuery").list();
     this.queue = new PriorityQueue<CachedQuery>(20, new SortByTimeDue());
     for (Object o : l)
@@ -413,7 +408,12 @@ public class CacheManager
       }
       cq.setNextExecution(nextExecution);
       this.queue.add(cq);
+
+      s.save(cq);
     }
+
+    s.flush();
+    s.getTransaction().commit();
     s.close();
   }
 
