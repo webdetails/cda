@@ -43,6 +43,9 @@
       <property name="cronString" not-null="true" type="string">
         <column length="254" name="cronString" not-null="true"/>
       </property>
+      <property name="success" type="boolean" >
+        <column name="success"/>
+      </property>
     </subclass>
     <subclass discriminator-value="UNCACHED" name="pt.webdetails.cda.cache.UncachedQuery"/>
   </class>

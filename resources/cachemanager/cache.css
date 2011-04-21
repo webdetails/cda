@@ -1,3 +1,8 @@
+body{
+  font-size: 9pt;
+
+}
+
 div.tableHeader {
     font-weight: bold;
     text-align: center;
@@ -15,6 +20,12 @@ div.row {
     border-bottom: 1px solid silver;
     padding-top: 2px;
     padding-bottom: 2px;
+    text-align: center;
+    font-size: 8pt;
+}
+
+div.left{
+  text-align: left;
 }
 
 img.button {

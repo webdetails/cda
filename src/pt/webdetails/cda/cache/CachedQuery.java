@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.quartz.CronExpression;
+import pt.webdetails.cda.utils.Util;
 
 /**
  *
@@ -22,6 +23,7 @@ public class CachedQuery extends Query
 
   private Date lastExecuted, nextExecution;
   private boolean executeAtStart;
+  private boolean success = false;
   private String cronString, userName;
 
 
@@ -62,6 +64,16 @@ public class CachedQuery extends Query
     this.executeAtStart = executeAtStart;
   }
 
+  public boolean isSuccess()
+  {
+    return success;
+  }
+
+
+  public void setSuccess(boolean success)
+  {
+    this.success = success;
+  }
 
   public Date getLastExecuted()
   {
@@ -149,11 +161,13 @@ public class CachedQuery extends Query
   {
     try
     {
+
       executeQuery();
     }
     catch (Exception e)
     {
-      CacheManager.logger.error("Failed to execute query " + toString());
+      CacheManager.logger.error("Failed to execute query " + toString() + " " + Util.getExceptionDescription(e));
+      Logger.getLogger(CachedQuery.class.getName()).log(Level.SEVERE, null, e);
     }
     finally
     {

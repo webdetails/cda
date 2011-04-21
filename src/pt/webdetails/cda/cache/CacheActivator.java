@@ -55,6 +55,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
       while (queue.peek().getNextExecution().before(rightNow))
       {
         processQueries(queue);
+        rightNow = new Date();
       }
       reschedule(queue);
       s.flush();

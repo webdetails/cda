@@ -20,8 +20,12 @@
 <div class='section span-24 last'>Cached Queries</div>
     <div class='span-24 last'>
         <div class="tableHeader container" id="header">
+            <div class='span-9'>Name</div>
             <div class='span-6'>Name</div>
-            <div class='span-16'>&nbsp;</div>
+            <div class='span-1'>Execute At Start</div>
+            <div class='span-2'>Last Execution</div>
+            <div class='span-2'>Next Execution</div>
+            <div class='span-2'>Cron</div>
             <div class='span-2 last'>Delete</div>
         </div>
         <div id="lines"></div>
@@ -31,7 +35,7 @@
 </body>
 <script>
 $(document).ready(function(){
-    $.getJSON('cacheController?method=list', populateQueries);
+    refreshTable();
 });
 </script>
 </html>
