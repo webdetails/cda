@@ -23,7 +23,7 @@ public class CachedQuery extends Query
 
   private Date lastExecuted, nextExecution;
   private boolean executeAtStart;
-  private boolean success = false;
+  private boolean success = true;
   private String cronString, userName;
 
 
@@ -121,6 +121,7 @@ public class CachedQuery extends Query
       json.put("nextExecution", getNextExecution().getTime());
       json.put("cronString", getCronString());
       json.put("executeAtStart", isExecuteAtStart());
+      json.put("success", isSuccess());
     }
     catch (JSONException ex)
     {

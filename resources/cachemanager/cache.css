@@ -4,32 +4,57 @@ body{
 }
 
 div.tableHeader {
-    font-weight: bold;
-    text-align: center;
-    border-bottom: 1px solid black;
-    border-top: 1px solid black;
+  font-weight: bold;
+  text-align: center;
+  border-bottom: 1px solid black;
+  border-top: 1px solid black;
 }
 
 div.section {
-    font-family: "Times New Roman", Times, serif;
-    font-size: 14pt;
-    margin-bottom: 8px;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 14pt;
+  margin-bottom: 8px;
 }
 
 div.row {
-    border-bottom: 1px solid silver;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    text-align: center;
-    font-size: 8pt;
+  border-bottom: 1px solid silver;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  text-align: center;
+  font-size: 8pt;
+}
+
+div.error{
+
+  background-color: #FFC9C9;
 }
 
 div.left{
   text-align: left;
 }
 
+div.operations a{
+  display: inline-block;
+  padding-right: 5px;
+}
+
 img.button {
-    position: relative;
-    top: 2px;
-    height: 16px
+  position: relative;
+  top: 2px;
+  height: 16px
+}
+
+
+dt { float: left;
+     clear: left;
+     color: #888;
+}
+
+dt:after {
+  content: ":";
+}
+
+dd {
+  float: left;
+  font-style: italic;
 }

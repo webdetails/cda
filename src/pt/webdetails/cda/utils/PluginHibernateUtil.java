@@ -4,7 +4,7 @@
  */
 package pt.webdetails.cda.utils;
 
-import java.io.InputStream;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
@@ -12,8 +12,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.pentaho.platform.api.engine.IPluginResourceLoader;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.repository.hibernate.HibernateUtil;
 import pt.webdetails.cda.PluginHibernateException;
 
@@ -107,12 +105,12 @@ public class PluginHibernateUtil
    *
    * @return Session
    */
-  public static Session getSession() throws PluginHibernateException
+  public static synchronized Session getSession() throws PluginHibernateException
   {
     Session s = (Session) PluginHibernateUtil.threadSession.get();
     try
     {
-      if (s == null)
+      if (s == null || !s.isOpen())
       {
 
         s = PluginHibernateUtil.getSessionFactory().openSession();
@@ -125,6 +123,7 @@ public class PluginHibernateUtil
       logger.warn("Error creating session " + Util.getExceptionDescription(ex)); //$NON-NLS-1$
       throw new PluginHibernateException("Error creating session", ex); //$NON-NLS-1$
     }
+    
     return s;
   }
 
@@ -147,7 +146,7 @@ public class PluginHibernateUtil
   /**
    * Closes the Session local to the thread.
    */
-  public static void closeSession() throws PluginHibernateException
+  public static synchronized void closeSession() throws PluginHibernateException
   {
     try
     {

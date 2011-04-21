@@ -145,8 +145,9 @@ public class CacheManager
 
   private void load(IParameterProvider requestParams, OutputStream out) throws Exception
   {
+    Session s = getHibernateSession();
     Long id = Long.decode(requestParams.getParameter("id").toString());
-    Query q = loadQuery(id);
+    Query q = (Query) s.load(Query.class, id);
     if (q == null)
     {
       out.write("{}".getBytes("UTF-8"));
@@ -161,15 +162,9 @@ public class CacheManager
     {
       logger.error(e);
     }
+    s.close();
   }
 
-
-  public Query loadQuery(Long id) throws PluginHibernateException
-  {
-    Session s = getHibernateSession();
-
-    return (Query) s.load(Query.class, id);
-  }
 
 
   private void monitor(IParameterProvider requestParams, OutputStream out)
@@ -190,6 +185,7 @@ public class CacheManager
     }
     JSONObject json = uq.toJSON();
     out.write(json.toString(2).getBytes("UTF-8"));
+    s.close();
   }
 
 
@@ -260,6 +256,7 @@ public class CacheManager
       Session s = getHibernateSession();
       s.save(q);
       s.flush();
+      s.close();
     }
     catch (JSONException jse)
     {
@@ -286,6 +283,10 @@ public class CacheManager
     catch (Exception e)
     {
       logger.error(e);
+    }
+    finally
+    {
+      s.close();
     }
   }
 
@@ -318,6 +319,7 @@ public class CacheManager
 
 
       s.flush();
+      s.close();
     }
     catch (JSONException jse)
     {
@@ -345,6 +347,10 @@ public class CacheManager
     {
       logger.error(ex);
     }
+    finally
+    {
+      s.close();
+    }
   }
 
 
@@ -352,14 +358,17 @@ public class CacheManager
   {
     Long id = Long.decode(requestParams.getParameter("id").toString());
     Session s = getHibernateSession();
-    Query q = loadQuery(id);
+    Query q = (Query) s.load(Query.class, id);
     s.delete(q);
     s.flush();
-    for (CachedQuery cq: queue) {
-      if (cq.getId() == id) {
-          queue.remove(cq);
+    for (CachedQuery cq : queue)
+    {
+      if (cq.getId() == id)
+      {
+        queue.remove(cq);
       }
     }
+    s.close();
   }
 
 
@@ -405,6 +414,7 @@ public class CacheManager
       cq.setNextExecution(nextExecution);
       this.queue.add(cq);
     }
+    s.close();
   }
 
 
@@ -454,6 +464,7 @@ public class CacheManager
         logger.error("Error executing " + cq.toString() + ":" + ex.toString());
       }
     }
+    s.close();
 
     CacheActivator.reschedule(queue);
   }
