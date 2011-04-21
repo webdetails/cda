@@ -46,19 +46,23 @@ public class CacheActivator implements IAcceptsRuntimeInputs
   public boolean execute() throws Exception
   {
     ClassLoader contextCL = Thread.currentThread().getContextClassLoader();
+    Session s = PluginHibernateUtil.getSession();
+    
     try
     {
       Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-      Session s = PluginHibernateUtil.getSession();
+
+      s.beginTransaction();
+
       PriorityQueue<CachedQuery> queue = CacheManager.getInstance().getQueue();
       Date rightNow = new Date();
       while (queue.peek().getNextExecution().before(rightNow))
       {
-        processQueries(queue);
+        processQueries(s, queue);
         rightNow = new Date();
       }
       reschedule(queue);
-      s.flush();
+
       return true;
     }
     catch (Exception e)
@@ -66,6 +70,9 @@ public class CacheActivator implements IAcceptsRuntimeInputs
     }
     finally
     {
+      s.flush();
+      s.getTransaction().commit();
+      s.close();
       Thread.currentThread().setContextClassLoader(contextCL);
       return true;
     }
@@ -78,12 +85,13 @@ public class CacheActivator implements IAcceptsRuntimeInputs
   }
 
 
-  public void processQueries(PriorityQueue<CachedQuery> queue)
+  public void processQueries(Session s, PriorityQueue<CachedQuery> queue)
   {
     CachedQuery q = queue.poll();
     try
     {
       IPentahoSession session = PentahoSessionHolder.getSession();
+      s.refresh(q);
       setSession(q);
       q.execute();
       q.updateNext();
@@ -96,6 +104,8 @@ public class CacheActivator implements IAcceptsRuntimeInputs
       q.setSuccess(false);
       CacheManager.logger.error("Failed to execute " + q.toString());
     }
+
+    s.save(q);
     CacheManager.logger.debug("Refreshing cached query...");
   }
 

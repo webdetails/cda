@@ -209,7 +209,7 @@ public class Query implements Serializable
 
   protected void executeQuery() throws Exception
   {
-    PluginHibernateUtil.getSession().merge(this);
+    
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(getCdaFile());
 
     final QueryOptions queryOptions = new QueryOptions();
