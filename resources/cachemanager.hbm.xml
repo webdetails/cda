@@ -28,6 +28,9 @@
       <one-to-many class="pt.webdetails.cda.cache.CachedParam"/>
     </list>
     <subclass discriminator-value="CACHED" name="pt.webdetails.cda.cache.CachedQuery">
+      <property name="userName" type="string">
+        <column name="uname"/>
+      </property>
       <property name="executeAtStart" type="boolean">
         <column name="executeAtStart"/>
       </property>

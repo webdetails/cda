@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.quartz.CronExpression;
 
 /**
@@ -21,13 +22,14 @@ public class CachedQuery extends Query
 
   private Date lastExecuted, nextExecution;
   private boolean executeAtStart;
-  private String cronString;
+  private String cronString, userName;
 
 
   CachedQuery(JSONObject json) throws JSONException
   {
     super(json);
 
+    this.userName = PentahoSessionHolder.getSession().getName();
     this.cronString = getJsonString(json,"cronString");
     this.executeAtStart = getJsonBoolean(json,"executeAtStart");
     this.lastExecuted = getJsonDate(json,"lastExecuted");
@@ -157,5 +159,23 @@ public class CachedQuery extends Query
     {
       setLastExecuted(new Date());
     }
+  }
+
+
+  /**
+   * @return the userName
+   */
+  public String getUserName()
+  {
+    return userName;
+  }
+
+
+  /**
+   * @param userName the userName to set
+   */
+  public void setUserName(String userName)
+  {
+    this.userName = userName;
   }
 }

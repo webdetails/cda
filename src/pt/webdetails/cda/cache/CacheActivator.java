@@ -6,10 +6,18 @@ import java.util.PriorityQueue;
 import org.hibernate.Session;
 import org.pentaho.platform.api.engine.IAcceptsRuntimeInputs;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
+import org.pentaho.platform.engine.core.system.UserSession;
+import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.scheduler.QuartzSystemListener;
 import org.pentaho.platform.scheduler.SchedulerHelper;
 import org.quartz.Scheduler;
+import org.springframework.security.Authentication;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import pt.webdetails.cda.utils.PluginHibernateUtil;
 
 /**
@@ -74,9 +82,12 @@ public class CacheActivator implements IAcceptsRuntimeInputs
     CachedQuery q = queue.poll();
     try
     {
+      IPentahoSession session = PentahoSessionHolder.getSession();
+      setSession(q);
       q.execute();
       q.updateNext();
       queue.add(q);
+      PentahoSessionHolder.setSession(session);
     }
     catch (Exception ex)
     {
@@ -98,5 +109,18 @@ public class CacheActivator implements IAcceptsRuntimeInputs
     SchedulerHelper.createSimpleTriggerJob(session, "system", "cda/actions", JOB_ACTION, TRIGGER_NAME, JOB_GROUP, "", dueAt, null, 0, 0);
 
 
+  }
+
+
+  public static void setSession(CachedQuery q)
+  {
+    IUserDetailsRoleListService userDetailsRoleListService = PentahoSystem.getUserDetailsRoleListService();
+    String user = q.getUserName();
+    UserSession session = new UserSession(user, null, false, null);
+    GrantedAuthority[] auths = userDetailsRoleListService.getUserRoleListService().getAuthoritiesForUser(user);
+    Authentication auth = new UsernamePasswordAuthenticationToken(user, null, auths);
+    session.setAttribute(SecurityHelper.SESSION_PRINCIPAL, auth);
+    session.doStartupActions(null);
+    PentahoSessionHolder.setSession(session);
   }
 }
