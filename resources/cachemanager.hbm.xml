@@ -19,7 +19,7 @@
     <property name="missCount" type="int">
       <column name="missCount"/>
     </property>
-    <property name="timeElapsed" type="double">
+    <property name="timeElapsed" type="long">
       <column name="timeElapsed"/>
     </property>
     <list cascade="all" lazy="false" name="parameters">

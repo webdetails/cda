@@ -88,10 +88,12 @@ public class CacheActivator implements IAcceptsRuntimeInputs
       q.execute();
       q.updateNext();
       queue.add(q);
+      q.setSuccess(true);
       PentahoSessionHolder.setSession(session);
     }
     catch (Exception ex)
     {
+      q.setSuccess(false);
       CacheManager.logger.error("Failed to execute " + q.toString());
     }
     CacheManager.logger.debug("Refreshing cached query...");

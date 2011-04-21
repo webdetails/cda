@@ -33,7 +33,7 @@ public class Query implements Serializable
   private String cdaFile;
   private String dataAccessId;
   private List<CachedParam> parameters;
-  private Double timeElapsed;
+  private long timeElapsed;
   private int hitCount, missCount;
 
 
@@ -183,6 +183,7 @@ public class Query implements Serializable
 
       output.put("hitCount", getHitCount());
       output.put("missCount", getMissCount());
+      output.put("timeElapsed", getTimeElapsed());
     }
     catch (JSONException jse)
     {
@@ -225,8 +226,8 @@ public class Query implements Serializable
     OutputStream nullOut = new NullOutputStream();
     Date d = new Date();
     CdaEngine.getInstance().doQuery(nullOut, cdaSettings, queryOptions);
-    setTimeElapsed(new Double((new Date().getTime() - d.getTime()) / 1000));
-    CacheManager.logger.debug("Time elapsed: " + new Double(timeElapsed).toString() + "s");
+    setTimeElapsed(new Date().getTime() - d.getTime());
+    CacheManager.logger.debug("Time elapsed: " + Double.toString(new Double(timeElapsed) / 1000)+ "s");
   }
 
 
@@ -240,13 +241,13 @@ public class Query implements Serializable
   }
 
 
-  public Double getTimeElapsed()
+  public long getTimeElapsed()
   {
     return timeElapsed;
   }
 
 
-  public void setTimeElapsed(Double timeElapsed)
+  public void setTimeElapsed(long timeElapsed)
   {
     this.timeElapsed = timeElapsed;
   }
