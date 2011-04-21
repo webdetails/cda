@@ -105,7 +105,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
       CacheManager.logger.error("Failed to execute " + q.toString());
     }
 
-    s.save(q);
+    s.update(q);
     CacheManager.logger.debug("Refreshing cached query...");
   }
 
