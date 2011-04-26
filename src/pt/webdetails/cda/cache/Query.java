@@ -52,10 +52,21 @@ public abstract class Query implements Serializable
     if (json.has("parameters"))
     {
       this.parameters = new ArrayList<CachedParam>();
-      JSONObject params = json.getJSONObject("parameters");
-      for (String name : JSONObject.getNames(params))
+      Object params = json.get("parameters");
+
+      if (params instanceof JSONArray)
       {
-        this.parameters.add(new CachedParam(name, params.getString(name)));
+        for (int i = 0; i < ((JSONArray) params).length(); i++)
+        {
+          this.parameters.add(new CachedParam(((JSONArray) params).getJSONObject(i)));
+        }
+      }
+      else
+      {
+        for (String name : JSONObject.getNames(json))
+        {
+          this.parameters.add(new CachedParam(name, ((JSONObject) params).getString(name)));
+        }
       }
     }
   }

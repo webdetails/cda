@@ -1,9 +1,13 @@
 package pt.webdetails.cda;
 
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPluginLifecycleListener;
 import org.pentaho.platform.api.engine.PluginLifecycleException;
 import pt.webdetails.cda.cache.CacheManager;
 import pt.webdetails.cda.utils.PluginHibernateUtil;
+import pt.webdetails.cda.utils.Util;
 
 /**
  * This class inits Cda plugin within the bi-platform
@@ -12,6 +16,9 @@ import pt.webdetails.cda.utils.PluginHibernateUtil;
  */
 public class CdaLifecycleListener implements IPluginLifecycleListener
 {
+
+  static Log logger = LogFactory.getLog(CacheManager.class);
+
 
   public void init() throws PluginLifecycleException
   {
@@ -31,6 +38,7 @@ public class CdaLifecycleListener implements IPluginLifecycleListener
     }
     catch (Exception e)
     {
+      logger.error(Util.getExceptionDescription(e));
     }
     finally
     {

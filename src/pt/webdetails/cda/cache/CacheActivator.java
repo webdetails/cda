@@ -28,10 +28,11 @@ public class CacheActivator implements IAcceptsRuntimeInputs
 {
 
   static final String TRIGGER_NAME = "cacheWarmer";
-  static final String BACKUP_TRIGGER_NAME = "cacheWarmer-backup";
+  static final String BACKUP_TRIGGER_NAME = "backupCacheWarmer";
   static final String JOB_GROUP = "CDA";
-  static final String JOB_BACKUP_GROUP = "CDA_BACKUP";
+  static final String BACKUP_JOB_GROUP = "CDABACKUP";
   static final String JOB_ACTION = "scheduler.xaction";
+  static final String BACKUP_JOB_ACTION = "backupScheduler.xaction";
   static final long ONE_HOUR = 3600000; // In miliseconds
 
 
@@ -51,21 +52,25 @@ public class CacheActivator implements IAcceptsRuntimeInputs
     ClassLoader contextCL = Thread.currentThread().getContextClassLoader();
     Session s = PluginHibernateUtil.getSession();
     Date rightNow = new Date();
-    /* the first thing we do is proactively reschedule this action to one hour
-     * from now, to ensure that, if for some reason the queue fails to reschedule
-     * after excuting all due queries, we'll still recover at some point in the
-     * future.
-     */
-    Date anHourFromNow = new Date(rightNow.getTime() + ONE_HOUR);
-    reschedule(anHourFromNow);
+
     try
     {
       Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
 
       s.beginTransaction();
-
+      /* If there's any work at all to be done, the first thing we do is proactively
+       * reschedule this action to one hour from now, to ensure that, if for some
+       * reason the queue fails to reschedule after excuting all due queries, we'll
+       * still recover at some point in the future.
+       */
       PriorityQueue<CachedQuery> queue = CacheManager.getInstance().getQueue();
-
+      if (queue.peek().getNextExecution().before(rightNow))
+      {
+        Date anHourFromNow = new Date(rightNow.getTime() + ONE_HOUR);
+        reschedule(anHourFromNow);
+      } else {
+      CacheManager.logger.info("No work to be done");
+      }
       while (queue.peek().getNextExecution().before(rightNow))
       {
         processQueries(s, queue);
@@ -156,5 +161,14 @@ public class CacheActivator implements IAcceptsRuntimeInputs
     session.setAttribute(SecurityHelper.SESSION_PRINCIPAL, auth);
     session.doStartupActions(null);
     PentahoSessionHolder.setSession(session);
+  }
+
+
+  public static void rescheduleBackup()
+  {
+
+    IPentahoSession session = new StandaloneSession("CDA");
+    SchedulerHelper.deleteJob(session, CacheActivator.BACKUP_JOB_ACTION, CacheActivator.BACKUP_JOB_GROUP);
+    SchedulerHelper.createCronJob(session, "system", "cda/actions", CacheActivator.BACKUP_JOB_ACTION, CacheActivator.BACKUP_TRIGGER_NAME, CacheActivator.BACKUP_JOB_GROUP, "", "* * 0/30 * * ?");
   }
 }

@@ -43,7 +43,7 @@
       <property name="cronString" not-null="true" type="string">
         <column length="254" name="cronString" not-null="true"/>
       </property>
-      <property name="success" type="boolean" >
+      <property name="success" type="boolean">
         <column name="success"/>
       </property>
     </subclass>
