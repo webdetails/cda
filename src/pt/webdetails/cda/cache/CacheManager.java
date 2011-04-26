@@ -328,6 +328,7 @@ public class CacheManager
     }
     catch (JSONException jse)
     {
+      logger.error("Error importing queries: " + Util.getExceptionDescription(jse));
       out.write("".getBytes("UTF-8"));
     }
   }
