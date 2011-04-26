@@ -55,7 +55,7 @@ refreshTable = function(id){
 
 
 export = function(id){
-  // Detect whether the change was triggered by a refresh or a change in DataAccessId
+  // Detect whether the was triggered by a refresh or a change in DataAccessId
   if (id != lastQuery) {
     // When we change query, we must rebuild parameters
     lastQuery = id;
@@ -103,7 +103,7 @@ getParams = function() {
 var filename = function(){
   var params = pageParams();
   return params.solution != undefined?
-    (params.solution + '/' +params.path + '/' + params.file).replace(/\/\//g,"/")
+    (params.solution + '/' +params.path + '/' + params.file).replace(/\+/g," ").replace(/\/\//g,"/")
   : params.path}();
 
 cacheThis = function() {

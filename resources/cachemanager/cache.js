@@ -19,7 +19,7 @@ var populateQueries = function(data){
 
     // Name
     var name = r.cdaFile + " (" + r.dataAccessId + ")";
-    row.append("<div class='span-9 left'>" + name + "</div>");
+    row.append("<div class='span-7 left'>" + name + "</div>");
 
     var paramPh = $("<dl></dl></div>");
     for (var param in r.parameters){
@@ -31,6 +31,7 @@ var populateQueries = function(data){
     row.append("<div class='span-2'>" + formatDate(r.lastExecuted) + " </div>");
     row.append("<div class='span-2'>" + formatDate(r.nextExecution) + " </div>");
     row.append("<div class='span-2'>" + r.cronString + " </div>");
+    row.append("<div class='span-2'>" + r.timeElapsed + " </div>");
     row.append("<div class='span-2'>" + (r.success?"Success":"Failed") + " </div>");
 
     var deleteButton = $("<a  href='javascript:'><img src='cachemanager/delete-24x24.png' class='button' alt='delete'></a>");
