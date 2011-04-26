@@ -137,8 +137,6 @@ public class CacheActivator implements IAcceptsRuntimeInputs
   {
 
     IPentahoSession session = new StandaloneSession("CDA");
-    Scheduler sched = QuartzSystemListener.getSchedulerInstance();
-
     SchedulerHelper.deleteJob(session, JOB_ACTION, JOB_GROUP);
     SchedulerHelper.createSimpleTriggerJob(session, "system", "cda/actions", JOB_ACTION, TRIGGER_NAME, JOB_GROUP, "", date, null, 0, 0);
 

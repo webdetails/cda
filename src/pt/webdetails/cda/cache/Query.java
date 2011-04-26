@@ -26,14 +26,13 @@ import pt.webdetails.cda.utils.PluginHibernateUtil;
  *
  * @author pdpi
  */
-public class Query implements Serializable
+public abstract class Query implements Serializable
 {
 
   private long id;
   private String cdaFile;
   private String dataAccessId;
   private List<CachedParam> parameters;
-  private long timeElapsed;
   private int hitCount, missCount;
 
 
@@ -238,18 +237,6 @@ public class Query implements Serializable
       Session s = PluginHibernateUtil.getSession();
       s.save(this);
     }
-  }
-
-
-  public long getTimeElapsed()
-  {
-    return timeElapsed;
-  }
-
-
-  public void setTimeElapsed(long timeElapsed)
-  {
-    this.timeElapsed = timeElapsed;
   }
 
 

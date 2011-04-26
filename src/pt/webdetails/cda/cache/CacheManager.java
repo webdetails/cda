@@ -6,14 +6,11 @@ package pt.webdetails.cda.cache;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.cfg.Configuration;
@@ -28,6 +25,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.engine.core.system.StandaloneSession;
+import org.pentaho.platform.scheduler.SchedulerHelper;
 import org.quartz.CronExpression;
 import pt.webdetails.cda.PluginHibernateException;
 import pt.webdetails.cda.utils.PluginHibernateUtil;
@@ -480,6 +480,11 @@ public class CacheManager
    */
   public void coldInit() throws PluginHibernateException
   {
+
+    IPentahoSession session = new StandaloneSession("CDA");
+
+    SchedulerHelper.deleteJob(session, CacheActivator.JOB_ACTION, CacheActivator.JOB_GROUP);
+     SchedulerHelper.createCronJob(session, "system", "cda/actions", CacheActivator.JOB_ACTION, CacheActivator.TRIGGER_NAME, CacheActivator.JOB_GROUP, "", "* * * * * ?");
     // run all queries
     Session s = getHibernateSession();
     List l = s.createQuery("from CachedQuery where executeAtStart = true").list();
