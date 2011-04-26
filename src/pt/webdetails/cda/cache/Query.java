@@ -182,7 +182,6 @@ public abstract class Query implements Serializable
 
       output.put("hitCount", getHitCount());
       output.put("missCount", getMissCount());
-      output.put("timeElapsed", getTimeElapsed());
     }
     catch (JSONException jse)
     {
@@ -208,7 +207,7 @@ public abstract class Query implements Serializable
 
   protected void executeQuery() throws Exception
   {
-    
+
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(getCdaFile());
 
     final QueryOptions queryOptions = new QueryOptions();
@@ -226,10 +225,12 @@ public abstract class Query implements Serializable
     Date d = new Date();
     CdaEngine.getInstance().doQuery(nullOut, cdaSettings, queryOptions);
     setTimeElapsed(new Date().getTime() - d.getTime());
-    CacheManager.logger.debug("Time elapsed: " + Double.toString(new Double(timeElapsed) / 1000)+ "s");
+    CacheManager.logger.debug("Time elapsed: " + Double.toString(new Double(getTimeElapsed()) / 1000) + "s");
   }
 
 
+  public abstract void setTimeElapsed(long timeElapsed);
+  public abstract long getTimeElapsed();
   public void save() throws PluginHibernateException
   {
     if (getId() == 0)

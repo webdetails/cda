@@ -24,4 +24,18 @@ public class UncachedQuery extends Query
   {
     return new CachedQuery(this);
   }
+
+
+  @Override
+  public void setTimeElapsed(long timeElapsed)
+  {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+
+  @Override
+  public long getTimeElapsed()
+  {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 }

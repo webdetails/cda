@@ -36,6 +36,7 @@ public class CachedQuery extends Query
     this.cronString = getJsonString(json, "cronString");
     this.executeAtStart = getJsonBoolean(json, "executeAtStart");
     this.lastExecuted = getJsonDate(json, "lastExecuted");
+
     updateNext();
   }
 
@@ -137,6 +138,9 @@ public class CachedQuery extends Query
       json.put("cronString", getCronString());
       json.put("executeAtStart", isExecuteAtStart());
       json.put("success", isSuccess());
+      json.put("timeElapsed", getTimeElapsed());
+
+
     }
     catch (JSONException ex)
     {
