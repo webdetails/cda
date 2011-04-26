@@ -53,7 +53,7 @@ public abstract class Query implements Serializable
     {
       this.parameters = new ArrayList<CachedParam>();
       JSONObject params = json.getJSONObject("parameters");
-      for (String name : params.getNames(json))
+      for (String name : JSONObject.getNames(params))
       {
         this.parameters.add(new CachedParam(name, params.getString(name)));
       }
