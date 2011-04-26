@@ -162,13 +162,14 @@ public class CachedQuery extends Query
   {
     try
     {
-
       executeQuery();
+      setSuccess(true);
     }
     catch (Exception e)
     {
       CacheManager.logger.error("Failed to execute query " + toString() + " " + Util.getExceptionDescription(e));
       Logger.getLogger(CachedQuery.class.getName()).log(Level.SEVERE, null, e);
+      setSuccess(false);
     }
     finally
     {

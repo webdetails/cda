@@ -6,11 +6,14 @@ package pt.webdetails.cda.cache;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.cfg.Configuration;
@@ -183,7 +186,7 @@ public class CacheManager
     .setString(0, file) //
     .setString(1, id) //
     .list();
-
+    
     if (l.size() == 0)
     {
     // No results, create a new (uncached) query object.
@@ -257,6 +260,8 @@ public class CacheManager
 
   private void list(IParameterProvider requestParams, OutputStream out) throws PluginHibernateException
   {
+    JSONObject list = new JSONObject();
+    JSONObject meta = new JSONObject();
     JSONArray queries = new JSONArray();
     Session s = getHibernateSession();
     List l = s.createQuery("from CachedQuery").list();
@@ -266,7 +271,17 @@ public class CacheManager
     }
     try
     {
-      out.write(queries.toString(2).getBytes("UTF-8"));
+      meta.put("nextExecution", queue.peek().getNextExecution().getTime());
+      list.put("queries", queries);
+      list.put("meta", meta);
+    }
+    catch (Exception e)
+    {
+      logger.error(e);
+    }
+    try
+    {
+      out.write(list.toString(2).getBytes("UTF-8"));
     }
     catch (Exception e)
     {
@@ -331,13 +346,28 @@ public class CacheManager
     try
     {
       q.execute();
+      q.updateNext();
+      CacheActivator.reschedule(queue);
+      out.write("{\"status\": \"ok\"}".getBytes("UTF-8"));
     }
     catch (Exception ex)
     {
       logger.error(ex);
+      try
+      {
+        out.write("{\"status\": \"error\"}".getBytes("UTF-8"));
+      }
+      catch (Exception ex1)
+      {
+        logger.error(ex1);
+      }
     }
     finally
     {
+      s.beginTransaction();
+      s.update(q);
+      s.flush();
+      s.getTransaction().commit();
       s.close();
     }
   }
@@ -387,7 +417,7 @@ public class CacheManager
   {
     Session s = getHibernateSession();
     s.beginTransaction();
-    
+
     List l = s.createQuery("from CachedQuery").list();
     this.queue = new PriorityQueue<CachedQuery>(20, new SortByTimeDue());
     for (Object o : l)

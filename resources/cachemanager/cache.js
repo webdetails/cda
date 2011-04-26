@@ -11,9 +11,9 @@ var populateQueries = function(data){
   var ph = $("#lines").empty();
 
 
-  for (row in data) {
+  for (row in data.queries) {
   
-    var r = data[row];
+    var r = data.queries[row];
 
     var row = $("<div class='span-24 last row "+ (r.success?"":"error") +"' id='query_" + r.id + "'></div>");
 

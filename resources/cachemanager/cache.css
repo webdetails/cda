@@ -16,7 +16,7 @@ div.section {
   margin-bottom: 8px;
 }
 
-div.row {
+div.row, div.row.error {
   border-bottom: 1px solid silver;
   padding-top: 2px;
   padding-bottom: 2px;
@@ -25,7 +25,9 @@ div.row {
 }
 
 div.error{
-
+  border: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
   background-color: #FFC9C9;
 }
 

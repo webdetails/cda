@@ -30,6 +30,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
   static final String TRIGGER_NAME = "cacheWarmer";
   static final String JOB_GROUP = "CDA";
   static final String JOB_ACTION = "scheduler.xaction";
+  static final long ONE_HOUR = 3600000; // In miliseconds
 
 
   public CacheActivator()
@@ -47,7 +48,14 @@ public class CacheActivator implements IAcceptsRuntimeInputs
   {
     ClassLoader contextCL = Thread.currentThread().getContextClassLoader();
     Session s = PluginHibernateUtil.getSession();
-    
+    Date rightNow = new Date();
+    /* the first thing we do is proactively reschedule this action to one hour
+     * from now, to ensure that, if for some reason the queue fails to reschedule
+     * after excuting all due queries, we'll still recover at some point in the
+     * future.
+     */
+    Date anHourFromNow = new Date(rightNow.getTime() + ONE_HOUR);
+    reschedule(anHourFromNow);
     try
     {
       Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
@@ -55,7 +63,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
       s.beginTransaction();
 
       PriorityQueue<CachedQuery> queue = CacheManager.getInstance().getQueue();
-      Date rightNow = new Date();
+
       while (queue.peek().getNextExecution().before(rightNow))
       {
         processQueries(s, queue);
@@ -87,6 +95,8 @@ public class CacheActivator implements IAcceptsRuntimeInputs
 
   public void processQueries(Session s, PriorityQueue<CachedQuery> queue)
   {
+
+    CacheManager.logger.debug("Refreshing cached query...");
     CachedQuery q = queue.poll();
     try
     {
@@ -94,19 +104,17 @@ public class CacheActivator implements IAcceptsRuntimeInputs
       s.refresh(q);
       setSession(q);
       q.execute();
-      q.updateNext();
-      queue.add(q);
-      q.setSuccess(true);
       PentahoSessionHolder.setSession(session);
     }
     catch (Exception ex)
     {
-      q.setSuccess(false);
       CacheManager.logger.error("Failed to execute " + q.toString());
     }
 
+
+    q.updateNext();
+    queue.add(q);
     s.update(q);
-    CacheManager.logger.debug("Refreshing cached query...");
   }
 
 
@@ -120,6 +128,19 @@ public class CacheActivator implements IAcceptsRuntimeInputs
 
     SchedulerHelper.deleteJob(session, JOB_ACTION, JOB_GROUP);
     SchedulerHelper.createSimpleTriggerJob(session, "system", "cda/actions", JOB_ACTION, TRIGGER_NAME, JOB_GROUP, "", dueAt, null, 0, 0);
+
+
+  }
+
+
+  public static void reschedule(Date date)
+  {
+
+    IPentahoSession session = new StandaloneSession("CDA");
+    Scheduler sched = QuartzSystemListener.getSchedulerInstance();
+
+    SchedulerHelper.deleteJob(session, JOB_ACTION, JOB_GROUP);
+    SchedulerHelper.createSimpleTriggerJob(session, "system", "cda/actions", JOB_ACTION, TRIGGER_NAME, JOB_GROUP, "", date, null, 0, 0);
 
 
   }
