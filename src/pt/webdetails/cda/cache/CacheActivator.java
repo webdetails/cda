@@ -28,7 +28,9 @@ public class CacheActivator implements IAcceptsRuntimeInputs
 {
 
   static final String TRIGGER_NAME = "cacheWarmer";
+  static final String BACKUP_TRIGGER_NAME = "cacheWarmer-backup";
   static final String JOB_GROUP = "CDA";
+  static final String JOB_BACKUP_GROUP = "CDA_BACKUP";
   static final String JOB_ACTION = "scheduler.xaction";
   static final long ONE_HOUR = 3600000; // In miliseconds
 
