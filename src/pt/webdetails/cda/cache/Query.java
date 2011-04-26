@@ -51,11 +51,11 @@ public abstract class Query implements Serializable
 
     if (json.has("parameters"))
     {
-      JSONArray params = json.getJSONArray("parameters");
       this.parameters = new ArrayList<CachedParam>();
-      for (int i = 0; i < params.length(); i++)
+      JSONObject params = json.getJSONObject("parameters");
+      for (String name : params.getNames(json))
       {
-        this.parameters.add(new CachedParam((JSONObject) params.get(i)));
+        this.parameters.add(new CachedParam(name, params.getString(name)));
       }
     }
   }
@@ -230,7 +230,11 @@ public abstract class Query implements Serializable
 
 
   public abstract void setTimeElapsed(long timeElapsed);
+
+
   public abstract long getTimeElapsed();
+
+
   public void save() throws PluginHibernateException
   {
     if (getId() == 0)
