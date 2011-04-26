@@ -482,9 +482,10 @@ public class CacheManager
   {
 
     IPentahoSession session = new StandaloneSession("CDA");
-
+    /*
     SchedulerHelper.deleteJob(session, CacheActivator.JOB_ACTION, CacheActivator.JOB_GROUP);
      SchedulerHelper.createCronJob(session, "system", "cda/actions", CacheActivator.JOB_ACTION, CacheActivator.TRIGGER_NAME, CacheActivator.JOB_GROUP, "", "* * * * * ?");
+*/
     // run all queries
     Session s = getHibernateSession();
     List l = s.createQuery("from CachedQuery where executeAtStart = true").list();
