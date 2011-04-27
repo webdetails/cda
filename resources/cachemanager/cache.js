@@ -35,26 +35,30 @@ var populateQueries = function(data){
     row.append("<div class='span-2'>" + (r.success?"Success":"Failed") + " </div>");
 
     var deleteButton = $("<a  href='javascript:'><img src='cachemanager/delete-24x24.png' class='button' alt='delete'></a>");
-    var deleteId = function(){return r.id};
-    deleteButton.click(function(){
-      if(confirm("Want to delete this scheduler?")){
-        $.getJSON("cacheController?method=delete&id=" + deleteId(),function(){
-          refreshTable();
-        })
-      }
-    })
+    var deleteFunction = function(id){
+      deleteButton.click(function(){
+        if(confirm("Want to delete this scheduler?")){
+          $.getJSON("cacheController?method=delete&id=" + id ,function(){
+            refreshTable();
+          })
+        }
+      })
+    };
+    deleteFunction(r.id);
 
     var refreshButton = $("<a  href='javascript:'><img src='cachemanager/refresh-24x24.png' class='button' alt='refresh'></a>");
-    refreshButton.click(function(){
+    var refreshFunction = function(id){
+      refreshButton.click(function(){
 
-      var myself = this;
-      $(this).find("img").attr("src","cachemanager/processing.png");
-      $.getJSON("cacheController?method=execute&id=" + r.id,function(){
-        refreshTable();
+        var myself = this;
+        $(this).find("img").attr("src","cachemanager/processing.png");
+        $.getJSON("cacheController?method=execute&id=" + id,function(){
+          refreshTable();
+        })
+
       })
-
-    })
-
+    };
+    refreshFunction(r.id);
 
     $("<div class='span-2 last operations'></div>").append(refreshButton).append(deleteButton).appendTo(row);
 
