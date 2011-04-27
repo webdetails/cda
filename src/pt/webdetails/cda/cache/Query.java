@@ -63,11 +63,16 @@ public abstract class Query implements Serializable
       }
       else
       {
-        for (String name : JSONObject.getNames(json))
+        String[] names = JSONObject.getNames((JSONObject) params);
+        if (names != null)
         {
-          this.parameters.add(new CachedParam(name, ((JSONObject) params).getString(name)));
+          for (String name : names)
+          {
+            this.parameters.add(new CachedParam(name, ((JSONObject) params).getString(name)));
+          }
         }
       }
+
     }
   }
 

@@ -272,7 +272,8 @@ public class CacheManager
     }
     try
     {
-      meta.put("nextExecution", queue.peek().getNextExecution().getTime());
+
+      meta.put("nextExecution", queue.size() > 0 ? queue.peek().getNextExecution().getTime() : 0);
       list.put("queries", queries);
       list.put("meta", meta);
     }
@@ -508,7 +509,7 @@ public class CacheManager
       }
       s.close();
     }
-    
+
     CacheActivator.reschedule(queue);
     CacheActivator.rescheduleBackup();
   }
