@@ -31,9 +31,6 @@
       <property name="userName" type="string">
         <column name="uname"/>
       </property>
-      <property name="executeAtStart" type="boolean">
-        <column name="executeAtStart"/>
-      </property>
       <property name="lastExecuted" type="timestamp">
         <column name="lastExecuted"/>
       </property>

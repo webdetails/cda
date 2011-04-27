@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.PriorityQueue;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.cfg.Configuration;
 
 import org.hibernate.Session;
 import org.pentaho.platform.api.engine.IParameterProvider;
@@ -28,7 +27,9 @@ import org.json.JSONTokener;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.scheduler.SchedulerHelper;
+import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.quartz.CronExpression;
+import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.PluginHibernateException;
 import pt.webdetails.cda.utils.PluginHibernateUtil;
 import pt.webdetails.cda.utils.Util;
@@ -460,7 +461,7 @@ public class CacheManager
 
     // Close session and rebuild
     PluginHibernateUtil.closeSession();
-    Configuration configuration = PluginHibernateUtil.getConfiguration();
+    org.hibernate.cfg.Configuration configuration = PluginHibernateUtil.getConfiguration();
     //if (configuration.getClassMapping(CachedQuery.class.getCanonicalName()) == null)
     //{
     configuration.addInputStream(in);
@@ -483,25 +484,31 @@ public class CacheManager
   public void coldInit() throws PluginHibernateException
   {
 
-    IPentahoSession session = new StandaloneSession("CDA");
 
-    // run all queries
-    Session s = getHibernateSession();
-    List l = s.createQuery("from CachedQuery where executeAtStart = true").list();
-    for (Object o : l)
+    Configuration config = CdaBoot.getInstance().getGlobalConfig();
+    String executeAtStart = config.getConfigProperty("pt.webdetails.cda.cache.executeAtStart");
+    if (executeAtStart.equals("true"))
     {
-      CachedQuery cq = (CachedQuery) o;
-      try
-      {
-        cq.execute();
-      }
-      catch (Exception ex)
-      {
-        logger.error("Error executing " + cq.toString() + ":" + ex.toString());
-      }
-    }
-    s.close();
+      IPentahoSession session = new StandaloneSession("CDA");
 
+      // run all queries
+      Session s = getHibernateSession();
+      List l = s.createQuery("from CachedQuery").list();
+      for (Object o : l)
+      {
+        CachedQuery cq = (CachedQuery) o;
+        try
+        {
+          cq.execute();
+        }
+        catch (Exception ex)
+        {
+          logger.error("Error executing " + cq.toString() + ":" + ex.toString());
+        }
+      }
+      s.close();
+    }
+    
     CacheActivator.reschedule(queue);
     CacheActivator.rescheduleBackup();
   }

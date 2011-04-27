@@ -22,7 +22,6 @@ public class CachedQuery extends Query
 {
 
   private Date lastExecuted, nextExecution;
-  private boolean executeAtStart;
   private boolean success = true;
   private long timeElapsed;
   private String cronString, userName;
@@ -34,7 +33,6 @@ public class CachedQuery extends Query
 
     this.userName = PentahoSessionHolder.getSession().getName();
     this.cronString = getJsonString(json, "cronString");
-    this.executeAtStart = getJsonBoolean(json, "executeAtStart");
     this.lastExecuted = getJsonDate(json, "lastExecuted");
 
     updateNext();
@@ -43,27 +41,13 @@ public class CachedQuery extends Query
 
   CachedQuery(Query query)
   {
-    this.executeAtStart = true;
   }
 
 
   CachedQuery()
   {
     super();
-    this.executeAtStart = true;
     this.lastExecuted = new Date(0);
-  }
-
-
-  public boolean isExecuteAtStart()
-  {
-    return executeAtStart;
-  }
-
-
-  public void setExecuteAtStart(boolean executeAtStart)
-  {
-    this.executeAtStart = executeAtStart;
   }
 
 
@@ -136,7 +120,6 @@ public class CachedQuery extends Query
       json.put("lastExecuted", getLastExecuted().getTime());
       json.put("nextExecution", getNextExecution().getTime());
       json.put("cronString", getCronString());
-      json.put("executeAtStart", isExecuteAtStart());
       json.put("success", isSuccess());
       json.put("timeElapsed", getTimeElapsed());
 

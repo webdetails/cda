@@ -35,9 +35,10 @@ var populateQueries = function(data){
     row.append("<div class='span-2'>" + (r.success?"Success":"Failed") + " </div>");
 
     var deleteButton = $("<a  href='javascript:'><img src='cachemanager/delete-24x24.png' class='button' alt='delete'></a>");
+    var deleteId = function(){return r.id};
     deleteButton.click(function(){
       if(confirm("Want to delete this scheduler?")){
-        $.getJSON("cacheController?method=delete&id=" + r.id,function(){
+        $.getJSON("cacheController?method=delete&id=" + deleteId(),function(){
           refreshTable();
         })
       }
