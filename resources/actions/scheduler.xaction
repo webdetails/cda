@@ -14,11 +14,9 @@
     <action-definition>
       <action-name>Send email with report in body and in attachment</action-name>
       <component-name>org.pentaho.platform.engine.services.solution.PojoComponent</component-name>
-      <!--<component-name>pt.webdetails.cda.cache.CacheActivator</component-name>-->
       <action-type>Scheduler</action-type>
       <action-inputs/>
       <component-definition>
-        <!--<class>pt.webdetails.cda.cache.CacheActivator</class>-->
         <class>CdaScheduler</class>
       </component-definition>
     </action-definition>

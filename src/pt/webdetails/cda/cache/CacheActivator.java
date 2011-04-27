@@ -18,6 +18,7 @@ import org.quartz.Scheduler;
 import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.utils.PluginHibernateUtil;
 
 /**
@@ -30,7 +31,6 @@ public class CacheActivator implements IAcceptsRuntimeInputs
   static final String TRIGGER_NAME = "cacheWarmer";
   static final String BACKUP_TRIGGER_NAME = "backupCacheWarmer";
   static final String JOB_GROUP = "CDA";
-  static final String BACKUP_JOB_GROUP = "CDABACKUP";
   static final String JOB_ACTION = "scheduler.xaction";
   static final String BACKUP_JOB_ACTION = "backupScheduler.xaction";
   static final long ONE_HOUR = 3600000; // In miliseconds
@@ -68,8 +68,10 @@ public class CacheActivator implements IAcceptsRuntimeInputs
       {
         Date anHourFromNow = new Date(rightNow.getTime() + ONE_HOUR);
         reschedule(anHourFromNow);
-      } else {
-      CacheManager.logger.info("No work to be done");
+      }
+      else
+      {
+        CacheManager.logger.info("No work to be done");
       }
       while (queue.peek().getNextExecution().before(rightNow))
       {
@@ -130,7 +132,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
     CachedQuery q = queue.peek();
 
     Date dueAt = q.getNextExecution();
-    IPentahoSession session = new StandaloneSession("CDA");
+    IPentahoSession session = new StandaloneSession(JOB_GROUP);
     Scheduler sched = QuartzSystemListener.getSchedulerInstance();
 
     SchedulerHelper.deleteJob(session, JOB_ACTION, JOB_GROUP);
@@ -143,7 +145,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
   public static void reschedule(Date date)
   {
 
-    IPentahoSession session = new StandaloneSession("CDA");
+    IPentahoSession session = new StandaloneSession(JOB_GROUP);
     SchedulerHelper.deleteJob(session, JOB_ACTION, JOB_GROUP);
     SchedulerHelper.createSimpleTriggerJob(session, "system", "cda/actions", JOB_ACTION, TRIGGER_NAME, JOB_GROUP, "", date, null, 0, 0);
 
@@ -166,9 +168,10 @@ public class CacheActivator implements IAcceptsRuntimeInputs
 
   public static void rescheduleBackup()
   {
-
-    IPentahoSession session = new StandaloneSession("CDA");
-    SchedulerHelper.deleteJob(session, CacheActivator.BACKUP_JOB_ACTION, CacheActivator.BACKUP_JOB_GROUP);
-    SchedulerHelper.createCronJob(session, "system", "cda/actions", CacheActivator.BACKUP_JOB_ACTION, CacheActivator.BACKUP_TRIGGER_NAME, CacheActivator.BACKUP_JOB_GROUP, "", "* * 0/30 * * ?");
+    String cron = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.cache.backupWarmerCron");
+    cron = cron == null ? "0 0 0/30 * * ?" : cron;
+    IPentahoSession session = new StandaloneSession(JOB_GROUP);
+    SchedulerHelper.deleteJob(session, BACKUP_JOB_ACTION, JOB_GROUP);
+    SchedulerHelper.createCronJob(session, "system", "cda/actions", BACKUP_JOB_ACTION, BACKUP_TRIGGER_NAME, JOB_GROUP, "", cron);
   }
 }
