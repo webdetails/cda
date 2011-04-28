@@ -281,10 +281,9 @@ public abstract class AbstractDataAccess implements DataAccess
 
   public static synchronized void clearCache() throws CacheException
   {
-    if (cacheManager != null && cacheManager.cacheExists(CACHE_NAME))
-    {
-      cacheManager.removeCache(CACHE_NAME);
-    }
+    
+    Cache cache = getCache();
+    cache.removeAll();
   }
 
 

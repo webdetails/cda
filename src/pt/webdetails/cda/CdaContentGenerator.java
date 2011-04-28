@@ -525,8 +525,8 @@ public class CdaContentGenerator extends BaseContentGenerator
     {
 
       final String editorPath = "system/" + PLUGIN_NAME + EDITOR_SOURCE;
-      SettingsManager.getInstance().clearCache();
-      AbstractDataAccess.clearCache();
+      //SettingsManager.getInstance().clearCache();
+      //AbstractDataAccess.clearCache();
       setResponseHeaders("text/html", null);
       out.write(getResourceAsString(editorPath, ISolutionRepository.ACTION_UPDATE).getBytes("UTF-8"));
     }
@@ -544,8 +544,8 @@ public class CdaContentGenerator extends BaseContentGenerator
   public void previewQuery(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
     final String previewerPath = "system/" + PLUGIN_NAME + PREVIEWER_SOURCE;
-    SettingsManager.getInstance().clearCache();
-    AbstractDataAccess.clearCache();
+    //SettingsManager.getInstance().clearCache();
+    //AbstractDataAccess.clearCache();
     setResponseHeaders("text/html", null);
     out.write(getResourceAsString(previewerPath, ISolutionRepository.ACTION_EXECUTE).getBytes("UTF-8"));
   }
@@ -653,8 +653,8 @@ public class CdaContentGenerator extends BaseContentGenerator
     if (solutionRepository.getSolutionFile(path, ISolutionRepository.ACTION_UPDATE) != null)
     {
       final String cachemanPath = "system/" + PLUGIN_NAME + CACHEMAN_SOURCE;
-      SettingsManager.getInstance().clearCache();
-      AbstractDataAccess.clearCache();
+      //SettingsManager.getInstance().clearCache();
+      //AbstractDataAccess.clearCache();
       setResponseHeaders("text/html", null);
       out.write(getResourceAsString(cachemanPath, ISolutionRepository.ACTION_UPDATE).getBytes("UTF-8"));
     }
