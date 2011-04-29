@@ -309,6 +309,11 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       final net.sf.ehcache.Element storeElement = new net.sf.ehcache.Element(key, tableModelCopy);
       storeElement.setTimeToLive(getCacheDuration());
       cache.put(storeElement);
+      cache.flush();
+      
+      // Print cache status size
+      logger.debug("Cache status: " + cache.getMemoryStoreSize() + " in memory, " + 
+              cache.getDiskStoreSize() + " in disk");
     }
 
     // and finally return the copy.
