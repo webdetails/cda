@@ -134,9 +134,9 @@ cacheThis = function() {
 
 
 periodicity = [
-    {name: "every week", granularity: "day of the week (1-7)", cron: "* * * ? * x"},
-    {name: "every day", granularity: "hour (0-23)", cron: "* * x * * ?"},
-    {name: "every hour", granularity: "minute (0-59)", cron: "* x * * * ?"},
+    {name: "every week", granularity: "day of the week (1-7)", cron: "0 0 0 ? * x"},
+    {name: "every day", granularity: "hour (0-23)", cron: "0 0 x * * ?"},
+    {name: "every hour", granularity: "minute (0-59)", cron: "0 x * * * ?"},
     {name: "every minute", granularity: "second (0-59)",cron: "x * * * * ?"}
 ];
 
