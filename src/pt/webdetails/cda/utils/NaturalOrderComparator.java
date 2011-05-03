@@ -55,6 +55,7 @@ public class NaturalOrderComparator implements Comparator
   public int compareStrings(String a, String b)
   {
 
+    boolean pna = false, pnb = false;
     int ia = 0, ib = 0;
     int nza = 0, nzb = 0;
     char ca, cb;
@@ -79,6 +80,7 @@ public class NaturalOrderComparator implements Comparator
         {
           // only count consecutive zeroes
           nza = 0;
+          pna = false;
         }
 
         ca = charAt(a, ++ia);
@@ -94,6 +96,7 @@ public class NaturalOrderComparator implements Comparator
         {
           // only count consecutive zeroes
           nzb = 0;
+          pnb = false;
         }
 
         cb = charAt(b, ++ib);
@@ -102,9 +105,12 @@ public class NaturalOrderComparator implements Comparator
       // process run of digits
       if (Character.isDigit(ca) && Character.isDigit(cb))
       {
-        if ((result = compareRight(a.substring(ia), b.substring(ib))) != 0)
+        if (pna != pnb) {
+          return pna ? -1 : 1;
+        }
+        else if ((result = compareRight(a.substring(ia), b.substring(ib))) != 0)
         {
-          return result;
+          return pna ? - result : result;
         }
       }
 
@@ -114,7 +120,8 @@ public class NaturalOrderComparator implements Comparator
         // will want to call strcmp to break the tie.
         return nza - nzb;
       }
-
+      pna = ca == '-';
+      pnb = cb == '-';
       if (ca < cb)
       {
         return -1;
