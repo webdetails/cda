@@ -30,7 +30,7 @@ import pt.webdetails.cda.utils.Util;
 public abstract class SimpleDataAccess extends AbstractDataAccess
 {
 
-  protected static class TableCacheKey implements Serializable
+  public static class TableCacheKey implements Serializable
   {
 
     private static final long serialVersionUID = 1L;
@@ -269,16 +269,21 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
 
       if (isCache())
       {
-        final net.sf.ehcache.Element element = cache.get(key);
-        if (element != null && !queryOptions.isCacheBypass()) // Are we explicitly saying to bypass the cache?
-        {
-          final TableModel cachedTableModel = (TableModel) element.getObjectValue();
-          if (cachedTableModel != null)
+        try{
+          final net.sf.ehcache.Element element = cache.get(key);
+          if (element != null && !queryOptions.isCacheBypass()) // Are we explicitly saying to bypass the cache?
           {
-            // we have a entry in the cache ... great!
-            logger.debug("Found tableModel in cache. Returning");
-            return cachedTableModel;
+            final TableModel cachedTableModel = (TableModel) element.getObjectValue();
+            if (cachedTableModel != null)
+            {
+              // we have a entry in the cache ... great!
+              logger.debug("Found tableModel in cache. Returning");
+              return cachedTableModel;
+            }
           }
+        }
+        catch(Exception e){
+          logger.error("Error while attempting to load from cache, bypassing cache (cause: " + e.getClass() + ")", e);
         }
       }
 
