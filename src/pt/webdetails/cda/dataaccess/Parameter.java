@@ -10,8 +10,10 @@ import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 import org.pentaho.reporting.libraries.formula.Formula;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 
+import pt.webdetails.cda.utils.FormulaEvaluator;
 import pt.webdetails.cda.utils.Util;
 
 /**
@@ -29,7 +31,7 @@ public class Parameter implements java.io.Serializable {
   private String name;
   private Type type;
   private Object defaultValue;
-  private String pattern;
+  private String pattern = StringUtils.EMPTY;
   private Object value;
   private Access access = Access.PUBLIC;
   
@@ -181,7 +183,7 @@ public class Parameter implements java.io.Serializable {
       final String strValue = (String) objValue;
       //check if it is a formula
       if(strValue != null && strValue.trim().startsWith(FORMULA_BEGIN)){
-      	return processFormula(Util.getContentsBetween(strValue, FORMULA_BEGIN, FORMULA_END), this.formulaContext);
+      	return FormulaEvaluator.processFormula(Util.getContentsBetween(strValue, FORMULA_BEGIN, FORMULA_END), this.formulaContext);
       }
       
       Type valueType = getType();
@@ -241,25 +243,6 @@ public class Parameter implements java.io.Serializable {
       result.add(getValueFromString(tokenizer.nextToken(), elementType));
     }
     return result.toArray();
-  }
-
-  private static Object processFormula(String localValue, FormulaContext formulaContext) throws InvalidParameterException {
-    try {
-      Formula formula = new Formula(localValue);
-      // set context if available
-      if (formulaContext != null) formula.initialize(formulaContext);
-      else formula.initialize(new DefaultFormulaContext());
-      // evaluate
-      Object result = formula.evaluate();
-      if(result instanceof ArrayList){//TODO: this returns Object[] with no specific type
-          result = ((ArrayList) result).toArray();
-      }
-      return result;
-    } catch (org.pentaho.reporting.libraries.formula.parser.ParseException e) {
-      throw new InvalidParameterException("Unable to parse expression " + localValue, e);
-    } catch (org.pentaho.reporting.libraries.formula.EvaluationException e) {
-      throw new InvalidParameterException("Unable to evaluate expression " + localValue, e);
-    }
   }
 
   public String getName()

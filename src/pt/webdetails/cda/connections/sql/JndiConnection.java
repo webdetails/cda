@@ -9,8 +9,10 @@ import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.Co
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.JndiConnectionProvider;
 import org.pentaho.reporting.platform.plugin.connection.PentahoJndiDatasourceConnectionProvider;
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.connections.EvaluableConnection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
+import pt.webdetails.cda.utils.FormulaEvaluator;
 import pt.webdetails.cda.utils.Util;
 
 /**
@@ -21,9 +23,9 @@ import pt.webdetails.cda.utils.Util;
  *
  * @author Thomas Morgner.
  */
-public class JndiConnection extends AbstractSqlConnection {
+public class JndiConnection extends AbstractSqlConnection implements EvaluableConnection {
 
-  private JndiConnectionInfo connectionInfo;
+  private SqlJndiConnectionInfo connectionInfo;
 
   public JndiConnection(final Element connection)
           throws InvalidConnectionException {
@@ -39,7 +41,12 @@ public class JndiConnection extends AbstractSqlConnection {
    */
   public JndiConnection(String id, String jndi){
   	super(id);
-  	this.connectionInfo = new JndiConnectionInfo(jndi,null,null,null,null);
+  	this.connectionInfo = new SqlJndiConnectionInfo(jndi,null,null,null,null);
+  }
+  
+  public JndiConnection(String id, SqlJndiConnectionInfo info){
+    super(id);
+    this.connectionInfo = info;
   }
 
   public ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException {
@@ -64,14 +71,14 @@ public class JndiConnection extends AbstractSqlConnection {
       connection.close();
     } catch (SQLException e) {
 
-      throw new InvalidConnectionException("JdbcConnection: Found SQLException: " + Util.getExceptionDescription(e), e);
+      throw new InvalidConnectionException( getClass().getName() + ": Found SQLException: " + Util.getExceptionDescription(e), e);
     }
 
     return connectionProvider;
   }
 
   protected void initializeConnection(final Element connection) throws InvalidConnectionException {
-    connectionInfo = new JndiConnectionInfo(connection);
+    connectionInfo = new SqlJndiConnectionInfo(connection);
   }
 
   public String getType() {
@@ -114,5 +121,17 @@ public class JndiConnection extends AbstractSqlConnection {
   public String getUserField()
   {
     return connectionInfo.getUserField();
+  }
+
+  @Override
+  public pt.webdetails.cda.connections.Connection evaluate() {    
+    SqlJndiConnectionInfo info = new SqlJndiConnectionInfo( FormulaEvaluator.replaceFormula( connectionInfo.getJndi()), 
+                                                      connectionInfo.getUser(), 
+                                                      connectionInfo.getPass(), 
+                                                      connectionInfo.getUserField(), 
+                                                      connectionInfo.getPasswordField());
+    JndiConnection conn = new JndiConnection(getId(), info);
+    conn.setCdaSettings(getCdaSettings());
+    return conn;
   }
 }

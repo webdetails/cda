@@ -2,7 +2,6 @@ package pt.webdetails.cda.connections;
 
 import java.util.ArrayList;
 
-import org.dom4j.Element;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.settings.CdaSettings;

@@ -23,7 +23,7 @@ import pt.webdetails.cda.utils.Util;
  */
 public class JndiConnection extends AbstractConnection implements Olap4JConnection {
 
-  private JndiConnectionInfo connectionInfo;
+  private OlapJndiConnectionInfo connectionInfo;
 
   public JndiConnection(final Element connection)
           throws InvalidConnectionException {
@@ -52,7 +52,7 @@ public class JndiConnection extends AbstractConnection implements Olap4JConnecti
   }
 
   protected void initializeConnection(final Element connection) throws InvalidConnectionException {
-    connectionInfo = new JndiConnectionInfo(connection);
+    connectionInfo = new OlapJndiConnectionInfo(connection);
   }
 
   public String getType() {

@@ -32,6 +32,10 @@ public class CdaSessionFormulaContext extends DefaultFormulaContext
       }
       providers.put(SYSTEM_PREFIX, new SystemSettingsParameterProvider());
     }
+    
+    public CdaSessionFormulaContext(){
+      this(null);
+    }
 
 
     @Override

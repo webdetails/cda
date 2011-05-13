@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-import org.pentaho.platform.api.engine.IConnectionUserRoleMapper;
-import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DataSourceProvider;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.JndiDataSourceProvider;
 import org.pentaho.reporting.platform.plugin.connection.PentahoMondrianDataSourceProvider;
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.connections.Connection;
+import pt.webdetails.cda.connections.EvaluableConnection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
+import pt.webdetails.cda.utils.FormulaEvaluator;
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,12 +20,12 @@ import pt.webdetails.cda.dataaccess.PropertyDescriptor;
  * Date: Feb 2, 2010
  * Time: 5:09:18 PM
  */
-public class JndiConnection extends AbstractMondrianConnection
+public class JndiConnection extends AbstractMondrianConnection implements EvaluableConnection
 {
 
   private static final Log logger = LogFactory.getLog(JndiConnection.class);
   public static final String TYPE = "mondrianJndi";
-  private JndiConnectionInfo connectionInfo;
+  private MondrianJndiConnectionInfo connectionInfo;
   private Element connection;
 
 
@@ -40,12 +40,15 @@ public class JndiConnection extends AbstractMondrianConnection
   {
   }
 
+  public JndiConnection(MondrianJndiConnectionInfo info){
+    connectionInfo = info;
+  }
 
   @Override
   protected void initializeConnection(final Element connection) throws InvalidConnectionException
   {
 
-    connectionInfo = new JndiConnectionInfo(connection);
+    connectionInfo = new MondrianJndiConnectionInfo(connection);
 
   }
 
@@ -71,11 +74,12 @@ public class JndiConnection extends AbstractMondrianConnection
   }
 
 
-  public synchronized JndiConnectionInfo getConnectionInfo()
+  public synchronized MondrianJndiConnectionInfo getConnectionInfo()
   {
-    JndiConnectionInfo ci = new JndiConnectionInfo(this.connection);
-    ci.setMondrianRole(assembleRole(ci.getCatalog()));
-    return ci;
+    return this.connectionInfo;
+//    MondrianJndiConnectionInfo ci = new MondrianJndiConnectionInfo(this.connection);
+//    ci.setMondrianRole(assembleRole(ci.getCatalog()));
+//    return ci;
   }
 
 
@@ -113,5 +117,22 @@ public class JndiConnection extends AbstractMondrianConnection
     final ArrayList<PropertyDescriptor> properties = super.getProperties();
     properties.add(new PropertyDescriptor("jndi", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
+  }
+
+
+  @Override
+  public Connection evaluate() {
+      JndiConnection evaluated = this;
+      try {
+        evaluated= new JndiConnection(this.connection);
+      } catch (InvalidConnectionException e) {
+        logger.error("Unable to duplicate connection for evaluation", e);
+      }
+      evaluated.setCdaSettings(getCdaSettings());
+      //process formula on jndi
+      evaluated.getConnectionInfo().setJndi( FormulaEvaluator.replaceFormula(getConnectionInfo().getJndi()));
+      //assemble role
+      evaluated.getConnectionInfo().setMondrianRole(assembleRole(getConnectionInfo().getCatalog()));
+      return evaluated;
   }
 }

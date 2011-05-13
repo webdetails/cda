@@ -174,7 +174,7 @@ public class MdxDataAccess extends PREDataAccess
 
   @Override
   protected Object getExtraCacheKey()
-  {
+  {//TODO: is this necessary after role assembly in EvaluableConnection.evaluate()? 
     MondrianConnectionInfo mci;
     try
     {

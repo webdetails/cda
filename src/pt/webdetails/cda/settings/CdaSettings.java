@@ -16,6 +16,7 @@ import org.dom4j.Element;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import pt.webdetails.cda.connections.Connection;
+import pt.webdetails.cda.connections.EvaluableConnection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.connections.kettle.TransFromFileConnection;
@@ -308,7 +309,14 @@ public class CdaSettings {
     if (!connectionsMap.containsKey(id)) {
       throw new UnknownConnectionException("Unknown connection with id " + id, null);
     }
-    return connectionsMap.get(id);
+    
+    Connection connection = connectionsMap.get(id);
+    
+    if(connection instanceof EvaluableConnection)
+    {//return evaluated copy, keep original
+      return ((EvaluableConnection) connection).evaluate();
+    }
+    else return connection;
   }
 
   public DataAccess getDataAccess(final String id) throws UnknownDataAccessException {

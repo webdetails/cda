@@ -154,8 +154,10 @@ public class SettingsManager {
     else {
       IPentahoSession session = PentahoSessionHolder.getSession();
       final ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, session);
-      ISolutionFile savedCda = solutionRepository.getSolutionFile(id, IPentahoAclEntry.PERM_NOTHING);
-      if(savedCda != null) return savedCda.getLastModified();
+      if(solutionRepository != null){
+        ISolutionFile savedCda = solutionRepository.getSolutionFile(id, IPentahoAclEntry.PERM_NOTHING);
+        if(savedCda != null) return savedCda.getLastModified();
+      }
     }
     return null;
   }

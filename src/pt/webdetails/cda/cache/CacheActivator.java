@@ -131,13 +131,12 @@ public class CacheActivator implements IAcceptsRuntimeInputs
   {
     CachedQuery q = queue.peek();
 
-    Date dueAt = q.getNextExecution();
+    Date dueAt = ( q != null)? q.getNextExecution() : null;
     IPentahoSession session = new StandaloneSession(JOB_GROUP);
     Scheduler sched = QuartzSystemListener.getSchedulerInstance();
 
     SchedulerHelper.deleteJob(session, JOB_ACTION, JOB_GROUP);
     SchedulerHelper.createSimpleTriggerJob(session, "system", "cda/actions", JOB_ACTION, TRIGGER_NAME, JOB_GROUP, "", dueAt, null, 0, 0);
-
 
   }
 
