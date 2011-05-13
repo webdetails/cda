@@ -16,7 +16,6 @@ import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.DummyConnection;
 import pt.webdetails.cda.query.QueryOptions;
-import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.Util;
@@ -33,8 +32,9 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
   protected static class TableCacheKey implements Serializable
   {
 
-    private static final long serialVersionUID = 1L;
-    private Connection connection;
+    private static final long serialVersionUID = 2L; //1->2 only hash of connection kept
+    
+    private int connectionHash;
     private String query;
     private ParameterDataRow parameterDataRow;
     private Object extraCacheKey;
@@ -50,12 +50,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
 
     private void writeObject(java.io.ObjectOutputStream out) throws IOException
     {
-      //connection
-      String cdaSettingsId = connection.getCdaSettings().getId();
-      String connectionId = connection.getId();
-      out.writeObject(cdaSettingsId);
-      out.writeObject(connectionId);
-
+      out.writeInt(connectionHash);
       out.writeObject(query);
       out.writeObject(createParametersFromParameterDataRow(parameterDataRow));
       out.writeObject(extraCacheKey);
@@ -65,16 +60,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
     {
       //connection
-      String cdaSettingsId = (String) in.readObject();
-      String connectionId = (String) in.readObject();
-      try
-      {
-        connection = SettingsManager.getInstance().parseSettingsFile(cdaSettingsId).getConnection(connectionId);
-      }
-      catch (Exception e)
-      {//wrap in generic IOException
-        throw new IOException("Error serializing " + TableCacheKey.class.getName() + ".connection", e);
-      }
+      connectionHash = in.readInt();
       //query
       query = (String) in.readObject();
       //parameterDataRow
@@ -115,7 +101,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
         throw new NullPointerException();
       }
 
-      this.connection = connection;
+      this.connectionHash = connection.hashCode();
       this.query = query;
       this.parameterDataRow = parameterDataRow;
       this.extraCacheKey = extraCacheKey;
@@ -135,8 +121,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
 
       final TableCacheKey that = (TableCacheKey) o;
 
-      if (connection != null ? !connection.equals(that.connection) : that.connection != null)
-      {
+      if(connectionHash != that.connectionHash){
         return false;
       }
       if (parameterDataRow != null ? !parameterDataRow.equals(that.parameterDataRow) : that.parameterDataRow != null)
@@ -159,7 +144,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     @Override
     public int hashCode()
     {
-      int result = connection != null ? connection.hashCode() : 0;
+      int result = connectionHash;
       result = 31 * result + (query != null ? query.hashCode() : 0);
       result = 31 * result + (parameterDataRow != null ? parameterDataRow.hashCode() : 0);
       result = 31 * result + (extraCacheKey != null ? extraCacheKey.hashCode() : 0);
