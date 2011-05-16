@@ -5,21 +5,19 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import javax.swing.table.TableModel;
 
-import org.apache.axis2.databinding.types.xsd.Decimal;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 
 /**
- * JsonExporter
+ * XmlExporter
  * <p/>
  * User: pedro
  * Date: Feb 5, 2010

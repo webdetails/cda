@@ -1,6 +1,9 @@
 package pt.webdetails.cda.exporter;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import pt.webdetails.cda.utils.Util;
@@ -24,11 +27,21 @@ public class ExporterEngine
   	JSON("json"),
   	XML("xml"),
   	CSV("csv"),
-  	XLS("xls");
+  	XLS("xls"),
+  	HTML("html");
   	
   	private String type;
   	OutputType(String type){this.type = type;}
   	public String toString(){ return type;}
+  	
+  	public static OutputType parse(String typeStr){
+  	  for(OutputType outputType: OutputType.values()){
+  	    if(StringUtils.equalsIgnoreCase(outputType.toString(), typeStr)){
+  	      return outputType;
+  	    }
+  	  }
+  	  return null;
+  	}
   }
 
   public ExporterEngine()
@@ -38,6 +51,7 @@ public class ExporterEngine
 
   }
 
+  
   public Exporter getExporter(final String outputType) throws UnsupportedExporterException
   {
     return getExporter(outputType, null);
@@ -45,6 +59,13 @@ public class ExporterEngine
 
   public Exporter getExporter(final String outputType, final HashMap<String, String> extraSettings) throws UnsupportedExporterException
   {
+    Exporter exporter = getExporter( OutputType.parse(outputType), extraSettings);
+    if(exporter != null)
+    {
+      return exporter;
+    }
+    //else fallback to old version
+    logger.info(MessageFormat.format("getExporter for {0} failed, falling back to old version", outputType));
 
     try
     {
@@ -58,7 +79,7 @@ public class ExporterEngine
         HashMap.class
       };
 
-      final Exporter exporter = (Exporter) clazz.getConstructor(params).newInstance(new Object[]
+      exporter = (Exporter) clazz.getConstructor(params).newInstance(new Object[]
               {
                 extraSettings
               });
@@ -67,9 +88,29 @@ public class ExporterEngine
     }
     catch (Exception e)
     {
-      throw new UnsupportedExporterException("Error initializing expoert class: " + Util.getExceptionDescription(e), e);
+      throw new UnsupportedExporterException("Error initializing export class: " + Util.getExceptionDescription(e), e);
     }
 
+  }
+  
+  private Exporter getExporter(OutputType type, HashMap<String, String> extraSettings)
+  {
+    if(type == null) return null;
+    
+    switch(type){
+      case CSV:
+        return new CsvExporter(extraSettings);
+      case HTML:
+        return new HtmlExporter(extraSettings);
+      case JSON:
+        return new JsonExporter(extraSettings);
+      case XLS:
+        return new XlsExporter(extraSettings);
+      case XML:
+        return new XmlExporter(extraSettings);
+      default:
+        return null;
+    }
   }
 
   private void init()
