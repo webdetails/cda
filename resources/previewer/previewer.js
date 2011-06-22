@@ -54,7 +54,7 @@ refreshTable = function(id){
 };
 
 
-export = function(id){
+exportFunc = function(id){
   // Detect whether the was triggered by a refresh or a change in DataAccessId
   if (id != lastQuery) {
     // When we change query, we must rebuild parameters
