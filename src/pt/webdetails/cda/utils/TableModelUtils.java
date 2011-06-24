@@ -306,13 +306,19 @@ public class TableModelUtils
 
     // We will believe the data is correct - no type checking
 
-    final Class[] colTypes = new Class[tableModelA.getColumnCount()];
-    final String[] colNames = new String[tableModelA.getColumnCount()];
+    int colCountA = tableModelA.getColumnCount(),
+            colCountB = tableModelB.getColumnCount();
+    boolean usingA = colCountA > colCountB;
+    int colCount = usingA ? colCountA : colCountB;
+    TableModel referenceTable = (usingA? tableModelA : tableModelB);
+    
+    final Class[] colTypes = new Class[colCount];
+    final String[] colNames = new String[colCount];
 
-    for (int i = 0; i < tableModelA.getColumnCount(); i++)
+    for (int i = 0; i < referenceTable.getColumnCount(); i++)
     {
-      colTypes[i] = tableModelA.getColumnClass(i);
-      colNames[i] = tableModelA.getColumnName(i);
+      colTypes[i] = referenceTable.getColumnClass(i);
+      colNames[i] = referenceTable.getColumnName(i);
     }
 
     int rowCount = tableModelA.getRowCount() + tableModelB.getRowCount();
