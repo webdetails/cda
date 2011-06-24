@@ -15,6 +15,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
@@ -59,7 +60,6 @@ public abstract class AbstractDataAccess implements DataAccess
   private ArrayList<Integer> outputs;
   private ArrayList<ColumnDefinition> columnDefinitions;
   private HashMap<Integer, ColumnDefinition> columnDefinitionIndexMap;
-  //private static final ConnectionType connectionType = null;
   private FormulaContext formulaContext;
   private static final String CACHE_NAME = "pentaho-cda-dataaccess";
   private static final String CACHE_CFG_FILE = "ehcache.xml";
@@ -511,13 +511,14 @@ public abstract class AbstractDataAccess implements DataAccess
 
     //name, values
     Map<String, Iterable<String>> iterableParameters = new HashMap<String, Iterable<String>>();
+    final String splitRegex = PARAM_ITERATOR_ARG_SEPARATOR + "(?=([^\"]*\"[^\"]*\")*[^\"]*$)";//ignore separator inside dquotes
 
     for (Parameter param : queryOptions.getParameters())
     {
       String value = param.getStringValue();
       if (value != null && value.startsWith(PARAM_ITERATOR_BEGIN))
       {
-        String[] args = Util.getContentsBetween(value, PARAM_ITERATOR_BEGIN, PARAM_ITERATOR_END).split(PARAM_ITERATOR_ARG_SEPARATOR);
+        String[] args = Util.getContentsBetween(value, PARAM_ITERATOR_BEGIN, PARAM_ITERATOR_END).split(splitRegex);
 
         if (args.length < 2)
         {
@@ -526,7 +527,7 @@ public abstract class AbstractDataAccess implements DataAccess
         }
 
         //dataAccessId
-        String dataAccessId = args[0];
+        String dataAccessId = StringUtils.trim(args[0]);
         try
         {//validate
           getCdaSettings().getDataAccess(dataAccessId);
@@ -540,7 +541,7 @@ public abstract class AbstractDataAccess implements DataAccess
         int columnIdx = 0;
         try
         {
-          columnIdx = Integer.parseInt(args[1]);
+          columnIdx = Integer.parseInt(StringUtils.trim(args[1]));
         }
         catch (NumberFormatException nfe)
         {
@@ -586,12 +587,16 @@ public abstract class AbstractDataAccess implements DataAccess
     //set query parameters
     if (dataAccessParameters != null)
     {
-      for (String nameVal : dataAccessParameters)
+      for (String paramDef : dataAccessParameters)
       {
-        String[] nameValArr = nameVal.split("=");
-        if (nameValArr.length == 2)
-        {
-          queryOptions.addParameter(nameValArr[0], nameValArr[1]);
+        int attribIdx = StringUtils.indexOf(paramDef, '=');
+        if(attribIdx > 0){
+          String paramName = StringUtils.trim(StringUtils.substring(paramDef, 0, attribIdx));
+          String paramValue = StringUtils.trim(StringUtils.substring(paramDef, attribIdx+1));
+          queryOptions.addParameter(paramName, paramValue);
+        }
+        else {
+          logger.error("Bad parameter definition, skipping: " + paramDef);
         }
       }
     }

@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
-import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
-import org.pentaho.reporting.libraries.formula.Formula;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 
 import org.apache.commons.lang.StringUtils;
@@ -182,8 +180,14 @@ public class Parameter implements java.io.Serializable {
     if(objValue instanceof String){//may be a string or a parsed value
       final String strValue = (String) objValue;
       //check if it is a formula
-      if(strValue != null && strValue.trim().startsWith(FORMULA_BEGIN)){
-      	return FormulaEvaluator.processFormula(Util.getContentsBetween(strValue, FORMULA_BEGIN, FORMULA_END), this.formulaContext);
+      if(strValue != null && strValue.trim().startsWith(FORMULA_BEGIN))
+      {
+        String formula = Util.getContentsBetween(strValue, FORMULA_BEGIN, FORMULA_END);
+        if(formula == null)
+        {
+          throw new InvalidParameterException("Malformed formula expression", null);
+        }
+      	return FormulaEvaluator.processFormula(formula, this.formulaContext);
       }
       
       Type valueType = getType();
