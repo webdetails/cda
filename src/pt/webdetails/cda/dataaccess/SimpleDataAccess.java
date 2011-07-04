@@ -370,7 +370,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
   private static ArrayList<Parameter> createParametersFromParameterDataRow(final ParameterDataRow row)
   {
     ArrayList<Parameter> parameters = new ArrayList<Parameter>();
-    for (String name : row.getColumnNames())
+    if(row != null) for (String name : row.getColumnNames())
     {
       Object value = row.get(name);
       Parameter param = new Parameter(name, value != null ? value.toString() : null);
