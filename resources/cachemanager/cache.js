@@ -1,9 +1,28 @@
 
-
 var refreshTable = function(){
 
+  $('#cachedQueries').hide();
+  $('#scheduledQueries').show();
+  $('#cacheButton').removeClass('selected');
+  var thisButton = $('#scheduleButton');
+  if(!thisButton.hasClass('selected')){
+    thisButton.addClass('selected');
+  }
   $.getJSON('cacheController?method=list', populateQueries);
 
+}
+
+var refreshCachedTable = function(){
+  
+    $('#scheduledQueries').hide();
+    $('#cachedQueries').show();
+    $('#scheduleButton').removeClass('selected');
+    var thisButton = $('#cacheButton');
+    if(!thisButton.hasClass('selected')){
+      thisButton.addClass('selected');
+    }
+    $.getJSON('cacheController?method=cached', populateCachedQueries);
+    
 }
 
 
@@ -67,9 +86,73 @@ var populateQueries = function(data){
   }
 }
 
+var populateCachedQueries = function(resp){
+ 
+  var ph = $("#cachedQueriesLines").empty();
+
+  if(resp.results.length > 0){
+    for (var i = 0; i< resp.results.length;i++ ) {
+      //<div class='span-13'>Query</div>
+      //<div class='span-5'>Parameters</div>
+      //<div class='span-2'>Insertion</div>
+      //<div class='span-2'>Last Update</div>
+      //<div class='span-2'># Hits</div>
+      
+      var row = $("<div class='span-24 last row'></div>");
+      var item = resp.results[i];
+      
+      row.append($('<div/>').addClass('span-13').text(item.query));
+      
+      var paramPh = $("<dl></dl>");
+      for (var param in item.parameters){
+        paramPh.append("<dt>"+param+"</dt><dd>"+item.parameters[param]+"</dd>");
+      }
+      row.append($('<div/>').addClass('span-5').append(paramPh));
+      var insertDate = new Date(item.inserted);
+      row.append($('<div/>').addClass('span-2').text(insertDate.toLocaleDateString() + ' ' + insertDate.toLocaleTimeString()));
+      var accessDate = new Date(item.accessed);
+      row.append($('<div/>').addClass('span-2').text(accessDate.toLocaleDateString() + ' ' + accessDate.toLocaleTimeString()));
+      row.append($('<div/>').addClass('span-2 last').text(item.hits));
+      
+      ph.append(row);
+  
+      if(item.table && item.table.metadata && item.table.resultset){
+        row.click( function() {
+          $(this.nextSibling).toggle();
+        });
+        
+        //table
+        var tableContentsId = "tableContents" + i;
+        ph.append($('<div id="' + tableContentsId + '" />').addClass('span-22 prepend-1 append-1').css('display','none'));
+        renderCachedTable(item.table, tableContentsId);
+      }
+    }
+  }
+  else {
+    var row = $('<div class="span-24 last row"/>').text('Cache is empty.');
+    ph.append(row);
+  }
+}
+
+var renderCachedTable = function(data, containerId){
+  
+  var tableContents = data.resultset;
+  var columnNames = [];
+  for (column in data.metadata) {
+    columnNames.push({"sTitle": data.metadata[column].colName});
+  }
+  var table = $('<table class="queryTable"></table>');
+  
+  var container = $('#' + containerId);
+  container.empty();
+  container.append(table);
+  
+  var dTable = table.dataTable({"aaData": tableContents, "aoColumns": columnNames, "bFilter" : false});
+  
+}
+
 
 var formatDate = function(date){
-
   var d = new Date(date);
   return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-"+ pad(d.getDate()) + "<br/>" +
   pad(d.getHours())+":" + pad(d.getMinutes())+":" + pad(d.getSeconds()) ;

@@ -11,14 +11,22 @@
     <script type="text/javascript" src="cachemanager/cache.js"></script>
     <script type="text/javascript" src="static/jquery.i18n.properties.js"></script>
     <script type="text/javascript" src="static/jquery-ui-1.8rc3.custom.min.js"></script>
+    <script type="text/javascript" src="previewer/dataTables/js/jquery.dataTables.js"></script>
   </head>
   <body>
-    <div class='container'>
-      <!-- HEADER -->
-      <div class='header span24 last'></div>
 
+    <div class='container'>     
+    <!-- HEADER -->
+    <div class='header span24 last'>
+      <div id="tabButtons">
+        <span id="scheduleButton" class="button" onclick="refreshTable()"> Scheduled Queries </span>
+        <span id="cacheButton" class="button" onclick="refreshCachedTable()"> Cached Queries </span>
+      </div>
+    </div>
+    </div>
+    <div id='scheduledQueries' class='container'>
       <!-- MAIN TABLE BODY -->
-      <div class='section span-24 last'>Cached Queries</div>
+      <div class='section span-24 last'>Scheduled Queries</div>
       <div class='span-24 last'>
         <div class="tableHeader container" id="header">
           <div class='span-7'>Name</div>
@@ -33,6 +41,25 @@
         <div id="lines"></div>
       </div>
     </div>
+    
+    <div id="cachedQueries" class="container" style="display:none;" />
+    <!-- MAIN TABLE BODY -->
+      <div class='section span-24 last'>Queries in cache</div>
+      <div class='span-24 last'>
+        <div class="tableHeader container" id="cachedQueriesHeader">
+          <div class='span-13'>Query</div>
+          <div class='span-5'>Parameters</div>
+          <div class='span-2'>Insertion</div>
+          <div class='span-2'>Last Access</div>
+          <div class='span-2 last'># Hits</div>
+          <!--<div class='span-2'>Time (ms)</div>-->
+          <!--<div class='span-2'>Status</div>-->
+          <!--<div class='span-2 last'>Operations</div>-->
+        </div>
+        <div id="cachedQueriesLines"></div>
+      </div>
+    </div>
+    
     <!-- FOOTER -->
   </body>
   <script>

@@ -31,41 +31,7 @@ public class JsonExporter extends AbstractExporter
 
     try
     {
-      JSONObject json = new JSONObject();
-
-      // Generate metadata
-      final JSONObject queryInfo = new JSONObject();
-      final JSONArray metadataArray = new JSONArray();
-
-      final int columnCount = tableModel.getColumnCount();
-      final int rowCount = tableModel.getRowCount();
-
-      for (int i = 0; i < columnCount; i++)
-      {
-        JSONObject info = new JSONObject();
-        info.put("colIndex", i);
-        info.put("colName", tableModel.getColumnName(i));
-        info.put("colType", getColType(tableModel.getColumnClass(i)));
-        metadataArray.put(info);
-      }
-      json.put("metadata", metadataArray);
-
-      if (tableModel instanceof MetadataTableModel)
-      {
-        json.put("queryInfo", ((MetadataTableModel)tableModel).getAllMetadata());
-      }
-      final JSONArray valuesArray = new JSONArray();
-      for (int rowIdx = 0; rowIdx < rowCount; rowIdx++)
-      {
-
-        final JSONArray rowArray = new JSONArray();
-        valuesArray.put(rowArray);
-        for (int colIdx = 0; colIdx < columnCount; colIdx++)
-        {
-          rowArray.put(tableModel.getValueAt(rowIdx, colIdx));
-        }
-      }
-      json.put("resultset", valuesArray);
+      JSONObject json = getTableAsJson(tableModel);
 
       try
       {
@@ -83,6 +49,45 @@ public class JsonExporter extends AbstractExporter
     }
 
 
+  }
+  
+  public JSONObject getTableAsJson(TableModel tableModel) throws JSONException, ExporterException {
+    JSONObject json = new JSONObject();
+
+    // Generate metadata
+    final JSONObject queryInfo = new JSONObject();
+    final JSONArray metadataArray = new JSONArray();
+
+    final int columnCount = tableModel.getColumnCount();
+    final int rowCount = tableModel.getRowCount();
+
+    for (int i = 0; i < columnCount; i++)
+    {
+      JSONObject info = new JSONObject();
+      info.put("colIndex", i);
+      info.put("colName", tableModel.getColumnName(i));
+      info.put("colType", getColType(tableModel.getColumnClass(i)));
+      metadataArray.put(info);
+    }
+    json.put("metadata", metadataArray);
+
+    if (tableModel instanceof MetadataTableModel)
+    {
+      json.put("queryInfo", ((MetadataTableModel)tableModel).getAllMetadata());
+    }
+    final JSONArray valuesArray = new JSONArray();
+    for (int rowIdx = 0; rowIdx < rowCount; rowIdx++)
+    {
+
+      final JSONArray rowArray = new JSONArray();
+      valuesArray.put(rowArray);
+      for (int colIdx = 0; colIdx < columnCount; colIdx++)
+      {
+        rowArray.put(tableModel.getValueAt(rowIdx, colIdx));
+      }
+    }
+    json.put("resultset", valuesArray);
+    return json;
   }
 
 

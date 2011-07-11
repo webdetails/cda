@@ -4,13 +4,16 @@
  */
 package pt.webdetails.cda.cache;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.PriorityQueue;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -26,11 +29,13 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.scheduler.SchedulerHelper;
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.quartz.CronExpression;
 import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.PluginHibernateException;
+import pt.webdetails.cda.dataaccess.AbstractDataAccess;
+import pt.webdetails.cda.dataaccess.SimpleDataAccess;
+import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.utils.PluginHibernateUtil;
 import pt.webdetails.cda.utils.Util;
 
@@ -49,7 +54,7 @@ public class CacheManager
   enum functions
   {
 
-    LIST, CHANGE, RELOAD, DELETE, PERSIST, MONITOR, DETAILS, TEST, EXECUTE, IMPORT
+    LIST, CHANGE, RELOAD, DELETE, PERSIST, MONITOR, DETAILS, TEST, EXECUTE, IMPORT, CACHED
   }
   private static CacheManager _instance;
 
@@ -94,6 +99,10 @@ public class CacheManager
           break;
         case IMPORT:
           importQueries(requestParams, out);
+          break;
+        case CACHED:
+          listCachedQueries(requestParams, out);
+          break;
       }
     }
     catch (Exception e)
@@ -124,6 +133,7 @@ public class CacheManager
 
   public void render(IParameterProvider requestParams, OutputStream out)
   {
+    //TODO:
   }
 
 
@@ -295,6 +305,21 @@ public class CacheManager
     }
   }
 
+  private void listCachedQueries(IParameterProvider requestParams, OutputStream out){
+    try {
+      JSONObject result =  SimpleDataAccess.listQueriesInCache();
+      result.put("success", true);
+      out.write(result.toString(2).getBytes("UTF-8"));
+    } catch (JSONException e) {
+      logger.error("Error building JSON response", e);
+    } catch (UnsupportedEncodingException e) {
+      logger.error("Error attempting to use UTF-8 encoding", e);
+    } catch (IOException e) {
+      logger.error("Error writing to output stream", e);
+    } catch (ExporterException e) {
+      logger.error("Error writing cache element table contents", e);
+    }
+  }
 
   private void importQueries(IParameterProvider requestParams, OutputStream out) throws Exception
   {
@@ -529,4 +554,7 @@ public class CacheManager
   {
     return queue;
   }
+  
+
+  
 }

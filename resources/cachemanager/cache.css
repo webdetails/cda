@@ -17,7 +17,7 @@ div.section {
 }
 
 div.row, div.row.error {
-  border-bottom: 1px solid silver;
+  border-top: 1px solid silver;
   padding-top: 2px;
   padding-bottom: 2px;
   text-align: center;
@@ -59,4 +59,32 @@ dt:after {
 dd {
   float: left;
   font-style: italic;
+}
+
+#tabButtons {
+  position: relative;
+  left:670px;
+  top:80px;
+}
+
+#tabButtons .button {
+  padding:12px;
+}
+
+#tabButtons .button.selected {
+  font-size: 14px;
+  background-color: #ffffff;
+}
+
+.button {
+  cursor: pointer;
+}
+
+#cachedQueries div.row {
+  cursor: pointer;
+}
+
+.dataTables_wrapper {
+  border: 1px solid silver;
+  margin-bottom: 10px;
 }

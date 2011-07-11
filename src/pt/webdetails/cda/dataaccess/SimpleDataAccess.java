@@ -3,18 +3,25 @@ package pt.webdetails.cda.dataaccess;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.table.TableModel;
 
 import net.sf.ehcache.Cache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 
 import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.DummyConnection;
+import pt.webdetails.cda.exporter.ExporterException;
+import pt.webdetails.cda.exporter.JsonExporter;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 import pt.webdetails.cda.utils.TableModelUtils;
@@ -445,4 +452,58 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     }
     return defaultValue;
   }
+
+  
+  public static JSONObject listQueriesInCache() throws JSONException, ExporterException {
+    
+    JSONArray results = new JSONArray();
+    
+    Cache cdaCache = AbstractDataAccess.getCache();
+    
+    for(Object key : cdaCache.getKeys()) {
+      
+      if(key instanceof TableCacheKey){
+        
+        JSONObject queryInfo = new JSONObject();
+        
+        TableCacheKey cacheKey = (TableCacheKey) key;
+        
+        //query
+        queryInfo.put("query", cacheKey.query);
+        //parameters
+        ParameterDataRow prow = cacheKey.parameterDataRow;
+        JSONObject parameters = new JSONObject();
+        for(String paramName : prow.getColumnNames()){
+          parameters.put(paramName, prow.get(paramName));
+        }
+        queryInfo.put("parameters", parameters);
+        
+        //cacheKey.query;
+        net.sf.ehcache.Element elem = cdaCache.getQuiet(key);
+                
+        //inserted
+        queryInfo.put("inserted", elem.getLatestOfCreationAndUpdateTime());
+        queryInfo.put("accessed", elem.getLastAccessTime());
+        queryInfo.put("hits", elem.getHitCount());
+        
+        //query results
+        JsonExporter exporter = new JsonExporter(null);
+        queryInfo.put("table", exporter.getTableAsJson((TableModel) elem.getObjectValue()));//TODO: move elsewhere
+        
+        results.put(queryInfo);
+      }
+      else {
+        logger.warn("Found non-TableCacheKey object in cache, skipping...");
+      }
+    }
+    
+    JSONObject result = new JSONObject();
+    result.put("results", results);
+    result.put("cacheLength", cdaCache.getSize());
+    result.put("memoryStoreLength", cdaCache.getMemoryStoreSize());
+    result.put("diskStoreLength", cdaCache.getDiskStoreSize());
+    return result;
+  }
+  
+  
 }
