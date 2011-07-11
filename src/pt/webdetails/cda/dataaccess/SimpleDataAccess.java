@@ -1,13 +1,18 @@
 package pt.webdetails.cda.dataaccess;
 
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+
+//import java.io.ObjectOutputStream;
+//import org.apache.commons.codec.binary.Base64;
+//import java.io.ByteArrayOutputStream;
 
 import javax.swing.table.TableModel;
 
 import net.sf.ehcache.Cache;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
@@ -454,7 +459,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
   }
 
   
-  public static JSONObject listQueriesInCache() throws JSONException, ExporterException {
+  public static JSONObject listQueriesInCache() throws JSONException, ExporterException, IOException {
     
     JSONArray results = new JSONArray();
     
@@ -486,9 +491,17 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
         queryInfo.put("accessed", elem.getLastAccessTime());
         queryInfo.put("hits", elem.getHitCount());
         
+//        //TODO: use id to get table; more efficient solution than b64
+//        //identifier
+//        ByteArrayOutputStream keyStream = new ByteArrayOutputStream();
+//        ObjectOutputStream objStream = new ObjectOutputStream(keyStream);
+//        cacheKey.writeObject(objStream);
+//        String identifier = new String(Base64.encodeBase64(keyStream.toByteArray()), "UTF-8");
+//        queryInfo.put("key", identifier);
+        
         //query results
         JsonExporter exporter = new JsonExporter(null);
-        queryInfo.put("table", exporter.getTableAsJson((TableModel) elem.getObjectValue()));//TODO: move elsewhere
+        queryInfo.put("table", exporter.getTableAsJson((TableModel) elem.getObjectValue(), 50));//TODO: move elsewhere
         
         results.put(queryInfo);
       }

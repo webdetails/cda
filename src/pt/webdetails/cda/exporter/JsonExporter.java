@@ -31,7 +31,7 @@ public class JsonExporter extends AbstractExporter
 
     try
     {
-      JSONObject json = getTableAsJson(tableModel);
+      JSONObject json = getTableAsJson(tableModel, null);
 
       try
       {
@@ -51,7 +51,7 @@ public class JsonExporter extends AbstractExporter
 
   }
   
-  public JSONObject getTableAsJson(TableModel tableModel) throws JSONException, ExporterException {
+  public JSONObject getTableAsJson(TableModel tableModel, Integer rowLimit) throws JSONException, ExporterException {
     JSONObject json = new JSONObject();
 
     // Generate metadata
@@ -59,8 +59,12 @@ public class JsonExporter extends AbstractExporter
     final JSONArray metadataArray = new JSONArray();
 
     final int columnCount = tableModel.getColumnCount();
-    final int rowCount = tableModel.getRowCount();
+    int rowCount = tableModel.getRowCount();
 
+    if(rowLimit != null){
+      rowCount = Math.min(rowCount, rowLimit);
+    }
+    
     for (int i = 0; i < columnCount; i++)
     {
       JSONObject info = new JSONObject();
