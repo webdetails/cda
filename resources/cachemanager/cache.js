@@ -14,15 +14,14 @@ var refreshTable = function(){
 
 var refreshCachedTable = function(){
   
-    $('#scheduledQueries').hide();
-    $('#cachedQueries').show();
-    $('#scheduleButton').removeClass('selected');
-    var thisButton = $('#cacheButton');
-    if(!thisButton.hasClass('selected')){
-      thisButton.addClass('selected');
-    }
-    $.getJSON('cacheController?method=cached', populateCachedQueries);
-    
+  $('#scheduledQueries').hide();
+  $('#cachedQueries').show();
+  $('#scheduleButton').removeClass('selected');
+  var thisButton = $('#cacheButton');
+  if(!thisButton.hasClass('selected')){
+    thisButton.addClass('selected');
+  }
+  $.getJSON('cacheController?method=cached', populateCachedQueries);
 }
 
 
@@ -113,19 +112,42 @@ var populateCachedQueries = function(resp){
       var accessDate = new Date(item.accessed);
       row.append($('<div/>').addClass('span-2').text(accessDate.toLocaleDateString() + ' ' + accessDate.toLocaleTimeString()));
       row.append($('<div/>').addClass('span-2 last').text(item.hits));
+      row.append($('<span/>').css('display','none').addClass('keyHolder').text( escape(item.key)));
       
       ph.append(row);
   
-      if(item.table && item.table.metadata && item.table.resultset){
-        row.click( function() {
-          $(this.nextSibling).toggle();
-        });
-        
+      //if(item.table && item.table.metadata && item.table.resultset){
+      //  
+      //
+      
         //table
-        var tableContentsId = "tableContents" + i;
-        ph.append($('<div id="' + tableContentsId + '" />').addClass('span-22 prepend-1 append-1').css('display','none'));
-        renderCachedTable(item.table, tableContentsId);
-      }
+      var tableContentsId = "tableContents" + i;
+      ph.append($('<div id="' + tableContentsId + '" />').addClass('span-22 prepend-1 append-1 empty').css('display','none'));
+      row.click( function() {
+        var tableContents = $(this.nextSibling);
+        tableContents.toggle();
+        if(tableContents.hasClass('empty')){
+          tableContents.removeClass('empty');
+          var key = unescape($(this).find('.keyHolder').text());
+          if(key){
+            $.getJSON("cacheController", {method: 'getDetails', key: key} , function(result){
+              if(result.success){
+                renderCachedTable(result.table, tableContents);
+              }
+              else {
+                tableContents.text('Item could not be retrieved from cache: ' + result.errorMsg);
+              }
+            })
+          }
+          else{
+            alert('this cache element is invalid');//TODO: better msg
+          }
+        }
+        //TODO: else
+      });
+        
+
+      //}
     }
   }
   else {
@@ -134,7 +156,7 @@ var populateCachedQueries = function(resp){
   }
 }
 
-var renderCachedTable = function(data, containerId){
+var renderCachedTable = function(data, container){
   
   var tableContents = data.resultset;
   var columnNames = [];
@@ -143,7 +165,7 @@ var renderCachedTable = function(data, containerId){
   }
   var table = $('<table class="queryTable"></table>');
   
-  var container = $('#' + containerId);
+  //var container = $('#' + containerId);
   container.empty();
   container.append(table);
   

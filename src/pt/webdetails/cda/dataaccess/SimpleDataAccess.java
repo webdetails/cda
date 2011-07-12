@@ -1,13 +1,16 @@
 package pt.webdetails.cda.dataaccess;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
-//import java.io.ObjectOutputStream;
-//import org.apache.commons.codec.binary.Base64;
-//import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
+import org.apache.commons.codec.binary.Base64;
+import java.io.ByteArrayOutputStream;
 
 import javax.swing.table.TableModel;
 
@@ -385,7 +388,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     if(row != null) for (String name : row.getColumnNames())
     {
       Object value = row.get(name);
-      Parameter param = new Parameter(name, value != null ? value.toString() : null);
+      Parameter param = new Parameter (name, value != null ? value : null);
       Parameter.Type type = Parameter.Type.inferTypeFromObject(value);
       param.setType(type);
       parameters.add(param);
@@ -457,7 +460,29 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     }
     return defaultValue;
   }
+  
+  public static JSONObject getcacheQueryTable(String encodedCacheKey) throws JSONException, ExporterException, UnsupportedEncodingException, IOException, ClassNotFoundException {
+    
+    JSONObject result = new JSONObject();
+    Cache cdaCache = AbstractDataAccess.getCache();
 
+    TableCacheKey lookupCacheKey = getTableCacheKeyFromString(encodedCacheKey);
+    net.sf.ehcache.Element elem = cdaCache.getQuiet(lookupCacheKey);
+
+    if(elem != null){
+      // put query results
+      JsonExporter exporter = new JsonExporter(null);
+      result.put("table", exporter.getTableAsJson((TableModel) elem.getObjectValue(), 50));
+      result.put("success", true);
+    }
+    else {
+      result.put("success", false);
+      result.put("errorMsg", "item not found");
+    }
+    
+    return result;
+    
+  }
   
   public static JSONObject listQueriesInCache() throws JSONException, ExporterException, IOException {
     
@@ -478,7 +503,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
         //parameters
         ParameterDataRow prow = cacheKey.parameterDataRow;
         JSONObject parameters = new JSONObject();
-        for(String paramName : prow.getColumnNames()){
+        if(prow != null) for(String paramName : prow.getColumnNames()){
           parameters.put(paramName, prow.get(paramName));
         }
         queryInfo.put("parameters", parameters);
@@ -491,17 +516,10 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
         queryInfo.put("accessed", elem.getLastAccessTime());
         queryInfo.put("hits", elem.getHitCount());
         
-//        //TODO: use id to get table; more efficient solution than b64
-//        //identifier
-//        ByteArrayOutputStream keyStream = new ByteArrayOutputStream();
-//        ObjectOutputStream objStream = new ObjectOutputStream(keyStream);
-//        cacheKey.writeObject(objStream);
-//        String identifier = new String(Base64.encodeBase64(keyStream.toByteArray()), "UTF-8");
-//        queryInfo.put("key", identifier);
-        
-        //query results
-        JsonExporter exporter = new JsonExporter(null);
-        queryInfo.put("table", exporter.getTableAsJson((TableModel) elem.getObjectValue(), 50));//TODO: move elsewhere
+        //use id to get table;TODO: more efficient solution than b64
+        //identifier
+        String identifier = getTableCacheKeyAsString(cacheKey);
+        queryInfo.put("key", identifier);
         
         results.put(queryInfo);
       }
@@ -516,6 +534,29 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     result.put("memoryStoreLength", cdaCache.getMemoryStoreSize());
     result.put("diskStoreLength", cdaCache.getDiskStoreSize());
     return result;
+  }
+
+
+  /**
+   * @param cacheKey
+   * @return
+   * @throws IOException
+   * @throws UnsupportedEncodingException
+   */
+  private static String getTableCacheKeyAsString(TableCacheKey cacheKey) throws IOException, UnsupportedEncodingException {
+    ByteArrayOutputStream keyStream = new ByteArrayOutputStream();
+    ObjectOutputStream objStream = new ObjectOutputStream(keyStream);
+    cacheKey.writeObject(objStream);
+    String identifier = new String(Base64.encodeBase64(keyStream.toByteArray()), "UTF-8");
+    return identifier;
+  }
+  
+  private static TableCacheKey getTableCacheKeyFromString(String encodedCacheKey) throws IOException, UnsupportedEncodingException, ClassNotFoundException {
+    ByteArrayInputStream keyStream = new ByteArrayInputStream( Base64.decodeBase64(encodedCacheKey.getBytes()));
+    ObjectInputStream objStream = new ObjectInputStream(keyStream);   
+    TableCacheKey cacheKey = new TableCacheKey();
+    cacheKey.readObject(objStream);
+    return cacheKey;
   }
   
   

@@ -50,12 +50,15 @@ public class CacheManager
   final String PLUGIN_PATH = PentahoSystem.getApplicationContext().getSolutionPath("system/" + CdaContentGenerator.PLUGIN_NAME);
   public static int DEFAULT_MAX_AGE = 3600;  // 1 hour
   PriorityQueue<CachedQuery> queue;
+  
+  private static final String ENCODING = "UTF-8";
 
   enum functions
   {
-
-    LIST, CHANGE, RELOAD, DELETE, PERSIST, MONITOR, DETAILS, TEST, EXECUTE, IMPORT, CACHED
+    LIST, CHANGE, RELOAD, DELETE, PERSIST, MONITOR, DETAILS, TEST, EXECUTE, IMPORT, 
+    CACHED, GETDETAILS
   }
+  
   private static CacheManager _instance;
 
 
@@ -103,6 +106,9 @@ public class CacheManager
         case CACHED:
           listCachedQueries(requestParams, out);
           break;
+        case GETDETAILS:
+          getCachedQueryResult(requestParams, out);
+          break;
       }
     }
     catch (Exception e)
@@ -144,13 +150,13 @@ public class CacheManager
     Query q = (Query) s.load(Query.class, id);
     if (q == null)
     {
-      out.write("{}".getBytes("UTF-8"));
+      out.write("{}".getBytes(ENCODING));
       logger.error("Couldn' get Query with id=" + id.toString());
     }
     try
     {
       JSONObject json = q.toJSON();
-      out.write(json.toString(2).getBytes("UTF-8"));
+      out.write(json.toString(2).getBytes(ENCODING));
     }
     catch (Exception e)
     {
@@ -180,7 +186,7 @@ public class CacheManager
       s.delete(s);
     }
     JSONObject json = uq.toJSON();
-    out.write(json.toString(2).getBytes("UTF-8"));
+    out.write(json.toString(2).getBytes(ENCODING));
     s.flush();
     s.getTransaction().commit();
     s.close();
@@ -237,7 +243,7 @@ public class CacheManager
         catch (Exception e)
         {
           logger.error("Failed to parse Cron string \"" + cronString + "\"");
-          out.write("{\"status\": \"error\", \"message\": \"failed to parse Cron String\"}".getBytes("UTF-8"));
+          out.write("{\"status\": \"error\", \"message\": \"failed to parse Cron String\"}".getBytes(ENCODING));
           return;
         }
         q = new CachedQuery(json);
@@ -262,10 +268,10 @@ public class CacheManager
     }
     catch (JSONException jse)
     {
-      out.write("".getBytes("UTF-8"));
+      out.write("".getBytes(ENCODING));
     }
 
-    out.write("{\"status\": \"ok\"}".getBytes("UTF-8"));
+    out.write("{\"status\": \"ok\"}".getBytes(ENCODING));
   }
 
 
@@ -293,7 +299,7 @@ public class CacheManager
     }
     try
     {
-      out.write(list.toString(2).getBytes("UTF-8"));
+      out.write(list.toString(2).getBytes(ENCODING));
     }
     catch (Exception e)
     {
@@ -309,7 +315,7 @@ public class CacheManager
     try {
       JSONObject result =  SimpleDataAccess.listQueriesInCache();
       result.put("success", true);
-      out.write(result.toString(2).getBytes("UTF-8"));
+      out.write(result.toString(2).getBytes(ENCODING));
     } catch (JSONException e) {
       logger.error("Error building JSON response", e);
     } catch (UnsupportedEncodingException e) {
@@ -319,6 +325,29 @@ public class CacheManager
     } catch (ExporterException e) {
       logger.error("Error writing cache element table contents", e);
     }
+  }
+  
+  private void getCachedQueryResult(IParameterProvider requestParams, OutputStream out){
+    try {
+        String key = requestParams.getStringParameter("key", null);
+        JSONObject result =  SimpleDataAccess.getcacheQueryTable(key);
+        out.write(result.toString(2).getBytes(ENCODING));
+      } catch (UnsupportedEncodingException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      } catch (JSONException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      } catch (ExporterException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      } catch (ClassNotFoundException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
   }
 
   private void importQueries(IParameterProvider requestParams, OutputStream out) throws Exception
@@ -356,7 +385,7 @@ public class CacheManager
     catch (JSONException jse)
     {
       logger.error("Error importing queries: " + Util.getExceptionDescription(jse));
-      out.write("".getBytes("UTF-8"));
+      out.write("".getBytes(ENCODING));
     }
   }
 
@@ -377,14 +406,14 @@ public class CacheManager
       q.execute();
       q.updateNext();
       CacheActivator.reschedule(queue);
-      out.write("{\"status\": \"ok\"}".getBytes("UTF-8"));
+      out.write("{\"status\": \"ok\"}".getBytes(ENCODING));
     }
     catch (Exception ex)
     {
       logger.error(ex);
       try
       {
-        out.write("{\"status\": \"error\"}".getBytes("UTF-8"));
+        out.write("{\"status\": \"error\"}".getBytes(ENCODING));
       }
       catch (Exception ex1)
       {

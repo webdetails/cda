@@ -85,6 +85,13 @@ dd {
 }
 
 .dataTables_wrapper {
-  border: 1px solid silver;
   margin-bottom: 10px;
+}
+
+#cachedQueriesLines th {
+  background: none repeat scroll 0 0 #CCCCCC;
+}
+
+#cachedQueriesLines tr.even td {
+  background: none repeat scroll 0 0 #EEEEEE;
 }
