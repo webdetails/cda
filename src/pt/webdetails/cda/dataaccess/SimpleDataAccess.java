@@ -584,7 +584,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
         TableCacheKey cacheKey = (TableCacheKey) key;
         
         if(!StringUtils.equals(cdaSettingsId, cacheKey.getCdaSettingsId()) ||
-           !StringUtils.equals(cdaSettingsId, cacheKey.getCdaSettingsId()))
+           !StringUtils.equals(dataAccessId, cacheKey.getDataAccessId()))
         {//not what we're looking for
           continue;
         }
