@@ -80,10 +80,6 @@ dd {
   cursor: pointer;
 }
 
-#cachedQueries div.row {
-  cursor: pointer;
-}
-
 .dataTables_wrapper {
   margin-bottom: 10px;
 }
@@ -94,4 +90,8 @@ dd {
 
 #cachedQueriesLines tr.even td {
   background: none repeat scroll 0 0 #EEEEEE;
+}
+
+#cachedQueriesLines div.row.toDelete{
+  background: none repeat scroll 0 0 #FFEEEE;
 }

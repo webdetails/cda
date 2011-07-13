@@ -20,12 +20,12 @@
     <div class='header span24 last'>
       <div id="tabButtons">
         <span id="scheduleButton" class="button" onclick="refreshTable()"> Scheduled Queries </span>
-        <span id="cacheButton" class="button" onclick="refreshCachedTable()"> Cached Queries </span>
+        <span id="cacheButton" class="button" onclick="refreshCachedOverviewTable()"> Cached Queries </span>
       </div>
     </div>
     </div>
     <div id='scheduledQueries' class='container'>
-      <!-- MAIN TABLE BODY -->
+      <!-- MAIN TABLE BODY:  scheduler -->
       <div class='section span-24 last'>Scheduled Queries</div>
       <div class='span-24 last'>
         <div class="tableHeader container" id="header">
@@ -43,21 +43,33 @@
     </div>
     
     <div id="cachedQueries" class="container" style="display:none;" />
-    <!-- MAIN TABLE BODY -->
       <div class='section span-24 last'>Queries in cache</div>
-      <div class='span-24 last'>
-        <div class="tableHeader container" id="cachedQueriesHeader">
-          <div class='span-13'>Query</div>
-          <div class='span-5'>Parameters</div>
-          <div class='span-2'>Insertion</div>
-          <div class='span-2'>Last Access</div>
-          <div class='span-2 last'># Hits</div>
-          <!--<div class='span-2'>Time (ms)</div>-->
-          <!--<div class='span-2'>Status</div>-->
-          <!--<div class='span-2 last'>Operations</div>-->
+    <!-- MAIN TABLE BODY: cache -->
+      <div id="cachedQueriesOverview">
+        <div class='span-24 last'>
+          <div class="tableHeader container" id="cachedQueriesOverviewHeader">
+            <div class='span-16'>CDA Settings</div>
+            <div class='span-6'>Data Access ID</div>
+            <div class='span-2 last'># Queries</div>
+          </div>
+          <div id="cachedQueriesOverviewLines"></div>
         </div>
-        <div id="cachedQueriesLines"></div>
       </div>
+      
+      <div id="cachedQueriesDetail" style="display:none;">
+        <div class='span-24 last'>
+          <div class="tableHeader container" id="cachedQueriesHeader">
+            <div class='span-11'>Query</div>
+            <div class='span-5'>Parameters</div>
+            <div class='span-1'># Rows</div>
+            <div class='span-2'>Insertion</div>
+            <div class='span-2'>Last Access</div>
+            <div class='span-1'># Hits</div>
+            <div class='span-2 last'>Actions</div>
+          </div>
+          <div id="cachedQueriesLines"></div>
+        </div>
+      </div>  
     </div>
     
     <!-- FOOTER -->

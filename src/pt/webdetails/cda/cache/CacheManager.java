@@ -33,7 +33,6 @@ import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.quartz.CronExpression;
 import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.PluginHibernateException;
-import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.SimpleDataAccess;
 import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.utils.PluginHibernateUtil;
@@ -56,7 +55,7 @@ public class CacheManager
   enum functions
   {
     LIST, CHANGE, RELOAD, DELETE, PERSIST, MONITOR, DETAILS, TEST, EXECUTE, IMPORT, 
-    CACHED, GETDETAILS
+    CACHED, GETDETAILS, CACHEOVERVIEW, REMOVECACHE
   }
   
   private static CacheManager _instance;
@@ -109,6 +108,12 @@ public class CacheManager
         case GETDETAILS:
           getCachedQueryResult(requestParams, out);
           break;
+        case CACHEOVERVIEW:
+          getCachedQueriesOverview(requestParams, out);
+          break;
+        case REMOVECACHE:
+          removeCache(requestParams, out);
+          break;
       }
     }
     catch (Exception e)
@@ -116,6 +121,8 @@ public class CacheManager
       logger.error(e);
     }
   }
+
+
 
 
   public void register(Query query)
@@ -310,12 +317,55 @@ public class CacheManager
       s.close();
     }
   }
+  
+//  private boolean hasAdminRole()
+//  {
+//    IPentahoSession userSession = PentahoSessionHolder.getSession();
+//    if (userSession != null)
+//    {
+//      IParameterProvider securityParams = new SecurityParameterProvider(userSession);
+//      List<String> roles = (List<String>) securityParams.getParameter("principalRoles");
+//      
+//      if(roles.contains("Admin"))
+//      {
+//        return true;
+//      }
+//    }
+//    return false;
+//  }
+  
+  private void getCachedQueriesOverview(IParameterProvider requestParams, OutputStream out) {
+    try {
+      JSONObject result =SimpleDataAccess.getCachedQueriesOverview();
+      out.write(result.toString(2).getBytes(ENCODING));
+    } catch (JSONException e) {
+      logger.error("Error building JSON response", e);
+    } catch (UnsupportedEncodingException e) {
+      logger.error("Error attempting to use UTF-8 encoding", e);
+    } catch (IOException e) {
+      logger.error("Error writing to output stream", e);
+    }
+  }
+
 
   private void listCachedQueries(IParameterProvider requestParams, OutputStream out){
-    try {
-      JSONObject result =  SimpleDataAccess.listQueriesInCache();
-      result.put("success", true);
-      out.write(result.toString(2).getBytes(ENCODING));
+    try {     
+//      if(hasAdminRole())
+//      {
+        String cdaSettingsId = requestParams.getStringParameter("cdaSettingsId", null);
+        String dataAccessId = requestParams.getStringParameter("dataAccessId", null);
+        
+        JSONObject result =
+          (cdaSettingsId == null || dataAccessId == null)?
+              SimpleDataAccess.listQueriesInCache():
+              SimpleDataAccess.listQueriesInCache(cdaSettingsId, dataAccessId);
+        result.put("success", true);
+        out.write(result.toString(2).getBytes(ENCODING));
+//      }
+//      else 
+//      {
+//        sendNoPermissionNotif(out);
+//      }
     } catch (JSONException e) {
       logger.error("Error building JSON response", e);
     } catch (UnsupportedEncodingException e) {
@@ -327,27 +377,78 @@ public class CacheManager
     }
   }
   
+  private void sendNoPermissionNotif(OutputStream out) throws UnsupportedEncodingException, IOException, JSONException{
+    JSONObject result = new JSONObject();
+    result.put("success", false);
+    result.put("errorMsg", "Need Admin permissions for operation");
+    out.write(result.toString(2).getBytes(ENCODING));
+  }
+  
   private void getCachedQueryResult(IParameterProvider requestParams, OutputStream out){
     try {
-        String key = requestParams.getStringParameter("key", null);
-        JSONObject result =  SimpleDataAccess.getcacheQueryTable(key);
-        out.write(result.toString(2).getBytes(ENCODING));
-      } catch (UnsupportedEncodingException e) {
-        // TODO Auto-generated catch block
+//        if(hasAdminRole())
+//        {
+          String key = requestParams.getStringParameter("key", null);
+          JSONObject result =  SimpleDataAccess.getcacheQueryTable(key);
+          out.write(result.toString(2).getBytes(ENCODING));
+//        }
+//        else 
+//        {
+//          sendNoPermissionNotif(out);
+//        }
+      } catch (UnsupportedEncodingException e) 
+      {
+        logger.error("Error attempting to use UTF-8 encoding", e);
+      } 
+      catch (IOException e) 
+      {
+        logger.error("Error writing to output stream", e);
+      } 
+      catch (JSONException e) 
+      {
+        logger.error("Error building JSON response", e);
         e.printStackTrace();
-      } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      } catch (JSONException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      } catch (ExporterException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      } catch (ClassNotFoundException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+      } 
+      catch (ExporterException e) 
+      {
+        logger.error("Error exporting table", e);
+      } 
+      catch (ClassNotFoundException e) 
+      {
+        logger.error("Error instantiating key", e);
       }
+  }
+  
+  private void removeCache(IParameterProvider requestParams, OutputStream out) {
+    try 
+    {
+//      if(hasAdminRole())
+//      {
+        String key = requestParams.getStringParameter("key", null);
+        JSONObject result =  SimpleDataAccess.removeQueryFromCache(key);
+        out.write(result.toString(2).getBytes(ENCODING));
+//      }
+//      else 
+//      {
+//        sendNoPermissionNotif(out);
+//      }
+    } 
+    catch(JSONException e)
+    {
+      logger.error("Error building JSON response", e);
+    } 
+    catch (UnsupportedEncodingException e) 
+    {
+      logger.error("Error attempting to use UTF-8 encoding", e);
+    } 
+    catch (IOException e) 
+    {
+      logger.error("Error writing to output stream", e);
+    } 
+    catch (ClassNotFoundException e) 
+    {
+      logger.error("Error instantiating key", e);
+    }
   }
 
   private void importQueries(IParameterProvider requestParams, OutputStream out) throws Exception

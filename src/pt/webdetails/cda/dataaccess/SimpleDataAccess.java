@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import java.io.ObjectOutputStream;
 import org.apache.commons.codec.binary.Base64;
@@ -16,6 +17,7 @@ import javax.swing.table.TableModel;
 
 import net.sf.ehcache.Cache;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
@@ -47,13 +49,15 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
   protected static class TableCacheKey implements Serializable
   {
 
-    private static final long serialVersionUID = 2L; //1->2 only hash of connection kept
+    private static final long serialVersionUID = 3L; //1->2 only hash of connection kept; 2->3 file/dataAccessId
     
     private int connectionHash;
     private String query;
     private ParameterDataRow parameterDataRow;
     private Object extraCacheKey;
-
+    
+    private String cdaSettingsId;
+    private String dataAccessId;
 
     /**
      * For serialization
@@ -69,6 +73,8 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       out.writeObject(query);
       out.writeObject(createParametersFromParameterDataRow(parameterDataRow));
       out.writeObject(extraCacheKey);
+      out.writeObject(cdaSettingsId);//information only, not used in hash/equals
+      out.writeObject(dataAccessId);//information only, not used in hash/equals
     }
 
 
@@ -97,11 +103,14 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       }
       //extraCacheKey
       extraCacheKey = in.readObject();
+      cdaSettingsId = (String) in.readObject();
+      dataAccessId = (String) in.readObject();
     }
 
 
     private TableCacheKey(final Connection connection, final String query,
-            final ParameterDataRow parameterDataRow, final Object extraCacheKey)
+            final ParameterDataRow parameterDataRow, final Object extraCacheKey, 
+            String cdaSettingsId, String dataAccessId)
     {
       if (connection == null)
       {
@@ -120,6 +129,8 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       this.query = query;
       this.parameterDataRow = parameterDataRow;
       this.extraCacheKey = extraCacheKey;
+      this.cdaSettingsId = cdaSettingsId;
+      this.dataAccessId = dataAccessId;
     }
 
 
@@ -165,6 +176,15 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       result = 31 * result + (extraCacheKey != null ? extraCacheKey.hashCode() : 0);
       return result;
     }
+    
+    public String getDataAccessId(){
+      return this.dataAccessId;
+    }
+    
+    public String getCdaSettingsId(){
+      return this.cdaSettingsId;
+    }
+    
   }
   private static final Log logger = LogFactory.getLog(SimpleDataAccess.class);
   protected String connectionId;
@@ -259,7 +279,8 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
         {
           connection = getCdaSettings().getConnection(getConnectionId());
         }
-        key = new TableCacheKey(connection, getQuery(), parameterDataRow, getExtraCacheKey());
+        key = new TableCacheKey(connection, getQuery(), parameterDataRow, getExtraCacheKey(), 
+            this.getCdaSettings().getId(), queryOptions.getDataAccessId());//
       }
       catch (UnknownConnectionException e)
       {
@@ -461,6 +482,9 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     return defaultValue;
   }
   
+  
+  //TODO: these methods should be moved...
+  
   public static JSONObject getcacheQueryTable(String encodedCacheKey) throws JSONException, ExporterException, UnsupportedEncodingException, IOException, ClassNotFoundException {
     
     JSONObject result = new JSONObject();
@@ -472,7 +496,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     if(elem != null){
       // put query results
       JsonExporter exporter = new JsonExporter(null);
-      result.put("table", exporter.getTableAsJson((TableModel) elem.getObjectValue(), 50));
+      result.put("table", exporter.getTableAsJson((TableModel) elem.getObjectValue(), 100));
       result.put("success", true);
     }
     else {
@@ -482,6 +506,134 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     
     return result;
     
+  }
+  
+  public static JSONObject getCachedQueriesOverview() throws JSONException {
+    
+    HashMap<String, HashMap<String, Integer>> cdaMap = new HashMap<String, HashMap<String,Integer>>();
+    
+    Cache cdaCache = AbstractDataAccess.getCache();
+    JSONArray results = new JSONArray();
+    
+    for(Object key : cdaCache.getKeys()) {
+
+      TableCacheKey cacheKey = (TableCacheKey) key;
+      String cdaSettingsId = cacheKey.getCdaSettingsId();
+      String dataAccessId = cacheKey.getDataAccessId();
+      
+      //aggregate occurrences
+      HashMap<String, Integer> dataAccessIdMap = cdaMap.get(cdaSettingsId);
+      if( dataAccessIdMap == null ){
+        dataAccessIdMap = new HashMap<String, Integer>();
+        dataAccessIdMap.put(dataAccessId, 1);
+        cdaMap.put(cdaSettingsId, dataAccessIdMap);
+      }
+      else {
+        Integer count = dataAccessIdMap.get(dataAccessId);
+        if(count == null){
+          dataAccessIdMap.put(dataAccessId, 1);
+        }
+        else {
+          dataAccessIdMap.put(dataAccessId, ++count);
+        }
+      }
+    }
+    
+    for(String cdaSettingsId :  cdaMap.keySet()){
+      for(String dataAccessId : cdaMap.get(cdaSettingsId).keySet() ){
+        Integer count = cdaMap.get(cdaSettingsId).get(dataAccessId);
+        JSONObject queryInfo = new JSONObject();
+        queryInfo.put("cdaSettingsId", cdaSettingsId);
+        queryInfo.put("dataAccessId", dataAccessId); 
+        queryInfo.put("count", count.intValue());
+        
+        results.put(queryInfo);
+      }
+    }
+    
+    JSONObject result = new JSONObject();
+    result.put("success", true);
+    result.put("results", results);
+    return result;
+  }
+  
+  public static JSONObject removeQueryFromCache(String serializedCacheKey) throws UnsupportedEncodingException, IOException, ClassNotFoundException, JSONException 
+  {
+    TableCacheKey key = getTableCacheKeyFromString(serializedCacheKey);
+    
+    Cache cdaCache = AbstractDataAccess.getCache();
+    boolean success = cdaCache.remove(key);
+    
+    JSONObject result = new JSONObject();
+    result.put("success", success);
+    return result;
+  }
+  
+  public static JSONObject listQueriesInCache(String cdaSettingsId, String dataAccessId) throws JSONException, ExporterException, IOException {
+    
+    JSONArray results = new JSONArray();
+    
+    Cache cdaCache = AbstractDataAccess.getCache();
+    
+    for(Object key : cdaCache.getKeys()) {
+      
+      if(key instanceof TableCacheKey){
+        
+        JSONObject queryInfo = new JSONObject();
+        
+        TableCacheKey cacheKey = (TableCacheKey) key;
+        
+        if(!StringUtils.equals(cdaSettingsId, cacheKey.getCdaSettingsId()) ||
+           !StringUtils.equals(cdaSettingsId, cacheKey.getCdaSettingsId()))
+        {//not what we're looking for
+          continue;
+        }
+        
+        //query
+        queryInfo.put("query", cacheKey.query);
+        //parameters
+        ParameterDataRow prow = cacheKey.parameterDataRow;
+        JSONObject parameters = new JSONObject();
+        if(prow != null) for(String paramName : prow.getColumnNames()){
+          parameters.put(paramName, prow.get(paramName));
+        }
+        queryInfo.put("parameters", parameters);
+        
+        //cacheKey.query;
+        net.sf.ehcache.Element elem = cdaCache.getQuiet(key);
+        
+        if(elem != null){
+                  
+          TableModel tableModel = (TableModel) elem.getObjectValue();
+          queryInfo.put("rows", tableModel.getRowCount());
+          
+          //inserted
+          queryInfo.put("inserted", elem.getLatestOfCreationAndUpdateTime());
+          queryInfo.put("accessed", elem.getLastAccessTime());
+          queryInfo.put("hits", elem.getHitCount()); 
+          
+          //use id to get table;
+          //identifier
+          String identifier = getTableCacheKeyAsString(cacheKey);
+          queryInfo.put("key", identifier);
+          
+          results.put(queryInfo);
+        }
+      }
+      else {
+        logger.warn("Found non-TableCacheKey object in cache, skipping...");
+      }
+    }
+    
+    JSONObject result = new JSONObject();
+    result.put("cdaSettingsId", cdaSettingsId);
+    result.put("dataAccessId", dataAccessId);
+    result.put("results", results);
+    //total stats
+    result.put("cacheLength", cdaCache.getSize());
+    result.put("memoryStoreLength", cdaCache.getMemoryStoreSize());
+    result.put("diskStoreLength", cdaCache.getDiskStoreSize());
+    return result;
   }
   
   public static JSONObject listQueriesInCache() throws JSONException, ExporterException, IOException {
@@ -514,7 +666,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
         //inserted
         queryInfo.put("inserted", elem.getLatestOfCreationAndUpdateTime());
         queryInfo.put("accessed", elem.getLastAccessTime());
-        queryInfo.put("hits", elem.getHitCount());
+        queryInfo.put("hits", elem.getHitCount()); 
         
         //use id to get table;TODO: more efficient solution than b64
         //identifier
@@ -544,6 +696,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
    * @throws UnsupportedEncodingException
    */
   private static String getTableCacheKeyAsString(TableCacheKey cacheKey) throws IOException, UnsupportedEncodingException {
+    //TODO: more efficient solution than b64?
     ByteArrayOutputStream keyStream = new ByteArrayOutputStream();
     ObjectOutputStream objStream = new ObjectOutputStream(keyStream);
     cacheKey.writeObject(objStream);
