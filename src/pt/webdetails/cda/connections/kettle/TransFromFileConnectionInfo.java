@@ -83,7 +83,7 @@ public class TransFromFileConnectionInfo
     {
       return false;
     }
-    if (!Arrays.equals(definedVariableNames, that.definedVariableNames))
+    if (!Arrays.deepEquals( parameterMappingToStringArray(definedVariableNames), parameterMappingToStringArray(that.definedVariableNames)))
     {
       return false;
     }
@@ -99,7 +99,18 @@ public class TransFromFileConnectionInfo
   {
     int result = transformationFile != null ? transformationFile.hashCode() : 0;
     result = 31 * result + (definedArgumentNames != null ? Arrays.hashCode(definedArgumentNames) : 0);
-    result = 31 * result + (definedVariableNames != null ? Arrays.hashCode(definedVariableNames) : 0);
+    result = 31 * result + (definedVariableNames != null ? Arrays.deepHashCode( parameterMappingToStringArray(definedVariableNames)) : 0);
     return result;
+  }
+  
+  private String[][] parameterMappingToStringArray(ParameterMapping[] paramMaps)
+  {
+   if(paramMaps == null) return null;
+   String[][] result = new String[paramMaps.length][];
+   for(int i = 0; i< paramMaps.length; i++){
+     String[] item = new String[] {paramMaps[i].getName(), paramMaps[i].getAlias()};
+     result[i] = item;
+   }
+   return result;
   }
 }
