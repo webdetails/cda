@@ -38,7 +38,6 @@ import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.utils.Util;
-import pt.webdetails.cda.CdaSessionFormulaContext;
 
 @SuppressWarnings("unchecked")
 public class CdaContentGenerator extends BaseContentGenerator
@@ -242,10 +241,12 @@ public class CdaContentGenerator extends BaseContentGenerator
       queryOptions.setPageSize(pageSize > 0 ? (int) pageSize : paginate ? DEFAULT_PAGE_SIZE : 0);
       queryOptions.setPageStart(pageStart > 0 ? (int) pageStart : paginate ? DEFAULT_START_PAGE : 0);
     }
+    
     // Handle the query itself and its output format...
     queryOptions.setOutputType(pathParams.getStringParameter("outputType", "json"));
     queryOptions.setDataAccessId(pathParams.getStringParameter("dataAccessId", "<blank>"));
-
+    queryOptions.setOutputIndexId(Integer.parseInt(pathParams.getStringParameter("outputIndexId", "1")));
+    
     final ArrayList<String> sortBy = new ArrayList<String>();
     String[] def =
     {

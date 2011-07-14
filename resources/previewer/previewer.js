@@ -37,6 +37,7 @@ refreshTable = function(id){
     var params = getParams();
     params.path = filename;
     params.dataAccessId = id;
+    params.outputIndexId = $('#outputIndexId').val();
     $.getJSON("doQuery",params,function(data){
       var tableContents = data.resultset;
       var columnNames = [];

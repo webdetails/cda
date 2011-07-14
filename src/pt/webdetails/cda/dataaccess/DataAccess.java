@@ -49,8 +49,12 @@ public interface DataAccess
   public ArrayList<ColumnDefinition> getCalculatedColumns();
 
   public ArrayList<Integer> getOutputs();
+  
+  public ArrayList<Integer> getOutputs(int id);
 
   public OutputMode getOutputMode();
+  
+  public OutputMode getOutputMode(int id);
 
   public TableModel listParameters(DiscoveryOptions discoveryOptions);
 

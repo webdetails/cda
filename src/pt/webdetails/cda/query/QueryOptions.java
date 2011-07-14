@@ -16,6 +16,7 @@ public class QueryOptions implements Cloneable
 {
 
   private String dataAccessId;
+  private int outputIndexId;
   private boolean paginate;
   private int pageSize;
   private int pageStart;
@@ -28,6 +29,7 @@ public class QueryOptions implements Cloneable
 
   public QueryOptions()
   {
+    outputIndexId = 1;
     paginate = false;
     pageSize = 20;
     pageStart = 0;
@@ -104,6 +106,16 @@ public class QueryOptions implements Cloneable
     this.dataAccessId = dataAccessId;
   }
 
+  public int getOutputIndexId()
+  {
+    return outputIndexId;
+  }
+
+
+  public void setOutputIndexId(final int outputIndexId)
+  {
+    this.outputIndexId = outputIndexId;
+  }
 
   public void addParameter(final String name, final Object value)
   {

@@ -1,7 +1,6 @@
 package pt.webdetails.cda.utils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import javax.swing.table.TableModel;
@@ -38,7 +37,7 @@ public class TableModelUtils
 
   public TableModel postProcessTableModel(final DataAccess dataAccess,
           final QueryOptions queryOptions,
-          final TableModel rawTableModel) throws TableModelException, SortException
+          final TableModel rawTableModel) throws TableModelException, SortException, InvalidOutputIndexException
   {
 
     // We will:
@@ -60,7 +59,10 @@ public class TableModelUtils
     }
 
     // First we need to check if there's nothing to do.
-    ArrayList<Integer> outputIndexes = dataAccess.getOutputs();
+    ArrayList<Integer> outputIndexes = dataAccess.getOutputs(queryOptions.getOutputIndexId());
+    if(outputIndexes == null) {
+      throw new InvalidOutputIndexException("Invalid outputIndexId: " + queryOptions.getOutputIndexId(), null);
+    }
     /*
     if (queryOptions.isPaginate() == false && outputIndexes.isEmpty() && queryOptions.getSortBy().isEmpty())
     {
@@ -71,7 +73,7 @@ public class TableModelUtils
     // 2
     // If output mode == exclude, we need to translate the excluded outputColuns
     // into included ones
-    if (dataAccess.getOutputMode() == DataAccess.OutputMode.EXCLUDE && outputIndexes.size() > 0)
+    if (dataAccess.getOutputMode(queryOptions.getOutputIndexId()) == DataAccess.OutputMode.EXCLUDE && outputIndexes.size() > 0)
     {
 
       ArrayList<Integer> newOutputIndexes = new ArrayList<Integer>();

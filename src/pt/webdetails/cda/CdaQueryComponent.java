@@ -18,7 +18,6 @@ import org.pentaho.platform.plugin.services.connections.javascript.JavaScriptRes
 import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
 
 
-import pt.webdetails.cda.CdaSessionFormulaContext;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
@@ -57,7 +56,25 @@ public class CdaQueryComponent {
     
     return true;
   }
-  
+
+  private int inputsGetInteger(String name, int defaultVal)
+  {
+    Object obj = inputs.get(name);
+    
+    // pojo component forces all strings to upper case :-(
+    if (obj == null)
+    {
+      obj = inputs.get(name.toUpperCase());
+    }
+    
+    if (obj == null)
+    {
+      return defaultVal;
+    }
+    
+    return new Integer(obj.toString());
+  }
+
   private long inputsGetLong(String name, long defaultVal) {
       Object obj = inputs.get(name);
       // pojo component forces all strings to upper case :-(
@@ -117,6 +134,7 @@ public class CdaQueryComponent {
     
     queryOptions.setOutputType(inputsGetString("outputType", "resultset"));
     queryOptions.setDataAccessId(inputsGetString("dataAccessId", "<blank>"));
+    queryOptions.setOutputIndexId(inputsGetInteger("outputIndexId", 1));
     
     // params and settings
     

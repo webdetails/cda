@@ -32,6 +32,7 @@ import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
+import pt.webdetails.cda.utils.InvalidOutputIndexException;
 import pt.webdetails.cda.utils.TableModelException;
 import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.Util;
@@ -56,8 +57,8 @@ public abstract class AbstractDataAccess implements DataAccess
   private boolean cache = false;
   private int cacheDuration = 3600;
   private ArrayList<Parameter> parameters;
-  private OutputMode outputMode;
-  private ArrayList<Integer> outputs;
+  private HashMap<Integer, OutputMode> outputMode;
+  private HashMap<Integer, ArrayList<Integer>> outputs;
   private ArrayList<ColumnDefinition> columnDefinitions;
   private HashMap<Integer, ColumnDefinition> columnDefinitionIndexMap;
   private FormulaContext formulaContext;
@@ -81,9 +82,11 @@ public abstract class AbstractDataAccess implements DataAccess
     name = "";
     columnDefinitionIndexMap = new HashMap<Integer, ColumnDefinition>();
     columnDefinitions = new ArrayList<ColumnDefinition>();
-    outputs = new ArrayList<Integer>();
     parameters = new ArrayList<Parameter>();
-    outputMode = OutputMode.INCLUDE;
+    outputs = new HashMap<Integer, ArrayList<Integer>>();
+    outputs.put(1, new ArrayList<Integer>());
+    outputMode = new HashMap<Integer, OutputMode>();
+    outputMode.put(1, OutputMode.INCLUDE);
 
     parseOptions(element);
 
@@ -101,9 +104,11 @@ public abstract class AbstractDataAccess implements DataAccess
 
     columnDefinitionIndexMap = new HashMap<Integer, ColumnDefinition>();
     columnDefinitions = new ArrayList<ColumnDefinition>();
-    outputs = new ArrayList<Integer>();
     parameters = new ArrayList<Parameter>();
-    outputMode = OutputMode.INCLUDE;
+    outputs = new HashMap<Integer, ArrayList<Integer>>();
+    outputs.put(1, new ArrayList<Integer>());
+    outputMode = new HashMap<Integer, OutputMode>();
+    outputMode.put(1, OutputMode.INCLUDE);
   }
 
 
@@ -174,22 +179,41 @@ public abstract class AbstractDataAccess implements DataAccess
     }
 
     // Parse outputs
-    final Element outputNode = (Element) element.selectSingleNode("Output");
-    if (outputNode != null)
-    {
-      try
-      {
-        outputMode = OutputMode.valueOf(outputNode.attributeValue("mode").toUpperCase());
-      }
-      catch (Exception e)
-      {
-        // if there are any errors, go back to the default
-      }
+    final List<Element> outputNodes = element.selectNodes("Output");
 
-      final String[] indexes = outputNode.attributeValue("indexes").split(",");
-      for (final String index : indexes)
+    for (final Element outputNode : outputNodes)
+    {
+      ArrayList<Integer> myOutputs = new ArrayList<Integer>();
+      if (outputNode != null)
       {
-        outputs.add(Integer.parseInt(index));
+        int localId = 1;
+        if (outputNode.attribute("id") != null && !outputNode.attribute("id").toString().equals(""))
+        {
+          // if parseInt fails an exception will be thrown and the cda file will not be accepted
+          localId = Integer.parseInt(outputNode.attributeValue("id"));
+        }
+        else
+        {
+          // if an output has not a defined or empty id then it will have key = 1
+          localId = 1;
+        }
+
+        try
+        {
+          outputMode.put(localId, OutputMode.valueOf(outputNode.attributeValue("mode").toUpperCase()));
+        }
+        catch (Exception e)
+        {
+          // if there are any errors, go back to the default					
+          outputMode.put(localId, OutputMode.INCLUDE);
+        }
+
+        final String[] indexes = outputNode.attributeValue("indexes").split(",");
+        for (final String index : indexes)
+        {
+          myOutputs.add(Integer.parseInt(index));
+        }
+        outputs.put(localId, myOutputs);
       }
     }
 
@@ -311,6 +335,10 @@ public abstract class AbstractDataAccess implements DataAccess
       logger.debug("Query " + getId() + " done successfully - returning tableModel");
       return outputTableModel;
     }
+    catch (InvalidOutputIndexException e)
+    {
+      throw new QueryException("Error while setting output index id ", e);
+    }
     catch (SortException e)
     {
       throw new QueryException("Error while sorting output ", e);
@@ -319,8 +347,6 @@ public abstract class AbstractDataAccess implements DataAccess
     {
       throw new QueryException("Could not create outputTableModel ", e);
     }
-
-
   }
 
 
@@ -442,7 +468,17 @@ public abstract class AbstractDataAccess implements DataAccess
 
   public ArrayList<Integer> getOutputs()
   {
-    return outputs;
+    if (outputs.isEmpty())
+    {
+      return new ArrayList<Integer>();
+    }
+    return (ArrayList<Integer>) outputs.get(1);
+  }
+
+
+  public ArrayList<Integer> getOutputs(int id)
+  {
+    return (ArrayList<Integer>) outputs.get(id);
   }
 
 
@@ -450,7 +486,7 @@ public abstract class AbstractDataAccess implements DataAccess
    * 
    * @param outputIndexes indexes of columns to output
    */
-  public void setOutputs(ArrayList<Integer> outputIndexes)
+  public void setOutputs(HashMap<Integer, ArrayList<Integer>> outputIndexes)
   {
     this.outputs = outputIndexes;
   }
@@ -458,7 +494,13 @@ public abstract class AbstractDataAccess implements DataAccess
 
   public OutputMode getOutputMode()
   {
-    return outputMode;
+    return outputMode.get(1);
+  }
+
+
+  public OutputMode getOutputMode(int id)
+  {
+    return outputMode.get(id);
   }
 
 
