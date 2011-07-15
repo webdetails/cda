@@ -57,5 +57,7 @@
         </Settings>
         <!-- Output controls what is outputed and by what order. Defaults to everything -->
         <Output indexes="1,0,2,3"/>
+        <Output id="2" indexes="0,1,3"/>
+        <Output id="3" indexes="1,0,2"/>
     </DataAccess>
 </CDADescriptor>
