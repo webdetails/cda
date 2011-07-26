@@ -11,10 +11,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.memory.MemoryMetaData;
-//import org.pentaho.commons.connection.memory.MemoryResultSet;
+import org.pentaho.commons.connection.memory.MemoryResultSet;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-import org.pentaho.platform.plugin.services.connections.javascript.JavaScriptResultSet;
 import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
 
 
@@ -192,7 +191,7 @@ public class CdaQueryComponent {
     }
     MemoryMetaData metadata = new MemoryMetaData(columnNames);
     
-    JavaScriptResultSet resultSet = new JavaScriptResultSet();
+    MemoryResultSet resultSet = new MemoryResultSet();
     resultSet.setMetaData(metadata);
     for (int i = 0; i < tableModel.getRowCount(); i++) {
       Object row[] = new Object[tableModel.getColumnCount()];
