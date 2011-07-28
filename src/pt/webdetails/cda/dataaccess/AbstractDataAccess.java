@@ -235,7 +235,7 @@ public abstract class AbstractDataAccess implements DataAccess
   }
 
 
-  protected static synchronized Cache getCache() throws CacheException
+  public static synchronized Cache getCache() throws CacheException
   {
     if (cacheManager == null)
     {// 'new CacheManager' used instead of 'CacheManager.create' to avoid overriding default cache

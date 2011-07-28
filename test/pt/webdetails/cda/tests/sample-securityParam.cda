@@ -23,7 +23,7 @@
 
       -->
     <DataAccess id="1" connection="1" type="sql" access="public" cache="true" cacheDuration="5">
-      <Name>Sql Query on SampleData</Name>
+      <Name>User Name</Name>
       <Query>select distinct ${param} as inputParam from orderfact</Query>
       <!--for other security params:
           http://wiki.pentaho.com/display/ServerDoc1x/04.+Using+Security+from+Action+Sequences-->
@@ -34,10 +34,10 @@
 
     <DataAccess id="junitDataAccess" connection="1" type="sql" access="public" cache="true" cacheDuration="5">
     <!-- session variable test -->
-      <Name>Sql Query on SampleData</Name>
+      <Name>User Roles</Name>
       <Query>select distinct ${param} as inputParam from orderfact</Query>
       <Parameters>
-        <Parameter name="param" type="String" default="${[session:test]}" />
+        <Parameter name="param" type="String" default="${[security:principalRoles]}" />
       </Parameters>
     </DataAccess>
 </CDADescriptor>

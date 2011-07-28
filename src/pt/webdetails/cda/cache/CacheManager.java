@@ -11,9 +11,15 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 
+import javax.swing.table.TableModel;
+
+import net.sf.ehcache.Cache;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -29,20 +35,23 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
+import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.quartz.CronExpression;
 import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.PluginHibernateException;
-import pt.webdetails.cda.dataaccess.SimpleDataAccess;
+import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.exporter.ExporterException;
+import pt.webdetails.cda.exporter.JsonExporter;
 import pt.webdetails.cda.utils.PluginHibernateUtil;
 import pt.webdetails.cda.utils.Util;
+import pt.webdetails.cda.utils.framework.JsonCallHandler;
 
 /**
  *
  * @author pdpi
  */
-public class CacheManager
+public class CacheManager extends JsonCallHandler
 {
 
   static Log logger = LogFactory.getLog(CacheManager.class);
@@ -50,7 +59,7 @@ public class CacheManager
   public static int DEFAULT_MAX_AGE = 3600;  // 1 hour
   PriorityQueue<CachedQuery> queue;
   
-  private static final String ENCODING = "UTF-8";
+//  private static final String ENCODING = "UTF-8";
 
   enum functions
   {
@@ -102,17 +111,8 @@ public class CacheManager
         case IMPORT:
           importQueries(requestParams, out);
           break;
-        case CACHED:
-          listCachedQueries(requestParams, out);
-          break;
-        case GETDETAILS:
-          getCachedQueryResult(requestParams, out);
-          break;
-        case CACHEOVERVIEW:
-          getCachedQueriesOverview(requestParams, out);
-          break;
-        case REMOVECACHE:
-          removeCache(requestParams, out);
+        default:
+          super.handleCall(requestParams, out);
           break;
       }
     }
@@ -132,6 +132,7 @@ public class CacheManager
 
   private void initialize()
   {
+    registerMethods();
     try
     {
       initHibernate();
@@ -141,6 +142,64 @@ public class CacheManager
     {
       logger.warn("Found PluginHibernateException while initializing CacheManager " + Util.getExceptionDescription(ex));
     }
+  }
+  
+
+  private void registerMethods()
+  {
+    
+    registerMethod("cached", new JsonCallHandler.Method() 
+    {
+      /**
+       * get all cached items for given cda file and data access id
+       */
+      public JSONObject execute(IParameterProvider params) throws JSONException, ExporterException, IOException {
+        String cdaSettingsId = params.getStringParameter("cdaSettingsId", null);
+        String dataAccessId = params.getStringParameter("dataAccessId", null);
+        return listQueriesInCache(cdaSettingsId, dataAccessId);
+      }
+    });
+    
+    registerMethod("cacheOverview", new JsonCallHandler.Method() 
+    {
+      /**
+       * get details on a particular cached item
+       */
+      public JSONObject execute(IParameterProvider params) throws JSONException 
+      {
+        return getCachedQueriesOverview();
+      }
+    });
+    
+    registerMethod("getDetails", new JsonCallHandler.Method() 
+    {
+      /**
+       * get details on a particular cached item
+       */
+      public JSONObject execute(IParameterProvider params) throws UnsupportedEncodingException, JSONException, ExporterException, IOException, ClassNotFoundException  
+      {
+        try{
+          String encodedCacheKey=params.getStringParameter("key", null);
+          return getcacheQueryTable(encodedCacheKey);
+        }
+        catch(ExporterException e){
+          logger.error( "Error exporting table.", e);
+          return createJsonResultFromException(e);
+        }
+      }
+    });
+    
+    registerMethod("removeCache", new JsonCallHandler.Method() 
+    {
+      /**
+       * Remove item from cache 
+       */
+      public JSONObject execute(IParameterProvider params) throws JSONException, UnsupportedEncodingException, IOException, ClassNotFoundException 
+      {
+        String serializedCacheKey = params.getStringParameter("key", null);
+        return removeQueryFromCache(serializedCacheKey);
+      }
+    });
   }
 
 
@@ -315,139 +374,6 @@ public class CacheManager
     finally
     {
       s.close();
-    }
-  }
-  
-//  private boolean hasAdminRole()
-//  {
-//    IPentahoSession userSession = PentahoSessionHolder.getSession();
-//    if (userSession != null)
-//    {
-//      IParameterProvider securityParams = new SecurityParameterProvider(userSession);
-//      List<String> roles = (List<String>) securityParams.getParameter("principalRoles");
-//      
-//      if(roles.contains("Admin"))
-//      {
-//        return true;
-//      }
-//    }
-//    return false;
-//  }
-  
-  private void getCachedQueriesOverview(IParameterProvider requestParams, OutputStream out) {
-    try {
-      JSONObject result =SimpleDataAccess.getCachedQueriesOverview();
-      out.write(result.toString(2).getBytes(ENCODING));
-    } catch (JSONException e) {
-      logger.error("Error building JSON response", e);
-    } catch (UnsupportedEncodingException e) {
-      logger.error("Error attempting to use UTF-8 encoding", e);
-    } catch (IOException e) {
-      logger.error("Error writing to output stream", e);
-    }
-  }
-
-
-  private void listCachedQueries(IParameterProvider requestParams, OutputStream out){
-    try {     
-//      if(hasAdminRole())
-//      {
-        String cdaSettingsId = requestParams.getStringParameter("cdaSettingsId", null);
-        String dataAccessId = requestParams.getStringParameter("dataAccessId", null);
-        
-        JSONObject result =
-          (cdaSettingsId == null || dataAccessId == null)?
-              SimpleDataAccess.listQueriesInCache():
-              SimpleDataAccess.listQueriesInCache(cdaSettingsId, dataAccessId);
-        result.put("success", true);
-        out.write(result.toString(2).getBytes(ENCODING));
-//      }
-//      else 
-//      {
-//        sendNoPermissionNotif(out);
-//      }
-    } catch (JSONException e) {
-      logger.error("Error building JSON response", e);
-    } catch (UnsupportedEncodingException e) {
-      logger.error("Error attempting to use UTF-8 encoding", e);
-    } catch (IOException e) {
-      logger.error("Error writing to output stream", e);
-    } catch (ExporterException e) {
-      logger.error("Error writing cache element table contents", e);
-    }
-  }
-  
-  private void sendNoPermissionNotif(OutputStream out) throws UnsupportedEncodingException, IOException, JSONException{
-    JSONObject result = new JSONObject();
-    result.put("success", false);
-    result.put("errorMsg", "Need Admin permissions for operation");
-    out.write(result.toString(2).getBytes(ENCODING));
-  }
-  
-  private void getCachedQueryResult(IParameterProvider requestParams, OutputStream out){
-    try {
-//        if(hasAdminRole())
-//        {
-          String key = requestParams.getStringParameter("key", null);
-          JSONObject result =  SimpleDataAccess.getcacheQueryTable(key);
-          out.write(result.toString(2).getBytes(ENCODING));
-//        }
-//        else 
-//        {
-//          sendNoPermissionNotif(out);
-//        }
-      } catch (UnsupportedEncodingException e) 
-      {
-        logger.error("Error attempting to use UTF-8 encoding", e);
-      } 
-      catch (IOException e) 
-      {
-        logger.error("Error writing to output stream", e);
-      } 
-      catch (JSONException e) 
-      {
-        logger.error("Error building JSON response", e);
-        e.printStackTrace();
-      } 
-      catch (ExporterException e) 
-      {
-        logger.error("Error exporting table", e);
-      } 
-      catch (ClassNotFoundException e) 
-      {
-        logger.error("Error instantiating key", e);
-      }
-  }
-  
-  private void removeCache(IParameterProvider requestParams, OutputStream out) {
-    try 
-    {
-//      if(hasAdminRole())
-//      {
-        String key = requestParams.getStringParameter("key", null);
-        JSONObject result =  SimpleDataAccess.removeQueryFromCache(key);
-        out.write(result.toString(2).getBytes(ENCODING));
-//      }
-//      else 
-//      {
-//        sendNoPermissionNotif(out);
-//      }
-    } 
-    catch(JSONException e)
-    {
-      logger.error("Error building JSON response", e);
-    } 
-    catch (UnsupportedEncodingException e) 
-    {
-      logger.error("Error attempting to use UTF-8 encoding", e);
-    } 
-    catch (IOException e) 
-    {
-      logger.error("Error writing to output stream", e);
-    } 
-    catch (ClassNotFoundException e) 
-    {
-      logger.error("Error instantiating key", e);
     }
   }
 
@@ -649,10 +575,9 @@ public class CacheManager
 
       // run all queries
       Session s = getHibernateSession();
-      List l = s.createQuery("from CachedQuery").list();
-      for (Object o : l)
+      List<CachedQuery> cachedQueries = s.createQuery("from CachedQuery").list();
+      for (CachedQuery cq : cachedQueries)
       {
-        CachedQuery cq = (CachedQuery) o;
         try
         {
           cq.execute();
@@ -686,5 +611,181 @@ public class CacheManager
   }
   
 
+  
+  private static class ResultFields extends JsonCallHandler.JsonResultFields {
+  //  public static final String TABLE = "table";
+    public static final String CDA_SETTINGS_ID = "cdaSettingsId";
+    public static final String DATA_ACCESS_ID = "dataAccessId";
+    public static final String COUNT = "count";
+    public static final String ITEMS = "items";
+   // public static final String RESULTS = "results";
+  }
+  
+  private static JSONObject getcacheQueryTable(String encodedCacheKey) throws JSONException, ExporterException, UnsupportedEncodingException, IOException, ClassNotFoundException {
+    
+    if(encodedCacheKey == null){
+      throw new IllegalArgumentException("No cache key received.");
+    }
+    
+    JSONObject result = new JSONObject();
+    Cache cdaCache = AbstractDataAccess.getCache();
+
+    TableCacheKey lookupCacheKey = TableCacheKey.getTableCacheKeyFromString(encodedCacheKey);
+    net.sf.ehcache.Element elem = cdaCache.getQuiet(lookupCacheKey);
+
+    if(elem != null){
+      // put query results
+      JsonExporter exporter = new JsonExporter(null);
+      result.put(ResultFields.RESULT, exporter.getTableAsJson((TableModel) elem.getObjectValue(), 100));
+      result.put(JsonResultFields.STATUS, ResponseStatus.OK);
+    }
+    else {
+      result.put(JsonResultFields.STATUS, ResponseStatus.ERROR);
+      result.put(ResultFields.ERROR_MSG, "item not found");
+    }
+    
+    return result;
+    
+  }
+  
+  private static JSONObject getCachedQueriesOverview() throws JSONException {
+    
+    HashMap<String, HashMap<String, Integer>> cdaMap = new HashMap<String, HashMap<String,Integer>>();
+    
+    Cache cdaCache = AbstractDataAccess.getCache();
+    JSONArray results = new JSONArray();
+    
+    for(Object key : cdaCache.getKeys()) {
+
+      TableCacheKey cacheKey = (TableCacheKey) key;
+      String cdaSettingsId = cacheKey.getCdaSettingsId();
+      String dataAccessId = cacheKey.getDataAccessId();
+      
+      //aggregate occurrences
+      HashMap<String, Integer> dataAccessIdMap = cdaMap.get(cdaSettingsId);
+      if( dataAccessIdMap == null ){
+        dataAccessIdMap = new HashMap<String, Integer>();
+        dataAccessIdMap.put(dataAccessId, 1);
+        cdaMap.put(cdaSettingsId, dataAccessIdMap);
+      }
+      else {
+        Integer count = dataAccessIdMap.get(dataAccessId);
+        if(count == null){
+          dataAccessIdMap.put(dataAccessId, 1);
+        }
+        else {
+          dataAccessIdMap.put(dataAccessId, ++count);
+        }
+      }
+    }
+    
+    for(String cdaSettingsId :  cdaMap.keySet()){
+      for(String dataAccessId : cdaMap.get(cdaSettingsId).keySet() ){
+        Integer count = cdaMap.get(cdaSettingsId).get(dataAccessId);
+        JSONObject queryInfo = new JSONObject();
+        queryInfo.put(ResultFields.CDA_SETTINGS_ID, cdaSettingsId);
+        queryInfo.put(ResultFields.DATA_ACCESS_ID, dataAccessId); 
+        queryInfo.put(ResultFields.COUNT, count.intValue());
+        
+        results.put(queryInfo);
+      }
+    }
+    
+    JSONObject result = new JSONObject();
+    result.put(JsonResultFields.STATUS, ResponseStatus.OK);
+    result.put(ResultFields.RESULT, results);
+    return result;
+  }
+  
+  private static JSONObject removeQueryFromCache(String serializedCacheKey) throws UnsupportedEncodingException, IOException, ClassNotFoundException, JSONException 
+  {
+    TableCacheKey key = TableCacheKey.getTableCacheKeyFromString(serializedCacheKey);
+    
+    Cache cdaCache = AbstractDataAccess.getCache();
+    boolean success = cdaCache.remove(key);
+    
+    JSONObject result = new JSONObject();
+    if(success){
+      result.put(JsonResultFields.STATUS, ResponseStatus.OK);
+    }
+    else {
+      result.put(JsonResultFields.STATUS, ResponseStatus.ERROR);
+      result.put(JsonResultFields.ERROR_MSG, "Item not found in cache.");
+    }
+    return result;
+  }
+  
+  private static JSONObject listQueriesInCache(String cdaSettingsId, String dataAccessId) throws JSONException, ExporterException, IOException {
+    
+    JSONArray results = new JSONArray();
+    
+    Cache cdaCache = AbstractDataAccess.getCache();
+    
+    for(Object key : cdaCache.getKeys()) {
+      
+      if(key instanceof TableCacheKey){
+        
+        JSONObject queryInfo = new JSONObject();
+        
+        TableCacheKey cacheKey = (TableCacheKey) key;
+        
+        if(!StringUtils.equals(cdaSettingsId, cacheKey.getCdaSettingsId()) ||
+           !StringUtils.equals(dataAccessId, cacheKey.getDataAccessId()))
+        {//not what we're looking for
+          continue;
+        }
+        
+        //query
+        queryInfo.put("query", cacheKey.getQuery());
+        //parameters
+        ParameterDataRow prow = cacheKey.getParameterDataRow();
+        JSONObject parameters = new JSONObject();
+        if(prow != null) for(String paramName : prow.getColumnNames()){
+          parameters.put(paramName, prow.get(paramName));
+        }
+        queryInfo.put("parameters", parameters);
+        
+        //cacheKey.query;
+        net.sf.ehcache.Element elem = cdaCache.getQuiet(key);
+        
+        if(elem != null){
+                  
+          TableModel tableModel = (TableModel) elem.getObjectValue();
+          queryInfo.put("rows", tableModel.getRowCount());
+          
+          //inserted
+          queryInfo.put("inserted", elem.getLatestOfCreationAndUpdateTime());
+          queryInfo.put("accessed", elem.getLastAccessTime());
+          queryInfo.put("hits", elem.getHitCount()); 
+          
+          //use id to get table;
+          //identifier
+          String identifier = TableCacheKey.getTableCacheKeyAsString(cacheKey);
+          queryInfo.put("key", identifier);
+          
+          results.put(queryInfo);
+        }
+      }
+      else {
+        logger.warn("Found non-TableCacheKey object in cache, skipping...");
+      }
+    }
+    
+    JSONObject result = new JSONObject();
+    result.put(ResultFields.CDA_SETTINGS_ID, cdaSettingsId);
+    result.put(ResultFields.DATA_ACCESS_ID, dataAccessId);
+    result.put(ResultFields.ITEMS, results);
+    //total stats
+    result.put("cacheLength", cdaCache.getSize());
+    result.put("memoryStoreLength", cdaCache.getMemoryStoreSize());
+    result.put("diskStoreLength", cdaCache.getDiskStoreSize());
+    
+    JSONObject response = new JSONObject();
+    response.put(ResultFields.STATUS, ResponseStatus.OK);
+    response.put(ResultFields.RESULT, result);
+    
+    return response;
+  }
+  
   
 }

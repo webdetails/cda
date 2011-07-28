@@ -1,4 +1,51 @@
 
+
+var CacheManagerBackend = {
+  
+  CONTENT_HANDLER: 'cacheController',
+  STATUS_OK: 'ok',
+  STATUS_ERROR: 'error',
+  
+  defaultErrorHandle: function(status, errorMsg){
+    alert('Error :' + errorMsg);
+  },
+  
+  handleResponse: function(response, callback){
+        if(response.status == this.STATUS_OK){
+          if(typeof(callback) == 'function'){
+            callback(response.result);
+          }
+        }
+        else {//TODO: if, etc
+          if(typeof(errorCallback) == 'function'){
+            errorCallback(reponse.status, response.errorMsg);
+          }
+        }
+  },
+  
+  postJson: function(args, callback, errorCallback){
+    var self = this;
+    $.post(this.CONTENT_HANDLER, args,
+    function(response)
+    {
+      self.handleResponse(response, callback, errorCallback);
+    }, 'json');
+  },
+  
+  getJson: function(args, callback, errorCallback){
+    var self = this;
+    $.getJSON(this.CONTENT_HANDLER, args,
+      function(response)
+      {
+        self.handleResponse(response, callback, errorCallback);
+      });
+      
+  }
+  
+}
+
+/** SCHEDULER **/
+
 var refreshTable = function(){
 
   $('#cachedQueries').hide();
@@ -9,7 +56,6 @@ var refreshTable = function(){
     thisButton.addClass('selected');
   }
   $.getJSON('cacheController?method=list', populateQueries);
-
 }
 
 
@@ -88,40 +134,39 @@ var refreshCachedOverviewTable = function(){
     thisButton.addClass('selected');
   }
   
-  $.getJSON('cacheController', {method : 'cacheOverview'}, populateCachedQueriesOverview);
+  CacheManagerBackend.getJson({method : 'cacheOverview'},populateCachedQueriesOverview, CacheManagerBackend.defaultErrorHandle);
 }
 
 var refreshCachedTable = function(cdaSettingsId, dataAccessId){
   
   $('#cachedQueriesOverview').hide('fast');
   $('#cachedQueriesDetail').show('fast');
-  //}
-  $.getJSON('cacheController',
+  
+  CacheManagerBackend.getJson(
             {
               method :'cached',
               cdaSettingsId: cdaSettingsId,
               dataAccessId: dataAccessId
             },
-            populateCachedQueries);
+            populateCachedQueries,
+            function(status, errorMsg){
+              var row = $('<div class="span-24 last"/>').text('Problem accessing cache. Check log for errors or reload to try again.');
+              $("#cachedQueriesOverviewLines").empty().append(row);
+            });
 }
 
 
-var populateCachedQueriesOverview = function(resp){
+var populateCachedQueriesOverview = function(results){
     var ph = $("#cachedQueriesOverviewLines").empty();
 
-  if(resp == null || resp.results == null)
-  {
-    var row = $('<div class="span-24 last"/>').text('Problem accessing cache. Check log for errors or reload to try again.');
-    ph.append(row);
-  }
-  else if(resp.results.length > 0){
-    for (var i = 0; i< resp.results.length;i++ )
+  if(results.length > 0){
+    for (var i = 0; i< results.length;i++ )
     {
       //<div class='span-16'>CDA Settings</div>
       //<div class='span-6'>Data Access ID</div>
       //<div class='span-2 last'># Queries</div>
       var row = $("<div class='span-24 last row'></div>");
-      var item = resp.results[i];
+      var item = results[i];
       row.append($('<div/>').addClass('span-16').text(item.cdaSettingsId));
       row.append($('<div/>').addClass('span-6').text(item.dataAccessId));
       row.append($('<div/>').addClass('span-2 last').text(item.count));
@@ -148,10 +193,10 @@ var removeCachedQuery =  function(key, row, cdaSettingsId, dataAccessId){
   row.addClass('toDelete');
   if(confirm('Are you sure you want to remove this query from cache?'))
   {
-    $.post("cacheController", {method: 'removeCache', key: key},
+    CacheManagerBackend.postJson({method: 'removeCache', key: key},
       function(result){
-        refreshCachedTable(cdaSettingsId, dataAccessId)
-      }, 'json');
+        refreshCachedTable(cdaSettingsId, dataAccessId);
+      }, CacheManagerBackend.defaultErrorHandle);
   }
   else
   {
@@ -163,14 +208,8 @@ var populateCachedQueries = function(resp){
  
   var ph = $("#cachedQueriesLines").empty();
 
-  if(!resp.results){
-    var errorMsg = resp.errorMsg;
-    if(errorMsg == null) errorMsg = 'Check log for errors or reload page to try again.';
-    var row = $('<div class="span-24 last"/>').text('Problem accessing cache: ' + errorMsg);
-    ph.append(row);
-  }
-  else if(resp.results.length > 0){
-    for (var i = 0; i< resp.results.length;i++ ) {
+  if(resp.items.length > 0){
+    for (var i = 0; i< resp.items.length;i++ ) {
       //<div class='span-11'>Query</div>
       //<div class='span-5'>Parameters</div>
       //<div class='span-1'># Rows</div>
@@ -180,7 +219,7 @@ var populateCachedQueries = function(resp){
       //<div class='span-2 last'>Operations</div>
       
       var row = $("<div class='span-24 last row'></div>");
-      var item = resp.results[i];
+      var item = resp.items[i];
       
       row.append($('<div/>').addClass('span-11').text(item.query));
       
@@ -215,16 +254,19 @@ var populateCachedQueries = function(resp){
               tableContents.removeClass('empty');
               if(key)
               {
-                tableContents.append( $('<img src="cacheManager/loading.gif" >' ));
-                $.post("cacheController", {method: 'getDetails', key: key},
-                  function(result){
-                    if(result.success){
-                      renderCachedTable(result.table, tableContents);
-                    }
-                    else {
-                      tableContents.text('Item could not be retrieved from cache: ' + result.errorMsg);
-                    }
-                  }, 'json');
+                tableContents.append( $('<img src="cachemanager/loading.gif" >' ));
+                CacheManagerBackend.postJson(
+                  {
+                    method: 'getDetails',
+                    key: key
+                  },
+                  function(result) {
+                     renderCachedTable(result, tableContents);
+                  },
+                  function(status, errorMsg){
+                    tableContents.text('Item could not be retrieved from cache: ' + errorMsg);
+                  }
+                )
               }
               else{
                 alert('this cache element is invalid');//TODO: better msg

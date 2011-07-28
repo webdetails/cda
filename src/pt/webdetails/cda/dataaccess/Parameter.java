@@ -4,11 +4,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 
 import pt.webdetails.cda.utils.FormulaEvaluator;
@@ -22,6 +26,8 @@ import pt.webdetails.cda.utils.Util;
  */
 public class Parameter implements java.io.Serializable {
 
+  static Log logger = LogFactory.getLog(Parameter.class);
+  
   private static final long serialVersionUID = 1L;
   
   final static String DEFAULT_ARRAY_SEPERATOR = ";";
@@ -43,7 +49,7 @@ public class Parameter implements java.io.Serializable {
   	
   	Access(String name){ this.name = name; }
   	
-  	public static Access parse(String text){//TODO: -> valueOf
+  	public static Access parse(String text){
   		for(Access type : Access.values()){
   			if(text != null && type.name.equals(text.trim().toLowerCase())){
   				return type;
@@ -62,7 +68,7 @@ public class Parameter implements java.io.Serializable {
   	formulaContext = context;
   }
   
-  enum Type{
+  public enum Type{
   	
   	STRING("String"),
   	INTEGER("Integer"),
@@ -99,13 +105,12 @@ public class Parameter implements java.io.Serializable {
   	  }
   	}
   	
-    public static Type parse(String typeString) {// throws ParseException{ //TODO: -> valueOf
+    public static Type parse(String typeString) {
       for (Type type : Type.values()) {
         if (type.name.equals(typeString)) {
           return type;
         }
       }
-      // throw new ParseException(typeString + " is not recognized by " + Type.class.getCanonicalName(),0);
       return null;
     }
   	
@@ -264,7 +269,7 @@ public class Parameter implements java.io.Serializable {
     return type;
   }
   
-  public String getTypeAsString(){//TODO:temp
+  public String getTypeAsString(){
     return (type == null) ? null : type.getName();
   }
 
@@ -325,14 +330,11 @@ public class Parameter implements java.io.Serializable {
 
   public void setStringValue(final String stringValue)
   {
-    if(this.type == null){
-     //TODO: warn 
-    }
     this.value = stringValue;
   }
   
   public void setStringValue(final String stringValue, Type type){
-    this.value = stringValue;//TODO: parse now
+    this.value = stringValue;//TODO: parse now?
     this.type = type;
   }
   
@@ -356,6 +358,26 @@ public class Parameter implements java.io.Serializable {
    */
   public String toString(){
   	return getName() + "=" + getStringValue();
+  }
+  
+  public static ParameterDataRow createParameterDataRowFromParameters(final List<Parameter> parameters) throws InvalidParameterException
+  {
+
+    final ArrayList<String> names = new ArrayList<String>();
+    final ArrayList<Object> values = new ArrayList<Object>();
+
+    if(parameters != null) for (final Parameter parameter : parameters)
+    {
+      names.add(parameter.getName());
+      values.add(parameter.getValue());
+    }
+
+    final ParameterDataRow parameterDataRow = new ParameterDataRow(names.toArray(new String[]
+            {
+            }), values.toArray());
+
+    return parameterDataRow;
+
   }
 
 }
