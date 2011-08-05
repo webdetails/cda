@@ -39,6 +39,10 @@ public class TableModelUtils
           final QueryOptions queryOptions,
           final TableModel rawTableModel) throws TableModelException, SortException, InvalidOutputIndexException
   {
+    
+    if(rawTableModel == null){
+      throw new IllegalArgumentException("Cannot process null table.");
+    }
 
     // We will:
     //  1. Evaluate Calculated columns
