@@ -75,11 +75,11 @@ public class CalculatedTableModel implements MetaTableModel
   {
     if (backend == null)
     {
-      throw new NullPointerException();
+      throw new IllegalArgumentException("Attempting to create a calculated table model from null table.");
     }
     if (calculatedColumns == null)
     {
-      throw new NullPointerException();
+      throw new IllegalArgumentException("Null calculated columns.");
     }
     this.backend = backend;
     this.backendColumnCount = backend.getColumnCount();
