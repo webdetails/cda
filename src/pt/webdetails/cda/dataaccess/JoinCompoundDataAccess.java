@@ -79,7 +79,12 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       final TableModel tableModelA = this.getCdaSettings().getDataAccess(leftId).doQuery(croppedOptions);
       final TableModel tableModelB = this.getCdaSettings().getDataAccess(rightId).doQuery(croppedOptions);
 
-
+      if (tableModelA.getColumnCount() == 0) {
+        return tableModelA;
+      }else if(tableModelB.getColumnCount() == 0) {
+        return tableModelB;
+      }
+      
       String[] leftColumnNames = new String[leftKeys.length];
       for (int i = 0; i < leftKeys.length; i++) {
         leftColumnNames[i] = tableModelA.getColumnName(Integer.parseInt(leftKeys[i]));
