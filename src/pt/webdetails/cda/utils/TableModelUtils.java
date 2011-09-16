@@ -42,6 +42,8 @@ public class TableModelUtils
     
     if(rawTableModel == null){
       throw new IllegalArgumentException("Cannot process null table.");
+    } else if (rawTableModel.getRowCount() == 0) {
+      return rawTableModel;
     }
 
     // We will:
