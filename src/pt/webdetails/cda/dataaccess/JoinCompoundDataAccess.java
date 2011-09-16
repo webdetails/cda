@@ -28,6 +28,7 @@ import pt.webdetails.cda.utils.kettle.RowMetaToTableModel;
 import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
 import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
+import pt.webdetails.cda.utils.MetadataTableModel;
 
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM
@@ -79,10 +80,9 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       final TableModel tableModelA = this.getCdaSettings().getDataAccess(leftId).doQuery(croppedOptions);
       final TableModel tableModelB = this.getCdaSettings().getDataAccess(rightId).doQuery(croppedOptions);
 
-      if (tableModelA.getColumnCount() == 0) {
-        return tableModelA;
-      }else if(tableModelB.getColumnCount() == 0) {
-        return tableModelB;
+      if (tableModelA.getRowCount() == 0 || tableModelB.getRowCount() == 0) {
+        return new MetadataTableModel(new String[0], new Class[0], 0);
+        
       }
       
       String[] leftColumnNames = new String[leftKeys.length];
