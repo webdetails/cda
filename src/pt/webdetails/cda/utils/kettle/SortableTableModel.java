@@ -4,11 +4,11 @@
  */
 package pt.webdetails.cda.utils.kettle;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import org.apache.commons.logging.Log;
@@ -52,9 +52,37 @@ public class SortableTableModel extends AbstractTableModel
 
 
   @Override
+  public String getColumnName(int idx)
+  {
+    return base.getColumnName(idx);
+  }
+
+
+  @Override
+  public Class getColumnClass(int idx)
+  {
+    return base.getColumnClass(idx);
+  }
+
+
+  @Override
+  public void removeTableModelListener(TableModelListener l)
+  {
+    base.removeTableModelListener(l);
+  }
+
+
+  @Override
   public Object getValueAt(int i, int i1)
   {
     return base.getValueAt(sortedIndices[i], i1);
+  }
+
+
+  @Override
+  public void setValueAt(Object val, int i, int i1)
+  {
+    base.setValueAt(val, sortedIndices[i], i1);
   }
 
 
@@ -84,7 +112,7 @@ public class SortableTableModel extends AbstractTableModel
     }
     try
     {
-      Comparator comp = (Comparator) klass.getConstructor(TableModel.class, List.class).newInstance(base,sortBy);
+      Comparator comp = (Comparator) klass.getConstructor(TableModel.class, List.class).newInstance(base, sortBy);
       List<Integer> idxs = Arrays.asList(sortedIndices);
       Collections.sort(idxs, comp);
       sortedIndices = idxs.toArray(sortedIndices);
