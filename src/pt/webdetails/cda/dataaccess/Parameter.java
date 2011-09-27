@@ -1,5 +1,8 @@
 package pt.webdetails.cda.dataaccess;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,7 +31,7 @@ public class Parameter implements java.io.Serializable {
 
   static Log logger = LogFactory.getLog(Parameter.class);
   
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 2L;
   
   final static String DEFAULT_ARRAY_SEPERATOR = ";";
 
@@ -221,14 +224,21 @@ public class Parameter implements java.io.Serializable {
       case NUMERIC:
         return Double.parseDouble(localValue);
       case DATE:
-        SimpleDateFormat format = new SimpleDateFormat(getPattern());
-        try
+        if(!StringUtils.isEmpty(getPattern()))
         {
-          return format.parse(localValue);
+          SimpleDateFormat format = new SimpleDateFormat(getPattern());
+          try
+          {
+            return format.parse(localValue);
+          }
+          catch (ParseException e)
+          {
+            throw new InvalidParameterException("Unable to parse " + Type.DATE.getName() + " '" + localValue + "' with pattern " + getPattern() , e);
+          }
         }
-        catch (ParseException e)
+        else
         {
-          throw new InvalidParameterException("Unable to parse " + Type.DATE.getName() + " '" + localValue + "' with pattern " + getPattern() , e);
+          return new Date(Long.parseLong(localValue));
         }
       case STRING_ARRAY:
         return parseToArray(localValue, Type.STRING);
@@ -309,20 +319,51 @@ public class Parameter implements java.io.Serializable {
     if (value == null) {
       if (getDefaultValue() != null) return getDefaultValue().toString();
       else return null;
+    }  
+    else if (value instanceof String){
+      return (String) value;  
     } else if (type != null) {
       switch (type) {
-        case STRING_ARRAY:
+        case STRING_ARRAY://csvTokenizer compatible
+          String[] strArr = (String[]) value;
+          int i = 0;
+          StringBuilder strBuild = new StringBuilder();
+          for (String s : strArr) {
+            if (i++ > 0) strBuild.append(separator);
+            
+            strBuild.append('"');
+            int lastWritten = 0;
+            for(int sepIdx = StringUtils.indexOf(s, "'"); sepIdx >=0; sepIdx = StringUtils.indexOf(s, "'", sepIdx))
+            {//quote separator
+              strBuild.append(s.substring(lastWritten, sepIdx));
+              strBuild.append('"');
+              strBuild.append(separator);
+              strBuild.append('"');
+              lastWritten =  ++sepIdx;
+            }
+            strBuild.append(StringUtils.substring(s, lastWritten, s.length()));
+            strBuild.append('"');
+          }
+          return strBuild.toString();
         case DATE_ARRAY:
         case INTEGER_ARRAY:
         case NUMERIC_ARRAY:
           Object[] arr = (Object[]) value;
-          int i = 0;
-          StringBuilder strBuild = new StringBuilder();
+           i = 0;
+           strBuild = new StringBuilder();
           for (Object o : arr) {
             if (i++ > 0) strBuild.append(separator);
-            strBuild.append(o);
+            if(o instanceof Date) strBuild.append(((Date)o).getTime());
+            else strBuild.append(o);
           }
           return strBuild.toString();
+        case DATE:
+          try {
+            Date dt = (Date) getValue();
+            return (dt == null)? null : "" + dt.getTime();
+          } catch (InvalidParameterException e) {
+            logger.error("Parameter of date type " + getName() + " does not yield date.", e);
+          }
       }
     }
     return value.toString();
@@ -362,6 +403,11 @@ public class Parameter implements java.io.Serializable {
   
   public static ParameterDataRow createParameterDataRowFromParameters(final List<Parameter> parameters) throws InvalidParameterException
   {
+    return createParameterDataRowFromParameters(parameters.toArray(new Parameter[parameters.size()]));
+  }
+  
+  public static ParameterDataRow createParameterDataRowFromParameters(final Parameter[] parameters) throws InvalidParameterException
+  {
 
     final ArrayList<String> names = new ArrayList<String>();
     final ArrayList<Object> values = new ArrayList<Object>();
@@ -377,7 +423,31 @@ public class Parameter implements java.io.Serializable {
             }), values.toArray());
 
     return parameterDataRow;
-
   }
+
+  public void readObject(ObjectInputStream in) throws IOException {
+    try {
+      this.setName((String) in.readObject());
+      this.setType((Type) in.readObject());
+      //if(isDateType()) this.setPattern((String) in.readObject());
+      this.setStringValue((String) in.readObject(), this.getType());
+    } catch (ClassNotFoundException e) {
+      throw new IOException("Error casting read object.", e);
+    }
+  }
+
+  /**
+   * Should only be called on evaluated parameters
+   **/
+  public void writeObject(ObjectOutputStream out) throws IOException {
+    out.writeObject(this.getName());
+    out.writeObject(this.getType());
+   //if(isDateType()) out.writeObject(this.pattern);
+    out.writeObject(this.getStringValue());
+  }
+  
+//  private boolean isDateType(){
+//    return this.type != null && (this.type.equals(Type.DATE) || this.type.equals(Type.DATE_ARRAY));
+//  }
 
 }
