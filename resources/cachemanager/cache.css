@@ -95,3 +95,13 @@ dd {
 #cachedQueriesLines div.row.toDelete{
   background: none repeat scroll 0 0 #FFEEEE;
 }
+
+.queryCol {
+  overflow: auto;
+  max-height:100px;
+  cursor: pointer;
+}
+
+.queryTable {
+  overflow:auto;
+}

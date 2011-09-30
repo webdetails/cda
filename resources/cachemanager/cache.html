@@ -12,6 +12,7 @@
     <script type="text/javascript" src="static/jquery.i18n.properties.js"></script>
     <script type="text/javascript" src="static/jquery-ui-1.8rc3.custom.min.js"></script>
     <script type="text/javascript" src="previewer/dataTables/js/jquery.dataTables.js"></script>
+    <script language="javascript" type="text/javascript" src="../pentaho-cdf/js/Dashboards.js"></script>
   </head>
   <body>
 
@@ -44,6 +45,9 @@
     
     <div id="cachedQueries" class="container" style="display:none;" >
       
+      <div id="mapInfo" class="span-24 last"> </div>
+      <div id="membersInfo" class="span-24 last"></div>
+      
       <div class='section span-24 last'>Queries in cache</div>
     <!-- MAIN TABLE BODY: cache -->
       <div id="cachedQueriesOverview">
@@ -60,9 +64,10 @@
       <div id="cachedQueriesDetail" style="display:none;">
         <div class='span-24 last'>
           <div class="tableHeader container" id="cachedQueriesHeader">
-            <div class='span-11'>Query</div>
+            <div class='span-9'>Query</div>
             <div class='span-5'>Parameters</div>
-            <div class='span-1'># Rows</div>
+            <div class='span-1'>Rows</div>
+            <div class='span-2'>Mem.Size</div>
             <div class='span-2'>Insertion</div>
             <div class='span-2'>Last Access</div>
             <div class='span-1'># Hits</div>

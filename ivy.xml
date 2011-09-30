@@ -21,6 +21,8 @@
 			rev="${dependency.bi-platform.revision}" changing="true"/>
 		<dependency org="pentaho" name="pentaho-bi-platform-plugin-actions"
 			rev="${dependency.bi-platform.revision}" changing="true"/>
+		<dependency org="com.hazelcast" name="hazelcast" rev="1.9.4.3"/>
+		
 		<exclude module="ehcache"/>  <!-- Comment this for CDA with 3.6.0 dependencies -->
 
 

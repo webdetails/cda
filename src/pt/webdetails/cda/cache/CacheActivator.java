@@ -84,6 +84,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
     }
     catch (Exception e)
     {
+      return true;
     }
     finally
     {
@@ -91,7 +92,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
       s.getTransaction().commit();
       s.close();
       Thread.currentThread().setContextClassLoader(contextCL);
-      return true;
+//      return true;
     }
   }
 

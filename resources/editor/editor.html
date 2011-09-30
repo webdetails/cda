@@ -25,33 +25,36 @@ loadMessageBundles = function(lang) {
 
 
 loadFile = function() {
-var fileName =$("#filename").val();
-fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
-var b = bespin;
-$.get("getCdaFile",{path:fileName},
-function(data) {
-b.setContent("");
-b.setContent(data);
-})
+  var fileName =$("#filename").val();
+  fileName = (fileName == undefined || fileName == "") ? $("#staticfile").val() : fileName;
+  var b = bespin;
+  $.get("getCdaFile",{path:fileName},
+    function(data) {
+      b.setContent("");
+      b.setContent(data);
+    })
 }
 
 fileChanged = function() {
     $('a#save').text('Save As');
 }
+
 saveFile = function() {
-    $('a#save').text('Save');
-var fileName =$("#filename").val();
-fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
-$('#notifications').html('Saving...');
-$('#notifications').fadeIn().delay(2000).fadeOut('slow');
-$.post("writeCdaFile",{path: fileName,data:bespin.getContent()},function(data){
-$('#notifications').html(data);
-$('#notifications').fadeIn().delay(2000).fadeOut('slow');
-});
+  $('a#save').text('Save');
+  var fileName =$("#filename").val();
+  fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
+  $('#notifications').html('Saving...');
+  $('#notifications').fadeIn().delay(2000).fadeOut('slow');
+  $.post("writeCdaFile",{path: fileName,data:bespin.getContent()},
+    function(data){
+      $('#notifications').html(data);
+      $('#notifications').fadeIn().delay(2000).fadeOut('slow');
+    });
 }
+
 previewFile = function() {
-var fileName = $("#staticfile").val();
-window.open('previewQuery?path='+fileName);
+  var fileName = $("#staticfile").val();
+  window.open('previewQuery?path='+fileName);
 }
 
 /*
@@ -122,19 +125,18 @@ window.onBespinLoad = function() {
 
 transitions = {
     shiftState: function(state) {
-	state = state();
-        var controller = $("#controller");
-        controller.empty();
-        for (var i = 0; i < state.length; i ++){
-           $("#controller").append(state[i]()); 
-        }
-        $("button.button").hover(
-          function() {
-            $(this).addClass('button-hover');
-        }, function() {
-            $(this).removeClass('button-hover');
-        });
-
+      state = state();
+      var controller = $("#controller");
+      controller.empty();
+      for (var i = 0; i < state.length; i ++){
+         $("#controller").append(state[i]()); 
+      }
+      $("button.button").hover(
+        function() {
+          $(this).addClass('button-hover');
+      }, function() {
+          $(this).removeClass('button-hover');
+      });
     },
 
     initialSave: function() {

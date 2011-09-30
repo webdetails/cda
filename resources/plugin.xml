@@ -39,6 +39,8 @@
   </content-generator>
 
   <bean id="CdaQueryComponent" class="pt.webdetails.cda.CdaQueryComponent"/>
+  <!-- TODO:testing -->
+  <bean id="CdaCache" class="pt.webdetails.cda.dataaccess.AbstractDataAccess" factory-method="getCache"/>
 
 
 	<!-- Menu entry -->

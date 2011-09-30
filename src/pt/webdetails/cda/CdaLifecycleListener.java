@@ -5,7 +5,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPluginLifecycleListener;
 import org.pentaho.platform.api.engine.PluginLifecycleException;
+
 import pt.webdetails.cda.cache.CacheManager;
+import pt.webdetails.cda.cache.HazelcastQueryCache;
 import pt.webdetails.cda.utils.PluginHibernateUtil;
 import pt.webdetails.cda.utils.Util;
 
@@ -49,5 +51,6 @@ public class CdaLifecycleListener implements IPluginLifecycleListener
 
   public void unLoaded() throws PluginLifecycleException
   {
+    HazelcastQueryCache.shutdownIfRunning();
   }
 }

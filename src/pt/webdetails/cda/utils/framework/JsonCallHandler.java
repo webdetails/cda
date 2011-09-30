@@ -15,9 +15,9 @@ import org.pentaho.platform.api.engine.IParameterProvider;
 /**
  * Boilerplate for a JSON content generator
  */
-public class JsonCallHandler {
+public abstract class JsonCallHandler {
 
-  protected static Log logger = LogFactory.getLog(JsonCallHandler.class);
+  private static Log logger = LogFactory.getLog(JsonCallHandler.class);
   
   public static final String ENCODING = "UTF-8";
   public static final int INDENT_FACTOR = 2;
@@ -42,7 +42,6 @@ public class JsonCallHandler {
       return super.toString().toLowerCase();
     }
   }
- 
   
   public static abstract class Method {
     
@@ -58,12 +57,14 @@ public class JsonCallHandler {
     }
   }
 
+  
+  
   /**
    * 
    * @param name
    * @param method
    */
-  public void registerMethod(String name, Method method){
+  protected void registerMethod(String name, Method method){
     method.setName(name);
     methods.put(name, method);
   }
@@ -114,7 +115,7 @@ public class JsonCallHandler {
   {
     JSONObject result = new JSONObject();
     
-    result.put(JsonResultFields.STATUS, ResponseStatus.ERROR.toString());
+    result.put(JsonResultFields.STATUS, ResponseStatus.ERROR);
     result.put(JsonResultFields.ERROR_MSG, exc.getMessage());
     
     return result;
@@ -122,11 +123,17 @@ public class JsonCallHandler {
   
   public static JSONObject getErrorJson(String msg) throws JSONException {
     JSONObject result = new JSONObject();
-    result.put(JsonResultFields.STATUS, ResponseStatus.ERROR.toString());
+    result.put(JsonResultFields.STATUS, ResponseStatus.ERROR);
     result.put(JsonResultFields.ERROR_MSG, msg);
     return result;
   }
 
-
+  public static JSONObject getOKJson(Object obj) throws JSONException {
+    JSONObject result = new JSONObject();
+    result.put(JsonResultFields.STATUS, ResponseStatus.OK);
+    result.put(JsonResultFields.RESULT, obj);
+    return result;
+  }
+  
   
 }

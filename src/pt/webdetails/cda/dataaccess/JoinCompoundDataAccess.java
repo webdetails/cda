@@ -9,14 +9,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+
 import javax.swing.table.TableModel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-import org.pentaho.di.core.util.StringUtil;
-
-import pt.webdetails.cda.CdaBoot;
+import pt.webdetails.cda.CdaProperties;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
@@ -40,13 +39,10 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
 
   private String leftId;
   private String rightId;
-  private String[] leftKeys;
-  private String[] rightKeys;
+  private int[] leftKeys;
+  private int[] rightKeys;
   private ExecutorService executorService = Executors.newCachedThreadPool();
   private Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
-
-  private static final long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
-  private static TimeUnit DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT = TimeUnit.SECONDS;
   
   public JoinCompoundDataAccess() {
   }
@@ -60,15 +56,27 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     leftId = left.attributeValue("id");
     rightId = right.attributeValue("id");
 
-    leftKeys = left.attributeValue("keys").split(",");
-    rightKeys = right.attributeValue("keys").split(",");
+    String[] leftKeysStr = left.attributeValue("keys").split(",");
+    leftKeys = new int[leftKeysStr.length];
+    for(int i=0; i<leftKeysStr.length; i++){
+      leftKeys[i] = Integer.parseInt(leftKeysStr[i]);
+    }
+    
+    String[] rightKeysStr = right.attributeValue("keys").split(",");
+    rightKeys = new int[rightKeysStr.length];
+    for(int i=0; i<rightKeysStr.length; i++){
+      rightKeys[i] = Integer.parseInt(rightKeysStr[i]);
+    }
+    
   }
 
   public String getType() {
     return TYPE;
   }
 
-  protected TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException {
+
+  protected TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException 
+  {
     TableModel output = null;
     inputCallables.clear();
 
@@ -77,65 +85,26 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       croppedOptions.setSortBy(new ArrayList<String>());
       croppedOptions.setPageSize(0);
       croppedOptions.setPageStart(0);
-      final TableModel tableModelA = this.getCdaSettings().getDataAccess(leftId).doQuery(croppedOptions);
-      final TableModel tableModelB = this.getCdaSettings().getDataAccess(rightId).doQuery(croppedOptions);
+     
+      DataAccess left = this.getCdaSettings().getDataAccess(leftId);
+      DataAccess right = this.getCdaSettings().getDataAccess(rightId);
+      
+      TableModel tableModelLeft = left.doQuery(croppedOptions);
+      TableModel tableModelRight = right.doQuery(croppedOptions);
 
-      if (tableModelA.getRowCount() == 0 || tableModelB.getRowCount() == 0) {
+      if (tableModelLeft.getRowCount() == 0 || tableModelRight.getRowCount() == 0) {
         return new MetadataTableModel(new String[0], new Class[0], 0);
         
       }
       
-      String[] leftColumnNames = new String[leftKeys.length];
-      for (int i = 0; i < leftKeys.length; i++) {
-        leftColumnNames[i] = tableModelA.getColumnName(Integer.parseInt(leftKeys[i]));
-      }
-
-      String[] rightColumnNames = new String[rightKeys.length];
-      for (int i = 0; i < rightKeys.length; i++) {
-        rightColumnNames[i] = tableModelB.getColumnName(Integer.parseInt(rightKeys[i]));
-      }
-
-      String sortLeftXML = getSortXmlStep("sortLeft", leftColumnNames);
-      String sortRightXML = getSortXmlStep("sortRight", rightColumnNames);
-
-      StringBuilder mergeJoinXML = new StringBuilder(
-              "<step><name>mergeJoin</name><type>MergeJoin</type><join_type>FULL OUTER</join_type><step1>sortLeft</step1><step2>sortRight</step2>");
-      mergeJoinXML.append("<keys_1>");
-
-      for (int i = 0; i < leftKeys.length; i++) {
-        mergeJoinXML.append("<key>").append(leftColumnNames[i]).append("</key>");
-      }
-      mergeJoinXML.append("</keys_1><keys_2>");
-      for (int i = 0; i < rightKeys.length; i++) {
-        mergeJoinXML.append("<key>").append(rightColumnNames[i]).append("</key>");
-      }
-      mergeJoinXML.append("</keys_2></step>");
-
-      DynamicTransMetaConfig transMetaConfig = new DynamicTransMetaConfig(Type.EMPTY, "JoinCompoundData", null, null);
-      DynamicTransConfig transConfig = new DynamicTransConfig();
-
-      transConfig.addConfigEntry(EntryType.STEP, "input1", "<step><name>input1</name><type>Injector</type></step>");
-      transConfig.addConfigEntry(EntryType.STEP, "input2", "<step><name>input2</name><type>Injector</type></step>");
-      transConfig.addConfigEntry(EntryType.STEP, "sortLeft", sortLeftXML);
-      transConfig.addConfigEntry(EntryType.STEP, "sortRight", sortRightXML);
-      transConfig.addConfigEntry(EntryType.STEP, "mergeJoin", mergeJoinXML.toString());
-
-      transConfig.addConfigEntry(EntryType.HOP, "input1", "sortLeft");
-      transConfig.addConfigEntry(EntryType.HOP, "input2", "sortRight");
-      transConfig.addConfigEntry(EntryType.HOP, "sortLeft", "mergeJoin");
-      transConfig.addConfigEntry(EntryType.HOP, "sortRight", "mergeJoin");
-
-      TableModelInput input1 = new TableModelInput();
-      transConfig.addInput("input1", input1);
-      inputCallables.add(input1.getCallableRowProducer(tableModelA, true));
-      TableModelInput input2 = new TableModelInput();
-      transConfig.addInput("input2", input2);
-      inputCallables.add(input2.getCallableRowProducer(tableModelB, true));
+      DynamicTransConfig transConfig = createMergeStep(tableModelLeft, tableModelRight);
 
       RowMetaToTableModel outputListener = new RowMetaToTableModel(false, true, false);
       transConfig.addOutput("mergeJoin", outputListener);
-
+      
+      DynamicTransMetaConfig transMetaConfig = new DynamicTransMetaConfig(Type.EMPTY, "JoinCompoundData", null, null);
       DynamicTransformation trans = new DynamicTransformation(transConfig, transMetaConfig);
+            
       trans.executeCheckedSuccess(null, null, this);
       logger.info(trans.getReadWriteThroughput());
       output = outputListener.getRowsWritten();
@@ -144,10 +113,109 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     } catch (Exception e) {
       throw new QueryException("Exception during query ", e);
     }
+    
+    if(output == null)
+    {  
+      throw new QueryException("Join transformation returned null", null);
+    }
+//      
+//      //just return empty table model
+//      
+//      return createBogusTableModel(0);
+////      //give out an empty table with sufficient metadata
+////      SortedSet<Integer> sortedIndexes = new TreeSet<Integer>();
+////      for(int outIdx : getOutputs())sortedIndexes.add(outIdx); 
+////        
+////      output = createBogusTableModel(sortedIndexes.last() + 1);
+//    }
 
     return output;
   }
 
+//  private TableModel createBogusTableIfNoColumns(TableModel tableModel, int[] keys, int other) 
+//  {
+//    if(tableModel.getColumnCount() < 1)
+//    {
+//      logger.warn("Attempting to join table with no metadata. Creating bogus empty table to comply with join.");
+//      
+//      SortedSet<Integer> keysSorted = new TreeSet<Integer>();
+//      for(int i=0; i < keys.length; i++) keysSorted.add(keys[i]);
+//    
+//      int nbrColumns = getOutputs().size() + 1 - other;
+//      nbrColumns = Math.max(nbrColumns, keysSorted.last() + 1);
+//      
+//      tableModel = createBogusTableModel(nbrColumns);
+//    }
+//    return tableModel;
+//  }
+
+  /**
+   * @param tableModelLeft
+   * @param tableModelRight
+   * @return
+   */
+  private DynamicTransConfig createMergeStep(final TableModel tableModelLeft, final TableModel tableModelRight) {
+    String[] leftColumnNames = getColumnNames(tableModelLeft, leftKeys); //new String[leftKeys.length];
+    String[] rightColumnNames = getColumnNames(tableModelRight, rightKeys);
+
+    String sortLeftXML = getSortXmlStep("sortLeft", leftColumnNames);
+    String sortRightXML = getSortXmlStep("sortRight", rightColumnNames);
+
+    StringBuilder mergeJoinXML = new StringBuilder(
+            "<step><name>mergeJoin</name><type>MergeJoin</type><join_type>FULL OUTER</join_type><step1>sortLeft</step1><step2>sortRight</step2>");
+    
+    mergeJoinXML.append("<keys_1>");
+    for(String columnName: leftColumnNames){
+      mergeJoinXML.append("<key>").append(columnName).append("</key>");
+    }
+    
+    mergeJoinXML.append("</keys_1><keys_2>");
+    for(String columnName: rightColumnNames){
+      mergeJoinXML.append("<key>").append(columnName).append("</key>");
+    }
+    mergeJoinXML.append("</keys_2></step>");
+
+
+    DynamicTransConfig transConfig = new DynamicTransConfig();
+
+    transConfig.addConfigEntry(EntryType.STEP, "input1", "<step><name>input1</name><type>Injector</type></step>");
+    transConfig.addConfigEntry(EntryType.STEP, "input2", "<step><name>input2</name><type>Injector</type></step>");
+    transConfig.addConfigEntry(EntryType.STEP, "sortLeft", sortLeftXML);
+    transConfig.addConfigEntry(EntryType.STEP, "sortRight", sortRightXML);
+    transConfig.addConfigEntry(EntryType.STEP, "mergeJoin", mergeJoinXML.toString());
+
+    transConfig.addConfigEntry(EntryType.HOP, "input1", "sortLeft");
+    transConfig.addConfigEntry(EntryType.HOP, "input2", "sortRight");
+    transConfig.addConfigEntry(EntryType.HOP, "sortLeft", "mergeJoin");
+    transConfig.addConfigEntry(EntryType.HOP, "sortRight", "mergeJoin");
+
+    TableModelInput input1 = new TableModelInput();
+    transConfig.addInput("input1", input1);
+    inputCallables.add(input1.getCallableRowProducer(tableModelLeft, true));
+    TableModelInput input2 = new TableModelInput();
+    transConfig.addInput("input2", input2);
+    inputCallables.add(input2.getCallableRowProducer(tableModelRight, true));
+    
+    return transConfig;
+  }
+
+  private String[] getColumnNames(TableModel tableModel, int[] keys) {
+
+    int columnCount = tableModel.getColumnCount();
+    List<String> columnNames = new ArrayList<String>();
+    for (int i = 0; i < keys.length; i++) {
+      if(keys[i] >= columnCount )
+      {
+        logger.error("Attempting to get column " + keys[i] + " from " + columnCount + " columns. Skipping.");
+      }
+      else {
+        columnNames.add( tableModel.getColumnName(keys[i]) );
+      }
+    }
+    
+    return columnNames.toArray(new String[columnNames.size()]);
+  }
+  
   private String getSortXmlStep(final String name, final String[] columnNames) {
 
     StringBuilder sortXML = new StringBuilder(
@@ -190,12 +258,14 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     return sortXML.toString();
   }
 
-  public void startRowProduction() {
-    
-    String timeoutStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout");
-    long timeout = StringUtil.isEmpty(timeoutStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
-    String unitStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
-    TimeUnit unit = StringUtil.isEmpty(unitStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
+  public void startRowProduction() 
+  {
+    TimeUnit unit = CdaProperties.Entries.getRowProductionTimeoutUnit();
+    long timeout = CdaProperties.Entries.getRowProductionTimeout();
+//    String timeoutStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout");
+//    long timeout = StringUtil.isEmpty(timeoutStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
+//    String unitStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
+//    TimeUnit unit = StringUtil.isEmpty(unitStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
     startRowProduction(timeout, unit);
   }
 
@@ -206,11 +276,9 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
         result.get();
       }
     } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      logger.error("Row production interrupted", e);
     } catch (ExecutionException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      logger.error("Problem starting row production", e);
     }
   }
   /*
@@ -227,6 +295,17 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   public ConnectionType getConnectionType() {
     return ConnectionType.NONE;
   }
+  
+  
+//  private TableModel createBogusTableModel(int numberOfColumns)
+//  {//create generic table
+//    TypedTableModel tableModel = new TypedTableModel();
+//    for(int i=0; i < numberOfColumns; i++){
+//      tableModel.addColumn("col"+i, Object.class);
+//    }
+//    return tableModel;
+//  }
+
 
   public ArrayList<PropertyDescriptor> getInterface() {
     ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();

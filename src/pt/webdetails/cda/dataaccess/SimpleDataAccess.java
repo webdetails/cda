@@ -1,12 +1,11 @@
 package pt.webdetails.cda.dataaccess;
 
+import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.table.TableModel;
-
-import net.sf.ehcache.Cache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,6 +15,7 @@ import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 
 import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.cache.TableCacheKey;
+import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.DummyConnection;
@@ -72,9 +72,6 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
 
   protected synchronized TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException
   {
-
-    final Cache cache = getCache();
-
     // Get parameters from definition and apply it's values
     final List<Parameter> parameters = (List<Parameter>) getParameters().clone();
 
@@ -83,7 +80,6 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       final Parameter parameterPassed = queryOptions.getParameter(parameter.getName());
       if (parameter.getAccess().equals(Parameter.Access.PUBLIC) && parameterPassed != null)
       {
-        //parameter.setStringValue(parameterPassed.getStringValue());
         try
         {
           parameterPassed.inheritDefaults(parameter);
@@ -113,6 +109,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     // create the cache-key which is both query and parameter values
     TableCacheKey key;
     TableModel tableModelCopy;
+    long duration;
     try
     {
       try
@@ -137,27 +134,18 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
 
       if (isCache())
       {
-        ClassLoader contextCL = Thread.currentThread().getContextClassLoader();
-        try{
-          //make sure we have the right class loader in thread to instantiate cda classes in case DiskStore is used
-          Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-          final net.sf.ehcache.Element element = cache.get(key);
-          if (element != null && !queryOptions.isCacheBypass()) // Are we explicitly saying to bypass the cache?
+        try
+        {
+          final TableModel cachedTableModel = getCdaCache().getTableModel(key);
+          if(cachedTableModel != null && !queryOptions.isCacheBypass())
           {
-            final TableModel cachedTableModel = (TableModel) element.getObjectValue();
-            if (cachedTableModel != null)
-            {
-              // we have a entry in the cache ... great!
-              logger.debug("Found tableModel in cache. Returning");
-              return cachedTableModel;
-            }
+            logger.debug("Found table in cache, returning.");
+            return cachedTableModel;
           }
         }
-        catch(Exception e){
-          logger.error("Error while attempting to load from cache, bypassing cache (cause: " + e.getClass() + ")", e);
-        }
-        finally{
-          Thread.currentThread().setContextClassLoader(contextCL);
+        catch(Exception e)
+        {//shouldn't happen, but if does cannot let it be fatal
+          logger.error("ERROR ACCESSING CACHE! Bypassing...",e);
         }
       }
 
@@ -166,7 +154,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
 
       final TableModel tableModel = postProcessTableModel(performRawQuery(parameterDataRow));
 
-      logIfDurationAboveThreshold(beginTime, getId(), getQuery(), parameters);
+      duration = logIfDurationAboveThreshold(beginTime, getId(), getQuery(), parameters);
 
       // Copy the tableModel and cache it
       // Handle the TableModel
@@ -185,17 +173,9 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     // put the copy into the cache ...
     if (isCache())
     {
-      final net.sf.ehcache.Element storeElement = new net.sf.ehcache.Element(key, tableModelCopy);
-      storeElement.setTimeToLive(getCacheDuration());
-      cache.put(storeElement);
-      cache.flush();
-      
-      // Print cache status size
-      logger.debug("Cache status: " + cache.getMemoryStoreSize() + " in memory, " + 
-              cache.getDiskStoreSize() + " in disk");
+      ExtraCacheInfo info = new ExtraCacheInfo(getCdaSettings().getId(), queryOptions.getDataAccessId(), duration, tableModelCopy);
+      getCdaCache().putTableModel(key, tableModelCopy, info);
     }
-
-    // and finally return the copy.
     return tableModelCopy;
   }
 
@@ -203,7 +183,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
   /**
    * @param beginTime When query execution began.
    */
-  private void logIfDurationAboveThreshold(final long beginTime, final String queryId, final String query, final List<Parameter> parameters)
+  private long logIfDurationAboveThreshold(final long beginTime, final String queryId, final String query, final List<Parameter> parameters)
   {
     long endTime = System.currentTimeMillis();
     long duration = (endTime - beginTime) / 1000;//precision not an issue: integer op is ok
@@ -222,6 +202,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       }
       logger.debug(logMsg);
     }
+    return duration;
   }
 
 
@@ -237,7 +218,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
    * extend SimpleDataAccess may decide to implement it
    * @return
    */
-  protected Object getExtraCacheKey()
+  protected Serializable getExtraCacheKey()
   {
     return null;
   }

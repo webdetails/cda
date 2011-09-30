@@ -8,6 +8,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import org.apache.commons.codec.binary.Base64;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
@@ -16,18 +18,15 @@ import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.dataaccess.InvalidParameterException;
 import pt.webdetails.cda.dataaccess.Parameter;
 
-public class TableCacheKey implements Serializable
+public class TableCacheKey implements Serializable 
   {
 
-    private static final long serialVersionUID = 4L; //1->2 only hash of connection kept; 2->3 file/dataAccessId
+    private static final long serialVersionUID = 5L; //1->2 only hash of connection kept; 2->3 file/dataAccessId; 4->5 hazelcast vers
     
     private int connectionHash;
     private String query;
     private ParameterDataRow parameterDataRow;
-    private Object extraCacheKey;
-    
-    private String cdaSettingsId;
-    private String dataAccessId;
+    private Serializable extraCacheKey;
 
     /**
      * For serialization
@@ -38,7 +37,7 @@ public class TableCacheKey implements Serializable
 
 
     public TableCacheKey(final Connection connection, final String query,
-            final ParameterDataRow parameterDataRow, final Object extraCacheKey, 
+            final ParameterDataRow parameterDataRow, final Serializable extraCacheKey, 
             String cdaSettingsId, String dataAccessId)
     {
       if (connection == null)
@@ -58,8 +57,6 @@ public class TableCacheKey implements Serializable
       this.query = query;
       this.parameterDataRow = parameterDataRow;
       this.extraCacheKey = extraCacheKey;
-      this.cdaSettingsId = cdaSettingsId;
-      this.dataAccessId = dataAccessId;
     }
 
     
@@ -98,20 +95,10 @@ public class TableCacheKey implements Serializable
     }
 
 
-    public void setExtraCacheKey(Object extraCacheKey) {
+    public void setExtraCacheKey(Serializable extraCacheKey) {
       this.extraCacheKey = extraCacheKey;
     }
-
-
-    public void setCdaSettingsId(String cdaSettingsId) {
-      this.cdaSettingsId = cdaSettingsId;
-    }
-
-
-    public void setDataAccessId(String dataAccessId) {
-      this.dataAccessId = dataAccessId;
-    }
-
+    
 
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
     {
@@ -121,35 +108,50 @@ public class TableCacheKey implements Serializable
       query = (String) in.readObject();
       //parameterDataRow
       try
-      {
-        Object holder = in.readObject();
-        if (holder != null)
-        {
-          parameterDataRow = Parameter.createParameterDataRowFromParameters((ArrayList<Parameter>) (ArrayList) holder);
-        }
-        else
-        {
-          parameterDataRow = null;
-        }
+      {          
+          //to be hazelcast compatible needs to serialize EXACTLY the same
+          //binary comparison/hash will be used
+          int len = in.readInt();
+          Parameter[] params = new Parameter[len];
+          
+          for(int i =0; i < params.length; i++)
+          {
+            Parameter param = new Parameter();
+            param.readObject(in);
+            params[i] = param;
+          }
+          parameterDataRow = Parameter.createParameterDataRowFromParameters(params);
       }
       catch (InvalidParameterException e)
       {
         parameterDataRow = null;
       }
-      //extraCacheKey
-      extraCacheKey = in.readObject();
-      cdaSettingsId = (String) in.readObject();
-      dataAccessId = (String) in.readObject();
+      extraCacheKey = (Serializable) in.readObject();
     }
 
     private void writeObject(java.io.ObjectOutputStream out) throws IOException
     {
       out.writeInt(connectionHash);
       out.writeObject(query);
-      out.writeObject(createParametersFromParameterDataRow(parameterDataRow));
+     // out.writeObject(createParametersFromParameterDataRow(parameterDataRow));
+      
+      //new parameters write
+      Parameter[] params = createParametersFromParameterDataRow(parameterDataRow);
+      
+//      Arrays.sort(params, new Comparator<Parameter> () {
+//        public int compare(Parameter o1, Parameter o2) {
+//         return o1.getName().compareTo(o2.getName()); 
+//        }
+//      });
+      
+      out.writeInt(params.length);
+      for(Parameter param : params){
+        param.writeObject(out);     
+      }
+      
       out.writeObject(extraCacheKey);
-      out.writeObject(cdaSettingsId);//information only, not used in hash/equals
-      out.writeObject(dataAccessId);//information only, not used in hash/equals
+//      out.writeObject(cdaSettingsId);//information only, not used in hash/equals
+//      out.writeObject(dataAccessId);//information only, not used in hash/equals
     }
     
     /**
@@ -190,7 +192,8 @@ public class TableCacheKey implements Serializable
       if(connectionHash != that.connectionHash){
         return false;
       }
-      if (parameterDataRow != null ? !parameterDataRow.equals(that.parameterDataRow) : that.parameterDataRow != null)
+      if (parameterDataRow != null ? !Arrays.equals(createParametersFromParameterDataRow(parameterDataRow),createParametersFromParameterDataRow(that.parameterDataRow)) 
+                                     : that.parameterDataRow != null)
       {
         return false;
       }
@@ -217,18 +220,18 @@ public class TableCacheKey implements Serializable
       return result;
     }
     
-    public String getDataAccessId(){
-      return this.dataAccessId;
-    }
-    
-    public String getCdaSettingsId(){
-      return this.cdaSettingsId;
-    }
+//    public String getDataAccessId(){
+//      return this.dataAccessId;
+//    }
+//    
+//    public String getCdaSettingsId(){
+//      return this.cdaSettingsId;
+//    }
     
     /**
      * for serialization
      **/
-    private static ArrayList<Parameter> createParametersFromParameterDataRow(final ParameterDataRow row)
+    private static Parameter[] createParametersFromParameterDataRow(final ParameterDataRow row)
     {
       ArrayList<Parameter> parameters = new ArrayList<Parameter>();
       if(row != null) for (String name : row.getColumnNames())
@@ -239,7 +242,14 @@ public class TableCacheKey implements Serializable
         param.setType(type);
         parameters.add(param);
       }
-      return parameters;
+      Parameter[] params = parameters.toArray(new Parameter[parameters.size()]);
+      //so comparisons will not fail when parameters are added in different order
+      Arrays.sort(params, new Comparator<Parameter> () {
+        public int compare(Parameter o1, Parameter o2) {
+         return o1.getName().compareTo(o2.getName()); 
+        }
+      });
+      return params;
     }
    
 }

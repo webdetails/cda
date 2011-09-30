@@ -25,6 +25,7 @@ import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.util.StringUtil;
 
 import pt.webdetails.cda.CdaBoot;
+import pt.webdetails.cda.CdaProperties;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransformation;
@@ -48,17 +49,11 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
 
   private SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmssZ");
   private String filename;
-  
-  private static long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
-  private static TimeUnit DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT = TimeUnit.SECONDS;
-
 
   public void startRowProduction()
   {
-    String timeoutStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout");
-    long timeout = StringUtil.isEmpty(timeoutStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
-    String unitStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
-    TimeUnit unit = StringUtil.isEmpty(unitStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
+    TimeUnit unit = CdaProperties.Entries.getRowProductionTimeoutUnit();
+    long timeout = CdaProperties.Entries.getRowProductionTimeout();
     startRowProduction(timeout, unit);
   }
 

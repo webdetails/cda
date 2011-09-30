@@ -25,6 +25,9 @@ import org.pentaho.reporting.libraries.formula.FormulaContext;
 import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.CdaContentGenerator;
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.CdaProperties;
+import pt.webdetails.cda.cache.HazelcastQueryCache;
+import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
@@ -50,6 +53,8 @@ public abstract class AbstractDataAccess implements DataAccess
 
   private static final Log logger = LogFactory.getLog(AbstractDataAccess.class);
   private static CacheManager cacheManager;
+  private static HazelcastQueryCache hazelcastCache;
+  
   private CdaSettings cdaSettings;
   private String id;
   private String name;
@@ -71,6 +76,12 @@ public abstract class AbstractDataAccess implements DataAccess
   private static final String PARAM_ITERATOR_ARG_SEPARATOR = ",";
   private static final String USE_TERRACOTTA_PROPERTY = "pt.webdetails.cda.UseTerracotta";
 
+//  public enum CacheType{
+//    EHCACHE,
+//    HAZELCAST
+//  }
+  
+  private static final String CACHE_CFG_FILE_HAZELCAST = "hazelcast.xml";
 
   protected AbstractDataAccess()
   {
@@ -234,7 +245,22 @@ public abstract class AbstractDataAccess implements DataAccess
 
   }
 
+  public static IQueryCache getCdaCache() throws CacheException 
+  {
+    return getHazelCache();
+  }
+  
+  public static synchronized HazelcastQueryCache getHazelCache(){
+    if(hazelcastCache == null)
+    {
+      String cfgFile = PentahoSystem.getApplicationContext().getSolutionPath(PLUGIN_PATH + CACHE_CFG_FILE_HAZELCAST);
+      boolean superClient  = CdaProperties.Entries.isHazelcastSuperClient();
+      hazelcastCache = new HazelcastQueryCache(cfgFile, superClient);
+    }
+    return hazelcastCache;
+  }
 
+  @Deprecated
   public static synchronized Cache getCache() throws CacheException
   {
     if (cacheManager == null)
@@ -245,17 +271,20 @@ public abstract class AbstractDataAccess implements DataAccess
       if (CdaEngine.getInstance().isStandalone())
       {//look for the one under src/jar
         URL cfgFile = CdaBoot.class.getResource(cacheConfigFile);
-        cacheManager = new CacheManager(cfgFile);//CacheManager.create(cfgFile);
+        cacheManager = new CacheManager(cfgFile);
+        logger.debug("Cache started using " + cfgFile);
       }
       else
       {//look at cda folder in pentaho
         try
-		{
+		{//preferred way: proper config in plugin folder
     	 String cfgFile = PentahoSystem.getApplicationContext().getSolutionPath(PLUGIN_PATH + cacheConfigFile);
     	 cacheManager = new CacheManager(cfgFile);
+    	 logger.debug("Cache started using " + cfgFile);
     	}
     	catch(CacheException exc)
 		{//fallback to standalone 
+    	  logger.warn("Cache configuration not found in plugin folder, using fallback.");
     	  URL cfgFile = CdaBoot.class.getResource(cacheConfigFile);
     	  cacheManager = new CacheManager(cfgFile);
     	}
@@ -303,9 +332,8 @@ public abstract class AbstractDataAccess implements DataAccess
 
   public static synchronized void clearCache() throws CacheException
   {
-    
-    Cache cache = getCache();
-    cache.removeAll();
+    IQueryCache cache = getCdaCache();
+    cache.clearCache();
   }
 
 
@@ -328,9 +356,10 @@ public abstract class AbstractDataAccess implements DataAccess
      *
      */
 
+    final TableModel tableModel = queryDataSource(queryOptions);
+    
     try
     {
-      final TableModel tableModel = queryDataSource(queryOptions);
       final TableModel outputTableModel = TableModelUtils.getInstance().postProcessTableModel(this, queryOptions, tableModel);
       logger.debug("Query " + getId() + " done successfully - returning tableModel");
       return outputTableModel;

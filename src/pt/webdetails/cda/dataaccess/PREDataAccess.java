@@ -119,6 +119,7 @@ public abstract class PREDataAccess extends SimpleDataAccess
       // Store this variable so that we can close it later
       setLocalDataFactory(dataFactory);
       setTableModel(tm);
+      
       return tm;
 
     }
@@ -134,8 +135,7 @@ public abstract class PREDataAccess extends SimpleDataAccess
     {
       throw new QueryException("ReportDataFactoryException : " + e.getMessage()
               + ((e.getParentThrowable() == null) ? "" : ("; Parent exception: " + e.getParentThrowable().getMessage())) + "\n" +
-              ((e.getParentThrowable() != null && e.getParentThrowable().getCause() != null)?e.getParentThrowable().getCause().getMessage() :"") + "\n"+
-              ((e.getParentThrowable() != null && e.getParentThrowable().getCause().getCause() != null)?e.getParentThrowable().getCause().getCause().getMessage() :"")
+              ((e.getParentThrowable() != null && e.getParentThrowable().getCause() != null)?e.getParentThrowable().getCause().getMessage() :"") + "\n"
               , e);
     }
     finally

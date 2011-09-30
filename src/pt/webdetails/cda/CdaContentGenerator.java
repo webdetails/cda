@@ -29,6 +29,7 @@ import org.pentaho.platform.util.messages.LocaleHelper;
 import org.apache.commons.lang.StringUtils;
 
 import pt.webdetails.cda.cache.CacheManager;
+import pt.webdetails.cda.cache.monitor.CacheMonitorHandler;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
@@ -188,6 +189,10 @@ public class CdaContentGenerator extends BaseContentGenerator
       else if ("cacheController".equals(method))
       {
         cacheController(requestParams, out);
+      }
+      else if(StringUtils.equals(method, "cacheMonitor"))
+      {
+        CacheMonitorHandler.getInstance().handleCall(requestParams, out);
       }
       else
       {
