@@ -45,9 +45,25 @@ public class NaturalOrderComparator implements Comparator<Integer>
       boolean ascending = direction == 'A' || direction == 'a';
       int i = Integer.parseInt(entry.substring(0, entry.length() - 1), 10);
       int bigger = 0;
-
+      
       String v0 = baseData.getValueAt(i0, i) != null ? baseData.getValueAt(i0, i).toString() : "";
       String v1 = baseData.getValueAt(i1, i) != null ? baseData.getValueAt(i1, i).toString() : "";
+      
+      boolean v0Empty = false;
+      boolean v1Empty = false;
+      
+      if(v0.compareTo("Infinity") == 0 || v0.compareTo("") == 0 || v0.compareTo("null") == 0){
+    	  v0Empty = true;
+      }
+      if(v1.compareTo("Infinity") == 0 || v1.compareTo("") == 0 || v1.compareTo("null") == 0){
+    	  v1Empty = true;
+      }
+      
+      if(v0Empty && v1Empty) return 0;
+      else if(v0Empty) return 1;
+      else if(v1Empty) return -1;
+
+
 
       bigger = compareStrings(v0, v1);
       if (bigger != 0)
