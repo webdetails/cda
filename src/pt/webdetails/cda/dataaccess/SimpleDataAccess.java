@@ -70,20 +70,23 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
   }
 
 
-  protected synchronized TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException
+  protected TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException
   {
+    // Get parameters from definition and apply their values
+    //TODO: use queryOptions' parameters instead of copying?
+    final List<Parameter> parameters = new ArrayList(getParameters().size());
+    for(Parameter param : getParameters())
+    {
+      parameters.add(new Parameter(param));
+    }
 
     final Cache cache = getCache();
-
-    // Get parameters from definition and apply it's values
-    final List<Parameter> parameters = (List<Parameter>) getParameters().clone();
 
     for (final Parameter parameter : parameters)
     {
       final Parameter parameterPassed = queryOptions.getParameter(parameter.getName());
       if (parameter.getAccess().equals(Parameter.Access.PUBLIC) && parameterPassed != null)
       {
-        //parameter.setStringValue(parameterPassed.getStringValue());
         try
         {
           parameterPassed.inheritDefaults(parameter);
@@ -113,6 +116,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     // create the cache-key which is both query and parameter values
     TableCacheKey key;
     TableModel tableModelCopy;
+    IDataSourceQuery rawQueryExecution = null;
     try
     {
       try
@@ -163,8 +167,10 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
 
       //start timing query
       long beginTime = System.currentTimeMillis();
+      
+      rawQueryExecution = performRawQuery(parameterDataRow);
 
-      final TableModel tableModel = postProcessTableModel(performRawQuery(parameterDataRow));
+      final TableModel tableModel = postProcessTableModel(rawQueryExecution.getTableModel());
 
       logIfDurationAboveThreshold(beginTime, getId(), getQuery(), parameters);
 
@@ -179,7 +185,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     }
     finally
     {
-      closeDataSource();
+      if(rawQueryExecution != null) rawQueryExecution.closeDataSource();
     }
 
     // put the copy into the cache ...
@@ -203,7 +209,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
   /**
    * @param beginTime When query execution began.
    */
-  private void logIfDurationAboveThreshold(final long beginTime, final String queryId, final String query, final List<Parameter> parameters)
+  private long logIfDurationAboveThreshold(final long beginTime, final String queryId, final String query, final List<Parameter> parameters)
   {
     long endTime = System.currentTimeMillis();
     long duration = (endTime - beginTime) / 1000;//precision not an issue: integer op is ok
@@ -222,6 +228,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
       }
       logger.debug(logMsg);
     }
+    return duration;
   }
 
 
@@ -241,12 +248,24 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
   {
     return null;
   }
+  
+  //TODO:
+  /**
+   * Query state.
+   */
+  public static interface IDataSourceQuery {
+    
+    public TableModel getTableModel();
+    
+    public void closeDataSource() throws QueryException;
+
+  }
 
 
-  protected abstract TableModel performRawQuery(ParameterDataRow parameterDataRow) throws QueryException;
+  protected abstract IDataSourceQuery performRawQuery(ParameterDataRow parameterDataRow) throws QueryException;
 
 
-  public abstract void closeDataSource() throws QueryException;
+//  public abstract void closeDataSource() throws QueryException;
 
 
   public String getQuery()

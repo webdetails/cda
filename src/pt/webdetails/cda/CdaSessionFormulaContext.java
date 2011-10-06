@@ -10,6 +10,7 @@ import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.solution.PentahoSessionParameterProvider;
 import org.pentaho.platform.engine.core.solution.SystemSettingsParameterProvider;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.security.SecurityParameterProvider;
 import org.pentaho.platform.plugin.services.connections.javascript.JavaScriptResultSet;
 
@@ -33,8 +34,9 @@ public class CdaSessionFormulaContext extends DefaultFormulaContext
       providers.put(SYSTEM_PREFIX, new SystemSettingsParameterProvider());
     }
     
-    public CdaSessionFormulaContext(){
-      this(null);
+    public CdaSessionFormulaContext()
+    {
+      this(PentahoSessionHolder.getSession());
     }
 
 

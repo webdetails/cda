@@ -59,6 +59,4 @@ public interface DataAccess
   public TableModel listParameters(DiscoveryOptions discoveryOptions);
 
   public void storeDescriptor(DataAccessConnectionDescriptor descriptor);
-  
-  public void setFormulaContext(FormulaContext formulaContext);
 }

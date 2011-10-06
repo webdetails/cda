@@ -220,11 +220,6 @@ public class CdaContentGenerator extends BaseContentGenerator
 
     final String path = getRelativePath(pathParams);
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
-    //set a formula context for current session
-    if (userSession != null)
-    {
-      cdaSettings.setFormulaContext(new CdaSessionFormulaContext(userSession));
-    }
 
     // Handle paging options
     // We assume that any paging options found mean that the user actively wants paging.

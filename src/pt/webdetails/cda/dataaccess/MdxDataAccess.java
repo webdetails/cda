@@ -247,7 +247,7 @@ public class MdxDataAccess extends PREDataAccess
   
   //treat special cases: allow string[]
   @Override
-  protected TableModel performRawQuery(final ParameterDataRow parameterDataRow) throws QueryException
+  protected IDataSourceQuery performRawQuery(final ParameterDataRow parameterDataRow) throws QueryException
   {
     final String MDX_MULTI_SEPARATOR = ",";
     
