@@ -103,15 +103,7 @@ public class CdaQueryComponent {
     final QueryOptions queryOptions = new QueryOptions();
 
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(file);
-    
-  //set a formula context for current session
-    IPentahoSession userSession = null;
-    userSession = PentahoSessionHolder.getSession();
-    if (userSession != null)
-    {
-      cdaSettings.setFormulaContext(new CdaSessionFormulaContext(userSession));
-    }
-    
+
     final String CDA_PARAMS = "cdaParameterString";
     final String CDA_PARAM_SEPARATOR = ";";
 

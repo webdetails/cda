@@ -5,8 +5,6 @@ import java.util.Locale;
 import java.util.TimeZone;
 import javax.swing.table.TableModel;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
@@ -40,9 +38,7 @@ import pt.webdetails.cda.settings.UnknownConnectionException;
 public abstract class PREDataAccess extends SimpleDataAccess
 {
 
-  private static final Log logger = LogFactory.getLog(PREDataAccess.class);
-  private TableModel tableModel;
-  private CachingDataFactory localDataFactory;
+//  private static final Log logger = LogFactory.getLog(PREDataAccess.class);
 
 
   public PREDataAccess()
@@ -73,9 +69,45 @@ public abstract class PREDataAccess extends SimpleDataAccess
 
   public abstract DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException;
 
+  
+  protected static class PREDataSourceQuery implements IDataSourceQuery{
+
+    private TableModel tableModel;
+    private CachingDataFactory localDataFactory;
+    
+    public PREDataSourceQuery(TableModel tm, CachingDataFactory df){
+      this.tableModel = tm;
+      this.localDataFactory = df;
+    }
+    
+    public TableModel getTableModel() {
+      return tableModel;
+    }
+
+    public void closeDataSource() throws QueryException {
+      if (localDataFactory == null)
+      {
+        return;
+      }
+
+      // and at the end, close your tablemodel if it holds on to resources like a resultset
+      if (getTableModel() instanceof CloseableTableModel)
+      {
+        final CloseableTableModel ctm = (CloseableTableModel) getTableModel();
+        ctm.close();
+      }
+
+      // and finally shut down the datafactory to free any connection that may be open.
+      localDataFactory.close();
+
+      localDataFactory = null;
+    }
+    
+  }
+  
 
   @Override
-  protected TableModel performRawQuery(final ParameterDataRow parameterDataRow) throws QueryException
+  protected IDataSourceQuery performRawQuery(final ParameterDataRow parameterDataRow) throws QueryException
   {
     
     boolean threadVarSet = false;
@@ -116,11 +148,9 @@ public abstract class PREDataAccess extends SimpleDataAccess
       final TableModel tm = dataFactory.queryData("query",
               new CompoundDataRow(environmentDataRow, parameterDataRow));
 
-      // Store this variable so that we can close it later
-      setLocalDataFactory(dataFactory);
-      setTableModel(tm);
-      
-      return tm;
+      //  Store this variable so that we can close it later
+      PREDataSourceQuery queryExecution = new PREDataSourceQuery(tm, dataFactory);
+      return queryExecution;
 
     }
     catch (UnknownConnectionException e)
@@ -147,50 +177,49 @@ public abstract class PREDataAccess extends SimpleDataAccess
   }
 
 
-  public void closeDataSource() throws QueryException
-  {
+//  public void closeDataSource() throws QueryException
+//  {
+//
+//    if (localDataFactory == null)
+//    {
+//      return;
+//    }
+//
+//    // and at the end, close your tablemodel if it holds on to resources like a resultset
+//    if (getTableModel() instanceof CloseableTableModel)
+//    {
+//      final CloseableTableModel ctm = (CloseableTableModel) getTableModel();
+//      ctm.close();
+//    }
+//
+//    // and finally shut down the datafactory to free any connection that may be open.
+//    getLocalDataFactory().close();
+//
+//    localDataFactory = null;
+//  }
 
-    if (localDataFactory == null)
-    {
-      return;
-    }
-
-    // and at the end, close your tablemodel if it holds on to resources like a resultset
-    if (getTableModel() instanceof CloseableTableModel)
-    {
-      final CloseableTableModel ctm = (CloseableTableModel) getTableModel();
-      ctm.close();
-    }
-
-    // and finally shut down the datafactory to free any connection that may be open.
-    getLocalDataFactory().close();
-
-    localDataFactory = null;
-  }
-
-
-  public TableModel getTableModel()
-  {
-    return tableModel;
-  }
-
-
-  public void setTableModel(final TableModel tableModel)
-  {
-    this.tableModel = tableModel;
-  }
-
-
-  public CachingDataFactory getLocalDataFactory()
-  {
-    return localDataFactory;
-  }
-
-
-  public void setLocalDataFactory(final CachingDataFactory localDataFactory)
-  {
-    this.localDataFactory = localDataFactory;
-  }
+//  public TableModel getTableModel()
+//  {
+//    return tableModel;
+//  }
+//
+//
+//  public void setTableModel(final TableModel tableModel)
+//  {
+//    this.tableModel = tableModel;
+//  }
+//
+//
+//  public CachingDataFactory getLocalDataFactory()
+//  {
+//    return localDataFactory;
+//  }
+//
+//
+//  public void setLocalDataFactory(final CachingDataFactory localDataFactory)
+//  {
+//    this.localDataFactory = localDataFactory;
+//  }
   /*
   public static ArrayList<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors() {
   ArrayList<DataAccessConnectionDescriptor> descriptor = new ArrayList<DataAccessConnectionDescriptor>();

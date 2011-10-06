@@ -5,12 +5,11 @@ import java.util.ArrayList;
 import org.apache.commons.lang.StringUtils;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 import org.pentaho.reporting.libraries.formula.Formula;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 
 import pt.webdetails.cda.CdaSessionFormulaContext;
-import pt.webdetails.cda.dataaccess.InvalidParameterException;//TODO
+import pt.webdetails.cda.dataaccess.InvalidParameterException;
 
 public class FormulaEvaluator {
   
@@ -55,14 +54,18 @@ public class FormulaEvaluator {
     return text;
   }
   
-  //TODO: change exceptions
+  public static Object processFormula(String localValue) throws InvalidParameterException 
+  {
+    return processFormula(localValue, null);
+  }
+  
   public static Object processFormula(String localValue, FormulaContext formulaContext) throws InvalidParameterException 
   {
     try {
       Formula formula = new Formula(localValue);
       // set context if available
       if (formulaContext != null) formula.initialize(formulaContext);
-      else formula.initialize(new DefaultFormulaContext());
+      else formula.initialize(new CdaSessionFormulaContext(PentahoSessionHolder.getSession()));
       // evaluate
       Object result = formula.evaluate();
       if(result instanceof ArrayList)

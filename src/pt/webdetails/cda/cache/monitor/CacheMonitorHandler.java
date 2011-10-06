@@ -455,7 +455,8 @@ public class CacheMonitorHandler extends JsonCallHandler
         
         MapEntry<TableCacheKey, TableModel> mapEntry =  hazelCache.getMap().getMapEntry(key);
         if(mapEntry == null){
-          logger.error("No model entry found for existing key, skipping.");
+          logger.error("Found dangling key in stats with no model, removing..");
+          hazelCache.getStatsMap().remove(key);
           continue;
         }
         

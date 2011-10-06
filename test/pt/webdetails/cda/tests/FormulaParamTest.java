@@ -68,7 +68,7 @@ public class FormulaParamTest extends TestCase {
     IPentahoSession bogusSession = new StandaloneSession();
     final String testParamValue = "thisIsAGoodValue";
     bogusSession.setAttribute("test", testParamValue);
-    cdaSettings.setFormulaContext(new CdaSessionFormulaContext(bogusSession));
+ //   cdaSettings.setFormulaContext(new CdaSessionFormulaContext(bogusSession));
     
     logger.debug("Doing query on Cda - Initializing CdaEngine");
     final CdaEngine engine = CdaEngine.getInstance();

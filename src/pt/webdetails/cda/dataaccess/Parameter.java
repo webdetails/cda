@@ -66,11 +66,6 @@ public class Parameter implements java.io.Serializable {
   private final static String FORMULA_BEGIN = "${";
   private final static String FORMULA_END = "}";
   
-  private FormulaContext formulaContext;
-  public void setFormulaContext(FormulaContext context){
-  	formulaContext = context;
-  }
-  
   public enum Type{
   	
   	STRING("String"),
@@ -143,6 +138,11 @@ public class Parameter implements java.io.Serializable {
     }
 
   }
+  
+  
+  /* *****
+   * CTORS
+   ********/
 
   public Parameter()
   {
@@ -155,6 +155,16 @@ public class Parameter implements java.io.Serializable {
     this.defaultValue = defaultValue;
     this.pattern = pattern;
     this.access = Access.parse(access);//defaults to public
+  }
+  
+  /**
+   * Defensive copy constructor
+   * @param param Parameter to clone
+   */
+  public Parameter(Parameter param)
+  {
+    this(param.getName(), param.getTypeAsString(), param.getStringValue(), param.getPattern(), param.getAccess().toString() );
+    this.setSeparator(param.getSeparator());
   }
 
   public Parameter(final Element p)
@@ -173,7 +183,7 @@ public class Parameter implements java.io.Serializable {
     this.name = name;
     this.value = value;
   }
-  
+   
   public void inheritDefaults(Parameter defaultParameter){
     if(this.type == null) this.setType(defaultParameter.getType());
     if(this.type == Type.DATE || this.type == Type.DATE_ARRAY) this.setPattern(defaultParameter.getPattern());
@@ -195,7 +205,7 @@ public class Parameter implements java.io.Serializable {
         {
           throw new InvalidParameterException("Malformed formula expression", null);
         }
-      	return FormulaEvaluator.processFormula(formula, this.formulaContext);
+      	return FormulaEvaluator.processFormula(formula);
       }
       
       Type valueType = getType();
@@ -445,9 +455,5 @@ public class Parameter implements java.io.Serializable {
    //if(isDateType()) out.writeObject(this.pattern);
     out.writeObject(this.getStringValue());
   }
-  
-//  private boolean isDateType(){
-//    return this.type != null && (this.type.equals(Type.DATE) || this.type.equals(Type.DATE_ARRAY));
-//  }
 
 }

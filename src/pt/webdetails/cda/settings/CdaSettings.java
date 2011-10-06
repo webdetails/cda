@@ -13,7 +13,6 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
-import org.pentaho.reporting.libraries.formula.FormulaContext;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.EvaluableConnection;
@@ -62,7 +61,6 @@ public class CdaSettings {
   private Element root;
   private HashMap<String, Connection> connectionsMap;
   private HashMap<String, DataAccess> dataAccessMap;
-  private FormulaContext formulaContext;
   
   
   /**
@@ -124,13 +122,6 @@ public class CdaSettings {
 
   public TableModel listQueries(DiscoveryOptions discoveryOptions) {
     return TableModelUtils.getInstance().dataAccessMapToTableModel(dataAccessMap);
-  }
-  
-  public void setFormulaContext(FormulaContext formulaContext){
-  	this.formulaContext = formulaContext;
-  	for(DataAccess dataAccess : this.dataAccessMap.values()){
-  		dataAccess.setFormulaContext(formulaContext);
-  	}
   }
 
   private void parseDocument() throws UnsupportedConnectionException, UnsupportedDataAccessException {
@@ -277,7 +268,8 @@ public class CdaSettings {
   * 
   * @param dataAccess
   */
-  public void addDataAccess(final DataAccess dataAccess){
+  public void addDataAccess(final DataAccess dataAccess)
+  {
   	addInternalDataAccess(dataAccess);
   	dataAccess.setCdaSettings(this);
   }
@@ -286,26 +278,24 @@ public class CdaSettings {
    * 
    * @param connection
    */
-   public void addConnection(final Connection connection){
+   public void addConnection(final Connection connection)
+   {
   	 addInternalConnection(connection);
   	 connection.setCdaSettings(this);
    }
 
-  private void addInternalConnection(final Connection connectionSettings) {
-
+  private void addInternalConnection(final Connection connectionSettings) 
+  {
     connectionsMap.put(connectionSettings.getId(), connectionSettings);
-
   }
 
-  private void addInternalDataAccess(final DataAccess dataAccess) {
-
-  	if(this.formulaContext != null) dataAccess.setFormulaContext(this.formulaContext);
+  private void addInternalDataAccess(final DataAccess dataAccess) 
+  {
     dataAccessMap.put(dataAccess.getId(), dataAccess);
-
   }
 
-  public Connection getConnection(final String id) throws UnknownConnectionException {
-
+  public Connection getConnection(final String id) throws UnknownConnectionException 
+  {
     if (!connectionsMap.containsKey(id)) {
       throw new UnknownConnectionException("Unknown connection with id " + id, null);
     }
@@ -319,8 +309,8 @@ public class CdaSettings {
     else return connection;
   }
 
-  public DataAccess getDataAccess(final String id) throws UnknownDataAccessException {
-
+  public DataAccess getDataAccess(final String id) throws UnknownDataAccessException 
+  {
     if (!dataAccessMap.containsKey(id)) {
       throw new UnknownDataAccessException("Unknown dataAccess with id " + id, null);
     }

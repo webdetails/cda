@@ -70,10 +70,15 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
   }
 
 
-  protected synchronized TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException
+  protected TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException
   {
-    // Get parameters from definition and apply it's values
-    final List<Parameter> parameters = (List<Parameter>) getParameters().clone();
+    // Get parameters from definition and apply their values
+    //TODO: use queryOptions' parameters instead of copying?
+    final List<Parameter> parameters = new ArrayList(getParameters().size());
+    for(Parameter param : getParameters())
+    {
+      parameters.add(new Parameter(param));
+    }
 
     for (final Parameter parameter : parameters)
     {
@@ -109,6 +114,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     // create the cache-key which is both query and parameter values
     TableCacheKey key;
     TableModel tableModelCopy;
+    IDataSourceQuery rawQueryExecution = null;
     long duration;
     try
     {
@@ -151,8 +157,10 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
 
       //start timing query
       long beginTime = System.currentTimeMillis();
+      
+      rawQueryExecution = performRawQuery(parameterDataRow);
 
-      final TableModel tableModel = postProcessTableModel(performRawQuery(parameterDataRow));
+      final TableModel tableModel = postProcessTableModel(rawQueryExecution.getTableModel());
 
       duration = logIfDurationAboveThreshold(beginTime, getId(), getQuery(), parameters);
 
@@ -167,7 +175,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     }
     finally
     {
-      closeDataSource();
+      if(rawQueryExecution != null) rawQueryExecution.closeDataSource();
     }
 
     // put the copy into the cache ...
@@ -222,12 +230,20 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
   {
     return null;
   }
+  
+  public static interface IDataSourceQuery {
+    
+    public TableModel getTableModel();
+    
+    public void closeDataSource() throws QueryException;
+
+  }
 
 
-  protected abstract TableModel performRawQuery(ParameterDataRow parameterDataRow) throws QueryException;
+  protected abstract IDataSourceQuery performRawQuery(ParameterDataRow parameterDataRow) throws QueryException;
 
 
-  public abstract void closeDataSource() throws QueryException;
+//  public abstract void closeDataSource() throws QueryException;
 
 
   public String getQuery()

@@ -66,7 +66,6 @@ public abstract class AbstractDataAccess implements DataAccess
   private HashMap<Integer, ArrayList<Integer>> outputs;
   private ArrayList<ColumnDefinition> columnDefinitions;
   private HashMap<Integer, ColumnDefinition> columnDefinitionIndexMap;
-  private FormulaContext formulaContext;
   private static final String CACHE_NAME = "pentaho-cda-dataaccess";
   private static final String CACHE_CFG_FILE = "ehcache.xml";
   private static final String CACHE_CFG_FILE_DIST = "ehcache-dist.xml";
@@ -129,26 +128,8 @@ public abstract class AbstractDataAccess implements DataAccess
    */
   public void setParameters(Collection<Parameter> params)
   {
-    if (this.formulaContext != null)
-    {
-      for (Parameter param : params)
-      {
-        param.setFormulaContext(this.formulaContext);
-      }
-    }
-
     this.parameters.clear();
     this.parameters.addAll(params);
-  }
-
-
-  public void setFormulaContext(FormulaContext formulaContext)
-  {
-    this.formulaContext = formulaContext;
-    for (Parameter param : this.parameters)
-    {
-      param.setFormulaContext(formulaContext);
-    }
   }
 
 
@@ -378,7 +359,6 @@ public abstract class AbstractDataAccess implements DataAccess
     }
   }
 
-
   public TableModel listParameters(final DiscoveryOptions discoveryOptions)
   {
 
@@ -390,7 +370,7 @@ public abstract class AbstractDataAccess implements DataAccess
   protected abstract TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException;
 
 
-  public abstract void closeDataSource() throws QueryException;
+  //public abstract void closeDataSource() throws QueryException;
 
 
   public ArrayList<ColumnDefinition> getColumns()
@@ -641,7 +621,6 @@ public abstract class AbstractDataAccess implements DataAccess
     }
     return iterableParameters;
   }
-
 
   /**
    * Get a value iterator from a $FOREACH directive 
