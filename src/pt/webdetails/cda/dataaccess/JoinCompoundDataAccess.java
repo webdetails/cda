@@ -33,25 +33,28 @@ import pt.webdetails.cda.utils.MetadataTableModel;
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM
  */
-public class JoinCompoundDataAccess extends CompoundDataAccess implements RowProductionManager {
+public class JoinCompoundDataAccess extends CompoundDataAccess implements RowProductionManager
+{
 
   private static final Log logger = LogFactory.getLog(JoinCompoundDataAccess.class);
   private static final String TYPE = "join";
-
   private String leftId;
   private String rightId;
   private String[] leftKeys;
   private String[] rightKeys;
   private ExecutorService executorService = Executors.newCachedThreadPool();
   private Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
-
   private static final long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
   private static TimeUnit DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT = TimeUnit.SECONDS;
-  
-  public JoinCompoundDataAccess() {
+
+
+  public JoinCompoundDataAccess()
+  {
   }
 
-  public JoinCompoundDataAccess(final Element element) {
+
+  public JoinCompoundDataAccess(final Element element)
+  {
     super(element);
 
     Element left = (Element) element.selectSingleNode("Left");
@@ -64,15 +67,20 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     rightKeys = right.attributeValue("keys").split(",");
   }
 
-  public String getType() {
+
+  public String getType()
+  {
     return TYPE;
   }
 
-  protected TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException {
+
+  protected TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException
+  {
     TableModel output = null;
     inputCallables.clear();
 
-    try {
+    try
+    {
       QueryOptions croppedOptions = (QueryOptions) queryOptions.clone();
       croppedOptions.setSortBy(new ArrayList<String>());
       croppedOptions.setPageSize(0);
@@ -80,18 +88,21 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       final TableModel tableModelA = this.getCdaSettings().getDataAccess(leftId).doQuery(croppedOptions);
       final TableModel tableModelB = this.getCdaSettings().getDataAccess(rightId).doQuery(croppedOptions);
 
-      if (tableModelA.getRowCount() == 0 || tableModelB.getRowCount() == 0) {
+      if (tableModelA.getColumnCount() == 0 || tableModelB.getColumnCount() == 0)
+      {
         return new MetadataTableModel(new String[0], new Class[0], 0);
-        
+
       }
-      
+
       String[] leftColumnNames = new String[leftKeys.length];
-      for (int i = 0; i < leftKeys.length; i++) {
+      for (int i = 0; i < leftKeys.length; i++)
+      {
         leftColumnNames[i] = tableModelA.getColumnName(Integer.parseInt(leftKeys[i]));
       }
 
       String[] rightColumnNames = new String[rightKeys.length];
-      for (int i = 0; i < rightKeys.length; i++) {
+      for (int i = 0; i < rightKeys.length; i++)
+      {
         rightColumnNames[i] = tableModelB.getColumnName(Integer.parseInt(rightKeys[i]));
       }
 
@@ -102,11 +113,13 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
               "<step><name>mergeJoin</name><type>MergeJoin</type><join_type>FULL OUTER</join_type><step1>sortLeft</step1><step2>sortRight</step2>");
       mergeJoinXML.append("<keys_1>");
 
-      for (int i = 0; i < leftKeys.length; i++) {
+      for (int i = 0; i < leftKeys.length; i++)
+      {
         mergeJoinXML.append("<key>").append(leftColumnNames[i]).append("</key>");
       }
       mergeJoinXML.append("</keys_1><keys_2>");
-      for (int i = 0; i < rightKeys.length; i++) {
+      for (int i = 0; i < rightKeys.length; i++)
+      {
         mergeJoinXML.append("<key>").append(rightColumnNames[i]).append("</key>");
       }
       mergeJoinXML.append("</keys_2></step>");
@@ -114,8 +127,11 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       DynamicTransMetaConfig transMetaConfig = new DynamicTransMetaConfig(Type.EMPTY, "JoinCompoundData", null, null);
       DynamicTransConfig transConfig = new DynamicTransConfig();
 
-      transConfig.addConfigEntry(EntryType.STEP, "input1", "<step><name>input1</name><type>Injector</type></step>");
-      transConfig.addConfigEntry(EntryType.STEP, "input2", "<step><name>input2</name><type>Injector</type></step>");
+      String input1Xml = getInjectorStepXmlString("input1", tableModelA);
+      String input2Xml = getInjectorStepXmlString("input2", tableModelB);
+
+      transConfig.addConfigEntry(EntryType.STEP, "input1", input1Xml);
+      transConfig.addConfigEntry(EntryType.STEP, "input2", input2Xml);
       transConfig.addConfigEntry(EntryType.STEP, "sortLeft", sortLeftXML);
       transConfig.addConfigEntry(EntryType.STEP, "sortRight", sortRightXML);
       transConfig.addConfigEntry(EntryType.STEP, "mergeJoin", mergeJoinXML.toString());
@@ -139,16 +155,22 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       trans.executeCheckedSuccess(null, null, this);
       logger.info(trans.getReadWriteThroughput());
       output = outputListener.getRowsWritten();
-    } catch (UnknownDataAccessException e) {
+    }
+    catch (UnknownDataAccessException e)
+    {
       throw new QueryException("Unknown Data access in CompoundDataAccess ", e);
-    } catch (Exception e) {
+    }
+    catch (Exception e)
+    {
       throw new QueryException("Exception during query ", e);
     }
 
     return output;
   }
 
-  private String getSortXmlStep(final String name, final String[] columnNames) {
+
+  private String getSortXmlStep(final String name, final String[] columnNames)
+  {
 
     StringBuilder sortXML = new StringBuilder(
             "  <step>\n"
@@ -170,7 +192,8 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
             + "      <unique_rows>N</unique_rows>\n"
             + "    <fields>\n");
 
-    for (int i = 0; i < columnNames.length; i++) {
+    for (int i = 0; i < columnNames.length; i++)
+    {
       sortXML.append("      <field>\n"
               + "        <name>" + columnNames[i] + "</name>\n"
               + "        <ascending>Y</ascending>\n"
@@ -190,25 +213,110 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     return sortXML.toString();
   }
 
-  public void startRowProduction() {
-    
+
+  private String getInjectorStepXmlString(String name, TableModel t)
+  {
+    StringBuilder xml = new StringBuilder("<step><name>");
+    xml.append(name).append("</name><type>Injector</type>");
+
+    // If we have metadata information, put it here
+    if (t.getColumnCount() > 0)
+    {
+
+      xml.append("<fields>");
+      for (int i = 0; i < t.getColumnCount(); i++)
+      {
+        xml.append("<field>");
+        xml.append("<name>" + t.getColumnName(i) + "</name>");
+        xml.append("<type>" + getKettleTypeFromColumnClass(t.getColumnClass(i)) + "</type>");
+        xml.append("<length>-1</length><precision>-1</precision></field>");
+      }
+      xml.append("</fields>");
+
+    }
+
+    xml.append("</step>");
+    return xml.toString();
+
+  }
+
+  /*
+   * This method returns the correct kettle type from the column class. Possible values:
+   *  String
+   *  Date
+   *  Boolean
+   *  Integer
+   *  BigNumber
+   *  Serializable
+   *  Binary
+   *  
+   */
+
+  private String getKettleTypeFromColumnClass(Class clazz)
+  {
+
+    if (clazz == String.class)
+    {
+      return "String";
+    }
+    else if (clazz == Double.class)
+    {
+      return "Number";
+    }
+    else if (clazz == java.util.Date.class)
+    {
+      return "Date";
+    }
+    else if (clazz == Long.class || clazz == Integer.class)
+    {
+      return "Integer";
+    }
+    else if (clazz == java.math.BigDecimal.class)
+    {
+      return "BigNumber";
+    }
+    else if (clazz == Boolean.class )
+    {
+      return "Boolean";
+    }
+    else
+    {
+      throw new IllegalArgumentException("Unexpected class " + clazz + ", can't convert to kettle type");
+
+    }
+
+
+  }
+
+
+  public void startRowProduction()
+  {
+
     String timeoutStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout");
-    long timeout = StringUtil.isEmpty(timeoutStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
+    long timeout = StringUtil.isEmpty(timeoutStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
     String unitStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
-    TimeUnit unit = StringUtil.isEmpty(unitStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
+    TimeUnit unit = StringUtil.isEmpty(unitStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
     startRowProduction(timeout, unit);
   }
 
-  public void startRowProduction(long timeout, TimeUnit unit) {
-    try {
+
+  public void startRowProduction(long timeout, TimeUnit unit)
+  {
+    try
+    {
       List<Future<Boolean>> results = executorService.invokeAll(inputCallables, timeout, unit);
-      for (Future<Boolean> result : results) {
+      for (Future<Boolean> result : results)
+      {
         result.get();
       }
-    } catch (InterruptedException e) {
+    }
+    catch (InterruptedException e)
+    {
       // TODO Auto-generated catch block
       e.printStackTrace();
-    } catch (ExecutionException e) {
+    }
+    catch (ExecutionException e)
+    {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -223,12 +331,16 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   return descriptor;
   }*/
 
+
   @Override
-  public ConnectionType getConnectionType() {
+  public ConnectionType getConnectionType()
+  {
     return ConnectionType.NONE;
   }
 
-  public ArrayList<PropertyDescriptor> getInterface() {
+
+  public ArrayList<PropertyDescriptor> getInterface()
+  {
     ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
     properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
     properties.add(new PropertyDescriptor("left", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
@@ -238,4 +350,3 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     return properties;
   }
 }
-
