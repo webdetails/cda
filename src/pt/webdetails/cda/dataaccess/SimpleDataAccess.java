@@ -23,6 +23,8 @@ import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.Util;
+import pt.webdetails.cda.xml.DomVisitable;
+import pt.webdetails.cda.xml.DomVisitor;
 
 /**
  * Implementation of the SimpleDataAccess
@@ -30,7 +32,7 @@ import pt.webdetails.cda.utils.Util;
  * Date: Feb 3, 2010
  * Time: 11:04:10 AM
  */
-public abstract class SimpleDataAccess extends AbstractDataAccess
+public abstract class SimpleDataAccess extends AbstractDataAccess implements DomVisitable
 {
 
   private static final Log logger = LogFactory.getLog(SimpleDataAccess.class);
@@ -309,5 +311,13 @@ public abstract class SimpleDataAccess extends AbstractDataAccess
     return defaultValue;
   }
   
+  public void accept(DomVisitor xmlVisitor, Element root) {
+	  xmlVisitor.visit((SimpleDataAccess)this, root);
+  }
+
+
+public void setQuery(String query) {
+	this.query = query;
+}
   
 }

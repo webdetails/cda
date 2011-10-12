@@ -35,6 +35,7 @@ public class ScriptingConnection extends AbstractConnection {
     return "scripting";
   }
 
+  @Deprecated
   public ScriptingConnectionInfo getScriptingConnectionInfo() {
     return connectionInfo;
   }
@@ -72,5 +73,9 @@ public class ScriptingConnection extends AbstractConnection {
     properties.add(new PropertyDescriptor("language", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     properties.add(new PropertyDescriptor("initscript", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
+  }
+
+  public ScriptingConnectionInfo getConnectionInfo() {
+	  return connectionInfo;
   }
 }

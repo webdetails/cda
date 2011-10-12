@@ -2,6 +2,8 @@ package pt.webdetails.cda.dataaccess;
 
 import org.dom4j.Element;
 
+import pt.webdetails.cda.xml.DomVisitor;
+
 /**
  * Created by IntelliJ IDEA.
  * User: pedro
@@ -85,4 +87,9 @@ public class ColumnDefinition
   {
     this.formula = formula;
   }
+
+  public void accept(DomVisitor xmlVisitor, Element daEle) {
+	  xmlVisitor.visit(this, daEle);
+  }
+  
 }

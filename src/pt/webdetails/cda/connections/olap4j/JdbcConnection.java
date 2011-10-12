@@ -124,4 +124,8 @@ public class JdbcConnection extends AbstractConnection implements Olap4JConnecti
   {
     return connectionInfo.getPasswordField();
   }
+
+  public pt.webdetails.cda.connections.olap4j.JdbcConnectionInfo getConnectionInfo() {
+	  return connectionInfo;
+  }
 }

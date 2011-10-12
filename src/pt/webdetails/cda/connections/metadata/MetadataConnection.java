@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import org.dom4j.Element;
 import pt.webdetails.cda.connections.AbstractConnection;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
-import pt.webdetails.cda.connections.sql.SqlJndiConnectionInfo;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
-import pt.webdetails.cda.settings.CdaSettings;
 
 /**
  * Todo: Document me!
@@ -49,6 +47,7 @@ public class MetadataConnection extends AbstractConnection {
     return "metadata";
   }
 
+  @Deprecated
   public MetadataConnectionInfo getMetadataConnectionInfo() {
     return connectionInfo;
   }
@@ -88,4 +87,9 @@ public class MetadataConnection extends AbstractConnection {
 
     return properties;
   }
+  
+  public MetadataConnectionInfo getConnectionInfo() {
+	  return connectionInfo;
+  }
+	
 }

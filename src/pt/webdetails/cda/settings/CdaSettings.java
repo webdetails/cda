@@ -1,12 +1,15 @@
 package pt.webdetails.cda.settings;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashMap;
-
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.OperationNotSupportedException;
 import javax.swing.table.TableModel;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,6 +18,7 @@ import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
+
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.EvaluableConnection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
@@ -23,8 +27,9 @@ import pt.webdetails.cda.connections.kettle.TransFromFileConnection;
 import pt.webdetails.cda.connections.metadata.MetadataConnection;
 import pt.webdetails.cda.connections.scripting.ScriptingConnection;
 import pt.webdetails.cda.connections.xpath.XPathConnection;
-
 import pt.webdetails.cda.dataaccess.DataAccess;
+import pt.webdetails.cda.dataaccess.DataAccessEnums.ConnectionInstanceType;
+import pt.webdetails.cda.dataaccess.DataAccessEnums.DataAccessInstanceType;
 import pt.webdetails.cda.dataaccess.DenormalizedMdxDataAccess;
 import pt.webdetails.cda.dataaccess.DenormalizedOlap4JDataAccess;
 import pt.webdetails.cda.dataaccess.JoinCompoundDataAccess;
@@ -36,15 +41,13 @@ import pt.webdetails.cda.dataaccess.ReflectionDataAccess;
 import pt.webdetails.cda.dataaccess.ScriptableDataAccess;
 import pt.webdetails.cda.dataaccess.SqlDataAccess;
 import pt.webdetails.cda.dataaccess.UnionCompoundDataAccess;
-import pt.webdetails.cda.dataaccess.XPathDataAccess;
-
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
-
-import pt.webdetails.cda.dataaccess.DataAccessEnums.ConnectionInstanceType;
-import pt.webdetails.cda.dataaccess.DataAccessEnums.DataAccessInstanceType;
+import pt.webdetails.cda.dataaccess.XPathDataAccess;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.Util;
+import pt.webdetails.cda.xml.DomTraversalHelper;
+import pt.webdetails.cda.xml.XmlUtils;
 
 /**
  * CdaSettings class
@@ -63,6 +66,7 @@ public class CdaSettings {
   private HashMap<String, Connection> connectionsMap;
   private HashMap<String, DataAccess> dataAccessMap;
   private FormulaContext formulaContext;
+  private Document genDoc;
   
   
   /**
@@ -90,7 +94,7 @@ public class CdaSettings {
   }
 
   /**
-   * Creates a representation of a CDA file and handles the xml generation
+   * Creates a representation of a CDA via API
    *
    * @param id
    * @param key
@@ -103,11 +107,10 @@ public class CdaSettings {
     this.contextKey = key;
     this.id = id;
 
-    Document doc = DocumentFactory.getInstance().createDocument("UTF-8");
+    genDoc = DocumentFactory.getInstance().createDocument("UTF-8");
 
-    doc.addElement("CDADescriptor");
-    this.root = doc.getRootElement();
-    this.root.add(doc.addElement("DataSources"));
+    genDoc.addElement("CDADescriptor");
+    this.root = genDoc.getRootElement();
 
     connectionsMap = new HashMap<String, Connection>();
     dataAccessMap = new HashMap<String, DataAccess>();
@@ -262,8 +265,21 @@ public class CdaSettings {
     }
   }
 
-  public String asXML() throws OperationNotSupportedException {
-    return this.root.asXML();
+  public String asXML() throws OperationNotSupportedException, 
+  	IOException, TransformerFactoryConfigurationError, TransformerException {
+	
+	  //if genDoc does not exist we can be sure that the CdaSetting
+	  //was instantiatet from an existing file. we don't want to regenerate
+	  //the xml in that case
+	  
+	  if(genDoc==null){
+		  return this.root.asXML();	  
+	  }
+	  
+	  DomTraversalHelper tHelper = new DomTraversalHelper();
+	  
+	  return XmlUtils.prettyPrint(tHelper.traverse(this).asXML());
+
   }
   
  /**
@@ -325,5 +341,15 @@ public class CdaSettings {
 
   public ResourceKey getContextKey() {
     return contextKey;
+  }
+  
+  public Map<String, Connection> getConnectionsMap() {
+
+	  return this.connectionsMap;
+  }
+
+  public Map<String, DataAccess> getDataAccessMap() {
+
+	  return this.dataAccessMap;
   }
 }

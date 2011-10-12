@@ -8,6 +8,8 @@ import org.pentaho.reporting.libraries.formula.FormulaContext;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
+import org.dom4j.Element;
+import pt.webdetails.cda.xml.DomVisitor;
 
 /**
  * DataAccess interface
@@ -22,7 +24,7 @@ public interface DataAccess
 
   public enum OutputMode
   {
-
+	  
     INCLUDE, EXCLUDE
   };
 
@@ -47,6 +49,8 @@ public interface DataAccess
   public ColumnDefinition getColumnDefinition(int idx);
 
   public ArrayList<ColumnDefinition> getCalculatedColumns();
+  
+  public ArrayList<ColumnDefinition> getColumnDefinitions();;
 
   public ArrayList<Integer> getOutputs();
   
@@ -59,4 +63,9 @@ public interface DataAccess
   public TableModel listParameters(DiscoveryOptions discoveryOptions);
 
   public void storeDescriptor(DataAccessConnectionDescriptor descriptor);
+  
+  public void setQuery(String query);
+  
+  public void accept(DomVisitor v, Element ele);
+
 }

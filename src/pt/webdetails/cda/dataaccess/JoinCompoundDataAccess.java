@@ -30,6 +30,7 @@ import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.utils.MetadataTableModel;
 
+
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM
  */
@@ -348,5 +349,30 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     properties.add(new PropertyDescriptor("parameters", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     properties.add(new PropertyDescriptor("output", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD));
     return properties;
+  }
+
+  public String getLeftId() {
+	  return leftId;
+  }
+
+  public void setLeftId(String leftId) {
+	  this.leftId = leftId;
+  }
+
+  public String getRightId() {
+	  return rightId;
+  }
+
+  public String[] getLeftKeys() {
+	  return leftKeys;
+  }
+
+  public String[] getRightKeys() {
+	  return rightKeys;
+  }
+
+  @Override
+  public void setQuery(String query) {
+	  // Do nothing
   }
 }

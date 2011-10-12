@@ -118,4 +118,8 @@ public class TransFromFileConnection extends AbstractConnection implements Kettl
   {
     return "kettle.TransFromFile";
   }
+
+  public TransFromFileConnectionInfo getConnectionInfo() {
+	  return connectionInfo;
+  }
 }

@@ -60,7 +60,7 @@ public abstract class AbstractDataAccess implements DataAccess
   private HashMap<Integer, OutputMode> outputMode;
   private HashMap<Integer, ArrayList<Integer>> outputs;
   private ArrayList<ColumnDefinition> columnDefinitions;
-  private HashMap<Integer, ColumnDefinition> columnDefinitionIndexMap;
+  protected HashMap<Integer, ColumnDefinition> columnDefinitionIndexMap;
   private static final String CACHE_NAME = "pentaho-cda-dataaccess";
   private static final String CACHE_CFG_FILE = "ehcache.xml";
   private static final String CACHE_CFG_FILE_DIST = "ehcache-dist.xml";
@@ -770,4 +770,9 @@ public abstract class AbstractDataAccess implements DataAccess
       }
     }
   }
+
+  public ArrayList<ColumnDefinition> getColumnDefinitions() {
+	  return columnDefinitions;
+  }
+  
 }

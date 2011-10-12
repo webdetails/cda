@@ -6,7 +6,8 @@ import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor.Type;
-import pt.webdetails.cda.query.QueryOptions;
+import pt.webdetails.cda.xml.DomVisitable;
+import pt.webdetails.cda.xml.DomVisitor;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,7 +15,7 @@ import pt.webdetails.cda.query.QueryOptions;
  * Date: Feb 16, 2010
  * Time: 11:36:05 PM
  */
-public abstract class CompoundDataAccess extends AbstractDataAccess {
+public abstract class CompoundDataAccess extends AbstractDataAccess implements DomVisitable{
 
   public CompoundDataAccess(final Element element) {
     super(element);
@@ -53,5 +54,9 @@ public abstract class CompoundDataAccess extends AbstractDataAccess {
     properties.add(new PropertyDescriptor("id", Type.STRING, PropertyDescriptor.Placement.ATTRIB));
     properties.add(new PropertyDescriptor("parameters", Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
+  }
+
+  public void accept(DomVisitor xmlVisitor, Element root) {
+	  xmlVisitor.visit((CompoundDataAccess)this, root);
   }
 }

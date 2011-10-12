@@ -24,7 +24,7 @@ public class UnionCompoundDataAccess extends CompoundDataAccess
   private static final Log logger = LogFactory.getLog(UnionCompoundDataAccess.class);
   private static final String TYPE = "union";
   private String topId;
-  private String rightId;
+  private String bottomId;
 
 
   public UnionCompoundDataAccess()
@@ -40,7 +40,7 @@ public class UnionCompoundDataAccess extends CompoundDataAccess
     Element bottom = (Element) element.selectSingleNode("Bottom");
 
     topId = top.attributeValue("id");
-    rightId = bottom.attributeValue("id");
+    bottomId = bottom.attributeValue("id");
 
   }
 
@@ -62,7 +62,7 @@ public class UnionCompoundDataAccess extends CompoundDataAccess
       croppedOptions.setPageSize(0);
       croppedOptions.setPageStart(0);
       final TableModel tableModelA = this.getCdaSettings().getDataAccess(topId).doQuery(queryOptions);
-      final TableModel tableModelB = this.getCdaSettings().getDataAccess(rightId).doQuery(queryOptions);
+      final TableModel tableModelB = this.getCdaSettings().getDataAccess(bottomId).doQuery(queryOptions);
 
       return TableModelUtils.getInstance().appendTableModel(tableModelA, tableModelB);
 
@@ -96,5 +96,19 @@ public class UnionCompoundDataAccess extends CompoundDataAccess
     properties.add(new PropertyDescriptor("bottom", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     properties.add(new PropertyDescriptor("parameters", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
+  }
+
+  public String getTopId() {
+	  return topId;
+  }
+
+
+  public String getBottomId() {
+	  return bottomId;
+  }
+
+  @Override
+  public void setQuery(String query) {
+	  // Do nothing
   }
 }

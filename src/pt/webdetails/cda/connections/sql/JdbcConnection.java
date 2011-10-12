@@ -121,4 +121,8 @@ public class JdbcConnection extends AbstractSqlConnection {
   {
     return connectionInfo.getUserField();
   }
+
+  public JdbcConnectionInfo getConnectionInfo() {
+	  return connectionInfo;
+  }
 }

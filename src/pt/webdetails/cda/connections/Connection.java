@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.settings.CdaSettings;
+import pt.webdetails.cda.xml.DomVisitable;
 
 /**
  * Holds the Connections Settings of a file
@@ -14,7 +15,7 @@ import pt.webdetails.cda.settings.CdaSettings;
  * Date: Feb 2, 2010
  * Time: 2:44:01 PM
  */
-public interface Connection {
+public interface Connection extends DomVisitable {
 
   public String getId();
 

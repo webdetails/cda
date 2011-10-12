@@ -134,4 +134,8 @@ public class JndiConnection extends AbstractSqlConnection implements EvaluableCo
     conn.setCdaSettings(getCdaSettings());
     return conn;
   }
+
+  public SqlJndiConnectionInfo getConnectionInfo() {
+	  return connectionInfo;
+  }
 }

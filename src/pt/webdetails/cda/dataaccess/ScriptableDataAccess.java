@@ -29,8 +29,8 @@ public class ScriptableDataAccess extends PREDataAccess {
     final ScriptingConnection connection = (ScriptingConnection) getCdaSettings().getConnection(getConnectionId());
 
     final ScriptableDataFactory dataFactory = new ScriptableDataFactory();
-    dataFactory.setLanguage(connection.getScriptingConnectionInfo().getLanguage());
-    dataFactory.setScript(connection.getScriptingConnectionInfo().getInitScript());
+    dataFactory.setLanguage(connection.getConnectionInfo().getLanguage());
+    dataFactory.setScript(connection.getConnectionInfo().getInitScript());
 
     dataFactory.setQuery("query", getQuery());
     return dataFactory;

@@ -21,6 +21,8 @@ import org.dom4j.Element;
 import pt.webdetails.cda.utils.FormulaEvaluator;
 import pt.webdetails.cda.utils.Util;
 
+import pt.webdetails.cda.xml.DomVisitor;
+
 /**
  * Created by IntelliJ IDEA.
  * User: pedro
@@ -454,6 +456,10 @@ public class Parameter implements java.io.Serializable {
     out.writeObject(this.getType());
    //if(isDateType()) out.writeObject(this.pattern);
     out.writeObject(this.getStringValue());
+  }
+
+  public void accept(DomVisitor xmlVisitor, Element daEle) {
+		  xmlVisitor.visit(this, daEle);
   }
 
 }

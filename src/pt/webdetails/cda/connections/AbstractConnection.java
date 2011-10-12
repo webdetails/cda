@@ -7,6 +7,7 @@ import org.dom4j.Element;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.settings.CdaSettings;
+import pt.webdetails.cda.xml.DomVisitor;
 
 /**
  * Created by IntelliJ IDEA.
@@ -71,4 +72,10 @@ public abstract class AbstractConnection implements Connection {
   public String getTypeForFile(){
     return this.getClass().toString().toLowerCase().replaceAll("class pt.webdetails.cda.connections.(.*)connection", "$1");
   }
+  
+  @Override
+  public void accept(DomVisitor v, Element ele) {
+	  v.visit((AbstractConnection)this, ele);		
+  }
+
 }
