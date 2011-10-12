@@ -22,7 +22,7 @@
 	-->
   <DataAccess id="2" connection="2" type="scriptable" access="public">
 		<Name>Sample query on SteelWheelsSales</Name>
-        <Query>
+        <Query><![CDATA[
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 
 String[] columnNames = new String[5];
@@ -44,7 +44,7 @@ model.addRow(new Object[]{ new String(&quot;West&quot;), new Integer(14), new In
 model.addRow(new Object[]{ new String(&quot;South&quot;), new Integer(10), new Integer(11), new Integer(14), new Integer(15)});
 model.addRow(new Object[]{ dataRow.get(&quot;status&quot;), new Integer(10), new Integer(11), new Integer(14), new Integer(15)});
 return model;
-        </Query>
+        ]]></Query>
         <Parameters>
             <Parameter name="status" type="String" default="In Process"/>
         </Parameters>

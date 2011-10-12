@@ -12,12 +12,12 @@
     
     <DataAccess id="1" connection="1" type="mdx" access="public">
       <Name>Mdx Query on Steelwheels</Name>
-      <Query>
+      <Query><![CDATA[
         select {[Measures].[Sales], [Measures].[Quantity]} ON COLUMNS,
         NON EMPTY  [Time].Children ON ROWS
         from [SteelWheelsSales]
         where { ${status} }
-      </Query>
+      ]]></Query>
       <Parameters>
         <Parameter name="status" type="StringArray" default="[Order Status].[Shipped];[Order Status].[Cancelled]"/>
       </Parameters>

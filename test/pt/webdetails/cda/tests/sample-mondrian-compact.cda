@@ -9,12 +9,6 @@
 
   -->
   <DataSources>
-    <!--Connection id="1" type="sql.jdbc">
-            <Driver>org.hsqldb.jdbcDriver</Driver>
-            <Url>jdbc:hsqldb:hsql://localhost:9001/sampledata</Url>
-            <User>pentaho_user</User>
-            <Pass>password</Pass>
-        </Connection-->
     <Connection id="1" type="mondrian.jdbc">
       <Driver>org.hsqldb.jdbcDriver</Driver>
       <Url>jdbc:hsqldb:hsql://localhost:9001/sampledata</Url>
@@ -26,12 +20,12 @@
   </DataSources>
   <DataAccess id="1" connection="1" type="mdx" access="public">
     <Name>Sample query on SteelWheelsSales</Name>
-    <Query>
+    <Query><![CDATA[
       select {[Measures].[Sales], [Measures].[Quantity]} ON COLUMNS,
       NON EMPTY   Descendants([Time].Children,1,SELF_AND_BEFORE) ON ROWS
       from [SteelWheelsSales]
       where ([Order Status].[${status}])
-    </Query>
+    ]]></Query>
     <Parameters>
       <Parameter name="status" type="String" default="In Process"/>
     </Parameters>
@@ -40,12 +34,12 @@
 
   <DataAccess id="2" connection="1" type="mdx" access="public">
     <Name>Sample query on SteelWheelsSales</Name>
-    <Query>
+    <Query><![CDATA[
       select {[Measures].[Sales], [Measures].[Quantity]} ON ROWS,
       NON EMPTY   Descendants([Time].Children,1,SELF_AND_BEFORE) ON COLUMNS
       from [SteelWheelsSales]
       where ([Order Status].[${status}])
-    </Query>
+    ]]></Query>
     <Parameters>
       <Parameter name="status" type="String" default="In Process"/>
     </Parameters>
@@ -53,12 +47,12 @@
   </DataAccess>
   <DataAccess id="3" connection="1" type="mdx" access="public">
     <Name>Sample query on SteelWheelsSales</Name>
-    <Query>
+    <Query><![CDATA[
       select {[Measures].[Sales], [Measures].[Quantity]} ON COLUMNS,
       NON EMPTY   [Product].[All Products] * Descendants([Time].Children,1,SELF_AND_BEFORE) ON ROWS
       from [SteelWheelsSales]
       where ([Order Status].[${status}])
-    </Query>
+    ]]></Query>
     <Parameters>
       <Parameter name="status" type="String" default="In Process"/>
     </Parameters>
@@ -66,12 +60,12 @@
   </DataAccess>
     <DataAccess id="4" connection="1" type="mdx" access="public">
     <Name>Sample query on SteelWheelsSales</Name>
-    <Query>
+    <Query><![CDATA[
       select {[Measures].[Sales], [Measures].[Quantity]} ON ROWS,
       NON EMPTY   [Product].[All Products] * Descendants([Time].Children,1,SELF_AND_BEFORE) ON COLUMNS
       from [SteelWheelsSales]
       where ([Order Status].[${status}])
-    </Query>
+    ]]></Query>
     <Parameters>
       <Parameter name="status" type="String" default="In Process"/>
     </Parameters>

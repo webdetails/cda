@@ -21,12 +21,12 @@
 	-->
   <DataAccess id="2" connection="2" type="olap4J" access="public">
 		<Name>Sample query on SteelWheelsSales</Name>
-        <Query>
+        <Query><![CDATA[
 			select {[Measures].[Sales]} ON COLUMNS,
 			NON EMPTY  [Time].Children ON ROWS
 			from [SteelWheelsSales]
 			where ([Order Status].[${status}])
-		</Query>
+		]]></Query>
         <Parameters>
             <Parameter name="status" type="String" default="In Process"/>
         </Parameters>

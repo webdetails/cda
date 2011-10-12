@@ -21,9 +21,9 @@
 	be used from a Compound datasource only
 
 	-->
-  <DataAccess id="1" connection="1" type="kettle" access="public">
+  <DataAccess id="2" connection="1" type="kettle" access="public">
 		<Name>Sample query on SteelWheelsSales</Name>
-        <Query>Report Columns</Query>
+        <Query><![CDATA[Report Columns]]></Query>
         <Parameters>
           <Parameter name="myRadius" type="Integer" default="30"/>
           <Parameter name="ZipCode" type="Integer" default="32771"/>
