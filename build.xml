@@ -113,7 +113,7 @@
 
     <copy todir="${stage.dir}/${plugin.name}" overwrite="true">
       <fileset dir="${basedir}">
-        <include name="readme.txt"/>
+        <include name="README.txt"/>
       </fileset>
     </copy>
 
