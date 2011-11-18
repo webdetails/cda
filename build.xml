@@ -24,6 +24,59 @@
       FOUND IN common_build.xml.
     -->
 
+
+
+
+	<target name='tag-repo' description='Tags the git repo with the current version'>	
+		<exec executable = "git">
+    		<arg value = "config"/> 
+			<arg value = "--local"/>
+    		<arg value = "github.user"/>
+    		<arg value = "${hub.user}" />
+     	</exec>
+	 	<exec executable = "git">
+            <arg value = "config"/>
+            <arg value = "--local"/>
+            <arg value = "github.token"/>
+            <arg value = "${hub.token}" />
+        </exec>
+	 	<exec executable = "git">
+            <arg value = "config"/>
+            <arg value = "--local"/>
+            <arg value = "remote.origin.url"/>
+            <arg value = "${hub.url}" />
+      	</exec>
+	 	<exec executable = "git">
+            <arg value = "tag"/>
+            <arg value = "${distribution.version}" />
+     	</exec>            
+	 	<exec executable = "git">
+            <arg value = "push"/>
+            <arg value = "--tags" />
+            <arg value = "origin" />                	        
+			<arg value = "release" />                	        
+     	</exec>                       
+		<exec executable = "git">
+			<arg value = "config"/> 
+    	    <arg value = "--local"/>
+    	    <arg value = "github.user"/>
+    	    <arg value = "" />
+      	</exec>
+	 	<exec executable = "git">
+        	<arg value = "config"/>
+            <arg value = "--local"/>
+            <arg value = "github.token"/>
+            <arg value = "" />
+        </exec>
+	 	<exec executable = "git">
+            <arg value = "config"/>
+            <arg value = "--local"/>
+            <arg value = "remote.origin.url"/>
+            <arg value = "${hub.url2}" />
+      </exec>
+      
+	</target>
+
 <!--
   <target name='dist-solution'>
     <copy todir="${solution.stage.dir}" overwrite='true'>
