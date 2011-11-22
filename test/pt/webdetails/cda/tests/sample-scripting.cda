@@ -26,11 +26,11 @@
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 
 String[] columnNames = new String[5];
-columnNames[0] = &quot;Region&quot;;
-columnNames[1] = &quot;Q1&quot;;
-columnNames[2] = &quot;Q2&quot;;
-columnNames[3] = &quot;Q3&quot;;
-columnNames[4] = &quot;Q4&quot;;
+columnNames[0] = "Region";
+columnNames[1] = "Q1";
+columnNames[2] = "Q2";
+columnNames[3] = "Q3";
+columnNames[4] = "Q4";
 Class[] columnTypes = new Class[5];
 columnTypes[0] = String.class;
 columnTypes[1] = Integer.class;
@@ -39,10 +39,10 @@ columnTypes[3] = Integer.class;
 columnTypes[4] = Integer.class;
 
 TypedTableModel model = new TypedTableModel(columnNames, columnTypes);
-model.addRow(new Object[]{ new String(&quot;East&quot;), new Integer(10), new Integer(10), new Integer(14), new Integer(21)});
-model.addRow(new Object[]{ new String(&quot;West&quot;), new Integer(14), new Integer(34), new Integer(10), new Integer(12)});
-model.addRow(new Object[]{ new String(&quot;South&quot;), new Integer(10), new Integer(11), new Integer(14), new Integer(15)});
-model.addRow(new Object[]{ dataRow.get(&quot;status&quot;), new Integer(10), new Integer(11), new Integer(14), new Integer(15)});
+model.addRow(new Object[]{ new String("East"), new Integer(10), new Integer(10), new Integer(14), new Integer(21)});
+model.addRow(new Object[]{ new String("West"), new Integer(14), new Integer(34), new Integer(10), new Integer(12)});
+model.addRow(new Object[]{ new String("South"), new Integer(10), new Integer(11), new Integer(14), new Integer(15)});
+model.addRow(new Object[]{ dataRow.get("status"), new Integer(10), new Integer(11), new Integer(14), new Integer(15)});
 return model;
         ]]></Query>
         <Parameters>
