@@ -19,7 +19,7 @@
 	be used from a Compound datasource only
 
 	-->
-  <DataAccess id="2" connection="2" type="olap4J" access="public">
+  <DataAccess id="2" connection="2" type="olap4j" access="public">
 		<Name>Sample query on SteelWheelsSales</Name>
         <Query><![CDATA[
 			select {[Measures].[Sales]} ON COLUMNS,

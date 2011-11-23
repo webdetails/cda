@@ -27,54 +27,45 @@
 
 
 
-	<target name='tag-repo' description='Tags the git repo with the current version'>	
-		<exec executable = "git">
-    		<arg value = "config"/> 
-			<arg value = "--local"/>
-    		<arg value = "github.user"/>
-    		<arg value = "${hub.user}" />
-     	</exec>
-	 	<exec executable = "git">
-            <arg value = "config"/>
-            <arg value = "--local"/>
-            <arg value = "github.token"/>
-            <arg value = "${hub.token}" />
-        </exec>
-	 	<exec executable = "git">
-            <arg value = "config"/>
-            <arg value = "--local"/>
-            <arg value = "remote.origin.url"/>
-            <arg value = "${hub.url}" />
-      	</exec>
-	 	<exec executable = "git">
-            <arg value = "tag"/>
-            <arg value = "${distribution.version}" />
-     	</exec>            
-	 	<exec executable = "git">
-            <arg value = "push"/>
-            <arg value = "--tags" />
-            <arg value = "origin" />                	        
-			<arg value = "release" />                	        
-     	</exec>                       
-		<exec executable = "git">
-			<arg value = "config"/> 
-    	    <arg value = "--local"/>
-    	    <arg value = "github.user"/>
-    	    <arg value = "" />
-      	</exec>
-	 	<exec executable = "git">
-        	<arg value = "config"/>
-            <arg value = "--local"/>
-            <arg value = "github.token"/>
-            <arg value = "" />
-        </exec>
-	 	<exec executable = "git">
-            <arg value = "config"/>
-            <arg value = "--local"/>
-            <arg value = "remote.origin.url"/>
-            <arg value = "${hub.url2}" />
-      </exec>
-      
+<target name="startHs">
+<java dir="test/hs" classname="org.hsqldb.Server" fork="true" failonerror="true" maxmemory="128m">
+         <arg value="-database.0 hsqldb/sampledata"/> 
+         <arg value="-dbname.0 sampledata"/> 
+         <arg value="-database.1 hsqldb/hibernate"/>
+         <arg value="-dbname.1 hibernate"/>
+         <arg value="-database.2 hsqldb/quartz"/> 
+         <arg value="-dbname.2 quartz"/>                  
+         <classpath>
+           <pathelement path="test/hs/hsqldb-1.8.0.jar"/>
+         </classpath>
+       </java>
+
+</target>
+
+<target name="stopHs">
+<java dir="test/hs" classname="org.hsqldb.util.ShutdownServer" fork="true" failonerror="true" maxmemory="128m">           
+           <arg value='-url jdbc:hsqldb:hsql://localhost/sampledata'/>
+           <arg value='-user SA'/>
+         <classpath>
+         <pathelement path="test/hs/hsqldb-1.8.0.jar"/>
+         </classpath>
+       </java>
+<java dir="test/hs" classname="org.hsqldb.util.ShutdownServer" fork="true" failonerror="true" maxmemory="128m">           
+           <arg value='-url jdbc:hsqldb:hsql://localhost/hibernate'/>
+           <arg value='-user SA'/>
+         <classpath>
+           <pathelement path="test/hs/hsqldb-1.8.0.jar"/>
+         </classpath>
+       </java>
+<java dir="test/hs"  classname="org.hsqldb.util.ShutdownServer" fork="true" failonerror="true" maxmemory="128m">           
+           <arg value='-url jdbc:hsqldb:hsql://localhost/quartz'/>
+           <arg value='-user sa'/>
+         <classpath>
+           <pathelement path="test/hs/hsqldb-1.8.0.jar"/>
+         </classpath>
+       </java>
+
+</target>
 	</target>
 
 <!--

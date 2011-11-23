@@ -34,7 +34,7 @@
 			<Name>Get All Status</Name>
 	    <Query><![CDATA[
 				select distinct o.YEAR_ID from orderfact o
-				where o.YEAR_ID &gt;= ${minYear}
+				where o.YEAR_ID >= ${minYear}
 				order by o.YEAR_ID desc
 			]]></Query>
       <Parameters>

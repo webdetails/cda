@@ -78,7 +78,7 @@ public class Olap4jJdbcTest extends TestCase
   }
 
 
-
+/*
   public void testJndiQuery() throws ExporterException, UnknownDataAccessException, UnsupportedExporterException, QueryException, UnsupportedConnectionException, DocumentException, UnsupportedDataAccessException
   {
 
@@ -104,5 +104,9 @@ public class Olap4jJdbcTest extends TestCase
     engine.doQuery(out, cdaSettings, queryOptions);
 
 
+  
   }
+   * 
+   * 
+   */
 }

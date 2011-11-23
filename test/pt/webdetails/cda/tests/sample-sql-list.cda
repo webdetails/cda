@@ -26,7 +26,7 @@
 		<Name>Sql Query on SampleData</Name>
         <Query><![CDATA[
 			select o.YEAR_ID, o.STATUS, sum(o.TOTALPRICE) as price from orderfact o
-			where o.STATUS in (${status}) and o.ORDERDATE &gt; ${orderDate}
+			where o.STATUS in (${status}) and o.ORDERDATE > ${orderDate}
 			group by o.YEAR_ID, o.STATUS
 		]]></Query>
         <!-- All parameters are passed as string from the outside. Their

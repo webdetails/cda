@@ -66,7 +66,7 @@ public class SqlListTest extends TestCase {
 
     QueryOptions queryOptions = new QueryOptions();
     queryOptions.setDataAccessId("1");
-    queryOptions.addParameter("status", "Shipped;Cancelled");
+    queryOptions.addParameter("status", new String[]{"Shipped","Cancelled"});
     queryOptions.setOutputType(ExporterEngine.OutputType.XML);
 
     logger.info("Shipped,Cancelled through string");
