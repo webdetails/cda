@@ -76,7 +76,7 @@ public class MdxJdbcTest extends TestCase
 
 
   }
-
+/*
 
   public void testJndiQuery() throws ExporterException, UnknownDataAccessException, UnsupportedExporterException, QueryException, UnsupportedConnectionException, DocumentException, UnsupportedDataAccessException
   {
@@ -101,7 +101,8 @@ public class MdxJdbcTest extends TestCase
 
     logger.info("Doing query");
     engine.doQuery(out, cdaSettings, queryOptions);
-
-
   }
+   * 
+   * 
+   */
 }

@@ -25,7 +25,7 @@
 	be used from a Compound datasource only
 
 	-->
-  <DataAccess id="1" connection="1" type="olap4J" access="public">
+  <DataAccess id="1" connection="1" type="olap4j" access="public">
 		<Name>Sample query on SteelWheelsSales</Name>
         <Query>
 			select {[Measures].[Sales]} ON COLUMNS,
