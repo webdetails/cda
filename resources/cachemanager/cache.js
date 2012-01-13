@@ -27,18 +27,22 @@ var CacheManagerBackend = {
   
   postJson: function(args, callback, errorCallback){
     var self = this;
+    UI.loadingImg.show();
     $.post(this.CONTENT_HANDLER, args,
     function(response)
     {
+      UI.loadingImg.hide();
       self.handleResponse(response, callback, errorCallback);
     }, 'json');
   },
   
   getJson: function(args, callback, errorCallback){
     var self = this;
+    UI.loadingImg.show();
     $.getJSON(this.CONTENT_HANDLER, args,
       function(response)
       {
+        UI.loadingImg.hide();
         self.handleResponse(response, callback, errorCallback);
       });
       
@@ -69,6 +73,8 @@ var UI = {
     this.cachedQueriesOverview = $('#cachedQueriesOverview');
     this.cachedQueriesOverviewLines = $("#cachedQueriesOverviewLines");
     this.clearCacheButton = $("#clearCacheButton");
+    //loading imgs
+    this.loadingImg = $('#loading');
   }
 };
 
