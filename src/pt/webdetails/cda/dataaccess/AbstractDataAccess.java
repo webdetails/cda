@@ -1,6 +1,5 @@
 package pt.webdetails.cda.dataaccess;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,21 +9,14 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import javax.swing.table.TableModel;
 
-import mondrian.olap.InvalidArgumentException;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheException;
-import net.sf.ehcache.CacheManager;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.reporting.libraries.formula.FormulaContext;
 
-import pt.webdetails.cda.CdaBoot;
-import pt.webdetails.cda.CdaContentGenerator;
-import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.cache.EHCacheQueryCache;
+import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
@@ -49,26 +41,24 @@ public abstract class AbstractDataAccess implements DataAccess
 {
 
   private static final Log logger = LogFactory.getLog(AbstractDataAccess.class);
-  private static CacheManager cacheManager;
+//  private static CacheManager cacheManager;
+  private static IQueryCache cache;
+  
   private CdaSettings cdaSettings;
   private String id;
   private String name;
   private DataAccessEnums.ACCESS_TYPE access = DataAccessEnums.ACCESS_TYPE.PUBLIC;
-  private boolean cache = false;
+  private boolean useCache = false;
   private int cacheDuration = 3600;
   private ArrayList<Parameter> parameters;
   private HashMap<Integer, OutputMode> outputMode;
   private HashMap<Integer, ArrayList<Integer>> outputs;
   private ArrayList<ColumnDefinition> columnDefinitions;
   protected HashMap<Integer, ColumnDefinition> columnDefinitionIndexMap;
-  private static final String CACHE_NAME = "pentaho-cda-dataaccess";
-  private static final String CACHE_CFG_FILE = "ehcache.xml";
-  private static final String CACHE_CFG_FILE_DIST = "ehcache-dist.xml";
-  private static final String PLUGIN_PATH = "system/" + CdaContentGenerator.PLUGIN_NAME + "/";
+
   private static final String PARAM_ITERATOR_BEGIN = "$FOREACH(";
   private static final String PARAM_ITERATOR_END = ")";
   private static final String PARAM_ITERATOR_ARG_SEPARATOR = ",";
-  private static final String USE_TERRACOTTA_PROPERTY = "pt.webdetails.cda.UseTerracotta";
 
   protected AbstractDataAccess()
   {
@@ -141,7 +131,7 @@ public abstract class AbstractDataAccess implements DataAccess
 
     if (element.attributeValue("cache") != null && element.attributeValue("cache").equals("true"))
     {
-      cache = true;
+      useCache = true;
     }
 
     if (element.attribute("cacheDuration") != null && !element.attribute("cacheDuration").toString().equals(""))
@@ -213,79 +203,25 @@ public abstract class AbstractDataAccess implements DataAccess
     }
 
   }
+  
+  public static synchronized IQueryCache getCdaCache(){
+    if(cache == null){
+      cache = new EHCacheQueryCache();
+    }
+    return cache;
+  }
 
-
-  public static synchronized Cache getCache() throws CacheException
+  @Deprecated
+  public static synchronized net.sf.ehcache.Cache getCache()
   {
-    if (cacheManager == null)
-    {// 'new CacheManager' used instead of 'CacheManager.create' to avoid overriding default cache
-      boolean useTerracotta = Boolean.parseBoolean(CdaBoot.getInstance().getGlobalConfig().getConfigProperty(USE_TERRACOTTA_PROPERTY));
-      String cacheConfigFile = useTerracotta ? CACHE_CFG_FILE_DIST : CACHE_CFG_FILE;
-
-      if (CdaEngine.getInstance().isStandalone())
-      {//look for the one under src/jar
-        URL cfgFile = CdaBoot.class.getResource(cacheConfigFile);
-        cacheManager = new CacheManager(cfgFile);//CacheManager.create(cfgFile);
-      }
-      else
-      {//look at cda folder in pentaho
-        try
-		{
-    	 String cfgFile = PentahoSystem.getApplicationContext().getSolutionPath(PLUGIN_PATH + cacheConfigFile);
-    	 cacheManager = new CacheManager(cfgFile);
-    	}
-    	catch(CacheException exc)
-		{//fallback to standalone 
-    	  URL cfgFile = CdaBoot.class.getResource(cacheConfigFile);
-    	  cacheManager = new CacheManager(cfgFile);
-    	}
-      }
-      // enable clean shutdown so ehcache's diskPersistent attribute can work
-      if (!useTerracotta)
-      {
-        enableCacheProperShutdown(true);
-      }
-
-    }
-
-    if (cacheManager.cacheExists(CACHE_NAME) == false)
-    {
-      cacheManager.addCache(CACHE_NAME);
-    }
-
-    return cacheManager.getCache(CACHE_NAME);
+    return ((EHCacheQueryCache) getCdaCache()).getCache();
   }
 
 
-  private static void enableCacheProperShutdown(final boolean force)
+  public static synchronized void clearCache()
   {
-    if (!force)
-    {
-      try
-      {
-        System.getProperty(CacheManager.ENABLE_SHUTDOWN_HOOK_PROPERTY);
-        return;//unless force, ignore if already set
-      }
-      catch (NullPointerException npe)
-      {
-      } // key null, continue
-      catch (InvalidArgumentException iae)
-      {
-      }// key not there, continue
-      catch (SecurityException se)
-      {
-        return;//no permissions to set
-      }
-    }
-    System.setProperty(CacheManager.ENABLE_SHUTDOWN_HOOK_PROPERTY, "true");
-  }
-
-
-  public static synchronized void clearCache() throws CacheException
-  {
-    
-    Cache cache = getCache();
-    cache.removeAll();
+    IQueryCache cache = getCdaCache();
+    cache.clearCache();
   }
 
 
@@ -418,7 +354,7 @@ public abstract class AbstractDataAccess implements DataAccess
 
   public boolean isCache()
   {
-    return cache;
+    return useCache;
   }
 
 

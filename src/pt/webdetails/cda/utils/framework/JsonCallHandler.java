@@ -11,13 +11,15 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.pentaho.platform.api.engine.IParameterProvider;
+import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 
 /**
  * Boilerplate for a JSON content generator
  */
-public class JsonCallHandler {
+public abstract class JsonCallHandler {
 
-  protected static Log logger = LogFactory.getLog(JsonCallHandler.class);
+  private static Log logger = LogFactory.getLog(JsonCallHandler.class);
   
   public static final String ENCODING = "UTF-8";
   public static final int INDENT_FACTOR = 2;
@@ -42,7 +44,6 @@ public class JsonCallHandler {
       return super.toString().toLowerCase();
     }
   }
- 
   
   public static abstract class Method {
     
@@ -63,14 +64,24 @@ public class JsonCallHandler {
    * @param name
    * @param method
    */
-  public void registerMethod(String name, Method method){
+  protected void registerMethod(String name, Method method){
     method.setName(name);
     methods.put(name, method);
   }
   
+  /**
+   * Simple overridable method to limit access. Allows everything by default.
+   * @param session Caller session
+   * @param method Method being executed
+   * @return
+   */
+  protected boolean hasPermission(IPentahoSession session,  Method method){
+    return true;
+  }
+  
   public void handleCall(IParameterProvider requestParams, OutputStream out)
   {
-    
+  //TODO: messages
     String methodName = requestParams.getStringParameter(methodParameter, defaultMethod);
        
     JSONObject result = null;
@@ -84,6 +95,9 @@ public class JsonCallHandler {
       else if(method == null)
       {
         result = getErrorJson(MessageFormat.format("Method {0} not found.", methodName));
+      }
+      else if(!hasPermission(PentahoSessionHolder.getSession(), method)){
+        result = getErrorJson(MessageFormat.format("Permission denied to call method {0}:{1}.", this.getClass().getName(), methodName));
       }
       else 
       {
@@ -114,7 +128,7 @@ public class JsonCallHandler {
   {
     JSONObject result = new JSONObject();
     
-    result.put(JsonResultFields.STATUS, ResponseStatus.ERROR.toString());
+    result.put(JsonResultFields.STATUS, ResponseStatus.ERROR);
     result.put(JsonResultFields.ERROR_MSG, exc.getMessage());
     
     return result;
@@ -122,11 +136,17 @@ public class JsonCallHandler {
   
   public static JSONObject getErrorJson(String msg) throws JSONException {
     JSONObject result = new JSONObject();
-    result.put(JsonResultFields.STATUS, ResponseStatus.ERROR.toString());
+    result.put(JsonResultFields.STATUS, ResponseStatus.ERROR);
     result.put(JsonResultFields.ERROR_MSG, msg);
     return result;
   }
 
-
+  public static JSONObject getOKJson(Object obj) throws JSONException {
+    JSONObject result = new JSONObject();
+    result.put(JsonResultFields.STATUS, ResponseStatus.OK);
+    result.put(JsonResultFields.RESULT, obj);
+    return result;
+  }
+  
   
 }

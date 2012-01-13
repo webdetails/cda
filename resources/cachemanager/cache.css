@@ -71,12 +71,23 @@ dd {
   padding:12px;
 }
 
+#clearCacheButton {
+  text-align:right;
+  background: none repeat scroll 0 0 #FFEEEE;
+  padding 4px;
+}
+
 #tabButtons .button.selected {
   font-size: 14px;
   background-color: #ffffff;
 }
 
 .button {
+  cursor: pointer;
+}
+
+.link:hover {
+  text-decoration: underline;
   cursor: pointer;
 }
 
@@ -94,4 +105,14 @@ dd {
 
 #cachedQueriesLines div.row.toDelete{
   background: none repeat scroll 0 0 #FFEEEE;
+}
+
+.queryCol {
+  overflow: auto;
+  max-height:100px;
+  cursor: pointer;
+}
+
+.queryTable {
+  overflow:auto;
 }

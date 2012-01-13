@@ -15,6 +15,7 @@ import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 
 
 import pt.webdetails.cda.CdaBoot;
+import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.cache.TableCacheKey;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
@@ -82,7 +83,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
       parameters.add(new Parameter(param));
     }
 
-    final Cache cache = getCache();
+    final IQueryCache cache = getCdaCache();
 
     for (final Parameter parameter : parameters)
     {
@@ -143,27 +144,17 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
       if (isCache())
       {
-        ClassLoader contextCL = Thread.currentThread().getContextClassLoader();
-        try{
-          //make sure we have the right class loader in thread to instantiate cda classes in case DiskStore is used
-          Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-          final net.sf.ehcache.Element element = cache.get(key);
-          if (element != null && !queryOptions.isCacheBypass()) // Are we explicitly saying to bypass the cache?
+        try
+        {
+          final TableModel cachedTableModel = getCdaCache().getTableModel(key);
+          if(cachedTableModel != null && !queryOptions.isCacheBypass())
           {
-            final TableModel cachedTableModel = (TableModel) element.getObjectValue();
-            if (cachedTableModel != null)
-            {
-              // we have a entry in the cache ... great!
-              logger.debug("Found tableModel in cache. Returning");
-              return cachedTableModel;
-            }
+            logger.debug("Found table in cache, returning.");
+            return cachedTableModel;
           }
         }
         catch(Exception e){
           logger.error("Error while attempting to load from cache, bypassing cache (cause: " + e.getClass() + ")", e);
-        }
-        finally{
-          Thread.currentThread().setContextClassLoader(contextCL);
         }
       }
 
@@ -193,14 +184,16 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     // put the copy into the cache ...
     if (isCache())
     {
-      final net.sf.ehcache.Element storeElement = new net.sf.ehcache.Element(key, tableModelCopy);
-      storeElement.setTimeToLive(getCacheDuration());
-      cache.put(storeElement);
-      cache.flush();
+      getCdaCache().putTableModel(key, tableModelCopy, getCacheDuration());
       
-      // Print cache status size
-      logger.debug("Cache status: " + cache.getMemoryStoreSize() + " in memory, " + 
-              cache.getDiskStoreSize() + " in disk");
+//      final net.sf.ehcache.Element storeElement = new net.sf.ehcache.Element(key, tableModelCopy);
+//      storeElement.setTimeToLive(getCacheDuration());
+//      cache.put(storeElement);
+//      cache.flush();
+      
+//      // Print cache status size
+//      logger.debug("Cache status: " + cache.getMemoryStoreSize() + " in memory, " + 
+//              cache.getDiskStoreSize() + " in disk");
     }
 
     // and finally return the copy.

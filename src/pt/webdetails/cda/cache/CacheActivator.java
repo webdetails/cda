@@ -63,7 +63,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
        * reason the queue fails to reschedule after excuting all due queries, we'll
        * still recover at some point in the future.
        */
-      PriorityQueue<CachedQuery> queue = CacheManager.getInstance().getQueue();
+      PriorityQueue<CachedQuery> queue = CacheScheduleManager.getInstance().getQueue();
       if (queue.peek().getNextExecution().before(rightNow))
       {
         Date anHourFromNow = new Date(rightNow.getTime() + ONE_HOUR);
@@ -71,7 +71,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
       }
       else
       {
-        CacheManager.logger.info("No work to be done");
+        CacheScheduleManager.logger.info("No work to be done");
       }
       while (queue.peek().getNextExecution().before(rightNow))
       {
@@ -105,7 +105,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
   public void processQueries(Session s, PriorityQueue<CachedQuery> queue)
   {
 
-    CacheManager.logger.debug("Refreshing cached query...");
+    CacheScheduleManager.logger.debug("Refreshing cached query...");
     CachedQuery q = queue.poll();
     try
     {
@@ -117,7 +117,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
     }
     catch (Exception ex)
     {
-      CacheManager.logger.error("Failed to execute " + q.toString());
+      CacheScheduleManager.logger.error("Failed to execute " + q.toString());
     }
 
 

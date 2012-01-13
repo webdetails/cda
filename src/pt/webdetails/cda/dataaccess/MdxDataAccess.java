@@ -1,5 +1,6 @@
 package pt.webdetails.cda.dataaccess;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javax.swing.table.TableModel;
@@ -160,20 +161,20 @@ public class MdxDataAccess extends PREDataAccess
   @Override
   protected TableModel postProcessTableModel(TableModel tm)
   {
-    logger.debug("Determining if we need to transform the BandedMDXTableModel");
-
-    /*
-    if( tm instanceof BandedMDXDataFactory){
-    BandedMDXDataFactory df = (BandedMDXDataFactory) tm;
-    TableModel t = new CompactBandedMDXTableModel(df., rowLimit)
-    }
-     */
+//    logger.debug("Determining if we need to transform the BandedMDXTableModel");
+//
+//    
+//    if( tm instanceof BandedMDXDataFactory){
+//    BandedMDXDataFactory df = (BandedMDXDataFactory) tm;
+//    TableModel t = new CompactBandedMDXTableModel(df. (df., rowLimit)
+//    }
+     
     return tm;
   }
 
 
   @Override
-  protected Object getExtraCacheKey()
+  protected Serializable getExtraCacheKey()
   {//TODO: is this necessary after role assembly in EvaluableConnection.evaluate()? 
     MondrianConnectionInfo mci;
     try
@@ -191,6 +192,7 @@ public class MdxDataAccess extends PREDataAccess
   protected static class ExtraCacheKey implements Serializable
   {
 
+    private static final long serialVersionUID = 1L;
     private BANDED_MODE bandedMode;
     private String roles;
 
@@ -225,6 +227,15 @@ public class MdxDataAccess extends PREDataAccess
       return true;
     }
 
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException{
+      this.bandedMode = (BANDED_MODE) in.readObject();
+      this.roles = (String) in.readObject();
+    }
+    
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+      out.writeObject(this.bandedMode);
+      out.writeObject(this.roles);
+    }
 
     @Override
     public int hashCode()

@@ -127,7 +127,7 @@ public class CachedQuery extends Query
     }
     catch (JSONException ex)
     {
-      CacheManager.logger.error("Failed to build JSON for query: " + getCdaFile() + "/" + getDataAccessId());
+      CacheScheduleManager.logger.error("Failed to build JSON for query: " + getCdaFile() + "/" + getDataAccessId());
     }
 
 
@@ -169,7 +169,7 @@ public class CachedQuery extends Query
     }
     catch (Exception e)
     {
-      CacheManager.logger.error("Failed to execute query " + toString() + " " + Util.getExceptionDescription(e));
+      CacheScheduleManager.logger.error("Failed to execute query " + toString() + " " + Util.getExceptionDescription(e));
       Logger.getLogger(CachedQuery.class.getName()).log(Level.SEVERE, null, e);
       setSuccess(false);
     }
