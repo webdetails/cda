@@ -28,8 +28,14 @@
       <one-to-many class="pt.webdetails.cda.cache.CachedParam"/>
     </list>
     <subclass discriminator-value="CACHED" name="pt.webdetails.cda.cache.CachedQuery">
-      <property name="userName" type="string">
-        <column name="uname"/>
+      <property name="cdaFile" not-null="true" type="string" unique-key="single_cron" insert="false" update="false">
+         <column length="254" name="cdaFile" not-null="true"/>
+      </property>
+      <property name="dataAccessId" not-null="true" type="string" unique-key="single_cron" insert="false" update="false">
+        <column length="254" name="dataAccessId" not-null="true"/>
+      </property>
+      <property name="userName" type="string" unique-key="single_cron">
+        <column length="50" name="uname"/>
       </property>
       <property name="lastExecuted" type="timestamp">
         <column name="lastExecuted"/>
@@ -37,8 +43,11 @@
       <property name="nextExecution" type="timestamp">
         <column name="nextExecution"/>
       </property>
-      <property name="cronString" not-null="true" type="string">
-        <column length="254" name="cronString" not-null="true"/>
+      <property name="cronString" not-null="true" type="string" unique-key="single_cron">
+        <column length="50" name="cronString" not-null="true"/>
+      </property>
+      <property name="parametersAsString" type="string" unique-key="single_cron">
+        <column length="254" name="params" />
       </property>
       <property name="success" type="boolean">
         <column name="success"/>

@@ -142,10 +142,26 @@ public abstract class Query implements Serializable
     return parameters;
   }
 
+  public String getParametersAsString()
+  {
+	 String p = "";
+    for (CachedParam param : getParameters())
+    {
+	   p += param.getName() + ':' + param.getValue() + ';';
+    }
+    return p;
+  }
+
 
   public void setParameters(List<CachedParam> parameters)
   {
     this.parameters = parameters;
+  }
+
+  /* Doesn't do anything.  Provides congruence with getParametersAsString for
+	* hibernate. */
+  public void setParametersAsString(String parameters)
+  {
   }
 
 
