@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 
 import pt.webdetails.cda.cache.TableCacheKey;
+import pt.webdetails.cda.dataaccess.Parameter;
 
 public class CacheElementInfo {
   
@@ -81,10 +81,13 @@ public class CacheElementInfo {
     queryInfo.put("query", key.getQuery());
     
     JSONObject parameters = new JSONObject();
-    ParameterDataRow pRow = key.getParameterDataRow();
-    if(pRow != null) for(String paramName : pRow.getColumnNames()){
-      parameters.put(paramName, pRow.get(paramName));
+    for(Parameter param : key.getParameters()){
+      parameters.put(param.getName(), param.getStringValue());
     }
+//    ParameterDataRow pRow = key.getParameterDataRow();
+//    if(pRow != null) for(String paramName : pRow.getColumnNames()){
+//      parameters.put(paramName, pRow.get(paramName));
+//    }
     queryInfo.put("parameters", parameters);
     
     queryInfo.put("rows", rows != null ? rows.intValue() : null);

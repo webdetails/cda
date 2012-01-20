@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPluginLifecycleListener;
 import org.pentaho.platform.api.engine.PluginLifecycleException;
 import pt.webdetails.cda.cache.CacheScheduleManager;
+import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.utils.PluginHibernateUtil;
 import pt.webdetails.cda.utils.Util;
 
@@ -49,5 +50,6 @@ public class CdaLifecycleListener implements IPluginLifecycleListener
 
   public void unLoaded() throws PluginLifecycleException
   {
+    AbstractDataAccess.shutdowCache();
   }
 }

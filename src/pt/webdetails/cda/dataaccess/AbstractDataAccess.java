@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.pentaho.platform.api.engine.PluginBeanException;
 
 import pt.webdetails.cda.cache.EHCacheQueryCache;
 import pt.webdetails.cda.cache.IQueryCache;
@@ -28,6 +29,7 @@ import pt.webdetails.cda.utils.InvalidOutputIndexException;
 import pt.webdetails.cda.utils.TableModelException;
 import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.Util;
+import pt.webdetails.cda.utils.framework.PluginUtils;
 import pt.webdetails.cda.utils.kettle.SortException;
 
 /**
@@ -206,7 +208,15 @@ public abstract class AbstractDataAccess implements DataAccess
   
   public static synchronized IQueryCache getCdaCache(){
     if(cache == null){
-      cache = new EHCacheQueryCache();
+      try {
+        cache = PluginUtils.getPluginBean("cda.", IQueryCache.class);
+      } catch (PluginBeanException e) {
+        logger.error(e.getMessage());
+      }
+      if(cache == null){
+        //fallback
+        cache = new EHCacheQueryCache(); 
+      }
     }
     return cache;
   }
@@ -217,6 +227,12 @@ public abstract class AbstractDataAccess implements DataAccess
     return ((EHCacheQueryCache) getCdaCache()).getCache();
   }
 
+  public static synchronized void shutdowCache(){
+    if(cache != null){
+      cache.shutdownIfRunning();
+      cache = null;
+    }
+  }
 
   public static synchronized void clearCache()
   {

@@ -7,22 +7,22 @@ import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
 
 public interface IQueryCache {
 
-  /**
-   * Stores element in cache.
-   * @param key key
-   * @param table element to store.
-   * @param ttlSec time to live in seconds
-   */
-  public void putTableModel(TableCacheKey key, TableModel table, int ttlSec);
-  
 //  /**
 //   * Stores element in cache.
 //   * @param key key
 //   * @param table element to store.
 //   * @param ttlSec time to live in seconds
-//   * @param cacheInfo extra information for cache items that doesn't affect cache comparison
 //   */
-//  public void putTableModel(TableCacheKey key, TableModel table, int ttlSec, ExtraCacheInfo cacheInfo);
+//  public void putTableModel(TableCacheKey key, TableModel table, int ttlSec);
+//  
+  /**
+   * Stores element in cache.
+   * @param key key
+   * @param table element to store.
+   * @param ttlSec time to live in seconds
+   * @param cacheInfo extra information for cache items that doesn't affect cache comparison
+   */
+  public void putTableModel(TableCacheKey key, TableModel table, int ttlSec, ExtraCacheInfo cacheInfo);
   
   
   /**
@@ -68,5 +68,7 @@ public interface IQueryCache {
   public CacheElementInfo getElementInfo(TableCacheKey key);
 //  
   public ExtraCacheInfo getCacheEntryInfo(TableCacheKey key);
+  
+  public void shutdownIfRunning();
   
 }

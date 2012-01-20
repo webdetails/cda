@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
-import javax.swing.table.TableModel;
-
-import net.sf.ehcache.Cache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,13 +19,10 @@ import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.cache.TableCacheKey;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.exporter.ExporterException;
-import pt.webdetails.cda.exporter.JsonExporter;
 import pt.webdetails.cda.utils.framework.JsonCallHandler;
 
 public class CacheMonitorHandler extends JsonCallHandler 
 {
-
-  private static final int CACHE_INFO_TABLE_MAX = 100;
   
   private static Log logger = LogFactory.getLog(JsonCallHandler.class);
   
@@ -136,13 +130,14 @@ public class CacheMonitorHandler extends JsonCallHandler
 //      }
 //    });
     
-//    registerMethod("shutdown", new JsonCallHandler.Method() {
-//      
-//      @Override
-//      public JSONObject execute(IParameterProvider params) throws Exception {
-//        if(get)
-//      }
-//    });
+    registerMethod("shutdown", new JsonCallHandler.Method() {
+      
+      @Override
+      public JSONObject execute(IParameterProvider params) throws Exception {
+        AbstractDataAccess.shutdowCache();
+        return getOKJson("Cache shutdown.");
+      }
+    });
     
 //    registerMethod("getElementDiskSize", new JsonCallHandler.Method()
 //    {  
@@ -192,15 +187,16 @@ public class CacheMonitorHandler extends JsonCallHandler
     }
     
     JSONObject result = new JSONObject();
-    Cache cdaCache = AbstractDataAccess.getCache();
+    //Cache cdaCache = AbstractDataAccess.getCache();
+    IQueryCache cdaCache = AbstractDataAccess.getCdaCache();
 
     TableCacheKey lookupCacheKey = TableCacheKey.getTableCacheKeyFromString(encodedCacheKey);
-    net.sf.ehcache.Element elem = cdaCache.getQuiet(lookupCacheKey);
+    //net.sf.ehcache.Element elem = cdaCache.getQuiet(lookupCacheKey);
+    ExtraCacheInfo info = cdaCache.getCacheEntryInfo(lookupCacheKey);
 
-    if(elem != null){
+    if(info != null){
       // put query results
-      JsonExporter exporter = new JsonExporter(null);
-      result.put(ResultFields.RESULT, exporter.getTableAsJson((TableModel) elem.getObjectValue(), CACHE_INFO_TABLE_MAX));
+      result.put(ResultFields.RESULT, info.getTableSnapshot());
       result.put(JsonResultFields.STATUS, ResponseStatus.OK);
     }
     else {
@@ -215,14 +211,14 @@ public class CacheMonitorHandler extends JsonCallHandler
     
     HashMap<String, HashMap<String, Integer>> cdaMap = new HashMap<String, HashMap<String,Integer>>();
     
-    Cache cdaCache = AbstractDataAccess.getCache();
+    IQueryCache cdaCache = AbstractDataAccess.getCdaCache();
     JSONArray results = new JSONArray();
     
-    for(Object key : cdaCache.getKeys()) {
-
-      TableCacheKey cacheKey = (TableCacheKey) key;
-      String cdaSettingsId = cacheKey.getCdaSettingsId();
-      String dataAccessId = cacheKey.getDataAccessId();
+    for(TableCacheKey key : cdaCache.getKeys()) {
+      
+      ExtraCacheInfo info = cdaCache.getCacheEntryInfo(key);
+      String cdaSettingsId = info.getCdaSettingsId();
+      String dataAccessId = info.getDataAccessId();
       
       if(cdaSettingsIdFilter != null && !cdaSettingsIdFilter.equals(cdaSettingsId)){
         continue;
@@ -302,21 +298,17 @@ public class CacheMonitorHandler extends JsonCallHandler
     
     for(TableCacheKey key : cdaCache.getKeys()) {
       
-      if(key instanceof TableCacheKey){
-                        
-        if(!StringUtils.equals(cdaSettingsId, key.getCdaSettingsId()) ||
-           (dataAccessId != null && !StringUtils.equals(dataAccessId, key.getDataAccessId())))
-        {//not what we're looking for
-          continue;
-        }
-        
-        CacheElementInfo cacheInfo = cdaCache.getElementInfo(key);
-        results.put(cacheInfo.toJson());
-        
+      ExtraCacheInfo info = cdaCache.getCacheEntryInfo(key);
+      
+      if(!StringUtils.equals(cdaSettingsId, info.getCdaSettingsId()) ||
+         (dataAccessId != null && !StringUtils.equals(dataAccessId, info.getDataAccessId())))
+      {//not what we're looking for
+        continue;
       }
-      else {
-        logger.warn("Found non-TableCacheKey object in cache, skipping...");
-      }
+      
+      CacheElementInfo cacheInfo = cdaCache.getElementInfo(key);
+      results.put(cacheInfo.toJson());
+       
     }
     
     JSONObject result = new JSONObject();

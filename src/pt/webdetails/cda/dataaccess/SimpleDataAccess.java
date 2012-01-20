@@ -1,12 +1,11 @@
 package pt.webdetails.cda.dataaccess;
 
+import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.table.TableModel;
-
-import net.sf.ehcache.Cache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,8 +14,8 @@ import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 
 
 import pt.webdetails.cda.CdaBoot;
-import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.cache.TableCacheKey;
+import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.DummyConnection;
@@ -77,13 +76,12 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
   {
     // Get parameters from definition and apply their values
     //TODO: use queryOptions' parameters instead of copying?
-    final List<Parameter> parameters = new ArrayList(getParameters().size());
+    final List<Parameter> parameters = new ArrayList<Parameter>(getParameters().size());
     for(Parameter param : getParameters())
     {
       parameters.add(new Parameter(param));
     }
 
-    final IQueryCache cache = getCdaCache();
 
     for (final Parameter parameter : parameters)
     {
@@ -120,6 +118,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     TableCacheKey key;
     TableModel tableModelCopy;
     IDataSourceQuery rawQueryExecution = null;
+    Long queryTime = null;
     try
     {
       try
@@ -133,8 +132,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
         {
           connection = getCdaSettings().getConnection(getConnectionId());
         }
-        key = new TableCacheKey(connection, getQuery(), parameterDataRow, getExtraCacheKey(), 
-            this.getCdaSettings().getId(), queryOptions.getDataAccessId());
+        key = new TableCacheKey(connection, getQuery(), parameters, getExtraCacheKey());
       }
       catch (UnknownConnectionException e)
       {
@@ -165,7 +163,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
       final TableModel tableModel = postProcessTableModel(rawQueryExecution.getTableModel());
 
-      logIfDurationAboveThreshold(beginTime, getId(), getQuery(), parameters);
+      queryTime = logIfDurationAboveThreshold(beginTime, getId(), getQuery(), parameters);
 
       // Copy the tableModel and cache it
       // Handle the TableModel
@@ -184,7 +182,8 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     // put the copy into the cache ...
     if (isCache())
     {
-      getCdaCache().putTableModel(key, tableModelCopy, getCacheDuration());
+      ExtraCacheInfo cInfo = new ExtraCacheInfo(this.getCdaSettings().getId(), queryOptions.getDataAccessId(), queryTime, tableModelCopy);
+      getCdaCache().putTableModel(key, tableModelCopy, getCacheDuration(), cInfo);
       
 //      final net.sf.ehcache.Element storeElement = new net.sf.ehcache.Element(key, tableModelCopy);
 //      storeElement.setTimeToLive(getCacheDuration());
@@ -239,7 +238,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
    * extend SimpleDataAccess may decide to implement it
    * @return
    */
-  protected Object getExtraCacheKey()
+  protected Serializable getExtraCacheKey()
   {
     return null;
   }
