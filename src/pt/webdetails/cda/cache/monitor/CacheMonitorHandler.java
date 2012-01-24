@@ -217,6 +217,9 @@ public class CacheMonitorHandler extends JsonCallHandler
     for(TableCacheKey key : cdaCache.getKeys()) {
       
       ExtraCacheInfo info = cdaCache.getCacheEntryInfo(key);
+      
+      if(info == null) continue;
+      
       String cdaSettingsId = info.getCdaSettingsId();
       String dataAccessId = info.getDataAccessId();
       
@@ -299,6 +302,7 @@ public class CacheMonitorHandler extends JsonCallHandler
     for(TableCacheKey key : cdaCache.getKeys()) {
       
       ExtraCacheInfo info = cdaCache.getCacheEntryInfo(key);
+      if(info == null) continue;
       
       if(!StringUtils.equals(cdaSettingsId, info.getCdaSettingsId()) ||
          (dataAccessId != null && !StringUtils.equals(dataAccessId, info.getDataAccessId())))

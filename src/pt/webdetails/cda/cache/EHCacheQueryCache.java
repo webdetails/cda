@@ -226,17 +226,24 @@ public class EHCacheQueryCache implements IQueryCache {
     return cache.getKeys();
   }
 
-  public TableModel getTableModelQuietly(TableCacheKey key) {
-    Element el = cache.getQuiet(key);
-    return el != null? (TableModel)el.getValue() : null;
-  }
-
-
   @Override
   public ExtraCacheInfo getCacheEntryInfo(TableCacheKey key) 
   {
     Element element = cache.getQuiet(key);
-    return ((CacheElement)element.getObjectValue()).getInfo();
+    if(element == null){
+      logger.warn("Null element in cache, removing.");
+      remove(key);
+      return null;
+    }
+    Object val = element.getValue();
+    if(val instanceof CacheElement){
+      return ((CacheElement)val).getInfo();  
+    }
+    else {
+      logger.error("Expected " + CacheElement.class.getCanonicalName() + ", " found val.getClass().getCanonicalName() + " instead");
+      remove(key);
+      return null;
+    }
   }
 
   @Override
