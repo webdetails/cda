@@ -158,6 +158,8 @@
     <echo file="${stage.dir}/${plugin.name}/VERSION.txt">${distribution.version}</echo>
 
 
+    <replace file="${stage.dir}/${plugin.name}/cachemanager/cache.html" token="@@VERSION@@" value="${project.revision}"/> 
+
     <!-- create a zip file -->
     <zip zipfile="${dist.dir}/${plugin.zipfile}"
          basedir="${stage.dir}"
@@ -178,6 +180,8 @@
     <copy todir="${samples.stage.dir}/bi-developers" overwrite="true" >
       <fileset dir="solution/bi-developers"></fileset>
     </copy>
+
+    <replace file="${samples.stage.dir}/bi-developers/${plugin.name}/template.html" token="@@VERSION@@" value="${project.revision}"/> 
 
     <zip zipfile="${dist.dir}/${plugin.samples.zipfile}"
          basedir="${samples.stage.dir}"

@@ -3,6 +3,12 @@ body{
 
 }
 
+
+#versionInfo {
+	float:right;
+	padding:2px;
+}
+
 div.tableHeader {
   font-weight: bold;
   text-align: center;
@@ -65,6 +71,7 @@ dd {
   position: relative;
   left:670px;
   top:82px;
+  width:30%;
 }
 
 #tabButtons .button {
