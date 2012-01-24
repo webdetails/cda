@@ -240,7 +240,7 @@ public class EHCacheQueryCache implements IQueryCache {
       return ((CacheElement)val).getInfo();  
     }
     else {
-      logger.error("Expected " + CacheElement.class.getCanonicalName() + ", " found val.getClass().getCanonicalName() + " instead");
+      logger.error("Expected " + CacheElement.class.getCanonicalName() + ", found " + val.getClass().getCanonicalName() + " instead");
       remove(key);
       return null;
     }
