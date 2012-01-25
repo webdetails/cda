@@ -3,6 +3,12 @@ body{
 
 }
 
+
+#versionInfo {
+	float:right;
+	padding:2px;
+}
+
 div.tableHeader {
   font-weight: bold;
   text-align: center;
@@ -65,10 +71,17 @@ dd {
   position: relative;
   left:670px;
   top:82px;
+  width:30%;
 }
 
 #tabButtons .button {
   padding:12px;
+}
+
+#clearCacheButton {
+  text-align:right;
+  background: none repeat scroll 0 0 #FFEEEE;
+  padding 4px;
 }
 
 #tabButtons .button.selected {
@@ -77,6 +90,11 @@ dd {
 }
 
 .button {
+  cursor: pointer;
+}
+
+.link:hover {
+  text-decoration: underline;
   cursor: pointer;
 }
 
@@ -94,4 +112,14 @@ dd {
 
 #cachedQueriesLines div.row.toDelete{
   background: none repeat scroll 0 0 #FFEEEE;
+}
+
+.queryCol {
+  overflow: auto;
+  max-height:100px;
+  cursor: pointer;
+}
+
+.queryTable {
+  overflow:auto;
 }

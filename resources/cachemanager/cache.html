@@ -18,6 +18,7 @@
     <div class='container'>     
     <!-- HEADER -->
     <div class='header span24 last'>
+    <div id="versionInfo">Version @@VERSION@@ </div> 
       <div id="tabButtons">
         <span id="scheduleButton" class="button" onclick="refreshTable()"> Scheduled Queries </span>
         <span id="cacheButton" class="button" onclick="refreshCachedOverviewTable()"> Cached Queries </span>
@@ -44,7 +45,11 @@
     
     <div id="cachedQueries" class="container" style="display:none;" >
       
-      <div class='section span-24 last'>Queries in cache</div>
+      <div id="mapInfo" class="span-24 last"> </div>
+      <div id="membersInfo" class="span-24 last"></div>
+      
+      <div class='section span-4'>Queries in cache</div><div class='section span-1'><img id="loading" style="display:none;" src="cachemanager/loading.gif"/></div>
+      <div class='last button' style='text-align:right;'> <span id="clearCacheButton" class="button"> Clear all</span> </div>
     <!-- MAIN TABLE BODY: cache -->
       <div id="cachedQueriesOverview">
         <div class='span-24 last'>
@@ -60,9 +65,10 @@
       <div id="cachedQueriesDetail" style="display:none;">
         <div class='span-24 last'>
           <div class="tableHeader container" id="cachedQueriesHeader">
-            <div class='span-11'>Query</div>
+            <div class='span-9'>Query</div>
             <div class='span-5'>Parameters</div>
-            <div class='span-1'># Rows</div>
+            <div class='span-1'>Rows</div>
+            <div class='span-2'>Mem.Size</div>
             <div class='span-2'>Insertion</div>
             <div class='span-2'>Last Access</div>
             <div class='span-1'># Hits</div>
@@ -78,6 +84,7 @@
   </body>
   <script>
     $(document).ready(function(){
+      UI.init();
       refreshTable();
     });
   </script>

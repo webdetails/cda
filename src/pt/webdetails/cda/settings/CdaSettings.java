@@ -16,9 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
-import org.pentaho.reporting.libraries.formula.FormulaContext;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
-
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.EvaluableConnection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
@@ -65,7 +63,6 @@ public class CdaSettings {
   private Element root;
   private HashMap<String, Connection> connectionsMap;
   private HashMap<String, DataAccess> dataAccessMap;
-  private FormulaContext formulaContext;
   private Document genDoc;
   
   

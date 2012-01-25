@@ -310,16 +310,10 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       {
         result.get();
       }
-    }
-    catch (InterruptedException e)
-    {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    catch (ExecutionException e)
-    {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    } catch (InterruptedException e) {
+      logger.error("Row production interrupted", e);
+    } catch (ExecutionException e) {
+      logger.error("Problem starting row production", e);
     }
   }
   /*

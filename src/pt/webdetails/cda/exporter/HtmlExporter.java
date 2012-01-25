@@ -127,12 +127,12 @@ public class HtmlExporter extends AbstractExporter
       OutputFormat outFormat = new OutputFormat();
       outFormat.setOmitEncoding(true);
       outFormat.setSuppressDeclaration(true);//otherwise msexcel/oocalc may not recognize content
+      outFormat.setNewlines(true);
+      outFormat.setIndentSize(columnCount);
       final Writer writer = new BufferedWriter(new OutputStreamWriter(out));
       XMLWriter xmlWriter = new XMLWriter(writer, outFormat);
       xmlWriter.write(document);
       xmlWriter.flush();
-      
-      xmlWriter.write(document);
     }
     catch (IOException e)
     {

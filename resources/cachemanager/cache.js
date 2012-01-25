@@ -2,7 +2,7 @@
 
 var CacheManagerBackend = {
   
-  CONTENT_HANDLER: 'cacheController',
+  CONTENT_HANDLER: 'cacheMonitor',
   STATUS_OK: 'ok',
   STATUS_ERROR: 'error',
   
@@ -11,52 +11,84 @@ var CacheManagerBackend = {
   },
   
   handleResponse: function(response, callback){
-        if(response.status == this.STATUS_OK){
-          if(typeof(callback) == 'function'){
-            callback(response.result);
-          }
-        }
-        else {//TODO: if, etc
-          if(typeof(errorCallback) == 'function'){
-            errorCallback(reponse.status, response.errorMsg);
-          }
-        }
+    if(response.status == this.STATUS_OK){
+      if(typeof(callback) == 'function'){
+        callback(response.result);
+      }
+    }
+    else {
+      if(typeof(errorCallback) == 'function'){
+        errorCallback(reponse.status, response.errorMsg);
+      } else {
+        this.defaultErrorHandle(response.status, response.errorMsg);
+      }
+    }
   },
   
   postJson: function(args, callback, errorCallback){
     var self = this;
+    UI.loadingImg.show();
     $.post(this.CONTENT_HANDLER, args,
     function(response)
     {
+      UI.loadingImg.hide();
       self.handleResponse(response, callback, errorCallback);
     }, 'json');
   },
   
   getJson: function(args, callback, errorCallback){
     var self = this;
+    UI.loadingImg.show();
     $.getJSON(this.CONTENT_HANDLER, args,
       function(response)
       {
+        UI.loadingImg.hide();
         self.handleResponse(response, callback, errorCallback);
       });
       
   }
   
-}
+};
+
+var UI = {
+  
+  setButtonSelected: function(button, selected){
+    if(!button.hasClass('selected')){
+      if(selected) button.addClass('selected');
+    }
+    else if(!selected) button.removeClass('selected');
+  },
+  
+  //define UI elements
+  init: function(){
+    //main panes
+    this.cachedQueries = $('#cachedQueries');
+    this.scheduledQueries = $('#scheduledQueries');
+    //main pane switch buttons
+    this.cacheButton = $('#cacheButton');
+    this.scheduleButton = $('#scheduleButton');
+    //cache area
+    this.cachedQueries = $('#cachedQueries');
+    this.cachedQueriesDetail = $('#cachedQueriesDetail');
+    this.cachedQueriesOverview = $('#cachedQueriesOverview');
+    this.cachedQueriesOverviewLines = $("#cachedQueriesOverviewLines");
+    this.clearCacheButton = $("#clearCacheButton");
+    //loading imgs
+    this.loadingImg = $('#loading');
+  }
+};
 
 /** SCHEDULER **/
 
 var refreshTable = function(){
 
-  $('#cachedQueries').hide();
-  $('#scheduledQueries').show();
-  $('#cacheButton').removeClass('selected');
-  var thisButton = $('#scheduleButton');
-  if(!thisButton.hasClass('selected')){
-    thisButton.addClass('selected');
-  }
+  UI.cachedQueries.hide();
+  UI.scheduledQueries.show();
+  UI.setButtonSelected(UI.cacheButton, false);
+  UI.setButtonSelected(UI.scheduleButton, true);
+
   $.getJSON('cacheController?method=list', populateQueries);
-}
+};
 
 
 var populateQueries = function(data){
@@ -117,48 +149,141 @@ var populateQueries = function(data){
     ph.append(row);
   
   }
-}
+};
 
 /** CACHE **/
 
-var refreshCachedOverviewTable = function(){
-  $('#scheduledQueries').hide();
-  $('#cachedQueriesDetail').hide();
-  $('#cachedQueries').show();
-  $('#cachedQueriesOverview').show();
-  $('#cachedQueriesDetail').hide();
-  $('#scheduleButton').removeClass('selected');
+//Main cache view
+var refreshCachedOverviewTable = function()
+{
+  UI.scheduledQueries.hide();
+  UI.cachedQueriesDetail.hide();
   
-  var thisButton = $('#cacheButton');
-  if(!thisButton.hasClass('selected')){
-    thisButton.addClass('selected');
-  }
+  UI.cachedQueries.show();
+  UI.cachedQueriesDetail.hide();
+  UI.cachedQueriesOverview.show();
+  
+  UI.setButtonSelected(UI.scheduleButton, false);
+  UI.setButtonSelected(UI.cacheButton, true);
+  
+  UI.clearCacheButton.text('Clear Cache');
+  UI.clearCacheButton.unbind('click');
+  UI.clearCacheButton.click(function(){
+    if(confirm('This will remove ALL items from cache. Are you sure?')){
+      CacheManagerBackend.getJson(
+        {method:'removeAll'},
+        function(itemsDeleted){
+          alert(itemsDeleted + ' items have been removed from cache');
+          CacheManagerBackend.getJson({method : 'cacheOverview'},populateCachedQueriesOverview);
+        }
+      );
+    }
+  });
+
+  //getGeneralInfo();
   
   CacheManagerBackend.getJson({method : 'cacheOverview'},populateCachedQueriesOverview, CacheManagerBackend.defaultErrorHandle);
 }
 
 var refreshCachedTable = function(cdaSettingsId, dataAccessId){
   
-  $('#cachedQueriesOverview').hide('fast');
-  $('#cachedQueriesDetail').show('fast');
+  UI.cachedQueriesOverview.hide();
+  UI.cachedQueriesDetail.show();
+   
+  var clearBtnText = "Clear all items";
+  if(cdaSettingsId != null){
+    clearBtnText += " for " + cdaSettingsId;
+    if(dataAccessId != null){
+      clearBtnText += " (" + dataAccessId + ")";
+    }
+  }
+  UI.clearCacheButton.text(clearBtnText);
+  UI.clearCacheButton.unbind('click');
+  UI.clearCacheButton.click(function(){
+    var confText = "This will clear All items" +
+      (cdaSettingsId != null?
+       (" where cdaSettingsId='" + cdaSettingsId + "'" +
+         (dataAccessId!=null? "and dataAccessId='"+ dataAccessId+"'" : "")):
+       "");
+    confText += ". Are you sure?";
+    if(confirm(confText)){
+      var callArgs = {method:'removeAll'};
+      if(cdaSettingsId!= null){
+        callArgs.cdaSettingsId = cdaSettingsId;
+        if(dataAccessId!=null) callArgs.dataAccessId = dataAccessId;
+      }
+      CacheManagerBackend.getJson(
+        callArgs,
+        function(itemsDeleted){
+          alert(itemsDeleted + ' items have been removed from cache');
+          refreshCachedTable(cdaSettingsId, dataAccessId);
+        }
+      );
+    }
+  });
   
+  var callArgs = {method:'cached'};
+  if(cdaSettingsId!= null){
+    callArgs.cdaSettingsId = cdaSettingsId;
+    if(dataAccessId!=null) callArgs.dataAccessId = dataAccessId;
+  }
   CacheManagerBackend.getJson(
-            {
-              method :'cached',
-              cdaSettingsId: cdaSettingsId,
-              dataAccessId: dataAccessId
-            },
+            callArgs,
             populateCachedQueries,
             function(status, errorMsg){
               var row = $('<div class="span-24 last"/>').text('Problem accessing cache. Check log for errors or reload to try again.');
               $("#cachedQueriesOverviewLines").empty().append(row);
             });
+};
+
+//should be improved
+var getHumanReadableSize = function(byteSize) {
+  var units = ['B', 'kB', 'MB', 'GB'];
+  var convRate = 1024;
+  var okVal = 2047;
+  var size = byteSize;
+  
+  for(i=0; i<units.length; i++)
+  {
+    if(size < okVal || i== units.length -1){
+      return sprintf("%.0f", size) + ' ' + units[i];
+    }
+    
+    size /= convRate;
+  }
+  return '?';
 }
 
+//NOT IMPLEMENTED:
+var getGeneralInfo = function()
+{
+  CacheManagerBackend.getJson({method: 'clusterInfo'}, populateClusterInfo, CacheManagerBackend.defaultErrorHandle);
+  CacheManagerBackend.getJson({method: 'mapInfo'}, populateMapInfo, CacheManagerBackend.defaultErrorHandle);
+}
 
-var populateCachedQueriesOverview = function(results){
-    var ph = $("#cachedQueriesOverviewLines").empty();
+var populateClusterInfo = function(result)
+{
+  var LENGTH = 12;
+  var members = result.otherMembers;
+  members.splice(0,0,result.localMember);
+  
+  var holder = $('#membersInfo');
+  
+  for(var i=0; i<members.length; i++){
+    $('<div/>').class('span-' + LENGTH + ' row last').text(members[i].address).appendTo(holder);
+  }
+}
 
+var populateMapInfo = function(result){
+  var holder = $('#mapInfo');
+  
+  var str = result.entryCount + ' entries, (' + result.ownedCount + ' owned), totalling ' + getHumanReadableSize(result.mapMemSize);
+  holder.text(str);
+}
+
+var populateCachedQueriesOverview = function(results)
+{
+  var ph = $("#cachedQueriesOverviewLines").empty();
   if(results.length > 0){
     for (var i = 0; i< results.length;i++ )
     {
@@ -167,18 +292,32 @@ var populateCachedQueriesOverview = function(results){
       //<div class='span-2 last'># Queries</div>
       var row = $("<div class='span-24 last row'></div>");
       var item = results[i];
-      row.append($('<div/>').addClass('span-16').text(item.cdaSettingsId));
+      var settingsLink = $('<span/>').text(item.cdaSettingsId);
+      row.append($('<div/>').addClass('span-16').append(settingsLink)); //.text(item.cdaSettingsId));
+      
+      //var dataAccessLink = $('<span/>').text(item.dataAccessId).addClass('span-6');
       row.append($('<div/>').addClass('span-6').text(item.dataAccessId));
       row.append($('<div/>').addClass('span-2 last').text(item.count));
       
       var drillDownFunction = function(cdaSettingsId, dataAccessId){
         row.click(function(){
           refreshCachedTable(cdaSettingsId, dataAccessId);
-        })
+        });
+        row.addClass('button');
       };
       drillDownFunction(item.cdaSettingsId, item.dataAccessId);
       
-      row.addClass('button');
+      var drillOnSettingsFunc = function(cdaSettingsId){
+        settingsLink.click(function(event){
+          //alert(cdaSettingsId);
+          event.stopPropagation();
+          refreshCachedTable(cdaSettingsId, null);
+        });
+      };
+      drillOnSettingsFunc(item.cdaSettingsId);
+      settingsLink.addClass('link');
+      
+      //row.addClass('button');
       ph.append(row);
     }
   }
@@ -187,9 +326,10 @@ var populateCachedQueriesOverview = function(results){
     ph.append(row);
   }
   
-}
+};
 
-var removeCachedQuery =  function(key, row, cdaSettingsId, dataAccessId){
+var removeCachedQuery =  function(key, row, cdaSettingsId, dataAccessId)
+{
   row.addClass('toDelete');
   if(confirm('Are you sure you want to remove this query from cache?'))
   {
@@ -202,13 +342,14 @@ var removeCachedQuery =  function(key, row, cdaSettingsId, dataAccessId){
   {
     row.removeClass('toDelete');
   }
-}
+};
 
 var populateCachedQueries = function(resp){
  
   var ph = $("#cachedQueriesLines").empty();
 
-  if(resp.items.length > 0){
+  if(resp.items.length > 0)
+  {
     for (var i = 0; i< resp.items.length;i++ ) {
       //<div class='span-11'>Query</div>
       //<div class='span-5'>Parameters</div>
@@ -221,19 +362,32 @@ var populateCachedQueries = function(resp){
       var row = $("<div class='span-24 last row'></div>");
       var item = resp.items[i];
       
-      row.append($('<div/>').addClass('span-11').text(item.query));
+      //query
+      var queryCol = $('<div/>').addClass('span-9').addClass('queryCol').text(item.query);
+      queryCol.click(
+        function(){
+          alert($(this).text());
+        }
+      );
+      row.append(queryCol);
       
+      //parameters
       var paramPh = $("<dl></dl>");
       for (var param in item.parameters){
         paramPh.append("<dt>"+param+"</dt><dd>"+item.parameters[param]+"</dd>");
       }
       row.append($('<div/>').addClass('span-5').append(paramPh));
-      row.append($('<div/>').addClass('span-1').text(item.rows != null ? item.rows : '?'));
+      //rows
+      row.append($('<div/>').addClass('span-1').text(item.rows));
+      //size
+      row.append($('<div/>').addClass('span-2').text(item.size != null ? getHumanReadableSize(item.size) : '?'));
+      //insert date
       var insertDate = new Date(item.inserted);
       row.append($('<div/>').addClass('span-2').text(insertDate.toLocaleDateString() + ' ' + insertDate.toLocaleTimeString()));
+      //access date
       var accessDate = new Date(item.accessed);
       row.append($('<div/>').addClass('span-2').text(accessDate.toLocaleDateString() + ' ' + accessDate.toLocaleTimeString()));
-
+      //#hits
       row.append($('<div/>').addClass('span-1').text(item.hits));
       
       //remove from cache
@@ -283,19 +437,21 @@ var populateCachedQueries = function(resp){
       
         //table
       var tableContentsId = "tableContents" + i;
-      ph.append($('<div id="' + tableContentsId + '" />').addClass('span-22 prepend-1 append-1 empty').css('display','none'));
+      ph.append($('<div id="' + tableContentsId + '" />').addClass('span-22 prepend-1 append-1 empty last queryTable').css('display','none'));
       
       setQueryDetailsAction($('#' + tableContentsId), item.key);
     }
   }
-  else {
-    var row = $('<div class="span-24 last"/>').text('Cache is empty.');
+  else //no items
+  {
+    var row = $('<div class="span-24 last"/>').text('No queries in cache for ' + resp.cdaSettingsId +
+                                                    (resp.dataAccessId!=null?' (' + resp.dataAccessId + ')' : ''));
     ph.append(row);
   }
-}
+};
 
-var renderCachedTable = function(data, container){
-  
+var renderCachedTable = function(data, container)
+{
   var tableContents = data.resultset;
   var columnNames = [];
   for (column in data.metadata) {
@@ -308,10 +464,11 @@ var renderCachedTable = function(data, container){
   
   var dTable = table.dataTable({"aaData": tableContents, "aoColumns": columnNames, "bFilter" : false});
   
-}
+};
 
 
-var formatDate = function(date){
+var formatDate = function(date)
+{
   var d = new Date(date);
   return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-"+ pad(d.getDate()) + "<br/>" +
   pad(d.getHours())+":" + pad(d.getMinutes())+":" + pad(d.getSeconds()) ;
@@ -321,4 +478,4 @@ var pad = function(n){
 
   return ("0"+n).substr(n.toFixed().length-1);
 
-}
+};

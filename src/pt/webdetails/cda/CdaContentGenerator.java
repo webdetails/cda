@@ -28,7 +28,8 @@ import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.apache.commons.lang.StringUtils;
 
-import pt.webdetails.cda.cache.CacheManager;
+import pt.webdetails.cda.cache.CacheScheduleManager;
+import pt.webdetails.cda.cache.monitor.CacheMonitorHandler;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
@@ -177,10 +178,6 @@ public class CdaContentGenerator extends BaseContentGenerator
       {
         listDataAccessTypes(requestParams, out);
       }
-      else if ("cacheManager".equals(method))
-      {
-        cacheManager(requestParams, out);
-      }
       else if ("manageCache".equals(method))
       {
         manageCache(requestParams, out);
@@ -188,6 +185,10 @@ public class CdaContentGenerator extends BaseContentGenerator
       else if ("cacheController".equals(method))
       {
         cacheController(requestParams, out);
+      }
+      else if(StringUtils.equals(method, "cacheMonitor"))
+      {
+        CacheMonitorHandler.getInstance().handleCall(requestParams, out);
       }
       else
       {
@@ -628,15 +629,9 @@ public class CdaContentGenerator extends BaseContentGenerator
   }
 
 
-  private void cacheManager(IParameterProvider requestParams, OutputStream out)
-  {
-    CacheManager.getInstance().render(requestParams, out);
-  }
-
-
   private void cacheController(IParameterProvider requestParams, OutputStream out)
   {
-    CacheManager.getInstance().handleCall(requestParams, out);
+    CacheScheduleManager.getInstance().handleCall(requestParams, out);
   }
 
 

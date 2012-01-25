@@ -5,7 +5,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPluginLifecycleListener;
 import org.pentaho.platform.api.engine.PluginLifecycleException;
-import pt.webdetails.cda.cache.CacheManager;
+import pt.webdetails.cda.cache.CacheScheduleManager;
+import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.utils.PluginHibernateUtil;
 import pt.webdetails.cda.utils.Util;
 
@@ -17,7 +18,7 @@ import pt.webdetails.cda.utils.Util;
 public class CdaLifecycleListener implements IPluginLifecycleListener
 {
 
-  static Log logger = LogFactory.getLog(CacheManager.class);
+  static Log logger = LogFactory.getLog(CacheScheduleManager.class);
 
 
   public void init() throws PluginLifecycleException
@@ -34,7 +35,7 @@ public class CdaLifecycleListener implements IPluginLifecycleListener
     try
     {
       Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-      CacheManager.getInstance().coldInit();
+      CacheScheduleManager.getInstance().coldInit();
     }
     catch (Exception e)
     {
@@ -49,5 +50,6 @@ public class CdaLifecycleListener implements IPluginLifecycleListener
 
   public void unLoaded() throws PluginLifecycleException
   {
+    AbstractDataAccess.shutdowCache();
   }
 }

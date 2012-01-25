@@ -14,52 +14,51 @@
 			<XmiFile>metadata.xml</XmiFile>
         </Connection>
     </DataSources>
-    <!-- DataAccess object controls the query itself
-
-	Access controls if the datasource can be seen from the outside or is to
-	be used from a Compound datasource only
-
-	-->
 
 	<DataAccess id="1" connection="1" type="mql" access="public">
-		<Name>Mql on SampleData - Metadata</Name>
-		<Query><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+		<Name>Metadata query on Steel Wheels</Name>
+		<Query><![CDATA[
 			<mql>
-				<domain_type>relational</domain_type>
-				<domain_id>steel-wheels</domain_id>
+				<domain_id>steel-wheels/metadata.xmi</domain_id>
 				<model_id>BV_ORDERS</model_id>
-				<model_name>Orders</model_name>
+				<options>
+					<disable_distinct>false</disable_distinct>
+					<limit>-1</limit>
+				</options>
 				<selections>
 					<selection>
-						<view>CAT_ORDERS</view>
-						<column>BC_ORDERS_ORDERDATE</column>
+						<view>BC_CUSTOMER_W_TER_</view>
+						<column>BC_CUSTOMER_W_TER_TERRITORY</column>
+						<aggregation>NONE</aggregation>
 					</selection>
 					<selection>
 						<view>CAT_ORDERS</view>
-						<column>BC_ORDERS_ORDERNUMBER</column>
+						<column>BC_ORDERDETAILS_QUANTITYORDERED</column>
+						<aggregation>SUM</aggregation>
 					</selection>
 					<selection>
 						<view>CAT_ORDERS</view>
-						<column>BC_ORDER_DETAILS_QUANTITYORDERED</column>
+						<column>BC_ORDERS_STATUS</column>
+						<aggregation>NONE</aggregation>
 					</selection>
 				</selections>
 				<constraints>
-
 					<constraint>
 						<operator>AND</operator>
-						<condition>[CAT_ORDERS.BC_ORDERDETAILS_QUANTITYORDERED] &gt;70</condition>
-					</constraint>
-
-					<constraint>
-						<operator>AND</operator>
-						<condition>[CAT_ORDERS.BC_ORDERS_ORDERDATE] &gt; DATE(2003;12;31)</condition>
+						<condition>IN([CAT_ORDERS.BC_ORDERS_STATUS];[param:status])</condition>
 					</constraint>
 				</constraints>
-				<orders/>
+				<orders>
+					<order>
+						<direction>DESC</direction>
+						<view_id>CAT_ORDERS</view_id>
+						<column_id>BC_ORDERS_STATUS</column_id> 
+					</order>
+				</orders>
 			</mql>
 		]]></Query> 
 		<Parameters>
-			<Parameter name="status" type="String" default="Shipped"/>
+			<Parameter name="status" type="StringArray" default="Shipped;Cancelled"/>
 		</Parameters>
 	</DataAccess>
 </CDADescriptor>

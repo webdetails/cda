@@ -436,6 +436,30 @@ public class Parameter implements java.io.Serializable {
 
     return parameterDataRow;
   }
+  
+  @Override
+  public boolean equals(Object other){
+    
+    if(other == null) return false;
+    if(this == other) return true;
+    
+    if(other instanceof Parameter){
+      Parameter param = (Parameter) other;
+      return StringUtils.equals(getName(), param.getName()) &&
+             ((getType() == null && param.getType() == null) 
+               || getType().equals(param.getType())) &&
+             StringUtils.equals(getStringValue(), param.getStringValue());
+    }
+    else return false;
+  }
+  
+  @Override
+  public int hashCode() {
+    int hashCode = getName() == null ? 0 : getName().hashCode();
+    hashCode = 31 * hashCode + (getType() == null ? 0 : getType().hashCode());
+    hashCode = 31 * hashCode + (getStringValue() == null ? 0 : getStringValue().hashCode());
+    return hashCode;
+  };
 
   public void readObject(ObjectInputStream in) throws IOException {
     try {

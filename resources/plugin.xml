@@ -39,7 +39,10 @@
   </content-generator>
 
   <bean id="CdaQueryComponent" class="pt.webdetails.cda.CdaQueryComponent"/>
-
+  
+  <!-- CDA Query Cache -->
+  <bean id="cda.IQueryCache" class="pt.webdetails.cda.cache.EHCacheQueryCache"/>
+  <!--bean id="cda.IQueryCache" class="pt.webdetails.cda.cache.HazelcastQueryCache"/-->
 
 	<!-- Menu entry -->
   <menu-items>
