@@ -1,0 +1,6 @@
+12.01.25
+Fix a bug where html output would duplicate output in some cases
+cache refactor; cache monitor: +removeAll, require admin permissions
+cachemanager: user feedback for server requests
+Support for cache plugin bean. Serialization changed
+Added version info to cachemanager and SelfTest Page. Sorted out some images on SelfTest Page
