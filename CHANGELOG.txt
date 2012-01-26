@@ -1,4 +1,7 @@
-12.01.25
+12.01.26
+
+Solved Redmine Bug #104: CDA Cache Manager -> UI didn't update after delete a query
+Implemented Redmine Feature #105: CDA Cache Manager -> Delete all queries belonging to a cda file
 Fix a bug where html output would duplicate output in some cases
 cache refactor; cache monitor: +removeAll, require admin permissions
 cachemanager: user feedback for server requests

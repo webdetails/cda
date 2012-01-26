@@ -7,7 +7,7 @@
 
   See common_build.xml for more details
 ============================================================================-->
-<project name="Community Data Access" basedir="." default="jar"
+<project name="Community Data Access Release" basedir="." default="jar"
          xmlns:ivy="antlib:org.apache.ivy.ant">
 
   <description>
@@ -157,7 +157,7 @@
     <!-- list of optional Sonar properties -->
     <property name="sonar.binaries" value="${classes.dir}" />
     
-    <sonar:sonar key="pt.webdetails:CDA" version="${distribution.version}" xmlns:sonar="antlib:org.sonar.ant"/>
+    <sonar:sonar key="pt.webdetails:CDA-Release" version="${distribution.version}" xmlns:sonar="antlib:org.sonar.ant"/>
   </target>
 
 
@@ -195,6 +195,7 @@
     <copy todir="${stage.dir}/${plugin.name}" overwrite="true">
       <fileset dir="${basedir}">
         <include name="README.txt"/>
+        <include name="CHANGELOG.txt"/>        
       </fileset>
     </copy>
 
