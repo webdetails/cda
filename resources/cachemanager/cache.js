@@ -246,7 +246,8 @@ var getHumanReadableSize = function(byteSize) {
   for(i=0; i<units.length; i++)
   {
     if(size < okVal || i== units.length -1){
-      return sprintf("%.0f", size) + ' ' + units[i];
+      return Math.round(size) + ' ' + units[i];
+      //return sprintf("%.0f", size) + ' ' + units[i];
     }
     
     size /= convRate;
