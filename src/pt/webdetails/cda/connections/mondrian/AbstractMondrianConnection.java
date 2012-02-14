@@ -23,7 +23,10 @@ public abstract class AbstractMondrianConnection extends AbstractConnection impl
   {
   }
 
-
+  public AbstractMondrianConnection(String id)
+  {
+    super(id);
+  }
   public AbstractMondrianConnection(final Element connection) throws InvalidConnectionException
   {
 
