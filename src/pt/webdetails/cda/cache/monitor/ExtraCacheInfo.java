@@ -132,4 +132,11 @@ public class ExtraCacheInfo implements Serializable {//TODO: serialization
     }
   }
   
+  @Override
+  public String toString(){
+    return ExtraCacheInfo.class.getName() + 
+        " [cdaSettingsId=" + cdaSettingsId +
+        " , dataAccessId=" + dataAccessId + "]";
+  }
+  
 }

@@ -58,9 +58,7 @@ public abstract class AbstractMondrianConnection extends AbstractConnection impl
     {
       final IConnectionUserRoleMapper mondrianUserRoleMapper =
               PentahoSystem.get(IConnectionUserRoleMapper.class, "Mondrian-UserRoleMapper", null);
-      if (mondrianUserRoleMapper != null)
-      {
-      }
+
       final String[] validMondrianRolesForUser =
               mondrianUserRoleMapper.mapConnectionRoles(PentahoSessionHolder.getSession(), "solution:" + catalog.replaceAll("solution/",""));
       if ((validMondrianRolesForUser != null) && (validMondrianRolesForUser.length > 0))

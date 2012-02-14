@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 
 import pt.webdetails.cda.connections.Connection;
@@ -21,11 +22,10 @@ import pt.webdetails.cda.dataaccess.Parameter;
 public class TableCacheKey implements Serializable
   {
 
-    private static final long serialVersionUID = 5L; //1->2 only hash of connection kept; 2->3 file/dataAccessId; 4->5 hazelcast version
+    private static final long serialVersionUID = 5L; //5: hazelcast version
     
     private int connectionHash;
     private String query;
-    //private ParameterDataRow parameterDataRow;
     private Parameter[] parameters;
     
     private Serializable extraCacheKey;
@@ -40,7 +40,6 @@ public class TableCacheKey implements Serializable
 
     public TableCacheKey(final Connection connection, final String query,
         final List<Parameter> parameters, final Serializable extraCacheKey)
-            //final ParameterDataRow parameterDataRow, final Serializable extraCacheKey)
     {
       if (connection == null)
       {
@@ -57,7 +56,6 @@ public class TableCacheKey implements Serializable
 
       this.connectionHash = connection.hashCode();
       this.query = query;
-      //this.parameterDataRow = parameterDataRow;
       this.parameters = parameters.toArray(new Parameter[parameters.size()]); //createParametersFromParameterDataRow(parameterDataRow);
       this.extraCacheKey = extraCacheKey;
     }
@@ -110,49 +108,35 @@ public class TableCacheKey implements Serializable
     //Hazelcast will use serialized version to perform comparisons and hashcodes
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
     {
+      //to be hazelcast compatible needs to serialize EXACTLY the same
+      //binary comparison/hash will be used
+      
       //connection
       connectionHash = in.readInt();
       //query
       query = (String) in.readObject();
-      //parameterDataRow
-//      try
-//      {          
-          //to be hazelcast compatible needs to serialize EXACTLY the same
-          //binary comparison/hash will be used
-          int len = in.readInt();
-          Parameter[] params = new Parameter[len];
-          
-          for(int i =0; i < params.length; i++)
-          {
-            Parameter param = new Parameter();
-            param.readObject(in);
-            params[i] = param;
-          }
-          parameters = params;
-          //parameterDataRow = Parameter.createParameterDataRowFromParameters(params);
-//      }
-//      catch (InvalidParameterException e)
-//      {
-//        parameters = null;
-//      }
+
+      int len = in.readInt();
+      Parameter[] params = new Parameter[len];
+      
+      for(int i =0; i < params.length; i++)
+      {
+        Parameter param = new Parameter();
+        param.readObject(in);
+        params[i] = param;
+      }
+      parameters = params;
       extraCacheKey = (Serializable) in.readObject();
     }
 
     //Hazelcast will use serialized version to perform comparisons and hashcodes
     private void writeObject(java.io.ObjectOutputStream out) throws IOException
     {
+      //to be hazelcast compatible needs to serialize EXACTLY the same
+      //binary comparison/hash will be used
+      
       out.writeInt(connectionHash);
       out.writeObject(query);
-     // out.writeObject(createParametersFromParameterDataRow(parameterDataRow));
-      
-      //new parameters write
-  //    Parameter[] params = createParametersFromParameterDataRow(parameterDataRow);
-      
-//      Arrays.sort(params, new Comparator<Parameter> () {
-//        public int compare(Parameter o1, Parameter o2) {
-//         return o1.getName().compareTo(o2.getName()); 
-//        }
-//      });
       
       out.writeInt(parameters.length);
       for(Parameter param : parameters){
@@ -160,8 +144,6 @@ public class TableCacheKey implements Serializable
       }
       
       out.writeObject(extraCacheKey);
-//      out.writeObject(cdaSettingsId);//information only, not used in hash/equals
-//      out.writeObject(dataAccessId);//information only, not used in hash/equals
     }
     
     /**
@@ -202,12 +184,7 @@ public class TableCacheKey implements Serializable
       if(connectionHash != that.connectionHash){
         return false;
       }
-      if(parameters != null ?  
-          !Arrays.equals(parameters,that.parameters) :
-          that.parameters != null)
-//      
-//      if (parameterDataRow != null ? !Arrays.equals(createParametersFromParameterDataRow(parameterDataRow),createParametersFromParameterDataRow(that.parameterDataRow)) 
-//                                     : that.parameterDataRow != null)
+      if(parameters != null ? !Arrays.equals(parameters,that.parameters) : that.parameters != null)
       {
         return false;
       }
@@ -229,19 +206,19 @@ public class TableCacheKey implements Serializable
     {
       int result = connectionHash;
       result = 31 * result + (query != null ? query.hashCode() : 0);
-      //result = 31 * result + (parameterDataRow != null ? Arrays.hashCode(createParametersFromParameterDataRow(parameterDataRow)) : 0);
       result = 31 * result + (parameters != null ? Arrays.hashCode(parameters) : 0);
       result = 31 * result + (extraCacheKey != null ? extraCacheKey.hashCode() : 0);
       return result;
     }
     
-//    public String getDataAccessId(){
-//      return this.dataAccessId;
-//    }
-//    
-//    public String getCdaSettingsId(){
-//      return this.cdaSettingsId;
-//    }
+    @Override
+    public String toString(){
+      return 
+          TableCacheKey.class.getName() + " [" + hashCode() + "]\n" +
+          "\tConnectionHash:[" + getConnectionHash() + "]\n" +
+          "\tQuery:[" + getQuery() + "]\n" +
+          "\tParameters: [" + StringUtils.join(getParameters(), ", ") + "]\n";
+    }
     
     /**
      * for serialization

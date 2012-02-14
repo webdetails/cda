@@ -311,8 +311,9 @@ public class CacheMonitorHandler extends JsonCallHandler
       }
       
       CacheElementInfo cacheInfo = cdaCache.getElementInfo(key);
-      results.put(cacheInfo.toJson());
-       
+      if(cacheInfo != null){
+        results.put(cacheInfo.toJson());
+      }
     }
     
     JSONObject result = new JSONObject();
