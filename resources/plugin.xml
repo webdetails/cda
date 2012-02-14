@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin title="Pentaho Community Data Access">
+<plugin title="cda">
 
   <lifecycle-listener class="pt.webdetails.cda.CdaLifecycleListener"/>
   <static-paths>
