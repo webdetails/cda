@@ -29,6 +29,8 @@ import pt.webdetails.cda.utils.PluginHibernateUtil;
 public abstract class Query implements Serializable
 {
 
+  private static final long serialVersionUID = 1L;
+
   private long id;
   private String cdaFile;
   private String dataAccessId;
