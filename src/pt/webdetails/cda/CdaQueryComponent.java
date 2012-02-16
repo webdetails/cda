@@ -166,12 +166,11 @@ public class CdaQueryComponent {
       }
     }
 
+      // TODO: Support binary outputs if outputtype not equals resultset
     if (queryOptions.getOutputType().equals("resultset")) {
       TableModel tableModel = cdaSettings.getDataAccess(queryOptions.getDataAccessId()).doQuery(queryOptions);
       resultSet = convertTableToResultSet(tableModel);
-    } else {
-      // TODO: Support binary outputs
-    }
+    } 
     
     return true;
   }

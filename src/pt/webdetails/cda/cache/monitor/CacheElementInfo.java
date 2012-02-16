@@ -109,4 +109,13 @@ public class CacheElementInfo {
     return queryInfo;
   }
   
+  @Override
+  public String toString(){
+    try {
+      return toJson().toString();
+    } catch (Exception e) {
+      return super.toString();
+    }
+  }
+  
 }

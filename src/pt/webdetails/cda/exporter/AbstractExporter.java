@@ -26,6 +26,10 @@ public abstract class AbstractExporter implements Exporter
     {
       return "String";
     }
+    else if (columnClass.equals(Boolean.class))
+    {
+      return "Boolean";
+    }
     else if (columnClass.equals(Integer.class) || columnClass.equals(Short.class) || columnClass.equals(Byte.class))
     {
       return "Integer";
@@ -45,7 +49,7 @@ public abstract class AbstractExporter implements Exporter
     }
     else{
 
-      throw new ExporterException("Unknown class: " + columnClass.toString(), null);
+      throw new ExporterException("CDA exporter doesn't know how to handle: " + columnClass.toString(), null);
 
     }
 

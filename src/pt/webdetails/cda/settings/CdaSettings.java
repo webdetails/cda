@@ -99,7 +99,7 @@ public class CdaSettings {
    * @throws UnsupportedDataAccessException
    */
   public CdaSettings(final String id,
-          final ResourceKey key) throws UnsupportedConnectionException, UnsupportedDataAccessException {
+          final ResourceKey key) {
 
     this.contextKey = key;
     this.id = id;
@@ -114,7 +114,7 @@ public class CdaSettings {
 
   }
   
-  public CdaSettings(final String id, final ResourceKey key, boolean garbage) throws UnsupportedConnectionException, UnsupportedDataAccessException {
+  public CdaSettings(final String id, final ResourceKey key, boolean garbage) {
     this.contextKey = key;
     this.id = id;
 

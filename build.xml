@@ -201,7 +201,7 @@
 
     <!-- create the version file -->
     <echo file="${stage.dir}/${plugin.name}/VERSION.txt">${distribution.version}</echo>
-
+	<echo file="${stage.dir}/${plugin.name}/version.xml" message="&lt;version>${distribution.version}&lt;/version>"/>		   
 
     <replace file="${stage.dir}/${plugin.name}/cachemanager/cache.html" token="@@VERSION@@" value="${distribution.version}"/> 
 
@@ -229,7 +229,7 @@
     <replace file="${samples.stage.dir}/bi-developers/${plugin.name}/template.html" token="@@VERSION@@" value="${distribution.version}"/> 
 
     <zip zipfile="${dist.dir}/${plugin.samples.zipfile}"
-         basedir="${samples.stage.dir}"
+         basedir="${samples.stage.dir}/bi-developers"
          includes="**/*"
          excludes="**/Thumbs.db"
          />
@@ -254,8 +254,8 @@
     </copy>
 
     <!-- Copy samples -->
-    <copy todir="${plugin.local.install.solutions.dir}/">
-      <fileset dir="${samples.stage.dir}/">
+    <copy todir="${plugin.local.install.solutions.dir}/plugin-samples">
+      <fileset dir="${samples.stage.dir}/bi-developers/">
         <include name="**/*" />
       </fileset>
     </copy>
