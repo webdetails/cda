@@ -50,7 +50,7 @@ public abstract class AbstractDataAccess implements DataAccess
   private String id;
   private String name;
   private DataAccessEnums.ACCESS_TYPE access = DataAccessEnums.ACCESS_TYPE.PUBLIC;
-  private boolean useCache = false;
+  private boolean cacheEnabled = false;
   private int cacheDuration = 3600;
   private ArrayList<Parameter> parameters;
   private HashMap<Integer, OutputMode> outputMode;
@@ -133,7 +133,7 @@ public abstract class AbstractDataAccess implements DataAccess
 
     if (element.attributeValue("cache") != null && element.attributeValue("cache").equals("true"))
     {
-      useCache = true;
+      cacheEnabled = true;
     }
 
     if (element.attribute("cacheDuration") != null && !element.attribute("cacheDuration").toString().equals(""))
@@ -367,10 +367,20 @@ public abstract class AbstractDataAccess implements DataAccess
     return access;
   }
 
-
+  /**
+   * @deprecated use {@link #isCacheEnabled()} instead
+   */
   public boolean isCache()
   {
-    return useCache;
+    return cacheEnabled;
+  }
+  
+  public boolean isCacheEnabled(){
+    return cacheEnabled;
+  }
+  
+  public void setCacheEnabled(boolean enabled){
+    cacheEnabled = enabled;
   }
 
 

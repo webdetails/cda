@@ -140,7 +140,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
         throw new QueryException("Unable to get a Connection for this dataAccess ", e);
       }
 
-      if (isCache())
+      if (isCacheEnabled())
       {
         try
         {
@@ -180,7 +180,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     }
 
     // put the copy into the cache ...
-    if (isCache())
+    if (isCacheEnabled())
     {
       ExtraCacheInfo cInfo = new ExtraCacheInfo(this.getCdaSettings().getId(), queryOptions.getDataAccessId(), queryTime, tableModelCopy);
       getCdaCache().putTableModel(key, tableModelCopy, getCacheDuration(), cInfo);
