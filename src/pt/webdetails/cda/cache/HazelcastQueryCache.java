@@ -95,6 +95,8 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
   
   public void putTableModel(TableCacheKey key, TableModel table, int ttlSec, ExtraCacheInfo info) {
     cache.put(key, table);
+    info.setEntryTime(System.currentTimeMillis());//TODO: distributed alternative?
+    info.setTimeToLive(ttlSec*1000);
     cacheStats.put(key, info);
   }
 
@@ -109,7 +111,7 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
       if(info != null)
       {
         //per instance ttl not supported by hazelcast, need to check manually
-        if(info.getTimeToLive() > 0 && info.getTimeToLive() + info.getEntryTime() > System.currentTimeMillis())
+        if(info.getTimeToLive() > 0 && (info.getTimeToLive() + info.getEntryTime()) > System.currentTimeMillis())
         {
           cache.remove(key);
           logger.info("Cache element expired, removed from cache.");
@@ -192,7 +194,6 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
   
   public Iterable<TableCacheKey> getKeys(String cdaSettingsId, String dataAccessId)
   {
-    //TODO: this approach hangs indefinetely when entries are not owned by CDA's instance
     return cacheStats.keySet(new SqlPredicate("cdaSettingsId = " + cdaSettingsId + " AND dataAccessId = " + dataAccessId));   
   }
   
