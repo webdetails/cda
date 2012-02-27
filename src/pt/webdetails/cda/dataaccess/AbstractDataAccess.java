@@ -388,6 +388,10 @@ public abstract class AbstractDataAccess implements DataAccess
   {
     return cacheDuration;
   }
+  
+  public void setCacheDuration(int cacheDuration) {
+    this.cacheDuration = cacheDuration;
+  }
 
 
   public CdaSettings getCdaSettings()
