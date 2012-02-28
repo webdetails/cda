@@ -1,0 +1,5 @@
+bin/
+lib/
+dist/
+override.properties
+.DS_Store
