@@ -53,16 +53,8 @@ public class EHCacheQueryCache implements IQueryCache {
       return table;
     }
 
-    public void setTable(TableModel table) {
-      this.table = table;
-    }
-
     public ExtraCacheInfo getInfo() {
       return info;
-    }
-
-    public void setInfo(ExtraCacheInfo info) {
-      this.info = info;
     }
     
     private void writeObject(ObjectOutputStream out) throws IOException {

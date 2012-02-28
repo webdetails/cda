@@ -86,7 +86,7 @@ refreshParams = function(id) {
     for (param in data.resultset) {
       placeholder.append('<div class="param span-8 last"><div class="span-4">'+data.resultset[param][0]+
         ':&nbsp;</div><div class="cdaInputWrapper span-4 last"><input class="cdaButton cdaButtonShort" id="'+data.resultset[param][0]+
-        '" value="'+data.resultset[param][2]+((data.resultset[param][4] == 'private')? ' readonly="readonly"' : '')+ '"><div class="helpButton">?</div></div></div>');
+        '" value="'+data.resultset[param][2]+'"' + ((data.resultset[param][4] == 'private')? ' readonly="readonly"' : '')+ '"><div class="helpButton">?</div></div></div>');
     }
     placeholder.find("div.helpButton").click(helpPopup).hide();
     placeholder.find("input").focus(inputFocus).blur(inputBlur);

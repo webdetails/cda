@@ -1,5 +1,7 @@
-bin/
-lib/
+build/
 dist/
-override.properties
+/bin
+/lib
+nbproject/private/
 .DS_Store
+/override.properties
