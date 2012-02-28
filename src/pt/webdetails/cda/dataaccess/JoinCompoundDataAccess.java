@@ -218,6 +218,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   private String getInjectorStepXmlString(String name, TableModel t)
   {
     StringBuilder xml = new StringBuilder("<step><name>");
+    Class columnClass;
     xml.append(name).append("</name><type>Injector</type>");
 
     // If we have metadata information, put it here
@@ -227,9 +228,20 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       xml.append("<fields>");
       for (int i = 0; i < t.getColumnCount(); i++)
       {
+        /* The proper way to get the column class is from t.getColumnClass().
+         * However, this always returns Object when the column at hand is a
+         * Calculated Column -- and we have no idea what to do with Objects.
+         * Therefore, we try to infer the correct type from the getClass() of
+         * the chosen column, first row, as that can't be worse than trying
+         * to deal with Object.
+         */
+        columnClass = t.getColumnClass(i);
+        if (columnClass.equals(Object.class) && t.getRowCount() > 0){
+          columnClass = t.getValueAt(0, i).getClass();
+        }
         xml.append("<field>");
         xml.append("<name>" + t.getColumnName(i) + "</name>");
-        xml.append("<type>" + getKettleTypeFromColumnClass(t.getColumnClass(i)) + "</type>");
+        xml.append("<type>" + getKettleTypeFromColumnClass(columnClass) + "</type>");
         xml.append("<length>-1</length><precision>-1</precision></field>");
       }
       xml.append("</fields>");
