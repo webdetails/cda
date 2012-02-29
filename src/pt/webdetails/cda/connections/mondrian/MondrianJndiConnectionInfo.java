@@ -10,6 +10,12 @@ public class MondrianJndiConnectionInfo extends pt.webdetails.cda.connections.ol
   private String mondrianRole;
 
 
+  public MondrianJndiConnectionInfo(String jndi, String catalog, String cube) {
+   super(null, jndi);
+  setCatalog(catalog);
+  setCube(cube);
+  }
+  
   public MondrianJndiConnectionInfo(final Element connection)
   {
     super(connection);

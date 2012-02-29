@@ -30,7 +30,7 @@
         <resultSet type="result-set" mapping="rule-result"/> 
       </action-outputs>
       <component-definition> 
-        <file>bi-developers/cda/cdafiles/sql-jndi.cda</file>  
+        <file>plugin-samples/cda/cdafiles/sql-jndi.cda</file>  
         <dataAccessId>1</dataAccessId>
       </component-definition> 
     </action-definition>

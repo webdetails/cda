@@ -18,13 +18,12 @@
 			rev="${dependency.bi-platform.revision}" changing="true">
 		</dependency>
 		<dependency org="pentaho" name="pentaho-bi-platform-plugin-services"
-			rev="${dependency.bi-platform.revision}" changing="true"/>
+			rev="${dependency.bi-platform.revision}" transitive="false" changing="true"/>
 		<dependency org="pentaho" name="pentaho-bi-platform-plugin-actions"
-			rev="${dependency.bi-platform.revision}" changing="true"/>
-		<exclude module="ehcache"/>  <!-- Comment this for CDA with 3.6.0 dependencies -->
+			rev="${dependency.bi-platform.revision}" transitive="false" changing="true"/>
+    <dependency org="com.hazelcast" name="hazelcast" transitive="false" rev="1.9.4.6" />
 
-
-
+    <exclude module="ehcache"/>  <!-- Comment this for CDA with 3.6.0 dependencies -->
 	</dependencies>
 
 </ivy-module>

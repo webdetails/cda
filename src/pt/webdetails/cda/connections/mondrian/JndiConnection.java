@@ -40,7 +40,8 @@ public class JndiConnection extends AbstractMondrianConnection implements Evalua
   {
   }
 
-  public JndiConnection(MondrianJndiConnectionInfo info){
+  public JndiConnection(String id, MondrianJndiConnectionInfo info){
+    super(id);
     connectionInfo = info;
   }
 
