@@ -77,9 +77,8 @@
   <tstamp/>
 
   <!-- Build the project.revision property -->
-  <condition property="distribution.version" value="${project.stage}-${DSTAMP}" else="${project.stage}-${project.version}">
-    <equals arg1="${project.version}" arg2="SNAPSHOT"/>
-  </condition>
+  <property name="distribution.version" value="${project.stage}-${project.version}"/>
+
 
   <echo>distribution.version = ${distribution.version}</echo>
 
@@ -155,8 +154,10 @@
     </copy>
 
     <!-- create the version file -->
-    <echo file="${stage.dir}/${plugin.name}/VERSION.txt">${distribution.version}</echo>
-	<echo file="${stage.dir}/${plugin.name}/version.xml" message="&lt;version branch='TRUNK'>${distribution.version}&lt;/version>"/>		   
+	<tstamp/>			
+	<property name="sequential.build.id" value="manual-${DSTAMP}"/>
+
+	<echo file="${stage.dir}/${plugin.name}/version.xml" message="&lt;version branch='TRUNK'  buildId='${sequential.build.id}'>${distribution.version}&lt;/version>"/>		   
 
     <replace file="${stage.dir}/${plugin.name}/cachemanager/cache.html" token="@@VERSION@@" value="${distribution.version}"/> 
 
