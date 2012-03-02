@@ -15,6 +15,10 @@ public class OlapJndiConnectionInfo extends pt.webdetails.cda.connections.JndiCo
 {
   private String roleField;
 
+  public OlapJndiConnectionInfo(final String roleFiled, String jndi) {
+    super(jndi, null, null, null, null);
+  
+  }
   public OlapJndiConnectionInfo(final Element connection) {
     
     super(connection);
