@@ -49,6 +49,31 @@ public class MdxDataAccess extends PREDataAccess
   private BANDED_MODE bandedMode = BANDED_MODE.CLASSIC;
 
 
+  /**
+   * 
+   * @param id
+   * @param name
+   * @param connectionId
+   * @param query
+   */
+  public MdxDataAccess(String id, String name, String connectionId, String query)
+  {
+    super(id, name, connectionId, query);
+    try
+    {
+      String _mode = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.BandedMDXMode");
+      if (_mode != null)
+      {
+        bandedMode = BANDED_MODE.valueOf(_mode);
+      }
+    }
+    catch (Exception ex)
+    {
+      bandedMode =  BANDED_MODE.COMPACT;
+    }
+  }
+
+
   public MdxDataAccess(final Element element)
   {
     super(element);
@@ -124,9 +149,12 @@ public class MdxDataAccess extends PREDataAccess
     else
     {
       mdxDataFactory.setCubeFileProvider(new PentahoCubeFileProvider(mondrianConnectionInfo.getCatalog()));
-      try{
+      try
+      {
         mdxDataFactory.setMondrianConnectionProvider((MondrianConnectionProvider) PentahoSystem.getObjectFactory().get(PentahoMondrianConnectionProvider.class, "MondrianConnectionProvider", null));
-      } catch(ObjectFactoryException e){//couldn't get object
+      }
+      catch (ObjectFactoryException e)
+      {//couldn't get object
         mdxDataFactory.setMondrianConnectionProvider(new PentahoMondrianConnectionProvider());
       }
     }
@@ -168,7 +196,7 @@ public class MdxDataAccess extends PREDataAccess
 //    BandedMDXDataFactory df = (BandedMDXDataFactory) tm;
 //    TableModel t = new CompactBandedMDXTableModel(df. (df., rowLimit)
 //    }
-     
+
     return tm;
   }
 
@@ -227,15 +255,20 @@ public class MdxDataAccess extends PREDataAccess
       return true;
     }
 
-    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException{
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
       this.bandedMode = (BANDED_MODE) in.readObject();
       this.roles = (String) in.readObject();
     }
-    
-    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+
+
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException
+    {
       out.writeObject(this.bandedMode);
       out.writeObject(this.roles);
     }
+
 
     @Override
     public int hashCode()
@@ -255,28 +288,30 @@ public class MdxDataAccess extends PREDataAccess
     properties.add(new PropertyDescriptor("bandedMode", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
   }
-  
+
   //treat special cases: allow string[]
+
   @Override
   protected IDataSourceQuery performRawQuery(final ParameterDataRow parameterDataRow) throws QueryException
   {
     final String MDX_MULTI_SEPARATOR = ",";
-    
+
     String[] columnNames = parameterDataRow.getColumnNames();
     Object[] values = new Object[columnNames.length];
-    
-    for(int i=0; i<columnNames.length;i++){
+
+    for (int i = 0; i < columnNames.length; i++)
+    {
       String colName = columnNames[i];
       Object value = parameterDataRow.get(colName);
-      if(value != null && value.getClass().isArray()){
+      if (value != null && value.getClass().isArray())
+      {
         //translate value
-        value = StringUtils.join( (Object[]) value, MDX_MULTI_SEPARATOR);
+        value = StringUtils.join((Object[]) value, MDX_MULTI_SEPARATOR);
       }
       values[i] = value;
     }
-    
-    return super.performRawQuery(new ParameterDataRow(columnNames, values));
-  
-  }
 
+    return super.performRawQuery(new ParameterDataRow(columnNames, values));
+
+  }
 }

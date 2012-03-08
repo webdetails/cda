@@ -74,35 +74,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
   protected TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException
   {
-    // Get parameters from definition and apply their values
-    //TODO: use queryOptions' parameters instead of copying?
-    final List<Parameter> parameters = new ArrayList<Parameter>(getParameters().size());
-    for(Parameter param : getParameters())
-    {
-      parameters.add(new Parameter(param));
-    }
-
-
-    for (final Parameter parameter : parameters)
-    {
-      final Parameter parameterPassed = queryOptions.getParameter(parameter.getName());
-      if (parameter.getAccess().equals(Parameter.Access.PUBLIC) && parameterPassed != null)
-      {
-        try
-        {
-          parameterPassed.inheritDefaults(parameter);
-          parameter.setValue(parameterPassed.getValue());
-        }
-        catch (InvalidParameterException e){
-          throw new QueryException("Error parsing parameters ", e);
-        } 
-      }
-      else
-      {
-        parameter.setValue(parameter.getDefaultValue());
-      }
-    }
-
+    final List<Parameter> parameters = getFilledParameters(queryOptions); 
 
     final ParameterDataRow parameterDataRow;
     try
@@ -121,31 +93,14 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     Long queryTime = null;
     try
     {
-      try
-      {
-        final Connection connection;
-        if (getConnectionType() == ConnectionCatalog.ConnectionType.NONE)
-        {
-          connection = new DummyConnection();
-        }
-        else
-        {
-          connection = getCdaSettings().getConnection(getConnectionId());
-        }
-        key = new TableCacheKey(connection, getQuery(), parameters, getExtraCacheKey());
-      }
-      catch (UnknownConnectionException e)
-      {
-        // I'm sure I'll never be here
-        throw new QueryException("Unable to get a Connection for this dataAccess ", e);
-      }
+      key = createCacheKey(parameters);
 
-      if (isCache())
+      if (isCacheEnabled() && !queryOptions.isCacheBypass())
       {
         try
         {
           final TableModel cachedTableModel = getCdaCache().getTableModel(key);
-          if(cachedTableModel != null && !queryOptions.isCacheBypass())
+          if(cachedTableModel != null)
           {
             logger.debug("Found table in cache, returning.");
             return cachedTableModel;
@@ -166,8 +121,6 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
       queryTime = logIfDurationAboveThreshold(beginTime, getId(), getQuery(), parameters);
 
       // Copy the tableModel and cache it
-      // Handle the TableModel
-
       tableModelCopy = TableModelUtils.getInstance().copyTableModel(this, tableModel);
     }
     catch (Exception e)
@@ -180,19 +133,10 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     }
 
     // put the copy into the cache ...
-    if (isCache())
+    if (isCacheEnabled())
     {
       ExtraCacheInfo cInfo = new ExtraCacheInfo(this.getCdaSettings().getId(), queryOptions.getDataAccessId(), queryTime, tableModelCopy);
       getCdaCache().putTableModel(key, tableModelCopy, getCacheDuration(), cInfo);
-      
-//      final net.sf.ehcache.Element storeElement = new net.sf.ehcache.Element(key, tableModelCopy);
-//      storeElement.setTimeToLive(getCacheDuration());
-//      cache.put(storeElement);
-//      cache.flush();
-      
-//      // Print cache status size
-//      logger.debug("Cache status: " + cache.getMemoryStoreSize() + " in memory, " + 
-//              cache.getDiskStoreSize() + " in disk");
     }
 
     // and finally return the copy.
@@ -200,8 +144,66 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
   }
 
 
+  private List<Parameter> getFilledParameters(final QueryOptions queryOptions) throws QueryException {
+
+    // Get parameters from definition and apply their values
+    //TODO: use queryOptions' parameters instead of copying?
+    final List<Parameter> parameters = new ArrayList<Parameter>(getParameters().size());
+    for(Parameter param : getParameters())
+    {
+      parameters.add(new Parameter(param));
+    }
+
+
+    for (final Parameter parameter : parameters)
+    {
+      final Parameter parameterPassed = queryOptions.getParameter(parameter.getName());
+      try 
+      {
+        if (parameter.getAccess().equals(Parameter.Access.PUBLIC) && parameterPassed != null) {
+
+          //complete passed parameter and get its value
+          parameterPassed.inheritDefaults(parameter);
+          parameter.setValue(parameterPassed.getValue());
+
+        } else {
+          //just force evaluation of default value
+          parameter.setValue(parameter.getValue());
+        }
+      } 
+      catch (InvalidParameterException e) {
+        throw new QueryException("Error parsing parameters ", e);
+      }
+    }
+    return parameters;
+  }
+
+
+  private TableCacheKey createCacheKey(final List<Parameter> parameters) throws QueryException {
+    try
+    {
+      final Connection connection;
+      if (getConnectionType() == ConnectionCatalog.ConnectionType.NONE)
+      {
+        connection = new DummyConnection();
+      }
+      else
+      {
+        connection = getCdaSettings().getConnection(getConnectionId());
+      }
+      return new TableCacheKey(connection, getQuery(), parameters, getExtraCacheKey());
+    }
+    catch (UnknownConnectionException e)
+    {
+      // I'm sure I'll never be here
+      throw new QueryException("Unable to get a Connection for this dataAccess ", e);
+    }
+  }
+
+
   /**
    * @param beginTime When query execution began.
+   * @return duration (in seconds)
    */
   private long logIfDurationAboveThreshold(final long beginTime, final String queryId, final String query, final List<Parameter> parameters)
   {
