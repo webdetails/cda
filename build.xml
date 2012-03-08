@@ -214,7 +214,7 @@
          excludes="**/Thumbs.db"/>
          
          
-	<echo file="${dist.dir}/marketplace.xml">&lt;version branch="RELEASE">
+	<echo file="${dist.dir}/marketplace.xml">&lt;version branch="STABLE">
 		&lt;version>${distribution.version}&lt;/version>
 		&lt;name>Stable&lt;/name>
 		&lt;downloadUrl>http://ci.analytical-labs.com/job/Webdetails-CDA-Release/lastSuccessfulBuild/artifact/dist/cda-${distribution.version}.zip&lt;/downloadUrl>
