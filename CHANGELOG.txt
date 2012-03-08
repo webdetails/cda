@@ -1,3 +1,20 @@
+12.03.08
+
+Build now outputs a marketplace xml to be merged into marketplace full plugin list
+Added french language to Messages.properties for Previewer and Editor
+Added branch info to version.xml
+Fix an issue where calculated columns always made joins break.
+Added setCacheDuration method
+bug with private formula parameters in new cache.
+some refactoring to keep queryDataSource sane.
+previewer issue with private params.
+individual time to live on hazelcast. 
+transitive attributes on ivy
+Added AbstractDataAccess.isCacheEnabled/setCacheEnabled.
+Changed icons.
+HazelcastQueryCache back to CDA.
+
+
 12.02.16
 
 Changed samples to plugin-samples. Made plugin compliant with Pentaho Marketplace.
