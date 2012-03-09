@@ -1,9 +1,8 @@
 12.03.08
-
+[REDMINE #346]Fix an issue where calculated columns always made joins break.
 Build now outputs a marketplace xml to be merged into marketplace full plugin list
 Added french language to Messages.properties for Previewer and Editor
 Added branch info to version.xml
-Fix an issue where calculated columns always made joins break.
 Added setCacheDuration method
 bug with private formula parameters in new cache.
 some refactoring to keep queryDataSource sane.
