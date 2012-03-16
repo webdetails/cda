@@ -111,7 +111,7 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
       if(info != null)
       {
         //per instance ttl not supported by hazelcast, need to check manually
-        if(info.getTimeToLive() > 0 && (info.getTimeToLive() + info.getEntryTime()) > System.currentTimeMillis())
+        if(info.getTimeToLive() > 0 && (info.getTimeToLive() + info.getEntryTime()) < System.currentTimeMillis())
         {
           cache.remove(key);
           logger.info("Cache element expired, removed from cache.");
