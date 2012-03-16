@@ -117,7 +117,10 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
           logger.info("Cache element expired, removed from cache.");
           return null;
         }
-        else return tm;
+        else {
+          logger.info("Table found in cache. Returning.");
+          return tm;
+        }
       }     
       else 
       {//no stats found; may be out of time to live, best to remove
