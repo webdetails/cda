@@ -241,7 +241,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
         if (columnClass.equals(Object.class) && t.getRowCount() > 0){
           for(int j = 0; j< t.getRowCount() && j < MAX_ROWS_VALUE_TYPE_SEARCH;j++){
             if(t.getValueAt(j, i) != null){
-              columnClass = t.getValueAt(0, i).getClass();
+              columnClass = t.getValueAt(j, i).getClass();
               break;
             }
           }
