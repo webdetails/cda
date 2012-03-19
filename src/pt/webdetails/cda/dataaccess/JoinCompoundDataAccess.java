@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.di.core.util.StringUtil;
+import org.pentaho.reporting.libraries.base.util.StringUtils;
 
 import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.query.QueryOptions;
@@ -48,8 +49,8 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   private static final long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
   private static TimeUnit DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT = TimeUnit.SECONDS;
   
-  private static int MAX_ROWS_VALUE_TYPE_SEARCH = 500;//max nbr of rows to search for value
-
+  private static int DEFAULT_MAX_ROWS_VALUE_TYPE_SEARCH = 500;//max nbr of rows to search for value
+  public static final String MAX_ROWS_VALUE_TYPE_SEARCH_PROPERTY = "pt.webdetails.cda.TypeSearchMaxRows";
 
   public JoinCompoundDataAccess()
   {
@@ -223,6 +224,8 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     Class<?> columnClass;
     xml.append(name).append("</name><type>Injector</type>");
 
+    int maxRowsTypeSearch = getMaxTypeSearchRowCount(t);
+    
     // If we have metadata information, put it here
     if (t.getColumnCount() > 0)
     {
@@ -239,7 +242,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
          */
         columnClass = t.getColumnClass(i);
         if (columnClass.equals(Object.class) && t.getRowCount() > 0){
-          for(int j = 0; j< t.getRowCount() && j < MAX_ROWS_VALUE_TYPE_SEARCH;j++){
+          for(int j = 0; j < maxRowsTypeSearch; j++){
             if(t.getValueAt(j, i) != null){
               columnClass = t.getValueAt(j, i).getClass();
               break;
@@ -258,6 +261,26 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     xml.append("</step>");
     return xml.toString();
 
+  }
+
+
+  private int getMaxTypeSearchRowCount(TableModel t) {
+    int maxRowsTypeSearch = DEFAULT_MAX_ROWS_VALUE_TYPE_SEARCH;
+    String maxRowsTypeSearchProperty = CdaBoot.getInstance().getGlobalConfig().getConfigProperty(MAX_ROWS_VALUE_TYPE_SEARCH_PROPERTY);
+    if(!StringUtils.isEmpty(maxRowsTypeSearchProperty)){
+      try{
+        maxRowsTypeSearch = Integer.parseInt(maxRowsTypeSearchProperty);
+      }catch (NumberFormatException nfe){
+        logger.error(MAX_ROWS_VALUE_TYPE_SEARCH_PROPERTY + ":" + maxRowsTypeSearchProperty + " not a valid integer.");
+      }
+    }
+    if(maxRowsTypeSearch <= 0){
+      maxRowsTypeSearch = t.getRowCount();
+    }
+    else {
+      maxRowsTypeSearch = Math.min(maxRowsTypeSearch, t.getRowCount());
+    }
+    return maxRowsTypeSearch;
   }
 
   /*
