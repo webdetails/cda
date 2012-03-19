@@ -47,6 +47,8 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   private Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
   private static final long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
   private static TimeUnit DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT = TimeUnit.SECONDS;
+  
+  private static int MAX_ROWS_VALUE_TYPE_SEARCH = 500;//max nbr of rows to search for value
 
 
   public JoinCompoundDataAccess()
@@ -218,7 +220,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   private String getInjectorStepXmlString(String name, TableModel t)
   {
     StringBuilder xml = new StringBuilder("<step><name>");
-    Class columnClass;
+    Class<?> columnClass;
     xml.append(name).append("</name><type>Injector</type>");
 
     // If we have metadata information, put it here
@@ -237,7 +239,12 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
          */
         columnClass = t.getColumnClass(i);
         if (columnClass.equals(Object.class) && t.getRowCount() > 0){
-          columnClass = t.getValueAt(0, i).getClass();
+          for(int j = 0; j< t.getRowCount() && j < MAX_ROWS_VALUE_TYPE_SEARCH;j++){
+            if(t.getValueAt(j, i) != null){
+              columnClass = t.getValueAt(0, i).getClass();
+              break;
+            }
+          }
         }
         xml.append("<field>");
         xml.append("<name>" + t.getColumnName(i) + "</name>");
@@ -265,7 +272,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
    *  
    */
 
-  private String getKettleTypeFromColumnClass(Class clazz)
+  private String getKettleTypeFromColumnClass(Class<?> clazz)
   {
 
     if (clazz == String.class)
