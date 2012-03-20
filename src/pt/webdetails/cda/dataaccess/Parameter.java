@@ -206,7 +206,11 @@ public class Parameter implements java.io.Serializable {
         {
           throw new InvalidParameterException("Malformed formula expression", null);
         }
-      	return FormulaEvaluator.processFormula(formula);
+      	Object value = FormulaEvaluator.processFormula(formula);
+      	if(getType() == Type.STRING && !(value instanceof String)){
+      	  return getValueAsString(value);
+      	}
+      	else return value;
       }
       
       Type valueType = getType();
@@ -324,8 +328,8 @@ public class Parameter implements java.io.Serializable {
   {
     this.pattern = pattern;
   }
-
-  public String getStringValue() {
+  
+  private String getValueAsString(Object value){
     String separator = getSeparator();
     if(separator == null) separator = DEFAULT_ARRAY_SEPERATOR;
       
@@ -369,18 +373,6 @@ public class Parameter implements java.io.Serializable {
             strBuild.append('"');
           }
           return strBuild.toString();
-        case DATE_ARRAY:
-        case INTEGER_ARRAY:
-        case NUMERIC_ARRAY:
-          Object[] arr = (Object[]) value;
-           i = 0;
-           strBuild = new StringBuilder();
-          for (Object o : arr) {
-            if (i++ > 0) strBuild.append(separator);
-            if(o instanceof Date) strBuild.append(((Date)o).getTime());
-            else strBuild.append(o);
-          }
-          return strBuild.toString();
         case DATE:
           try {
             Date dt = (Date) getValue();
@@ -388,9 +380,29 @@ public class Parameter implements java.io.Serializable {
           } catch (InvalidParameterException e) {
             logger.error("Parameter of date type " + getName() + " does not yield date.", e);
           }
+          break;
+        case DATE_ARRAY:
+        case INTEGER_ARRAY:
+        case NUMERIC_ARRAY:
+        default://also handle whan we want a string and have an array
+          if(value instanceof Object[]){
+            Object[] arr = (Object[]) value;
+             i = 0;
+             strBuild = new StringBuilder();
+            for (Object o : arr) {
+              if (i++ > 0) strBuild.append(separator);
+              if(o instanceof Date) strBuild.append(((Date)o).getTime());
+              else strBuild.append(o);
+            }
+            return strBuild.toString();
+          }//else toString
       }
     }
     return value.toString();
+  }
+
+  public String getStringValue() {
+    return getValueAsString(this.value);
   }
 
   public void setStringValue(final String stringValue)
