@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import pt.webdetails.cda.CdaBoot;
 
 import pt.webdetails.cda.utils.FormulaEvaluator;
 import pt.webdetails.cda.utils.Util;
@@ -43,7 +44,12 @@ public class Parameter implements java.io.Serializable {
   private Object value;
   private Access access = Access.PUBLIC;
   
-  private String separator = DEFAULT_ARRAY_SEPERATOR;
+
+  
+  private String sep = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.dataaccess.parameterarray.Separator");
+  private String separator = sep == null ? DEFAULT_ARRAY_SEPERATOR : sep;
+
+  
   
   public enum Access {
   	PRIVATE("private"),
