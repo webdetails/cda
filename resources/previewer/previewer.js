@@ -19,41 +19,47 @@ refreshTable = function(id){
     // When we change query, we must drop the table and parameters, and rebuild both
     lastQuery = id;
     refreshParams(id);
-    $.getJSON("doQuery",{path:filename, dataAccessId: id},function(data){
-      var tableContents = data.resultset;
-      var columnNames = [];
-      for (column in data.metadata) {
-        columnNames.push({"sTitle": data.metadata[column].colName});
-      }
-      $('#previewerTable').empty();
-      $('#previewerTable').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="contents"></table>' );
-      if (oLanguage == 'undefined')
-        tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames});
-      else
-        tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames,"oLanguage":oLanguage});
-    });
+    $.getJSON("doQuery",{path:filename, dataAccessId: id},showTable);
   } else {
     // Same query, we need to get the present parameter values and rebuild the table
     var params = getParams();
     params.path = filename;
     params.dataAccessId = id;
     params.outputIndexId = $('#outputIndexId').val();
-    $.getJSON("doQuery",params,function(data){
-      var tableContents = data.resultset;
-      var columnNames = [];
-      for (column in data.metadata) {
-        columnNames.push({"sTitle": data.metadata[column].colName});
-      }
-      $('#previewerTable').empty();
-      $('#previewerTable').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="contents"></table>' );
-      if (oLanguage == 'undefined')
-        tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames});
-      else
-        tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames,"oLanguage":oLanguage});
-
-    });}
+    $.getJSON("doQuery",params, showTable);
+  }
 };
 
+showTable = function(data){
+  var tableContents = ignoreNullRows(data.resultset);
+  var columnNames = [];
+  for (column in data.metadata) {
+    columnNames.push({"sTitle": data.metadata[column].colName});
+  }
+  $('#previewerTable').empty();
+  $('#previewerTable').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="contents"></table>' );
+  if (oLanguage == 'undefined'){
+    tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames});
+  }
+  else {
+    tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames,"oLanguage":oLanguage});
+  }
+};
+
+ignoreNullRows = function(table){
+  var cleanTable = [];
+  if(table != null){
+    for(var i=0;i<table.length;i++){
+      if(table[i] != null){
+        cleanTable.push(table[i]);
+      }
+      else if(console && console.error){
+        console.error("row #" + i + " is null");
+      }
+    }
+  }
+  return cleanTable;
+};
 
 exportFunc = function(id){
   // Detect whether the was triggered by a refresh or a change in DataAccessId
