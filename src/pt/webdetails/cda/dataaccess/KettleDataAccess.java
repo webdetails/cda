@@ -3,6 +3,8 @@ package pt.webdetails.cda.dataaccess;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleDataFactory;
+import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
+
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.kettle.KettleConnection;
@@ -46,5 +48,12 @@ public class KettleDataAccess extends PREDataAccess
   public ConnectionType getConnectionType()
   {
     return ConnectionType.KETTLE;
+  }
+  
+  /**
+   * ContextKey is used to resolve the transformation file, and so must be stored in the cache key.
+   */
+  public ResourceKey getExtraCacheKey(){
+    return getCdaSettings().getContextKey();
   }
 }

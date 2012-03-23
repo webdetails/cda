@@ -217,7 +217,8 @@ public class TableCacheKey implements Serializable
           TableCacheKey.class.getName() + " [" + hashCode() + "]\n" +
           "\tConnectionHash:[" + getConnectionHash() + "]\n" +
           "\tQuery:[" + getQuery() + "]\n" +
-          "\tParameters: [" + StringUtils.join(getParameters(), ", ") + "]\n";
+          "\tParameters: [" + StringUtils.join(getParameters(), ", ") + "]\n" +
+          "\tExtra: [" + getExtraCacheKey() + "]\n";
     }
     
     /**
