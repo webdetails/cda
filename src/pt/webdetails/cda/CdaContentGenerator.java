@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
+import java.util.UUID;
 import javax.servlet.http.HttpServletResponse;
 
 
@@ -39,6 +40,7 @@ import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.utils.Util;
+import pt.webdetails.cpf.audit.CpfAuditHelper;
 
 @SuppressWarnings("unchecked")
 public class CdaContentGenerator extends BaseContentGenerator
@@ -215,7 +217,11 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   public void doQuery(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
-
+    
+    final long start = System.currentTimeMillis();        
+    UUID uuid = CpfAuditHelper.startAudit("doQuery", getObjectName(), this.userSession, this, pathParams);       
+    
+        
     final CdaEngine engine = CdaEngine.getInstance();
     final QueryOptions queryOptions = new QueryOptions();
 
@@ -285,6 +291,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
     // Finally, pass the query to the engine
     engine.doQuery(out, cdaSettings, queryOptions);
+    CpfAuditHelper.endAudit("doQuery", getObjectName(), this.userSession, this, start, uuid, System.currentTimeMillis());    
 
   }
 
