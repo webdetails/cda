@@ -219,7 +219,7 @@ public class CdaContentGenerator extends BaseContentGenerator
   {
     
     final long start = System.currentTimeMillis();        
-    UUID uuid = CpfAuditHelper.startAudit("doQuery", getObjectName(), this.userSession, this, pathParams);       
+    UUID uuid = CpfAuditHelper.startAudit(PLUGIN_NAME, "doQuery", getObjectName(), this.userSession, this, pathParams);       
     
         
     final CdaEngine engine = CdaEngine.getInstance();
@@ -291,7 +291,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
     // Finally, pass the query to the engine
     engine.doQuery(out, cdaSettings, queryOptions);
-    CpfAuditHelper.endAudit("doQuery", getObjectName(), this.userSession, this, start, uuid, System.currentTimeMillis());    
+    CpfAuditHelper.endAudit(PLUGIN_NAME,"doQuery", getObjectName(), this.userSession, this, start, uuid, System.currentTimeMillis());    
 
   }
 
