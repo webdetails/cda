@@ -1,3 +1,13 @@
+12.04.02
+Implemented [REDMINE 515] - Added auditing support for cda doQuery
+Fixed [REDMINE CDA100] previewer: survive null rows
+Fixed [REDMINE CDA269] KettleDataAccess: use contextKey as extraCacheKey to avoid cache collisions
+Added custom separator for arrays, defined on cda.properties
+force string return type if defined for a formula parameter
+Added TypeSearchMaxRows property
+Solved NPE getting column type from data 
+Hazelcast dependency moved to ivy
+
 12.03.08
 [REDMINE #346]Fix an issue where calculated columns always made joins break.
 Build now outputs a marketplace xml to be merged into marketplace full plugin list
