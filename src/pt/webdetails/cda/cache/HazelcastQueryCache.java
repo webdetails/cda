@@ -7,6 +7,9 @@ package pt.webdetails.cda.cache;
 import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 
 import javax.swing.table.TableModel;
 
@@ -28,6 +31,8 @@ import com.hazelcast.core.MapEntry;
 import com.hazelcast.impl.base.DataRecordEntry;
 import com.hazelcast.query.SqlPredicate;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * 
  * Hazelcast implementation of CDA query cache
@@ -37,17 +42,26 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
 
   private static final Log logger = LogFactory.getLog(HazelcastQueryCache.class);
   
-  public static final String PROPERTY_SUPER_CLIENT = "hazelcast.super.client";
   public static final String MAP_NAME = "cdaCache";
   public static final String AUX_MAP_NAME = "cdaCacheStats";
   
   private static final String PLUGIN_PATH = "system/" + CdaContentGenerator.PLUGIN_NAME + "/";
   private static final String CACHE_CFG_FILE_HAZELCAST = "hazelcast.xml";
   
+  //TODO:config
+  private static long getTimeout = 5;
+  private static long putTimeout = 5;
+  private static TimeUnit timeoutUnit = TimeUnit.SECONDS;
+  private static int maxTimeouts = 4;//max consecutive timeouts
+  
+  private static int timeoutsReached = 0;
+  
   //main cache (will hold actual values)
   private static IMap<TableCacheKey, TableModel> cache;
   //used for holding extra info 
   private static IMap<TableCacheKey, ExtraCacheInfo> cacheStats;
+  
+  private boolean active=true;
   
   
   public HazelcastQueryCache(){
@@ -57,6 +71,14 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
   private HazelcastQueryCache(String cfgFile, boolean superClient){
     super(Thread.currentThread().getContextClassLoader());
     init(cfgFile, true);
+  }
+  
+  private static int incrTimeouts(){
+    return ++timeoutsReached;
+  }
+  //no problem if unsynched
+  private static int resetTimeouts(){
+    return timeoutsReached=0;
   }
   
     
@@ -80,7 +102,6 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
     cache.addEntryListener(new LoggingEntryListener(cdaPluginClassLoader), false);
     
     logger.debug("Added entry listener");
-    
   }
   
   public void shutdownIfRunning()
@@ -92,27 +113,97 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
   }
   
   public void putTableModel(TableCacheKey key, TableModel table, int ttlSec, ExtraCacheInfo info) {
-    cache.put(key, table);
-    info.setEntryTime(System.currentTimeMillis());//TODO: distributed alternative?
-    info.setTimeToLive(ttlSec*1000);
-    cacheStats.put(key, info);
+
+    //cache.put(key, table);
+    TableModel put = putWithTimeout(key, table, cache);
+    if(put!= null){
+      info.setEntryTime(System.currentTimeMillis());//TODO: distributed alternative?
+      info.setTimeToLive(ttlSec*1000);
+      putWithTimeout(key, info, cacheStats);
+    }
+  }
+  
+  private <K,V> V getWithTimeout(K key, IMap<K,V> map){
+    if(!active) return null;
+    Future<V> future = map.getAsync(key);
+    try{
+      V result = future.get(getTimeout, timeoutUnit);
+      
+      return result;
+    }
+    catch(TimeoutException e){
+//      int nbrTimeouts = incrTimeouts();
+//      checkNbrTimeouts(nbrTimeouts);
+      logger.error("Timeout " + getTimeout + " " +  timeoutUnit + " expired fetching from " + map.getName());// + " (timeout#" + nbrTimeouts + ")" );
+    } catch (InterruptedException e) {
+      logger.error(e);
+    } catch (ExecutionException e) {
+      logger.error(e);
+    }
+    return null;
   }
 
+  private <K,V> V putWithTimeout(K key, V value, IMap<K,V> map){
+    if(!active) return null;
+    try{
+      Future<V> future = map.putAsync(key, value);
+      V result = future.get(putTimeout, TimeUnit.SECONDS);
+      return result;
+    }
+    catch(TimeoutException e){
+      int nbrTimeouts = incrTimeouts();
+      checkNbrTimeouts(nbrTimeouts);
+      logger.error("Timeout " + putTimeout + " " +  timeoutUnit + " expired inserting into " +map.getName());// + " (timeout#" + nbrTimeouts + ")" );
+    } catch (Exception e) {
+      logger.error(e);
+    }
+    return null;
+  }
+  
+  private void checkNbrTimeouts(int nbrTimeouts){
+    if(nbrTimeouts > 0 && nbrTimeouts % maxTimeouts == 0){
+      logger.error("Too many timeouts, disabling");
+      resetTimeouts();
+      active = false;
+      new Thread(new Runnable(){
+
+        @Override
+        public void run() {
+          try {
+            Thread.sleep(5000);
+          } catch (InterruptedException e) {
+            logger.error(e);
+          } catch (Exception e){
+            logger.error(e);
+          }
+          active = true;
+        }
+        
+      }).start();
+      
+//      cache.destroy();
+//      cacheStats.destroy();
+//      cache = Hazelcast.getMap(MAP_NAME);
+//      cacheStats = Hazelcast.getMap(AUX_MAP_NAME);
+    }
+  }
+  
   @Override
   public TableModel getTableModel(TableCacheKey key) {
     try
-    {
-      TableModel tm = cache.get(key);
+    {      
+      TableModel tm = getWithTimeout(key, cache);
+      
       if(tm == null) return null;
       
-      ExtraCacheInfo info = cacheStats.get(key);
+      ExtraCacheInfo info = getWithTimeout(key, cacheStats); // cacheStats.get(key);
       if(info != null)
       {
         //per instance ttl not supported by hazelcast, need to check manually
         if(info.getTimeToLive() > 0 && (info.getTimeToLive() + info.getEntryTime()) < System.currentTimeMillis())
         {
-          cache.remove(key);
-          logger.info("Cache element expired, removed from cache.");
+          logger.info("Cache element expired, removing from cache.");
+          cache.removeAsync(key);
           return null;
         }
         else {
@@ -123,8 +214,8 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
       else 
       {//no stats found; may be out of time to live, best to remove
         logger.error("Cache info not found! Removing element.");
-        cache.remove(key);
-        logger.info("element removed");
+        cache.removeAsync(key);
+        //logger.info("element removed");
         return null;
       }
     } 
@@ -158,8 +249,8 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
       if(e.getCause() instanceof IOException) 
       {//most likely a StreamCorruptedException
         logger.error("IO error while attempting to get key " + key + "(" + e.getCause().getMessage() + "), removing from cache!");
-        cache.remove(key);
-        logger.info("entry removed");
+        cache.removeAsync(key);
+//        logger.info("entry removed");
         return null;
       }
       else logger.error("Unexpected exception ", e);
@@ -200,7 +291,7 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
   
   @Override
   public ExtraCacheInfo getCacheEntryInfo(TableCacheKey key){
-    return cacheStats.get(key);
+    return  cacheStats.get(key);
   }
   
   /**
