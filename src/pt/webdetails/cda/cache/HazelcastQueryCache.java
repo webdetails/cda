@@ -74,12 +74,10 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
     
     SyncRemoveStatsEntryListener syncRemoveStats = new SyncRemoveStatsEntryListener( cdaPluginClassLoader );
     cache.removeEntryListener(syncRemoveStats);
-    //WARNING: setting includeValue to false will result in a premature key serialization
-    // that will make hazelcast fail if its classloader cannot resolve the key class
-    //This is fixed in hazelcast 2.0
-    cache.addEntryListener(syncRemoveStats, true);//false
-    //logging/debug, includes value
-    cache.addEntryListener(new LoggingEntryListener(cdaPluginClassLoader), true);
+
+    cache.addEntryListener(syncRemoveStats, false);
+    //logging/debug //TODO: depend on flag, 
+    cache.addEntryListener(new LoggingEntryListener(cdaPluginClassLoader), false);
     
     logger.debug("Added entry listener");
     
