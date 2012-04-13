@@ -3,8 +3,6 @@ package pt.webdetails.cda.dataaccess;
 import java.util.ArrayList;
 import javax.swing.table.TableModel;
 
-import org.pentaho.reporting.libraries.formula.FormulaContext;
-
 import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
@@ -22,50 +20,55 @@ import pt.webdetails.cda.xml.DomVisitor;
 public interface DataAccess
 {
 
-  public enum OutputMode
+  enum OutputMode
   {
 	  
     INCLUDE, EXCLUDE
   };
 
-  public String getId();
+  String getId();
 
-  public String getName();
+  String getName();
 
-  public String getType();
+  String getType();
 
-  public DataAccessEnums.ACCESS_TYPE getAccess();
+  DataAccessEnums.ACCESS_TYPE getAccess();
 
-  public boolean isCache();
-
-  public int getCacheDuration();
-
-  public CdaSettings getCdaSettings();
-
-  public void setCdaSettings(CdaSettings cdaSettings);
-
-  public TableModel doQuery(QueryOptions queryOptions) throws QueryException;
-
-  public ColumnDefinition getColumnDefinition(int idx);
-
-  public ArrayList<ColumnDefinition> getCalculatedColumns();
+  /**
+   * @deprecated use {@link #isCacheEnabled()}
+   */
+  boolean isCache();
   
-  public ArrayList<ColumnDefinition> getColumnDefinitions();;
-
-  public ArrayList<Integer> getOutputs();
+  boolean isCacheEnabled();
   
-  public ArrayList<Integer> getOutputs(int id);
+  int getCacheDuration();
 
-  public OutputMode getOutputMode();
-  
-  public OutputMode getOutputMode(int id);
+  CdaSettings getCdaSettings();
 
-  public TableModel listParameters(DiscoveryOptions discoveryOptions);
+  void setCdaSettings(CdaSettings cdaSettings);
 
-  public void storeDescriptor(DataAccessConnectionDescriptor descriptor);
+  TableModel doQuery(QueryOptions queryOptions) throws QueryException;
+
+  ColumnDefinition getColumnDefinition(int idx);
+
+  ArrayList<ColumnDefinition> getCalculatedColumns();
   
-  public void setQuery(String query);
+  ArrayList<ColumnDefinition> getColumnDefinitions();;
+
+  ArrayList<Integer> getOutputs();
   
-  public void accept(DomVisitor v, Element ele);
+  ArrayList<Integer> getOutputs(int id);
+
+  OutputMode getOutputMode();
+  
+  OutputMode getOutputMode(int id);
+
+  TableModel listParameters(DiscoveryOptions discoveryOptions);
+
+  void storeDescriptor(DataAccessConnectionDescriptor descriptor);
+  
+  void setQuery(String query);
+  
+  void accept(DomVisitor v, Element ele);
 
 }

@@ -17,7 +17,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-import pt.webdetails.cda.CdaBoot;
 
 import pt.webdetails.cda.utils.FormulaEvaluator;
 import pt.webdetails.cda.utils.Util;
@@ -34,7 +33,7 @@ public class Parameter implements java.io.Serializable {
 
   static Log logger = LogFactory.getLog(Parameter.class);
   
-  private static final long serialVersionUID = 2L;
+  private static final long serialVersionUID = 3L;
   
   final static String DEFAULT_ARRAY_SEPERATOR = ";";
 
@@ -44,13 +43,8 @@ public class Parameter implements java.io.Serializable {
   private String pattern = StringUtils.EMPTY;
   private Object value;
   private Access access = Access.PUBLIC;
-  
+  private String separator = DEFAULT_ARRAY_SEPERATOR;
 
-  
-  private String sep = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.dataaccess.parameterarray.Separator");
-  private String separator = sep == null ? DEFAULT_ARRAY_SEPERATOR : sep;
-
-  
   
   public enum Access {
   	PRIVATE("private"),
@@ -184,6 +178,7 @@ public class Parameter implements java.io.Serializable {
         p.attributeValue("pattern"),
         p.attributeValue("access")
     );
+    this.setSeparator(p.attributeValue("separator"));
   }
 
   public Parameter(final String name, final Object value)
@@ -336,7 +331,6 @@ public class Parameter implements java.io.Serializable {
   
   private String getValueAsString(Object value){
     String separator = getSeparator();
-    if(separator == null) separator = DEFAULT_ARRAY_SEPERATOR;
       
     if (value == null) {
       if (getDefaultValue() != null) return getDefaultValue().toString();
@@ -417,7 +411,7 @@ public class Parameter implements java.io.Serializable {
   	return this.access;
   }
   
-  public void setSeparator(String separator){
+  protected void setSeparator(String separator){
     this.separator = separator;
   }
   public String getSeparator(){
@@ -485,6 +479,7 @@ public class Parameter implements java.io.Serializable {
       this.setType((Type) in.readObject());
       //if(isDateType()) this.setPattern((String) in.readObject());
       this.setStringValue((String) in.readObject(), this.getType());
+      this.setSeparator((String) in.readObject());
     } catch (ClassNotFoundException e) {
       throw new IOException("Error casting read object.", e);
     }
@@ -498,6 +493,7 @@ public class Parameter implements java.io.Serializable {
     out.writeObject(this.getType());
    //if(isDateType()) out.writeObject(this.pattern);
     out.writeObject(this.getStringValue());
+    out.writeObject(this.getSeparator());
   }
 
   public void accept(DomVisitor xmlVisitor, Element daEle) {
