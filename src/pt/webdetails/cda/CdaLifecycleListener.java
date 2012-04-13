@@ -50,6 +50,6 @@ public class CdaLifecycleListener implements IPluginLifecycleListener
 
   public void unLoaded() throws PluginLifecycleException
   {
-    AbstractDataAccess.shutdowCache();
+//    AbstractDataAccess.shutdownCache();
   }
 }

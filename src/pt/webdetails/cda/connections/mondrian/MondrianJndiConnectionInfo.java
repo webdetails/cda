@@ -109,7 +109,7 @@ public class MondrianJndiConnectionInfo extends pt.webdetails.cda.connections.ol
   }
 
   public int hashCode()
-  {//TODO: use xor?
+  {
     int result = super.hashCode();//jndi != null ? jndi.hashCode() : 0;
     result = 31 * result + (catalog != null ? catalog.hashCode() : 0);
     result = 31 * result + (cube != null ? cube.hashCode() : 0);
