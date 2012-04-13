@@ -227,7 +227,7 @@ public abstract class AbstractDataAccess implements DataAccess
     return ((EHCacheQueryCache) getCdaCache()).getCache();
   }
 
-  public static synchronized void shutdowCache(){
+  public static synchronized void shutdownCache(){
     if(cache != null){
       cache.shutdownIfRunning();
       cache = null;
