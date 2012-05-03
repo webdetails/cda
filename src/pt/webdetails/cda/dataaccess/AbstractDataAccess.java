@@ -14,7 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-import org.pentaho.platform.api.engine.PluginBeanException;
 
 import pt.webdetails.cda.cache.EHCacheQueryCache;
 import pt.webdetails.cda.cache.IQueryCache;
@@ -210,7 +209,7 @@ public abstract class AbstractDataAccess implements DataAccess
     if(cache == null){
       try {
         cache = PluginUtils.getPluginBean("cda.", IQueryCache.class);
-      } catch (PluginBeanException e) {
+      } catch (Exception e) {
         logger.error(e.getMessage());
       }
       if(cache == null){
