@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="editor/editor.css" type="text/css" rel="stylesheet"/>
+    <link href="editor/editor-webdetails.css" type="text/css" rel="stylesheet"/>
+    <link href="static/blueprint/screen.css" type="text/css" rel="stylesheet"/>
+    <link href="static/jquery-ui-1.8rc3.custom.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/jquery.i18n.properties.js"></script>
+    <script type="text/javascript" src="static/jquery-ui-1.8rc3.custom.min.js"></script>
+    <script language="javascript">
+
+  // Init jQuery i18n plugin
+  loadMessageBundles = function(lang) {
+  
+      jQuery.i18n.properties({
+          name:'Messages',
+          path:'editor/languages/',
+          mode:'both',
+          language:(lang == 'browser' ? jQuery.i18n.browserLang() : lang)
+      });
+  }
+
+  fileChanged = function() {
+      $('a#save').text('Save As');
+  }
+  
+  saveFile = function() {
+    getEditorWindow().save();
+  }
+  
+  previewFile = function() {
+      var fileName = $("#staticfile").val();
+      window.open('previewQuery?path='+fileName);
+  }
+  
+  loadFile = function() {
+    var params = pageParams();
+    
+    //build full path
+    var path = getFullPath(params);
+    $("#staticfile").val(path);
+
+    var externalEditor = $('#externalEditor');
+    var header = $('.cdalogo');
+
+    externalEditor.height(window.innerHeight - header.height());
+
+    externalEditor.load(function() 
+    {
+      getEditorWindow().listeners.onStatusUpdate = setDirty;
+      $('#notifications').hide();
+    });
+    externalEditor.attr('src','../pentaho-cdf-dd/extEditor?path=' + path + '&editorOnly=true');
+	}
+
+  /*
+   *  pageParams: get the request variables passed in the url 
+   */
+  pageParams = function() {
+    var url = document.location.href;
+    var output = {};
+    var index = url.indexOf('?');
+    if (index < 0) {
+      return null;
+    } else {
+      // First we get the part of the url with the parameters in it (i.e. after the '?'), and partition
+      // it into individual 'var=value' pieces. Then we split those pieces and add them to the output object
+      args = url.slice(index + 1).split('&');
+      for(i = 0; i < args.length; i++) {
+        pair = args[i].split('=');
+        output[pair[0]] = unescape(pair[1]);
+      }
+      return output;
+    }
+  }
+  
+  getFullPath = function(params){
+    var path;
+    if (params != null && params.solution != undefined) {
+    // If we have fully qualified path, concatenate the pieces together.
+    // We mustn't forget to account for double slashes
+      path = params.solution + '/' + params.path + '/'+ params.file; 
+      path = path.replace(/(\/)+/g,"/");
+    } else if (params != null){
+      path = params.path;
+    }
+    return path;
+  }
+  
+  setDirty = function(isDirty){
+    $('#save').attr('disabled', !isDirty);
+  }
+  
+  getEditorWindow = function(){
+    return $('#externalEditor')[0].contentWindow;
+  }
+
+    </script>
+  
+  </head>
+  <body>
+    <input type="hidden" id="staticfile" value="">
+    <div class="container">
+      <div class='span-24 clearfix cdalogo'>
+        <div style="padding-top: 24px" class="prepend-12 span-12 last">
+          <span id="controller">
+            <div class='span-5'>&nbsp;</div>
+            <button id="save" disabled="true" onclick="saveFile()" class="span-2 button">Save</button>
+            <button id="reload" onclick="loadFile()" class="span-2 button" >Load </button>
+            <button id="preview" onclick="previewFile()" class="span-2 button last">Preview</button>
+
+          </span>
+        </div>
+        <div class="prepend-14 span-9 last" style="margin-top: 10px">
+          <div id="notifications" class='notification'>&nbsp;</div>
+        </div>
+      </div>
+      
+      <iframe id="externalEditor" class="span-24"></iframe>
+      
+    </div>
+    <script language="javascript">  
+  $(document).ready(function(){
+    // Initialize jquery.i18n plugin - load message files
+    var userLocale = '#{LANGUAGE_CODE}';
+    loadMessageBundles(userLocale);
+    $('#save').text(jQuery.i18n.prop('label.save'));
+    $('#reload').text(jQuery.i18n.prop('label.reload'));
+    $('#preview').text(jQuery.i18n.prop('label.preview'));
+    
+    loadFile();
+  });
+ 
+    </script>
+  </body>
+</html>

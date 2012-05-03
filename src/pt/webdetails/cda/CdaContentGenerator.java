@@ -22,8 +22,6 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IMimeTypeListener;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.repository.IContentItem;
-import org.pentaho.platform.api.repository.ISolutionRepository;
-import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
 import org.pentaho.platform.util.messages.LocaleHelper;
@@ -41,8 +39,10 @@ import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.utils.Util;
 import pt.webdetails.cpf.audit.CpfAuditHelper;
+import pt.webdetails.cpf.repository.RepositoryAccess;
+import pt.webdetails.cpf.repository.RepositoryAccess.FileAccess;
 
-@SuppressWarnings("unchecked")
+
 public class CdaContentGenerator extends BaseContentGenerator
 {
 
@@ -54,13 +54,14 @@ public class CdaContentGenerator extends BaseContentGenerator
   private static final String MIME_JS = "text/javascript";
   private static final String MIME_JSON = "application/json";
   private static final String EDITOR_SOURCE = "/editor/editor.html";
+  private static final String EXT_EDITOR_SOURCE = "/editor/editor-cde.html";
   private static final String PREVIEWER_SOURCE = "/previewer/previewer.html";
   private static final String CACHEMAN_SOURCE = "/cachemanager/cache.html";
   private static final int DEFAULT_PAGE_SIZE = 20;
   private static final int DEFAULT_START_PAGE = 0;
   private static final String PREFIX_PARAMETER = "param";
   private static final String PREFIX_SETTING = "setting";
-
+  private static final String ENCODING = "UTF-8";
 
   public CdaContentGenerator()
   {
@@ -99,21 +100,20 @@ public class CdaContentGenerator extends BaseContentGenerator
     final String pathString;
     try
     {
+      
+      pathParams = parameterProviders.get("path");
+      requestParams = parameterProviders.get("request");
+      contentItem = outputHandler.getOutputContentItem("response", "content", "", instanceId, MIME_HTML);
+      
       // If callbacks is properly setup, we assume we're being called from another plugin
       if (this.callbacks != null && callbacks.size() > 0 && HashMap.class.isInstance(callbacks.get(0)))
       {
         HashMap<String, Object> iface = (HashMap<String, Object>) callbacks.get(0);
-        pathParams = parameterProviders.get("path");
-        requestParams = parameterProviders.get("request");
-        contentItem = outputHandler.getOutputContentItem("response", "content", "", instanceId, MIME_HTML);
         out = (OutputStream) iface.get("output");
         method = (String) iface.get("method");
       }
       else
       { // if not, we handle the request normally
-        pathParams = parameterProviders.get("path");
-        requestParams = parameterProviders.get("request");
-        contentItem = outputHandler.getOutputContentItem("response", "content", "", instanceId, MIME_HTML);
         out = contentItem.getOutputStream(null);
         pathString = pathParams.getStringParameter("path", null);
         method = extractMethod(pathString);
@@ -265,6 +265,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
     // ... and the query parameters
     // We identify any pathParams starting with "param" as query parameters
+    @SuppressWarnings("unchecked")
     final Iterator<String> params = (Iterator<String>) pathParams.getParameterNames();
     while (params.hasNext())
     {
@@ -359,41 +360,33 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   public void getCdaFile(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
-    String document = getResourceAsString(getRelativePath(pathParams), ISolutionRepository.ACTION_UPDATE);
+    String document = getResourceAsString(getRelativePath(pathParams), FileAccess.READ);// ISolutionRepository.ACTION_UPDATE);//TODO:check
     setResponseHeaders("text/plain", null);
-    out.write(document.getBytes("UTF-8"));
+    out.write(document.getBytes(ENCODING));
   }
 
 
   private void writeCdaFile(IParameterProvider pathParams, OutputStream out) throws Exception
   {
     //TODO: Validate the filename in some way, shape or form!
-    String[] file = buildFileParameters(getRelativePath(pathParams));
-    String rootDir = PentahoSystem.getApplicationContext().getSolutionPath("");
 
-    ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
-
+    RepositoryAccess repository = RepositoryAccess.getRepository(userSession);
+    
     // Check if the file exists and we have permissions to write to it
     String path = getRelativePath(pathParams);
 
-    // 1 - is it a new file?
-    final boolean resourceExists = solutionRepository.resourceExists(path);
-
-    // 2 - it already exists - let's see if we have permissions
-    if (!resourceExists || solutionRepository.getSolutionFile(path, ISolutionRepository.ACTION_UPDATE) != null)
-    {
-      int status = solutionRepository.publish(rootDir, file[0], file[1], ((String) pathParams.getParameter("data")).getBytes("UTF-8"), true);
-      if (status == ISolutionRepository.FILE_ADD_SUCCESSFUL)
-      {
-        SettingsManager.getInstance().clearCache();
-        setResponseHeaders("text/plain", null);
-        out.write("File saved".getBytes());
-      }
-      else
-      {
-        setResponseHeaders("text/plain", null);
-        out.write("Save unsuccessful!".getBytes());
-        logger.error("writeCdaFile: saving " + file + " returned " + new Integer(status).toString());
+    if (repository.canWrite(path))
+    { 
+      switch(repository.publishFile(path, ((String) pathParams.getParameter("data")).getBytes(ENCODING), true)){
+        case OK:
+          SettingsManager.getInstance().clearCache();
+          setResponseHeaders("text/plain", null);
+          out.write("File saved".getBytes());
+          break;
+        case FAIL:
+          setResponseHeaders("text/plain", null);
+          out.write("Save unsuccessful!".getBytes());
+          logger.error("writeCdaFile: saving " + path);
       }
     }
     else
@@ -444,34 +437,32 @@ public class CdaContentGenerator extends BaseContentGenerator
   private String getRelativePath(final IParameterProvider pathParams) throws UnsupportedEncodingException
   {
 
-    String path = URLDecoder.decode(pathParams.getStringParameter("path", ""), "UTF-8").replaceAll("//", "/");
+    String path = URLDecoder.decode(pathParams.getStringParameter("path", ""), ENCODING);
 
     final String solution = pathParams.getStringParameter("solution", "");
     if (StringUtils.isEmpty(solution))
     {
-
       return path;
     }
+    final String file = pathParams.getStringParameter("file", "");
 
-    return ActionInfo.buildSolutionPath(
-            solution,
-            path,
-            pathParams.getStringParameter("file", ""));
+    return StringUtils.join(new String[] {solution, path, file}, "/" ).replaceAll("//", "/");
   }
 
 
   public String getResourceAsString(final String path, final HashMap<String, String> tokens) throws IOException
   {
     // Read file
-    ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
-    
+
+    RepositoryAccess repository = RepositoryAccess.getRepository(userSession);    
     String resourceContents = StringUtils.EMPTY;
-    if (solutionRepository.resourceExists(path))
+    
+    if (repository.resourceExists(path))
     {
       InputStream in = null;
       try
       {
-        in = solutionRepository.getResourceInputStream(path, true, ISolutionRepository.ACTION_EXECUTE);
+        in = repository.getResourceInputStream(path, FileAccess.READ);
         resourceContents = IOUtils.toString(in);
       }
       finally 
@@ -491,17 +482,11 @@ public class CdaContentGenerator extends BaseContentGenerator
     return resourceContents;
   }
 
-
-  public String getResourceAsString(final String path, int actionOperation) throws IOException, AccessDeniedException
-  {
-
-    ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
-
-    // Check if the file exists and we have permissions to write to it
-    if (solutionRepository.getSolutionFile(path, actionOperation) != null)
-    {
-      // Fill key map with locale definition
-      HashMap<String, String> keys = new HashMap();
+  
+  public String getResourceAsString(final String path, RepositoryAccess.FileAccess access) throws IOException, AccessDeniedException{
+    RepositoryAccess repository = RepositoryAccess.getRepository(userSession);
+    if(repository.hasAccess(path, access)){
+      HashMap<String, String> keys = new HashMap<String, String>();
       Locale locale = LocaleHelper.getLocale();
       if (logger.isDebugEnabled())
       {
@@ -520,19 +505,18 @@ public class CdaContentGenerator extends BaseContentGenerator
   public void editFile(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
 
-
-    ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
-
+    RepositoryAccess repository = RepositoryAccess.getRepository(userSession);
+    
     // Check if the file exists and we have permissions to write to it
     String path = getRelativePath(pathParams);
-    if (solutionRepository.getSolutionFile(path, ISolutionRepository.ACTION_UPDATE) != null)
+    if (repository.canWrite(path))// solutionRepository.getSolutionFile(path, ISolutionRepository.ACTION_UPDATE) != null)
     {
-
-      final String editorPath = "system/" + PLUGIN_NAME + EDITOR_SOURCE;
-      //SettingsManager.getInstance().clearCache();
-      //AbstractDataAccess.clearCache();
+      boolean hasCde = repository.resourceExists("system/pentaho-cdf-dd");
+      
+      final String editorPath = "system/" + PLUGIN_NAME + (hasCde? EXT_EDITOR_SOURCE : EDITOR_SOURCE);
       setResponseHeaders("text/html", null);
-      out.write(getResourceAsString(editorPath, ISolutionRepository.ACTION_UPDATE).getBytes("UTF-8"));
+      out.write(repository.getResourceAsString(editorPath).getBytes(ENCODING));
+//      out.write(getResourceAsString(editorPath, ISolutionRepository.ACTION_UPDATE).getBytes(ENCODING));
     }
     else
     {
@@ -548,10 +532,8 @@ public class CdaContentGenerator extends BaseContentGenerator
   public void previewQuery(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
     final String previewerPath = "system/" + PLUGIN_NAME + PREVIEWER_SOURCE;
-    //SettingsManager.getInstance().clearCache();
-    //AbstractDataAccess.clearCache();
     setResponseHeaders("text/html", null);
-    out.write(getResourceAsString(previewerPath, ISolutionRepository.ACTION_EXECUTE).getBytes("UTF-8"));
+    out.write(getResourceAsString(previewerPath, FileAccess.READ).getBytes(ENCODING));
   }
 
 
@@ -600,22 +582,7 @@ public class CdaContentGenerator extends BaseContentGenerator
     }
     
   }
-
-
-  private String[] buildFileParameters(String filePath)
-  {
-    String[] result =
-    {
-      "", ""
-    };
-    String[] file = filePath.split("/");
-    String fileName = file[file.length - 1];
-    String path = filePath.substring(0, filePath.indexOf(fileName));
-    result[0] = path;
-    result[1] = fileName;
-    return result;
-  }
-
+  
 
   public void listDataAccessTypes(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
@@ -631,7 +598,7 @@ public class CdaContentGenerator extends BaseContentGenerator
       {
         output.append(datum.toJSON() + ",\n");
       }
-      out.write(output.toString().replaceAll(",\n\\z", "\n}").getBytes("UTF-8"));
+      out.write(output.toString().replaceAll(",\n\\z", "\n}").getBytes(ENCODING));
     }
   }
 
@@ -644,17 +611,14 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   public void manageCache(final IParameterProvider pathParams, final OutputStream out) throws Exception
   {
-    ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
-    
+    RepositoryAccess repository = RepositoryAccess.getRepository(userSession);
     // Check if the file exists and we have permissions to write to it
     String path = getRelativePath(pathParams);
-    if (solutionRepository.getSolutionFile(path, ISolutionRepository.ACTION_UPDATE) != null)
+    if (repository.hasAccess(path, FileAccess.EDIT))
     {
       final String cachemanPath = "system/" + PLUGIN_NAME + CACHEMAN_SOURCE;
-      //SettingsManager.getInstance().clearCache();
-      //AbstractDataAccess.clearCache();
       setResponseHeaders("text/html", null);
-      out.write(getResourceAsString(cachemanPath, ISolutionRepository.ACTION_UPDATE).getBytes("UTF-8"));
+      out.write(getResourceAsString(cachemanPath, FileAccess.EDIT).getBytes(ENCODING));
     }
     else
     {
