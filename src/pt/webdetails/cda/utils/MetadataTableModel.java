@@ -6,7 +6,6 @@ package pt.webdetails.cda.utils;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 
 /**
@@ -16,17 +15,19 @@ import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 public class MetadataTableModel extends TypedTableModel
 {
 
+  private static final long serialVersionUID = 1L;
+
   private Map<String, String> metadata;
 
 
-  public MetadataTableModel(String[] colNames, Class[] colTypes, int rowCount)
+  public MetadataTableModel(String[] colNames, Class<?>[] colTypes, int rowCount)
   {
     super(colNames, colTypes, rowCount);
     metadata = new HashMap<String, String>();
   }
 
 
-  public MetadataTableModel(String[] colNames, Class[] colTypes, int rowCount, Map<String, String> metadata)
+  public MetadataTableModel(String[] colNames, Class<?>[] colTypes, int rowCount, Map<String, String> metadata)
   {
     this(colNames, colTypes, rowCount);
     this.metadata.putAll(metadata);

@@ -47,7 +47,9 @@ public class MetadataConnection extends AbstractConnection {
     return "metadata";
   }
 
-  @Deprecated
+  /**
+   * @deprecated use {@link #getConnectionInfo()}
+   */
   public MetadataConnectionInfo getMetadataConnectionInfo() {
     return connectionInfo;
   }

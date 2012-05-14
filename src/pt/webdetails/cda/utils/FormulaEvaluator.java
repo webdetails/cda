@@ -70,7 +70,7 @@ public class FormulaEvaluator {
       Object result = formula.evaluate();
       if(result instanceof ArrayList)
       {//TODO: this returns Object[] with no specific type
-          result = ((ArrayList) result).toArray();
+          result = ((ArrayList<?>) result).toArray();
       }
       return result;
     } catch (org.pentaho.reporting.libraries.formula.parser.ParseException e) {

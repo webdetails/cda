@@ -1,7 +1,5 @@
 package pt.webdetails.cda.dataaccess;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DenormalizedMDXDataFactory;
@@ -15,7 +13,7 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.Deno
  */
 public class DenormalizedMdxDataAccess extends MdxDataAccess {
 
-  private static final Log logger = LogFactory.getLog(DenormalizedMdxDataAccess.class);
+//  private static final Log logger = LogFactory.getLog(DenormalizedMdxDataAccess.class);
 
   public DenormalizedMdxDataAccess(final Element element) {
     super(element);

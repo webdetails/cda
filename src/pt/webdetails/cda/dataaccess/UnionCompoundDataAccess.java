@@ -3,8 +3,6 @@ package pt.webdetails.cda.dataaccess;
 import java.util.ArrayList;
 import javax.swing.table.TableModel;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.query.QueryOptions;
@@ -21,7 +19,7 @@ import pt.webdetails.cda.utils.TableModelUtils;
 public class UnionCompoundDataAccess extends CompoundDataAccess
 {
 
-  private static final Log logger = LogFactory.getLog(UnionCompoundDataAccess.class);
+  //private static final Log logger = LogFactory.getLog(UnionCompoundDataAccess.class);
   private static final String TYPE = "union";
   private String topId;
   private String bottomId;

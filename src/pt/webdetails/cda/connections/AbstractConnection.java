@@ -1,7 +1,6 @@
 package pt.webdetails.cda.connections;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.dom4j.Element;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
@@ -36,9 +35,9 @@ public abstract class AbstractConnection implements Connection {
 
   }
 
-  public AbstractConnection(final HashMap settings) throws InvalidConnectionException {
-    // TODO
-  }
+//  public AbstractConnection(final HashMap<String,String> settings) throws InvalidConnectionException {
+//    // TODO
+//  }
 
   public abstract ConnectionType getGenericType();
 
