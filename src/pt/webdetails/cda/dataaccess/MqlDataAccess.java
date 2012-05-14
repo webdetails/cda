@@ -21,8 +21,6 @@ import pt.webdetails.cda.settings.UnknownConnectionException;
  */
 public class MqlDataAccess extends PREDataAccess {
 
-  private static final ConnectionType connectionType = ConnectionType.MQL;
-
   public MqlDataAccess(final Element element) {
     super(element);
   }
@@ -45,14 +43,14 @@ public class MqlDataAccess extends PREDataAccess {
     final MetadataConnection connection = (MetadataConnection) getCdaSettings().getConnection(getConnectionId());
 
     final PmdDataFactory returnDataFactory = new PmdDataFactory();
-    returnDataFactory.setXmiFile(connection.getMetadataConnectionInfo().getXmiFile());
-    returnDataFactory.setDomainId(connection.getMetadataConnectionInfo().getDomainId());
+    returnDataFactory.setXmiFile(connection.getConnectionInfo().getXmiFile());
+    returnDataFactory.setDomainId(connection.getConnectionInfo().getDomainId());
     if (CdaEngine.getInstance().isStandalone()) {
       returnDataFactory.setConnectionProvider(new PmdConnectionProvider());
     } else {
       returnDataFactory.setConnectionProvider(new PentahoPmdConnectionProvider());
     }
-    returnDataFactory.setQuery("query", getQuery());
+    returnDataFactory.setQuery("query", getQuery(), null, null);
 
     return returnDataFactory;
   }

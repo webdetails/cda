@@ -25,7 +25,6 @@ import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 import pt.webdetails.cda.utils.InvalidOutputIndexException;
-import pt.webdetails.cda.utils.TableModelException;
 import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.Util;
 import pt.webdetails.cda.utils.framework.PluginUtils;
@@ -142,6 +141,7 @@ public abstract class AbstractDataAccess implements DataAccess
 
 
     // Parse parameters
+    @SuppressWarnings("unchecked")
     final List<Element> parameterNodes = element.selectNodes("Parameters/Parameter");
 
     for (final Element p : parameterNodes)
@@ -150,6 +150,7 @@ public abstract class AbstractDataAccess implements DataAccess
     }
 
     // Parse outputs
+    @SuppressWarnings("unchecked")
     final List<Element> outputNodes = element.selectNodes("Output");
 
     for (final Element outputNode : outputNodes)
@@ -189,6 +190,7 @@ public abstract class AbstractDataAccess implements DataAccess
     }
 
     // Parse Columns
+    @SuppressWarnings("unchecked")
     final List<Element> columnNodes = element.selectNodes("Columns/*");
 
     for (final Element p : columnNodes)
@@ -274,10 +276,6 @@ public abstract class AbstractDataAccess implements DataAccess
     catch (SortException e)
     {
       throw new QueryException("Error while sorting output ", e);
-    }
-    catch (TableModelException e)
-    {
-      throw new QueryException("Could not create outputTableModel ", e);
     }
   }
 

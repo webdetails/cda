@@ -5,8 +5,6 @@ import java.util.Locale;
 import java.util.TimeZone;
 import javax.swing.table.TableModel;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
@@ -19,7 +17,7 @@ import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.engine.classic.core.ReportEnvironmentDataRow;
 import org.pentaho.reporting.engine.classic.core.parameters.CompoundDataRow;
-import org.pentaho.reporting.engine.classic.core.states.CachingDataFactory;
+import org.pentaho.reporting.engine.classic.core.cache.CachingDataFactory;
 import org.pentaho.reporting.engine.classic.core.util.CloseableTableModel;
 import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFactory;
 import org.pentaho.reporting.libraries.base.config.Configuration;
@@ -117,7 +115,7 @@ public abstract class PREDataAccess extends SimpleDataAccess
     try
     {
 
-      final CachingDataFactory dataFactory = new CachingDataFactory(getDataFactory());
+      final CachingDataFactory dataFactory = new CachingDataFactory(getDataFactory(), false);
 
       final ResourceManager resourceManager = new ResourceManager();
       resourceManager.registerDefaults();

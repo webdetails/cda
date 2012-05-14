@@ -19,11 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.DOMReader;
-import org.pentaho.platform.api.engine.IPentahoAclEntry;
-import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ISolutionFile;
-import org.pentaho.platform.api.repository.ISolutionRepository;
-import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.reporting.libraries.resourceloader.Resource;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
@@ -36,6 +32,8 @@ import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
+import pt.webdetails.cpf.repository.RepositoryAccess;
+import pt.webdetails.cpf.repository.RepositoryAccess.FileAccess;
 
 /**
  * This file is responsible to build / keep the different cda settings.
@@ -119,7 +117,7 @@ public class SettingsManager {
         File settingsFile = new File(id);
         key = resourceManager.createKey(settingsFile);
       } else {
-        final HashMap helperObjects = new HashMap();
+        final HashMap<String, Object> helperObjects = new HashMap<String, Object>();
         key = resourceManager.createKey(SOLUTION_SCHEMA_NAME + SCHEMA_SEPARATOR + id, helperObjects);
       }
       final Resource resource = resourceManager.create(key, null, org.w3c.dom.Document.class);
@@ -152,12 +150,8 @@ public class SettingsManager {
       }
     }
     else {
-      IPentahoSession session = PentahoSessionHolder.getSession();
-      final ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, session);
-      if(solutionRepository != null){
-        ISolutionFile savedCda = solutionRepository.getSolutionFile(id, IPentahoAclEntry.PERM_NOTHING);
-        if(savedCda != null) return savedCda.getLastModified();
-      }
+      ISolutionFile savedCda = RepositoryAccess.getRepository().getSolutionFile(id, FileAccess.NONE);
+      if(savedCda != null) return savedCda.getLastModified();
     }
     return null;
   }
@@ -205,8 +199,7 @@ public class SettingsManager {
   }
 
   public DataAccessConnectionDescriptor[] getDataAccessDescriptors(boolean refreshCache) throws Exception {
-//    Method getDescriptors;
-//    Method getConnectionType;
+
     ArrayList<DataAccessConnectionDescriptor> descriptors = new ArrayList<DataAccessConnectionDescriptor>();
     // First we need a list of all the data accesses. We're getting that from a .properties file, as a comma-separated array.
     final File file = new File(PentahoSystem.getApplicationContext().getSolutionPath("system/cda/resources/components.properties"));
@@ -228,7 +221,7 @@ public class SettingsManager {
     // For any class that passes those tests, we get its getDataAccessDescripts() method, and use it to get a description.
     for (String dataAccess : dataAccesses) {
       
-      Class clazz = null;
+      Class<?> clazz = null;
       String className = DATA_ACCESS_PACKAGE + '.' + dataAccess;
       try {
         clazz = Class.forName(className);
@@ -241,7 +234,8 @@ public class SettingsManager {
         logger.debug(dataAccess + " is abstract: Skipping");
       } else if (AbstractDataAccess.class.isAssignableFrom(clazz)) {
         try {
-          DataAccessConnectionDescriptor[] descriptor = DataAccessConnectionDescriptor.fromClass(clazz);
+          @SuppressWarnings("unchecked")
+          DataAccessConnectionDescriptor[] descriptor = DataAccessConnectionDescriptor.fromClass((Class<? extends AbstractDataAccess>) clazz);
           descriptors.addAll(Arrays.asList(descriptor));
         } catch (InvocationTargetException e) {
           Throwable cause = e.getTargetException();

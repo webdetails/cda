@@ -37,7 +37,7 @@ public class TableModelUtils
 
   public TableModel postProcessTableModel(final DataAccess dataAccess,
           final QueryOptions queryOptions,
-          final TableModel rawTableModel) throws TableModelException, SortException, InvalidOutputIndexException
+          final TableModel rawTableModel) throws SortException, InvalidOutputIndexException
   {
     
     if(rawTableModel == null){
@@ -100,11 +100,11 @@ public class TableModelUtils
 
       if ((Collections.max(outputIndexes) > t.getColumnCount() - 1))
       {
-        throw new TableModelException("Output index higher than number of columns in tableModel", null);
+        throw new InvalidOutputIndexException("Output index higher than number of columns in tableModel", null);
 
       }
 
-      final Class[] colTypes = new Class[columnCount];
+      final Class<?>[] colTypes = new Class[columnCount];
       final String[] colNames = new String[columnCount];
 
       for (int i = 0; i < outputIndexes.size(); i++)
@@ -142,7 +142,7 @@ public class TableModelUtils
 
     // Create a metadata-aware table model
 
-    final Class[] colTypes = new Class[t.getColumnCount()];
+    final Class<?>[] colTypes = new Class[t.getColumnCount()];
     final String[] colNames = new String[t.getColumnCount()];
 
     for (int i = 0; i < t.getColumnCount(); i++)
@@ -176,7 +176,7 @@ public class TableModelUtils
 
     // Build an array of column indexes whose name is different from ::table-by-index::.*
     ArrayList<String> namedColumns = new ArrayList<String>();
-    ArrayList<Class> namedColumnsClasses = new ArrayList<Class>();
+    ArrayList<Class<?>> namedColumnsClasses = new ArrayList<Class<?>>();
     for (int i = 0; i < t.getColumnCount(); i++)
     {
       String colName = t.getColumnName(i);
@@ -189,15 +189,9 @@ public class TableModelUtils
     }
 
     final int count = namedColumns.size();
-    final ArrayList<ColumnDefinition> calculatedColumnsList = dataAccess.getCalculatedColumns();
 
-
-    final Class[] colTypes = namedColumnsClasses.toArray(new Class[]
-            {
-            });
-    final String[] colNames = namedColumns.toArray(new String[]
-            {
-            });
+    final Class<?>[] colTypes = namedColumnsClasses.toArray(new Class[]{});
+    final String[] colNames = namedColumns.toArray(new String[]{});
 
     for (int i = 0; i < count; i++)
     {
@@ -233,7 +227,7 @@ public class TableModelUtils
     {
       "id", "name", "type"
     };
-    final Class[] colTypes =
+    final Class<?>[] colTypes =
     {
       String.class, String.class, String.class
     };
@@ -279,7 +273,7 @@ public class TableModelUtils
     {
       "name", "type", "defaultValue", "pattern", "access"
     };
-    final Class[] colTypes =
+    final Class<?>[] colTypes =
     {
       String.class, String.class, String.class, String.class, String.class
     };
@@ -320,7 +314,7 @@ public class TableModelUtils
     int colCount = usingA ? colCountA : colCountB;
     TableModel referenceTable = (usingA? tableModelA : tableModelB);
     
-    final Class[] colTypes = new Class[colCount];
+    final Class<?>[] colTypes = new Class[colCount];
     final String[] colNames = new String[colCount];
 
     for (int i = 0; i < referenceTable.getColumnCount(); i++)
@@ -371,7 +365,7 @@ public class TableModelUtils
     logger.debug("Paginating " + queryOptions.getPageSize() + " pages from page " + queryOptions.getPageStart());
 
 
-    final Class[] colTypes = new Class[t.getColumnCount()];
+    final Class<?>[] colTypes = new Class[t.getColumnCount()];
     final String[] colNames = new String[t.getColumnCount()];
 
     for (int i = 0; i < t.getColumnCount(); i++)

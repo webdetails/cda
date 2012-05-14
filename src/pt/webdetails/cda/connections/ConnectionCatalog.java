@@ -73,21 +73,20 @@ public class ConnectionCatalog {
       ConnectionInfo conn = connectionPool.get(key);
       if (conn.getType() == type) {
         try {
-          conns.add((Connection) conn.getImplementation().getConstructor().newInstance());
+          conns.add(conn.getImplementation().getConstructor().newInstance());
         } catch (Exception ex) {
           logger.error("Couldn't instantiate " + conn.toString());
         }
       }
     }
-    //return (Connection[]) (conns.toArray());
     return conns.toArray(new Connection[conns.size()]);
   }
 
   private Connection connectionFromClass(String className) {
     Connection connection = null;
     try {
-      Class cClass = Class.forName(className);
-      if (!cClass.isInterface()) {
+      Class<?> cClass = Class.forName(className);
+      if (!cClass.isInterface() && Connection.class.isAssignableFrom(cClass)) {
         connection = (Connection) cClass.newInstance();
       }
     } catch (Exception ex) {
@@ -106,7 +105,7 @@ public class ConnectionCatalog {
 
 class ConnectionInfo {
 
-  public Class getImplementation() {
+  public Class<? extends Connection> getImplementation() {
     return implementation;
   }
 
@@ -114,9 +113,9 @@ class ConnectionInfo {
     return type;
   }
   private ConnectionType type;
-  private Class implementation;
+  private Class<? extends Connection> implementation;
 
-  public ConnectionInfo(ConnectionType type, Class implementation) {
+  public ConnectionInfo(ConnectionType type, Class<? extends Connection> implementation) {
     this.type = type;
     this.implementation = implementation;
   }

@@ -118,64 +118,64 @@ public class CdaExecutor
 
   }
 
-  private void testQueryExecution(final OutputStream out)
-      throws DocumentException, UnsupportedConnectionException, UnsupportedDataAccessException, UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
-  {
+//  private void testQueryExecution(final OutputStream out)
+//      throws DocumentException, UnsupportedConnectionException, UnsupportedDataAccessException, UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
+//  {
+//
+//    logger.info("Building CDA settings from sample file");
+//
+//    final SettingsManager settingsManager = SettingsManager.getInstance();
+//
+//    final File settingsFile = new File("samples/sample.cda");
+//    final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
+//
+//    testSqlQuery(out, cdaSettings);
+//
+//    //testMondrianQuery(out, cdaSettings);
+//
+//  }
 
-    logger.info("Building CDA settings from sample file");
 
-    final SettingsManager settingsManager = SettingsManager.getInstance();
-
-    final File settingsFile = new File("samples/sample.cda");
-    final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
-
-    testSqlQuery(out, cdaSettings);
-
-    //testMondrianQuery(out, cdaSettings);
-
-  }
-
-
-  private void testSqlQuery(final OutputStream out, final CdaSettings cdaSettings)
-      throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
-  {
-    logger.debug("Doing query on Cda - Initializing CdaEngine");
-    final CdaEngine engine = CdaEngine.getInstance();
-
-    QueryOptions queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("1");
-    queryOptions.addParameter("orderDate", "2003-04-01");
-    queryOptions.setOutputType("csv");
-    // queryOptions.addParameter("status","In Process");
-
-    logger.info("Doing first query");
-    engine.doQuery(out, cdaSettings, queryOptions);
-
-    logger.info("Doing query with different parameters");
-    queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("1");
-    queryOptions.addParameter("orderDate", "2004-01-01");
-    engine.doQuery(out, cdaSettings, queryOptions);
-
-    // Querying 2nd time to test cache
-    logger.info("Doing query using the initial parameters - Cache should be used");
-    queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("1");
-    queryOptions.addParameter("orderDate", "2003-04-01");
-    engine.doQuery(out, cdaSettings, queryOptions);
-
-    // Querying 2nd time to test cache
-    logger.info("Doing query again to see if cache expires");
-    try
-    {
-      Thread.sleep(6000);
-    }
-    catch (InterruptedException e)
-    {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-    }
-    engine.doQuery(out, cdaSettings, queryOptions);
-  }
+//  private void testSqlQuery(final OutputStream out, final CdaSettings cdaSettings)
+//      throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
+//  {
+//    logger.debug("Doing query on Cda - Initializing CdaEngine");
+//    final CdaEngine engine = CdaEngine.getInstance();
+//
+//    QueryOptions queryOptions = new QueryOptions();
+//    queryOptions.setDataAccessId("1");
+//    queryOptions.addParameter("orderDate", "2003-04-01");
+//    queryOptions.setOutputType("csv");
+//    // queryOptions.addParameter("status","In Process");
+//
+//    logger.info("Doing first query");
+//    engine.doQuery(out, cdaSettings, queryOptions);
+//
+//    logger.info("Doing query with different parameters");
+//    queryOptions = new QueryOptions();
+//    queryOptions.setDataAccessId("1");
+//    queryOptions.addParameter("orderDate", "2004-01-01");
+//    engine.doQuery(out, cdaSettings, queryOptions);
+//
+//    // Querying 2nd time to test cache
+//    logger.info("Doing query using the initial parameters - Cache should be used");
+//    queryOptions = new QueryOptions();
+//    queryOptions.setDataAccessId("1");
+//    queryOptions.addParameter("orderDate", "2003-04-01");
+//    engine.doQuery(out, cdaSettings, queryOptions);
+//
+//    // Querying 2nd time to test cache
+//    logger.info("Doing query again to see if cache expires");
+//    try
+//    {
+//      Thread.sleep(6000);
+//    }
+//    catch (InterruptedException e)
+//    {
+//      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//    }
+//    engine.doQuery(out, cdaSettings, queryOptions);
+//  }
 
 
   private void testSingleSqlQuery(final OutputStream out, final CdaSettings cdaSettings)
@@ -193,21 +193,21 @@ public class CdaExecutor
   }
 
 
-  private void testMondrianQuery(final OutputStream out, final CdaSettings cdaSettings)
-      throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
-  {
-    logger.debug("Doing query on Cda - Initializing CdaEngine");
-    final CdaEngine engine = CdaEngine.getInstance();
-
-    QueryOptions queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("2");
-    queryOptions.setOutputType("json");
-    queryOptions.addParameter("status", "Shipped");
-
-    logger.info("Doing query");
-    engine.doQuery(out, cdaSettings, queryOptions);
-
-  }
+//  private void testMondrianQuery(final OutputStream out, final CdaSettings cdaSettings)
+//      throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
+//  {
+//    logger.debug("Doing query on Cda - Initializing CdaEngine");
+//    final CdaEngine engine = CdaEngine.getInstance();
+//
+//    QueryOptions queryOptions = new QueryOptions();
+//    queryOptions.setDataAccessId("2");
+//    queryOptions.setOutputType("json");
+//    queryOptions.addParameter("status", "Shipped");
+//
+//    logger.info("Doing query");
+//    engine.doQuery(out, cdaSettings, queryOptions);
+//
+//  }
 
 
   public static synchronized CdaExecutor getInstance()

@@ -64,8 +64,6 @@ public class CdaBoot extends AbstractBoot
   protected void performBoot()
   {
     // any manual init work goes in here ...
-
-
   }
 
 
