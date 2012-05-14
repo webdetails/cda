@@ -62,6 +62,7 @@ public class CdaContentGenerator extends BaseContentGenerator
   private static final String PREFIX_PARAMETER = "param";
   private static final String PREFIX_SETTING = "setting";
   private static final String ENCODING = "UTF-8";
+  private static final String CDA_FILE_MIME_TYPE = "text/xml";
 
   public CdaContentGenerator()
   {
@@ -151,10 +152,6 @@ public class CdaContentGenerator extends BaseContentGenerator
       else if ("clearCache".equals(method))
       {
         clearCache(requestParams, out);
-      }
-      else if ("synchronize".equals(method))
-      {
-        syncronize(requestParams, out);
       }
       else if ("getCdaFile".equals(method))
       {
@@ -387,6 +384,7 @@ public class CdaContentGenerator extends BaseContentGenerator
           setResponseHeaders("text/plain", null);
           out.write("Save unsuccessful!".getBytes());
           logger.error("writeCdaFile: saving " + path);
+          break;
       }
     }
     else
@@ -509,18 +507,16 @@ public class CdaContentGenerator extends BaseContentGenerator
     
     // Check if the file exists and we have permissions to write to it
     String path = getRelativePath(pathParams);
-    if (repository.canWrite(path))// solutionRepository.getSolutionFile(path, ISolutionRepository.ACTION_UPDATE) != null)
+    if (repository.canWrite(path))
     {
       boolean hasCde = repository.resourceExists("system/pentaho-cdf-dd");
       
       final String editorPath = "system/" + PLUGIN_NAME + (hasCde? EXT_EDITOR_SOURCE : EDITOR_SOURCE);
       setResponseHeaders("text/html", null);
-      out.write(repository.getResourceAsString(editorPath).getBytes(ENCODING));
-//      out.write(getResourceAsString(editorPath, ISolutionRepository.ACTION_UPDATE).getBytes(ENCODING));
+      out.write(getResourceAsString(editorPath,FileAccess.EXECUTE).getBytes(ENCODING));
     }
     else
     {
-
       setResponseHeaders("text/plain", null);
       out.write("Access Denied".getBytes());
     }

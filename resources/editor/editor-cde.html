@@ -20,17 +20,13 @@
           language:(lang == 'browser' ? jQuery.i18n.browserLang() : lang)
       });
   }
-
-  fileChanged = function() {
-      $('a#save').text('Save As');
-  }
   
   saveFile = function() {
     getEditorWindow().save();
   }
   
   previewFile = function() {
-      var fileName = $("#staticfile").val();
+      var fileName = $("#staticfile").text();
       window.open('previewQuery?path='+fileName);
   }
   
@@ -39,19 +35,26 @@
     
     //build full path
     var path = getFullPath(params);
-    $("#staticfile").val(path);
+    $("#staticfile").text(path);
 
     var externalEditor = $('#externalEditor');
     var header = $('.cdalogo');
 
-    externalEditor.height(window.innerHeight - header.height());
+    externalEditor.height(window.innerHeight - header.height() -5);
 
     externalEditor.load(function() 
     {
-      getEditorWindow().listeners.onStatusUpdate = setDirty;
+      var editorEnv = getEditorWindow();
+      editorEnv.listeners.onStatusUpdate = setDirty;
+      editorEnv.listeners.notify = function(msg, type){
+        $('#notifications').text(msg);
+        $('#notifications').fadeIn().delay(2000).fadeOut('slow');
+      }
+      
       $('#notifications').hide();
     });
-    externalEditor.attr('src','../pentaho-cdf-dd/extEditor?path=' + path + '&editorOnly=true');
+    var width = externalEditor.width() -10;
+    externalEditor.attr('src','../pentaho-cdf-dd/extEditor?path=' + path + '&theme=ace/theme/eclipse&editorOnly=true&width='+width );
 	}
 
   /*
@@ -100,30 +103,36 @@
   
   </head>
   <body>
-    <input type="hidden" id="staticfile" value="">
-    <div class="container">
-      <div class='span-24 clearfix cdalogo'>
-        <div style="padding-top: 24px" class="prepend-12 span-12 last">
-          <span id="controller">
-            <div class='span-5'>&nbsp;</div>
-            <button id="save" disabled="true" onclick="saveFile()" class="span-2 button">Save</button>
-            <button id="reload" onclick="loadFile()" class="span-2 button" >Load </button>
-            <button id="preview" onclick="previewFile()" class="span-2 button last">Preview</button>
 
-          </span>
+    <div class="container">
+      
+      <div class="span-24 clearfix cdalogo">
+        <div style="padding-top: 56px;">
+          <div style="text-align: right;" class="span-17 filename">
+            <span style="font-size: 16px; font-family: helvetica;" id="staticfile"></span>
+          </div>
+          <div id="controller">
+            
+            <button class="span-2 button" onclick="saveFile()" id="save" disabled="">Save</button>
+            <button class="span-2 button" onclick="loadFile()" id="reload">Reload</button>
+            <button class="span-2 button last" onclick="previewFile()" id="preview">Preview</button>
+          </div>
         </div>
-        <div class="prepend-14 span-9 last" style="margin-top: 10px">
-          <div id="notifications" class='notification'>&nbsp;</div>
+        <div class="span-24 last" style="margin-top: 10px;text-align:center;">
+          <span style="display: none;" id="notifications" class="notification"></span>
         </div>
       </div>
       
-      <iframe id="externalEditor" class="span-24"></iframe>
-      
+      <iframe id="externalEditor" marginheight="0" seamless="true" class="span-24 last" ></iframe>
+
     </div>
     <script language="javascript">  
   $(document).ready(function(){
     // Initialize jquery.i18n plugin - load message files
     var userLocale = '#{LANGUAGE_CODE}';
+    if(userLocale.indexOf('#') == 0){
+      userLocale = 'en';//fallback
+    }
     loadMessageBundles(userLocale);
     $('#save').text(jQuery.i18n.prop('label.save'));
     $('#reload').text(jQuery.i18n.prop('label.reload'));
