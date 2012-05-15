@@ -19,6 +19,8 @@ import javax.swing.table.TableModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.libraries.base.config.Configuration;
+import org.pentaho.reporting.libraries.base.util.StringUtils;
+
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig.EntryType;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig;
@@ -131,9 +133,9 @@ public class SortTableModel implements RowProductionManager
   public void startRowProduction()
   {
     String timeoutStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout");
-    long timeout = Util.isNullOrEmpty(timeoutStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
+    long timeout =  StringUtils.isEmpty(timeoutStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
     String unitStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
-    TimeUnit unit = Util.isNullOrEmpty(unitStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
+    TimeUnit unit = StringUtils.isEmpty(unitStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
     startRowProduction(timeout, unit);
   }
 

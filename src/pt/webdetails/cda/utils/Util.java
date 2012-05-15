@@ -57,10 +57,4 @@ public class Util
 
     return source.substring(startIdx, endIdx);
   }
-
-
-  public static final boolean isNullOrEmpty(final String str)
-  {
-    return (str == null || str.trim().length() == 0);
-  }
 }
