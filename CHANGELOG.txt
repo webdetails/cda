@@ -1,3 +1,19 @@
+12.05.15
+Fixed [REDMINE CDA038] - 	CDA does not accurately determine metadata of variable column kettle output
+Fixed [REDMINE CDA269] - cache lookups can return incorrect data with kettle data sources
+Fixed [REDMINE CDA577] - ETL metadata injection results in no data
+Fixed [REDMINE CDA612] - CDA hazelcast cache too prone to fatal failures
+Fixed [REDMINE CDA613] - Parameter separator should be configured per-parameter instead of in cda.properties
+Stopped using values in listeners to prevent memory problems (req hazelcast 2)
+Prevent cache locks on hazelcast failure
+Timeouts configurable; maps always fetched to prevent issues with original instance being shutdown; stats accessed synch due to unidentified issue
+KettleDataAccess: extraCacheKey now String
+Separator as a per-parameter attribute, serialization changed
+Typos, imports, extraCacheInfo toString
+Building against pho-3.8-SNAPSHOT, hazelcast 2.0.2
+Cache bean: cast exception can happen only on return if used inside another plugin
+
+
 12.04.02
 Implemented [REDMINE 515] - Added auditing support for cda doQuery
 Fixed [REDMINE CDA100] previewer: survive null rows
