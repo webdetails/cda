@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.swing.table.TableModel;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
@@ -291,7 +292,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
   private static int getQueryTimeThresholdFromConfig(int defaultValue)
   {
     String strVal = CdaBoot.getInstance().getGlobalConfig().getConfigProperty(QUERY_TIME_THRESHOLD_PROPERTY);
-    if (!Util.isNullOrEmpty(strVal))
+    if (!StringUtils.isEmpty(strVal))
     {
       try
       {
