@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package pt.webdetails.cda;
 
 import java.io.File;
@@ -356,7 +360,7 @@ public class CdaContentGenerator extends BaseContentGenerator
 
   public void getCdaFile(final IParameterProvider requestParams, final OutputStream out) throws Exception
   {
-    String document = getResourceAsString(getRelativePath(requestParams), FileAccess.READ);// ISolutionRepository.ACTION_UPDATE);//TODO:check
+    String document = getResourceAsString(StringUtils.replace(getRelativePath(requestParams), "///", "/"), FileAccess.READ);// ISolutionRepository.ACTION_UPDATE);//TODO:check
     setResponseHeaders("text/plain", null);
     out.write(document.getBytes(ENCODING));
   }
