@@ -55,6 +55,7 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
   private static int maxTimeouts = CdaPropertiesHelper.getIntProperty("pt.webdetails.cda.cache.maxTimeouts", 4);//max consecutive timeouts
   private static long cacheDisablePeriod = CdaPropertiesHelper.getIntProperty("pt.webdetails.cda.cache.disablePeriod", 5);
   private static boolean debugCache = CdaPropertiesHelper.getBoolProperty("pt.webdetails.cda.cache.debug", true);
+
   
   private static int timeoutsReached = 0;
   private static boolean active=true;
@@ -249,7 +250,7 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
     catch (Exception e){
       if(e.getCause() instanceof IOException) 
       {//most likely a StreamCorruptedException
-        logger.error("IO error while attempting to get key " + key + "(" + e.getCause().getMessage() + "), removing from cache!");
+        logger.error("IO error while attempting to get key " + key + "(" + e.getCause().getMessage() + "), removing from cache!", e);
         getCache().removeAsync(key);
         return null;
       }

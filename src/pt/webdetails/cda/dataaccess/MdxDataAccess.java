@@ -278,6 +278,11 @@ public class MdxDataAccess extends PREDataAccess
       hash = 83 * hash + (this.roles != null ? this.roles.hashCode() : 0);
       return hash;
     }
+    
+    @Override 
+    public String toString(){
+      return this.getClass().getName() + "[bandedMode: " + bandedMode + "; roles:" +  roles + "]";
+    }
   }
 
 
