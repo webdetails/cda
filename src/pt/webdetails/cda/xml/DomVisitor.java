@@ -166,7 +166,7 @@ public class DomVisitor {
 		daEle.addAttribute("connection", da.getConnectionId());
 		daEle.addAttribute("type", da.getType());
 		daEle.addAttribute("access", da.getAccess().name().toLowerCase());
-		if(da.isCache()) daEle.addAttribute("cache", new Boolean(da.isCache()).toString());
+		if(da.isCacheEnabled()) daEle.addAttribute("cache", new Boolean(da.isCacheEnabled()).toString());
 		if(da.getCacheDuration()!=3600) daEle.addAttribute("cacheDuration", "" + da.getCacheDuration());
 		daEle.addElement("Name").addText(da.getName());
 
@@ -222,6 +222,7 @@ public class DomVisitor {
 			paramEle.addAttribute("pattern", parameter.getPattern());
 		// Object getDefaultValue does not make sense!
 		paramEle.addAttribute("default", parameter.getDefaultValue().toString());
+	    paramEle.addAttribute("separator", parameter.getSeparator());
 		if (parameter.getAccess().equals(Parameter.Access.PRIVATE)){
 			paramEle.addAttribute("access", parameter.getAccess().name().toLowerCase());
 		}

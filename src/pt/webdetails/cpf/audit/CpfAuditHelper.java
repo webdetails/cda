@@ -20,19 +20,21 @@ public class CpfAuditHelper {
 	 * 
 	 * Start Audit Event
 	 *  
-	 * @param actionName  Name of the action
+   * @param processId Id for the audit process (usually the plugin name)
+   * @param actionName  Name of the action
 	 * @param objectName Object of the action
 	 * @param userSession Pentaho User Session 
 	 * @param logger Logger object
    * @param requestParams parameters associated to the request
 	 * @return  UUID of start event
 	 */
-	static public UUID startAudit(String actionName, String objectName, IPentahoSession userSession,ILogger logger, IParameterProvider requestParams) {
+	static public UUID startAudit(String processId, String actionName, String objectName, IPentahoSession userSession,ILogger logger, IParameterProvider requestParams) {
 		UUID uuid=UUID.randomUUID();
 
     StringBuilder sb = new StringBuilder();
     if (requestParams != null) {
-      Iterator iter = requestParams.getParameterNames();
+      @SuppressWarnings("unchecked")
+      Iterator<String> iter = requestParams.getParameterNames();
       while (iter.hasNext()) {
         String paramName = iter.next().toString();
         sb.append(paramName).append("=").append(requestParams.getStringParameter(paramName, "novalue")).append(";");
@@ -41,7 +43,7 @@ public class CpfAuditHelper {
       
     
     
-		AuditHelper.audit(userSession.getId(), userSession.getName(), actionName, objectName, userSession.getProcessId(),
+		AuditHelper.audit(userSession.getId(), userSession.getName(), actionName, objectName, processId,
 				MessageTypes.INSTANCE_START, uuid.toString(), sb.toString(), 0, logger);
 
 		return uuid;
@@ -51,6 +53,7 @@ public class CpfAuditHelper {
 	 * 
 	 * End Audit Event
 	 * 
+   * @param processId Id for the audit process (usually the plugin name)
 	 * @param actionName Name of the action
 	 * @param objectName Object of the action
 	 * @param userSession Pentaho User Session 
@@ -59,9 +62,9 @@ public class CpfAuditHelper {
 	 * @param uuid  UUID of start event
 	 * @param end End time in Millis Seconds
 	 */
-	static public void endAudit(String actionName, String objectName, IPentahoSession userSession,ILogger logger, long start,UUID uuid, long end) {
+	static public void endAudit(String processId, String actionName, String objectName, IPentahoSession userSession,ILogger logger, long start,UUID uuid, long end) {
 
-    AuditHelper.audit(userSession.getId(), userSession.getName(), actionName, objectName, userSession.getProcessId(),
+    AuditHelper.audit(userSession.getId(), userSession.getName(), actionName, objectName, processId,
 				MessageTypes.INSTANCE_END, uuid.toString(),"", ((float) (end - start) / 1000), logger);
 	}
 

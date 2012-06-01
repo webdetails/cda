@@ -134,7 +134,7 @@ public class CacheMonitorHandler extends JsonCallHandler
       
       @Override
       public JSONObject execute(IParameterProvider params) throws Exception {
-        AbstractDataAccess.shutdowCache();
+        AbstractDataAccess.shutdownCache();
         return getOKJson("Cache shutdown.");
       }
     });

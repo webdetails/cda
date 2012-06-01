@@ -10,9 +10,10 @@ import org.dom4j.Element;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.ISolutionFilter;
-import org.pentaho.platform.api.repository.ISolutionRepository;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
+
+import pt.webdetails.cpf.repository.RepositoryAccess;
+import pt.webdetails.cpf.repository.RepositoryAccess.FileAccess;
 
 /**
  * Utility class for SolutionRepository utils
@@ -50,17 +51,16 @@ public class SolutionRepositoryUtils
 
     logger.debug("Getting CDA list");
 
-    ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
-
-    Document cdaTree = solutionRepository.getFullSolutionTree(ISolutionRepository.ACTION_EXECUTE, new CdaFilter());
-    List cdaFiles = cdaTree.selectNodes("//leaf[@isDir=\"false\"]");
+    Document cdaTree = RepositoryAccess.getRepository(userSession).getFullSolutionTree(FileAccess.READ, new CdaFilter());// solutionRepository.getFullSolutionTree(ISolutionRepository.ACTION_EXECUTE, new CdaFilter());
+    @SuppressWarnings("unchecked")
+    List<Element> cdaFiles = cdaTree.selectNodes("//leaf[@isDir=\"false\"]");
 
 
     final int rowCount = cdaFiles.size();
 
     // Define names and types
     final String[] colNames = {"name", "path"};
-    final Class[] colTypes = {String.class, String.class};
+    final Class<?>[] colTypes = {String.class, String.class};
     final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
 
     for (Object o : cdaFiles)

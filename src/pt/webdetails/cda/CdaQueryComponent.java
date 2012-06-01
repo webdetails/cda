@@ -12,8 +12,6 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.commons.connection.memory.MemoryResultSet;
-import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
 
 

@@ -2,6 +2,7 @@
 package pt.webdetails.cda.dataaccess;
 
 import org.dom4j.Element;
+
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleDataFactory;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
@@ -24,7 +25,7 @@ import pt.webdetails.cda.settings.UnknownConnectionException;
 public class KettleDataAccess extends PREDataAccess
 {
   
-  private ResourceKey fileKey;
+  private String path;
 
   public KettleDataAccess(final Element element)
   {
@@ -61,22 +62,25 @@ public class KettleDataAccess extends PREDataAccess
     super.setCdaSettings(cdaSettings);
     final ResourceManager resourceManager = new ResourceManager();
     resourceManager.registerDefaults();
+    ResourceKey fileKey;
     try {
       fileKey = resourceManager.deriveKey(getCdaSettings().getContextKey(), "");
+      path = fileKey.getIdentifierAsString();
     } catch (ResourceKeyCreationException e) {
-      fileKey = null;//will blow down the road
+      path = null;//shouldn't happen and will blow down the road
     }
   };
   
-  protected ResourceKey getResourceKey(){
-    return fileKey;
-  }
+//  protected ResourceKey getResourceKey(){
+//    return new ResourceKey(RepositoryResourceLoader.SOLUTION_SCHEMA_NAME, path, new HashMap<Object,Object>(0));
+//  }
   
   /**
    * ContextKey is used to resolve the transformation file, and so must be stored in the cache key.
+   * We only use solution paths, only the path needs to be stored.
    */
   @Override
-  public ResourceKey getExtraCacheKey(){
-    return getResourceKey();
+  public String getExtraCacheKey(){
+    return path;
   }
 }

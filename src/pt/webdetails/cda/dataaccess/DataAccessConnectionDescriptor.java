@@ -89,7 +89,7 @@ public class DataAccessConnectionDescriptor {
     return output.toString().replaceAll(",\n(\t*)}", "\n$1}");
   }
 
-  public static DataAccessConnectionDescriptor[] fromClass(Class dataAccess) throws Exception {
+  public static DataAccessConnectionDescriptor[] fromClass(Class<? extends DataAccess> dataAccess) throws Exception {
     ArrayList<DataAccessConnectionDescriptor> descriptors = new ArrayList<DataAccessConnectionDescriptor>();
     AbstractDataAccess sample = (AbstractDataAccess) dataAccess.newInstance();
     Connection[] conns = sample.getAvailableConnections();

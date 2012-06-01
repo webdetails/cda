@@ -141,11 +141,11 @@ public class CalculatedTableModel implements MetaTableModel
     {
       context.lock(calcColumnIndex);
       final String formula = calculatedColumns[calcColumnIndex].getFormula();
-      final String formulaNamespace;
+//      final String formulaNamespace;
       final String formulaExpression;
       if (formula.length() > 0 && formula.charAt(0) == '=')
       {
-        formulaNamespace = "report";
+//        formulaNamespace = "report";
         formulaExpression = formula.substring(1);
       }
       else
@@ -154,12 +154,12 @@ public class CalculatedTableModel implements MetaTableModel
         if (separator <= 0 || ((separator + 1) == formula.length()))
         {
           // error: invalid formula.
-          formulaNamespace = null;
+//          formulaNamespace = null;
           formulaExpression = null;
         }
         else
         {
-          formulaNamespace = formula.substring(0, separator);
+//          formulaNamespace = formula.substring(0, separator);
           formulaExpression = formula.substring(separator + 1);
         }
       }

@@ -14,7 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-import org.pentaho.platform.api.engine.PluginBeanException;
 
 import pt.webdetails.cda.cache.EHCacheQueryCache;
 import pt.webdetails.cda.cache.IQueryCache;
@@ -26,7 +25,6 @@ import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 import pt.webdetails.cda.utils.InvalidOutputIndexException;
-import pt.webdetails.cda.utils.TableModelException;
 import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.Util;
 import pt.webdetails.cda.utils.framework.PluginUtils;
@@ -143,6 +141,7 @@ public abstract class AbstractDataAccess implements DataAccess
 
 
     // Parse parameters
+    @SuppressWarnings("unchecked")
     final List<Element> parameterNodes = element.selectNodes("Parameters/Parameter");
 
     for (final Element p : parameterNodes)
@@ -151,6 +150,7 @@ public abstract class AbstractDataAccess implements DataAccess
     }
 
     // Parse outputs
+    @SuppressWarnings("unchecked")
     final List<Element> outputNodes = element.selectNodes("Output");
 
     for (final Element outputNode : outputNodes)
@@ -190,6 +190,7 @@ public abstract class AbstractDataAccess implements DataAccess
     }
 
     // Parse Columns
+    @SuppressWarnings("unchecked")
     final List<Element> columnNodes = element.selectNodes("Columns/*");
 
     for (final Element p : columnNodes)
@@ -210,7 +211,7 @@ public abstract class AbstractDataAccess implements DataAccess
     if(cache == null){
       try {
         cache = PluginUtils.getPluginBean("cda.", IQueryCache.class);
-      } catch (PluginBeanException e) {
+      } catch (Exception e) {
         logger.error(e.getMessage());
       }
       if(cache == null){
@@ -227,7 +228,7 @@ public abstract class AbstractDataAccess implements DataAccess
     return ((EHCacheQueryCache) getCdaCache()).getCache();
   }
 
-  public static synchronized void shutdowCache(){
+  public static synchronized void shutdownCache(){
     if(cache != null){
       cache.shutdownIfRunning();
       cache = null;
@@ -275,10 +276,6 @@ public abstract class AbstractDataAccess implements DataAccess
     catch (SortException e)
     {
       throw new QueryException("Error while sorting output ", e);
-    }
-    catch (TableModelException e)
-    {
-      throw new QueryException("Could not create outputTableModel ", e);
     }
   }
 

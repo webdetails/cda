@@ -15,13 +15,13 @@
 		<dependency org="pentaho" name="pentaho-bi-platform-scheduler" rev="${dependency.bi-platform.revision}" transitive="false" changing="true"/>
 		<!--  internal dependencies -->
 		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin"
-			rev="${dependency.bi-platform.revision}" changing="true">
+			rev="${dependency.pentaho-reporting.revision}" changing="true">
 		</dependency>
 		<dependency org="pentaho" name="pentaho-bi-platform-plugin-services"
 			rev="${dependency.bi-platform.revision}" transitive="false" changing="true"/>
 		<dependency org="pentaho" name="pentaho-bi-platform-plugin-actions"
 			rev="${dependency.bi-platform.revision}" transitive="false" changing="true"/>
-    <dependency org="com.hazelcast" name="hazelcast" transitive="false" rev="1.9.4.6" />
+    <dependency org="com.hazelcast" name="hazelcast" transitive="false" rev="2.0.2" />
 
     <exclude module="ehcache"/>  <!-- Comment this for CDA with 3.6.0 dependencies -->
 	</dependencies>
