@@ -244,6 +244,11 @@ public class CdaContentGenerator extends BaseContentGenerator
       queryOptions.setPageStart(pageStart > 0 ? (int) pageStart : paginate ? DEFAULT_START_PAGE : 0);
     }
     
+    // Support for bypassCache (we'll maintain the name we use in CDE
+    if(pathParams.hasParameter("bypassCache")){
+      queryOptions.setCacheBypass(Boolean.parseBoolean(pathParams.getStringParameter("bypassCache","false")));
+    }
+    
     // Handle the query itself and its output format...
     queryOptions.setOutputType(requestParams.getStringParameter("outputType", "json"));
     queryOptions.setDataAccessId(requestParams.getStringParameter("dataAccessId", "<blank>"));
