@@ -159,7 +159,8 @@ public class MdxDataAccess extends PREDataAccess
       }
     }
 
-    mdxDataFactory.setQuery("query", getQuery(), null, null);
+    // using deprecated method for 3.10 support
+    mdxDataFactory.setQuery("query", getQuery());
 
     return mdxDataFactory;
 
