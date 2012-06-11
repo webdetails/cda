@@ -50,7 +50,7 @@ public class MqlDataAccess extends PREDataAccess {
     } else {
       returnDataFactory.setConnectionProvider(new PentahoPmdConnectionProvider());
     }
-    returnDataFactory.setQuery("query", getQuery(), null, null);
+    returnDataFactory.setQuery("query", getQuery());
 
     return returnDataFactory;
   }
