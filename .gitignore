@@ -5,3 +5,6 @@ dist/
 nbproject/private/
 .DS_Store
 /override.properties
+/classes/**
+/classes-test/**
+*~
