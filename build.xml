@@ -224,6 +224,16 @@
 		&lt;/version>	</echo>         
 
   </target>
+  
+  <!-- ================ 
+      Legacy Compat
+      ================ --> 
+  <target name="resolve-legacy" depends="resolve-init">
+    <ivy:resolve file="ivy.xml" conf="legacy" />
+    <ivy:retrieve conf="legacy" pattern="${lib.dir}/[module]-[revision](-[classifier]).[ext]" />
+  </target>
+  <target name="dist-legacy" depends="clean,resolve-legacy,jar,dist-plugin"/>
+  <!-- ================= --> 
 
   <!--=======================================================================
               dist-samples
