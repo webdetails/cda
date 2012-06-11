@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package pt.webdetails.cda.cache.monitor;
 
 import java.io.IOException;
@@ -116,20 +120,6 @@ public class CacheMonitorHandler extends JsonCallHandler
       }
     });
     
-//    registerMethod("clusterInfo", new JsonCallHandler.Method() 
-//    {
-//      public JSONObject execute(IParameterProvider params) throws JSONException {
-//        return getOKJson(HazelcastCacheMonitor.getClusterInfo()); 
-//      }
-//    });
-//    
-//    registerMethod("mapInfo", new JsonCallHandler.Method() 
-//    {
-//      public JSONObject execute(IParameterProvider params) throws JSONException {
-//        return getOKJson(HazelcastCacheMonitor.getMapInfo()); 
-//      }
-//    });
-    
     registerMethod("shutdown", new JsonCallHandler.Method() {
       
       @Override
@@ -138,30 +128,6 @@ public class CacheMonitorHandler extends JsonCallHandler
         return getOKJson("Cache shutdown.");
       }
     });
-    
-//    registerMethod("getElementDiskSize", new JsonCallHandler.Method()
-//    {  
-//      /**
-//       * Get serialized size of an element
-//       */
-//      public JSONObject execute(IParameterProvider params) throws UnsupportedEncodingException, IOException, ClassNotFoundException, JSONException 
-//      {
-//        String serializedKey = params.getStringParameter("key", null);
-//        return getElementSize(serializedKey, CacheSizeType.DISK);
-//      }
-//    });
-//    
-//    registerMethod("getElementMemorySize", new JsonCallHandler.Method()
-//    {
-//      /**
-//       * Get in-memory size of an element
-//       */
-//      public JSONObject execute(IParameterProvider params) throws UnsupportedEncodingException, IOException, ClassNotFoundException, JSONException 
-//      {
-//        String serializedKey = params.getStringParameter("key", null);
-//        return getElementSize(serializedKey, CacheSizeType.MEMORY);
-//      }
-//    });
     
   }
   
@@ -175,9 +141,7 @@ public class CacheMonitorHandler extends JsonCallHandler
   
   
   private static class ErrorMsgs {
-//    public static final String SIZEOF_NO_INSTRUMENTATION = "SizeOf needs to be declared as a java agent for this to work.";
     public static final String CACHE_ITEM_NOT_FOUND = "Cache element no longer in cache.";
-    public static final String NO_CACHE_KEY_ARG = "No cache key received.";
   }
   
   private static JSONObject getcacheQueryTable(String encodedCacheKey) throws JSONException, ExporterException, UnsupportedEncodingException, IOException, ClassNotFoundException {
@@ -187,11 +151,9 @@ public class CacheMonitorHandler extends JsonCallHandler
     }
     
     JSONObject result = new JSONObject();
-    //Cache cdaCache = AbstractDataAccess.getCache();
     IQueryCache cdaCache = AbstractDataAccess.getCdaCache();
 
     TableCacheKey lookupCacheKey = TableCacheKey.getTableCacheKeyFromString(encodedCacheKey);
-    //net.sf.ehcache.Element elem = cdaCache.getQuiet(lookupCacheKey);
     ExtraCacheInfo info = cdaCache.getCacheEntryInfo(lookupCacheKey);
 
     if(info != null){

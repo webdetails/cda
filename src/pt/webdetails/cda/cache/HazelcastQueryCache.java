@@ -327,9 +327,9 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
       runInClassLoader(new Runnable(){
         
         public void run(){
-        TableCacheKey key = event.getKey();
-        logger.debug("entry evicted, removing stats for query " + key);
-        getCacheStats().remove(key);
+          TableCacheKey key = event.getKey();
+          logger.debug("entry evicted, removing stats for query " + key);
+          getCacheStats().remove(key);
         }
         
       });

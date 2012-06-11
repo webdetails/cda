@@ -14,6 +14,9 @@ import org.json.JSONObject;
 public class UncachedQuery extends Query
 {
 
+  private static final long serialVersionUID = 1L;
+
+
   public UncachedQuery(JSONObject json) throws JSONException
   {
     super(json);

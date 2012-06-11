@@ -114,11 +114,13 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
       trans.executeCheckedSuccess(null, null, this);
       logger.info(trans.getReadWriteThroughput());
 
+      // Transformation executed ok, lets return the file
       copyFileToOutputStream(out);
 
-      // Transformation executed ok, lets return the file
-
       output = outputListener.getRowsWritten();
+      if(output != null){
+        logger.debug(output.getRowCount() + " rows written.");
+      }
     }
     catch (KettleException e)
     {

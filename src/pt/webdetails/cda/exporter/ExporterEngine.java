@@ -73,8 +73,8 @@ public class ExporterEngine
       final String className = "pt.webdetails.cda.exporter."
               + outputType.substring(0, 1).toUpperCase() + outputType.substring(1, outputType.length()) + "Exporter";
 
-      final Class clazz = Class.forName(className);
-      final Class[] params =
+      final Class<?> clazz = Class.forName(className);
+      final Class<?>[] params =
       {
         HashMap.class
       };

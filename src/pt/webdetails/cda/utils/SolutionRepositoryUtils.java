@@ -51,7 +51,7 @@ public class SolutionRepositoryUtils
 
     logger.debug("Getting CDA list");
 
-    Document cdaTree = RepositoryAccess.getRepository(userSession).getFullSolutionTree(FileAccess.READ, new CdaFilter());// solutionRepository.getFullSolutionTree(ISolutionRepository.ACTION_EXECUTE, new CdaFilter());
+    Document cdaTree = RepositoryAccess.getRepository(userSession).getFullSolutionTree(FileAccess.READ, new CdaFilter());
     @SuppressWarnings("unchecked")
     List<Element> cdaFiles = cdaTree.selectNodes("//leaf[@isDir=\"false\"]");
 
