@@ -7,6 +7,9 @@ package pt.webdetails.cda.utils;
  * Time: 11:13:10 PM
  */
 public class InvalidOutputIndexException extends Exception {
+
+  private static final long serialVersionUID = 1L;
+
   public InvalidOutputIndexException(final String s, final Exception cause) {
     super(s,cause);
   }

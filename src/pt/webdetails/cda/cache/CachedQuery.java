@@ -21,6 +21,8 @@ import pt.webdetails.cda.utils.Util;
 public class CachedQuery extends Query
 {
 
+  private static final long serialVersionUID = 1L;
+  
   private Date lastExecuted, nextExecution;
   private boolean success = true;
   private long timeElapsed;

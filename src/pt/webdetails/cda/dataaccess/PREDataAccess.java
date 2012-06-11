@@ -6,9 +6,6 @@ import java.util.TimeZone;
 import javax.swing.table.TableModel;
 
 import org.dom4j.Element;
-import org.pentaho.platform.api.repository.ISolutionRepository;
-import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
@@ -136,12 +133,13 @@ public abstract class PREDataAccess extends SimpleDataAccess
       }
       else
       {
-        // Make sure we have the env. correctly inited
-        if (SolutionReposHelper.getSolutionRepositoryThreadVariable() == null && PentahoSystem.getObjectFactory().objectDefined(ISolutionRepository.class.getSimpleName()))
-        {
-          threadVarSet = true;
-          SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession()));
-        }
+        //TODO:testing, TEMP
+//        // Make sure we have the env. correctly inited
+//        if (SolutionReposHelper.getSolutionRepositoryThreadVariable() == null && PentahoSystem.getObjectFactory().objectDefined(ISolutionRepository.class.getSimpleName()))
+//        {
+//          threadVarSet = true;
+//          SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession()));
+//        }
         environmentDataRow = new ReportEnvironmentDataRow(new PentahoReportEnvironment(configuration));
       }
 

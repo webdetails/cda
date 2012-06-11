@@ -55,7 +55,6 @@ public class JsonExporter extends AbstractExporter
     JSONObject json = new JSONObject();
 
     // Generate metadata
-    final JSONObject queryInfo = new JSONObject();
     final JSONArray metadataArray = new JSONArray();
 
     final int columnCount = tableModel.getColumnCount();

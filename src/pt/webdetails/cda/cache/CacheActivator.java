@@ -83,7 +83,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
       return true;
     }
     catch (Exception e)
-    {
+    {//TODO: shouldn't we rollback here?
     }
     finally
     {

@@ -7,6 +7,9 @@ package pt.webdetails.cda.exporter;
  * Time: 5:39:10 PM
  */
 public class UnsupportedExporterException extends Exception {
+
+  private static final long serialVersionUID = 1L;
+
   public UnsupportedExporterException(final String s, final Exception cause) {
     super(s,cause);
   }

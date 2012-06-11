@@ -1,8 +1,6 @@
 package pt.webdetails.cda.exporter;
 
 import java.util.HashMap;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM
@@ -10,7 +8,6 @@ import org.apache.commons.logging.LogFactory;
 public class XlsExporter extends AbstractKettleExporter
 {
 
-  private static final Log logger = LogFactory.getLog(XlsExporter.class);
   public static final String ATTACHMENT_NAME_SETTING = "attachmentName";
   private String attachmentName;
 
