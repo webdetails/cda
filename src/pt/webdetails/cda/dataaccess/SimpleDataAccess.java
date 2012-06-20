@@ -20,10 +20,12 @@ import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.DummyConnection;
+import pt.webdetails.cpf.messaging.EventPublisher;
+import pt.webdetails.cda.events.QueryErrorEvent;
+import pt.webdetails.cda.events.QueryTooLongEvent;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 import pt.webdetails.cda.utils.TableModelUtils;
-import pt.webdetails.cda.utils.Util;
 import pt.webdetails.cda.xml.DomVisitable;
 import pt.webdetails.cda.xml.DomVisitor;
 
@@ -126,6 +128,12 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     }
     catch (Exception e)
     {
+      try {
+        EventPublisher.getPublisher().publish(new QueryErrorEvent(
+            new QueryTooLongEvent.QueryInfo(getCdaSettings().getId(), getId(), getQuery(), parameterDataRow), e));
+      } catch (Exception inner) {
+        logger.error("Error pushing event", inner);
+      } 
       throw new QueryException("Found an unhandled exception:", e);
     }
     finally
@@ -212,6 +220,15 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     long duration = (endTime - beginTime) / 1000;//precision not an issue: integer op is ok
     if (duration > queryTimeThreshold)
     {
+      //publish
+      try {
+        EventPublisher.getPublisher().publish(new QueryTooLongEvent(
+            new QueryTooLongEvent.QueryInfo(this.getCdaSettings().getId(), queryId, query, Parameter.createParameterDataRowFromParameters(parameters)), duration));
+      } catch (Exception e) {
+        //TODO
+        logger.error("Error pushing event", e);
+      } 
+      
       //log query and duration
       String logMsg = "Query " + queryId + " took " + duration + "s.\n";
       logMsg += "\t Query contents: << " + query.trim() + " >>\n";
@@ -223,7 +240,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
           logMsg += "\t\t" + parameter.toString() + "\n";
         }
       }
-      logger.debug(logMsg);
+      logger.warn(logMsg);
     }
     return duration;
   }
