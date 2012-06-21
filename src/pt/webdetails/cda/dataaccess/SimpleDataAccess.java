@@ -21,6 +21,7 @@ import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.DummyConnection;
 import pt.webdetails.cpf.messaging.EventPublisher;
+import pt.webdetails.cda.events.CdaEvent;
 import pt.webdetails.cda.events.QueryErrorEvent;
 import pt.webdetails.cda.events.QueryTooLongEvent;
 import pt.webdetails.cda.query.QueryOptions;
@@ -130,7 +131,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     {
       try {
         EventPublisher.getPublisher().publish(new QueryErrorEvent(
-            new QueryTooLongEvent.QueryInfo(getCdaSettings().getId(), getId(), getQuery(), parameterDataRow), e));
+            new CdaEvent.QueryInfo(getCdaSettings().getId(), getId(), getQuery(), parameterDataRow), e));
       } catch (Exception inner) {
         logger.error("Error pushing event", inner);
       } 
