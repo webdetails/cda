@@ -5,50 +5,26 @@
 package pt.webdetails.cda.events;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
-public class QueryTooLongEvent extends CdaEvent { //implements JsonSerializable {//TODO: make JsonSerializable work both ways... use annotations
+public class QueryTooLongEvent extends CdaEvent { //implements JsonSerializable {
 
-//  public static class Fields extends PluginEvent.Fields {
+//  public static class Fields extends CdaEvent.Fields {
 //    public static final String DURATION = "duration";
-//    public static final String QUERY_INFO = "queryInfo";
 //  }
   
+  private long duration;
 
   public QueryTooLongEvent(QueryInfo queryInfo, long duration) throws JSONException{
     super(CdaEventType.QueryTooLong, queryInfo);
-    getEvent().put("duration", duration);
-//    this.duration = duration;
+    this.duration = duration;
   }
   
-//  public String getEventType(){
-//    return "queryDelay";
-//  }
-//  
-//  private QueryInfo queryInfo;
-//  
-//  public QueryInfo getQueryInfo(){
-//    return queryInfo;
-//  }
-//  
-//  private long timeStamp = System.currentTimeMillis();
-//  
-//  public long getTimeStamp(){
-//    return timeStamp;
-//  }
-//  
-//  private long duration;
-//  
-  
-//  @Override
-//  public JSONObject toJSON() throws JSONException {
-//    JSONObject obj = super.toJSON();
-////        new JSONObject();
-////    obj.put("eventType", getEventType()); 
-////    obj.put("timestamp", getTimeStamp());
-////    obj.put("queryInfo", queryInfo.toJSON());
-//    //
-//    obj.put("duration", duration);
-//    return obj;
-//  }
+  @Override
+  public JSONObject toJSON() throws JSONException {
+    JSONObject obj = super.toJSON();
+    obj.put("duration", duration);
+    return obj;
+  }
 
 }

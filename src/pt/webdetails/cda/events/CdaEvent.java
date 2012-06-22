@@ -13,6 +13,10 @@ import pt.webdetails.cpf.messaging.PluginEvent;
 
 public abstract class CdaEvent extends PluginEvent {
   
+  public static class Fields extends PluginEvent.Fields {
+    public static String QUERY_INFO = "queryInfo";
+  }
+  
   enum CdaEventType {
     QueryTooLong,
     QueryError,
@@ -48,12 +52,35 @@ public abstract class CdaEvent extends PluginEvent {
     }
 
   }
+  
+  private QueryInfo queryInfo;
 
   public CdaEvent(CdaEventType eventType, QueryInfo queryInfo) throws JSONException{
-    super("cda",eventType.toString(),null);
-    JSONObject event = new JSONObject();
-    event.put("queryInfo", queryInfo.toJSON());
-    setEvent(event);
+    super("cda",eventType.toString());
+    this.queryInfo = queryInfo;
+    JSONObject key = queryInfo.toJSON();
+    key.put(Fields.EVENT_TYPE, eventType.toString());
+    setKey(key);
+  }
+  
+//  public CdaEvent(JSONObject obj) throws JSONException {
+//    super(obj);
+//    this.queryInfo = new QueryInfo(obj.getJSONObject(Fields.QUERY_INFO));
+//  }
+
+  public QueryInfo getQueryInfo() {
+    return queryInfo;
+  }
+
+  public void setQueryInfo(QueryInfo queryInfo) {
+    this.queryInfo = queryInfo;
+  }
+  
+  @Override 
+  public JSONObject toJSON() throws JSONException{
+    JSONObject obj = super.toJSON();
+    obj.put(Fields.QUERY_INFO, queryInfo.toJSON());
+    return obj;
   }
 
 }
