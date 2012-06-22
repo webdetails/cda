@@ -16,12 +16,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.engine.IMimeTypeListener;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.util.messages.LocaleHelper;
@@ -51,9 +48,6 @@ public class CdaContentGenerator extends SimpleContentGenerator
   private static Log logger = LogFactory.getLog(CdaContentGenerator.class);
   public static final String PLUGIN_NAME = "cda";
   private static final long serialVersionUID = 1L;
-  private static final String MIME_CSS = "text/css";
-  private static final String MIME_JS = "text/javascript";
-  private static final String MIME_JSON = "application/json";
   private static final String EDITOR_SOURCE = "/editor/editor.html";
   private static final String EXT_EDITOR_SOURCE = "/editor/editor-cde.html";
   private static final String PREVIEWER_SOURCE = "/previewer/previewer.html";
@@ -70,9 +64,6 @@ public class CdaContentGenerator extends SimpleContentGenerator
   public void doQuery(final OutputStream out) throws Exception
   {
     final IParameterProvider requestParams = getRequestParameters();
-//    final long start = System.currentTimeMillis();        
-//    UUID uuid = CpfAuditHelper.startAudit(PLUGIN_NAME, "doQuery", getObjectName(), this.userSession, this, requestParams);       
-    
         
     final CdaEngine engine = CdaEngine.getInstance();
     final QueryOptions queryOptions = new QueryOptions();
@@ -149,27 +140,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
 
     // Finally, pass the query to the engine
     engine.doQuery(out, cdaSettings, queryOptions);
-//    CpfAuditHelper.endAudit(PLUGIN_NAME,"doQuery", getObjectName(), this.userSession, this, start, uuid, System.currentTimeMillis());    
 
-  }
-
-
-  private void setResponseHeaders(final String mimeType, final String attachmentName)
-  {
-    // Make sure we have the correct mime type
-    final HttpServletResponse response = getResponse();
-    if (response == null)
-    {
-      return;
-    }
-    response.setHeader("Content-Type", mimeType);
-
-    if (attachmentName != null)
-    {
-      response.setHeader("content-disposition", "attachment; filename=" + attachmentName);
-    }
-    // We can't cache this request
-    response.setHeader("Cache-Control", "max-age=0, no-store");
   }
 
   @Exposed(accessLevel = AccessLevel.PUBLIC)
@@ -179,6 +150,9 @@ public class CdaContentGenerator extends SimpleContentGenerator
 
     final IParameterProvider requestParams = getRequestParameters();
     final String path = getRelativePath(requestParams);
+    if(StringUtils.isEmpty(path)){
+      throw new IllegalArgumentException("No path provided");
+    }
     logger.debug("Do Query: getRelativePath:" + path);
     logger.debug("Do Query: getSolPath:" + PentahoSystem.getApplicationContext().getSolutionPath(path));
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
@@ -188,7 +162,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
     discoveryOptions.setOutputType(requestParams.getStringParameter("outputType", "json"));
 
     String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
-    setResponseHeaders(mimeType, null);
+    setResponseHeaders(mimeType);
     engine.listQueries(out, cdaSettings, discoveryOptions);
   }
 
@@ -208,21 +182,20 @@ public class CdaContentGenerator extends SimpleContentGenerator
     discoveryOptions.setDataAccessId(requestParams.getStringParameter("dataAccessId", "<blank>"));
 
     String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
-    setResponseHeaders(mimeType, null);
+    setResponseHeaders(mimeType);
 
     engine.listParameters(out, cdaSettings, discoveryOptions);
   }
 
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC)
+  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.XML)
   public void getCdaFile(final OutputStream out) throws Exception
   {
     String document = getResourceAsString(StringUtils.replace(getRelativePath(getRequestParameters()), "///", "/"), FileAccess.READ);// ISolutionRepository.ACTION_UPDATE);//TODO:check
-    setResponseHeaders(getMimeType(FileType.XML), null);
     writeOut(out, document);
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC)
+  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.PLAIN_TEXT)
   public void writeCdaFile(OutputStream out) throws Exception
   {
     //TODO: Validate the filename in some way, shape or form!
@@ -234,7 +207,6 @@ public class CdaContentGenerator extends SimpleContentGenerator
 
     if (repository.canWrite(path))
     { 
-      setResponseHeaders("text/plain", null);
       switch(repository.publishFile(path, ((String) requestParams.getParameter("data")).getBytes(ENCODING), true)){
         case OK:
           SettingsManager.getInstance().clearCache();
@@ -261,17 +233,16 @@ public class CdaContentGenerator extends SimpleContentGenerator
     discoveryOptions.setOutputType(getRequestParameters().getStringParameter("outputType", "json"));
 
     String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
-    setResponseHeaders(mimeType, null);
+    setResponseHeaders(mimeType);
     engine.getCdaList(out, discoveryOptions, userSession);
   }
 
-  @Exposed(accessLevel = AccessLevel.ADMIN)
+  @Exposed(accessLevel = AccessLevel.ADMIN, outputType = MimeType.PLAIN_TEXT)
   public void clearCache(final OutputStream out) throws Exception
   {
     SettingsManager.getInstance().clearCache();
     AbstractDataAccess.clearCache();
 
-    setResponseHeaders("text/plain", null);
     out.write("Cache cleared".getBytes());
   }
   
@@ -376,12 +347,11 @@ public class CdaContentGenerator extends SimpleContentGenerator
       boolean hasCde = repository.resourceExists("system/pentaho-cdf-dd");
       
       final String editorPath = "system/" + PLUGIN_NAME + (hasCde? EXT_EDITOR_SOURCE : EDITOR_SOURCE);
-      setResponseHeaders(MimeType.HTML,null);
       writeOut(out, getResourceAsString(editorPath,FileAccess.EXECUTE));
     }
     else
     {
-      setResponseHeaders("text/plain", null);
+      setResponseHeaders("text/plain");
       out.write("Access Denied".getBytes());
     }
 
@@ -392,31 +362,19 @@ public class CdaContentGenerator extends SimpleContentGenerator
   public void previewQuery(final OutputStream out) throws Exception
   {
     final String previewerPath = "system/" + PLUGIN_NAME + PREVIEWER_SOURCE;
-    setResponseHeaders(MimeType.HTML, null);
     writeOut(out, getResourceAsString(previewerPath, FileAccess.EXECUTE));
-//    out.write(getResourceAsString(previewerPath, FileAccess.READ).getBytes(ENCODING));
   }
 
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC)
+  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.CSS)
   public void getCssResource(final OutputStream out) throws Exception
   {
-    final IMimeTypeListener mimeTypeListener = outputHandler.getMimeTypeListener();
-    if (mimeTypeListener != null)
-    {
-      mimeTypeListener.setMimeType(MIME_CSS);
-    }
     getResource( out);
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC)
+  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.JAVASCRIPT)
   public void getJsResource(final OutputStream out) throws Exception
   {
-    final IMimeTypeListener mimeTypeListener = outputHandler.getMimeTypeListener();
-    if (mimeTypeListener != null)
-    {
-      mimeTypeListener.setMimeType(MIME_JS);
-    }
     getResource( out);
   }
 
@@ -445,14 +403,13 @@ public class CdaContentGenerator extends SimpleContentGenerator
     
   }
   
-  @Exposed(accessLevel = AccessLevel.PUBLIC)
+  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.JSON)
   public void listDataAccessTypes(final OutputStream out) throws Exception
   {
     boolean refreshCache = Boolean.parseBoolean(getRequestParameters().getStringParameter("refreshCache", "false"));
     
     DataAccessConnectionDescriptor[] data = SettingsManager.getInstance().
             getDataAccessDescriptors(refreshCache);
-    setResponseHeaders(MIME_JSON, null);
 
     StringBuilder output = new StringBuilder("");
     if (data != null)
@@ -481,12 +438,11 @@ public class CdaContentGenerator extends SimpleContentGenerator
     if (repository.hasAccess(path, FileAccess.EDIT))
     {
       final String cacheManagerPath = "system/" + PLUGIN_NAME + CACHEMAN_SOURCE;
-      setResponseHeaders("text/html", null);
       writeOut(out, getResourceAsString(cacheManagerPath, FileAccess.EDIT));
     }
     else
     {
-      setResponseHeaders("text/plain", null);
+      setResponseHeaders("text/plain");
       writeOut(out, "Access Denied");
     }
   }
