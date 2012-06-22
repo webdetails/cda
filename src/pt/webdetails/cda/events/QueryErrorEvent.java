@@ -5,14 +5,24 @@
 package pt.webdetails.cda.events;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class QueryErrorEvent extends CdaEvent {
+  
+  private Exception e;
 
   public QueryErrorEvent(QueryInfo queryInfo, Exception e) throws JSONException {
     super(CdaEventType.QueryError, queryInfo);
-    getEvent().put("exceptionType", e.getClass().getName());
-    getEvent().put("message", e.getMessage());
-    getEvent().put("stackTrace", e.getStackTrace());
+    this.e = e;
+  }
+  
+  @Override
+  public JSONObject toJSON() throws JSONException {
+    JSONObject obj = super.toJSON();
+    obj.put("exceptionType", e.getClass().getName());
+    obj.put("message", e.getMessage());
+    obj.put("stackTrace", e.getStackTrace());
+    return obj;
   }
 
 }
