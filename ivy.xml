@@ -23,6 +23,10 @@
 			rev="${dependency.bi-platform.revision}" transitive="false" changing="true"/>
     <dependency org="com.hazelcast" name="hazelcast" transitive="false" rev="2.0.2" conf="default->default;legacy->default"/>
 
+		<dependency org="pentaho" name="cpf"
+			rev="TRUNK-SNAPSHOT" transitive="false" changing="true"/>
+
+
         <!-- Legacy -->
     <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin"
       rev="${dependency.pentaho-reporting.revision.legacy}" changing="true" conf="legacy->default"/>
