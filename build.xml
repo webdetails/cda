@@ -181,6 +181,10 @@
       <fileset dir="${devlib.dir}">
         <include name="**/*.jar"/>
       </fileset>
+		  <fileset dir="${lib.dir}">
+			  <include name="cpf-*.jar" />
+		  </fileset>
+      
     </copy>
 
 
