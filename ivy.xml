@@ -7,6 +7,7 @@
 		<conf name="default"/>
 		<conf name="test" visibility="private"/>
     <conf name="legacy"/>
+        <conf name="runtime"/>
     <conf name="sources"/>
 	</configurations>
 
@@ -24,7 +25,7 @@
     <dependency org="com.hazelcast" name="hazelcast" transitive="false" rev="2.0.2" conf="default->default;legacy->default"/>
 
 		<dependency org="pentaho" name="cpf"
-			rev="TRUNK-SNAPSHOT" transitive="false" changing="true"/>
+			rev="TRUNK-SNAPSHOT" transitive="false" changing="true" conf='runtime->default'/>
 
 
         <!-- Legacy -->
