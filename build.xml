@@ -52,6 +52,10 @@
            target="${javac.target}">
       <classpath>
         <path refid="classpath"/>
+        <fileset dir="runtime-lib">
+          <include name="**/*.jar" />
+        </fileset>
+        
       </classpath>
       <src path="${src.dir}"/>
     </javac>
@@ -117,6 +121,19 @@
 
 
 
+  <!-- Overriding resolve target so we can add resolve-dev -->
+  <target name="resolve"
+          depends="resolve-default, resolve-test, resolve-runtime, ivy.check-releasable"
+          description="Retrieves all the dependent libraries" />
+
+
+  <target name="resolve-runtime" depends="resolve-init">
+    <ivy:resolve file="ivy.xml" conf="runtime" />
+    <ivy:retrieve conf="runtime" pattern="runtime-lib/[module]-[revision](-[classifier]).[ext]" />
+  </target>  
+
+
+
   <!--=======================================================================
               dist
 
@@ -137,10 +154,10 @@
       <fileset dir="${devlib.dir}">
         <include name="**/*.jar"/>
       </fileset>
-		  <fileset dir="${lib.dir}">
-			  <include name="cpf-*.jar" />
-		  </fileset>
-      
+  <fileset dir="runtime-lib">
+        <include name="**/*.jar"/>
+        <exclude name="**/batik-js-1.7.jar"/>
+      </fileset>      
     </copy>
 
 
@@ -191,6 +208,8 @@
     <ivy:retrieve conf="legacy" pattern="${lib.dir}/[module]-[revision](-[classifier]).[ext]" />
   </target>
   <target name="dist-legacy" depends="clean,resolve-legacy,jar,dist-plugin"/>
+  
+  
   <!-- ================= --> 
 
   <!--=======================================================================
