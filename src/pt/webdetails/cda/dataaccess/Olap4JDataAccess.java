@@ -42,6 +42,7 @@ public class Olap4JDataAccess extends PREDataAccess {
     final Olap4JConnection connection = (Olap4JConnection) getCdaSettings().getConnection(getConnectionId());
 
     final AbstractNamedMDXDataFactory mdxDataFactory = createDataFactory();
+    // using deprecated method for 3.10 support
     mdxDataFactory.setQuery("query", getQuery());
     mdxDataFactory.setJdbcPasswordField(connection.getPasswordField());
     mdxDataFactory.setJdbcUserField(connection.getUserField());

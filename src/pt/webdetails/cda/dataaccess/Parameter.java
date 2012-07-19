@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
-import org.pentaho.reporting.libraries.formula.FormulaContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -258,27 +257,29 @@ public class Parameter implements java.io.Serializable {
           return new Date(Long.parseLong(localValue));
         }
       case STRING_ARRAY:
-        return parseToArray(localValue, Type.STRING);
+        return parseToArray(localValue, Type.STRING, new String[0]);
       case DATE_ARRAY:
-        return parseToArray(localValue, Type.DATE);
+        return parseToArray(localValue, Type.DATE, new Date[0]);
       case INTEGER_ARRAY:
-        return parseToArray(localValue, Type.INTEGER);
+        return parseToArray(localValue, Type.INTEGER, new Integer[0]);
       case NUMERIC_ARRAY:
-        return parseToArray(localValue, Type.NUMERIC);
+        return parseToArray(localValue, Type.NUMERIC, new Double[0]);
       default:
          return localValue;
     }
   }
 
-  private Object[] parseToArray(String arrayAsString, Type elementType) throws InvalidParameterException
+
+  @SuppressWarnings("unchecked")
+  private <T> T[] parseToArray(String arrayAsString, Type elementType, T[] array) throws InvalidParameterException
   {    
     CSVTokenizer tokenizer = new CSVTokenizer(arrayAsString, getSeparator());
     
-    ArrayList<Object> result = new ArrayList<Object>();
+    ArrayList<T> result = new ArrayList<T>();
     while( tokenizer.hasMoreTokens()){
-      result.add(getValueFromString(tokenizer.nextToken(), elementType));
+      result.add((T) getValueFromString(tokenizer.nextToken(), elementType));
     }
-    return result.toArray();
+    return result.toArray(array);
   }
 
   public String getName()
@@ -341,6 +342,17 @@ public class Parameter implements java.io.Serializable {
     } else if (type != null) {
       switch (type) {
         case STRING_ARRAY://csvTokenizer compatible
+          
+          if(!(value instanceof String[]) && (value instanceof Object[])){
+            Object[] oldVal = (Object[]) value;
+            String[] newVal = new String[oldVal.length];
+            for(int i=0;i<oldVal.length;i++){
+              //force toString()
+              newVal[i] = "" + oldVal[i];
+            }
+            value = newVal;
+          }
+          
           String[] strArr = (String[]) value;
           int i = 0;
           StringBuilder strBuild = new StringBuilder();

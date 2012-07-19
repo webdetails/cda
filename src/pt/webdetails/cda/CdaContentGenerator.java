@@ -88,8 +88,8 @@ public class CdaContentGenerator extends SimpleContentGenerator
     }
     
     // Support for bypassCache (we'll maintain the name we use in CDE
-    if(pathParams.hasParameter("bypassCache")){
-      queryOptions.setCacheBypass(Boolean.parseBoolean(pathParams.getStringParameter("bypassCache","false")));
+    if(requestParams.hasParameter("bypassCache")){
+      queryOptions.setCacheBypass(Boolean.parseBoolean(requestParams.getStringParameter("bypassCache","false")));
     }
     
     // Handle the query itself and its output format...

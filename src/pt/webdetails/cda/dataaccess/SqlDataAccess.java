@@ -55,6 +55,7 @@ public class SqlDataAccess extends PREDataAccess {
 
     reportDataFactory.setUserField(connection.getUserField());
     reportDataFactory.setPasswordField(connection.getPasswordField());
+    // using deprecated method for 3.10 support
     reportDataFactory.setQuery("query", getQuery());
 
     return reportDataFactory;

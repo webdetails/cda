@@ -1,3 +1,18 @@
+12.07.19
+Fixed [REDMINE CDA797] - ClassLoader issue using CdaQueryComponent in FusionContentGenerator
+Fixed [REDMINE CDA787] - use cde ext-editor for cda files
+Introduced CPF As plugin base
+New Robochef Version - Memory optimization
+CDV Integration
+print stack trace for hazelcast serialization errors, +MdxDataAccess.ExtraCacheKey.toString()
+path issue in cda editor
+-Util.isNullOrEmpty, using StringUtils; build was changed to use 4.5 2 commits ago
+pathParams->requestParams
+more cleaning, warning suppressions
+cde-editor corrections
+Use cde as editor if available; +RepositoryAccess and some cleaning
+
+
 12.05.15
 Fixed [REDMINE CDA038] - 	CDA does not accurately determine metadata of variable column kettle output
 Fixed [REDMINE CDA269] - cache lookups can return incorrect data with kettle data sources
