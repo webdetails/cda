@@ -61,29 +61,26 @@ ignoreNullRows = function(table){
   return cleanTable;
 };
 
-exportFunc = function(id){
-  // Detect whether the was triggered by a refresh or a change in DataAccessId
-  if (id != lastQuery) {
-    // When we change query, we must rebuild parameters
-    lastQuery = id;
-    refreshParams(id);
-    
-    var url = document.location.href;
-    
-    var newWindow = window.open(url.replace('previewQuery', 'doQuery') + '&' + $.param({dataAccessId: id, outputType: "xls"}), 'CDA Export');
-  } else {
-    // Same query, we need to get the present parameter values and rebuild the table
-    var params = getParams();
-
-    params.dataAccessId = id;
-    params.outputType = "xls";
-
-    var url = document.location.href;
-    
-    var newWindow = window.open(url.replace('previewQuery', 'doQuery') + '&' + $.param(params), 'CDA Export');
-  }	
+showQueryUrl = function(dataAccessId){
+	$('#queryUrlDialog input').val(getFullQueryUrl(dataAccessId));
+	$('#queryUrlDialog').jqmShow();
+	$('#queryUrlDialog input').select();
 };
 
+exportFunc = function(id){
+	window.open(getFullQueryUrl(id, {outputType: 'xls'}), 'CDA Export');
+};
+
+getFullQueryUrl = function(dataAccessId, extraParams) {
+	if(dataAccessId != lastQuery){
+		lastQuery = id;
+		refreshParams(id);
+	}
+	var params = getParams();
+	return 	window.location.protocol + '//' + window.location.host + 
+			window.location.pathname.slice(0, window.location.pathname.lastIndexOf('/') +1) +
+			'doQuery' + window.location.search + '&' + $.param( $.extend({dataAccessId : dataAccessId}, params, extraParams) );
+};
 
 refreshParams = function(id) {
   $.getJSON("listParameters",{path:filename, dataAccessId: id},function(data){
