@@ -44,6 +44,10 @@ input[readonly]{
   font-style:italic;
 }
 
+#doQueryUrl {
+  width: 100%;
+}
+
 #selectorText{
   display: inline
 }

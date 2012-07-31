@@ -76,7 +76,8 @@
         <div class="span-6 center last">
           <button class="cdaButton" id='button' onclick='refreshTable(lastQuery)'>Refresh</button>      
           <div><button class='cdaButton' id='cachethis' onclick='$("#dialog").jqmShow()'>Cache this</button></div>
-          <div id="exportButton"><button class='cdaButton' id='export' onclick='exportFunc(lastQuery)'>Export as .xls</button></div> 
+		  <div><button class='cdaButton' id='queryUrl' onclick='showQueryUrl(lastQuery)'>Query URL</button></div> 
+          <div id="exportButton"><button class='cdaButton' id='export' onclick='exportFunc(lastQuery)'>Export as .xls</button></div>
         </div>
 
         </div>
@@ -98,10 +99,22 @@
         <p>Please refer to the Pentaho Reporting Engine <a href='http://wiki.pentaho.com/display/Reporting/9.+Report+Designer+Formula+Expressions' target='_blank'>documentation</a> for a full description of the syntax.</p>
         <div class='dialogAction'><a href='#' class='jqmClose'>Close</a></div>
     </div>
-    <div id='dialog' class='jqmWindow'>
-    <p class='dialogTitle'>What schedule should this query run on? <a href='javascript:toggleAdvanced()' class='dialogToggle'>(advanced)</a></p>
-    <div id='dialogInput'><input id='cron'></input></div>
-    <div class='dialogAction'><a href='javascript:cacheThis()'>Ok</a> <a href='javascript:;' class='jqmClose'>Cancel</a></div>
+		<div id='dialog' class='jqmWindow'>
+			<p class='dialogTitle'>What schedule should this query run on? <a href='javascript:toggleAdvanced()' class='dialogToggle'>(advanced)</a></p>
+			<div id='dialogInput'><input id='cron'></input></div>
+			<div class='dialogAction'>
+				<a href='javascript:cacheThis()'>Ok</a> <a href='javascript:;' class='jqmClose'>Cancel</a>
+			</div>
+		</div>
+    </div>
+    <div id='queryUrlDialog' class='jqmWindow'>
+		<p class='dialogTitle'>Query Execution URL:</p>
+		<div class='dialogInput'>
+			<input id='doQueryUrl' readonly="readonly"></input>
+		</div>
+		<div class='dialogAction'>
+			<a href='javascript:;' class='jqmClose'>Close</a>
+		</div>
     </div>
   </body>
   <script type="text/javascript">
@@ -135,6 +148,7 @@
       })
       $("#dialog").jqm({modal:true});
       $('#help').jqm({modal:true});
+      $('#queryUrlDialog').jqm({modal:true});
       toggleAdvanced(false);
       $.getJSON("listQueries",{path: filename},function(queries){
         var defaultQuery;
