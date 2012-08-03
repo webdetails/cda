@@ -224,8 +224,8 @@ public class CdaSettings {
           return new pt.webdetails.cda.connections.mondrian.JdbcConnection(element);
         case MONDRIAN_JNDI:
           return new pt.webdetails.cda.connections.mondrian.JndiConnection(element);
-        case OLAP4J_JDBC:
-          return new pt.webdetails.cda.connections.olap4j.JdbcConnection(element);
+        case OLAP4J:
+          return new pt.webdetails.cda.connections.olap4j.DefaultOlap4jConnection(element);
         case SCRIPTING:
           return new ScriptingConnection(element);
         case SQL_JDBC:
