@@ -25,17 +25,17 @@ import pt.webdetails.cda.settings.UnknownDataAccessException;
  * Date: Feb 15, 2010
  * Time: 7:53:13 PM
  */
-public class Olap4jJdbcTest extends TestCase
+public class Olap4jTest extends TestCase
 {
 
-  private static final Log logger = LogFactory.getLog(Olap4jJdbcTest.class);
+  private static final Log logger = LogFactory.getLog(Olap4jTest.class);
 
-  public Olap4jJdbcTest()
+  public Olap4jTest()
   {
     super();
   }
 
-  public Olap4jJdbcTest(final String name)
+  public Olap4jTest(final String name)
   {
     super(name);
   }
@@ -50,11 +50,9 @@ public class Olap4jJdbcTest extends TestCase
   }
 
 
-  public void testSqlQuery() throws ExporterException, UnknownDataAccessException, UnsupportedExporterException, QueryException, UnsupportedConnectionException, DocumentException, UnsupportedDataAccessException
+  public void testOlap4jQuery() throws ExporterException, UnknownDataAccessException, UnsupportedExporterException, QueryException, UnsupportedConnectionException, DocumentException, UnsupportedDataAccessException
   {
 
-
-    // Define an outputStream
     OutputStream out = System.out;
 
     logger.info("Building CDA settings from sample file");
@@ -76,37 +74,4 @@ public class Olap4jJdbcTest extends TestCase
 
 
   }
-
-
-/*
-  public void testJndiQuery() throws ExporterException, UnknownDataAccessException, UnsupportedExporterException, QueryException, UnsupportedConnectionException, DocumentException, UnsupportedDataAccessException
-  {
-
-
-    // Define an outputStream
-    OutputStream out = System.out;
-
-    logger.info("Building CDA settings from sample file");
-
-    final SettingsManager settingsManager = SettingsManager.getInstance();
-
-    final File settingsFile = new File("test/pt/webdetails/cda/tests/sample-olap4j-jndi.cda");
-    final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
-    logger.debug("Doing query on Cda - Initializing CdaEngine");
-    final CdaEngine engine = CdaEngine.getInstance();
-
-    final QueryOptions queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("2");
-    queryOptions.setOutputType("json");
-    queryOptions.addParameter("status", "Shipped");
-
-    logger.info("Doing query");
-    engine.doQuery(out, cdaSettings, queryOptions);
-
-
-  
-  }
-   * 
-   * 
-   */
 }
