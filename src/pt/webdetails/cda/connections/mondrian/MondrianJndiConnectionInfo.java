@@ -3,7 +3,7 @@ package pt.webdetails.cda.connections.mondrian;
 import org.dom4j.Element;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
 
-public class MondrianJndiConnectionInfo extends pt.webdetails.cda.connections.olap4j.OlapJndiConnectionInfo implements MondrianConnectionInfo 
+public class MondrianJndiConnectionInfo extends pt.webdetails.cda.connections.mondrian.OlapJndiConnectionInfo implements MondrianConnectionInfo 
 {
   private String catalog;
   private String cube;
