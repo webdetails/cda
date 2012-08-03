@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="dev-lib/junit-4.8.2.jar"/>
 	<classpathentry kind="lib" path="dev-lib/xmlunit-1.3.jar"/>
 	<classpathentry kind="lib" path="dev-lib/robochef-0.9.6.jar"/>
+	<classpathentry kind="lib" path="runtime-lib"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
