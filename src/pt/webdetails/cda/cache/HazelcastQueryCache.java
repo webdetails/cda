@@ -121,13 +121,10 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
   }
   
   public void putTableModel(TableCacheKey key, TableModel table, int ttlSec, ExtraCacheInfo info) {
-
-    if(putWithTimeout(key, table, getCache())){
-      info.setEntryTime(System.currentTimeMillis());
-      info.setTimeToLive(ttlSec*1000);
-      putWithTimeout(key, info, getCacheStats());
-    }
-    
+    getCache().putAsync(key, table);
+    info.setEntryTime(System.currentTimeMillis());
+    info.setTimeToLive(ttlSec*1000);
+    getCacheStats().putAsync(key, info);    
   }
   
   private <K,V> V getWithTimeout(K key, IMap<K,V> map){
@@ -135,7 +132,6 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
     Future<V> future = map.getAsync(key);
     try{
       V result = future.get(getTimeout, timeoutUnit);
-      
       return result;
     }
     catch(TimeoutException e){
@@ -193,13 +189,8 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
   @Override
   public TableModel getTableModel(TableCacheKey key) {
     try
-    {      
-      TableModel tm = getWithTimeout(key, getCache());
-      
-      if(tm == null) return null;
-      
-      //TODO: get timeout failing with cacheStats, reason still unknown
-      ExtraCacheInfo info = getCacheStats().get(key);// getWithTimeout(key, cacheStats); // cacheStats.get(key);
+    {
+      ExtraCacheInfo info = getWithTimeout(key, getCacheStats());
       if(info != null)
       {
         //per instance ttl not supported by hazelcast, need to check manually
@@ -210,6 +201,8 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
           return null;
         }
         else {
+          TableModel tm = getWithTimeout(key, getCache());
+          if(tm == null) return null;
           logger.info("Table found in cache. Returning.");
           return tm;
         }
@@ -426,7 +419,7 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
     CacheElementInfo ceInfo = new CacheElementInfo();
     ceInfo.setAccessTime(entry.getLastAccessTime());
     ceInfo.setByteSize(entry.getCost());
-    ceInfo.setInsertTime(entry.getCreationTime());
+    ceInfo.setInsertTime(entry.getLastUpdateTime());// getCreationTime()
     ceInfo.setKey(key);
     ceInfo.setHits(entry.getHits());
     
