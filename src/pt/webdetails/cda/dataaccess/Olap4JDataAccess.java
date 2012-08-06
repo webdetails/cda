@@ -51,7 +51,7 @@ public class Olap4JDataAccess extends PREDataAccess {
   }
 
   public String getType() {
-    return "olap4J";
+    return "olap4j";
   }
 
   @Override
