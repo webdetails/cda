@@ -202,17 +202,16 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
         }
         else {
           TableModel tm = getWithTimeout(key, getCache());
-          if(tm == null) return null;
+          if(tm == null) {
+            logger.error("Cache stats out of sync! Removing element.");
+            getCacheStats().removeAsync(key);
+            return null;
+          }
           logger.info("Table found in cache. Returning.");
           return tm;
         }
-      }     
-      else 
-      {//no stats found; may be out of time to live, best to remove
-        logger.error("Cache info not found! Removing element.");
-        getCache().removeAsync(key);
-        return null;
       }
+      return null;
     } 
     catch(ClassCastException e)
     {//handle issue when map would return a dataRecordEntry instead of element type//TODO: hasn't been caught in a while, maybe we can drop this
