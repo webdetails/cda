@@ -127,9 +127,10 @@ public class CdaEngine
     {
       _instance = new CdaEngine();
     }
-    
-    //Avoid problems when vfs is not registered yet
-    SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession()));
+    if (!_instance.isStandalone()) {
+    	//Avoid problems when vfs is not registered yet
+    	SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession()));
+    }
     return _instance;
   }
 

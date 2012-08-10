@@ -1,4 +1,4 @@
-package pt.webdetails.cda.connections.olap4j;
+package pt.webdetails.cda.connections.mondrian;
 
 import org.dom4j.Element;
 import org.pentaho.reporting.libraries.base.util.StringUtils;

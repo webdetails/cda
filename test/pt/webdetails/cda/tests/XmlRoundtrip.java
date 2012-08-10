@@ -115,9 +115,9 @@ public class XmlRoundtrip extends XMLTestCase {
     	equalityCheck("test/pt/webdetails/cda/tests/sample-mondrian.cda");
     }    
     
-//    public void testOlap4jJndi() throws Exception{
-//    	equalityCheck("test/pt/webdetails/cda/tests/sample-olap4j-jndi.cda");
-//    }     
+    public void testOlap4j() throws Exception{
+    	equalityCheck("test/pt/webdetails/cda/tests/sample-olap4j.cda");
+    }     
     
     public void testOutput() throws Exception{
     	equalityCheck("test/pt/webdetails/cda/tests/sample-output.cda");

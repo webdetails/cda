@@ -59,7 +59,7 @@ public class DataAccessEnums {
     MONDRIAN_JDBC("mondrian.jdbc"),
     MONDRIAN_JNDI("mondrian.jndi"),
     
-    OLAP4J_JDBC("olap4j.jdbc"),
+    OLAP4J("olap4j"),
     
     SCRIPTING("scripting.scripting"),
     
