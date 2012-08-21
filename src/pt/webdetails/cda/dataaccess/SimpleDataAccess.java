@@ -130,8 +130,14 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     catch (Exception e)
     {
       try {
-        EventPublisher.getPublisher().publish(new QueryErrorEvent(
-            new CdaEvent.QueryInfo(getCdaSettings().getId(), getId(), getQuery(), parameterDataRow), e));
+        CdaEvent.QueryInfo info = new CdaEvent.QueryInfo(getCdaSettings().getId(), getId(), getQuery(), parameterDataRow);
+        
+        if(e instanceof QueryException && e.getCause() != null){
+          EventPublisher.getPublisher().publish(new QueryErrorEvent(info, e.getCause()));
+        }
+        else {
+          EventPublisher.getPublisher().publish(new QueryErrorEvent(info, e));
+        }
       } catch (Exception inner) {
         logger.error("Error pushing event", inner);
       } 
