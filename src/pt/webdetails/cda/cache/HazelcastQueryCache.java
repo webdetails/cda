@@ -27,7 +27,9 @@ import pt.webdetails.cda.cache.TableCacheKey;
 import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.hazelcast.core.LifecycleService;
 import com.hazelcast.core.MapEntry;
 import com.hazelcast.impl.base.DataRecordEntry;
 import com.hazelcast.query.SqlPredicate;
@@ -49,10 +51,15 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
   private static final String PLUGIN_PATH = "system/" + CdaContentGenerator.PLUGIN_NAME + "/";
   private static final String CACHE_CFG_FILE_HAZELCAST = "hazelcast.xml";
 
+  private static final String GROUP_NAME = "cdc";
+  private static HazelcastInstance hzInstance;
+  private static LifecycleService lifeCycleService;
+  
   private static long getTimeout = CdaPropertiesHelper.getIntProperty("pt.webdetails.cda.cache.getTimeout", 5);
-  private static long putTimeout = CdaPropertiesHelper.getIntProperty("pt.webdetails.cda.cache.putTimeout", 5);
+//  private static long putTimeout = CdaPropertiesHelper.getIntProperty("pt.webdetails.cda.cache.putTimeout", 5);
   private static TimeUnit timeoutUnit = TimeUnit.SECONDS;
-  private static int maxTimeouts = CdaPropertiesHelper.getIntProperty("pt.webdetails.cda.cache.maxTimeouts", 4);//max consecutive timeouts
+//max consecutive timeouts
+  private static int maxTimeouts = CdaPropertiesHelper.getIntProperty("pt.webdetails.cda.cache.maxTimeouts", 4);
   private static long cacheDisablePeriod = CdaPropertiesHelper.getIntProperty("pt.webdetails.cda.cache.disablePeriod", 5);
   private static boolean debugCache = CdaPropertiesHelper.getBoolProperty("pt.webdetails.cda.cache.debug", true);
 
@@ -64,14 +71,34 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
    * @return main cache (will hold actual values)
    */
   private static IMap<TableCacheKey, TableModel> getCache(){
-    return Hazelcast.getMap(MAP_NAME);
+    return getHazelcast().getMap(MAP_NAME);
   }
   
   /**
    * @return used for holding extra info 
    */
   private static IMap<TableCacheKey, ExtraCacheInfo> getCacheStats(){
-    return Hazelcast.getMap(AUX_MAP_NAME);
+    return getHazelcast().getMap(AUX_MAP_NAME);
+  }
+  
+  private static synchronized HazelcastInstance getHazelcast(){
+    if(hzInstance == null || !lifeCycleService.isRunning()){
+      logger.debug("finding hazelcast instance..");
+      for(HazelcastInstance instance : Hazelcast.getAllHazelcastInstances()){
+        logger.debug("found hazelcast instance [" + instance.getName() + "]");
+        if(instance.getConfig().getGroupConfig().getName().equals(GROUP_NAME)){
+          logger.info(GROUP_NAME + " hazelcast instance found: [" + instance.getName() + "]");
+          hzInstance = instance;
+          lifeCycleService = hzInstance.getLifecycleService();
+          break;
+        }
+      }
+      
+      if(hzInstance == null){
+        logger.fatal("No valid hazelcast instance found.");
+      }
+    }
+    return hzInstance;
   }
   
   public HazelcastQueryCache(){
@@ -114,10 +141,7 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
   
   public void shutdownIfRunning()
   {
-    if(Hazelcast.getLifecycleService().isRunning()){
-      logger.debug("Shutting down Hazelcast...");
-      Hazelcast.getLifecycleService().shutdown();
-    }
+    //let cdc handle this
   }
   
   public void putTableModel(TableCacheKey key, TableModel table, int ttlSec, ExtraCacheInfo info) {
@@ -132,12 +156,14 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
     Future<V> future = map.getAsync(key);
     try{
       V result = future.get(getTimeout, timeoutUnit);
+      resetTimeouts();
       return result;
     }
     catch(TimeoutException e){
       int nbrTimeouts = incrTimeouts();
       checkNbrTimeouts(nbrTimeouts);
-      logger.error("Timeout " + getTimeout + " " +  timeoutUnit + " expired fetching from " + map.getName() + " (timeout#" + nbrTimeouts + ")" );
+      logger.error("Timeout " + getTimeout + " " +  timeoutUnit + " expired fetching from " + 
+          map.getName() + " (timeout#" + nbrTimeouts + ")" );
     } catch (InterruptedException e) {
       logger.error(e);
     } catch (ExecutionException e) {
@@ -145,26 +171,11 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
     }
     return null;
   }
-
-  private <K,V> boolean putWithTimeout(K key, V value, IMap<K,V> map){
-    if(!active) return false;
-    try{
-      Future<V> future = map.putAsync(key, value);
-      future.get(putTimeout, TimeUnit.SECONDS);
-      return true;
-    }
-    catch(TimeoutException e){
-      int nbrTimeouts = incrTimeouts();
-      checkNbrTimeouts(nbrTimeouts);
-      logger.error("Timeout " + putTimeout + " " +  timeoutUnit + " expired inserting into " +map.getName() + " (timeout#" + nbrTimeouts + ")" );
-    } catch (Exception e) {
-      logger.error(e);
-    }
-    return false;
-  }
   
   private void checkNbrTimeouts(int nbrTimeouts){
     if(nbrTimeouts > 0 && nbrTimeouts % maxTimeouts == 0){
+      //too many consecutive timeouts may mean hazelcast is gettint more requests
+      //than it can handle, give it some space
       logger.error("Too many timeouts, disabling for " + cacheDisablePeriod + " seconds.");
       resetTimeouts();
       active = false;
