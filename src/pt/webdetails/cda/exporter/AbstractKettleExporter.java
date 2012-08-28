@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -139,6 +140,12 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
   {
     filename = "pentaho-cda-" + getType() + "-" + dateFormat.format(Calendar.getInstance().getTime()) + "-" + UUID.randomUUID().toString();
     return filename;
+  }
+  
+  
+  protected   String getSetting(HashMap<String, String> settings, String name, String defaultValue){
+    if(settings.containsKey(name)) return settings.get(name);
+    return defaultValue;
   }
 
 
