@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package pt.webdetails.cda.exporter;
 
 import java.io.File;
@@ -76,13 +80,11 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
     }
     catch (InterruptedException e)
     {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      logger.error(e);
     }
     catch (ExecutionException e)
     {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      logger.error(e);
     }
   }
 
@@ -115,7 +117,7 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
       trans.executeCheckedSuccess(null, null, this);
       logger.info(trans.getReadWriteThroughput());
 
-      // Transformation executed ok, lets return the file
+      // Transformation executed ok, let's return the file
       copyFileToOutputStream(out);
 
       output = outputListener.getRowsWritten();
