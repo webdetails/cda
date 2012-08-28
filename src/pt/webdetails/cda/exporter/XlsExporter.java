@@ -2,6 +2,8 @@ package pt.webdetails.cda.exporter;
 
 import java.util.HashMap;
 
+import pt.webdetails.cpf.repository.RepositoryAccess;
+
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM
  */
@@ -9,17 +11,19 @@ public class XlsExporter extends AbstractKettleExporter
 {
 
   public static final String ATTACHMENT_NAME_SETTING = "attachmentName";
+  public static final String TEMPLATE_NAME_SETTING = "templateName";
+  
   private String attachmentName;
+  private String templateName;
 
   public XlsExporter(HashMap <String,String> extraSettings)
   {
-    
-    if (extraSettings.containsKey(ATTACHMENT_NAME_SETTING)) {
-      this.attachmentName = extraSettings.get(ATTACHMENT_NAME_SETTING);
-    } else {
-      this.attachmentName = "cda-export." + getType();
+
+    this.attachmentName = getSetting(extraSettings, ATTACHMENT_NAME_SETTING, "cda-export." + getType());
+    this.templateName = getSetting(extraSettings, TEMPLATE_NAME_SETTING, null);
+    if(templateName != null && !templateName.startsWith("/")){
+      templateName = RepositoryAccess.getSolutionPath(templateName);
     }
-    
   }
 
   protected String getExportStepDefinition(String name)
@@ -47,6 +51,7 @@ public class XlsExporter extends AbstractKettleExporter
 
     xml.append(getFileName());
 
+    //TODO: path for template needs change?
 
     xml.append("</name>\n" +
         "      <extention>xls</extention>\n" +
@@ -63,11 +68,11 @@ public class XlsExporter extends AbstractKettleExporter
         "      <splitevery>0</splitevery>\n" +
         "      </file>\n" +
         "    <template>\n" +
-        "      <enabled>N</enabled>\n" +
-        "      <append>N</append>\n" +
-        "      <filename>template.xls</filename>\n" +
+        "      <enabled>" + (this.templateName != null ? "Y" : "N") + "</enabled>\n" +
+        "      <append>Y</append>\n" +
+        "      <filename>" + (this.templateName != null ? this.templateName : "template.xls") + "</filename>\n" +
         "    </template>\n" +
-        "    <fields>\n" +
+        "    <fields>\n" + //TODO: if we want date formatting, this looks like the place
         "    </fields>\n" +
         "     <cluster_schema/>\n" +
         " <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>\n" +
