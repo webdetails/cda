@@ -1,6 +1,16 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package pt.webdetails.cda.exporter;
 
 import java.util.HashMap;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.pentaho.di.core.exception.KettleException;
+import org.pentaho.di.trans.step.StepMeta;
+import org.pentaho.di.trans.steps.exceloutput.ExcelOutputMeta;
 
 import pt.webdetails.cpf.repository.RepositoryAccess;
 
@@ -9,12 +19,16 @@ import pt.webdetails.cpf.repository.RepositoryAccess;
  */
 public class XlsExporter extends AbstractKettleExporter
 {
+  
+  private static final Log logger = LogFactory.getLog(XlsExporter.class);
 
   public static final String ATTACHMENT_NAME_SETTING = "attachmentName";
   public static final String TEMPLATE_NAME_SETTING = "templateName";
+  public static final String INCLUDE_HEADER_SETTING = "includeHeader";
   
   private String attachmentName;
   private String templateName;
+  private boolean includeHeader;
 
   public XlsExporter(HashMap <String,String> extraSettings)
   {
@@ -24,13 +38,36 @@ public class XlsExporter extends AbstractKettleExporter
     if(templateName != null && !templateName.startsWith("/")){
       templateName = RepositoryAccess.getSolutionPath(templateName);
     }
+    includeHeader = Boolean.parseBoolean(getSetting(extraSettings, INCLUDE_HEADER_SETTING, "true"));
+  }
+  
+  protected String getExportStepDefinition(String name){
+    ExcelOutputMeta excelOutput = new ExcelOutputMeta();
+    excelOutput.setDefault();
+    excelOutput.setFileName("${java.io.tmpdir}/" + getFileName());
+    excelOutput.setHeaderEnabled(includeHeader);
+    if(templateName != null){
+      excelOutput.setTemplateEnabled(true);
+      excelOutput.setTemplateFileName(templateName);
+      excelOutput.setTemplateAppend(true);
+    }
+    
+    StepMeta meta = new StepMeta(name, excelOutput);
+    try {
+      return meta.getXML();
+    } catch (KettleException e) {
+      logger.error(e);
+      //kept as a fallback for now
+      return getExportStepDefinitionS(name);
+    }
   }
 
-  protected String getExportStepDefinition(String name)
+  protected String getExportStepDefinitionS(String name)
   {
     StringBuilder xml = new StringBuilder();
 
-
+    //TODO: use meta instead of string xml?
+    
     xml.append("<step>\n" +
         "    <name>"+ name + "</name>\n" +
         "    <type>ExcelOutput</type>\n" +
@@ -41,7 +78,7 @@ public class XlsExporter extends AbstractKettleExporter
         "           <method>none</method>\n" +
         "           <schema_name/>\n" +
         "           </partitioning>\n" +
-        "    <header>Y</header>\n" +
+        "    <header>"+ (includeHeader? "Y" : "N")  + "</header>\n" +
         "    <footer>N</footer>\n" +
         "    <encoding/>\n" +
         "    <append>N</append>\n" +
@@ -50,8 +87,6 @@ public class XlsExporter extends AbstractKettleExporter
         "      <name>${java.io.tmpdir}&#47;");
 
     xml.append(getFileName());
-
-    //TODO: path for template needs change?
 
     xml.append("</name>\n" +
         "      <extention>xls</extention>\n" +
@@ -72,7 +107,7 @@ public class XlsExporter extends AbstractKettleExporter
         "      <append>Y</append>\n" +
         "      <filename>" + (this.templateName != null ? this.templateName : "template.xls") + "</filename>\n" +
         "    </template>\n" +
-        "    <fields>\n" + //TODO: if we want date formatting, this looks like the place
+        "    <fields>\n" +
         "    </fields>\n" +
         "     <cluster_schema/>\n" +
         " <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>\n" +
