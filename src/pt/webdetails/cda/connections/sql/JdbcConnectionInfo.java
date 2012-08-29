@@ -63,7 +63,7 @@ public class JdbcConnectionInfo
       setPasswordField(passFormula);
     }
 
-    final List list = connection.elements("Property");
+    final List<?> list = connection.elements("Property");
     for (int i = 0; i < list.size(); i++)
     {
       final Element childElement = (Element) list.get(i);
