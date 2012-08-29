@@ -12,8 +12,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -47,16 +47,26 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
 {
 
   private static final Log logger = LogFactory.getLog(AbstractKettleExporter.class);
+  
+  public static final String ATTACHMENT_NAME_SETTING = "attachmentName";
+  public static final String COLUMN_HEADERS_SETTING = "columnHeaders";
+  public static final String FILE_EXTENSION_SETTING = "fileExtension";
 
   protected ExecutorService executorService = Executors.newCachedThreadPool();
   protected Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
-
+  protected Map<String, String> extraSettings;
+  
   private SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmssZ");
   private String filename;
   
   private static long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
   private static TimeUnit DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT = TimeUnit.SECONDS;
 
+  
+  protected AbstractKettleExporter(Map<String, String> extraSettings)
+  {
+    this.extraSettings = extraSettings;
+  }
 
   public void startRowProduction()
   {
@@ -144,9 +154,14 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
     return filename;
   }
   
+  protected  String getSetting(String name, String defaultValue){
+    return getSetting(extraSettings, name, defaultValue);
+  }
   
-  protected   String getSetting(HashMap<String, String> settings, String name, String defaultValue){
-    if(settings.containsKey(name)) return settings.get(name);
+  protected  String getSetting(Map<String, String> settings, String name, String defaultValue){
+    if(settings.containsKey(name)) {
+      return settings.get(name);
+    }
     return defaultValue;
   }
 

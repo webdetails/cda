@@ -22,9 +22,7 @@ public class XlsExporter extends AbstractKettleExporter
   
   private static final Log logger = LogFactory.getLog(XlsExporter.class);
 
-  public static final String ATTACHMENT_NAME_SETTING = "attachmentName";
   public static final String TEMPLATE_NAME_SETTING = "templateName";
-  public static final String INCLUDE_HEADER_SETTING = "includeHeader";
   
   private String attachmentName;
   private String templateName;
@@ -32,13 +30,13 @@ public class XlsExporter extends AbstractKettleExporter
 
   public XlsExporter(HashMap <String,String> extraSettings)
   {
-
-    this.attachmentName = getSetting(extraSettings, ATTACHMENT_NAME_SETTING, "cda-export." + getType());
-    this.templateName = getSetting(extraSettings, TEMPLATE_NAME_SETTING, null);
+    super(extraSettings);
+    this.attachmentName = getSetting(ATTACHMENT_NAME_SETTING, "cda-export." + getType());
+    this.templateName = getSetting(TEMPLATE_NAME_SETTING, null);
     if(templateName != null && !templateName.startsWith("/")){
       templateName = RepositoryAccess.getSolutionPath(templateName);
     }
-    includeHeader = Boolean.parseBoolean(getSetting(extraSettings, INCLUDE_HEADER_SETTING, "true"));
+    includeHeader = Boolean.parseBoolean(getSetting( COLUMN_HEADERS_SETTING, "true"));
   }
   
   protected String getExportStepDefinition(String name){
