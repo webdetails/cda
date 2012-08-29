@@ -51,15 +51,15 @@ public class TableModelUtils
     //  3. Pagination
 
     // 1
-    TableModel t;
+    TableModel table;
     final ArrayList<ColumnDefinition> columnDefinitions = dataAccess.getCalculatedColumns();
     if (columnDefinitions.isEmpty())
     {
-      t = rawTableModel;
+      table = rawTableModel;
     }
     else
     {
-      t = new CalculatedTableModel(rawTableModel, columnDefinitions.toArray(new ColumnDefinition[columnDefinitions.size()]));
+      table = new CalculatedTableModel(rawTableModel, columnDefinitions.toArray(new ColumnDefinition[columnDefinitions.size()]), true);
     }
 
     // First we need to check if there's nothing to do.
@@ -81,7 +81,7 @@ public class TableModelUtils
     {
 
       ArrayList<Integer> newOutputIndexes = new ArrayList<Integer>();
-      for (int i = 0; i < t.getColumnCount(); i++)
+      for (int i = 0; i < table.getColumnCount(); i++)
       {
         if (!outputIndexes.contains(i))
         {
@@ -96,36 +96,41 @@ public class TableModelUtils
     if (columnCount != 0)
     {
 
-      if ((Collections.max(outputIndexes) > t.getColumnCount() - 1))
+      if ((Collections.max(outputIndexes) > table.getColumnCount() - 1))
       {
         throw new InvalidOutputIndexException("Output index higher than number of columns in tableModel", null);
 
       }
 
-      final Class<?>[] colTypes = new Class[columnCount];
-      final String[] colNames = new String[columnCount];
 
-      for (int i = 0; i < outputIndexes.size(); i++)
-      {
-        final int outputIndex = outputIndexes.get(i);
-        colTypes[i] = t.getColumnClass(outputIndex);
-        colNames[i] = t.getColumnName(outputIndex);
-      }
 
-      final int rowCount = t.getRowCount();
+      final int rowCount = table.getRowCount();
       logger.debug(rowCount == 0 ? "No data found" : "Found " + rowCount + " rows");
 
-
+      final Class<?>[] colTypes = new Class[columnCount];
+      final String[] colNames = new String[columnCount];
+      //just set the number of rows/columns
       final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
+      
       for (int r = 0; r < rowCount; r++)
       {
         for (int j = 0; j < outputIndexes.size(); j++)
         {
           final int outputIndex = outputIndexes.get(j);
-          typedTableModel.setValueAt(t.getValueAt(r, outputIndex), r, j);
+          typedTableModel.setValueAt(table.getValueAt(r, outputIndex), r, j);
         }
       }
-      t = typedTableModel;
+      
+      //since we set the calculated table model to infer types, they will be available after rows are evaluated
+      for (int i = 0; i < outputIndexes.size(); i++)
+      {
+        final int outputIndex = outputIndexes.get(i);
+        typedTableModel.setColumnName(i, table.getColumnName(outputIndex));
+        typedTableModel.setColumnType(i, table.getColumnClass(outputIndex));
+      }
+      
+      table = typedTableModel;
+      
 
     }
 
@@ -134,29 +139,29 @@ public class TableModelUtils
     if (!queryOptions.getSortBy().isEmpty())
     {
       // no action
-      t = (new SortTableModel()).doSort(t, queryOptions.getSortBy());
+      table = (new SortTableModel()).doSort(table, queryOptions.getSortBy());
     }
 
 
     // Create a metadata-aware table model
 
-    final Class<?>[] colTypes = new Class[t.getColumnCount()];
-    final String[] colNames = new String[t.getColumnCount()];
+    final Class<?>[] colTypes = new Class[table.getColumnCount()];
+    final String[] colNames = new String[table.getColumnCount()];
 
-    for (int i = 0; i < t.getColumnCount(); i++)
+    for (int i = 0; i < table.getColumnCount(); i++)
     {
-      colTypes[i] = t.getColumnClass(i);
-      colNames[i] = t.getColumnName(i);
+      colTypes[i] = table.getColumnClass(i);
+      colNames[i] = table.getColumnName(i);
     }
 
-    final int rowCount = t.getRowCount();
+    final int rowCount = table.getRowCount();
     MetadataTableModel result = new MetadataTableModel(colNames, colTypes, rowCount);
     result.setMetadata("totalRows", rowCount);
     for (int r = 0; r < rowCount; r++)
     {
-      for (int j = 0; j < t.getColumnCount(); j++)
+      for (int j = 0; j < table.getColumnCount(); j++)
       {
-        result.setValueAt(t.getValueAt(r, j), r, j);
+        result.setValueAt(table.getValueAt(r, j), r, j);
       }
     }
     // Paginate
