@@ -14,13 +14,13 @@ import pt.webdetails.cda.CdaBoot;
  */
 public class CsvExporter extends AbstractKettleExporter
 {
+  
+  public static final String CSV_SEPARATOR_SETTING = "csvSeparator";
+  public static final String CSV_QUOTE_SETTING = "csvQuote";
 
   private static final Log logger = LogFactory.getLog(CsvExporter.class);
   private static final String DEFAULT_CSV_SEPARATOR_SETTING = ";";
   private static final String DEFAULT_CSV_ENCLOSURE_SETTING = "&quot;";
-  public static final String CSV_SEPARATOR_SETTING = "csvSeparator";
-  public static final String ATTACHMENT_NAME_SETTING = "attachmentName";
-  public static final String COLUMN_HEADERS_SETTING = "columnHeaders";
   private String separator;
 
   private String enclosure;
@@ -28,27 +28,19 @@ public class CsvExporter extends AbstractKettleExporter
   private String showColumnHeaders;
   
   public CsvExporter(HashMap<String, String> extraSettings) {
-    if (extraSettings.containsKey(CSV_SEPARATOR_SETTING)) {
-      this.separator = extraSettings.get(CSV_SEPARATOR_SETTING);
-    } else {
-      String sep = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.exporter.csv.Separator");
-      this.separator = sep == null ? DEFAULT_CSV_SEPARATOR_SETTING : sep;
-    }
+    super(extraSettings);
+    
+    this.separator = getSetting( 
+        CSV_SEPARATOR_SETTING, 
+        CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.exporter.csv.Separator", DEFAULT_CSV_SEPARATOR_SETTING));
 
-    if (extraSettings.containsKey(ATTACHMENT_NAME_SETTING)) {
-      this.attachmentName = extraSettings.get(ATTACHMENT_NAME_SETTING);
-    } else {
-      this.attachmentName = "cda-export.csv";
-    }
+    this.enclosure = getSetting(
+        CSV_QUOTE_SETTING,
+        CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.exporter.csv.Enclosure", DEFAULT_CSV_ENCLOSURE_SETTING));
+    
+    this.attachmentName = getSetting(ATTACHMENT_NAME_SETTING, "cda-export.csv");
 
-    if (extraSettings.containsKey(COLUMN_HEADERS_SETTING)) {
-      this.showColumnHeaders = extraSettings.get(COLUMN_HEADERS_SETTING).equalsIgnoreCase("false") ? "N" : "Y";
-    } else {
-      this.showColumnHeaders = "Y";
-    }   
-
-    String enc = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.exporter.csv.Enclosure");
-    this.enclosure = enc == null ? DEFAULT_CSV_ENCLOSURE_SETTING : enc;
+    this.showColumnHeaders = Boolean.parseBoolean(getSetting(COLUMN_HEADERS_SETTING, "true")) ? "Y" : "N";
 
     logger.debug("Initialized CsvExporter with attachement filename '" + attachmentName + "'");
     logger.debug("Initialized CsvExporter with enclosure '" + enclosure + "'");
