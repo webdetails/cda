@@ -130,9 +130,12 @@ public class CdaContentGenerator extends SimpleContentGenerator
     }
 
     Exporter exporter = ExporterEngine.getInstance().getExporter(queryOptions.getOutputType(), queryOptions.getExtraSettings());
-    String mimeType = exporter.getMimeType();
     String attachmentName = exporter.getAttachmentName();
-
+    String mimeType = getMimeType(attachmentName);
+    if(StringUtils.isEmpty(mimeType)){
+      mimeType = exporter.getMimeType();
+    }
+    
     if (this.parameterProviders != null)
     {
       setResponseHeaders(mimeType, attachmentName);
