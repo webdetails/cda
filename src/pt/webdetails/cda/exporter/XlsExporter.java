@@ -33,7 +33,7 @@ public class XlsExporter extends AbstractKettleExporter
     super(extraSettings);
     this.attachmentName = getSetting(ATTACHMENT_NAME_SETTING, "cda-export." + getType());
     this.templateName = getSetting(TEMPLATE_NAME_SETTING, null);
-    if(templateName != null && !templateName.startsWith("/")){
+    if(templateName != null){
       templateName = RepositoryAccess.getSolutionPath(templateName);
     }
     includeHeader = Boolean.parseBoolean(getSetting( COLUMN_HEADERS_SETTING, "true"));
