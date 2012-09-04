@@ -43,7 +43,7 @@ import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
  * Date: Mar 12, 2010
  * Time: 3:01:27 PM
  */
-public abstract class AbstractKettleExporter implements Exporter, RowProductionManager
+public abstract class AbstractKettleExporter extends AbstractExporter implements Exporter, RowProductionManager
 {
 
   private static final Log logger = LogFactory.getLog(AbstractKettleExporter.class);
@@ -67,6 +67,13 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
   {
     this.extraSettings = extraSettings;
   }
+  
+  
+  protected abstract String getExportStepDefinition(String name);
+
+  
+  protected abstract String getType();
+  
 
   public void startRowProduction()
   {
@@ -183,12 +190,5 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
     file.delete();
 
   }
-
-  protected abstract String getExportStepDefinition(String name);
-
-
-  public abstract String getMimeType();
-
-  public abstract String getType();
 
 }
