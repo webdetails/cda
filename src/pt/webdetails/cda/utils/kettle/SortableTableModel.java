@@ -1,7 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package pt.webdetails.cda.utils.kettle;
 
 import java.util.Arrays;
@@ -21,7 +21,9 @@ import org.apache.commons.logging.LogFactory;
 public class SortableTableModel extends AbstractTableModel
 {
 
+  private static final long serialVersionUID = 1L;
   private static Log logger = LogFactory.getLog(SortableTableModel.class);
+  
   private TableModel base;
   private Integer[] sortedIndices;
 
@@ -59,7 +61,7 @@ public class SortableTableModel extends AbstractTableModel
 
 
   @Override
-  public Class getColumnClass(int idx)
+  public Class<?> getColumnClass(int idx)
   {
     return base.getColumnClass(idx);
   }
@@ -101,7 +103,7 @@ public class SortableTableModel extends AbstractTableModel
   }
 
 
-  public void sort(Class klass, List<String> sortBy) throws ClassCastException, SortException
+  public void sort(Class<? extends Comparator<Integer>> klass, List<String> sortBy) throws ClassCastException, SortException
   {
     if (!Comparator.class.isAssignableFrom(klass))
     {
@@ -112,7 +114,7 @@ public class SortableTableModel extends AbstractTableModel
     }
     try
     {
-      Comparator comp = (Comparator) klass.getConstructor(TableModel.class, List.class).newInstance(base, sortBy);
+      Comparator<Integer> comp = klass.getConstructor(TableModel.class, List.class).newInstance(base, sortBy);
       List<Integer> idxs = Arrays.asList(sortedIndices);
       Collections.sort(idxs, comp);
       sortedIndices = idxs.toArray(sortedIndices);
