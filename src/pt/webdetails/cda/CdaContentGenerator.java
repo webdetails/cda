@@ -75,7 +75,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
     // We assume that any paging options found mean that the user actively wants paging.
     final long pageSize = requestParams.getLongParameter("pageSize", 0);
     final long pageStart = requestParams.getLongParameter("pageStart", 0);
-    final boolean paginate = "true".equals(requestParams.getStringParameter("paginateQuery", "false"));
+    final boolean paginate = Boolean.parseBoolean(requestParams.getStringParameter("paginateQuery", "false"));
     if (pageSize > 0 || pageStart > 0 || paginate)
     {
       if (pageSize > Integer.MAX_VALUE || pageStart > Integer.MAX_VALUE)
@@ -95,7 +95,11 @@ public class CdaContentGenerator extends SimpleContentGenerator
     // Handle the query itself and its output format...
     queryOptions.setOutputType(requestParams.getStringParameter("outputType", "json"));
     queryOptions.setDataAccessId(requestParams.getStringParameter("dataAccessId", "<blank>"));
-    queryOptions.setOutputIndexId(Integer.parseInt(requestParams.getStringParameter("outputIndexId", "1")));
+    try {
+      queryOptions.setOutputIndexId(Integer.parseInt(requestParams.getStringParameter("outputIndexId", "1")));
+    } catch (NumberFormatException e) {
+      logger.error("Illegal outputIndexId '" + requestParams.getStringParameter("outputIndexId", null) + "'" );
+    }
     
     final ArrayList<String> sortBy = new ArrayList<String>();
     String[] def =
@@ -131,7 +135,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
 
     Exporter exporter = ExporterEngine.getInstance().getExporter(queryOptions.getOutputType(), queryOptions.getExtraSettings());
     String attachmentName = exporter.getAttachmentName();
-    String mimeType = getMimeType(attachmentName);
+    String mimeType = (attachmentName == null) ? null : getMimeType(attachmentName);
     if(StringUtils.isEmpty(mimeType)){
       mimeType = exporter.getMimeType();
     }
