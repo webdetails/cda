@@ -123,7 +123,7 @@ public class CdaSettings {
   }
 
   public TableModel listQueries(DiscoveryOptions discoveryOptions) {
-    return TableModelUtils.getInstance().dataAccessMapToTableModel(dataAccessMap);
+    return TableModelUtils.dataAccessMapToTableModel(dataAccessMap);
   }
 
   private void parseDocument() throws UnsupportedConnectionException, UnsupportedDataAccessException {

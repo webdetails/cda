@@ -7,8 +7,11 @@ package pt.webdetails.cda.utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+
 import javax.swing.table.TableModel;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
@@ -31,15 +34,36 @@ public class TableModelUtils
 {
 
   private static final Log logger = LogFactory.getLog(TableModelUtils.class);
+  private static final String DT_FILTER = "dtFilter";
+  private static final String DT_SEARCHABLE = "dtSearchableColumns";
+  
   private static TableModelUtils _instance;
 
-
+  /**
+   * @deprecated all methods made static
+   */
+  @Deprecated
   public TableModelUtils()
   {
   }
+  
+  /**
+   * @deprecated all methods made static
+   */
+  @Deprecated
+  public static synchronized TableModelUtils getInstance()
+  {
+
+    if (_instance == null)
+    {
+      _instance = new TableModelUtils();
+    }
+
+    return _instance;
+  }
 
 
-  public TableModel postProcessTableModel(final DataAccess dataAccess,
+  public static TableModel postProcessTableModel(final DataAccess dataAccess,
           final QueryOptions queryOptions,
           final TableModel rawTableModel) throws SortException, InvalidOutputIndexException
   {
@@ -52,9 +76,59 @@ public class TableModelUtils
     //  1. Evaluate Calculated columns
     //  2. Show only the output columns we want;
     //  3. Sort
-    //  3. Pagination
+    //  4. Pagination
 
-    // 1
+    TableModel table;
+    
+    // 1 Evaluate Calculated columns
+    table = evaluateCalculatedColumns(dataAccess, rawTableModel);
+
+    //  2. Show only the output columns we want, filter rows
+    List<Integer> outputIndexes = getOutputIndexes(dataAccess, queryOptions, table);
+    DataTableFilter rowFilter = getRowFilter(queryOptions, outputIndexes);
+    table = filterTable(table, outputIndexes, rowFilter);
+
+    //  3. Sort
+    if (!queryOptions.getSortBy().isEmpty())
+    {
+      // no action
+      table = (new SortTableModel()).doSort(table, queryOptions.getSortBy());
+    }
+
+    // Create a metadata-aware table model
+
+    final Class<?>[] colTypes = new Class[table.getColumnCount()];
+    final String[] colNames = new String[table.getColumnCount()];
+
+    for (int i = 0; i < table.getColumnCount(); i++)
+    {
+      colTypes[i] = table.getColumnClass(i);
+      colNames[i] = table.getColumnName(i);
+    }
+
+    final int rowCount = table.getRowCount();
+    MetadataTableModel result = new MetadataTableModel(colNames, colTypes, rowCount);
+    result.setMetadata("totalRows", rowCount);
+    for (int r = 0; r < rowCount; r++)
+    {
+      for (int j = 0; j < table.getColumnCount(); j++)
+      {
+        result.setValueAt(table.getValueAt(r, j), r, j);
+      }
+    }
+    //  4. Pagination
+    return paginateTableModel(result, queryOptions);
+
+
+  }
+
+
+  /**
+   * @param dataAccess
+   * @param rawTableModel
+   * @return
+   */
+  private static TableModel evaluateCalculatedColumns(final DataAccess dataAccess, final TableModel rawTableModel) {
     TableModel table;
     final ArrayList<ColumnDefinition> columnDefinitions = dataAccess.getCalculatedColumns();
     if (columnDefinitions.isEmpty())
@@ -65,7 +139,113 @@ public class TableModelUtils
     {
       table = new CalculatedTableModel(rawTableModel, columnDefinitions.toArray(new ColumnDefinition[columnDefinitions.size()]), true);
     }
+    return table;
+  }
 
+
+  /**
+   * @param table
+   * @param outputIndexes
+   * @param rowFilter (optional)
+   * @return
+   * @throws InvalidOutputIndexException
+   */
+  private static TableModel filterTable(final TableModel table, List<Integer> outputIndexes, final DataTableFilter rowFilter) throws InvalidOutputIndexException {
+    int columnCount = outputIndexes.size();
+    
+    if(columnCount == 0 && rowFilter != null)
+    {//still have to go through the motions if we need to filter rows
+      for(int i=0; i<table.getColumnCount(); i++){
+        outputIndexes.add(i);
+      }
+      columnCount = outputIndexes.size();
+    }
+    
+    if (columnCount != 0)
+    {
+
+      if ((Collections.max(outputIndexes) > table.getColumnCount() - 1))
+      {
+        throw new InvalidOutputIndexException("Output index higher than number of columns in tableModel", null);
+      }
+
+      final int rowCount = table.getRowCount();
+      logger.debug(rowCount == 0 ? "No data found" : "Found " + rowCount + " rows");
+
+      final Class<?>[] colTypes = new Class[columnCount];
+      final String[] colNames = new String[columnCount];
+      //just set the number of rows/columns
+      final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
+      
+      for (int rowIn = 0, rowOut = 0; rowIn < rowCount; rowIn++, rowOut++)
+      {
+        //filter rows
+        if(rowFilter != null && !rowFilter.rowContainsSearchTerms(table, rowIn)){
+          rowOut--;
+          continue;
+        }
+        //filter columns
+        for (int j = 0; j < outputIndexes.size(); j++)
+        {
+          final int outputIndex = outputIndexes.get(j);
+          typedTableModel.setValueAt(table.getValueAt(rowIn, outputIndex), rowOut, j);
+        }
+      }
+      
+      //since we set the calculated table model to infer types, they will be available after rows are evaluated
+      for (int i = 0; i < outputIndexes.size(); i++)
+      {
+        final int outputIndex = outputIndexes.get(i);
+        typedTableModel.setColumnName(i, table.getColumnName(outputIndex));
+        typedTableModel.setColumnType(i, table.getColumnClass(outputIndex));
+      }
+      return typedTableModel;
+    }
+    return table;
+  }
+
+
+  private static DataTableFilter getRowFilter(final QueryOptions queryOptions, final List<Integer> outputIndexes)
+  {  
+    String filterText = StringUtils.trim(queryOptions.getExtraSettings().get(DT_FILTER));
+    if(!StringUtils.isEmpty(filterText)){
+      int[] searchableIndexes = null;
+      if(queryOptions.getExtraSettings().containsKey(DT_SEARCHABLE)){
+        try{
+          String[] unparsedIndexes = StringUtils.split(queryOptions.getExtraSettings().get(DT_SEARCHABLE), ',');
+          searchableIndexes = new int[unparsedIndexes.length];
+          if(outputIndexes.size() > 0){
+            for(int i=0; i< searchableIndexes.length; i++){
+              int idx = Integer.parseInt(unparsedIndexes[i].trim());
+              searchableIndexes[i] = outputIndexes.get(idx);
+            }
+          }
+        }
+        catch(IndexOutOfBoundsException e){
+          logger.error(DT_SEARCHABLE + " is out of bounds.");
+          searchableIndexes = null;
+        }
+        catch(NumberFormatException e){
+          logger.error(DT_SEARCHABLE + " not a comma-separated list of integers: " +  queryOptions.getExtraSettings().get(DT_SEARCHABLE));
+          searchableIndexes = null;
+        }
+      }
+      
+      if(searchableIndexes == null) {//include all
+        searchableIndexes = new int[outputIndexes.size()];
+        for(int i=0; i< searchableIndexes.length; i++){
+          searchableIndexes[i] = outputIndexes.get(i);
+        }
+      }
+      
+      return new DataTableFilter(filterText, searchableIndexes);
+    }
+    return null;
+  }
+  
+  
+  private static List<Integer> getOutputIndexes(final DataAccess dataAccess, final QueryOptions queryOptions, TableModel table) throws InvalidOutputIndexException 
+  {
     // First we need to check if there's nothing to do.
     ArrayList<Integer> outputIndexes = dataAccess.getOutputs(queryOptions.getOutputIndexId());
     if(outputIndexes == null) {
@@ -94,88 +274,11 @@ public class TableModelUtils
       }
       outputIndexes = newOutputIndexes;
     }
-
-
-    final int columnCount = outputIndexes.size();
-    if (columnCount != 0)
-    {
-
-      if ((Collections.max(outputIndexes) > table.getColumnCount() - 1))
-      {
-        throw new InvalidOutputIndexException("Output index higher than number of columns in tableModel", null);
-
-      }
-
-
-
-      final int rowCount = table.getRowCount();
-      logger.debug(rowCount == 0 ? "No data found" : "Found " + rowCount + " rows");
-
-      final Class<?>[] colTypes = new Class[columnCount];
-      final String[] colNames = new String[columnCount];
-      //just set the number of rows/columns
-      final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
-      
-      for (int r = 0; r < rowCount; r++)
-      {
-        for (int j = 0; j < outputIndexes.size(); j++)
-        {
-          final int outputIndex = outputIndexes.get(j);
-          typedTableModel.setValueAt(table.getValueAt(r, outputIndex), r, j);
-        }
-      }
-      
-      //since we set the calculated table model to infer types, they will be available after rows are evaluated
-      for (int i = 0; i < outputIndexes.size(); i++)
-      {
-        final int outputIndex = outputIndexes.get(i);
-        typedTableModel.setColumnName(i, table.getColumnName(outputIndex));
-        typedTableModel.setColumnType(i, table.getColumnClass(outputIndex));
-      }
-      
-      table = typedTableModel;
-      
-
-    }
-
-    // Now, handle sorting
-
-    if (!queryOptions.getSortBy().isEmpty())
-    {
-      // no action
-      table = (new SortTableModel()).doSort(table, queryOptions.getSortBy());
-    }
-
-
-    // Create a metadata-aware table model
-
-    final Class<?>[] colTypes = new Class[table.getColumnCount()];
-    final String[] colNames = new String[table.getColumnCount()];
-
-    for (int i = 0; i < table.getColumnCount(); i++)
-    {
-      colTypes[i] = table.getColumnClass(i);
-      colNames[i] = table.getColumnName(i);
-    }
-
-    final int rowCount = table.getRowCount();
-    MetadataTableModel result = new MetadataTableModel(colNames, colTypes, rowCount);
-    result.setMetadata("totalRows", rowCount);
-    for (int r = 0; r < rowCount; r++)
-    {
-      for (int j = 0; j < table.getColumnCount(); j++)
-      {
-        result.setValueAt(table.getValueAt(r, j), r, j);
-      }
-    }
-    // Paginate
-    return paginateTableModel(result, queryOptions);
-
-
+    return outputIndexes;
   }
 
 
-  public TableModel copyTableModel(final DataAccess dataAccess, final TableModel t)
+  public static TableModel copyTableModel(final DataAccess dataAccess, final TableModel t)
   {
 
     // We're removing the ::table-by-index:: cols
@@ -223,7 +326,7 @@ public class TableModelUtils
   }
 
 
-  public TableModel dataAccessMapToTableModel(HashMap<String, DataAccess> dataAccessMap)
+  public static TableModel dataAccessMapToTableModel(HashMap<String, DataAccess> dataAccessMap)
   {
 
 
@@ -258,19 +361,7 @@ public class TableModelUtils
   }
 
 
-  public static synchronized TableModelUtils getInstance()
-  {
-
-    if (_instance == null)
-    {
-      _instance = new TableModelUtils();
-    }
-
-    return _instance;
-  }
-
-
-  public TableModel dataAccessParametersToTableModel(final ArrayList<Parameter> parameters)
+  public static TableModel dataAccessParametersToTableModel(final ArrayList<Parameter> parameters)
   {
 
     int rowCount = parameters.size();
@@ -310,7 +401,7 @@ public class TableModelUtils
    * @param tableModelB Contents to be appended
    * #
    */
-  public TableModel appendTableModel(final TableModel tableModelA, final TableModel tableModelB)
+  public static TableModel appendTableModel(final TableModel tableModelA, final TableModel tableModelB)
   {
 
     // We will believe the data is correct - no type checking
@@ -359,7 +450,7 @@ public class TableModelUtils
   }
 
 
-  private TableModel paginateTableModel(MetadataTableModel t, QueryOptions queryOptions)
+  private static TableModel paginateTableModel(MetadataTableModel t, QueryOptions queryOptions)
   {
 
     if (!queryOptions.isPaginate() || (queryOptions.getPageSize() == 0 && queryOptions.getPageStart() == 0))
