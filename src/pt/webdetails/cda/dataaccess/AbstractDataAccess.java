@@ -269,7 +269,7 @@ public abstract class AbstractDataAccess implements DataAccess
     
     try
     {
-      final TableModel outputTableModel = TableModelUtils.getInstance().postProcessTableModel(this, queryOptions, tableModel);
+      final TableModel outputTableModel = TableModelUtils.postProcessTableModel(this, queryOptions, tableModel);
       logger.debug("Query " + getId() + " done successfully - returning tableModel");
       return outputTableModel;
     }
@@ -286,7 +286,7 @@ public abstract class AbstractDataAccess implements DataAccess
   public TableModel listParameters(final DiscoveryOptions discoveryOptions)
   {
 
-    return TableModelUtils.getInstance().dataAccessParametersToTableModel(getParameters());
+    return TableModelUtils.dataAccessParametersToTableModel(getParameters());
 
   }
 

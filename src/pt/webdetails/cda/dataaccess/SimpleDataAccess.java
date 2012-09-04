@@ -129,7 +129,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
       queryTime = logIfDurationAboveThreshold(beginTime, getId(), getQuery(), parameters);
 
       // Copy the tableModel and cache it
-      tableModelCopy = TableModelUtils.getInstance().copyTableModel(this, tableModel);
+      tableModelCopy = TableModelUtils.copyTableModel(this, tableModel);
     }
     catch (Exception e)
     {

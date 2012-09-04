@@ -66,7 +66,7 @@ public class UnionCompoundDataAccess extends CompoundDataAccess
       final TableModel tableModelA = this.getCdaSettings().getDataAccess(topId).doQuery(queryOptions);
       final TableModel tableModelB = this.getCdaSettings().getDataAccess(bottomId).doQuery(queryOptions);
 
-      return TableModelUtils.getInstance().appendTableModel(tableModelA, tableModelB);
+      return TableModelUtils.appendTableModel(tableModelA, tableModelB);
 
     }
     catch (CloneNotSupportedException e)
