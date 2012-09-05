@@ -1,3 +1,16 @@
+12.09.05
+Implemented [REDMINE 808] - Show URL feature in CDA previewer
+
+using getWithTimeout for cacheStats, WILL FAIL unless patched hazelcast is used; puts are now fire and forget; using last update time in monitor instead of first insertion
+QueryError: send string array for stack trace
+rebochef update missing from .classpath
+refactor olap4j connections
+Calling setSolutionRepositoryThreadVariable before getting any connection. Fix suggested by wgorman and pstoellberg
+format tablemodel also on empty result
+fix classpath for eclipse + ant for running the tests (runtime-lib)
+change olap4j sample file name
+refactor use of mondrian role mapper
+
 12.07.19
 Fixed [REDMINE CDA797] - ClassLoader issue using CdaQueryComponent in FusionContentGenerator
 Fixed [REDMINE CDA787] - use cde ext-editor for cda files
