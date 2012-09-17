@@ -51,7 +51,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
   private static final String EDITOR_SOURCE = "/editor/editor.html";
   private static final String EXT_EDITOR_SOURCE = "/editor/editor-cde.html";
   private static final String PREVIEWER_SOURCE = "/previewer/previewer.html";
-  private static final String CACHEMAN_SOURCE = "/cachemanager/cache.html";
+  private static final String CACHE_MANAGER_PATH = "system/" + PLUGIN_NAME + "/cachemanager/cache.html";
   private static final int DEFAULT_PAGE_SIZE = 20;
   private static final int DEFAULT_START_PAGE = 0;
   private static final String PREFIX_PARAMETER = "param";
@@ -436,22 +436,10 @@ public class CdaContentGenerator extends SimpleContentGenerator
     CacheScheduleManager.getInstance().handleCall(getRequestParameters(), out);
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC)
+  @Exposed(accessLevel = AccessLevel.ADMIN)
   public void manageCache(final OutputStream out) throws Exception
   {
-    RepositoryAccess repository = RepositoryAccess.getRepository(userSession);
-    // Check if the file exists and we have permissions to write to it
-    String path = getRelativePath(getRequestParameters());
-    if (repository.hasAccess(path, FileAccess.EDIT))
-    {
-      final String cacheManagerPath = "system/" + PLUGIN_NAME + CACHEMAN_SOURCE;
-      writeOut(out, getResourceAsString(cacheManagerPath, FileAccess.EDIT));
-    }
-    else
-    {
-      setResponseHeaders("text/plain");
-      writeOut(out, "Access Denied");
-    }
+    writeOut(out, getResourceAsString(CACHE_MANAGER_PATH, FileAccess.EXECUTE));
   }
 
 
