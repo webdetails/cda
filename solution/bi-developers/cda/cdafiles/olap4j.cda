@@ -9,7 +9,7 @@
 
 	-->
     <DataSources>
-        <Connection id="1" type="olap4j.jdbc">
+        <Connection id="1" type="olap4j">
             <Driver>mondrian.olap4j.MondrianOlap4jDriver</Driver>
             <Url>jdbc:mondrian:</Url>
             <Property name="JdbcUser">pentaho_user</Property>

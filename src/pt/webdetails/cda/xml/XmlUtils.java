@@ -1,5 +1,8 @@
-package pt.webdetails.cda.xml;
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+package pt.webdetails.cda.xml;
 
 import java.io.StringWriter;
 import org.dom4j.DocumentHelper;
@@ -26,13 +29,13 @@ public class XmlUtils
   private static class XmlFormatter
   {
     private int indentNumChars;
-    private int lineLength;
+//    private int lineLength;
     private boolean singleLine;
 
     public XmlFormatter(int indentNumChars, int lineLength)
     {
       this.indentNumChars = indentNumChars;
-      this.lineLength = lineLength;
+//      this.lineLength = lineLength;
     }
 
     public synchronized String format(String s, int initialIndent)
@@ -105,47 +108,47 @@ public class XmlUtils
     return sb.toString();
   }
 
-  /**
-   * Wraps the supplied text to the specified line length.
-   * @lineLength the maximum length of each line in the returned string (not including indent if specified).
-   * @indent optional number of whitespace characters to prepend to each line before the text.
-   * @linePrefix optional string to append to the indent (before the text).
-   * @returns the supplied text wrapped so that no line exceeds the specified line length + indent, optionally with
-   * indent and prefix applied to each line.
-   */
-  private static String lineWrap(String s, int lineLength, Integer indent, String linePrefix)
-  {
-    if (s == null)
-      return null;
-
-    StringBuilder sb = new StringBuilder();
-    int lineStartPos = 0;
-    int lineEndPos;
-    boolean firstLine = true;
-    while(lineStartPos < s.length())
-    {
-      if (!firstLine)
-        sb.append("\n");
-      else
-        firstLine = false;
-
-      if (lineStartPos + lineLength > s.length())
-        lineEndPos = s.length() - 1;
-      else
-      {
-        lineEndPos = lineStartPos + lineLength - 1;
-        while (lineEndPos > lineStartPos && (s.charAt(lineEndPos) != ' ' && s.charAt(lineEndPos) != '\t'))
-          lineEndPos--;
-      }
-      sb.append(buildWhitespace(indent));
-      if (linePrefix != null)
-        sb.append(linePrefix);
-
-      sb.append(s.substring(lineStartPos, lineEndPos + 1));
-      lineStartPos = lineEndPos + 1;
-    }
-    return sb.toString();
-  }
+//  /**
+//   * Wraps the supplied text to the specified line length.
+//   * @lineLength the maximum length of each line in the returned string (not including indent if specified).
+//   * @indent optional number of whitespace characters to prepend to each line before the text.
+//   * @linePrefix optional string to append to the indent (before the text).
+//   * @returns the supplied text wrapped so that no line exceeds the specified line length + indent, optionally with
+//   * indent and prefix applied to each line.
+//   */
+//  private static String lineWrap(String s, int lineLength, Integer indent, String linePrefix)
+//  {
+//    if (s == null)
+//      return null;
+//
+//    StringBuilder sb = new StringBuilder();
+//    int lineStartPos = 0;
+//    int lineEndPos;
+//    boolean firstLine = true;
+//    while(lineStartPos < s.length())
+//    {
+//      if (!firstLine)
+//        sb.append("\n");
+//      else
+//        firstLine = false;
+//
+//      if (lineStartPos + lineLength > s.length())
+//        lineEndPos = s.length() - 1;
+//      else
+//      {
+//        lineEndPos = lineStartPos + lineLength - 1;
+//        while (lineEndPos > lineStartPos && (s.charAt(lineEndPos) != ' ' && s.charAt(lineEndPos) != '\t'))
+//          lineEndPos--;
+//      }
+//      sb.append(buildWhitespace(indent));
+//      if (linePrefix != null)
+//        sb.append(linePrefix);
+//
+//      sb.append(s.substring(lineStartPos, lineEndPos + 1));
+//      lineStartPos = lineEndPos + 1;
+//    }
+//    return sb.toString();
+//  }
 
   // other utils removed for brevity
 

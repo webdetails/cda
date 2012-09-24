@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package pt.webdetails.cda.dataaccess;
 
 import java.util.ArrayList;
@@ -124,15 +128,20 @@ public abstract class PREDataAccess extends SimpleDataAccess
               new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
 
       dataFactory.open();
-      // fire the query. you always get a tablemodel or an exception.
 
-      final ReportEnvironmentDataRow environmentDataRow;
-      if (CdaEngine.isStandalone())
-      {
-        environmentDataRow = new ReportEnvironmentDataRow(new DefaultReportEnvironment(configuration));
-      }
-      else
-      {
+      
+      PREDataSourceQuery queryExecution = null;
+      
+      try {
+        // fire the query. you always get a tablemodel or an exception.
+
+        final ReportEnvironmentDataRow environmentDataRow;
+        if (CdaEngine.isStandalone())
+        {
+          environmentDataRow = new ReportEnvironmentDataRow(new DefaultReportEnvironment(configuration));
+        }
+        else
+        {
         //TODO:testing, TEMP
 //        // Make sure we have the env. correctly inited
 //        if (SolutionReposHelper.getSolutionRepositoryThreadVariable() == null && PentahoSystem.getObjectFactory().objectDefined(ISolutionRepository.class.getSimpleName()))
@@ -140,14 +149,22 @@ public abstract class PREDataAccess extends SimpleDataAccess
 //          threadVarSet = true;
 //          SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession()));
 //        }
-        environmentDataRow = new ReportEnvironmentDataRow(new PentahoReportEnvironment(configuration));
+          environmentDataRow = new ReportEnvironmentDataRow(new PentahoReportEnvironment(configuration));
+        }
+
+        final TableModel tm = dataFactory.queryData("query",
+                new CompoundDataRow(environmentDataRow, parameterDataRow));
+
+        //  Store this variable so that we can close it later
+        queryExecution = new PREDataSourceQuery(tm, dataFactory);
+      } finally {
+        //There was an exception while getting the dataset - need to make sure 
+        //that the dataFactory is closed
+        if (queryExecution == null) {
+          dataFactory.close();
+        }
       }
-
-      final TableModel tm = dataFactory.queryData("query",
-              new CompoundDataRow(environmentDataRow, parameterDataRow));
-
-      //  Store this variable so that we can close it later
-      PREDataSourceQuery queryExecution = new PREDataSourceQuery(tm, dataFactory);
+      
       return queryExecution;
 
     }

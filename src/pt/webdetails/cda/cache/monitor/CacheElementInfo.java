@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package pt.webdetails.cda.cache.monitor;
 
 import java.io.IOException;
@@ -18,6 +22,7 @@ public class CacheElementInfo {
   long hits;
   Long byteSize;
   Long duration;
+  int timeToLive;
 
   public TableCacheKey getKey() {
     return key;
@@ -75,6 +80,14 @@ public class CacheElementInfo {
     this.duration = duration;
   }
   
+  public int getTimeToLive() {
+    return timeToLive;
+  }
+
+  public void setTimeToLive(int timeToLive) {
+    this.timeToLive = timeToLive;
+  }
+
   public JSONObject toJson() throws JSONException, IOException
   {
     JSONObject queryInfo = new JSONObject();
@@ -84,10 +97,6 @@ public class CacheElementInfo {
     for(Parameter param : key.getParameters()){
       parameters.put(param.getName(), param.getStringValue());
     }
-//    ParameterDataRow pRow = key.getParameterDataRow();
-//    if(pRow != null) for(String paramName : pRow.getColumnNames()){
-//      parameters.put(paramName, pRow.get(paramName));
-//    }
     queryInfo.put("parameters", parameters);
     
     queryInfo.put("rows", rows != null ? rows.intValue() : null);
@@ -101,6 +110,8 @@ public class CacheElementInfo {
     if(duration != null){
       queryInfo.put("duration", duration.longValue());
     }
+    queryInfo.put("timeToLive", timeToLive);
+    
     //use id to get table;
     //identifier
     String identifier = TableCacheKey.getTableCacheKeyAsString(key);

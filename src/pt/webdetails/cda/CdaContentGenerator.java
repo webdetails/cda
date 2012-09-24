@@ -51,7 +51,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
   private static final String EDITOR_SOURCE = "/editor/editor.html";
   private static final String EXT_EDITOR_SOURCE = "/editor/editor-cde.html";
   private static final String PREVIEWER_SOURCE = "/previewer/previewer.html";
-  private static final String CACHEMAN_SOURCE = "/cachemanager/cache.html";
+  private static final String CACHE_MANAGER_PATH = "system/" + PLUGIN_NAME + "/cachemanager/cache.html";
   private static final int DEFAULT_PAGE_SIZE = 20;
   private static final int DEFAULT_START_PAGE = 0;
   private static final String PREFIX_PARAMETER = "param";
@@ -75,7 +75,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
     // We assume that any paging options found mean that the user actively wants paging.
     final long pageSize = requestParams.getLongParameter("pageSize", 0);
     final long pageStart = requestParams.getLongParameter("pageStart", 0);
-    final boolean paginate = "true".equals(requestParams.getStringParameter("paginateQuery", "false"));
+    final boolean paginate = Boolean.parseBoolean(requestParams.getStringParameter("paginateQuery", "false"));
     if (pageSize > 0 || pageStart > 0 || paginate)
     {
       if (pageSize > Integer.MAX_VALUE || pageStart > Integer.MAX_VALUE)
@@ -95,7 +95,11 @@ public class CdaContentGenerator extends SimpleContentGenerator
     // Handle the query itself and its output format...
     queryOptions.setOutputType(requestParams.getStringParameter("outputType", "json"));
     queryOptions.setDataAccessId(requestParams.getStringParameter("dataAccessId", "<blank>"));
-    queryOptions.setOutputIndexId(Integer.parseInt(requestParams.getStringParameter("outputIndexId", "1")));
+    try {
+      queryOptions.setOutputIndexId(Integer.parseInt(requestParams.getStringParameter("outputIndexId", "1")));
+    } catch (NumberFormatException e) {
+      logger.error("Illegal outputIndexId '" + requestParams.getStringParameter("outputIndexId", null) + "'" );
+    }
     
     final ArrayList<String> sortBy = new ArrayList<String>();
     String[] def =
@@ -130,9 +134,12 @@ public class CdaContentGenerator extends SimpleContentGenerator
     }
 
     Exporter exporter = ExporterEngine.getInstance().getExporter(queryOptions.getOutputType(), queryOptions.getExtraSettings());
-    String mimeType = exporter.getMimeType();
     String attachmentName = exporter.getAttachmentName();
-
+    String mimeType = (attachmentName == null) ? null : getMimeType(attachmentName);
+    if(StringUtils.isEmpty(mimeType)){
+      mimeType = exporter.getMimeType();
+    }
+    
     if (this.parameterProviders != null)
     {
       setResponseHeaders(mimeType, attachmentName);
@@ -429,22 +436,10 @@ public class CdaContentGenerator extends SimpleContentGenerator
     CacheScheduleManager.getInstance().handleCall(getRequestParameters(), out);
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC)
+  @Exposed(accessLevel = AccessLevel.ADMIN)
   public void manageCache(final OutputStream out) throws Exception
   {
-    RepositoryAccess repository = RepositoryAccess.getRepository(userSession);
-    // Check if the file exists and we have permissions to write to it
-    String path = getRelativePath(getRequestParameters());
-    if (repository.hasAccess(path, FileAccess.EDIT))
-    {
-      final String cacheManagerPath = "system/" + PLUGIN_NAME + CACHEMAN_SOURCE;
-      writeOut(out, getResourceAsString(cacheManagerPath, FileAccess.EDIT));
-    }
-    else
-    {
-      setResponseHeaders("text/plain");
-      writeOut(out, "Access Denied");
-    }
+    writeOut(out, getResourceAsString(CACHE_MANAGER_PATH, FileAccess.EXECUTE));
   }
 
 

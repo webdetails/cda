@@ -1,7 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package pt.webdetails.cda.utils.kettle;
 
 import java.util.ArrayList;
@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import javax.swing.table.TableModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import java.util.Comparator;
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
 
@@ -29,7 +30,6 @@ import plugins.org.pentaho.di.robochef.kettle.DynamicTransformation;
 import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
 import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
 import pt.webdetails.cda.CdaBoot;
-import pt.webdetails.cda.utils.Util;
 
 /**
  *
@@ -69,7 +69,8 @@ public class SortTableModel implements RowProductionManager
   {
     try
     {
-      Class comp = Class.forName(comparatorClass);
+      @SuppressWarnings("unchecked")
+      Class<? extends Comparator<Integer>> comp = (Class<? extends Comparator<Integer>>) Class.forName(comparatorClass);
       SortableTableModel sortable = new SortableTableModel(unsorted);
       sortable.sort(comp, sortBy);
       return sortable;

@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package pt.webdetails.cda.dataaccess;
 
 import java.util.ArrayList;
@@ -62,7 +66,7 @@ public class UnionCompoundDataAccess extends CompoundDataAccess
       final TableModel tableModelA = this.getCdaSettings().getDataAccess(topId).doQuery(queryOptions);
       final TableModel tableModelB = this.getCdaSettings().getDataAccess(bottomId).doQuery(queryOptions);
 
-      return TableModelUtils.getInstance().appendTableModel(tableModelA, tableModelB);
+      return TableModelUtils.appendTableModel(tableModelA, tableModelB);
 
     }
     catch (CloneNotSupportedException e)

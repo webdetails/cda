@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package pt.webdetails.cda.dataaccess;
 
 import java.util.ArrayList;
@@ -265,7 +269,7 @@ public abstract class AbstractDataAccess implements DataAccess
     
     try
     {
-      final TableModel outputTableModel = TableModelUtils.getInstance().postProcessTableModel(this, queryOptions, tableModel);
+      final TableModel outputTableModel = TableModelUtils.postProcessTableModel(this, queryOptions, tableModel);
       logger.debug("Query " + getId() + " done successfully - returning tableModel");
       return outputTableModel;
     }
@@ -282,7 +286,7 @@ public abstract class AbstractDataAccess implements DataAccess
   public TableModel listParameters(final DiscoveryOptions discoveryOptions)
   {
 
-    return TableModelUtils.getInstance().dataAccessParametersToTableModel(getParameters());
+    return TableModelUtils.dataAccessParametersToTableModel(getParameters());
 
   }
 

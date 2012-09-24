@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package pt.webdetails.cda.xml;
 
 import org.apache.commons.lang.StringUtils;
@@ -19,7 +23,6 @@ import pt.webdetails.cda.connections.xpath.XPathConnectionInfo;
 import pt.webdetails.cda.dataaccess.ColumnDefinition;
 import pt.webdetails.cda.dataaccess.CompoundDataAccess;
 import pt.webdetails.cda.dataaccess.JoinCompoundDataAccess;
-import pt.webdetails.cda.dataaccess.KettleDataAccess;
 import pt.webdetails.cda.dataaccess.Parameter;
 import pt.webdetails.cda.dataaccess.SimpleDataAccess;
 import pt.webdetails.cda.dataaccess.UnionCompoundDataAccess;
@@ -55,10 +58,8 @@ public class DomVisitor {
 			visit((pt.webdetails.cda.connections.mondrian.JdbcConnection) con, conEle);		
 		} else if (con instanceof pt.webdetails.cda.connections.mondrian.JndiConnection) {
 			visit((pt.webdetails.cda.connections.mondrian.JndiConnection) con, conEle);		
-		} else if (con instanceof pt.webdetails.cda.connections.olap4j.JdbcConnection) {
-			visit((pt.webdetails.cda.connections.olap4j.JdbcConnection) con, conEle);
-		} else if (con instanceof pt.webdetails.cda.connections.olap4j.JndiConnection) {
-			visit((pt.webdetails.cda.connections.olap4j.JndiConnection) con, conEle);
+		} else if (con instanceof pt.webdetails.cda.connections.olap4j.DefaultOlap4jConnection) {
+			visit((pt.webdetails.cda.connections.olap4j.DefaultOlap4jConnection) con, conEle);
 		} else if (con instanceof ScriptingConnection) {
 			visit((ScriptingConnection) con, conEle);
 		} else if (con instanceof XPathConnection) {
@@ -110,24 +111,21 @@ public class DomVisitor {
 		ele.addElement("Cube").addText(conInfo.getCube());
 	}
 	
-	// ...olap4j.jdbc
-	private void visit(pt.webdetails.cda.connections.olap4j.JdbcConnection con, Element ele) {
-		final pt.webdetails.cda.connections.olap4j.JdbcConnectionInfo conInfo = con.getConnectionInfo();
+	// ...olap4j
+	private void visit(pt.webdetails.cda.connections.olap4j.DefaultOlap4jConnection con, Element ele) {
+		final pt.webdetails.cda.connections.olap4j.Olap4jConnectionInfo conInfo = con.getConnectionInfo();
 		ele.addElement("Driver").addText(conInfo.getDriver());
 		ele.addElement("Url").addText(conInfo.getUrl());
-		//TODO: where do these come from?
-//		ele.addElement("JdbcDrivers").addText(conInfo.get);
-//		ele.addElement("Jdbc").addText(conInfo.getDriver());
-//		ele.addElement("JdbcUser").addText(conInfo.);
-//		ele.addElement("JdbcPass").addText(conInfo.);
-//		ele.addElement("Catalog").addText(conInfo.);
+		ele.addElement("User").addText(conInfo.getUser());
+		ele.addElement("Pass").addText(conInfo.getPass());
+		ele.addElement("Role").addText(conInfo.getRole());
+		for (Object key : conInfo.getProperties().keySet()) {
+			String k = key.toString();
+			String v = conInfo.getProperties().getProperty(k);
+			ele.addElement("Property").addAttribute("name", k).addText(v);	
+		}
 	}
-	
-	// ...olap4j.jndi
-	private void visit(pt.webdetails.cda.connections.olap4j.JndiConnection con, Element ele) {
-		//Spec missing???
-	}
-	
+
 	// ...scripting.scripting
 	private void visit(ScriptingConnection con, Element ele) {
 		final ScriptingConnectionInfo conInfo = con.getConnectionInfo();

@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package pt.webdetails.cda.utils;
 
 import javax.swing.event.TableModelListener;
@@ -13,10 +17,7 @@ import org.pentaho.reporting.libraries.formula.parser.ParseException;
 import pt.webdetails.cda.dataaccess.ColumnDefinition;
 
 /**
- * Todo: Document me!
- * <p/>
- * Date: 08.02.2010
- * Time: 16:21:28
+ * A {@link TableModel} extended with calculated columns.
  *
  * @author Thomas Morgner.
  */
@@ -70,7 +71,23 @@ public class CalculatedTableModel implements MetaTableModel
   private TableModel backend;
   private ColumnDefinition[] calculatedColumns;
   private int backendColumnCount;
+  private boolean inferTypes = false;
+  private Class<?>[] calculatedColumnClasses;
 
+  /**
+   * 
+   * @param backend Table that provides the first columns of the table, which can be used by the calculated columns 
+   * @param calculatedColumns Formula-based columns to be evaluated
+   * @param inferColumnTypes Whether to attempt to determine column types as they are calculated
+   */
+  public CalculatedTableModel(final TableModel backend, final ColumnDefinition[] calculatedColumns, boolean inferColumnTypes){
+    this(backend, calculatedColumns);
+    inferTypes = inferColumnTypes;
+    if(inferTypes){
+      calculatedColumnClasses = new Class<?>[calculatedColumns.length];
+    }
+  }
+  
   public CalculatedTableModel(final TableModel backend, final ColumnDefinition[] calculatedColumns)
   {
     if (backend == null)
@@ -110,11 +127,20 @@ public class CalculatedTableModel implements MetaTableModel
     return calculatedColumns[calculatedColumnIndex].getName();
   }
 
+  /**
+   * If set to infer types, result may change as cells are evaluated.
+   */
   public Class<?> getColumnClass(final int columnIndex)
   {
     if (columnIndex < backendColumnCount)
     {
       return backend.getColumnClass(columnIndex);
+    }
+    else if (inferTypes){
+      final int calcColumnIndex = columnIndex - backendColumnCount;
+      if(calcColumnIndex < calculatedColumnClasses.length && calculatedColumnClasses[calcColumnIndex] != null){
+        return calculatedColumnClasses[calcColumnIndex];
+      }
     }
     return Object.class;
   }
@@ -126,6 +152,20 @@ public class CalculatedTableModel implements MetaTableModel
       return backend.isCellEditable(rowIndex, columnIndex);
     }
     return false;
+  }
+  
+  protected void accumulateClassAt(final int calcColumnIndex, Class<?> valueClass){
+    if(calculatedColumnClasses[calcColumnIndex] == null){
+      calculatedColumnClasses[calcColumnIndex] = valueClass;
+    }
+    else if (!calculatedColumnClasses[calcColumnIndex].isAssignableFrom(valueClass)){
+      if(valueClass.isAssignableFrom(calculatedColumnClasses[calcColumnIndex])){
+        calculatedColumnClasses[calcColumnIndex] = valueClass;
+      }
+      else {
+        calculatedColumnClasses[calcColumnIndex] = Object.class;
+      }
+    }
   }
 
   protected Object getValueInternal(final int columnIndex, final DataAccessFormulaContext context)
@@ -165,7 +205,11 @@ public class CalculatedTableModel implements MetaTableModel
       }
       final Formula formulaObject = new Formula(formulaExpression);
       formulaObject.initialize(context);
-      return formulaObject.evaluate();
+      Object value = formulaObject.evaluate();
+      if(inferTypes && value != null){
+        accumulateClassAt(calcColumnIndex, value.getClass());
+      }
+      return value;
     }
     finally
     {

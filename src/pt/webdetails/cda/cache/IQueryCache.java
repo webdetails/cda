@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package pt.webdetails.cda.cache;
 
 import javax.swing.table.TableModel;
@@ -6,15 +10,7 @@ import pt.webdetails.cda.cache.monitor.CacheElementInfo;
 import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
 
 public interface IQueryCache {
-
-//  /**
-//   * Stores element in cache.
-//   * @param key key
-//   * @param table element to store.
-//   * @param ttlSec time to live in seconds
-//   */
-//  public void putTableModel(TableCacheKey key, TableModel table, int ttlSec);
-//  
+  
   /**
    * Stores element in cache.
    * @param key key
@@ -32,12 +28,6 @@ public interface IQueryCache {
    */
   public TableModel getTableModel(TableCacheKey key);
   
-//  /**
-//   * 
-//   * @param key the key to retrieve.
-//   * @return <code>TableModel</code> associated with key.
-//   */
-//  public TableModel getTableModelQuietly(TableCacheKey key);
   
   /**
    * Removes element with given key from cache.

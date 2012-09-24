@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package pt.webdetails.cda.exporter;
 
 import java.io.File;
@@ -9,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -38,20 +43,37 @@ import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
  * Date: Mar 12, 2010
  * Time: 3:01:27 PM
  */
-public abstract class AbstractKettleExporter implements Exporter, RowProductionManager
+public abstract class AbstractKettleExporter extends AbstractExporter implements Exporter, RowProductionManager
 {
 
   private static final Log logger = LogFactory.getLog(AbstractKettleExporter.class);
+  
+  public static final String ATTACHMENT_NAME_SETTING = "attachmentName";
+  public static final String COLUMN_HEADERS_SETTING = "columnHeaders";
+  public static final String FILE_EXTENSION_SETTING = "fileExtension";
 
   protected ExecutorService executorService = Executors.newCachedThreadPool();
   protected Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
-
+  protected Map<String, String> extraSettings;
+  
   private SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmssZ");
   private String filename;
   
   private static long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
   private static TimeUnit DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT = TimeUnit.SECONDS;
 
+  
+  protected AbstractKettleExporter(Map<String, String> extraSettings)
+  {
+    this.extraSettings = extraSettings;
+  }
+  
+  
+  protected abstract String getExportStepDefinition(String name);
+
+  
+  protected abstract String getType();
+  
 
   public void startRowProduction()
   {
@@ -75,13 +97,11 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
     }
     catch (InterruptedException e)
     {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      logger.error(e);
     }
     catch (ExecutionException e)
     {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      logger.error(e);
     }
   }
 
@@ -114,7 +134,7 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
       trans.executeCheckedSuccess(null, null, this);
       logger.info(trans.getReadWriteThroughput());
 
-      // Transformation executed ok, lets return the file
+      // Transformation executed ok, let's return the file
       copyFileToOutputStream(out);
 
       output = outputListener.getRowsWritten();
@@ -140,6 +160,17 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
     filename = "pentaho-cda-" + getType() + "-" + dateFormat.format(Calendar.getInstance().getTime()) + "-" + UUID.randomUUID().toString();
     return filename;
   }
+  
+  protected  String getSetting(String name, String defaultValue){
+    return getSetting(extraSettings, name, defaultValue);
+  }
+  
+  protected  String getSetting(Map<String, String> settings, String name, String defaultValue){
+    if(settings.containsKey(name)) {
+      return settings.get(name);
+    }
+    return defaultValue;
+  }
 
 
   private void copyFileToOutputStream(OutputStream os) throws IOException
@@ -159,12 +190,5 @@ public abstract class AbstractKettleExporter implements Exporter, RowProductionM
     file.delete();
 
   }
-
-  protected abstract String getExportStepDefinition(String name);
-
-
-  public abstract String getMimeType();
-
-  public abstract String getType();
 
 }
