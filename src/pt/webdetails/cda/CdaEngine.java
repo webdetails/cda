@@ -32,7 +32,6 @@ import pt.webdetails.cda.utils.SolutionRepositoryUtils;
 public class CdaEngine
 {
 
-
   private static final Log logger = LogFactory.getLog(CdaEngine.class);
   private static CdaEngine _instance;
 
@@ -46,8 +45,8 @@ public class CdaEngine
 
 
   public void doQuery(final OutputStream out,
-                      final CdaSettings cdaSettings,
-                      final QueryOptions queryOptions) throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
+          final CdaSettings cdaSettings,
+          final QueryOptions queryOptions) throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
   {
 
     logger.debug("Doing query on CdaSettings [ " + cdaSettings.getId() + " (" + queryOptions.getDataAccessId() + ")]");
@@ -62,8 +61,8 @@ public class CdaEngine
 
 
   public void listQueries(final OutputStream out,
-                          final CdaSettings cdaSettings,
-                          final DiscoveryOptions discoveryOptions) throws UnsupportedExporterException, ExporterException
+          final CdaSettings cdaSettings,
+          final DiscoveryOptions discoveryOptions) throws UnsupportedExporterException, ExporterException
   {
 
     logger.debug("Getting list of queries on CdaSettings [ " + cdaSettings.getId() + ")]");
@@ -79,8 +78,8 @@ public class CdaEngine
 
 
   public void listParameters(final OutputStream out,
-                             final CdaSettings cdaSettings,
-                             final DiscoveryOptions discoveryOptions) throws UnknownDataAccessException, UnsupportedExporterException, ExporterException
+          final CdaSettings cdaSettings,
+          final DiscoveryOptions discoveryOptions) throws UnknownDataAccessException, UnsupportedExporterException, ExporterException
   {
 
     logger.debug("Getting list of queries on CdaSettings [ " + cdaSettings.getId() + ")]");
@@ -95,6 +94,7 @@ public class CdaEngine
 
   }
 
+
   public void getCdaList(final OutputStream out, final DiscoveryOptions discoveryOptions, final IPentahoSession userSession) throws UnsupportedExporterException, ExporterException
   {
 
@@ -104,18 +104,20 @@ public class CdaEngine
 
   }
 
-  public boolean isStandalone()
+
+  public static boolean isStandalone()
   {
     return "true".equals(CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.Standalone"));
   }
+
 
   private void init()
   {
 
     // Start ClassicEngineBoot
-    CdaBoot.getInstance().start();    
+    CdaBoot.getInstance().start();
     ClassicEngineBoot.getInstance().start();
-    
+
 
   }
 
@@ -127,11 +129,12 @@ public class CdaEngine
     {
       _instance = new CdaEngine();
     }
-    
+
     //Avoid problems when vfs is not registered yet
-    SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession()));
+    if (!isStandalone())
+    {
+      SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession()));
+    }
     return _instance;
   }
-
-
 }

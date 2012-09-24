@@ -127,7 +127,7 @@ public abstract class PREDataAccess extends SimpleDataAccess
       // fire the query. you always get a tablemodel or an exception.
 
       final ReportEnvironmentDataRow environmentDataRow;
-      if (CdaEngine.getInstance().isStandalone())
+      if (CdaEngine.isStandalone())
       {
         environmentDataRow = new ReportEnvironmentDataRow(new DefaultReportEnvironment(configuration));
       }
