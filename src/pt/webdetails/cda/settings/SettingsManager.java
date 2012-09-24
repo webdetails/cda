@@ -113,7 +113,7 @@ public class SettingsManager {
       // add the runtime context so that PentahoResourceData class can get access
       // to the solution repo
       final ResourceKey key;
-      if (CdaEngine.getInstance().isStandalone()) {
+      if (CdaEngine.isStandalone()) {
         File settingsFile = new File(id);
         key = resourceManager.createKey(settingsFile);
       } else {

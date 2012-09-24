@@ -80,7 +80,7 @@ public class EHCacheQueryCache implements IQueryCache {
       boolean useTerracotta = Boolean.parseBoolean(CdaBoot.getInstance().getGlobalConfig().getConfigProperty(USE_TERRACOTTA_PROPERTY));
       String cacheConfigFile = useTerracotta ? CACHE_CFG_FILE_DIST : CACHE_CFG_FILE;
 
-      if (CdaEngine.getInstance().isStandalone())
+      if (CdaEngine.isStandalone())
       {//look for the one under src/jar
         URL cfgFile = CdaBoot.class.getResource(cacheConfigFile);
         cacheManager = new net.sf.ehcache.CacheManager(cfgFile);
