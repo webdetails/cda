@@ -12,6 +12,7 @@ import javax.swing.table.TableModel;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import pt.webdetails.cda.utils.MetadataTableModel;
 
 /**
@@ -67,13 +68,16 @@ public class JsonExporter extends AbstractExporter
     if(rowLimit != null){
       rowCount = Math.min(rowCount, rowLimit);
     }
-    
+
+    boolean[] isColumnDouble = new boolean[columnCount];
     for (int i = 0; i < columnCount; i++)
     {
       JSONObject info = new JSONObject();
       info.put("colIndex", i);
       info.put("colName", tableModel.getColumnName(i));
-      info.put("colType", getColType(tableModel.getColumnClass(i)));
+      Class<?> columnClass = tableModel.getColumnClass(i);
+      isColumnDouble[i] = (columnClass.isAssignableFrom(Double.class));
+      info.put("colType", getColType(columnClass));
       metadataArray.put(info);
     }
     json.put("metadata", metadataArray);
@@ -83,15 +87,25 @@ public class JsonExporter extends AbstractExporter
       json.put("queryInfo", ((MetadataTableModel)tableModel).getAllMetadata());
     }
     final JSONArray valuesArray = new JSONArray();
+    
     for (int rowIdx = 0; rowIdx < rowCount; rowIdx++)
     {
-
       final JSONArray rowArray = new JSONArray();
-      valuesArray.put(rowArray);
       for (int colIdx = 0; colIdx < columnCount; colIdx++)
       {
-        rowArray.put(tableModel.getValueAt(rowIdx, colIdx));
+//        try {
+          Object value = tableModel.getValueAt(rowIdx, colIdx);
+          if (isColumnDouble[colIdx] && ((Double)value).isInfinite()) {
+            value = null;
+            //value = Double.POSITIVE_INFINITY == (Double) value ? "Infinity" : "-Infinity";//workaround for JSON issue with Infinity
+          }
+          rowArray.put(value);
+//        } 
+//        catch (Exception e) {
+//          logger.error(e);
+//        }
       }
+      valuesArray.put(rowArray);
     }
     json.put("resultset", valuesArray);
     return json;
