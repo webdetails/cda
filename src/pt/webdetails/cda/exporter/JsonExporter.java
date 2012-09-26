@@ -95,7 +95,7 @@ public class JsonExporter extends AbstractExporter
       {
 //        try {
           Object value = tableModel.getValueAt(rowIdx, colIdx);
-          if (isColumnDouble[colIdx] && ((Double)value).isInfinite()) {
+          if (value != null && isColumnDouble[colIdx] && ((Double)value).isInfinite()) {
             value = null;
             //value = Double.POSITIVE_INFINITY == (Double) value ? "Infinity" : "-Infinity";//workaround for JSON issue with Infinity
           }
