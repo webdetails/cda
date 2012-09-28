@@ -95,9 +95,9 @@ public class JsonExporter extends AbstractExporter
       {
         Object value = tableModel.getValueAt(rowIdx, colIdx);
         try {
-          if (isColumnDouble[colIdx] && ((Double) value).isInfinite()) {
+          if (value != null && isColumnDouble[colIdx] && ((Double)value).isInfinite()) {
             value = null;
-            // value = Double.POSITIVE_INFINITY == (Double) value ? "Infinity" : "-Infinity";//workaround for JSON issue with Infinity
+            //value = Double.POSITIVE_INFINITY == (Double) value ? "Infinity" : "-Infinity";//workaround for JSON issue with Infinity
           }
         } catch (ClassCastException e) { }//just because it says Double doesn't mean we don't get oranges
         rowArray.put(value);
