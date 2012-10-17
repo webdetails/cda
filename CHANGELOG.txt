@@ -1,9 +1,18 @@
 12.09.05
 Implemented [REDMINE 808] - Show URL feature in CDA previewer
-
+Implemented [REDMINE 1092] - template support for xls export
+Implemented [REDMINE 1128] - CSV exporter: extension, headers, escaping
+Fixed [REDMINE 1019] - Clean unnecessary ERROR messages
+expose csv exporter enclosure, normalize headers setting
+infer column types in CalculatedTableModel
+Fix: Ensured DataFactory is closed even when there is an exception on the query
+update cache to avoid default hazelcast instance
+QueryErrorEvent: give cause of queryException if possible
+expose timeToLive for cache manager
 using getWithTimeout for cacheStats, WILL FAIL unless patched hazelcast is used; puts are now fire and forget; using last update time in monitor instead of first insertion
 QueryError: send string array for stack trace
-rebochef update missing from .classpath
+robochef update missing from .classpath
+Fixed bad error log on cache miss
 refactor olap4j connections
 Calling setSolutionRepositoryThreadVariable before getting any connection. Fix suggested by wgorman and pstoellberg
 format tablemodel also on empty result
