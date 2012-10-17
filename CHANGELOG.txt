@@ -1,3 +1,17 @@
+12.10.17
+    * Fixed [REDMINE 1159] - Cache Manager does not work when bi-server is in file based repository
+    * Fixed [REDMINE 1087] - json output problem when number is "infinity"
+    * Fixed [REDMINE 1217] - JSON infinity workaround
+    * Fix some instantiation issues with standalone mode
+    * Update build to include runtime-lib as a variable rather than a hardcoded value
+    * Image update
+    * add datatable filter on post-process; stateless TableModelUtils static instead of singleton
+    * AbstractKettleExporter: inherit from AbstractExporter
+    * NaturalOrderComparator: lic header, clean
+    * sort table model: cast where reflection is used
+    * CdaContentGenerator: bad outputIndexId not fatal, don't check null name for extension , bool parse
+
+
 12.09.05
 Implemented [REDMINE 808] - Show URL feature in CDA previewer
 Implemented [REDMINE 1092] - template support for xls export
