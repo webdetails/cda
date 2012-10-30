@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.hibernate.Session;
+import org.hibernate.exception.ConstraintViolationException;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -252,10 +253,20 @@ public class CacheScheduleManager
 
       Session s = getHibernateSession();
       s.beginTransaction();
-      s.save(q);
-      s.flush();
-      s.getTransaction().commit();
-      s.close();
+      try
+      {
+         s.save(q);
+         s.flush();
+         s.getTransaction().commit();
+      }
+      catch (ConstraintViolationException e)
+      {
+         logger.debug("Duplicate cron job suppressed");
+      }
+      finally
+      {
+         s.close();
+      }
 
     }
     catch (JSONException jse)
