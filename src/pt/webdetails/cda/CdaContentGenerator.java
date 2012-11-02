@@ -56,7 +56,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
   private static final int DEFAULT_START_PAGE = 0;
   private static final String PREFIX_PARAMETER = "param";
   private static final String PREFIX_SETTING = "setting";
-  private static final String ENCODING = "UTF-8";
+  public static final String ENCODING = "UTF-8";
 
 
   @Exposed(accessLevel = AccessLevel.PUBLIC)
@@ -133,7 +133,14 @@ public class CdaContentGenerator extends SimpleContentGenerator
       }
     }
 
+    if(requestParams.getStringParameter("wrapItUp", null) != null) {
+      writeOut(out, engine.wrapQuery(out, cdaSettings, queryOptions));
+      return;
+    }
+    
+
     Exporter exporter = ExporterEngine.getInstance().getExporter(queryOptions.getOutputType(), queryOptions.getExtraSettings());
+    
     String attachmentName = exporter.getAttachmentName();
     String mimeType = (attachmentName == null) ? null : getMimeType(attachmentName);
     if(StringUtils.isEmpty(mimeType)){
@@ -144,10 +151,36 @@ public class CdaContentGenerator extends SimpleContentGenerator
     {
       setResponseHeaders(mimeType, attachmentName);
     }
-
     // Finally, pass the query to the engine
     engine.doQuery(out, cdaSettings, queryOptions);
 
+  }
+
+  @Exposed(accessLevel = AccessLevel.PUBLIC)
+  public void unwrapQuery(final OutputStream out) throws Exception
+  {
+    final CdaEngine engine = CdaEngine.getInstance();
+    final IParameterProvider requestParams = getRequestParameters();
+    final String path = getRelativePath(requestParams);
+    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
+    String uuid = requestParams.getStringParameter("uuid", null);
+
+    QueryOptions queryOptions = engine.unwrapQuery(uuid);
+    if(queryOptions != null) {
+      Exporter exporter = ExporterEngine.getInstance().getExporter(queryOptions.getOutputType(), queryOptions.getExtraSettings());
+      
+      String attachmentName = exporter.getAttachmentName();
+      String mimeType = (attachmentName == null) ? null : getMimeType(attachmentName);
+      if(StringUtils.isEmpty(mimeType)){
+        mimeType = exporter.getMimeType();
+      }
+      if (this.parameterProviders != null)
+      {
+        setResponseHeaders(mimeType, attachmentName);
+      }
+      engine.doQuery(out, cdaSettings, queryOptions);
+    }
+    
   }
 
   @Exposed(accessLevel = AccessLevel.PUBLIC)
