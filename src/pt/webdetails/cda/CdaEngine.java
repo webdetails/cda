@@ -5,6 +5,10 @@
 package pt.webdetails.cda;
 
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import javax.swing.table.TableModel;
 
 import org.apache.commons.logging.Log;
@@ -38,7 +42,8 @@ public class CdaEngine
 
   private static final Log logger = LogFactory.getLog(CdaEngine.class);
   private static CdaEngine _instance;
-
+  
+  private Map<UUID, QueryOptions> wrappedQueries = new HashMap<UUID, QueryOptions>();
 
   protected CdaEngine()
   {
@@ -47,6 +52,20 @@ public class CdaEngine
 
   }
 
+  public QueryOptions unwrapQuery(String uuid) throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
+  {
+    return wrappedQueries.remove(UUID.fromString(uuid));
+  }
+
+  public String wrapQuery(
+      final OutputStream out,
+      final CdaSettings cdaSettings,
+      final QueryOptions queryOptions)
+  {
+    UUID uuid = UUID.randomUUID();
+    wrappedQueries.put(uuid, queryOptions);
+    return uuid.toString();
+  }
 
   public void doQuery(final OutputStream out,
           final CdaSettings cdaSettings,
