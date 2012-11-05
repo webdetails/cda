@@ -134,7 +134,9 @@ public class CdaContentGenerator extends SimpleContentGenerator
     }
 
     if(requestParams.getStringParameter("wrapItUp", null) != null) {
-      writeOut(out, engine.wrapQuery(out, cdaSettings, queryOptions));
+      String uuid = engine.wrapQuery(out, cdaSettings, queryOptions);
+      logger.debug("doQuery: query wrapped as " + uuid);
+      writeOut(out, uuid);
       return;
     }
     
@@ -179,6 +181,9 @@ public class CdaContentGenerator extends SimpleContentGenerator
         setResponseHeaders(mimeType, attachmentName);
       }
       engine.doQuery(out, cdaSettings, queryOptions);
+    }
+    else {
+      logger.error("unwrapQuery: uuid " + uuid + " not found.");
     }
     
   }
