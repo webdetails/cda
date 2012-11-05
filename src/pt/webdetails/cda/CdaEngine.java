@@ -5,9 +5,9 @@
 package pt.webdetails.cda;
 
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.table.TableModel;
 
@@ -43,7 +43,7 @@ public class CdaEngine
   private static final Log logger = LogFactory.getLog(CdaEngine.class);
   private static CdaEngine _instance;
   
-  private Map<UUID, QueryOptions> wrappedQueries = new HashMap<UUID, QueryOptions>();
+  private Map<UUID, QueryOptions> wrappedQueries = new ConcurrentHashMap<UUID, QueryOptions>();
 
   protected CdaEngine()
   {
