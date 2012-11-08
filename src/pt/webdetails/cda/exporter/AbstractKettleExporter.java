@@ -33,6 +33,7 @@ import pt.webdetails.cda.CdaBoot;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransformation;
+import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.kettle.RowMetaToTableModel;
 import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
 import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
@@ -51,6 +52,7 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
   public static final String ATTACHMENT_NAME_SETTING = "attachmentName";
   public static final String COLUMN_HEADERS_SETTING = "columnHeaders";
   public static final String FILE_EXTENSION_SETTING = "fileExtension";
+  public static final String FORCE_STRING_SETTING = "forceStringOutput";
 
   protected ExecutorService executorService = Executors.newCachedThreadPool();
   protected Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
@@ -58,6 +60,7 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
   
   private SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmssZ");
   private String filename;
+  private boolean forceStringOutput;
   
   private static long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
   private static TimeUnit DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT = TimeUnit.SECONDS;
@@ -66,6 +69,7 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
   protected AbstractKettleExporter(Map<String, String> extraSettings)
   {
     this.extraSettings = extraSettings;
+    forceStringOutput = Boolean.parseBoolean(getSetting(FORCE_STRING_SETTING, "false"));
   }
   
   
@@ -106,13 +110,16 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
   }
 
 
-  public void export(final OutputStream out, final TableModel tableModel) throws ExporterException
+  public void export(final OutputStream out, TableModel tableModel) throws ExporterException
   {
     TableModel output = null;
     inputCallables.clear();
 
     try
     {
+      if(forceStringOutput) {
+        tableModel = TableModelUtils.copyAsStringTable(tableModel);
+      }
 
       final DynamicTransMetaConfig transMetaConfig = new DynamicTransMetaConfig(DynamicTransMetaConfig.Type.EMPTY, "Exporter", null, null);
       final DynamicTransConfig transConfig = new DynamicTransConfig();
