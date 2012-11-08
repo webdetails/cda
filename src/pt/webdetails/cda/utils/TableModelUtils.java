@@ -277,49 +277,77 @@ public class TableModelUtils
     return outputIndexes;
   }
 
-
-  public static TableModel copyTableModel(final DataAccess dataAccess, final TableModel t)
-  {
-
-    // We're removing the ::table-by-index:: cols
-
-
-    // Build an array of column indexes whose name is different from ::table-by-index::.*
+  public static TableModel copyAsStringTable(final TableModel table) {
     ArrayList<String> namedColumns = new ArrayList<String>();
-    ArrayList<Class<?>> namedColumnsClasses = new ArrayList<Class<?>>();
-    for (int i = 0; i < t.getColumnCount(); i++)
+    ArrayList<Class<String>> namedColumnsClasses = new ArrayList<Class<String>>();
+    for (int i = 0; i < table.getColumnCount(); i++)
     {
-      String colName = t.getColumnName(i);
+      String colName = table.getColumnName(i);
       if (!colName.startsWith("::table-by-index::")
               && !colName.startsWith("::column::"))
       {
         namedColumns.add(colName);
-        namedColumnsClasses.add(t.getColumnClass(i));
+        namedColumnsClasses.add(String.class);
       }
     }
 
-    final int count = namedColumns.size();
+    final Class<?>[] colTypes = namedColumnsClasses.toArray(new Class[namedColumns.size()]);
+    final String[] colNames = namedColumns.toArray(new String[namedColumns.size()]);
+
+    final int columnCount = namedColumns.size();
+    final int rowCount = table.getRowCount();
+    final TypedTableModel stringTableModel = new TypedTableModel(colNames, colTypes, rowCount);
+    for (int row = 0; row < rowCount; row++)
+    {
+      for (int column = 0; column < columnCount; column++)
+      {
+        Object value = table.getValueAt(row, column);
+        stringTableModel.setValueAt(value == null ? null : value.toString(), row, column);
+      }
+    }
+    return stringTableModel;
+  }
+
+  public static TableModel copyTableModel(final DataAccess dataAccess, final TableModel table)
+  {
+
+    // We're removing the ::table-by-index:: cols
+
+    // Build an array of column indexes whose name is different from ::table-by-index::.*
+    ArrayList<String> namedColumns = new ArrayList<String>();
+    ArrayList<Class<?>> namedColumnsClasses = new ArrayList<Class<?>>();
+    for (int i = 0; i < table.getColumnCount(); i++)
+    {
+      String colName = table.getColumnName(i);
+      if (!colName.startsWith("::table-by-index::")
+              && !colName.startsWith("::column::"))
+      {
+        namedColumns.add(colName);
+        namedColumnsClasses.add(table.getColumnClass(i));
+      }
+    }
+
+    final int columnCount = namedColumns.size();
 
     final Class<?>[] colTypes = namedColumnsClasses.toArray(new Class[]{});
     final String[] colNames = namedColumns.toArray(new String[]{});
 
-    for (int i = 0; i < count; i++)
+    for (int i = 0; i < columnCount; i++)
     {
-      colTypes[i] = t.getColumnClass(i);
+      colTypes[i] = table.getColumnClass(i);
 
       final ColumnDefinition col = dataAccess.getColumnDefinition(i);
-      colNames[i] = col != null ? col.getName() : t.getColumnName(i);
+      colNames[i] = col != null ? col.getName() : table.getColumnName(i);
     }
-    final int rowCount = t.getRowCount();
+    final int rowCount = table.getRowCount();
     logger.debug(rowCount == 0 ? "No data found" : "Found " + rowCount + " rows");
 
-
     final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
-    for (int r = 0; r < rowCount; r++)
+    for (int row = 0; row < rowCount; row++)
     {
-      for (int c = 0; c < count; c++)
+      for (int col = 0; col < columnCount; col++)
       {
-        typedTableModel.setValueAt(t.getValueAt(r, c), r, c);
+        typedTableModel.setValueAt(table.getValueAt(row, col), row, col);
       }
     }
     return typedTableModel;
