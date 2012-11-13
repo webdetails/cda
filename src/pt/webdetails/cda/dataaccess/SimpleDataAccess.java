@@ -18,6 +18,7 @@ import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 
 
 import pt.webdetails.cda.CdaBoot;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.cache.TableCacheKey;
 import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
 import pt.webdetails.cda.connections.Connection;
