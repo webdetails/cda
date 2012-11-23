@@ -48,7 +48,8 @@ public class ConnectionCatalog {
     if (files != null && files.length > 0) {
       for (String file : files) {
         try {
-          Document doc = XmlDom4JHelper.getDocFromFile(dir.getPath() + "/" + file, null);
+          File settingsFile = new File(dir.getPath() + "/" + file); 
+          Document doc = XmlDom4JHelper.getDocFromFile(settingsFile, null);
           // To figure out whether the component is generic or has a special implementation,
           // we directly look for the class override in the definition
           String className = XmlDom4JHelper.getNodeText("/Connection/Implementation", doc);

@@ -5,6 +5,8 @@
 package pt.webdetails.cda;
 
 import java.io.InputStream;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.dom4j.Document;
 import org.pentaho.platform.api.engine.IFileInfo;
@@ -12,6 +14,7 @@ import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.SolutionFileMetaAdapter;
 import org.pentaho.platform.engine.core.solution.FileInfo;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
+import pt.webdetails.cpf.InterPluginCall;
 
 /**
  * Parses a Dom4J document and creates an IFileInfo object containing the
@@ -20,7 +23,8 @@ import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
  * @author Will Gorman (wgorman@pentaho.com)
  */
 public class CdaFileMetaProvider extends SolutionFileMetaAdapter {
-
+  
+  private static final Log logger = LogFactory.getLog(InterPluginCall.class);
   public CdaFileMetaProvider() {
   }
 

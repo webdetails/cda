@@ -50,7 +50,7 @@ public class CacheMonitorHandler extends JsonCallHandler
   @Override
   protected boolean hasPermission(IPentahoSession session, Method method) 
   {//limit all interaction besides overview to admin role
-    return method.getName().equals("cacheOverview") || SecurityHelper.isPentahoAdministrator(session);
+    return method.getName().equals("cacheOverview") || SecurityHelper.getInstance().isPentahoAdministrator(session);
   }
   
   private void registerMethods()

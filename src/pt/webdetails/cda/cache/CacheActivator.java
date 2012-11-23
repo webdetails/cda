@@ -5,22 +5,32 @@
 package pt.webdetails.cda.cache;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.hibernate.Session;
 import org.pentaho.platform.api.engine.IAcceptsRuntimeInputs;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
+import org.pentaho.platform.security.userroledao.service.UserRoleDaoUserRoleListService;
+//import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.UserSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
-import org.pentaho.platform.scheduler.QuartzSystemListener;
-import org.pentaho.platform.scheduler.SchedulerHelper;
-import org.quartz.Scheduler;
+import org.pentaho.platform.api.engine.IUserRoleListService;
+//import org.pentaho.platform.scheduler.SchedulerHelper;
+//import org.quartz.Scheduler;
+import org.pentaho.platform.api.scheduler2.IScheduler;
+import org.pentaho.platform.api.scheduler2.JobTrigger;
+import org.pentaho.platform.api.scheduler2.SchedulerException;
 import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.utils.PluginHibernateUtil;
@@ -37,7 +47,10 @@ public class CacheActivator implements IAcceptsRuntimeInputs
   static final String JOB_GROUP = "CDA";
   static final String JOB_ACTION = "scheduler.xaction";
   static final String BACKUP_JOB_ACTION = "backupScheduler.xaction";
+  static final String SESSION_PRINCIPAL = "SECURITY_PRINCIPAL";
   static final long ONE_HOUR = 3600000; // In miliseconds
+  
+  private static final Log logger = LogFactory.getLog(CacheActivator.class);
 
 
   public CacheActivator()
@@ -136,11 +149,19 @@ public class CacheActivator implements IAcceptsRuntimeInputs
     CachedQuery q = queue.peek();
 
     Date dueAt = ( q != null)? q.getNextExecution() : null;
-    IPentahoSession session = new StandaloneSession(JOB_GROUP);
-    Scheduler sched = QuartzSystemListener.getSchedulerInstance();
-
-    SchedulerHelper.deleteJob(session, JOB_ACTION, JOB_GROUP);
-    SchedulerHelper.createSimpleTriggerJob(session, "system", "cda/actions", JOB_ACTION, TRIGGER_NAME, JOB_GROUP, "", dueAt, null, 0, 0);
+    //Scheduler sched = QuartzSystemListener.getSchedulerInstance(); unused
+    IScheduler scheduler = PentahoSystem.get(IScheduler.class, "IScheduler2", null);
+    
+    //should we use cda name?
+    try {
+      scheduler.removeJob(q.getCdaFile());
+      scheduler.createJob(q.getCdaFile(), JOB_GROUP, null, JobTrigger.ONCE_NOW);
+    } catch(SchedulerException ex){
+      logger.error(ex);
+    }
+    
+    //SchedulerHelper.deleteJob(session, JOB_ACTION, JOB_GROUP);
+    //SchedulerHelper.createSimpleTriggerJob(session, "system", "cda/actions", JOB_ACTION, TRIGGER_NAME, JOB_GROUP, "", dueAt, null, 0, 0);
 
   }
 
@@ -149,8 +170,18 @@ public class CacheActivator implements IAcceptsRuntimeInputs
   {
 
     IPentahoSession session = new StandaloneSession(JOB_GROUP);
-    SchedulerHelper.deleteJob(session, JOB_ACTION, JOB_GROUP);
-    SchedulerHelper.createSimpleTriggerJob(session, "system", "cda/actions", JOB_ACTION, TRIGGER_NAME, JOB_GROUP, "", date, null, 0, 0);
+    IScheduler scheduler = PentahoSystem.get(IScheduler.class, "IScheduler2", null);
+    
+    //what name should be used?
+    try {
+      scheduler.removeJob("");
+      scheduler.createJob("", JOB_GROUP, null, JobTrigger.ONCE_NOW);
+    } catch(SchedulerException ex){
+      logger.error(ex);
+    }
+    
+    //SchedulerHelper.deleteJob(session, JOB_ACTION, JOB_GROUP);
+    //SchedulerHelper.createSimpleTriggerJob(session, "system", "cda/actions", JOB_ACTION, TRIGGER_NAME, JOB_GROUP, "", date, null, 0, 0);
 
 
   }
@@ -158,12 +189,20 @@ public class CacheActivator implements IAcceptsRuntimeInputs
 
   public static void setSession(CachedQuery q)
   {
-    IUserDetailsRoleListService userDetailsRoleListService = PentahoSystem.getUserDetailsRoleListService();
+    IUserRoleListService userRoleListService = PentahoSystem.get(IUserRoleListService.class);
     String user = q.getUserName();
     UserSession session = new UserSession(user, null, false, null);
-    GrantedAuthority[] auths = userDetailsRoleListService.getUserRoleListService().getAuthoritiesForUser(user);
-    Authentication auth = new UsernamePasswordAuthenticationToken(user, null, auths);
-    session.setAttribute(SecurityHelper.SESSION_PRINCIPAL, auth);
+    List<String> auths = userRoleListService.getRolesForUser(null, user);
+
+    GrantedAuthority[] grantedAuthorities = new GrantedAuthority[auths.size()];
+    if (!auths.isEmpty()) {
+      for (int i = 0; i < auths.size(); i++) {
+        grantedAuthorities[i] = new GrantedAuthorityImpl(auths.get(i));
+      }
+    }
+    
+    Authentication auth = new UsernamePasswordAuthenticationToken(user, null, grantedAuthorities);
+    session.setAttribute(SESSION_PRINCIPAL, auth);
     session.doStartupActions(null);
     PentahoSessionHolder.setSession(session);
   }
@@ -173,8 +212,11 @@ public class CacheActivator implements IAcceptsRuntimeInputs
   {
     String cron = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.cache.backupWarmerCron");
     cron = cron == null ? "0 0 0/30 * * ?" : cron;
+    
     IPentahoSession session = new StandaloneSession(JOB_GROUP);
-    SchedulerHelper.deleteJob(session, BACKUP_JOB_ACTION, JOB_GROUP);
-    SchedulerHelper.createCronJob(session, "system", "cda/actions", BACKUP_JOB_ACTION, BACKUP_TRIGGER_NAME, JOB_GROUP, "", cron);
+    IScheduler scheduler = PentahoSystem.get(IScheduler.class, "IScheduler2", null);
+    
+    //SchedulerHelper.deleteJob(session, BACKUP_JOB_ACTION, JOB_GROUP);
+    //SchedulerHelper.createCronJob(session, "system", "cda/actions", BACKUP_JOB_ACTION, BACKUP_TRIGGER_NAME, JOB_GROUP, "", cron);
   }
 }
