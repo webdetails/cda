@@ -1,24 +1,25 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
-
 package pt.webdetails.cda.exporter;
 
 import java.io.OutputStream;
 import java.util.Date;
 import javax.swing.table.TableModel;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 5, 2010
- * Time: 5:06:31 PM
+ * Created by IntelliJ IDEA. User: pedro Date: Feb 5, 2010 Time: 5:06:31 PM
  */
 public abstract class AbstractExporter implements Exporter
 {
 
+  private static final Log logger = LogFactory.getLog(AbstractExporter.class);
+
 
   public abstract void export(final OutputStream out, final TableModel tableModel) throws ExporterException;
+
 
   public abstract String getMimeType();
 
@@ -46,17 +47,21 @@ public abstract class AbstractExporter implements Exporter
     {
       return "Date";
     }
-    else if (columnClass.equals(Object.class) )
+    else if (columnClass.equals(Object.class))
     {
       // todo: Quick and dirty hack, as the formula never knows what type is returned. 
       return "String";
     }
-    else{
+    else
+    {
 
-      throw new ExporterException("CDA exporter doesn't know how to handle: " + columnClass.toString(), null);
+      // Unsupported. However, instead of bombing out, we'll try to cast to toString
+      //throw new ExporterException("CDA exporter doesn't know how to handle: " + columnClass.toString(), null);
+      logger.warn("CDA exporter doesn't know how to handle:" + columnClass.toString() + "; Returning String to allow it to continue");
+      return "String";
+
 
     }
 
   }
-
 }
