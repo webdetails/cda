@@ -34,7 +34,7 @@ public class CdaLifecycleListener implements IPluginLifecycleListener
     try
     {
       Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-      CacheScheduleManager.getInstance().coldInit();
+      //CacheScheduleManager.getInstance().coldInit();
     }
     catch (Exception e)
     {

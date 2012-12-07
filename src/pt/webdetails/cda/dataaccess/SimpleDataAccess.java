@@ -336,7 +336,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
   private static int getQueryTimeThresholdFromConfig(int defaultValue)
   {
-    String strVal = CdaBoot.getInstance().getGlobalConfig().getConfigProperty(QUERY_TIME_THRESHOLD_PROPERTY);
+    String strVal = null; //CdaBoot.getInstance().getGlobalConfig().getConfigProperty(QUERY_TIME_THRESHOLD_PROPERTY);
     if (!StringUtils.isEmpty(strVal))
     {
       try

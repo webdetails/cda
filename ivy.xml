@@ -63,9 +63,6 @@
                 rev="${dependency.bi-platform.revision}" changing="true" transitive="false" >
       <artifact name="common-ui" type="zip" />
     </dependency>
-    
-    <dependency org="pentaho" name="data-access-plugin" 
-                rev="${dependency.data-access-plugin.revision}" changing="true" transitive="false" />
       
       <exclude module="ehcache" />  <!-- Comment this for CDA with 3.6.0 dependencies -->
     

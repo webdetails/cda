@@ -6,7 +6,7 @@
 
   .cdalogo{
 
-    background-image: url("GetCDFResource?resource=/plugin-samples/cda/resources/sample_bg.png");
+    background-image: url("../../repo/files/:public:pentaho-solutions:plugin-samples:cda:resources:sample_bg.png");
     background-repeat: no-repeat;
     height: 360px;
 
@@ -115,7 +115,7 @@
 
       <div class="logo">
 		<a href="http://cda.webdetails.org/?q=content/documentation-overview" target="_blank">
-           <img border="0" src="GetCDFResource?resource=/plugin-samples/cda/resources/pastaCDA.png" />
+           <img border="0" src="../../repo/files/:public:pentaho-solutions:plugin-samples:cda:resources:pastaCDA.png" />
         </a>
         <br/>
         CDA Documentation
@@ -124,14 +124,14 @@
 
       <div class="logo">
         <a href="http://tinyurl.com/ydfzw4u" target="_blank">
-           <img border="0" src="GetCDFResource?resource=/plugin-samples/cda/resources/pastaCDA.png" /><br/>
+           <img border="0" src="../../repo/files/:public:pentaho-solutions:plugin-samples:cda:resources:pastaCDA.png" /><br/>
         </a>
         Blog Post
       </div>
 
       <div class="logo">
         <a href="http://www.webdetails.pt/cda/CDA.pdf" target="_blank">
-           <img border="0" src="GetCDFResource?resource=/plugin-samples/cda/resources/pastaCDA.png" /><br/>
+           <img border="0" src="../../repo/files/:public:pentaho-solutions:plugin-samples:cda:resources:pastaCDA.png" /><br/>
         </a>
         PDF Brochure
       </div>
@@ -181,10 +181,10 @@
     {
       type: "sql.jdbc",
       desc: "Sql query over a jdbc datasource",
-      url: "../cda/doQuery?dataAccessId=1&path=/plugin-samples/cda/cdafiles/sql-jdbc.cda",
+      url: "/pentaho/plugin/cda/api/utils/doQuery?dataAccessId=1&path=/public/pentaho-solutions/plugin-samples/cda/cdafiles/sql-jdbc.cda",
       expectedCols: 4,
       expectedRows: 3
-    },
+    }/*,
     {
       type: "sql.jndi",
       desc: "Sql query over a jndi datasource",
@@ -227,13 +227,13 @@
       expectedCols: 4,
       expectedRows: 1
     },
-    /*{
+    {
 type: "olap4j.jndi",
 desc: "Mdx query over a olap4j connection",
 url: "../cda/doQuery?dataAccessId=1&path=/plugin-samples/cda/cdafiles/olap4j-jndi.cda",
 expectedCols: 4,
 expectedRows: 1
-},*/
+},
     {
       type: "kettle",
       desc: "Kettle transformation",
@@ -275,7 +275,7 @@ expectedRows: 1
       url: "../cda/doQuery?dataAccessId=3&path=/plugin-samples/cda/cdafiles/compoundUnion.cda",
       expectedCols: 2,
       expectedRows: 4
-    }
+    }*/
   ];
 
 
@@ -301,12 +301,12 @@ expectedRows: 1
       $("#testTable").append("<tr><td>" + this.testInfo.type + "</td><td>"+
         this.testInfo.desc+"</td><td><a href='javascript:showFile(\"" + sampleFile +
         "\")'>"+sampleFile+
-        "</a></td><td class='testResult testPending'><img src=\"GetCDFResource?resource=/plugin-samples/cda/resources/testing.png\" /></td></tr>");
+        "</a></td><td class='testResult testPending'><img src=\"../../repo/files/:public:pentaho-solutions:plugin-samples:cda:resources:testing.png\" /></td></tr>");
     },
 
     makeCall:  function(){
       var myself = this;
-      $.getJSON(this.testInfo.url,function(data){
+      $.getJSON(window.location.origin + this.testInfo.url,function(data){
         myself.verifyData(data);
       });
 
@@ -331,7 +331,7 @@ expectedRows: 1
 
       if(valid){
         statusText = "";
-        statusImage = "<img src=\"GetCDFResource?resource=/plugin-samples/cda/resources/ok.png\" />"
+        statusImage = "<img src=\"../../repo/files/:public:pentaho-solutions:plugin-samples:cda:resources:ok.png\" />"
         cssClass="testPassed";
       }
       else{

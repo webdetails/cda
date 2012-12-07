@@ -1,5 +1,6 @@
 package pt.webdetails.cda.utils;
 
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.table.TableModel;
 
@@ -11,6 +12,8 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.ISolutionFilter;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
+
+import org.pentaho.platform.api.repository2.unified.RepositoryFileTree;
 
 import pt.webdetails.cpf.repository.RepositoryAccess;
 import pt.webdetails.cpf.repository.RepositoryAccess.FileAccess;
@@ -50,9 +53,16 @@ public class SolutionRepositoryUtils
   {
 
     logger.debug("Getting CDA list");
+    
+    return null;
+    
+    /*String[] extensions = new String[] {EXTENSION};
 
-    Document cdaTree = RepositoryAccess.getRepository(userSession).getFullSolutionTree(FileAccess.READ, new CdaFilter());
+    RepositoryFileTree cdaTree = RepositoryAccess.getRepository(userSession).getFullSolutionTree(FileAccess.READ, Arrays.asList(extensions), false);
+    
     @SuppressWarnings("unchecked")
+         
+    
     List<Element> cdaFiles = cdaTree.selectNodes("//leaf[@isDir=\"false\"]");
 
 
@@ -71,7 +81,7 @@ public class SolutionRepositoryUtils
     }
 
     return typedTableModel;
-
+*/
   }
 
 

@@ -2,6 +2,7 @@ package pt.webdetails.cda.settings;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.UnsupportedOperationException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -34,6 +35,8 @@ import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
 import pt.webdetails.cpf.repository.RepositoryAccess;
 import pt.webdetails.cpf.repository.RepositoryAccess.FileAccess;
+
+import org.pentaho.platform.api.repository2.unified.RepositoryFile;
 
 /**
  * This file is responsible to build / keep the different cda settings.
@@ -113,24 +116,28 @@ public class SettingsManager {
       // add the runtime context so that PentahoResourceData class can get access
       // to the solution repo
       final ResourceKey key;
-      if (CdaEngine.isStandalone()) {
-        File settingsFile = new File(id);
-        key = resourceManager.createKey(settingsFile);
-      } else {
-        final HashMap<String, Object> helperObjects = new HashMap<String, Object>();
-        key = resourceManager.createKey(SOLUTION_SCHEMA_NAME + SCHEMA_SEPARATOR + id, helperObjects);
-      }
-      final Resource resource = resourceManager.create(key, null, org.w3c.dom.Document.class);
-      final org.w3c.dom.Document document = (org.w3c.dom.Document) resource.getResource();
-      final DOMReader saxReader = new DOMReader();
-      final Document doc = saxReader.read(document);
 
-      final CdaSettings settings = new CdaSettings(doc, id, resource.getSource());
+      final HashMap<String, Object> helperObjects = new HashMap<String, Object>();
+      key = resourceManager.createKey(SOLUTION_SCHEMA_NAME + SCHEMA_SEPARATOR + id, helperObjects);
+      
+      RepositoryAccess repositoryAccess = RepositoryAccess.getRepository();
+      
+      
+      //final Resource resource = resourceManager.create(key, null, org.w3c.dom.Document.class);
+      /*final org.w3c.dom.Document document = (org.w3c.dom.Document) resource.getResource();
+      final DOMReader saxReader = new DOMReader();*/
+      final Document doc = repositoryAccess.getResourceAsDocument(id);//saxReader.read(document);
+
+      final CdaSettings settings = new CdaSettings(doc, id, key);//resource.getSource());
       addToCache(settings);
       
       return settings;
+      
     } catch (ResourceException re) {
       throw new UnsupportedDataAccessException("Failed: ResourceException", re);
+    } catch (IOException e){
+      logger.debug("Error while getting repository file "+ e);
+      return null;
     }
 
   }
@@ -150,8 +157,8 @@ public class SettingsManager {
       }
     }
     else {
-      ISolutionFile savedCda = RepositoryAccess.getRepository().getSolutionFile(id, FileAccess.NONE);
-      if(savedCda != null) return savedCda.getLastModified();
+      RepositoryFile savedCda = RepositoryAccess.getRepository().getRepositoryFile(id, FileAccess.NONE);
+      if(savedCda != null) return savedCda.getLastModifiedDate().getTime();
     }
     return null;
   }
