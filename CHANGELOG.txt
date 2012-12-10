@@ -1,3 +1,9 @@
+12.12.10
+    * added dependency to jackson-mapper since it is no longer provided by pentaho
+    * wrap/unwrap tentative workaround for exports in IE (what else?)
+    * Got some errors related to oracle.sql.TIMESTAMP. Changed AbstractExporter so that we return String when we can't find the column type
+
+
 12.10.17
     * Fixed [REDMINE 1159] - Cache Manager does not work when bi-server is in file based repository
     * Fixed [REDMINE 1087] - json output problem when number is "infinity"
