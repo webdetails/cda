@@ -41,6 +41,7 @@ public class JsonExporter extends AbstractExporter
       try
       {
         out.write(json.toString().getBytes("UTF-8"));
+        out.flush();
       }
       catch (IOException e)
       {

@@ -88,7 +88,23 @@ public class PluginHibernateUtil
     {
       try
       {
-        PluginHibernateUtil.sessionFactory = PluginHibernateUtil.getConfiguration().buildSessionFactory();
+        
+        ClassLoader contextCL = Thread.currentThread().getContextClassLoader();
+        try
+        {
+          Thread.currentThread().setContextClassLoader(PluginHibernateUtil.class.getClassLoader());
+          PluginHibernateUtil.sessionFactory = PluginHibernateUtil.getConfiguration().buildSessionFactory();
+        }
+        catch (Exception e)
+        {
+          logger.error("Unexpected exception while setting class loader or building SessionFactory", e);
+          throw e;
+        }
+        finally
+        {
+          Thread.currentThread().setContextClassLoader(contextCL);
+        }              
+        
       }
       catch (Exception ex)
       {

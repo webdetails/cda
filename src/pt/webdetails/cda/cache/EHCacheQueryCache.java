@@ -5,9 +5,11 @@
 package pt.webdetails.cda.cache;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.net.URL;
 
 import javax.swing.table.TableModel;
@@ -30,6 +32,9 @@ import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.Status;
+import org.apache.commons.io.IOUtils;
+import org.pentaho.platform.api.engine.IPluginManager;
+import org.pentaho.platform.api.engine.IPluginResourceLoader;
 
 public class EHCacheQueryCache implements IQueryCache {
 
@@ -90,9 +95,14 @@ public class EHCacheQueryCache implements IQueryCache {
       {//look at cda folder in pentaho
         try
         {//preferred way: proper config in plugin folder
-         String cfgFile = PentahoSystem.getApplicationContext().getSolutionPath(PLUGIN_PATH + cacheConfigFile);
-         cacheManager = new net.sf.ehcache.CacheManager(cfgFile);
-         logger.debug("Cache started using " + cfgFile);
+          IPluginResourceLoader pluginResourceLoader = PentahoSystem.get(IPluginResourceLoader.class);
+          IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class);
+          ClassLoader classLoader = pluginManager.getClassLoader(CdaContentGenerator.PLUGIN_NAME);
+          
+          InputStream inputStream = pluginResourceLoader.getResourceAsStream(classLoader, cacheConfigFile);
+                   
+          cacheManager = new net.sf.ehcache.CacheManager(inputStream);
+          logger.debug("Cache started using " + cacheConfigFile);
         }
         catch(CacheException exc)
         {//fallback to standalone 
@@ -225,20 +235,33 @@ public class EHCacheQueryCache implements IQueryCache {
   @Override
   public ExtraCacheInfo getCacheEntryInfo(TableCacheKey key) 
   {
-    Element element = cache.getQuiet(key);
-    if(element == null){
-      logger.warn("Null element in cache, removing.");
-      remove(key);
+    ClassLoader contextCL = Thread.currentThread().getContextClassLoader();
+    try{
+      //make sure we have the right class loader in thread to instantiate cda classes in case DiskStore is used
+      //TODO: ehcache 2.5 has ClassLoaderAwareCache
+      Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+      Element element = cache.get(key);
+      if(element == null){
+        logger.warn("Null element in cache, removing.");
+        remove(key);
+        return null;
+      }
+      Object val = element.getValue();
+      if(val instanceof CacheElement){
+        return ((CacheElement)val).getInfo();  
+      }
+      else {
+        logger.error("Expected " + CacheElement.class.getCanonicalName() + ", found " + val.getClass().getCanonicalName() + " instead");
+        remove(key);
+        return null;
+      }
+    }
+    catch(Exception e){
+      logger.error("Error while attempting to load from cache, bypassing cache (cause: " + e.getClass() + ")", e);
       return null;
     }
-    Object val = element.getValue();
-    if(val instanceof CacheElement){
-      return ((CacheElement)val).getInfo();  
-    }
-    else {
-      logger.error("Expected " + CacheElement.class.getCanonicalName() + ", found " + val.getClass().getCanonicalName() + " instead");
-      remove(key);
-      return null;
+    finally{
+      Thread.currentThread().setContextClassLoader(contextCL);
     }
   }
 

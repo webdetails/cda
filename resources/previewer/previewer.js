@@ -2,14 +2,22 @@ pageParams = function() {
         var url = document.location.href;
         var output = {};
 
-        // The parameters are in the section between '?' and '#' (if any)
-        var startIndex = url.indexOf('?');
-        var endIndex = url.indexOf('#');
-        var params = (endIndex > 0) ? url.slice(startIndex+1,endIndex).split('&'):url.slice(startIndex+1).split('&');
-        for (param in params){
+        if(url.indexOf("generatedContent") > -1){
+          var startIndex = url.indexOf('api/repos/');
+          var endIndex = url.indexOf('/generatedContent');
+
+          var path = (endIndex > 0) ? url.slice(startIndex+10,endIndex).split(":").join("/"):"";
+          output.path = path;
+        } else {
+          // The parameters are in the section between '?' and '#' (if any)
+          var startIndex = url.indexOf('?');
+          var endIndex = url.indexOf('#');
+          var params = (endIndex > 0) ? url.slice(startIndex+1,endIndex).split('&'):url.slice(startIndex+1).split('&');
+          for (param in params){
             var p = params[param].split('=');
             output[p[0]] = decodeURIComponent(p[1]);
-        }
+          }
+        } 
         return output;
 }
 
@@ -19,14 +27,14 @@ refreshTable = function(id){
     // When we change query, we must drop the table and parameters, and rebuild both
     lastQuery = id;
     refreshParams(id);
-    $.getJSON("doQuery",{path:filename, dataAccessId: id},showTable);
+    $.getJSON("../../../plugin/cda/api/utils/doQuery",{path:filename, dataAccessId: id},showTable);
   } else {
     // Same query, we need to get the present parameter values and rebuild the table
     var params = getParams();
     params.path = filename;
     params.dataAccessId = id;
     params.outputIndexId = $('#outputIndexId').val();
-    $.getJSON("doQuery",params, showTable);
+    $.getJSON("../../../plugin/cda/api/utils/doQuery",params, showTable);
   }
 };
 
@@ -83,7 +91,7 @@ getFullQueryUrl = function(dataAccessId, extraParams) {
 };
 
 refreshParams = function(id) {
-  $.getJSON("listParameters",{path:filename, dataAccessId: id},function(data){
+  $.getJSON("../../../plugin/cda/api/utils/listParameters",{path:filename, dataAccessId: id},function(data){
     var placeholder = $('#parameterHolder');
     placeholder.empty();
     for (param in data.resultset) {
@@ -126,7 +134,7 @@ cacheThis = function() {
     if (!notification.length) {
       notification = $("<span class='notification'></span>").appendTo('.dialogAction');
     }
-    $.getJSON("cacheController",{method: "change", "object": json}, function(response){
+    $.getJSON("../../../plugin/cda/api/utils/cacheController",{method: "change", "object": json}, function(response){
       if (response.status == 'ok') {
         notification.text('');
         $("#dialog").jqmHide();

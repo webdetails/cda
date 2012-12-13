@@ -39,7 +39,7 @@ public class XPathDataAccess extends PREDataAccess
     final XPathDataFactory dataFactory = new XPathDataFactory();
     dataFactory.setXqueryDataFile(connection.getXqueryDataFile());
 
-    dataFactory.setQuery("query", getQuery());
+    dataFactory.setQuery("query", getQuery(), true);
     return dataFactory;
   }
 

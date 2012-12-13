@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link href="previewer/previewer.css" type="text/css" rel="stylesheet"/>
-    <link href="previewer/dataTables/css/demo_table_jui.css" type="text/css" rel="stylesheet"/>
-    <link type="text/css" href="previewer/fg-menu/fg.menu.css" rel="stylesheet" />
-    <link type="text/css" href="static/blueprint/screen.css" rel="stylesheet" />
-    <link type="text/css" href="static/cda.css" rel="stylesheet" />
-    <link type="text/css" href="static/jquery.jqModal.css" rel="stylesheet" />
+    <link href="/pentaho/api/plugins/cda/files/previewer/previewer.css" type="text/css" rel="stylesheet"/>
+    <link href="/pentaho/api/plugins/cda/files/previewer/dataTables/css/demo_table_jui.css" type="text/css" rel="stylesheet"/>
+    <link type="text/css" href="/pentaho/api/plugins/cda/files/previewer/fg-menu/fg.menu.css" rel="stylesheet" />
+    <link type="text/css" href="/pentaho/api/plugins/cda/files/static/blueprint/screen.css" rel="stylesheet" />
+    <link type="text/css" href="/pentaho/api/plugins/cda/files/static/cda.css" rel="stylesheet" />
+    <link type="text/css" href="/pentaho/api/plugins/cda/files/static/jquery.jqModal.css" rel="stylesheet" />
 
-    <script type="text/javascript" src="previewer/js/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="static/jquery.jqModal.js"></script>
-    <script type="text/javascript" src="static/jquery-ui-1.8rc3.custom.min.js"></script>
-    <script type="text/javascript" src="previewer/js/jquery.i18n.properties.js"></script>
-    <script type="text/javascript" src="previewer/previewer.js"></script>
+    <script type="text/javascript" src="/pentaho/api/plugins/cda/files/previewer/js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="/pentaho/api/plugins/cda/files/static/jquery.jqModal.js"></script>
+    <script type="text/javascript" src="/pentaho/api/plugins/cda/files/static/jquery-ui-1.8rc3.custom.min.js"></script>
+    <script type="text/javascript" src="/pentaho/api/plugins/cda/files/previewer/js/jquery.i18n.properties.js"></script>
+    <script type="text/javascript" src="/pentaho/api/plugins/cda/files/previewer/previewer.js"></script>
 
-    <script type="text/javascript" src="previewer/dataTables/js/jquery.dataTables.js"></script>
-    <script type="text/javascript" src="previewer/fg-menu/fg.menu.js"></script>
+    <script type="text/javascript" src="/pentaho/api/plugins/cda/files/previewer/dataTables/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="/pentaho/api/plugins/cda/files/previewer/fg-menu/fg.menu.js"></script>
     <style type="text/css">
       body { font-size:62.5%; margin:0; padding:0; min-height: 500px}
 
@@ -30,7 +30,7 @@
 
         jQuery.i18n.properties({
           name:'Messages',
-          path:'previewer/languages/',
+          path:'/pentaho/api/plugins/cda/files/previewer/languages/',
           mode:'both',
           language:(lang == 'browser' ? jQuery.i18n.browserLang() : lang),
           callback: function() {
@@ -124,7 +124,7 @@
       var userLocale = '#{LANGUAGE_CODE}';
       loadMessageBundles(userLocale);
       // Initialize language support for jQuery dataTables
-      $.getJSON( "previewer/dataTables/languages/Messages_" + userLocale + ".txt", function( json ) {
+      $.getJSON( "/pentaho/api/plugins/cda/files/previewer/dataTables/languages/Messages_" + userLocale + ".txt", function( json ) {
         oLanguage = json;
       } );
       //$('#button').button();
@@ -150,7 +150,8 @@
       $('#help').jqm({modal:true});
       $('#queryUrlDialog').jqm({modal:true});
       toggleAdvanced(false);
-      $.getJSON("listQueries",{path: filename},function(queries){
+      
+      $.getJSON("../../../plugin/cda/api/utils/listQueries",{path: filename},function(queries){
         var defaultQuery;
         var defaultDescription;
         for (query in queries.resultset) {

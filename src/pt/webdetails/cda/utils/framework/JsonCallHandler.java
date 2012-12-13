@@ -9,6 +9,9 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,7 +56,7 @@ public abstract class JsonCallHandler {
     
     private String name;
     
-    public abstract JSONObject execute(IParameterProvider params) throws Exception;
+    public abstract JSONObject execute(HttpServletRequest request) throws Exception;
     
     public void setName(String name){
       this.name = name;
@@ -83,10 +86,10 @@ public abstract class JsonCallHandler {
     return true;
   }
   
-  public void handleCall(IParameterProvider requestParams, OutputStream out)
+  public void handleCall(HttpServletRequest request, HttpServletResponse response)
   {
   //TODO: messages
-    String methodName = requestParams.getStringParameter(methodParameter, defaultMethod);
+    String methodName = request.getParameter(methodParameter);
        
     JSONObject result = null;
     Method method = methods.get(methodName);
@@ -100,14 +103,14 @@ public abstract class JsonCallHandler {
       {
         result = getErrorJson(MessageFormat.format("Method {0} not found.", methodName));
       }
-      else if(!hasPermission(PentahoSessionHolder.getSession(), method)){
+     else if(!hasPermission(PentahoSessionHolder.getSession(), method)){
         result = getErrorJson(MessageFormat.format("Permission denied to call method {0}:{1}.", this.getClass().getName(), methodName));
       }
       else 
       {
         try
         {
-          result = method.execute(requestParams);
+          result = method.execute(request);
         }
         catch(JSONException e){
           logger.error( MessageFormat.format("Error building JSON response in method {0}.", methodName) , e);
@@ -117,7 +120,8 @@ public abstract class JsonCallHandler {
           result = createJsonResultFromException(e);
         }
       }
-      out.write(result.toString(INDENT_FACTOR).getBytes(ENCODING));
+      response.getOutputStream().write(result.toString(INDENT_FACTOR).getBytes(ENCODING));
+      response.getOutputStream().flush();
       
     } catch (JSONException e) {
       logger.error("Error building JSON response", e);

@@ -127,7 +127,7 @@ public abstract class PREDataAccess extends SimpleDataAccess
       dataFactory.initialize(configuration, resourceManager, contextKey,
               new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
 
-      dataFactory.open();
+      //dataFactory.open();
 
       
       PREDataSourceQuery queryExecution = null;
@@ -178,10 +178,10 @@ public abstract class PREDataAccess extends SimpleDataAccess
     }
     catch (ReportDataFactoryException e)
     {
-      throw new QueryException("ReportDataFactoryException : " + e.getMessage()
-              + ((e.getParentThrowable() == null) ? "" : ("; Parent exception: " + e.getParentThrowable().getMessage())) + "\n" +
+      throw new QueryException("ReportDataFactoryException : " + e.getMessage(), e);
+             /* + ((e.getParentThrowable() == null) ? "" : ("; Parent exception: " + e.getParentThrowable().getMessage())) + "\n" +
               ((e.getParentThrowable() != null && e.getParentThrowable().getCause() != null)?e.getParentThrowable().getCause().getMessage() :"") + "\n"
-              , e);
+              , e);*/
     }
     finally
     {

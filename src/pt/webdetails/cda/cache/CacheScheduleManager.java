@@ -4,13 +4,18 @@
 
 package pt.webdetails.cda.cache;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.PriorityQueue;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.quartz.CronExpression;
@@ -33,6 +39,7 @@ import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.PluginHibernateException;
 import pt.webdetails.cda.utils.PluginHibernateUtil;
 import pt.webdetails.cda.utils.Util;
+import pt.webdetails.cpf.repository.RepositoryAccess;
 
 /**
  *
@@ -74,30 +81,30 @@ public class CacheScheduleManager
   }
 
 
-  public void handleCall(IParameterProvider requestParams, OutputStream out)
+  public void handleCall(HttpServletRequest request, HttpServletResponse response)
   {
-    String method = requestParams.getParameter("method").toString();
+    String method = request.getParameter("method").toString();
     try
     {
       switch (functions.valueOf(method.toUpperCase()))
       {
         case CHANGE:
-          change(requestParams, out);
+          change(request, response);
           break;
         case RELOAD:
-          load(requestParams, out);
+          load(request, response);
           break;
         case LIST:
-          list(requestParams, out);
+          list(request, response);
           break;
         case EXECUTE:
-          execute(requestParams, out);
+          execute(request, response);
           break;
         case DELETE:
-          delete(requestParams, out);
+          delete(request, response);
           break;
         case IMPORT:
-          importQueries(requestParams, out);
+          importQueries(request, response);
           break;
       }
     }
@@ -129,26 +136,27 @@ public class CacheScheduleManager
   }
   
 
-  public void render(IParameterProvider requestParams, OutputStream out)
+  public void render(HttpServletRequest request, HttpServletResponse response)
   {
     //TODO:
   }
 
 
-  private void load(IParameterProvider requestParams, OutputStream out) throws Exception
+  private void load(HttpServletRequest request, HttpServletResponse response) throws Exception
   {
     Session s = getHibernateSession();
-    Long id = Long.decode(requestParams.getParameter("id").toString());
+    Long id = Long.decode(request.getParameter("id").toString());
     Query q = (Query) s.load(Query.class, id);
     if (q == null)
     {
-      out.write("{}".getBytes(ENCODING));
+      response.getOutputStream().write("{}".getBytes(ENCODING));
       logger.error("Couldn' get Query with id=" + id.toString());
     }
     try
     {
       JSONObject json = q.toJSON();
-      out.write(json.toString(2).getBytes(ENCODING));
+      response.getOutputStream().write(json.toString(2).getBytes(ENCODING));
+      response.getOutputStream().flush();
     }
     catch (Exception e)
     {
@@ -158,16 +166,16 @@ public class CacheScheduleManager
   }
 
 
-  private void monitor(IParameterProvider requestParams, OutputStream out)
+  private void monitor(HttpServletRequest request, HttpServletResponse response)
   {
     return; //NYI!
   }
 
 
-  private void persist(IParameterProvider requestParams, OutputStream out) throws Exception
+  private void persist(HttpServletRequest request, HttpServletResponse response) throws Exception
   {
 
-    Long id = Long.decode(requestParams.getParameter("id").toString());
+    Long id = Long.decode(request.getParameter("id").toString());
     Session s = getHibernateSession();
     s.beginTransaction();
 
@@ -178,7 +186,7 @@ public class CacheScheduleManager
       s.delete(s);
     }
     JSONObject json = uq.toJSON();
-    out.write(json.toString(2).getBytes(ENCODING));
+    response.getOutputStream().write(json.toString(2).getBytes(ENCODING));
     s.flush();
     s.getTransaction().commit();
     s.close();
@@ -217,9 +225,9 @@ public class CacheScheduleManager
   }
 
 
-  private void change(IParameterProvider requestParams, OutputStream out) throws Exception
+  private void change(HttpServletRequest request, HttpServletResponse response) throws Exception
   {
-    String jsonString = requestParams.getParameter("object").toString();
+    String jsonString = request.getParameter("object").toString();
     JSONTokener jsonTokener = new JSONTokener(jsonString);
     try
     {
@@ -235,7 +243,8 @@ public class CacheScheduleManager
         catch (Exception e)
         {
           logger.error("Failed to parse Cron string \"" + cronString + "\"");
-          out.write("{\"status\": \"error\", \"message\": \"failed to parse Cron String\"}".getBytes(ENCODING));
+          response.getOutputStream().write("{\"status\": \"error\", \"message\": \"failed to parse Cron String\"}".getBytes(ENCODING));
+          response.getOutputStream().flush();
           return;
         }
         q = new CachedQuery(json);
@@ -260,14 +269,16 @@ public class CacheScheduleManager
     }
     catch (JSONException jse)
     {
-      out.write("".getBytes(ENCODING));
+      response.getOutputStream().write("".getBytes(ENCODING));
+      
     }
 
-    out.write("{\"status\": \"ok\"}".getBytes(ENCODING));
+    response.getOutputStream().write("{\"status\": \"ok\"}".getBytes(ENCODING));
+    response.getOutputStream().flush();
   }
 
 
-  private void list(IParameterProvider requestParams, OutputStream out) throws PluginHibernateException
+  private void list(HttpServletRequest request, HttpServletResponse response) throws PluginHibernateException
   {
     JSONObject list = new JSONObject();
     JSONObject meta = new JSONObject();
@@ -291,7 +302,8 @@ public class CacheScheduleManager
     }
     try
     {
-      out.write(list.toString(2).getBytes(ENCODING));
+      response.getOutputStream().write(list.toString(2).getBytes(ENCODING));
+      response.getOutputStream().flush();
     }
     catch (Exception e)
     {
@@ -303,9 +315,9 @@ public class CacheScheduleManager
     }
   }
 
-  private void importQueries(IParameterProvider requestParams, OutputStream out) throws Exception
+  private void importQueries(HttpServletRequest request, HttpServletResponse response) throws Exception
   {
-    String jsonString = requestParams.getParameter("object").toString();
+    String jsonString = request.getParameter("object").toString();
     JSONTokener jsonTokener = new JSONTokener(jsonString);
     try
     {
@@ -338,14 +350,15 @@ public class CacheScheduleManager
     catch (JSONException jse)
     {
       logger.error("Error importing queries: " + Util.getExceptionDescription(jse));
-      out.write("".getBytes(ENCODING));
+      response.getOutputStream().write("".getBytes(ENCODING));
+      response.getOutputStream().flush();
     }
   }
 
 
-  private void execute(IParameterProvider requestParams, OutputStream out) throws PluginHibernateException
+  private void execute(HttpServletRequest request, HttpServletResponse response) throws PluginHibernateException
   {
-    Long id = Long.decode(requestParams.getParameter("id").toString());
+    Long id = Long.decode(request.getParameter("id").toString());
     Session s = getHibernateSession();
     CachedQuery q = (CachedQuery) s.load(CachedQuery.class, id);
 
@@ -359,14 +372,16 @@ public class CacheScheduleManager
       q.execute();
       q.updateNext();
       CacheActivator.reschedule(queue);
-      out.write("{\"status\": \"ok\"}".getBytes(ENCODING));
+      response.getOutputStream().write("{\"status\": \"ok\"}".getBytes(ENCODING));
+      response.getOutputStream().flush();
     }
     catch (Exception ex)
     {
       logger.error(ex);
       try
       {
-        out.write("{\"status\": \"error\"}".getBytes(ENCODING));
+        response.getOutputStream().write("{\"status\": \"error\"}".getBytes(ENCODING));
+        response.getOutputStream().flush();
       }
       catch (Exception ex1)
       {
@@ -384,9 +399,9 @@ public class CacheScheduleManager
   }
 
 
-  private void delete(IParameterProvider requestParams, OutputStream out) throws PluginHibernateException
+  private void delete(HttpServletRequest request, HttpServletResponse response) throws PluginHibernateException
   {
-    Long id = Long.decode(requestParams.getParameter("id").toString());
+    Long id = Long.decode(request.getParameter("id").toString());
     Session s = getHibernateSession();
     s.beginTransaction();
 
@@ -463,25 +478,33 @@ public class CacheScheduleManager
   public static void initHibernate() throws PluginHibernateException
   {
 
+    PluginHibernateUtil.initialize();
+
     // Get hbm file
     IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
-    InputStream in = resLoader.getResourceAsStream(CdaContentGenerator.class, "cachemanager.hbm.xml");
+    InputStream in = resLoader.getResourceAsStream(CacheScheduleManager.class, "cachemanager.hbm.xml");
+    
+/*    IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
+    IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class);
+    ClassLoader classLoader = pluginManager.getClassLoader(CdaContentGenerator.PLUGIN_NAME);
 
+    InputStream inputStream = resLoader.getResourceAsStream(classLoader, "cachemanager.hbm.xml");
+    
+    StringWriter writer = new StringWriter();
+    try {
+      IOUtils.copy(inputStream, writer, "UTF-8");
+    } catch (IOException ex){
+      return;
+    }
+    
+    String content = writer.toString();
+  */  
     // Close session and rebuild
     PluginHibernateUtil.closeSession();
     org.hibernate.cfg.Configuration configuration = PluginHibernateUtil.getConfiguration();
-    //if (configuration.getClassMapping(CachedQuery.class.getCanonicalName()) == null)
-    //{
     configuration.addInputStream(in);
-    try
-    {
-      PluginHibernateUtil.rebuildSessionFactory();
-    }
-    catch (Exception e)
-    {
-      return;
-    }
-    //}
+  //  configuration.addFile(RepositoryAccess.getSystemDir() + "/cda/cachemanager.hbm.xml");
+    PluginHibernateUtil.rebuildSessionFactory();
   }
 
 

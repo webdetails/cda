@@ -1,6 +1,4 @@
-<ehcache>
-
-
+<ehcache name="cdaCache">
     <!--CDA Cache configuration. 
 
         The following attributes are required:
@@ -41,6 +39,7 @@
     <diskStore path="java.io.tmpdir/_pentaho-cda"/>
     
 	<defaultCache
+        name="default"
         maxElementsInMemory="1000"
         eternal="false"
         overflowToDisk="false"

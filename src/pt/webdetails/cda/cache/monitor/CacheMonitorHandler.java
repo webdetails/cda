@@ -7,6 +7,7 @@ package pt.webdetails.cda.cache.monitor;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import javax.servlet.http.HttpServletRequest;
 
 
 import org.apache.commons.logging.Log;
@@ -61,9 +62,9 @@ public class CacheMonitorHandler extends JsonCallHandler
       /**
        * get all cached items for given cda file and data access id
        */
-      public JSONObject execute(IParameterProvider params) throws JSONException, ExporterException, IOException {
-        String cdaSettingsId = params.getStringParameter("cdaSettingsId", null);
-        String dataAccessId = params.getStringParameter("dataAccessId", null);
+      public JSONObject execute(HttpServletRequest params) throws JSONException, ExporterException, IOException {
+        String cdaSettingsId = params.getParameter("cdaSettingsId");
+        String dataAccessId = params.getParameter("dataAccessId");
         return listQueriesInCache(cdaSettingsId, dataAccessId);
       }
     });
@@ -73,9 +74,9 @@ public class CacheMonitorHandler extends JsonCallHandler
       /**
        * get details on a particular cached item
        */
-      public JSONObject execute(IParameterProvider params) throws JSONException 
+      public JSONObject execute(HttpServletRequest params) throws JSONException 
       {
-        String cdaSettingsId = params.getStringParameter("cdaSettingsId", null);
+        String cdaSettingsId = params.getParameter("cdaSettingsId");
         return getCachedQueriesOverview(cdaSettingsId);
       }
     });
@@ -85,10 +86,10 @@ public class CacheMonitorHandler extends JsonCallHandler
       /**
        * get details on a particular cached item
        */
-      public JSONObject execute(IParameterProvider params) throws UnsupportedEncodingException, JSONException, ExporterException, IOException, ClassNotFoundException  
+      public JSONObject execute(HttpServletRequest params) throws UnsupportedEncodingException, JSONException, ExporterException, IOException, ClassNotFoundException  
       {
         try{
-          String encodedCacheKey=params.getStringParameter("key", null);
+          String encodedCacheKey=params.getParameter("key");
           return getcacheQueryTable(encodedCacheKey);
         }
         catch(ExporterException e){
@@ -103,9 +104,9 @@ public class CacheMonitorHandler extends JsonCallHandler
       /**
        * Remove item from cache 
        */
-      public JSONObject execute(IParameterProvider params) throws JSONException, UnsupportedEncodingException, IOException, ClassNotFoundException 
+      public JSONObject execute(HttpServletRequest params) throws JSONException, UnsupportedEncodingException, IOException, ClassNotFoundException 
       {
-        String serializedCacheKey = params.getStringParameter("key", null);
+        String serializedCacheKey = params.getParameter("key");
         return removeQueryFromCache(serializedCacheKey);
       }
     });
@@ -113,9 +114,9 @@ public class CacheMonitorHandler extends JsonCallHandler
     registerMethod("removeAll", new JsonCallHandler.Method() {
       
       @Override
-      public JSONObject execute(IParameterProvider params) throws JSONException {
-        String cdaSettingsId = params.getStringParameter("cdaSettingsId", null);
-        String dataAccessId = params.getStringParameter("dataAccessId", null);
+      public JSONObject execute(HttpServletRequest params) throws JSONException {
+        String cdaSettingsId = params.getParameter("cdaSettingsId");
+        String dataAccessId = params.getParameter("dataAccessId");
         return removeAll(cdaSettingsId, dataAccessId);
       }
     });
@@ -123,7 +124,7 @@ public class CacheMonitorHandler extends JsonCallHandler
     registerMethod("shutdown", new JsonCallHandler.Method() {
       
       @Override
-      public JSONObject execute(IParameterProvider params) throws Exception {
+      public JSONObject execute(HttpServletRequest params) throws Exception {
         AbstractDataAccess.shutdownCache();
         return getOKJson("Cache shutdown.");
       }

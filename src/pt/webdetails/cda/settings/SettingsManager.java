@@ -37,6 +37,7 @@ import pt.webdetails.cpf.repository.RepositoryAccess;
 import pt.webdetails.cpf.repository.RepositoryAccess.FileAccess;
 
 import org.pentaho.platform.api.repository2.unified.RepositoryFile;
+import org.pentaho.reporting.libraries.resourceloader.FactoryParameterKey;
 
 /**
  * This file is responsible to build / keep the different cda settings.
@@ -117,7 +118,7 @@ public class SettingsManager {
       // to the solution repo
       final ResourceKey key;
 
-      final HashMap<String, Object> helperObjects = new HashMap<String, Object>();
+      final HashMap<FactoryParameterKey, Object> helperObjects = new HashMap<FactoryParameterKey, Object>();
       key = resourceManager.createKey(SOLUTION_SCHEMA_NAME + SCHEMA_SEPARATOR + id, helperObjects);
       
       RepositoryAccess repositoryAccess = RepositoryAccess.getRepository();

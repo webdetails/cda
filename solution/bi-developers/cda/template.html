@@ -91,7 +91,7 @@
       <div class="span-18 spacer200 clearfix last">&nbsp;</div>
 
       <div class="span-7 clearfix prepend-1">
-		Version @@VERSION@@ 
+    Version TRUNK-SNAPSHOT 
       </div>
       <div class="span-8 append-4 cdaDesc desc last">
         <p>
@@ -114,7 +114,7 @@
       <br />
 
       <div class="logo">
-		<a href="http://cda.webdetails.org/?q=content/documentation-overview" target="_blank">
+    <a href="http://cda.webdetails.org/?q=content/documentation-overview" target="_blank">
            <img border="0" src="../../repo/files/:public:pentaho-solutions:plugin-samples:cda:resources:pastaCDA.png" />
         </a>
         <br/>
@@ -184,98 +184,98 @@
       url: "/pentaho/plugin/cda/api/utils/doQuery?dataAccessId=1&path=/public/pentaho-solutions/plugin-samples/cda/cdafiles/sql-jdbc.cda",
       expectedCols: 4,
       expectedRows: 3
-    }/*,
+    },
     {
       type: "sql.jndi",
       desc: "Sql query over a jndi datasource",
-      url: "../cda/doQuery?dataAccessId=1&path=/plugin-samples/cda/cdafiles/sql-jndi.cda",
+      url: "/pentaho/plugin/cda/api/utils/doQuery?dataAccessId=1&path=/public/pentaho-solutions/plugin-samples/cda/cdafiles/sql-jndi.cda",
       expectedCols: 4,
       expectedRows: 2
     },
     {
       type: "mondrian.jdbc",
       desc: "Mdx query over a jdbc mondrian connection",
-      url: "../cda/doQuery?dataAccessId=1&path=/plugin-samples/cda/cdafiles/mondrian-jdbc.cda",
+      url: "/pentaho/plugin/cda/api/utils/doQuery?dataAccessId=1&path=/public/pentaho-solutions/plugin-samples/cda/cdafiles/mondrian-jdbc.cda",
       expectedCols: 4,
       expectedRows: 3
     },
     {
       type: "mondrian.jndi",
       desc: "Mdx query over a jndi mondrian connection",
-      url: "../cda/doQuery?dataAccessId=1&path=/plugin-samples/cda/cdafiles/mondrian-jndi.cda",
+      url: "/pentaho/plugin/cda/api/utils/doQuery?dataAccessId=1&path=/public/pentaho-solutions/plugin-samples/cda/cdafiles/mondrian-jndi.cda",
       expectedCols: 4,
       expectedRows: 3
     },
     {
       type: "mondrian.jdbc (denormalized)",
       desc: "Denormalized Mdx query over a jdbc mondrian connection",
-      url: "../cda/doQuery?dataAccessId=1&path=/plugin-samples/cda/cdafiles/denormalized-mondrian-jndi.cda",
+      url: "/pentaho/plugin/cda/api/utils/doQuery?dataAccessId=1&path=/public/pentaho-solutions/plugin-samples/cda/cdafiles/denormalized-mondrian-jndi.cda",
       expectedCols: 5,
       expectedRows: 6
     },
     {
       type: "mondrian.jndi (denormalized)",
       desc: "Denormalized Mdx query over a jndi mondrian connection",
-      url: "../cda/doQuery?dataAccessId=1&path=/plugin-samples/cda/cdafiles/denormalized-mondrian-jndi.cda",
+      url: "/pentaho/plugin/cda/api/utils/doQuery?dataAccessId=1&path=/public/pentaho-solutions/plugin-samples/cda/cdafiles/denormalized-mondrian-jndi.cda",
       expectedCols: 5,
       expectedRows: 6
     },
     {
       type: "olap4j",
       desc: "Mdx query over a olap4j connection",
-      url: "../cda/doQuery?dataAccessId=1&path=/plugin-samples/cda/cdafiles/olap4j.cda",
+      url: "/pentaho/plugin/cda/api/utils/doQuery?dataAccessId=1&path=/public/pentaho-solutions/plugin-samples/cda/cdafiles/olap4j.cda",
       expectedCols: 4,
       expectedRows: 1
     },
-    {
+    /*{
 type: "olap4j.jndi",
 desc: "Mdx query over a olap4j connection",
 url: "../cda/doQuery?dataAccessId=1&path=/plugin-samples/cda/cdafiles/olap4j-jndi.cda",
 expectedCols: 4,
 expectedRows: 1
-},
+},*/
     {
       type: "kettle",
       desc: "Kettle transformation",
-      url: "../cda/doQuery?dataAccessId=1&path=/plugin-samples/cda/cdafiles/kettle.cda",
+      url: "/pentaho/plugin/cda/api/utils/doQuery?dataAccessId=1&path=/public/pentaho-solutions/plugin-samples/cda/cdafiles/kettle.cda",
       expectedCols: 4,
       expectedRows: 1
     },
     {
       type: "metadata",
       desc: "Mql query over a metadata connection",
-      url: "../cda/doQuery?dataAccessId=1&path=/plugin-samples/cda/cdafiles/metadata.cda",
+      url: "/pentaho/plugin/cda/api/utils/doQuery?dataAccessId=1&path=/public/pentaho-solutions/plugin-samples/cda/cdafiles/metadata.cda",
       expectedCols: 2,
       expectedRows: 198
     },
     {
       type: "scripting",
       desc: "Scripting data access",
-      url: "../cda/doQuery?dataAccessId=1&path=/plugin-samples/cda/cdafiles/scripting.cda",
+      url: "/pentaho/plugin/cda/api/utils/doQuery?dataAccessId=1&path=/public/pentaho-solutions/plugin-samples/cda/cdafiles/scripting.cda",
       expectedCols: 5,
       expectedRows: 4
     },
     {
       type: "xpath",
       desc: "Xpath data access over XML file",
-      url: "../cda/doQuery?dataAccessId=1&path=/plugin-samples/cda/cdafiles/xpath.cda",
+      url: "/pentaho/plugin/cda/api/utils/doQuery?dataAccessId=1&path=/public/pentaho-solutions/plugin-samples/cda/cdafiles/xpath.cda",
       expectedCols: 2,
       expectedRows: 1
     },
     {
       type: "Compound join",
       desc: "Joining 2 different datasets",
-      url: "../cda/doQuery?dataAccessId=3&path=/plugin-samples/cda/cdafiles/compoundJoin.cda",
+      url: "/pentaho/plugin/cda/api/utils/doQuery?dataAccessId=3&path=/public/pentaho-solutions/plugin-samples/cda/cdafiles/compoundJoin.cda",
       expectedCols: 5,
       expectedRows: 12
     },
     {
       type: "Compound Union",
       desc: "Appending two different unions",
-      url: "../cda/doQuery?dataAccessId=3&path=/plugin-samples/cda/cdafiles/compoundUnion.cda",
+      url: "/pentaho/plugin/cda/api/utils/doQuery?dataAccessId=3&path=/public/pentaho-solutions/plugin-samples/cda/cdafiles/compoundUnion.cda",
       expectedCols: 2,
       expectedRows: 4
-    }*/
+    }
   ];
 
 
@@ -350,8 +350,8 @@ expectedRows: 1
   });
 
   var showFile = function(link){
-    $.fancybox({type:"iframe", href:webAppPath + "/content/cda/getCdaFile?path=/plugin-samples/cda/" + link, width: $(window).width() - 100, height:$(window).height() - 50});
-    //	GB_show("Source file",webAppPath + "/content/cda/getCdaFile?path=/plugin-samples/cda/" + link, $(window).height() - 50 , $(window).width() - 100);
+    $.fancybox({type:"iframe", href:webAppPath + "/pentaho/plugin/cda/api/utils/getCdaFile?path=/public/pentaho-solutions/plugin-samples/cda/" + link, width: $(window).width() - 100, height:$(window).height() - 50});
+    //  GB_show("Source file",webAppPath + "/content/cda/getCdaFile?path=/plugin-samples/cda/" + link, $(window).height() - 50 , $(window).width() - 100);
   }
 
   // Call it

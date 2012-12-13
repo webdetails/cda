@@ -2,23 +2,23 @@
 <html>
   <head>
     <title>CDA Cache Manager</title>
-    <link href="static/blueprint/screen.css" type="text/css" rel="stylesheet"/>
-    <link href="static/cda.css" type="text/css" rel="stylesheet"/>
-    <link href="cachemanager/cache.css" type="text/css" rel="stylesheet"/>
-    <link href="static/jquery-ui-1.8rc3.custom.css" type="text/css" rel="stylesheet"/>
-    <script type="text/javascript" src="static/jquery.js"></script>
-    <script type="text/javascript" src="static/cda.js"></script>
-    <script type="text/javascript" src="cachemanager/cache.js"></script>
-    <script type="text/javascript" src="static/jquery.i18n.properties.js"></script>
-    <script type="text/javascript" src="static/jquery-ui-1.8rc3.custom.min.js"></script>
-    <script type="text/javascript" src="previewer/dataTables/js/jquery.dataTables.js"></script>
+    <link href="/pentaho/api/plugins/cda/files/static/blueprint/screen.css" type="text/css" rel="stylesheet"/>
+    <link href="/pentaho/api/plugins/cda/files/static/cda.css" type="text/css" rel="stylesheet"/>
+    <link href="/pentaho/api/plugins/cda/files/cachemanager/cache.css" type="text/css" rel="stylesheet"/>
+    <link href="/pentaho/api/plugins/cda/files/static/jquery-ui-1.8rc3.custom.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="/pentaho/api/plugins/cda/files/static/jquery.js"></script>
+    <script type="text/javascript" src="/pentaho/api/plugins/cda/files/static/cda.js"></script>
+    <script type="text/javascript" src="/pentaho/api/plugins/cda/files/cachemanager/cache.js"></script>
+    <script type="text/javascript" src="/pentaho/api/plugins/cda/files/static/jquery.i18n.properties.js"></script>
+    <script type="text/javascript" src="/pentaho/api/plugins/cda/files/static/jquery-ui-1.8rc3.custom.min.js"></script>
+    <script type="text/javascript" src="/pentaho/api/plugins/cda/files/previewer/dataTables/js/jquery.dataTables.js"></script>
   </head>
   <body>
 
     <div class='container'>     
     <!-- HEADER -->
     <div class='header span24 last'>
-    <div id="versionInfo">Version @@VERSION@@ </div> 
+    <div id="versionInfo">Version TRUNK-SNAPSHOT </div> 
       <div id="tabButtons">
         <span id="scheduleButton" class="button" onclick="refreshTable()"> Scheduled Queries </span>
         <span id="cacheButton" class="button" onclick="refreshCachedOverviewTable()"> Cached Queries </span>
@@ -48,7 +48,7 @@
       <div id="mapInfo" class="span-24 last"> </div>
       <div id="membersInfo" class="span-24 last"></div>
       
-      <div class='section span-4'>Queries in cache</div><div class='section span-1'><img id="loading" style="display:none;" src="cachemanager/loading.gif"/></div>
+      <div class='section span-4'>Queries in cache</div><div class='section span-1'><img id="loading" style="display:none;" src="../../../../api/plugins/cda/files/cachemanager/loading.gif"/></div>
       <div class='last button' style='text-align:right;'> <span id="clearCacheButton" class="button"> Clear all</span> </div>
     <!-- MAIN TABLE BODY: cache -->
       <div id="cachedQueriesOverview">
