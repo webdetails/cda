@@ -1,12 +1,17 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
-
 package pt.webdetails.cda.dataaccess;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringReader;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.TableModel;
 
 import org.apache.commons.lang.StringUtils;
@@ -14,13 +19,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalog;
+import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalogHelper;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.BandedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DefaultCubeFileProvider;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.MondrianConnectionProvider;
+import org.pentaho.reporting.libraries.base.util.IOUtils;
 import org.pentaho.reporting.platform.plugin.connection.PentahoCubeFileProvider;
 import org.pentaho.reporting.platform.plugin.connection.PentahoMondrianConnectionProvider;
 import pt.webdetails.cda.CdaBoot;
@@ -36,9 +45,7 @@ import pt.webdetails.cda.utils.mondrian.CompactBandedMDXDataFactory;
 /**
  * Implementation of a DataAccess that will get data from a SQL database
  * <p/>
- * User: pedro
- * Date: Feb 3, 2010
- * Time: 12:18:05 PM
+ * User: pedro Date: Feb 3, 2010 Time: 12:18:05 PM
  */
 public class MdxDataAccess extends PREDataAccess
 {
@@ -54,7 +61,7 @@ public class MdxDataAccess extends PREDataAccess
 
 
   /**
-   * 
+   *
    * @param id
    * @param name
    * @param connectionId
@@ -73,7 +80,7 @@ public class MdxDataAccess extends PREDataAccess
     }
     catch (Exception ex)
     {
-      bandedMode =  BANDED_MODE.COMPACT;
+      bandedMode = BANDED_MODE.COMPACT;
     }
   }
 
@@ -138,6 +145,8 @@ public class MdxDataAccess extends PREDataAccess
     final MondrianConnectionInfo mondrianConnectionInfo = connection.getConnectionInfo();
 
     final AbstractNamedMDXDataFactory mdxDataFactory = createDataFactory();
+    setMdxDataFactoryBaseConnectionProperties(connection, mdxDataFactory);
+    
     mdxDataFactory.setDataSourceProvider(connection.getInitializedDataSourceProvider());
     mdxDataFactory.setJdbcPassword(mondrianConnectionInfo.getPass());
     mdxDataFactory.setJdbcUser(mondrianConnectionInfo.getUser());
@@ -169,6 +178,80 @@ public class MdxDataAccess extends PREDataAccess
     return mdxDataFactory;
 
 
+  }
+
+
+  /**
+   * Method to initialize MdxDataFactory's base connection properties.
+   * This has to be done in order to pass the extra set of properties that mondrian
+   * needs in order to share cache. This work should be done by the reporting plugin, 
+   * but it's not, so we do it in here.
+   * 
+   * The mdxDataFactory.setBaseConnectionProperties method only exists in PRD 3.9.1
+   * (from pentaho 4.8), so we're gonna call it by reflection. If it fails due to
+   * an older version of the platform, it will still work but no extra properties 
+   * will be passed to mondrian
+   * 
+   * @param mdxDataFactory 
+   */
+  private void setMdxDataFactoryBaseConnectionProperties(MondrianConnection connection, AbstractNamedMDXDataFactory mdxDataFactory)
+  {
+    
+    
+    if (!CdaEngine.getInstance().isStandalone())
+    {
+      
+      
+      PentahoCubeFileProvider cubeProvider = new PentahoCubeFileProvider(connection.getConnectionInfo().getCatalog());
+      
+
+      final List<MondrianCatalog> catalogs =
+              MondrianCatalogHelper.getInstance().listCatalogs(PentahoSessionHolder.getSession(), false);
+
+      MondrianCatalog catalog = null;
+      for (MondrianCatalog cat : catalogs)
+      {
+        final String definition = cat.getDefinition();
+        final String definitionFileName = IOUtils.getInstance().getFileName(definition);
+        if (definitionFileName.equals(IOUtils.getInstance().getFileName(connection.getConnectionInfo().getCatalog())))
+        {
+          catalog = cat;
+          break;
+        }
+      }
+      
+      if ( catalog != null){
+        
+        Properties props = new Properties();
+        try
+        {
+          props.load(new StringReader(catalog.getDataSourceInfo().replace(';', '\n')));
+          try
+          {
+            // Apply the method through reflection
+            Method m = AbstractNamedMDXDataFactory.class.getMethod("setBaseConnectionProperties",Properties.class);
+            m.invoke(mdxDataFactory, props);
+            
+          }
+          catch (Exception ex)
+          {
+            // This is a previous version - continue
+          }
+          
+          
+        }
+        catch (IOException ex)
+        {
+          logger.warn("Failed to transform DataSourceInfo string '"+ catalog.getDataSourceInfo() +"' into properties");
+        }
+        
+      }
+      
+      
+    }
+    
+    
+    
   }
 
 
@@ -283,10 +366,12 @@ public class MdxDataAccess extends PREDataAccess
       hash = 83 * hash + (this.roles != null ? this.roles.hashCode() : 0);
       return hash;
     }
-    
-    @Override 
-    public String toString(){
-      return this.getClass().getName() + "[bandedMode: " + bandedMode + "; roles:" +  roles + "]";
+
+
+    @Override
+    public String toString()
+    {
+      return this.getClass().getName() + "[bandedMode: " + bandedMode + "; roles:" + roles + "]";
     }
   }
 
