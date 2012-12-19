@@ -306,7 +306,7 @@ expectedRows: 1
 
     makeCall:  function(){
       var myself = this;
-      $.getJSON(window.location.origin + this.testInfo.url,function(data){
+      $.getJSON(this.testInfo.url,function(data){
         myself.verifyData(data);
       });
 

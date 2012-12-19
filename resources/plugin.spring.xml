@@ -15,6 +15,6 @@
     <bean id="cda.IQueryCache" class="pt.webdetails.cda.cache.EHCacheQueryCache" scope="prototype"/>
     <!-- JAX-RS beans -->
     <bean id="api" class="org.pentaho.platform.web.servlet.JAXRSPluginServlet"/>
-    <bean class="pt.webdetails.cda.CdaUtils" />
+    <bean id="cda.utils" class="pt.webdetails.cda.CdaUtils" />
     
 </beans>
