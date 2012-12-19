@@ -10,7 +10,7 @@
   <context:annotation-config />
     <bean id="cda" class="pt.webdetails.cda.CdaContentGenerator" scope="prototype"/>
     
- <!--   <bean id="CdaQueryComponent" class="pt.webdetails.cda.CdaQueryComponent" scope="prototype"/> -->
+    <bean id="CdaQueryComponent" class="pt.webdetails.cda.CdaQueryComponent" />
   
     <bean id="cda.IQueryCache" class="pt.webdetails.cda.cache.EHCacheQueryCache" scope="prototype"/>
     <!-- JAX-RS beans -->
