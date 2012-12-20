@@ -568,10 +568,45 @@ public class CdaUtils {
   @Path("/cacheController")
   @Produces("text/plain")
   @Consumes({ APPLICATION_XML, APPLICATION_JSON, APPLICATION_FORM_URLENCODED })
-  public void cacheController(@Context HttpServletResponse servletResponse, 
+  public void cacheController(@QueryParam("method") String method,
+                              @QueryParam("object") String object,
+                              @QueryParam("id") String id,
+  
+                              @Context HttpServletResponse servletResponse, 
                               @Context HttpServletRequest servletRequest)
   {
-    CacheScheduleManager.getInstance().handleCall(servletRequest, servletResponse);
+    if(!method.isEmpty() && method != null){
+      CacheScheduleManager cacheScheduleManager = CacheScheduleManager.getInstance();
+      
+      String upperCaseMethod = method.toUpperCase();
+      
+      try {
+        if(CacheScheduleManager.functions.valueOf(upperCaseMethod) == CacheScheduleManager.functions.CHANGE){
+          cacheScheduleManager.change(object, servletResponse.getOutputStream());
+        } else if(CacheScheduleManager.functions.valueOf(upperCaseMethod) == CacheScheduleManager.functions.RELOAD){
+          cacheScheduleManager.load(id, servletResponse.getOutputStream());
+        } else if(CacheScheduleManager.functions.valueOf(upperCaseMethod) == CacheScheduleManager.functions.LIST){
+          cacheScheduleManager.list(servletResponse.getOutputStream());
+        } else if(CacheScheduleManager.functions.valueOf(upperCaseMethod) == CacheScheduleManager.functions.EXECUTE){
+          cacheScheduleManager.execute(id, servletResponse.getOutputStream());
+        } else if(CacheScheduleManager.functions.valueOf(upperCaseMethod) == CacheScheduleManager.functions.DELETE){
+          cacheScheduleManager.delete(id);
+        } else if(CacheScheduleManager.functions.valueOf(upperCaseMethod) == CacheScheduleManager.functions.IMPORT){
+          cacheScheduleManager.importQueries(object, servletResponse.getOutputStream());
+        } else {
+          logger.error("Method called to cache controller is unknown");
+          return;
+        }
+      } catch(Exception ex){
+        logger.error("Error while calling CacheScheduleManager method "+method, ex);
+      }
+      
+    } else {
+      logger.error("Method called to cache controller is empty");
+      return;
+    }
+    
+    
   }
 
   @GET
