@@ -11,12 +11,7 @@ import javax.swing.table.TableModel;
 
 import org.dom4j.Element;
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
-import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
-import org.pentaho.reporting.engine.classic.core.DataFactory;
-import org.pentaho.reporting.engine.classic.core.DefaultReportEnvironment;
-import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
-import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
-import org.pentaho.reporting.engine.classic.core.ReportEnvironmentDataRow;
+import org.pentaho.reporting.engine.classic.core.*;
 import org.pentaho.reporting.engine.classic.core.parameters.CompoundDataRow;
 import org.pentaho.reporting.engine.classic.core.cache.CachingDataFactory;
 import org.pentaho.reporting.engine.classic.core.util.CloseableTableModel;
@@ -124,10 +119,27 @@ public abstract class PREDataAccess extends SimpleDataAccess
 
 
       final Configuration configuration = ClassicEngineBoot.getInstance().getGlobalConfig();
-      dataFactory.initialize(configuration, resourceManager, contextKey,
-              new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
+      dataFactory.initialize(new DataFactoryContext(){
+          public Configuration getConfiguration() {
+              return configuration;
+          }
 
-      //dataFactory.open();
+          public ResourceManager getResourceManager() {
+              return resourceManager;
+          }
+
+          public ResourceKey getContextKey() {
+              return contextKey;
+          }
+
+          public ResourceBundleFactory getResourceBundleFactory() {
+              return new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault());
+          }
+
+          public DataFactory getContextDataFactory() {
+              return dataFactory;
+          }
+      });
 
       
       PREDataSourceQuery queryExecution = null;
