@@ -54,7 +54,7 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
 
   protected ExecutorService executorService = Executors.newCachedThreadPool();
   protected Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
-  protected Map<String, String> extraSettings;
+  
   
   private SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmssZ");
   private String filename;
@@ -65,7 +65,7 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
   
   protected AbstractKettleExporter(Map<String, String> extraSettings)
   {
-    this.extraSettings = extraSettings;
+    super(extraSettings);
   }
   
   
@@ -160,19 +160,8 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
     filename = "pentaho-cda-" + getType() + "-" + dateFormat.format(Calendar.getInstance().getTime()) + "-" + UUID.randomUUID().toString();
     return filename;
   }
-  
-  protected  String getSetting(String name, String defaultValue){
-    return getSetting(extraSettings, name, defaultValue);
-  }
-  
-  protected  String getSetting(Map<String, String> settings, String name, String defaultValue){
-    if(settings.containsKey(name)) {
-      return settings.get(name);
-    }
-    return defaultValue;
-  }
 
-
+  
   private void copyFileToOutputStream(OutputStream os) throws IOException
   {
     

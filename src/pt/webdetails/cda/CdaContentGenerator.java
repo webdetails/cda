@@ -56,6 +56,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
   private static final int DEFAULT_START_PAGE = 0;
   private static final String PREFIX_PARAMETER = "param";
   private static final String PREFIX_SETTING = "setting";
+  private static final String JSONP_CALLBACK = "callback";
   public static final String ENCODING = "UTF-8";
 
 
@@ -116,7 +117,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
 
 
     // ... and the query parameters
-    // We identify any pathParams starting with "param" as query parameters
+    // We identify any pathParams starting with "param" as query parameters and extra settings prefixed with "setting"
     @SuppressWarnings("unchecked")
     final Iterator<String> params = (Iterator<String>) requestParams.getParameterNames();
     while (params.hasNext())
@@ -140,6 +141,11 @@ public class CdaContentGenerator extends SimpleContentGenerator
       return;
     }
     
+    // we'll allow for the special "callback" param to be used, and passed as settingcallback to jsonp exports
+    if (requestParams.hasParameter(JSONP_CALLBACK))
+    {
+      queryOptions.addSetting(JSONP_CALLBACK, requestParams.getStringParameter(JSONP_CALLBACK, "xxx"));
+    }
 
     Exporter exporter = ExporterEngine.getInstance().getExporter(queryOptions.getOutputType(), queryOptions.getExtraSettings());
     

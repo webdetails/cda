@@ -1,7 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
-
 package pt.webdetails.cda.exporter;
 
 import java.io.IOException;
@@ -18,16 +17,27 @@ import pt.webdetails.cda.utils.MetadataTableModel;
 /**
  * JsonExporter
  * <p/>
- * User: pedro
- * Date: Feb 5, 2010
- * Time: 5:07:12 PM
+ * User: pedro Date: Feb 5, 2010 Time: 5:07:12 PM
  */
 public class JsonExporter extends AbstractExporter
 {
 
-  public JsonExporter(HashMap<String, String> extraSettings)
+  boolean isJsonp = false;
+
+
+  public JsonExporter()
   {
     super();
+  }
+
+
+  public JsonExporter(HashMap<String, String> extraSettings)
+  {
+    super(extraSettings);
+    if (this.getSetting("callback", null) != null)
+    {
+      isJsonp = true;
+    }
   }
 
 
@@ -40,7 +50,18 @@ public class JsonExporter extends AbstractExporter
 
       try
       {
+
+        if (isJsonp)
+        {
+          out.write(this.getSetting("callback", "xxx").concat("(").getBytes("UTF-8"));
+        }
+
         out.write(json.toString().getBytes("UTF-8"));
+
+        if (isJsonp)
+        {
+          out.write(");".getBytes("UTF-8"));
+        }
       }
       catch (IOException e)
       {
@@ -55,8 +76,10 @@ public class JsonExporter extends AbstractExporter
 
 
   }
-  
-  public JSONObject getTableAsJson(TableModel tableModel, Integer rowLimit) throws JSONException, ExporterException {
+
+
+  public JSONObject getTableAsJson(TableModel tableModel, Integer rowLimit) throws JSONException, ExporterException
+  {
     JSONObject json = new JSONObject();
 
     // Generate metadata
@@ -65,7 +88,8 @@ public class JsonExporter extends AbstractExporter
     final int columnCount = tableModel.getColumnCount();
     int rowCount = tableModel.getRowCount();
 
-    if(rowLimit != null){
+    if (rowLimit != null)
+    {
       rowCount = Math.min(rowCount, rowLimit);
     }
 
@@ -84,22 +108,27 @@ public class JsonExporter extends AbstractExporter
 
     if (tableModel instanceof MetadataTableModel)
     {
-      json.put("queryInfo", ((MetadataTableModel)tableModel).getAllMetadata());
+      json.put("queryInfo", ((MetadataTableModel) tableModel).getAllMetadata());
     }
     final JSONArray valuesArray = new JSONArray();
-    
+
     for (int rowIdx = 0; rowIdx < rowCount; rowIdx++)
     {
       final JSONArray rowArray = new JSONArray();
       for (int colIdx = 0; colIdx < columnCount; colIdx++)
       {
         Object value = tableModel.getValueAt(rowIdx, colIdx);
-        try {
-          if (value != null && isColumnDouble[colIdx] && ((Double)value).isInfinite()) {
+        try
+        {
+          if (value != null && isColumnDouble[colIdx] && ((Double) value).isInfinite())
+          {
             value = null;
             //value = Double.POSITIVE_INFINITY == (Double) value ? "Infinity" : "-Infinity";//workaround for JSON issue with Infinity
           }
-        } catch (ClassCastException e) { }//just because it says Double doesn't mean we don't get oranges
+        }
+        catch (ClassCastException e)
+        {
+        }//just because it says Double doesn't mean we don't get oranges
         rowArray.put(value);
       }
       valuesArray.put(rowArray);
