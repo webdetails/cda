@@ -5,6 +5,7 @@ package pt.webdetails.cda.exporter;
 
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.Map;
 import javax.swing.table.TableModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,6 +17,18 @@ public abstract class AbstractExporter implements Exporter
 {
 
   private static final Log logger = LogFactory.getLog(AbstractExporter.class);
+  protected Map<String, String> extraSettings;
+
+
+  public AbstractExporter()
+  {
+  }
+
+
+  public AbstractExporter(Map<String, String> extraSettings)
+  {
+    this.extraSettings = extraSettings;
+  }
 
 
   public abstract void export(final OutputStream out, final TableModel tableModel) throws ExporterException;
@@ -63,5 +76,21 @@ public abstract class AbstractExporter implements Exporter
 
     }
 
+  }
+
+
+  protected String getSetting(String name, String defaultValue)
+  {
+    return extraSettings == null ? defaultValue : getSetting(extraSettings, name, defaultValue);
+  }
+
+
+  protected String getSetting(Map<String, String> settings, String name, String defaultValue)
+  {
+    if (settings.containsKey(name))
+    {
+      return settings.get(name);
+    }
+    return defaultValue;
   }
 }
