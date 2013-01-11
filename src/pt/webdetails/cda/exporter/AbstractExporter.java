@@ -16,6 +16,9 @@ import org.apache.commons.logging.LogFactory;
 public abstract class AbstractExporter implements Exporter
 {
 
+  public static final String ATTACHMENT_NAME_SETTING = "attachmentName";    
+  
+  
   protected static final Log logger = LogFactory.getLog(AbstractExporter.class);
   protected Map<String, String> extraSettings;
 
