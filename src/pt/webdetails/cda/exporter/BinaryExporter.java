@@ -5,6 +5,8 @@ package pt.webdetails.cda.exporter;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.HashMap;
 import javax.swing.table.TableModel;
 
@@ -79,7 +81,16 @@ public class BinaryExporter extends AbstractExporter
        
     if (colIdx >= 0) {      
       if (rowCount > 0) {
-        Object value = tableModel.getValueAt(0, colIdx);        
+        Object value = tableModel.getValueAt(0, colIdx);    
+        if (value instanceof Blob) {
+          Blob v = (Blob)value;
+          try {
+            return v.getBytes(0, (int)v.length());
+          } catch (SQLException se) {
+            logger.error("Exception caught while trying to read blob", se);
+            return null;
+          }
+        }
         return (byte[])value;
       }
     } else {
