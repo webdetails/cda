@@ -32,7 +32,8 @@ public class ExporterEngine
   	XML("xml"),
   	CSV("csv"),
   	XLS("xls"),
-  	HTML("html");
+  	HTML("html"),
+    BINARY("binary");
   	
   	private String type;
   	OutputType(String type){this.type = type;}
@@ -112,6 +113,8 @@ public class ExporterEngine
         return new XlsExporter(extraSettings);
       case XML:
         return new XmlExporter(extraSettings);
+      case BINARY:
+        return new BinaryExporter(extraSettings);
       default:
         return null;
     }
