@@ -4,6 +4,7 @@
 package pt.webdetails.cda.exporter;
 
 import java.io.OutputStream;
+import java.sql.Blob;
 import java.util.Date;
 import java.util.Map;
 import javax.swing.table.TableModel;
@@ -68,7 +69,7 @@ public abstract class AbstractExporter implements Exporter
       // todo: Quick and dirty hack, as the formula never knows what type is returned. 
       return "String";
     }
-    else if (columnClass.equals(byte[].class)) {
+    else if (columnClass.equals(byte[].class) || Blob.class.isAssignableFrom(columnClass)) {
       return "Blob";
     }
     else
