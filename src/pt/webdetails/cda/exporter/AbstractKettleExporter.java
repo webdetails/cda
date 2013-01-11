@@ -48,7 +48,6 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
 
   private static final Log logger = LogFactory.getLog(AbstractKettleExporter.class);
   
-  public static final String ATTACHMENT_NAME_SETTING = "attachmentName";
   public static final String COLUMN_HEADERS_SETTING = "columnHeaders";
   public static final String FILE_EXTENSION_SETTING = "fileExtension";
 
