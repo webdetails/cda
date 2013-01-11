@@ -16,7 +16,7 @@ import org.apache.commons.logging.LogFactory;
 public abstract class AbstractExporter implements Exporter
 {
 
-  private static final Log logger = LogFactory.getLog(AbstractExporter.class);
+  protected static final Log logger = LogFactory.getLog(AbstractExporter.class);
   protected Map<String, String> extraSettings;
 
 
@@ -64,6 +64,9 @@ public abstract class AbstractExporter implements Exporter
     {
       // todo: Quick and dirty hack, as the formula never knows what type is returned. 
       return "String";
+    }
+    else if (columnClass.equals(byte[].class)) {
+      return "Blob";
     }
     else
     {
