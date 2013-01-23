@@ -7,7 +7,9 @@ package pt.webdetails.cda.cache;
 import java.util.Date;
 import java.util.Map;
 import java.util.PriorityQueue;
+
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.pentaho.platform.api.engine.IAcceptsRuntimeInputs;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
@@ -54,14 +56,15 @@ public class CacheActivator implements IAcceptsRuntimeInputs
   public boolean execute() throws Exception
   {
     ClassLoader contextCL = Thread.currentThread().getContextClassLoader();
-    Session s = PluginHibernateUtil.getSession();
+    Session session = PluginHibernateUtil.getSession();
     Date rightNow = new Date();
-
+    
+    Transaction transaction = null;
     try
     {
       Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
 
-      s.beginTransaction();
+      transaction = session.beginTransaction();
       /* If there's any work at all to be done, the first thing we do is proactively
        * reschedule this action to one hour from now, to ensure that, if for some
        * reason the queue fails to reschedule after excuting all due queries, we'll
@@ -79,23 +82,25 @@ public class CacheActivator implements IAcceptsRuntimeInputs
       }
       while (queue.peek().getNextExecution().before(rightNow))
       {
-        processQueries(s, queue);
+        processQueries(session, queue);
         rightNow = new Date();
       }
       reschedule(queue);
-
+      session.flush();
+      session.getTransaction().commit();
       return true;
     }
     catch (Exception e)
-    {//TODO: shouldn't we rollback here?
+    {
+      if (transaction != null) {
+        transaction.rollback();
+      }
+      return false;
     }
     finally
     {
-      s.flush();
-      s.getTransaction().commit();
-      s.close();
+      session.close();
       Thread.currentThread().setContextClassLoader(contextCL);
-      return true;
     }
   }
 
