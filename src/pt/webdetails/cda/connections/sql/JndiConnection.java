@@ -51,7 +51,7 @@ public class JndiConnection extends AbstractSqlConnection implements EvaluableCo
 
   public ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException {
     final ConnectionProvider connectionProvider;
-    if (CdaEngine.getInstance().isStandalone()) {
+    if (CdaEngine.isStandalone()) {
       final JndiConnectionProvider provider = new JndiConnectionProvider();
       provider.setConnectionPath(connectionInfo.getJndi());
       provider.setUsername(connectionInfo.getUser());

@@ -49,7 +49,7 @@ public class MqlDataAccess extends PREDataAccess {
     final PmdDataFactory returnDataFactory = new PmdDataFactory();
     returnDataFactory.setXmiFile(connection.getConnectionInfo().getXmiFile());
     returnDataFactory.setDomainId(connection.getConnectionInfo().getDomainId());
-    if (CdaEngine.getInstance().isStandalone()) {
+    if (CdaEngine.isStandalone()) {
       returnDataFactory.setConnectionProvider(new PmdConnectionProvider());
     } else {
       returnDataFactory.setConnectionProvider(new PentahoPmdConnectionProvider());

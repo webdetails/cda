@@ -23,7 +23,8 @@ public class TransFromFileConnectionInfo
   public TransFromFileConnectionInfo(final Element connection)
   {
     transformationFile = ((String) connection.selectObject("string(./KtrFile)"));
-    final List argsList = connection.elements("arguments");
+    @SuppressWarnings("unchecked")
+    final List<Element> argsList = connection.elements("arguments");
     final String[] args = new String[argsList.size()];
     for (int i = 0; i < argsList.size(); i++)
     {
@@ -32,11 +33,12 @@ public class TransFromFileConnectionInfo
     }
     definedArgumentNames = args;
 
-    final List varsList = connection.elements("variables");
+    @SuppressWarnings("unchecked")
+    final List<Element> varsList = connection.elements("variables");
     final ParameterMapping[] vars = new ParameterMapping[varsList.size()];
-    for (int i = 0; i < varsList.size(); i++)
+    for ( int i = 0; i < varsList.size(); i++)
     {
-      final Element element = (Element) varsList.get(i);
+      final Element element = varsList.get(i);
       final String dataRowName = element.attributeValue("datarow-name");
       final String variableName = element.attributeValue("variable-name");
       if (variableName == null)

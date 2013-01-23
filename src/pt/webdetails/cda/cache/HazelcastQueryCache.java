@@ -146,6 +146,8 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
   
   public void putTableModel(TableCacheKey key, TableModel table, int ttlSec, ExtraCacheInfo info) {
     getCache().putAsync(key, table);
+    // TODO:async version of :?
+    //    getCache().put(key, table, ttlSec, TimeUnit.SECONDS);
     info.setEntryTime(System.currentTimeMillis());
     info.setTimeToLive(ttlSec*1000);
     getCacheStats().putAsync(key, info);    

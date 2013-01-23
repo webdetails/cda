@@ -101,10 +101,10 @@ public class Olap4jConnectionInfo
 		}
 
 		properties = new Properties();
-		final List list = connection.elements("Property");
-		for (int i = 0; i < list.size(); i++)
+		@SuppressWarnings("unchecked")
+		final List<Element> list = connection.elements("Property");
+		for (final Element childElement : list)
 		{
-			final Element childElement = (Element) list.get(i);
 			final String name = childElement.attributeValue("name");
 			final String text = childElement.getText();
 			properties.put(name, text);

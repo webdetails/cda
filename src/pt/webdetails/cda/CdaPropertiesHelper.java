@@ -22,6 +22,7 @@ public class CdaPropertiesHelper {
   public static boolean getBoolProperty(String key, boolean defaultValue){
     String value = getStringProperty(key, null);
     if(value != null){
+      //Boolean.parse would default to false if unparsable
       value = value.trim().toLowerCase();
       if(value.equals("true")) return true;
       if(value.equals("false")) return false;

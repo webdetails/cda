@@ -10,12 +10,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import javax.swing.table.TableModel;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import pt.webdetails.cda.utils.MetadataTableModel;
-
 /**
  * JsonExporter
  * <p/>

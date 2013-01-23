@@ -10,8 +10,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.table.TableModel;
 
 import org.apache.commons.lang.StringUtils;
@@ -21,8 +19,8 @@ import org.dom4j.Element;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.plugin.action.mondrian.catalog.IMondrianCatalogService;
 import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalog;
-import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalogHelper;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
@@ -155,7 +153,7 @@ public class MdxDataAccess extends PREDataAccess
     mdxDataFactory.setJdbcPasswordField(mondrianConnectionInfo.getPasswordField());
     mdxDataFactory.setJdbcUserField(mondrianConnectionInfo.getUserField());
 
-    if (CdaEngine.getInstance().isStandalone())
+    if (CdaEngine.isStandalone())
     {
       mdxDataFactory.setCubeFileProvider(new DefaultCubeFileProvider(mondrianConnectionInfo.getCatalog()));
     }
@@ -194,19 +192,18 @@ public class MdxDataAccess extends PREDataAccess
    * 
    * @param mdxDataFactory 
    */
-  private void setMdxDataFactoryBaseConnectionProperties(MondrianConnection connection, AbstractNamedMDXDataFactory mdxDataFactory)
+  private void setMdxDataFactoryBaseConnectionProperties(
+      MondrianConnection connection,
+      AbstractNamedMDXDataFactory mdxDataFactory)
   {
     
     
-    if (!CdaEngine.getInstance().isStandalone())
+    if (!CdaEngine.isStandalone())
     {
-      
-      
-      PentahoCubeFileProvider cubeProvider = new PentahoCubeFileProvider(connection.getConnectionInfo().getCatalog());
-      
-
+      IMondrianCatalogService catalogService =
+          PentahoSystem.get(IMondrianCatalogService.class, "IMondrianCatalogService", null);;
       final List<MondrianCatalog> catalogs =
-              MondrianCatalogHelper.getInstance().listCatalogs(PentahoSessionHolder.getSession(), false);
+          catalogService.listCatalogs(PentahoSessionHolder.getSession(), false);
 
       MondrianCatalog catalog = null;
       for (MondrianCatalog cat : catalogs)

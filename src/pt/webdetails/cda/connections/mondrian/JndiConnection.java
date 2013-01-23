@@ -64,7 +64,7 @@ public class JndiConnection extends AbstractMondrianConnection implements Evalua
   public DataSourceProvider getInitializedDataSourceProvider() throws InvalidConnectionException
   {
     logger.debug("Creating new jndi connection");
-    if (CdaEngine.getInstance().isStandalone())
+    if (CdaEngine.isStandalone())
     {
       return new JndiDataSourceProvider(connectionInfo.getJndi());
     }
