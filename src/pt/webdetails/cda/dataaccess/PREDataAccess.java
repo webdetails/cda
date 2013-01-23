@@ -10,7 +10,6 @@ import java.util.TimeZone;
 import javax.swing.table.TableModel;
 
 import org.dom4j.Element;
-import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.DefaultReportEnvironment;
@@ -178,73 +177,18 @@ public abstract class PREDataAccess extends SimpleDataAccess
     }
     catch (ReportDataFactoryException e)
     {
-      throw new QueryException("ReportDataFactoryException : " + e.getMessage()
-              + ((e.getParentThrowable() == null) ? "" : ("; Parent exception: " + e.getParentThrowable().getMessage())) + "\n" +
-              ((e.getParentThrowable() != null && e.getParentThrowable().getCause() != null)?e.getParentThrowable().getCause().getMessage() :"") + "\n"
-              , e);
+      throw new QueryException(e.getMessage(), e);
+//              + ((e.getParentThrowable() == null) ? "" : ("; Parent exception: " + e.getParentThrowable().getMessage())) + "\n" +
+//              ((e.getParentThrowable() != null && e.getParentThrowable().getCause() != null)?e.getParentThrowable().getCause().getMessage() :"") + "\n"
+//              , e);
     }
-    finally
-    {
-      //leave thread variable as it was
-      if(threadVarSet) SolutionReposHelper.setSolutionRepositoryThreadVariable(null);
-    }
+//    finally
+//    {
+//      //leave thread variable as it was
+//      if(threadVarSet) SolutionReposHelper.setSolutionRepositoryThreadVariable(null);
+//    }
 
   }
-
-
-//  public void closeDataSource() throws QueryException
-//  {
-//
-//    if (localDataFactory == null)
-//    {
-//      return;
-//    }
-//
-//    // and at the end, close your tablemodel if it holds on to resources like a resultset
-//    if (getTableModel() instanceof CloseableTableModel)
-//    {
-//      final CloseableTableModel ctm = (CloseableTableModel) getTableModel();
-//      ctm.close();
-//    }
-//
-//    // and finally shut down the datafactory to free any connection that may be open.
-//    getLocalDataFactory().close();
-//
-//    localDataFactory = null;
-//  }
-
-//  public TableModel getTableModel()
-//  {
-//    return tableModel;
-//  }
-//
-//
-//  public void setTableModel(final TableModel tableModel)
-//  {
-//    this.tableModel = tableModel;
-//  }
-//
-//
-//  public CachingDataFactory getLocalDataFactory()
-//  {
-//    return localDataFactory;
-//  }
-//
-//
-//  public void setLocalDataFactory(final CachingDataFactory localDataFactory)
-//  {
-//    this.localDataFactory = localDataFactory;
-//  }
-  /*
-  public static ArrayList<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors() {
-  ArrayList<DataAccessConnectionDescriptor> descriptor = new ArrayList<DataAccessConnectionDescriptor>();
-  DataAccessConnectionDescriptor proto = new DataAccessConnectionDescriptor();
-  proto.addDataAccessProperty(new PropertyDescriptor("Query",PropertyDescriptor.TYPE.STRING,PropertyDescriptor.SOURCE.DATAACCESS));
-  descriptor.add(proto);
-  return descriptor;
-  }
-   */
-
 
   @Override
   public ArrayList<PropertyDescriptor> getInterface()

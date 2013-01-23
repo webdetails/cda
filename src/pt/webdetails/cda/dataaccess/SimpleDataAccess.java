@@ -18,7 +18,6 @@ import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 
 
 import pt.webdetails.cda.CdaBoot;
-import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.cache.TableCacheKey;
 import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
 import pt.webdetails.cda.connections.Connection;
@@ -149,6 +148,9 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
       catch (Exception inner)
       {
         logger.error("Error pushing event", inner);
+      }
+      if (e instanceof QueryException) {
+        throw (QueryException) e; 
       }
       throw new QueryException("Found an unhandled exception:", e);
     }

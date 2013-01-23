@@ -130,7 +130,7 @@ public class SettingsManager {
       
       return settings;
     } catch (ResourceException re) {
-      throw new UnsupportedDataAccessException("Failed: ResourceException", re);
+      throw new UnsupportedDataAccessException(re.getMessage(), re);
     }
 
   }
@@ -143,7 +143,7 @@ public class SettingsManager {
    */
   private Long getLastSaveTime(final String id) {
     //check if it's a saved file and get its timestamp
-    if(CdaEngine.getInstance().isStandalone()) {
+    if(CdaEngine.isStandalone()) {
       File cdaFile = new File(id);
       if(cdaFile.exists()){
         return cdaFile.lastModified();

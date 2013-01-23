@@ -70,8 +70,8 @@ public class ExporterEngine
       return exporter;
     }
     //else fallback to old version
-    logger.info(MessageFormat.format("getExporter for {0} failed, falling back to old version", outputType));
-
+    logger.error(MessageFormat.format("getExporter for {0} failed, falling back to old version", outputType));
+    //TODO: can this be deleted?
     try
     {
 
@@ -90,6 +90,9 @@ public class ExporterEngine
               });
       return exporter;
 
+    }
+    catch (ClassNotFoundException e) {
+      throw new UnsupportedExporterException("Could not find exporter for " + outputType, e);
     }
     catch (Exception e)
     {
