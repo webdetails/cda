@@ -43,7 +43,7 @@ public class TransFromFileConnection extends AbstractConnection implements Kettl
    */
   public KettleTransformationProducer createTransformationProducer(final String query)
   {
-    if (CdaEngine.getInstance().isStandalone())
+    if (CdaEngine.isStandalone())
     {
       return new KettleTransFromFileProducer("",
               connectionInfo.getTransformationFile(),

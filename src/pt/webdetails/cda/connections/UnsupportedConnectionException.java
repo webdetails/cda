@@ -7,6 +7,9 @@ package pt.webdetails.cda.connections;
  * Time: 5:39:10 PM
  */
 public class UnsupportedConnectionException extends Exception {
+
+  private static final long serialVersionUID = 1L;
+
   public UnsupportedConnectionException(final String s, final Exception cause) {
     super(s,cause);
   }

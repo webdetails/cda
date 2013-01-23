@@ -7,6 +7,9 @@ package pt.webdetails.cda.settings;
  * Time: 3:12:17 PM
  */
 public class UnknownConnectionException extends Exception {
+
+  private static final long serialVersionUID = 1L;
+
   public UnknownConnectionException(final String s, final Exception cause) {
     super(s,cause);
   }
