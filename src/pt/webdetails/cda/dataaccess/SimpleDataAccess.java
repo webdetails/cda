@@ -1,7 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
-
 package pt.webdetails.cda.dataaccess;
 
 import java.io.Serializable;
@@ -35,10 +34,8 @@ import pt.webdetails.cda.xml.DomVisitable;
 import pt.webdetails.cda.xml.DomVisitor;
 
 /**
- * Implementation of the SimpleDataAccess
- * User: pedro
- * Date: Feb 3, 2010
- * Time: 11:04:10 AM
+ * Implementation of the SimpleDataAccess User: pedro Date: Feb 3, 2010 Time:
+ * 11:04:10 AM
  */
 public abstract class SimpleDataAccess extends AbstractDataAccess implements DomVisitable
 {
@@ -66,7 +63,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
 
   /**
-   * 
+   *
    * @param id DataAccess ID
    * @param name
    * @param connectionId
@@ -134,17 +131,22 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     }
     catch (Exception e)
     {
+
       try
       {
-        if (CdaEngine.isStandalone())
+        CdaEvent.QueryInfo info = new CdaEvent.QueryInfo(getCdaSettings().getId(), getId(), getQuery(), parameterDataRow);
+
+        if (e instanceof QueryException && e.getCause() != null)
         {
-          EventPublisher.getPublisher().publish(new QueryErrorEvent(
-                  new CdaEvent.QueryInfo(getCdaSettings().getId(), getId(), getQuery(), parameterDataRow), e));
+          EventPublisher.getPublisher().publish(new QueryErrorEvent(info, e.getCause()));
+        }
+        else
+        {
+          EventPublisher.getPublisher().publish(new QueryErrorEvent(info, e));
         }
       }
       catch (Exception inner)
       {
-
         logger.error("Error pushing event", inner);
       }
       if (e instanceof QueryException) {
@@ -282,8 +284,9 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
 
   /**
-   * Extra arguments to be used for the cache key. Defaults to null but classes that
-   * extend SimpleDataAccess may decide to implement it
+   * Extra arguments to be used for the cache key. Defaults to null but classes
+   * that extend SimpleDataAccess may decide to implement it
+   *
    * @return
    */
   protected Serializable getExtraCacheKey()

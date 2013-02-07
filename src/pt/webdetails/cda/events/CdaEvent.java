@@ -71,17 +71,7 @@ public abstract class CdaEvent extends PluginEvent
   {
     super("cda", eventType.toString(), queryInfo.cdaSettingsId);
     this.queryInfo = queryInfo;
-    JSONObject key = queryInfo.toJSON();
-
-
-
-    key.put(Fields.EVENT_TYPE, eventType.toString());
-
-
-
-    setKey(key);    
-    
-//    setKey(eventType.toString());
+    setKey(eventType.toString());
   }
 
 //  public CdaEvent(JSONObject obj) throws JSONException {
