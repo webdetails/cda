@@ -1,6 +1,6 @@
 13.02.07
     * Implemented setMdxDataFactoryBaseConnectionProperties. Mdx quereies, when executed in 4.8, will pass the correct properties that are defined in olap/datasources.xml, namely UseContentChecksum=true;JdbcConnectionUuid=FOOBAR
-    * Added JSON support to CDA
+    * Added JSONP support to CDA
     * Added binary exporter
     * Support for blobs encoded as java.sql.Blob
     * CacheActivator: only commit if no exception, rollback otherwise
