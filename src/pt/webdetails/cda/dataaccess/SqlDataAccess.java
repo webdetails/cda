@@ -48,7 +48,6 @@ public class SqlDataAccess extends PREDataAccess {
     return TYPE;
   }
 
-
   @Override
   public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException {
 
@@ -59,8 +58,9 @@ public class SqlDataAccess extends PREDataAccess {
 
     reportDataFactory.setUserField(connection.getUserField());
     reportDataFactory.setPasswordField(connection.getPasswordField());
-
-    reportDataFactory.setQuery("query", getQuery(), null, null);
+    // using deprecated version for 3.9/3.10 support until it breaks with latest 
+    reportDataFactory.setQuery("query", getQuery());
+    // reportDataFactory.setQuery("query", getQuery(), null, null);
 
     return reportDataFactory;
 
