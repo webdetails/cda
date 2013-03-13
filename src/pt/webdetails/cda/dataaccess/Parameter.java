@@ -199,7 +199,11 @@ public class Parameter implements java.io.Serializable {
 
   public Object getValue() throws InvalidParameterException
   {
-    final Object objValue = value == null ? getDefaultValue() : value;
+    Object objValue = value == null ? getDefaultValue() : value;
+	
+	if(objValue instanceof String[] && (Type.INTEGER_ARRAY.equals(getType())) ||  Type.NUMERIC_ARRAY.equals(getType())){
+    	objValue = stringArrayToString((String[])value, getSeparator());
+    }
 
     if(objValue instanceof String){//may be a string or a parsed value
       final String strValue = (String) objValue;
@@ -514,6 +518,42 @@ public class Parameter implements java.io.Serializable {
 
   public void accept(DomVisitor xmlVisitor, Element daEle) {
 		  xmlVisitor.visit(this, daEle);
+  }
+  
+  /**
+   * Helper method to convert a String[] into a string, with a user defined separator char
+   * @see http://docs.oracle.com/javase/1.5.0/docs/api/java/util/Arrays.html#toString(java.lang.Object[])
+   * @param stringArray
+   * @param separator - a user defined separator char
+   * @return string
+   */
+  private String stringArrayToString(String[] stringArray, String separator){
+	  
+	  final String START_CHAR = "[";
+	  final String END_CHAR = "]";
+	  final String SEPARATOR = ", ";
+	  
+	  if(stringArray != null){
+		  
+		  String s = java.util.Arrays.toString(stringArray);
+		   
+		  if(s != null && s.trim().length() > 0){
+			
+			//remove java.util.Arrays.toString() START_CHAR and END_CHAR
+			if(s.startsWith(START_CHAR) && s.endsWith(END_CHAR)){
+				s = s.substring(1,s.length() - 1);
+			}
+			
+			if(separator != null){
+				//replace java.util.Arrays.toString() SEPARATOR with user-defined separator
+				s = s.replaceAll(SEPARATOR, separator);
+			}
+			
+			return s;
+			
+		  }
+	  }
+	  return null;
   }
 
 }
