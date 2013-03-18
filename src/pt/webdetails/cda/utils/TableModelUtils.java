@@ -155,6 +155,7 @@ public class TableModelUtils
     
     if(columnCount == 0 && rowFilter != null)
     {//still have to go through the motions if we need to filter rows
+      
       for(int i=0; i<table.getColumnCount(); i++){
         outputIndexes.add(i);
       }
@@ -163,10 +164,19 @@ public class TableModelUtils
     
     if (columnCount != 0)
     {
-
+      //logger.info(Collections.max(outputIndexes)+" "+table.getColumnCount());
       if ((Collections.max(outputIndexes) > table.getColumnCount() - 1))
       {
-        throw new InvalidOutputIndexException("Output index higher than number of columns in tableModel", null);
+        String errorMessage = String.format("Output index higher than number of columns in tableModel. %s > %s", Collections.max(outputIndexes), table.getColumnCount());
+        logger.error(errorMessage);
+        
+        if (table.getColumnCount() > 0){
+          throw new InvalidOutputIndexException(errorMessage, null);
+        }
+        else {
+          logger.warn("Unable to validate output indexes because table metadata is empty. Returning table.");
+          return table;
+        }
       }
 
       final int rowCount = table.getRowCount();
