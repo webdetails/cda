@@ -1,7 +1,7 @@
 body {
   padding: 20px;
   font-family: Calibri, Helvetica, Arial;
-  background-color: #c9e576
+  background-color: #dee8ec;
 }
 
 .center{
@@ -11,12 +11,11 @@ body {
 }
 
 .cdalogo {
-
-  background-image: url("../static/headerbg.png");
   background-repeat: no-repeat;
-  background-color: #8ed300;
-  min-height: 112px;
-
+  background-color: #cad2d6;
+  padding: 0px;
+	margin-top: 5px !important;
+	width: 950px !important;
 }
 
 .params {
@@ -28,15 +27,63 @@ body {
 
 .cdaButton {
   border: none;
-  padding-left: 0px;
-  padding-right: 0px;
-  background-color: white;
-  width: 150px;
+  padding: 5px;
+  background-color: #f5f5f5;
+  width: 125px;
+  height: 40px;
   /*text-align: center;*/
   background-image: none;
-  -moz-border-radius: 0px;
-  height: 18px;
-  margin-bottom: 5px;
+  margin: 10px 5px;
+  color: #333;
+  float: right;
+  font-size: 16px;
+  box-shadow: inset 0px 0px 5px #ccc;
+}
+
+.cdaButton:hover {
+	background: #ddd;
+	cursor: pointer;
+}
+
+.cdaButton:active {
+	box-shadow: inset 0px 0px 2px #222;	
+}
+
+.cdaButtonShort {
+	width: 40px;
+	height: 30px;
+	padding: 5px;
+	text-align:center;
+	box-shadow: inset 0px 0px 5px #ccc;
+}
+
+.cdaButtonShort:hover {
+	cursor: text;
+}
+
+.cdaInputWrapper {
+	float: left;
+	margin-left: -10px;	
+}
+
+select#dataAccessSelector {
+	float: left;
+	height: 40px;
+	line-height: 40px;
+   	font-size: 16px;
+	box-shadow: none;
+	padding: 10px;
+  	width: 200px;
+	box-shadow: inset 0px 0px 5px #ccc;
+}
+
+select#dataAccessSelector option {
+	height: 20px;
+	padding: 10px;
+	background: #f5f5f5;
+	color: #222;
+	border: 1px #fff solid;
+	border: none;
 }
 
 input[readonly]{
@@ -45,34 +92,78 @@ input[readonly]{
 }
 
 #doQueryUrl {
-  width: 100%;
+  display:block;
+  width: 557px;
 }
 
 #selectorText{
-  display: inline
+  display: inline;
 }
 
+#button {
+	background: url('refresh.png') no-repeat center center;
+	background-color: #216dbf;
+	color: #f5f5f5;	
+	width: 40px;
+	box-shadow: none;
+}
+
+#button:hover {
+	background-color: #4d94e0;
+}
 
 .param {
   padding-left: 5px;
 }
 
+.filename {
+	padding: 5px;
+	color: #141919;
+	border: 1px solid #97a4aa;
+	max-width: 943px;
+	background: #c2cbcf; /* Old browsers */
+	background: -moz-linear-gradient(top, #c2cbcf 0%, #b5bec2 49%, #9ba7ac 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#c2cbcf), color-stop(49%,#b5bec2), color-stop(100%,#9ba7ac)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #c2cbcf 0%,#b5bec2 49%,#9ba7ac 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #c2cbcf 0%,#b5bec2 49%,#9ba7ac 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #c2cbcf 0%,#b5bec2 49%,#9ba7ac 100%); /* IE10+ */
+	background: linear-gradient(to bottom, #c2cbcf 0%,#b5bec2 49%,#9ba7ac 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c2cbcf', endColorstr='#9ba7ac',GradientType=0 ); /* IE6-9 */	
+}
+
+#about {
+	float: right;
+	margin-right: 10px;
+	color: #216dbf;	
+	text-decoration: none;
+}
+
+#about:hover {
+	color: #555;
+	cursor: pointer;
+}
+
 #fileid {
 
-  font-size:12pt;
-
+  font-size:8pt;
+	color: #555;
 }
 
 #pleaseselect {
-  background-color:#FFFFFF;
-  color:#442222;
-  font-size:12pt;
-  font-style: italic;
-  margin:20px 20px 10px;
+  color:#666;
+  margin: 0;
+  font-size:8pt;
+  display: block;
+  background: #F5D6D6;
+  border: 1px #ccc solid;
+  padding: 5px 10px;
+  width: 930px;;
 }
 
 #previewerTable  {
   min-height: 300px;
+  width: 950px;
+  margin:auto;
 }
 
 
@@ -85,21 +176,59 @@ input[readonly]{
 }
 
 #previewerTable tr > th {
-  background-color: #e3e2e2;
+  background-color: #c2cbcf;
   text-align: center;
   vertical-align: middle;
   min-height: 50px;
+  border: 1px solid #999;
 }
 
 #parameterHolder{
   text-align: right;
+  width: 190px;
+  float: left;
+}
+
+#parameterDimension {
+	float: left;
+	height: 40px;
+	margin-top: 10px;
+	line-height: 40px;
+	font-size: 10px;
+	margin-left: -5px;
+}
+
+#dimension {
+	width: 98px !important;
+	padding-right: 32px;
+	float:left;
+	height: 30px;
+	cursor: text;
+	box-shadow: inset 0px 0px 5px #ccc;
 }
 
 .dialogAction .notification {
     float: left;
 }
 #previewerTable input, #previewerTable select {
-  border: solid #8eD300 1px  ;
+    border: none;
+	box-shadow: inset 0px 0px 5px #ccc;
+	height: 30px;
+	line-height: 30px;
+	padding: 5px;
+}
+
+#previewerTable input {
+    height: 20px;
+}
+
+#previewerTable input:hover, #previewerTable select:hover {
+	background: #ddd;
+	cursor: pointer;
+}
+
+#previewerTable input:active, #previewerTable select:active {
+	box-shadow: inset 0px 0px 2px #222;	
 }
 
 #previewerTable .paginate_disabled_next,
@@ -148,15 +277,72 @@ div#footer{
     text-align: center;
     font-size: 14px;
     float: right;
-    background: #92d600;
-    height:18px;
-    width:18px;
+    background: #216dbf;
+    height:22px;
+    width:22px;
     border:1px solid white;
-    color:white;
-    font-weight:bold
+    color:#f5f5f5;
+    font-weight:bold;
+	position:absolute;
+	margin-left: 110px;
+	margin-top: 18px;
+	z-index: 100;
 }
 
 .helpButton:hover {
-    background: white;
-    color:#92d600;
+    background: #4d94e0;
+	cursor: pointer;
+}
+
+#aboutContainer {
+	width: 950px;
+	background: #2d3a3f;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	padding: 20px 150px 20px 150px;	
+}
+
+#aboutSubContainer {
+	width: 100%;
+}
+
+#aboutSubContainerLeft {
+	float: left;
+	width: 420px;
+	font-size: 14px;
+	line-height: 20px;
+	color: #bcc7cb;
+}
+
+#aboutSubContainerRight {
+	float:right;
+	width: 160px;
+	color: #78878e;
+	font-size: 20px;
+	text-align: right;
+}
+
+#aboutSubContainerRight .aboutSubContainerTop {
+	padding-top: 90px;	
+	height: 60px;
+	text-align: right;
+}
+
+.aboutSubContainerTop {
+	width: 100%;
+	height: 100px;
+	padding-top: 50px;
+}
+
+.aboutSubContainerBottom a:link, .aboutSubContainerBottom a:visited {
+	text-align: right;
+	text-decoration: none;
+	font-size: 17px;
+	display: block;
+	color: #216dbf;
+}
+
+.aboutSubContainerBottom a:hover {
+	color: #bcc7cb;
 }
