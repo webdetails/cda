@@ -87,8 +87,8 @@ refreshParams = function(id) {
     var placeholder = $('#parameterHolder');
     placeholder.empty();
     for (param in data.resultset) {
-      placeholder.append('<div class="param span-8 last"><div class="span-4">'+data.resultset[param][0]+
-        ':&nbsp;</div><div class="cdaInputWrapper span-4 last"><input class="cdaButton cdaButtonShort" id="'+data.resultset[param][0]+
+      placeholder.append('<div class="param span-5 last"><div class="span-2" id="parameterDimension">'+data.resultset[param][0]+
+        ':&nbsp;</div><div class="cdaInputWrapper span-2 last"><input class="cdaButton" id="'+data.resultset[param][0]+
         '" value="'+data.resultset[param][2]+'"' + ((data.resultset[param][4] == 'private')? ' readonly="readonly"' : '')+ '"><div class="helpButton">?</div></div></div>');
     }
     placeholder.find("div.helpButton").click(helpPopup).hide();
@@ -151,7 +151,7 @@ toggleAdvanced = function(advanced){
             selector += "<option value='"+option+"'>"+periodicity[option].name+"</option>"
         }
         selector += '</select>';
-        contents =$( '<span>'+selector+'<span>on the</span><input id="startAt"><span id="granularity">th '+periodicity[0].granularity +'</span></span>');
+        contents =$( '<span>'+selector+'<span>on the</span><input id="startAt" style="width: 40px; text-align: center;"><span id="granularity">th '+periodicity[0].granularity +'</span></span>');
         contents.find('select#periodType').change(function(){
             $(this).parent().find('#granularity')
                 .text(periodicity[$(this).attr('value')].granularity);
