@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="../previewer/previewer.css" type="text/css" rel="stylesheet"/>
+    <link href="../previewer/dataTables/css/demo_table_jui.css" type="text/css" rel="stylesheet"/>
+    <link type="text/css" href="../previewer/fg-menu/fg.menu.css" rel="stylesheet" />
+    <link type="text/css" href="blueprint/screen.css" rel="stylesheet" />
+    <link type="text/css" href="cda.css" rel="stylesheet" />
+    <link type="text/css" href="jquery.jqModal.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="../previewer/js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="jquery.jqModal.js"></script>
+    <script type="text/javascript" src="jquery-ui-1.8rc3.custom.min.js"></script>
+    <script type="text/javascript" src="../previewer/js/jquery.i18n.properties.js"></script>
+    <script type="text/javascript" src="../previewer/previewer.js"></script>
+
+    <script type="text/javascript" src="../previewer/dataTables/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="../previewer/fg-menu/fg.menu.js"></script>
+    <style type="text/css">
+      body { font-size:62.5%; margin:0; padding:0; min-height: 500px}
+
+    </style>
+
+    <script language="javascript">
+      var lastQuery;
+      var tableController;
+
+      // Init jQuery i18n plugin
+      loadMessageBundles = function(lang) {
+
+        jQuery.i18n.properties({
+          name:'Messages',
+          path:'previewer/languages/',
+          mode:'both',
+          language:(lang == 'browser' ? jQuery.i18n.browserLang() : lang),
+          callback: function() {
+            //$('#button').html(jQuery.i18n.prop('label.refresh'));
+            $('#export').html(jQuery.i18n.prop('label.export'));
+            $('#cachethis').html(jQuery.i18n.prop('label.cachethis'));
+            $('#pleaseselect').html(jQuery.i18n.prop('label.selectDataAccessID'));
+          }
+        });
+      }
+	  
+	  $(document).ready(function() {
+			function getURLParameter(name) {
+				return decodeURI(
+					(RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+				);
+			} 
+			
+			$solutionParameter = getURLParameter('solution');
+			$pathParameter = getURLParameter('path');
+			$fileParameter = getURLParameter('file');
+			
+			$('#about').attr('href', '../previewQuery?solution=' + $solutionParameter + '&path=' + $pathParameter + '&file=' + $fileParameter);
+	  });
+  </script>
+  </head>
+
+  <body>
+    <input id="staticfile" value="" type="hidden">
+
+
+
+
+    <div class="container">
+		<div class="span-24 last filename">
+			<span id="fileid">Hello!</span>
+			<a id="about" href="#">Back to CDA</a>
+		</div>
+		<div id="aboutContainer">
+			<div id="aboutSubContainer">
+				<div id="aboutSubContainerLeft">
+					<div class="aboutSubContainerTop">
+						<img src="cda.png">
+					</div>
+					<div class="aboutSubContainerBottom ">
+						<p>CDA is a Pentaho plugin designed for accessing data with great flexibility. Born to overcoming some cons of the older implementation, CDA allows you to access any of the various Pentaho data sources and:</p>
+						<ul>
+							<li>Join different data sources just by editing an XML file;</li>
+							<li>Cache queries providing a great boost in performance;</li>
+							<li>Deliver data in different formats (csv, xls, etc.) through the Pentaho User Console;</li>
+							<li>Sort and paginate data server-side.</li>
+						</ul>
+						<p>CDA can be used as a standalone plugin on the Pentaho BI server or in combination with CDE / CDF.</p>
+					</div>
+				</div>
+				<div id="aboutSubContainerRight">
+					<div class="aboutSubContainerTop">
+						v. 13.02.07
+					</div>
+					<div class="aboutSubContainerBottom">
+						<a href="http://www.webdetails.pt/ctools.html#tabcda">CDA Microsite</a>
+					</div>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+    </div>
+	
+	
+	
+    <div id="footer">&nbsp;</div>
+	
+  <script type="text/javascript">
+    var oLanguage;
+    $(document).ready(function(){
+      // Initialize jquery.i18n plugin - load message files
+      var userLocale = 'en_US';
+      loadMessageBundles(userLocale);
+      // Initialize language support for jQuery dataTables
+      $.getJSON( "previewer/dataTables/languages/Messages_" + userLocale + ".txt", function( json ) {
+        oLanguage = json;
+      } );
+      //$('#button').button();
+      var params = pageParams();
+      $('#notifications').hide();
+       $('#exportButton').hide();
+
+      var sel = $("#dataAccessSelector");
+      sel.bind("change", function(){
+        var val = $(this).val();
+        if(val != "undefined"){
+          refreshTable($(this).val())
+          $('#exportButton').show();
+        }
+        else{
+          $('#previewerTable').empty().append($("<span id=\"pleaseselect\"></span>").text("Please select a Data Access ID"));
+          $("#params").empty();
+          lastQuery = undefined;
+          $('#exportButton').hide();
+        }
+      })
+      $("#dialog").jqm({modal:true});
+      $('#help').jqm({modal:true});
+      $('#queryUrlDialog').jqm({modal:true});
+      toggleAdvanced(false);
+      $.getJSON("listQueries",{path: filename},function(queries){
+        var defaultQuery;
+        var defaultDescription;
+        for (query in queries.resultset) {
+          var name = queries.resultset[query][1] != null && queries.resultset[query][1] != ""? queries.resultset[query][1]: "DataAccess ID: " + queries.resultset[query][0];
+          var value = queries.resultset[query][0];
+
+          sel.append($("<option></option>").attr("value",value).text(name));
+        };
+
+        $('#fileid').text(filename);
+      });
+      
+    });
+    
+
+  </script>
+
+</body></html>
