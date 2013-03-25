@@ -1,3 +1,8 @@
+13.03.25
+    * Fixed [REDMINE-1851] - Added conditions that protect the TableComponent from empty metadata queries (eg. Select include mode with output options [1,0] and an empty query)
+    * Fixed [REDMINE-1881] - IntegerArrays not working on sql queries
+    * Reintroduced deprecated SQLReportDataFactory.setQuery for pentaho 3.9 support
+
 13.02.07
     * Implemented setMdxDataFactoryBaseConnectionProperties. Mdx quereies, when executed in 4.8, will pass the correct properties that are defined in olap/datasources.xml, namely UseContentChecksum=true;JdbcConnectionUuid=FOOBAR
     * Added JSONP support to CDA
