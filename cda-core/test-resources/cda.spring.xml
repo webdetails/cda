@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<root>
+  <!--
+	<bean id="IMondrianRoleMapper" class="pt.webdetails.cda.core.DefaultMondrianRoleMapper" scope="prototype"/>
+  <bean id="IDataAccess" class="pt.webdetails.cda.core.DefaultDataAccess" scope="prototype"/>  
+  <bean id="IQueryCache" class="pt.webdetails.cda.cache.EHCacheQueryCache" scope="prototype"/>
+  <bean id="ISessionUtils" class="pt.webdetails.cda.pentaho.SessionUtils" scope="prototype"/>
+
+  -->
+</root>

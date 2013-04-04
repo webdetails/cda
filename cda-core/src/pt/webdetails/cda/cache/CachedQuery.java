@@ -10,12 +10,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.CronExpression;
-//import pt.webdetails.cda.cache.CacheScheduleManager;
+
+import pt.webdetails.cda.CdaEngine;
+
 import pt.webdetails.cda.utils.Util;
-import pt.webdetails.cpf.session.UserSession;
+import pt.webdetails.cpf.session.ISessionUtils;
 
 
 /**
@@ -25,8 +28,9 @@ import pt.webdetails.cpf.session.UserSession;
 public class CachedQuery extends Query
 {
 
+  
+  private static final Log logger = LogFactory.getLog(CachedQuery.class);
   private static final long serialVersionUID = 1L;
-  private static Log logger = LogFactory.getLog(CachedQuery.class);
   private Date lastExecuted, nextExecution;
   private boolean success = true;
   private long timeElapsed;
@@ -37,7 +41,8 @@ public class CachedQuery extends Query
   {
     super(json);
 
-    this.userName = UserSession.session.getUserName();
+    ISessionUtils sessionUtils = (ISessionUtils) CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils");
+    this.userName = sessionUtils.getCurrentSession().getUserName();
     this.cronString = getJsonString(json, "cronString");
     this.lastExecuted = getJsonDate(json, "lastExecuted");
 
@@ -133,7 +138,6 @@ public class CachedQuery extends Query
     }
     catch (JSONException ex)
     {
-      //CacheScheduleManager.logger.error("Failed to build JSON for query: " + getCdaFile() + "/" + getDataAccessId());
       logger.error("Failed to build JSON for query: " + getCdaFile() + "/" + getDataAccessId());
     }
 
@@ -176,9 +180,7 @@ public class CachedQuery extends Query
     }
     catch (Exception e)
     {
-      //CacheScheduleManager.logger.error("Failed to execute query " + toString() + " " + Util.getExceptionDescription(e));
       logger.error("Failed to execute query " + toString() + " " + Util.getExceptionDescription(e));
-      Logger.getLogger(CachedQuery.class.getName()).log(Level.SEVERE, null, e);
       setSuccess(false);
     }
     finally
