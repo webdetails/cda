@@ -1,3 +1,6 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
 package pt.webdetails.cda.utils;
 
 import java.util.ArrayList;
@@ -11,6 +14,7 @@ import org.pentaho.reporting.libraries.formula.FormulaContext;
 
 import pt.webdetails.cda.ICdaCoreSessionFormulaContext;//XXX should I maintain this class and interface?
 import pt.webdetails.cda.CdaCoreSessionFormulaContext;
+
 import pt.webdetails.cda.dataaccess.InvalidParameterException;
 import pt.webdetails.cpf.session.IUserSession;
 import pt.webdetails.cpf.session.UserSession;
@@ -25,8 +29,8 @@ public class FormulaEvaluator {
     
     if(!StringUtils.contains(text, FORMULA_BEGIN)) return text;
     try{
-      IUserSession session = UserSession.session;//XXX implementation of IUserSession
-      return replaceFormula(text, new CdaSessionFormulaContext(session));
+      IUserSession session = UserSession.session;//XXX lacks implementation of IUserSession
+      return replaceFormula(text, new CdaCoreSessionFormulaContext(session));
     }
     catch(Exception e){//TODO: change
       throw new RuntimeException(e);
@@ -69,7 +73,7 @@ public class FormulaEvaluator {
       Formula formula = new Formula(localValue);
       // set context if available
       if (formulaContext != null) formula.initialize(formulaContext);
-      else formula.initialize(new CdaSessionFormulaContext(UserSession.session));
+      else formula.initialize(new CdaCoreSessionFormulaContext(UserSession.session));
       // evaluate
       Object result = formula.evaluate();
       if(result instanceof ArrayList)

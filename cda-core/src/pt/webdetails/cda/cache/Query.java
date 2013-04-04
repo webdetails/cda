@@ -15,9 +15,11 @@ import org.hibernate.Session;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.PluginHibernateException;
-import pt.webdetails.cda.cache.CacheScheduleManager;
+//import pt.webdetails.cda.cache.CacheScheduleManager;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
@@ -32,6 +34,7 @@ public abstract class Query implements Serializable
 
   private static final long serialVersionUID = 1L;
 
+  private static Log logger = LogFactory.getLog(Query.class);
   private long id;
   private String cdaFile;
   private String dataAccessId;
@@ -188,7 +191,8 @@ public abstract class Query implements Serializable
     }
     catch (JSONException jse)
     {
-      CacheScheduleManager.logger.error("Failed to build parameters for query: " + getCdaFile() + "/" + getDataAccessId());
+      //CacheScheduleManager.logger.error("Failed to build parameters for query: " + getCdaFile() + "/" + getDataAccessId());
+        logger.error("Failed to build parameters for query: " + getCdaFile() + "/" + getDataAccessId());
       return null;
     }
     try
@@ -204,7 +208,8 @@ public abstract class Query implements Serializable
     }
     catch (JSONException jse)
     {
-      CacheScheduleManager.logger.error("Failed to build JSON for query: " + getCdaFile() + "/" + getDataAccessId());
+      //CacheScheduleManager.logger.error("Failed to build JSON for query: " + getCdaFile() + "/" + getDataAccessId());
+        logger.error("Failed to build JSON for query: " + getCdaFile() + "/" + getDataAccessId());
       return null;
     }
     return output;
@@ -219,7 +224,8 @@ public abstract class Query implements Serializable
     }
     catch (Exception e)
     {
-      CacheScheduleManager.logger.error("Failed to execute query " + toString());
+      //CacheScheduleManager.logger.error("Failed to execute query " + toString());
+      logger.error("Failed to execute query " + toString());
     }
   }
 
@@ -244,7 +250,8 @@ public abstract class Query implements Serializable
     Date d = new Date();
     CdaEngine.getInstance().doQuery(nullOut, cdaSettings, queryOptions);
     setTimeElapsed(new Date().getTime() - d.getTime());
-    CacheScheduleManager.logger.debug("Time elapsed: " + Double.toString(new Double(getTimeElapsed()) / 1000) + "s");
+    //CacheScheduleManager.logger.debug("Time elapsed: " + Double.toString(new Double(getTimeElapsed()) / 1000) + "s");
+    logger.debug("Time elapsed: " + Double.toString(new Double(getTimeElapsed()) / 1000) + "s");
   }
 
 

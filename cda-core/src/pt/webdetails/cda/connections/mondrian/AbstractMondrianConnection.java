@@ -68,8 +68,9 @@ public abstract class AbstractMondrianConnection extends AbstractConnection impl
     IMondrianRoleMapper roleMapper = (IMondrianRoleMapper)CdaEngine.getInstance().getBeanFactory().getBean("IMondrianRoleMapper");
 	  try
 	  {
-      if (roleMapper != null)
-        return roleMapper.getRoles(catalog);
+            if (roleMapper != null)
+                return roleMapper.getRoles(catalog);
+
 	  }
 	  catch (Exception e)
 	  {

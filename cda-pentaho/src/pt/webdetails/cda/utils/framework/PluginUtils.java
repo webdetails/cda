@@ -16,7 +16,7 @@ public class PluginUtils {
   public static <T> T getPluginBean(String prefix, Class<T> interfaceClass) throws PluginBeanException {
     
     if(interfaceClass == null){
-      throw new IllegalArgumentException();
+  throw new IllegalArgumentException();
     }
     
     String key = prefix + interfaceClass.getSimpleName();

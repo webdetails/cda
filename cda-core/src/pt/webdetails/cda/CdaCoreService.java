@@ -19,13 +19,13 @@ import java.util.Locale;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.engine.IParameterProvider;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.util.messages.LocaleHelper;
+//import org.pentaho.platform.api.engine.IParameterProvider;
+//import org.pentaho.platform.engine.core.system.PentahoSystem;
+//import org.pentaho.platform.util.messages.LocaleHelper;
 import org.apache.commons.lang.StringUtils;
 
 import pt.webdetails.cda.AccessDeniedException;
-import pt.webdetails.cda.cache.CacheScheduleManager;
+//import pt.webdetails.cda.cache.CacheScheduleManager;
 import pt.webdetails.cda.cache.monitor.CacheMonitorHandler;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
@@ -36,18 +36,19 @@ import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cpf.session.IUserSession;
-import pt.webdetails.cpf.SimpleContentGenerator;
-import pt.webdetails.cpf.annotations.AccessLevel;
-import pt.webdetails.cpf.annotations.Audited;
-import pt.webdetails.cpf.annotations.Exposed;
-import pt.webdetails.cpf.repository.RepositoryAccess;
-import pt.webdetails.cpf.repository.RepositoryAccess.FileAccess;
+//import pt.webdetails.cpf.SimpleContentGenerator;
+//import pt.webdetails.cpf.annotations.AccessLevel;
+//import pt.webdetails.cpf.annotations.Audited;
+//import pt.webdetails.cpf.annotations.Exposed;
+//import pt.webdetails.cpf.repository.RepositoryAccess;
+//import pt.webdetails.cpf.repository.RepositoryAccess.FileAccess;
+import pt.webdetails.cpf.http.ICommonParameterProvider;
 
 
-public class CdaCoreContentGenerator extends SimpleContentGenerator
+public class CdaCoreService 
 {
 
-  private static Log logger = LogFactory.getLog(CdaContentGenerator.class);
+  private static Log logger = LogFactory.getLog(CdaCoreService.class);
   public static final String PLUGIN_NAME = "cda";
   private static final long serialVersionUID = 1L;
   private static final String EDITOR_SOURCE = "/editor/editor.html";
@@ -62,11 +63,11 @@ public class CdaCoreContentGenerator extends SimpleContentGenerator
   public static final String ENCODING = "UTF-8";
 
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC)
-  @Audited(action = "doQuery")
-  public void doQuery(final OutputStream out) throws Exception
+  //@Exposed(accessLevel = AccessLevel.PUBLIC)
+ // @Audited(action = "doQuery")
+  public void doQuery(final OutputStream out,ICommonParameterProvider requParams) throws Exception
   {
-    final IParameterProvider requestParams = getRequestParameters();
+    final ICommonParameterProvider requestParams = requParams;
         
     final CdaEngine engine = CdaEngine.getInstance();
     final QueryOptions queryOptions = new QueryOptions();
@@ -166,11 +167,11 @@ public class CdaCoreContentGenerator extends SimpleContentGenerator
 
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC)
-  public void unwrapQuery(final OutputStream out) throws Exception
+  //@Exposed(accessLevel = AccessLevel.PUBLIC)
+  public void unwrapQuery(final OutputStream out,ICommonParameterProvider requParam) throws Exception
   {
     final CdaEngine engine = CdaEngine.getInstance();
-    final IParameterProvider requestParams = getRequestParameters();
+    final ICommonParameterProvider requestParams = requParam;
     final String path = getRelativePath(requestParams);
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
     String uuid = requestParams.getStringParameter("uuid", null);
@@ -196,12 +197,12 @@ public class CdaCoreContentGenerator extends SimpleContentGenerator
     
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC)
-  public void listQueries(final OutputStream out) throws Exception
+ // @Exposed(accessLevel = AccessLevel.PUBLIC)
+  public void listQueries(final OutputStream out,ICommonParameterProvider requParam) throws Exception
   {
     final CdaEngine engine = CdaEngine.getInstance();
 
-    final IParameterProvider requestParams = getRequestParameters();
+    final ICommonParameterProvider requestParams = requParam;
     final String path = getRelativePath(requestParams);
     if(StringUtils.isEmpty(path)){
       throw new IllegalArgumentException("No path provided");
@@ -219,11 +220,11 @@ public class CdaCoreContentGenerator extends SimpleContentGenerator
     engine.listQueries(out, cdaSettings, discoveryOptions);
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC)
-  public void listParameters(final OutputStream out) throws Exception
+ // @Exposed(accessLevel = AccessLevel.PUBLIC)
+  public void listParameters(final OutputStream out, ICommonParameterProvider requParam) throws Exception
   {
     final CdaEngine engine = CdaEngine.getInstance();
-    final IParameterProvider requestParams = getRequestParameters();
+    final ICommonParameterProvider requestParams = requParam;
     final String path = getRelativePath(requestParams);
     logger.debug("Do Query: getRelativePath:" + path);
     logger.debug("Do Query: getSolPath:" + PentahoSystem.getApplicationContext().getSolutionPath(path));
@@ -241,20 +242,20 @@ public class CdaCoreContentGenerator extends SimpleContentGenerator
   }
 
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.XML)
-  public void getCdaFile(final OutputStream out) throws Exception
+  //@Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.XML)
+  public void getCdaFile(final OutputStream out,ICommonParameterProvider requParam) throws Exception
   {
-    String document = getResourceAsString(StringUtils.replace(getRelativePath(getRequestParameters()), "///", "/"), FileAccess.READ);// ISolutionRepository.ACTION_UPDATE);//TODO:check
+    String document = getResourceAsString(StringUtils.replace(getRelativePath(requParam), "///", "/"), FileAccess.READ);// ISolutionRepository.ACTION_UPDATE);//TODO:check
     writeOut(out, document);
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.PLAIN_TEXT)
-  public void writeCdaFile(OutputStream out) throws Exception
+ // @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.PLAIN_TEXT)
+  public void writeCdaFile(OutputStream out, ICommonParameterProvider requParam) throws Exception
   {
     //TODO: Validate the filename in some way, shape or form!
 
     RepositoryAccess repository = RepositoryAccess.getRepository(userSession);
-    final IParameterProvider requestParams = getRequestParameters();
+    final ICommonParameterProvider requestParams = requParam;
     // Check if the file exists and we have permissions to write to it
     String path = getRelativePath(requestParams);
 
@@ -277,20 +278,20 @@ public class CdaCoreContentGenerator extends SimpleContentGenerator
     }
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC)
-  public void getCdaList(final OutputStream out) throws Exception
+ // @Exposed(accessLevel = AccessLevel.PUBLIC)
+  public void getCdaList(final OutputStream out,ICommonParameterProvider requParam) throws Exception
   {
     final CdaEngine engine = CdaEngine.getInstance();
 
     final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
-    discoveryOptions.setOutputType(getRequestParameters().getStringParameter("outputType", "json"));
+    discoveryOptions.setOutputType(requParam.getStringParameter("outputType", "json"));
 
     String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
     setResponseHeaders(mimeType);
     engine.getCdaList(out, discoveryOptions, userSession);
   }
 
-  @Exposed(accessLevel = AccessLevel.ADMIN, outputType = MimeType.PLAIN_TEXT)
+ // @Exposed(accessLevel = AccessLevel.ADMIN, outputType = MimeType.PLAIN_TEXT)
   public void clearCache(final OutputStream out) throws Exception
   {
     SettingsManager.getInstance().clearCache();
@@ -299,13 +300,13 @@ public class CdaCoreContentGenerator extends SimpleContentGenerator
     out.write("Cache cleared".getBytes());
   }
   
-  @Exposed(accessLevel = AccessLevel.ADMIN)
-  public void cacheMonitor(final OutputStream out){
-    CacheMonitorHandler.getInstance().handleCall(getRequestParameters(), out);
+ // @Exposed(accessLevel = AccessLevel.ADMIN)
+  public void cacheMonitor(final OutputStream out,ICommonParameterProvider requParam){
+    CacheMonitorHandler.getInstance().handleCall(requParam, out);
   }
 
 
-  public void syncronize(final IParameterProvider pathParams, final OutputStream out) throws Exception
+  public void syncronize(final ICommonParameterProvider pathParams, final OutputStream out) throws Exception
   {
     throw new UnsupportedOperationException("Feature not implemented yet");
 //    final SyncronizeCdfStructure syncCdfStructure = new SyncronizeCdfStructure();
@@ -313,14 +314,14 @@ public class CdaCoreContentGenerator extends SimpleContentGenerator
   }
 
 
-  @Override
+ // @Override
   public Log getLogger()
   {
     return logger;
   }
 
 
-  private String getRelativePath(final IParameterProvider requestParams) throws UnsupportedEncodingException
+  private String getRelativePath(final ICommonParameterProvider requestParams) throws UnsupportedEncodingException
   {
 
     String path = URLDecoder.decode(requestParams.getStringParameter("path", ""), ENCODING);
@@ -387,14 +388,14 @@ public class CdaCoreContentGenerator extends SimpleContentGenerator
     }
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC)
-  public void editFile(final OutputStream out) throws Exception
+  //@Exposed(accessLevel = AccessLevel.PUBLIC)
+  public void editFile(final OutputStream out, ICommonParameterProvider requParam) throws Exception
   {
 
     RepositoryAccess repository = RepositoryAccess.getRepository(userSession);
     
     // Check if the file exists and we have permissions to write to it
-    String path = getRelativePath(getRequestParameters());
+    String path = getRelativePath(requParam);
     if (repository.canWrite(path))
     {
       boolean hasCde = repository.resourceExists("system/pentaho-cdf-dd");
@@ -411,7 +412,7 @@ public class CdaCoreContentGenerator extends SimpleContentGenerator
 
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC)
+  //@Exposed(accessLevel = AccessLevel.PUBLIC)
   public void previewQuery(final OutputStream out) throws Exception
   {
     final String previewerPath = "system/" + PLUGIN_NAME + PREVIEWER_SOURCE;
@@ -419,22 +420,22 @@ public class CdaCoreContentGenerator extends SimpleContentGenerator
   }
 
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.CSS)
+  //@Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.CSS)
   public void getCssResource(final OutputStream out) throws Exception
   {
     getResource( out);
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.JAVASCRIPT)
+  //@Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.JAVASCRIPT)
   public void getJsResource(final OutputStream out) throws Exception
   {
     getResource( out);
   }
 
 
-  public void getResource(final OutputStream out) throws Exception
+  public void getResource(final OutputStream out, ICommonParameterProvider requParam) throws Exception
   {
-    String resource = getRequestParameters().getStringParameter("resource", null);
+    String resource = requParam.getStringParameter("resource", null);
     resource = resource.startsWith("/") ? resource : "/" + resource;
     getResource(out, resource);
   }
@@ -456,10 +457,10 @@ public class CdaCoreContentGenerator extends SimpleContentGenerator
     
   }
   
-  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.JSON)
-  public void listDataAccessTypes(final OutputStream out) throws Exception
+  //@Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.JSON)
+  public void listDataAccessTypes(final OutputStream out, ICommonParameterProvider requParam) throws Exception
   {
-    boolean refreshCache = Boolean.parseBoolean(getRequestParameters().getStringParameter("refreshCache", "false"));
+    boolean refreshCache = Boolean.parseBoolean(requParam.getStringParameter("refreshCache", "false"));
     
     DataAccessConnectionDescriptor[] data = SettingsManager.getInstance().
             getDataAccessDescriptors(refreshCache);
@@ -476,21 +477,42 @@ public class CdaCoreContentGenerator extends SimpleContentGenerator
     }
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC)
-  public void cacheController(OutputStream out)//XXX -  get rid of dependency
+  //@Exposed(accessLevel = AccessLevel.PUBLIC)
+  public void cacheController(OutputStream out, ICommonParameterProvider requParam)//XXX -  get rid of dependency
   {
-    CacheScheduleManager.getInstance().handleCall(getRequestParameters(), out);
+    CacheScheduleManager.getInstance().handleCall(requParam, out);
   }
 
-  @Exposed(accessLevel = AccessLevel.ADMIN)
+  //@Exposed(accessLevel = AccessLevel.ADMIN)
   public void manageCache(final OutputStream out) throws Exception
   {
     writeOut(out, getResourceAsString(CACHE_MANAGER_PATH, FileAccess.EXECUTE));
   }
 
 
-  @Override
   public String getPluginName() {
     return "cda";
   }
+  
+  
+  private void writeOut(OutputStream out,String uuid){//XXX needs checking
+      
+      //TODO code
+      try{
+      out.write(uuid.getBytes());
+      }catch(IOException e){
+          logger.error("Failed to write to stream");
+      }
+  }
+  private String getMimeType(String attachmentName){
+      //TODO code
+      return null;
+  }
+  private void setResponseHeaders(String mimeType, String attachmentName){
+      
+  }
+  private void setResponseHeaders(String mimeType){//XXX can setResponseHeaders really receive just one param?
+      
+  }
+  
 }
