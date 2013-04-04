@@ -1,6 +1,8 @@
 build/
 dist/
 /bin
+nbbuild.xml
+nbproject/
 /lib
 nbproject/private/
 .DS_Store
