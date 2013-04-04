@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
+
+	<info organisation="pentaho" module="cda" revision="${project.revision}"/>
+
+	<configurations>
+		<conf name="default"/>
+		<conf name="test" visibility="private"/>
+    <conf name="legacy"/>
+        <conf name="runtime"/>
+    <conf name="sources"/>
+	</configurations>
+
+	<dependencies defaultconf="default->default">
+		<!--  pentaho dependencies -->
+		
+		<!--  internal dependencies -->
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin"
+			rev="${dependency.pentaho-reporting.revision}" changing="true">
+		</dependency>
+
+    <dependency org="com.hazelcast" name="hazelcast" transitive="false" rev="2.4" conf="default->default;legacy->default"/>
+
+	  <!--
+	  <dependency org="pentaho" name="cpf"
+		  rev="TRUNK-SNAPSHOT" transitive="false" changing="true" conf='runtime->default'/>
+-->
+
+<dependency org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.8.2" conf='runtime->default'/>
+
+        <!-- Legacy -->
+    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin"
+      rev="${dependency.pentaho-reporting.revision.legacy}" changing="true" conf="legacy->default"/>
+        
+    <dependency org="net.sf.ehcache" name="ehcache-core" rev="2.0.1" conf="legacy->default"/>
+      
+      <exclude module="ehcache" />  <!-- Comment this for CDA with 3.6.0 dependencies -->
+    
+	</dependencies>
+
+</ivy-module>
