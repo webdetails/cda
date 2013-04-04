@@ -203,18 +203,10 @@ public class SettingsManager {
       
     ArrayList<DataAccessConnectionDescriptor> descriptors = new ArrayList<DataAccessConnectionDescriptor>();
     // First we need a list of all the data accesses. We're getting that from a .properties file, as a comma-separated array.
-    final File file = new File(PentahoSystem.getApplicationContext().getSolutionPath("system/cda/resources/components.properties"));
-    final Properties resources = new Properties();
     
-    FileInputStream fin = null;
-    try{
-      fin = new FileInputStream(file);
-      resources.load(fin);
-    }
-    finally {
-      IOUtils.closeQuietly(fin);
-    }
-    String[] dataAccesses = StringUtils.split(StringUtils.defaultString(resources.getProperty("dataAccesses")), ",");
+    
+    IDataAccess dataAcess = (IDataAccess)CdaEngine.getInstance().getBeanFactory().getBean("IDataAccess");
+    String[] dataAccesses = dataAcess.getDataAcesses();
 
     // We apply some sanity checks to the dataAccesses listed:
     //    1. It can't be abstract,

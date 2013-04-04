@@ -1,7 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
 package pt.webdetails.cda.connections;
 
 import java.io.File;
@@ -14,7 +13,7 @@ import org.dom4j.Document;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
-import pt.webdetails.cda.CdaCoreContentGenerator;
+import pt.webdetails.cda.CdaCoreService;
 
 /**
  *
@@ -28,7 +27,7 @@ public class ConnectionCatalog {
   };
   private static ConnectionCatalog _instance;
   private static Log logger = LogFactory.getLog(ConnectionCatalog.class);
-  public static final String PLUGIN_DIR = PentahoSystem.getApplicationContext().getSolutionPath("system/" + CdaCoreContentGenerator.PLUGIN_NAME);
+  public static final String PLUGIN_DIR = PentahoSystem.getApplicationContext().getSolutionPath("system/" + CdaCoreService.PLUGIN_NAME);
   private HashMap<String, ConnectionInfo> connectionPool;
 
   public ConnectionCatalog() {

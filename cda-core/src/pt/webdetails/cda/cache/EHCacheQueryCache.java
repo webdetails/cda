@@ -17,7 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.lang.StringUtils;
 
 import pt.webdetails.cda.CdaBoot;
-import pt.webdetails.cda.CdaCoreContentGenerator;
+import pt.webdetails.cda.CdaCoreService;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.cache.monitor.CacheElementInfo;
 import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
@@ -36,7 +36,7 @@ public class EHCacheQueryCache implements IQueryCache {
   private static final String CACHE_NAME = "pentaho-cda-dataaccess";
   private static final String CACHE_CFG_FILE = "ehcache.xml";
   private static final String CACHE_CFG_FILE_DIST = "ehcache-dist.xml";
-  private static final String PLUGIN_PATH = "system/" + CdaCoreContentGenerator.PLUGIN_NAME + "/";
+  private static final String PLUGIN_PATH = "system/" + CdaCoreService.PLUGIN_NAME + "/";
   private static final String USE_TERRACOTTA_PROPERTY = "pt.webdetails.cda.UseTerracotta";
   private static CacheManager cacheManager;
   
@@ -85,7 +85,8 @@ public class EHCacheQueryCache implements IQueryCache {
         cacheManager = new net.sf.ehcache.CacheManager(cfgFile);
         logger.debug("Cache started using " + cfgFile);
       }
-      else
+      //XXX no need for pentaho context in core
+      /*else
       {//look at cda folder in pentaho
         try
         {//preferred way: proper config in plugin folder
@@ -99,7 +100,7 @@ public class EHCacheQueryCache implements IQueryCache {
           URL cfgFile = CdaBoot.class.getResource(cacheConfigFile);
           cacheManager = new net.sf.ehcache.CacheManager(cfgFile);
         }
-      }
+      }*/
       // enable clean shutdown so ehcache's diskPersistent attribute can work
       if (!useTerracotta)
       {
