@@ -42,7 +42,9 @@ public class CdaEngine
   //TODO: we have to clean this at some point or at least make it a reference map
   private Map<UUID, QueryOptions> wrappedQueries = new ConcurrentHashMap<UUID, QueryOptions>();
 
-  protected CdaEngine()
+  private ICdaBeanFactory beanFactory;
+  
+  protected CdaEngine() throws InitializationException
   {
     logger.info("Initializing CdaEngine");
     init();
@@ -131,23 +133,64 @@ public class CdaEngine
   }
 
 
-  private void init()
+  private void init() throws InitializationException
   {
 
     // Start ClassicEngineBoot
     CdaBoot.getInstance().start();
     ClassicEngineBoot.getInstance().start();
-
+    
+    
+    //Get beanFactory
+    String className = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.beanFactoryClass");
+    
+    if (className != null && !className.isEmpty()) {
+      try {
+        final Class<?> clazz;
+        clazz = Class.forName(className);
+        if (!ICdaBeanFactory.class.isAssignableFrom(clazz)) {
+          throw new InitializationException (
+            "Plugin class specified by property pt.webdetails.cda.beanFactoryClass "
+            + " must implement "
+            + ICdaBeanFactory.class.getName(), null);
+        }
+          beanFactory = (ICdaBeanFactory) clazz.newInstance();
+        } catch (ClassNotFoundException e) {
+          String errorMessage = "Class not found when loading bean factory " + className;
+          logger.error(errorMessage, e);
+          throw new InitializationException(errorMessage, e); 
+        } catch (IllegalAccessException e) {
+          String errorMessage = "Illegal access when loading bean factory from " + className;
+          logger.error(errorMessage, e);
+          throw new InitializationException(errorMessage, e); 
+        } catch (InstantiationException e) {
+          String errorMessage = "Instantiation error when loading bean factory from " + className;
+          logger.error(errorMessage, e);
+          throw new InitializationException(errorMessage, e); 
+        }
+      }
+    
+    
+    
 
   }
 
 
+  public ICdaBeanFactory getBeanFactory() {
+    return beanFactory;
+  }
+  
+  
   public static synchronized CdaEngine getInstance()
   {
 
     if (_instance == null)
     {
-      _instance = new CdaEngine();
+      try {
+        _instance = new CdaEngine();
+      } catch (InitializationException ie) {
+        logger.fatal("Initialization failed. CDA will NOT be available", ie);
+      }
     }
 
     return _instance;

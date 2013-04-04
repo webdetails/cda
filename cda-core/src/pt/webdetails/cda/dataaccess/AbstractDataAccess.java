@@ -19,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.cache.EHCacheQueryCache;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.connections.Connection;
@@ -31,7 +32,6 @@ import pt.webdetails.cda.settings.UnknownDataAccessException;
 import pt.webdetails.cda.utils.InvalidOutputIndexException;
 import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.Util;
-import pt.webdetails.cda.utils.framework.PluginUtils;
 import pt.webdetails.cda.utils.kettle.SortException;
 
 /**
@@ -214,7 +214,7 @@ public abstract class AbstractDataAccess implements DataAccess
   public static synchronized IQueryCache getCdaCache(){
     if(cache == null){
       try {
-        cache = PluginUtils.getPluginBean("cda.", IQueryCache.class);
+        cache = (IQueryCache) CdaEngine.getInstance().getBeanFactory().getBean("IQueryCache"); 
       } catch (Exception e) {
         logger.error(e.getMessage());
       }

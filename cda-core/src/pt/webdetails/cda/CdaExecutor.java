@@ -182,12 +182,12 @@ public class CdaExecutor
 //  }
 
 
-  private void testSingleSqlQuery(final OutputStream out, final CdaSettings cdaSettings)
+  private void testSingleSqlQuery(final OutputStream out, final CdaSettings cdaSettings) 
       throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
   {
     logger.debug("Doing query on Cda - Initializing CdaEngine");
     final CdaEngine engine = CdaEngine.getInstance();
-
+    
     QueryOptions queryOptions = new QueryOptions();
     queryOptions.setDataAccessId("1");
     queryOptions.addParameter("orderDate", "2003-04-01");
