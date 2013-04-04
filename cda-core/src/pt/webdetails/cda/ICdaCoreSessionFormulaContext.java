@@ -4,7 +4,7 @@
  */
 package pt.webdetails.cda;
 
-public interface ICdaSessionFormulaContext {
+public interface ICdaCoreSessionFormulaContext {
     
     
     public Object resolveReference(final Object name);

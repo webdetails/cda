@@ -200,7 +200,7 @@ public class SettingsManager {
   }
 
   public DataAccessConnectionDescriptor[] getDataAccessDescriptors(boolean refreshCache) throws Exception {
-
+      
     ArrayList<DataAccessConnectionDescriptor> descriptors = new ArrayList<DataAccessConnectionDescriptor>();
     // First we need a list of all the data accesses. We're getting that from a .properties file, as a comma-separated array.
     final File file = new File(PentahoSystem.getApplicationContext().getSolutionPath("system/cda/resources/components.properties"));

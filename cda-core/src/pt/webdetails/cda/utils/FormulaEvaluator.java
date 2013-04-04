@@ -9,7 +9,8 @@ import org.apache.commons.lang.StringUtils;
 import org.pentaho.reporting.libraries.formula.Formula;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 
-import pt.webdetails.cda.ICdaSessionFormulaContext;
+import pt.webdetails.cda.ICdaCoreSessionFormulaContext;//XXX should I maintain this class and interface?
+import pt.webdetails.cda.CdaCoreSessionFormulaContext;
 import pt.webdetails.cda.dataaccess.InvalidParameterException;
 import pt.webdetails.cpf.session.IUserSession;
 import pt.webdetails.cpf.session.UserSession;
