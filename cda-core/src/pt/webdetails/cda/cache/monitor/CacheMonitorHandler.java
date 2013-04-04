@@ -15,16 +15,13 @@ import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-//import org.pentaho.platform.api.engine.IParameterProvider;
-//import org.pentaho.platform.api.engine.IPentahoSession;
-//import org.pentaho.platform.engine.security.SecurityHelper;
-//import org.pentaho.reporting.libraries.base.util.StringUtils;
 import pt.webdetails.cpf.http.ICommonParameterProvider;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.cache.TableCacheKey;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.utils.framework.JsonCallHandler;
+import pt.webdetails.cpf.session.IUserSession;
 
 public class CacheMonitorHandler extends JsonCallHandler 
 {
@@ -49,9 +46,9 @@ public class CacheMonitorHandler extends JsonCallHandler
   }
   
   @Override
-  protected boolean hasPermission(IPentahoSession session, Method method) 
+  protected boolean hasPermission(IUserSession session, Method method) 
   {//limit all interaction besides overview to admin role
-    return method.getName().equals("cacheOverview") || SecurityHelper.isPentahoAdministrator(session);
+    return method.getName().equals("cacheOverview") || session.isAdministrator();
   }
   
   private void registerMethods()
