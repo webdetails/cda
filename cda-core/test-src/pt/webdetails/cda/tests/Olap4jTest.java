@@ -74,7 +74,7 @@ public class Olap4jTest extends TestCase
     boolean hasCash = false;
     
     String query = ((Olap4JDataAccess) cdaSettings.getDataAccess("2")).getQuery();
-    IQueryCache cache = CdaEngine.getInstance().getQueryCache();
+    IQueryCache cache = (IQueryCache) CdaEngine.getInstance().getBeanFactory().getBean("IQueryCache");
     logger.info("Cache cleared!");
     cache.clearCache();
     engine.doQuery(out, cdaSettings, queryOptions);

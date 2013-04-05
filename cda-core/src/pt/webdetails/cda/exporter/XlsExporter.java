@@ -12,7 +12,8 @@ import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.steps.exceloutput.ExcelOutputMeta;
 
-import pt.webdetails.cpf.repository.RepositoryAccess;
+import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cpf.repository.IRepositoryAccess;
 
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM

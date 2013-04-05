@@ -15,9 +15,10 @@ import org.pentaho.reporting.libraries.formula.FormulaContext;
 import pt.webdetails.cda.ICdaCoreSessionFormulaContext;//XXX should I maintain this class and interface?
 import pt.webdetails.cda.CdaCoreSessionFormulaContext;
 
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.dataaccess.InvalidParameterException;
+import pt.webdetails.cpf.session.ISessionUtils;
 import pt.webdetails.cpf.session.IUserSession;
-import pt.webdetails.cpf.session.UserSession;
 
 public class FormulaEvaluator {
   
@@ -29,7 +30,7 @@ public class FormulaEvaluator {
     
     if(!StringUtils.contains(text, FORMULA_BEGIN)) return text;
     try{
-      IUserSession session = UserSession.session;//XXX lacks implementation of IUserSession
+      IUserSession session = ((ISessionUtils)CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils")).getCurrentSession();
       return replaceFormula(text, new CdaCoreSessionFormulaContext(session));
     }
     catch(Exception e){//TODO: change
@@ -72,8 +73,11 @@ public class FormulaEvaluator {
     try {
       Formula formula = new Formula(localValue);
       // set context if available
-      if (formulaContext != null) formula.initialize(formulaContext);
-      else formula.initialize(new CdaCoreSessionFormulaContext(UserSession.session));
+      IUserSession session = ((ISessionUtils)CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils")).getCurrentSession();
+      if (formulaContext != null) 
+        formula.initialize(formulaContext);
+      else 
+        formula.initialize(new CdaCoreSessionFormulaContext(session));
       // evaluate
       Object result = formula.evaluate();
       if(result instanceof ArrayList)

@@ -35,7 +35,7 @@
     <dependency org="net.sf.ehcache" name="ehcache-core" rev="2.0.1" conf="legacy->default"/>
       
               <dependency org="junit" name="junit" rev="3.8.1" conf="test->default"/>      
-      
+              <dependency org="xmlunit" name="xmlunit" rev="1.3" conf="test->default"/>      
       
       <exclude module="ehcache" />  <!-- Comment this for CDA with 3.6.0 dependencies -->
       
