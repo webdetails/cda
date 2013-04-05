@@ -6,18 +6,12 @@ package pt.webdetails.cda.utils;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-//XXX remove
-//import org.pentaho.platform.api.engine.IPentahoSession;
-//import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.reporting.libraries.formula.Formula;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 
-import pt.webdetails.cda.ICdaCoreSessionFormulaContext;//XXX should I maintain this class and interface?
-import pt.webdetails.cda.CdaCoreSessionFormulaContext;
-
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.dataaccess.InvalidParameterException;
-import pt.webdetails.cpf.session.IUserSession;
-import pt.webdetails.cpf.session.UserSession;
+import pt.webdetails.cpf.session.ISessionUtils;
 
 public class FormulaEvaluator {
   
@@ -29,8 +23,9 @@ public class FormulaEvaluator {
     
     if(!StringUtils.contains(text, FORMULA_BEGIN)) return text;
     try{
-      IUserSession session = UserSession.session;//XXX lacks implementation of IUserSession
-      return replaceFormula(text, new CdaCoreSessionFormulaContext(session));
+        ISessionUtils sessionUtils = (ISessionUtils) CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils");
+        
+      return replaceFormula(text, new CdaCoreSessionFormulaContext(sessionUtils.getCurrentSession()));//XXX CdaCoreSessionFormulaContext got deleted
     }
     catch(Exception e){//TODO: change
       throw new RuntimeException(e);
@@ -71,9 +66,10 @@ public class FormulaEvaluator {
   {
     try {
       Formula formula = new Formula(localValue);
+      ISessionUtils sessionUtils = (ISessionUtils) CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils");
       // set context if available
       if (formulaContext != null) formula.initialize(formulaContext);
-      else formula.initialize(new CdaCoreSessionFormulaContext(UserSession.session));
+      else formula.initialize(new CdaCoreSessionFormulaContext(sessionUtils.getCurrentSession()));
       // evaluate
       Object result = formula.evaluate();
       if(result instanceof ArrayList)

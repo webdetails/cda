@@ -18,12 +18,13 @@ import org.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cda.PluginHibernateException;
+//import pt.webdetails.cda.PluginHibernateException;
 //import pt.webdetails.cda.cache.CacheScheduleManager;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
-import pt.webdetails.cda.utils.PluginHibernateUtil;
+import pt.webdetails.cpf.session.ISessionUtils;
+//import pt.webdetails.cda.utils.PluginHibernateUtil;
 
 /**
  *
@@ -261,12 +262,14 @@ public abstract class Query implements Serializable
   public abstract long getTimeElapsed();
 
 
-  public void save() throws PluginHibernateException
+  public void save() throws Exception//PluginHibernateException
   {
     if (getId() == 0)
     {
-      Session s = PluginHibernateUtil.getSession();
-      s.save(this);
+      ISessionUtils sessionUtils = (ISessionUtils) CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils");
+      //Session s = PluginHibernateUtil.getSession();
+      sessionUtils.getCurrentSession().save(this);//XXX  save receives an Object o, needs cast to retrieve
+      //s.save(this);
     }
   }
 

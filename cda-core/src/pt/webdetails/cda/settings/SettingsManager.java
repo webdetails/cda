@@ -1,27 +1,18 @@
 package pt.webdetails.cda.settings;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.lang.UnsupportedOperationException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
-
 import org.apache.commons.collections.map.LRUMap;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.DOMReader;
-//XXX remove
-//import org.pentaho.platform.api.engine.ISolutionFile;
-//import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.reporting.libraries.resourceloader.Resource;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
@@ -32,9 +23,10 @@ import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
-import pt.webdetails.cpf.repository.RepositoryAccess;
-import pt.webdetails.cpf.repository.RepositoryAccess.FileAccess;
+import pt.webdetails.cpf.repository.IRepositoryAccess;
+import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cpf.repository.IRepositoryFile;
 
 /**
  * This file is responsible to build / keep the different cda settings.
@@ -151,7 +143,11 @@ public class SettingsManager {
       }
     }
     else {
-      ISolutionFile savedCda = RepositoryAccess.getRepository().getSolutionFile(id, FileAccess.NONE);
+        //XXX IRepositoryAccess doesn't have getSolutionFile(String id, FileAccess fa) method
+        //XXX SolutionFile = RepositoryFile?
+      IRepositoryAccess repository = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
+      //ISolutionFile savedCda = repository.getSolutionFile(id, FileAccess.NONE);//RepositoryAccess.getRepository().getSolutionFile(id, FileAccess.NONE);
+      IRepositoryFile savedCda = repository.getRepositoryFile(id,FileAccess.NONE);
       if(savedCda != null) return savedCda.getLastModified();
     }
     return null;

@@ -14,13 +14,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
-//XXX remove
-//import org.pentaho.platform.api.engine.IParameterProvider;
-//import org.pentaho.platform.api.engine.IPentahoSession;
-//import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cpf.session.IUserSession;
-import pt.webdetails.cpf.session.UserSession;
 import pt.webdetails.cpf.http.ICommonParameterProvider;
+import pt.webdetails.cpf.session.ISessionUtils;
 /**
  * Boilerplate for a JSON content generator
  */
@@ -34,7 +31,6 @@ public abstract class JsonCallHandler {
   private HashMap<String, Method> methods = new HashMap<String, Method>();
   private String methodParameter = "method";
   private String defaultMethod = null;
-  private IUserSession session = new UserSession();//XXX probably won't need, look later on
   public static class JsonResultFields 
   {
     public static final String STATUS = "status";
@@ -93,7 +89,7 @@ public abstract class JsonCallHandler {
        
     JSONObject result = null;
     Method method = methods.get(methodName);
-    
+    ISessionUtils sessionUtils = (ISessionUtils) CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils");
     try 
     {
       if(methodName == null){
@@ -103,7 +99,7 @@ public abstract class JsonCallHandler {
       {
         result = getErrorJson(MessageFormat.format("Method {0} not found.", methodName));
       }
-      else if(!hasPermission(session, method)){//XXX will cpf have an implementation of IUserSession?
+      else if(!hasPermission(sessionUtils.getCurrentSession(), method)){//XXX will cpf have an implementation of IUserSession?
         result = getErrorJson(MessageFormat.format("Permission denied to call method {0}:{1}.", this.getClass().getName(), methodName));
       }
       else 

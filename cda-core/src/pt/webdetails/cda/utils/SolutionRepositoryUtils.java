@@ -10,14 +10,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
-//XXX remove
-//import org.pentaho.platform.api.engine.IPentahoSession;
-//import org.pentaho.platform.api.engine.ISolutionFile;
-//import org.pentaho.platform.api.engine.ISolutionFilter;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cpf.session.IUserSession;
-import pt.webdetails.cpf.repository.RepositoryAccess;
-import pt.webdetails.cpf.repository.RepositoryAccess.FileAccess;
+import pt.webdetails.cpf.repository.IRepositoryAccess;
+import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
+import pt.webdetails.cpf.repository.IRepositoryFile;
+import pt.webdetails.cpf.repository.IRepositoryFileFilter;
 
 /**
  * Utility class for SolutionRepository utils
@@ -54,8 +53,9 @@ public class SolutionRepositoryUtils
   {
 
     logger.debug("Getting CDA list");
-
-    Document cdaTree = RepositoryAccess.getRepository(userSession).getFullSolutionTree(FileAccess.READ, new CdaFilter());
+    //XXX IRepositoryAccess doesn't have getFullSolutionTree(FileAccess fa,CdaFilter cdaFltr) method
+    IRepositoryAccess repository = (IRepositoryAccess) CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
+    Document cdaTree = repository.getFullSolutionTree(FileAccess.READ, new CdaFilter());//RepositoryAccess.getRepository(userSession).getFullSolutionTree(FileAccess.READ, new CdaFilter());
     @SuppressWarnings("unchecked")
     List<Element> cdaFiles = cdaTree.selectNodes("//leaf[@isDir=\"false\"]");
 
@@ -79,19 +79,24 @@ public class SolutionRepositoryUtils
   }
 
 
-  private class CdaFilter implements ISolutionFilter
+  private class CdaFilter implements IRepositoryFileFilter
   {
-
-    public boolean keepFile(final ISolutionFile iSolutionFile, final int i)
+      
+      public boolean keepFile(final IRepositoryFile iRepositoryFile)//XXX the signature of this method was: keepFile(final IRepositoryFile iRepositoryFile, final int i)
     {
-      if (iSolutionFile.isDirectory())
+      if (iRepositoryFile.isDirectory())
       {
         return true;
       }
       else
       {
-        return iSolutionFile.getExtension().equals(EXTENSION);
+        return iRepositoryFile.getExtension().equals(EXTENSION);
       }
     }
+
+        @Override
+        public boolean accept(IRepositoryFile irf) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
   }
 }

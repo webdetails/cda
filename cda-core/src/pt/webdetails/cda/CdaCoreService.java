@@ -36,13 +36,16 @@ import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cpf.session.IUserSession;
+import pt.webdetails.cda.utils.ISolutionUtil;
+import pt.webdetails.cda.cache.ICacheScheduleManager;
 //import pt.webdetails.cpf.SimpleContentGenerator;
 //import pt.webdetails.cpf.annotations.AccessLevel;
 //import pt.webdetails.cpf.annotations.Audited;
 //import pt.webdetails.cpf.annotations.Exposed;
-//import pt.webdetails.cpf.repository.RepositoryAccess;
-//import pt.webdetails.cpf.repository.RepositoryAccess.FileAccess;
+import pt.webdetails.cpf.repository.IRepositoryAccess;
+import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
 import pt.webdetails.cpf.http.ICommonParameterProvider;
+import pt.webdetails.cpf.session.ISessionUtils;
 
 
 public class CdaCoreService 
@@ -158,7 +161,7 @@ public class CdaCoreService
       mimeType = exporter.getMimeType();
     }
     
-    if (this.parameterProviders != null)
+    if (requestParams != null);//XXX  ==  if (this.parameterProviders != null)  
     {
       setResponseHeaders(mimeType, attachmentName);
     }
@@ -185,7 +188,8 @@ public class CdaCoreService
       if(StringUtils.isEmpty(mimeType)){
         mimeType = exporter.getMimeType();
       }
-      if (this.parameterProviders != null)
+      
+      if (requestParams != null);//XXX  ==  if (this.parameterProviders != null)  
       {
         setResponseHeaders(mimeType, attachmentName);
       }
@@ -207,8 +211,9 @@ public class CdaCoreService
     if(StringUtils.isEmpty(path)){
       throw new IllegalArgumentException("No path provided");
     }
+    IRepositoryAccess repAccess = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
     logger.debug("Do Query: getRelativePath:" + path);
-    logger.debug("Do Query: getSolPath:" + PentahoSystem.getApplicationContext().getSolutionPath(path));
+    logger.debug("Do Query: getSolPath:" + repAccess.getSolutionPath(path));//PentahoSystem.getApplicationContext().getSolutionPath(path));
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
 
     // Handle the query itself and its output format...
@@ -226,8 +231,9 @@ public class CdaCoreService
     final CdaEngine engine = CdaEngine.getInstance();
     final ICommonParameterProvider requestParams = requParam;
     final String path = getRelativePath(requestParams);
+    IRepositoryAccess repAccess = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
     logger.debug("Do Query: getRelativePath:" + path);
-    logger.debug("Do Query: getSolPath:" + PentahoSystem.getApplicationContext().getSolutionPath(path));
+    logger.debug("Do Query: getSolPath:" + repAccess.getSolutionPath(path));//PentahoSystem.getApplicationContext().getSolutionPath(path));
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
 
     // Handle the query itself and its output format...
@@ -253,8 +259,8 @@ public class CdaCoreService
   public void writeCdaFile(OutputStream out, ICommonParameterProvider requParam) throws Exception
   {
     //TODO: Validate the filename in some way, shape or form!
+    IRepositoryAccess repository = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
 
-    RepositoryAccess repository = RepositoryAccess.getRepository(userSession);
     final ICommonParameterProvider requestParams = requParam;
     // Check if the file exists and we have permissions to write to it
     String path = getRelativePath(requestParams);
@@ -285,10 +291,10 @@ public class CdaCoreService
 
     final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
     discoveryOptions.setOutputType(requParam.getStringParameter("outputType", "json"));
-
+    ISessionUtils sessionUtils = (ISessionUtils) CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils");
     String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
     setResponseHeaders(mimeType);
-    engine.getCdaList(out, discoveryOptions, userSession);
+    engine.getCdaList(out, discoveryOptions, sessionUtils.getCurrentSession());
   }
 
  // @Exposed(accessLevel = AccessLevel.ADMIN, outputType = MimeType.PLAIN_TEXT)
@@ -340,8 +346,7 @@ public class CdaCoreService
   public String getResourceAsString(final String path, final HashMap<String, String> tokens) throws IOException
   {
     // Read file
-
-    RepositoryAccess repository = RepositoryAccess.getRepository(userSession);    
+    IRepositoryAccess repository = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
     String resourceContents = StringUtils.EMPTY;
     
     if (repository.resourceExists(path))
@@ -370,11 +375,12 @@ public class CdaCoreService
   }
 
   
-  public String getResourceAsString(final String path, RepositoryAccess.FileAccess access) throws IOException, AccessDeniedException{
-    RepositoryAccess repository = RepositoryAccess.getRepository(userSession);
+  public String getResourceAsString(final String path, FileAccess access) throws IOException, AccessDeniedException{
+    IRepositoryAccess repository = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
     if(repository.hasAccess(path, access)){
       HashMap<String, String> keys = new HashMap<String, String>();
-      Locale locale = LocaleHelper.getLocale();
+      //Locale locale = LocaleHelper.getLocale();
+      Locale locale = Locale.getDefault(); //XXX probably not what intended
       if (logger.isDebugEnabled())
       {
         logger.debug("Current Pentaho user locale: " + locale.toString());
@@ -391,8 +397,8 @@ public class CdaCoreService
   //@Exposed(accessLevel = AccessLevel.PUBLIC)
   public void editFile(final OutputStream out, ICommonParameterProvider requParam) throws Exception
   {
-
-    RepositoryAccess repository = RepositoryAccess.getRepository(userSession);
+    IRepositoryAccess repository = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
+    
     
     // Check if the file exists and we have permissions to write to it
     String path = getRelativePath(requParam);
@@ -421,15 +427,15 @@ public class CdaCoreService
 
 
   //@Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.CSS)
-  public void getCssResource(final OutputStream out) throws Exception
+  public void getCssResource(final OutputStream out, ICommonParameterProvider requParam) throws Exception
   {
-    getResource( out);
+    getResource(out, requParam);
   }
 
   //@Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.JAVASCRIPT)
-  public void getJsResource(final OutputStream out) throws Exception
+  public void getJsResource(final OutputStream out, ICommonParameterProvider requParam) throws Exception
   {
-    getResource( out);
+    getResource(out, requParam);
   }
 
 
@@ -443,7 +449,8 @@ public class CdaCoreService
 
   private void getResource(final OutputStream out, final String resource) throws IOException
   {
-    final String path = PentahoSystem.getApplicationContext().getSolutionPath("system/" + PLUGIN_NAME + resource); //$NON-NLS-1$ //$NON-NLS-2$
+    IRepositoryAccess repAccess = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
+    final String path = repAccess.getSolutionPath("system/" + PLUGIN_NAME + resource);//PentahoSystem.getApplicationContext().getSolutionPath("system/" + PLUGIN_NAME + resource); //$NON-NLS-1$ //$NON-NLS-2$
 
     final File file = new File(path);
     final InputStream in = new FileInputStream(file);
@@ -478,9 +485,11 @@ public class CdaCoreService
   }
 
   //@Exposed(accessLevel = AccessLevel.PUBLIC)
-  public void cacheController(OutputStream out, ICommonParameterProvider requParam)//XXX -  get rid of dependency
+  public void cacheController(OutputStream out, ICommonParameterProvider requParam)
   {
-    CacheScheduleManager.getInstance().handleCall(requParam, out);
+      ICacheScheduleManager manager = (ICacheScheduleManager) CdaEngine.getInstance().getBeanFactory().getBean("ICacheScheduleManager");
+      manager.handleCall(requParam, out);
+    //CacheScheduleManager.getInstance().handleCall(requParam, out);
   }
 
   //@Exposed(accessLevel = AccessLevel.ADMIN)
@@ -497,21 +506,20 @@ public class CdaCoreService
   
   private void writeOut(OutputStream out,String uuid){//XXX needs checking
       
-      //TODO code
       try{
       out.write(uuid.getBytes());
       }catch(IOException e){
           logger.error("Failed to write to stream");
       }
   }
-  private String getMimeType(String attachmentName){
-      //TODO code
+  private String getMimeType(String attachmentName){//XXX must be done differently. cda-core --> cpf-core -/-> cpf-pentaho 
       return null;
   }
-  private void setResponseHeaders(String mimeType, String attachmentName){
+  private void setResponseHeaders(String mimeType, String attachmentName){//XXX must be done differently. cda-core --> cpf-core -/-> cpf-pentaho 
       
   }
-  private void setResponseHeaders(String mimeType){//XXX can setResponseHeaders really receive just one param?
+ 
+  private void setResponseHeaders(String mimeType){
       
   }
   

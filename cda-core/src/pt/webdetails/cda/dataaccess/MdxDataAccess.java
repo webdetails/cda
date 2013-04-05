@@ -16,12 +16,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-//XXX remove
-//import org.pentaho.platform.api.engine.ObjectFactoryException;
-//import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-//import org.pentaho.platform.engine.core.system.PentahoSystem;
-//import org.pentaho.platform.plugin.action.mondrian.catalog.IMondrianCatalogService;
-//import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalog;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
@@ -160,11 +154,11 @@ public class MdxDataAccess extends PREDataAccess
     else
     {
       mdxDataFactory.setCubeFileProvider(new PentahoCubeFileProvider(mondrianConnectionInfo.getCatalog()));
-      try
+      try//XXX delegate the responsability to get the MondrianConnectionProvider to pentaho?  
       {
         mdxDataFactory.setMondrianConnectionProvider((MondrianConnectionProvider) PentahoSystem.getObjectFactory().get(PentahoMondrianConnectionProvider.class, "MondrianConnectionProvider", null));
       }
-      catch (ObjectFactoryException e)
+      catch (ObjectFactoryException e)//XXX Catch normal exception? create this exception in cda-core?
       {//couldn't get object
         mdxDataFactory.setMondrianConnectionProvider(new PentahoMondrianConnectionProvider());
       }
@@ -199,9 +193,9 @@ public class MdxDataAccess extends PREDataAccess
     
     
     if (!CdaEngine.isStandalone())
-    {
+    {//XXX very pentaho specific, needs to go.
       IMondrianCatalogService catalogService =
-          PentahoSystem.get(IMondrianCatalogService.class, "IMondrianCatalogService", null);;
+          PentahoSystem.get(IMondrianCatalogService.class, "IMondrianCatalogService", null);
       final List<MondrianCatalog> catalogs =
           catalogService.listCatalogs(PentahoSessionHolder.getSession(), false);
 

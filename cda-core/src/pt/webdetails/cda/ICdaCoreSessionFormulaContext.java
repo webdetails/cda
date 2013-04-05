@@ -9,7 +9,7 @@ public interface ICdaCoreSessionFormulaContext {
     
     public Object resolveReference(final Object name);
 
-    public Object[] convertToArray(final JavaScriptResultSet resultSet);
+    public Object[] convertToArray(/*final JavaScriptResultSet resultSet*/);
     
     
     

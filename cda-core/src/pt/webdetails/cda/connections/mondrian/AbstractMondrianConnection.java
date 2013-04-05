@@ -5,12 +5,6 @@ import java.util.ArrayList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-//XXX remove
-//import org.pentaho.platform.api.engine.IConnectionUserRoleMapper;
-//import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-//import org.pentaho.platform.engine.core.system.PentahoSystem;
-//import org.pentaho.platform.plugin.services.connections.mondrian.MDXConnection;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.AbstractConnection;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;

@@ -12,7 +12,8 @@ import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.steps.exceloutput.ExcelOutputMeta;
 
-import pt.webdetails.cpf.repository.RepositoryAccess;
+import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cpf.repository.IRepositoryAccess;
 
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM
@@ -33,8 +34,9 @@ public class XlsExporter extends AbstractKettleExporter
     super(extraSettings);
     this.attachmentName = getSetting(ATTACHMENT_NAME_SETTING, "cda-export." + getType());
     this.templateName = getSetting(TEMPLATE_NAME_SETTING, null);
+    IRepositoryAccess repository = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
     if(templateName != null){
-      templateName = RepositoryAccess.getSolutionPath(templateName);
+      templateName = repository.getSolutionPath(templateName);
     }
     includeHeader = Boolean.parseBoolean(getSetting( COLUMN_HEADERS_SETTING, "true"));
   }

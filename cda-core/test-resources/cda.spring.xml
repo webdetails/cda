@@ -7,6 +7,9 @@
   <bean id="IDataAccess" class="pt.webdetails.cda.core.DefaultDataAccess" scope="prototype"/>  
   <bean id="IQueryCache" class="pt.webdetails.cda.cache.EHCacheQueryCache" scope="prototype"/>
   <bean id="ISessionUtils" class="pt.webdetails.cda.pentaho.SessionUtils" scope="prototype"/>
+  <bean id="IRepositoryAccess" class="pt.webdetails.cda.pentaho.RepositoryAccess" scope="prototype"/>
+  <bean id="ICacheScheduleManager" class="pt.webdetails.cda.cache.CacheScheduleManager" scope="prototype"/>
+  
 
   -->
 </root>
