@@ -18,9 +18,10 @@ import org.json.JSONObject;
 //import org.pentaho.platform.api.engine.IParameterProvider;
 //import org.pentaho.platform.api.engine.IPentahoSession;
 //import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cpf.session.IUserSession;
-import pt.webdetails.cpf.session.UserSession;
 import pt.webdetails.cpf.http.ICommonParameterProvider;
+import pt.webdetails.cpf.session.ISessionUtils;
 /**
  * Boilerplate for a JSON content generator
  */
@@ -34,7 +35,7 @@ public abstract class JsonCallHandler {
   private HashMap<String, Method> methods = new HashMap<String, Method>();
   private String methodParameter = "method";
   private String defaultMethod = null;
-  private IUserSession session = new UserSession();//XXX probably won't need, look later on
+  
   public static class JsonResultFields 
   {
     public static final String STATUS = "status";
@@ -94,6 +95,7 @@ public abstract class JsonCallHandler {
     JSONObject result = null;
     Method method = methods.get(methodName);
     
+    IUserSession session = ((ISessionUtils)CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils")).getCurrentSession();
     try 
     {
       if(methodName == null){
