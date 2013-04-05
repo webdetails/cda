@@ -85,7 +85,7 @@ public class EHCacheQueryCache implements IQueryCache {
         cacheManager = new net.sf.ehcache.CacheManager(cfgFile);
         logger.debug("Cache started using " + cfgFile);
       }
-      //XXX no need for pentaho context in core
+      //XXX no need for pentaho context in core - should the code below be deleted?
       /*else
       {//look at cda folder in pentaho
         try
