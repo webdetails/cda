@@ -266,10 +266,10 @@ public abstract class Query implements Serializable
   {
     if (getId() == 0)
     {
-      ISessionUtils sessionUtils = (ISessionUtils) CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils");
-      //Session s = PluginHibernateUtil.getSession();
-      sessionUtils.getCurrentSession().save(this);//XXX  save receives an Object o, needs cast to retrieve
-      //s.save(this);
+      
+      Session s = PluginHibernateUtil.getSession();
+      
+      s.save(this);
     }
   }
 

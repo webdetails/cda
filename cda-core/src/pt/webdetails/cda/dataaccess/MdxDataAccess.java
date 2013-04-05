@@ -147,13 +147,11 @@ public class MdxDataAccess extends PREDataAccess
     mdxDataFactory.setJdbcPasswordField(mondrianConnectionInfo.getPasswordField());
     mdxDataFactory.setJdbcUserField(mondrianConnectionInfo.getUserField());
 
-    if (CdaEngine.isStandalone())
-    {
-      mdxDataFactory.setCubeFileProvider(new DefaultCubeFileProvider(mondrianConnectionInfo.getCatalog()));
-    }
-    else
-    {
-      mdxDataFactory.setCubeFileProvider(new PentahoCubeFileProvider(mondrianConnectionInfo.getCatalog()));
+    ICubeFileProviderSetter cubeFileProviderSetter = (ICubeFileProviderSetter)CdaEngine.getInstance().getBeanFactory().getBean("ICubeFileProviderSetter");
+    cubeFileProviderSetter.setCubeFileProvider(mdxDataFactory, mondrianConnectionInfo.getCatalog());
+    
+    /*
+    mdxDataFactory.setCubeFileProvider(new PentahoCubeFileProvider(mondrianConnectionInfo.getCatalog()));
       try//XXX delegate the responsability to get the MondrianConnectionProvider to pentaho?  
       {
         mdxDataFactory.setMondrianConnectionProvider((MondrianConnectionProvider) PentahoSystem.getObjectFactory().get(PentahoMondrianConnectionProvider.class, "MondrianConnectionProvider", null));
@@ -162,7 +160,7 @@ public class MdxDataAccess extends PREDataAccess
       {//couldn't get object
         mdxDataFactory.setMondrianConnectionProvider(new PentahoMondrianConnectionProvider());
       }
-    }
+    */
 
     // using deprecated method for 3.10 support
     mdxDataFactory.setQuery("query", getQuery());

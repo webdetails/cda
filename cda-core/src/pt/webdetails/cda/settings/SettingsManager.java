@@ -143,10 +143,8 @@ public class SettingsManager {
       }
     }
     else {
-        //XXX IRepositoryAccess doesn't have getSolutionFile(String id, FileAccess fa) method
-        //XXX SolutionFile = RepositoryFile?
+         
       IRepositoryAccess repository = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
-      //ISolutionFile savedCda = repository.getSolutionFile(id, FileAccess.NONE);//RepositoryAccess.getRepository().getSolutionFile(id, FileAccess.NONE);
       IRepositoryFile savedCda = repository.getRepositoryFile(id,FileAccess.NONE);
       if(savedCda != null) return savedCda.getLastModified();
     }

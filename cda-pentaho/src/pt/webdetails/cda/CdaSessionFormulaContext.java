@@ -18,7 +18,7 @@ import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.security.SecurityParameterProvider;
 import org.pentaho.platform.plugin.services.connections.javascript.JavaScriptResultSet;
 
-public class CdaSessionFormulaContext extends DefaultFormulaContext
+public class CdaSessionFormulaContext extends DefaultFormulaContext implements ICdaCoreSessionFormulaContext
   {
 
     Map<String, IParameterProvider> providers;

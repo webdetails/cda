@@ -10,8 +10,11 @@ import org.pentaho.reporting.libraries.formula.Formula;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.ICdaCoreSessionFormulaContext;
 import pt.webdetails.cda.dataaccess.InvalidParameterException;
 import pt.webdetails.cpf.session.ISessionUtils;
+import pt.webdetails.cpf.session.IUserSession;
+
 
 public class FormulaEvaluator {
   
@@ -23,9 +26,13 @@ public class FormulaEvaluator {
     
     if(!StringUtils.contains(text, FORMULA_BEGIN)) return text;
     try{
-        ISessionUtils sessionUtils = (ISessionUtils) CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils");
-        
-      return replaceFormula(text, new CdaCoreSessionFormulaContext(sessionUtils.getCurrentSession()));//XXX CdaCoreSessionFormulaContext got deleted
+      IUserSession session = ((ISessionUtils)CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils")).getCurrentSession();
+      ICdaCoreSessionFormulaContext formulaContext = ((ICdaCoreSessionFormulaContext)CdaEngine.getInstance().getBeanFactory().getBean("ICdaCoreSessionFormulaContext"));
+      formulaContext.setSession(session);
+      
+      return replaceFormula(text, formulaContext);//XXX CdaCoreSessionFormulaContext got deleted
+
+
     }
     catch(Exception e){//TODO: change
       throw new RuntimeException(e);
@@ -68,8 +75,15 @@ public class FormulaEvaluator {
       Formula formula = new Formula(localValue);
       ISessionUtils sessionUtils = (ISessionUtils) CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils");
       // set context if available
+
       if (formulaContext != null) formula.initialize(formulaContext);
-      else formula.initialize(new CdaCoreSessionFormulaContext(sessionUtils.getCurrentSession()));
+      else {
+          IUserSession session = ((ISessionUtils)CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils")).getCurrentSession();
+      ICdaCoreSessionFormulaContext formulaContext1 = ((ICdaCoreSessionFormulaContext)CdaEngine.getInstance().getBeanFactory().getBean("ICdaCoreSessionFormulaContext"));
+      formulaContext1.setSession(session);
+          formula.initialize(formulaContext1);
+      }
+
       // evaluate
       Object result = formula.evaluate();
       if(result instanceof ArrayList)
