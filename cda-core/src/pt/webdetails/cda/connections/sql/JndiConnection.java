@@ -6,14 +6,15 @@ import java.util.ArrayList;
 
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
-import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.JndiConnectionProvider;
-import org.pentaho.reporting.platform.plugin.connection.PentahoJndiDatasourceConnectionProvider;
+
+
 import pt.webdetails.cda.connections.EvaluableConnection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.utils.FormulaEvaluator;
 import pt.webdetails.cda.utils.Util;
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.connections.IConnectionHelper;
         
 /**
  * Todo: Document me!
@@ -51,20 +52,8 @@ public class JndiConnection extends AbstractSqlConnection implements EvaluableCo
 
   public ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException {
     final ConnectionProvider connectionProvider;
-    if (CdaEngine.isStandalone()) {
-      final JndiConnectionProvider provider = new JndiConnectionProvider();
-      provider.setConnectionPath(connectionInfo.getJndi());
-      provider.setUsername(connectionInfo.getUser());
-      provider.setPassword(connectionInfo.getPass());
-      connectionProvider = provider;
-    } else {
-      final PentahoJndiDatasourceConnectionProvider provider = new PentahoJndiDatasourceConnectionProvider();
-      provider.setJndiName(connectionInfo.getJndi());
-      provider.setUsername(connectionInfo.getUser());
-      provider.setPassword(connectionInfo.getPass());
-      connectionProvider = provider;
-    }
-
+    IConnectionHelper connectionHelper = (IConnectionHelper)CdaEngine.getInstance().getBeanFactory().getBean("IConnectionHelper");
+    connectionProvider = connectionHelper.getSqlConnectionProvider(connectionInfo);
 
     try {
       final Connection connection = connectionProvider.createConnection(null, null);

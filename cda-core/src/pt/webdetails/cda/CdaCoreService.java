@@ -19,13 +19,8 @@ import java.util.Locale;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-//import org.pentaho.platform.api.engine.IParameterProvider;
-//import org.pentaho.platform.engine.core.system.PentahoSystem;
-//import org.pentaho.platform.util.messages.LocaleHelper;
 import org.apache.commons.lang.StringUtils;
 
-import pt.webdetails.cda.AccessDeniedException;
-//import pt.webdetails.cda.cache.CacheScheduleManager;
 import pt.webdetails.cda.cache.monitor.CacheMonitorHandler;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
@@ -35,13 +30,8 @@ import pt.webdetails.cda.exporter.ExporterEngine;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
-import pt.webdetails.cpf.session.IUserSession;
-import pt.webdetails.cda.utils.ISolutionUtil;
 import pt.webdetails.cda.cache.ICacheScheduleManager;
-//import pt.webdetails.cpf.SimpleContentGenerator;
-//import pt.webdetails.cpf.annotations.AccessLevel;
-//import pt.webdetails.cpf.annotations.Audited;
-//import pt.webdetails.cpf.annotations.Exposed;
+
 import pt.webdetails.cpf.repository.IRepositoryAccess;
 import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
 import pt.webdetails.cpf.http.ICommonParameterProvider;

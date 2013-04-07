@@ -5,11 +5,7 @@ package pt.webdetails.cda.dataaccess;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringReader;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
 import javax.swing.table.TableModel;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,11 +16,6 @@ import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.BandedMDXDataFactory;
-import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DefaultCubeFileProvider;
-import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.MondrianConnectionProvider;
-import org.pentaho.reporting.libraries.base.util.IOUtils;
-import org.pentaho.reporting.platform.plugin.connection.PentahoCubeFileProvider;
-import org.pentaho.reporting.platform.plugin.connection.PentahoMondrianConnectionProvider;
 import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
@@ -137,7 +128,10 @@ public class MdxDataAccess extends PREDataAccess
     final MondrianConnectionInfo mondrianConnectionInfo = connection.getConnectionInfo();
 
     final AbstractNamedMDXDataFactory mdxDataFactory = createDataFactory();
-    setMdxDataFactoryBaseConnectionProperties(connection, mdxDataFactory);
+    
+    IDataAccessUtils dataAccessUtils = (IDataAccessUtils)CdaEngine.getInstance().getBeanFactory().getBean("IDataAccessUtils");
+    dataAccessUtils.setMdxDataFactoryBaseConnectionProperties(connection, mdxDataFactory);
+
     
     mdxDataFactory.setDataSourceProvider(connection.getInitializedDataSourceProvider());
     mdxDataFactory.setJdbcPassword(mondrianConnectionInfo.getPass());
@@ -172,78 +166,6 @@ public class MdxDataAccess extends PREDataAccess
 
   }
 
-
-  /**
-   * Method to initialize MdxDataFactory's base connection properties.
-   * This has to be done in order to pass the extra set of properties that mondrian
-   * needs in order to share cache. This work should be done by the reporting plugin, 
-   * but it's not, so we do it in here.
-   * 
-   * The mdxDataFactory.setBaseConnectionProperties method only exists in PRD 3.9.1
-   * (from pentaho 4.8), so we're gonna call it by reflection. If it fails due to
-   * an older version of the platform, it will still work but no extra properties 
-   * will be passed to mondrian
-   * 
-   * @param mdxDataFactory 
-   */
-  private void setMdxDataFactoryBaseConnectionProperties(
-      MondrianConnection connection,
-      AbstractNamedMDXDataFactory mdxDataFactory)
-  {
-    
-    
-    if (!CdaEngine.isStandalone())
-    {//XXX very pentaho specific, needs to go.
-      IMondrianCatalogService catalogService =
-          PentahoSystem.get(IMondrianCatalogService.class, "IMondrianCatalogService", null);
-      final List<MondrianCatalog> catalogs =
-          catalogService.listCatalogs(PentahoSessionHolder.getSession(), false);
-
-      MondrianCatalog catalog = null;
-      for (MondrianCatalog cat : catalogs)
-      {
-        final String definition = cat.getDefinition();
-        final String definitionFileName = IOUtils.getInstance().getFileName(definition);
-        if (definitionFileName.equals(IOUtils.getInstance().getFileName(connection.getConnectionInfo().getCatalog())))
-        {
-          catalog = cat;
-          break;
-        }
-      }
-      
-      if ( catalog != null){
-        
-        Properties props = new Properties();
-        try
-        {
-          props.load(new StringReader(catalog.getDataSourceInfo().replace(';', '\n')));
-          try
-          {
-            // Apply the method through reflection
-            Method m = AbstractNamedMDXDataFactory.class.getMethod("setBaseConnectionProperties",Properties.class);
-            m.invoke(mdxDataFactory, props);
-            
-          }
-          catch (Exception ex)
-          {
-            // This is a previous version - continue
-          }
-          
-          
-        }
-        catch (IOException ex)
-        {
-          logger.warn("Failed to transform DataSourceInfo string '"+ catalog.getDataSourceInfo() +"' into properties");
-        }
-        
-      }
-      
-      
-    }
-    
-    
-    
-  }
 
 
   public BANDED_MODE getBandedMode()

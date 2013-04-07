@@ -12,7 +12,6 @@ import javax.swing.table.TableModel;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
-import org.pentaho.reporting.engine.classic.core.DefaultReportEnvironment;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.engine.classic.core.ReportEnvironmentDataRow;
@@ -23,7 +22,7 @@ import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFac
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
-import org.pentaho.reporting.platform.plugin.PentahoReportEnvironment;
+
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 import pt.webdetails.cda.CdaEngine;
@@ -73,16 +72,18 @@ public abstract class PREDataAccess extends SimpleDataAccess
 
     private TableModel tableModel;
     private CachingDataFactory localDataFactory;
-    private static final boolean isStandalone = true;
+
     public PREDataSourceQuery(TableModel tm, CachingDataFactory df){
       this.tableModel = tm;
       this.localDataFactory = df;
     }
     
+    @Override
     public TableModel getTableModel() {
       return tableModel;
     }
 
+    @Override
     public void closeDataSource() throws QueryException {
       if (localDataFactory == null)
       {
@@ -134,21 +135,8 @@ public abstract class PREDataAccess extends SimpleDataAccess
         // fire the query. you always get a tablemodel or an exception.
 
         final ReportEnvironmentDataRow environmentDataRow;
-        if (CdaEngine.isStandalone())
-        {
-          environmentDataRow = new ReportEnvironmentDataRow(new DefaultReportEnvironment(configuration));
-        }
-        else
-        {
-        //TODO:testing, TEMP
-//        // Make sure we have the env. correctly inited
-//        if (SolutionReposHelper.getSolutionRepositoryThreadVariable() == null && PentahoSystem.getObjectFactory().objectDefined(ISolutionRepository.class.getSimpleName()))
-//        {
-//          threadVarSet = true;
-//          SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession()));
-//        }
-          environmentDataRow = new ReportEnvironmentDataRow(new PentahoReportEnvironment(configuration));
-        }
+        IDataAccessUtils dataAccessUtils = (IDataAccessUtils)CdaEngine.getInstance().getBeanFactory().getBean("IDataAccessUtils");
+        environmentDataRow = dataAccessUtils.createEnvironmentDataRow(configuration);
 
         final TableModel tm = dataFactory.queryData("query",
                 new CompoundDataRow(environmentDataRow, parameterDataRow));

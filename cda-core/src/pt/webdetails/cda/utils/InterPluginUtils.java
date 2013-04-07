@@ -13,6 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cpf.InterPluginCall;
 
 /**
@@ -49,8 +50,8 @@ public class InterPluginUtils
   public static TableModel getTableModelFromJsonPluginCall(String plugin, String method, Map<String, Object> params)
   {
 
-
-    InterPluginCall pluginCall = new InterPluginCall(new InterPluginCall.Plugin(plugin), method, params);
+    InterPluginCall pluginCall = (InterPluginCall)CdaEngine.getInstance().getBeanFactory().getBean("InterPluginCall");
+    pluginCall.init(new InterPluginCall.Plugin(plugin), method, params);
 
     return InterPluginUtils.getInstance().getTableModelFromJSONArray(pluginCall.call(), params);
 
@@ -146,26 +147,5 @@ public class InterPluginUtils
   }
 
 
-  public static final void main(String[] args)
-  {
-
-
-    System.out.println("TEST");
-
-
-    TableModel tm1 = InterPluginUtils.getInstance().getTableModelFromJSONArray("[{\"id\":1,\"type\":\"query\",\"name\":\"Test 1\",\"group\":\"CDV Sample Tests\",\"createdBy\":\"Pedro\",\"createdAt\":1339430893246,\"validation\":\"/plugin-samples/cda/cdafiles/sql-jndi.cda[1] \\n/plugin-samples/cda/cdafiles/sql-jndi.cda[1] (status: Cancelled)\",\"validationName\":\"Test Existence\",\"validationType\":\"custom\",\"expected\":100,\"warnPercentage\":0.3,\"errorPercentage\":0.7,\"errorOnLow\":true,\"cron\":\"0 2 * * ? *\"},{\"id\":2,\"type\":\"query\",\"name\":\"Test 2\",\"group\":\"CDV Sample Tests\",\"createdBy\":\"Pedro\",\"createdAt\":1339430893246,\"validation\":\"/plugin-samples/cda/cdafiles/mondrian-jndi.cda[1] \\n/plugin-samples/cda/cdafiles/mondrian-jndi.cda[1] (status: Cancelled)\",\"validationName\":\"Test Existence\",\"validationType\":\"custom\",\"expected\":100,\"warnPercentage\":0.3,\"errorPercentage\":0.7,\"errorOnLow\":true,\"cron\":\"0 2 * * ? *\"}]", null);
-
-    HashMap params = new HashMap<String, Object>();
-    params.put("columns", new String[]
-            {
-//              "timestamp", "file", "parameters", "message"
-              "id", "XXX","group"
-            });
-
-    TableModel tm2 = InterPluginUtils.getInstance().getTableModelFromJSONArray("[{\"id\":1,\"type\":\"query\",\"name\":\"Test 1\",\"group\":\"CDV Sample Tests\",\"createdBy\":\"Pedro\",\"createdAt\":1339430893246,\"validation\":\"/plugin-samples/cda/cdafiles/sql-jndi.cda[1] \\n/plugin-samples/cda/cdafiles/sql-jndi.cda[1] (status: Cancelled)\",\"validationName\":\"Test Existence\",\"validationType\":\"custom\",\"expected\":100,\"warnPercentage\":0.3,\"errorPercentage\":0.7,\"errorOnLow\":true,\"cron\":\"0 2 * * ? *\"},{\"id\":2,\"type\":\"query\",\"name\":\"Test 2\",\"group\":\"CDV Sample Tests\",\"createdBy\":\"Pedro\",\"createdAt\":1339430893246,\"validation\":\"/plugin-samples/cda/cdafiles/mondrian-jndi.cda[1] \\n/plugin-samples/cda/cdafiles/mondrian-jndi.cda[1] (status: Cancelled)\",\"validationName\":\"Test Existence\",\"validationType\":\"custom\",\"expected\":100,\"warnPercentage\":0.3,\"errorPercentage\":0.7,\"errorOnLow\":true,\"cron\":\"0 2 * * ? *\"}]", params);
-
-
-
-  }
 }
 

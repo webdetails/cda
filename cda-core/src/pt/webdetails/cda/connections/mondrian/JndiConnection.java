@@ -5,14 +5,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DataSourceProvider;
-import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.JndiDataSourceProvider;
-import org.pentaho.reporting.platform.plugin.connection.PentahoMondrianDataSourceProvider;
+
+
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.EvaluableConnection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.utils.FormulaEvaluator;
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.connections.IConnectionHelper;
 
 /**
  * Created by IntelliJ IDEA.
@@ -64,23 +65,14 @@ public class JndiConnection extends AbstractMondrianConnection implements Evalua
   public DataSourceProvider getInitializedDataSourceProvider() throws InvalidConnectionException
   {
     logger.debug("Creating new jndi connection");
-    if (CdaEngine.isStandalone())
-    {
-      return new JndiDataSourceProvider(connectionInfo.getJndi());
-    }
-    else
-    {
-      return new PentahoMondrianDataSourceProvider(connectionInfo.getJndi());
-    }
+    IConnectionHelper connectionHelper = (IConnectionHelper)CdaEngine.getInstance().getBeanFactory().getBean("IConnectionHelper");
+    return connectionHelper.getMondrianInitializedDataSourceProvider(connectionInfo);
   }
 
 
   public synchronized MondrianJndiConnectionInfo getConnectionInfo()
   {
     return this.connectionInfo;
-//    MondrianJndiConnectionInfo ci = new MondrianJndiConnectionInfo(this.connection);
-//    ci.setMondrianRole(assembleRole(ci.getCatalog()));
-//    return ci;
   }
 
 
