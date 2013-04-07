@@ -23,8 +23,6 @@ import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
-import pt.webdetails.cpf.session.ISessionUtils;
-//import pt.webdetails.cda.utils.PluginHibernateUtil;
 
 /**
  *
@@ -267,9 +265,9 @@ public abstract class Query implements Serializable
     if (getId() == 0)
     {
       
-      Session s = PluginHibernateUtil.getSession();
+//      Session s = PluginHibernateUtil.getSession();
       
-      s.save(this);
+//      s.save(this);
     }
   }
 

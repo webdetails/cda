@@ -6,9 +6,8 @@ package pt.webdetails.cda.dataaccess;
 
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
-import org.pentaho.reporting.engine.classic.extensions.datasources.pmd.PmdConnectionProvider;
 import org.pentaho.reporting.engine.classic.extensions.datasources.pmd.PmdDataFactory;
-import org.pentaho.reporting.platform.plugin.connection.PentahoPmdConnectionProvider;
+
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.metadata.MetadataConnection;
@@ -42,23 +41,22 @@ public class MqlDataAccess extends PREDataAccess {
   	super(id,name, connectionId, query);
   }
 
+  @Override
   public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException {
     final MetadataConnection connection = (MetadataConnection) getCdaSettings().getConnection(getConnectionId());
 
     final PmdDataFactory returnDataFactory = new PmdDataFactory();
     returnDataFactory.setXmiFile(connection.getConnectionInfo().getXmiFile());
     returnDataFactory.setDomainId(connection.getConnectionInfo().getDomainId());
-    if (CdaEngine.isStandalone()) {
-      returnDataFactory.setConnectionProvider(new PmdConnectionProvider());
-    } else {
-      returnDataFactory.setConnectionProvider(new PentahoPmdConnectionProvider());
-    }
+    IDataAccessUtils dataAccessUtils = (IDataAccessUtils)CdaEngine.getInstance().getBeanFactory().getBean("IDataAccessUtils");
+    dataAccessUtils.setConnectionProvider(returnDataFactory);
     // using deprecated method for 3.10 support
     returnDataFactory.setQuery("query", getQuery());
 
     return returnDataFactory;
   }
 
+  @Override
   public String getType() {
     return "mql";
   }

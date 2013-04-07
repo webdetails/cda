@@ -14,6 +14,10 @@ http://jax-ws.dev.java.net/spring/servlet http://jax-ws.dev.java.net/spring/serv
 	<context:annotation-config />
 
   <!--
+   <bean id="InterPluginCall" class="" scope="prototype"/>
+  <bean id="IDataAccessUtils" class="pt.webdetails.cda.dataccess.DefaultDataAccessUtils" scope="prototype"/>
+  <bean id="IResourceKeyGetter" class="pt.webdetails.cda.settings.DefaultResourceKeyGetter" scope="prototype"/>
+  <bean id="IConnectionHelper" class="pt.webdetails.cda.connections.DefaultConnectionHelper" scope="prototype"/>
 	<bean id="IMondrianRoleMapper" class="pt.webdetails.cda.core.DefaultMondrianRoleMapper" scope="prototype"/>
   <bean id="IDataAccess" class="pt.webdetails.cda.core.DefaultDataAccess" scope="prototype"/>  
   <bean id="IQueryCache" class="pt.webdetails.cda.cache.EHCacheQueryCache" scope="prototype"/>

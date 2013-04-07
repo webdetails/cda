@@ -17,7 +17,7 @@ import org.pentaho.reporting.libraries.resourceloader.Resource;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
-import org.pentaho.reporting.platform.plugin.RepositoryResourceLoader;
+
 import java.text.MessageFormat;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
@@ -42,8 +42,6 @@ public class SettingsManager {
   // TODO: These are defined in 
   // org.pentaho.reporting.platform.plugin.RepositoryResourceLoader
   // we should see if there is a way to have plugins use other plugin classes
-  public static final String SOLUTION_SCHEMA_NAME = RepositoryResourceLoader.SOLUTION_SCHEMA_NAME; //$NON-NLS-1$
-  public static final String SCHEMA_SEPARATOR = RepositoryResourceLoader.SCHEMA_SEPARATOR; //$NON-NLS-1$
   public static final String DATA_ACCESS_PACKAGE = "pt.webdetails.cda.dataaccess";
   private static final Log logger = LogFactory.getLog(SettingsManager.class);
   private static SettingsManager _instance;
@@ -105,14 +103,8 @@ public class SettingsManager {
       resourceManager.registerDefaults();
       // add the runtime context so that PentahoResourceData class can get access
       // to the solution repo
-      final ResourceKey key;
-      if (CdaEngine.isStandalone()) {
-        File settingsFile = new File(id);
-        key = resourceManager.createKey(settingsFile);
-      } else {
-        final HashMap<String, Object> helperObjects = new HashMap<String, Object>();
-        key = resourceManager.createKey(SOLUTION_SCHEMA_NAME + SCHEMA_SEPARATOR + id, helperObjects);
-      }
+      IResourceKeyGetter resourceKeyGetter = (IResourceKeyGetter)CdaEngine.getInstance().getBeanFactory().getBean("IResourceKeyGetter");
+      final ResourceKey key = resourceKeyGetter.getResourceKey(id, resourceManager);
       final Resource resource = resourceManager.create(key, null, org.w3c.dom.Document.class);
       final org.w3c.dom.Document document = (org.w3c.dom.Document) resource.getResource();
       final DOMReader saxReader = new DOMReader();
@@ -136,18 +128,10 @@ public class SettingsManager {
    */
   private Long getLastSaveTime(final String id) {
     //check if it's a saved file and get its timestamp
-    if(CdaEngine.isStandalone()) {
-      File cdaFile = new File(id);
-      if(cdaFile.exists()){
-        return cdaFile.lastModified();
-      }
-    }
-    else {
-         
-      IRepositoryAccess repository = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
-      IRepositoryFile savedCda = repository.getRepositoryFile(id,FileAccess.NONE);
-      if(savedCda != null) return savedCda.getLastModified();
-    }
+    IRepositoryAccess repository = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
+    IRepositoryFile savedCda = repository.getRepositoryFile(id,FileAccess.NONE);
+    if(savedCda != null) return savedCda.getLastModified();
+
     return null;
   }
   
