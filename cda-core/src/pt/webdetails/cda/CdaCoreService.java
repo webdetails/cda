@@ -203,7 +203,7 @@ public class CdaCoreService
     }
     IRepositoryAccess repAccess = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
     logger.debug("Do Query: getRelativePath:" + path);
-    logger.debug("Do Query: getSolPath:" + repAccess.getSolutionPath(path));//PentahoSystem.getApplicationContext().getSolutionPath(path));
+    logger.debug("Do Query: getSolPath:" + repAccess.getSolutionPath(path));
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
 
     // Handle the query itself and its output format...
@@ -223,7 +223,7 @@ public class CdaCoreService
     final String path = getRelativePath(requestParams);
     IRepositoryAccess repAccess = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
     logger.debug("Do Query: getRelativePath:" + path);
-    logger.debug("Do Query: getSolPath:" + repAccess.getSolutionPath(path));//PentahoSystem.getApplicationContext().getSolutionPath(path));
+    logger.debug("Do Query: getSolPath:" + repAccess.getSolutionPath(path));
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
 
     // Handle the query itself and its output format...

@@ -144,17 +144,6 @@ public class MdxDataAccess extends PREDataAccess
     ICubeFileProviderSetter cubeFileProviderSetter = (ICubeFileProviderSetter)CdaEngine.getInstance().getBeanFactory().getBean("ICubeFileProviderSetter");
     cubeFileProviderSetter.setCubeFileProvider(mdxDataFactory, mondrianConnectionInfo.getCatalog());
     
-    /*
-    mdxDataFactory.setCubeFileProvider(new PentahoCubeFileProvider(mondrianConnectionInfo.getCatalog()));
-      try//XXX delegate the responsability to get the MondrianConnectionProvider to pentaho?  
-      {
-        mdxDataFactory.setMondrianConnectionProvider((MondrianConnectionProvider) PentahoSystem.getObjectFactory().get(PentahoMondrianConnectionProvider.class, "MondrianConnectionProvider", null));
-      }
-      catch (ObjectFactoryException e)//XXX Catch normal exception? create this exception in cda-core?
-      {//couldn't get object
-        mdxDataFactory.setMondrianConnectionProvider(new PentahoMondrianConnectionProvider());
-      }
-    */
 
     // using deprecated method for 3.10 support
     mdxDataFactory.setQuery("query", getQuery());

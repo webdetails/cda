@@ -12,9 +12,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.CdaCoreService;
+import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
+import pt.webdetails.cpf.repository.IRepositoryAccess;
+import pt.webdetails.cpf.repository.IRepositoryFile;
+import pt.webdetails.cpf.repository.IRepositoryFileFilter;
 
 /**
  *
@@ -28,7 +32,6 @@ public class ConnectionCatalog {
   };
   private static ConnectionCatalog _instance;
   private static Log logger = LogFactory.getLog(ConnectionCatalog.class);
-  public static final String PLUGIN_DIR = PentahoSystem.getApplicationContext().getSolutionPath("system/" + CdaCoreService.PLUGIN_NAME);
   private HashMap<String, ConnectionInfo> connectionPool;
 
   public ConnectionCatalog() {
@@ -37,18 +40,17 @@ public class ConnectionCatalog {
 
   private void getConnections() {
     connectionPool = new HashMap<String, ConnectionInfo>();
-    File dir = new File(PLUGIN_DIR + "/resources/components/connections");
-    FilenameFilter xmlFiles = new FilenameFilter() {
 
-      public boolean accept(File dir, String name) {
-        return !name.startsWith(".") && name.endsWith(".xml");
-      }
-    };
-    String[] files = dir.list(xmlFiles);
+    
+    
+    IRepositoryAccess repAccess = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
+        
+    IRepositoryFile[] files = repAccess.getSettingsFileTree("resources/components/connections", "xml",FileAccess.READ);
+    
     if (files != null && files.length > 0) {
-      for (String file : files) {
+      for (IRepositoryFile file : files) {
         try {
-          Document doc = XmlDom4JHelper.getDocFromFile(dir.getPath() + "/" + file, null);
+          Document doc = XmlDom4JHelper.getDocFromFile(file.getFullPath(), null);
           // To figure out whether the component is generic or has a special implementation,
           // we directly look for the class override in the definition
           String className = XmlDom4JHelper.getNodeText("/Connection/Implementation", doc);
