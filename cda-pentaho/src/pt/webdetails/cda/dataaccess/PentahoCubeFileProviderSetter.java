@@ -8,7 +8,6 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DefaultCubeFileProvider;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.MondrianConnectionProvider;
-import org.pentaho.reporting.platform.plugin.connection.PentahoCubeFileProvider;
 import org.pentaho.reporting.platform.plugin.connection.PentahoMondrianConnectionProvider;
 
 /**
@@ -17,11 +16,12 @@ import org.pentaho.reporting.platform.plugin.connection.PentahoMondrianConnectio
  */
 public class PentahoCubeFileProviderSetter implements ICubeFileProviderSetter {
     @Override
-    public void setCubeFileProvider(AbstractNamedMDXDataFactory factory, String catalog) {  
+    public void setCubeFileProvider(AbstractNamedMDXDataFactory factory, String catalog) { 
+        
         factory.setCubeFileProvider(new DefaultCubeFileProvider(catalog));
-        
-        
-        factory.setCubeFileProvider(new PentahoCubeFileProvider(mondrianConnectionInfo.getCatalog()));//
+    
+        //XXX this method already receives a catalog, setCubeFileProvider above enough?
+        //factory.setCubeFileProvider(new PentahoCubeFileProvider(mondrianConnectionInfo.getCatalog()));
       try
       {
         factory.setMondrianConnectionProvider((MondrianConnectionProvider) PentahoSystem.getObjectFactory().get(PentahoMondrianConnectionProvider.class, "MondrianConnectionProvider", null));

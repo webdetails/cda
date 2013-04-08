@@ -12,8 +12,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-//XXX remove
-//import org.pentaho.platform.repository.hibernate.HibernateUtil;
+import org.pentaho.platform.repository.hibernate.HibernateUtil;
 import pt.webdetails.cda.PluginHibernateException;
 
 /**

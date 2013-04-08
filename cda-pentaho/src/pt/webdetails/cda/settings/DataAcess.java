@@ -5,15 +5,18 @@ package pt.webdetails.cda.settings;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Properties;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import pt.webdetails.cda.settings.IDataAccess;
 
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-public class DataAcess implements IDataAcess {
-    
-    public String[] getDataAcesses() throws Exception {
-        
+public class DataAcess implements IDataAccess {
+
+    @Override
+    public String[] getDataAcesses() {
+         
         final File file = new File(PentahoSystem.getApplicationContext().getSolutionPath("system/cda/resources/components.properties"));
         final Properties resources = new Properties();
         
@@ -22,10 +25,12 @@ public class DataAcess implements IDataAcess {
              fin = new FileInputStream(file);
             resources.load(fin);
          }
+        catch(IOException e){//XXX  IOException
+            
+        }
          finally {
          IOUtils.closeQuietly(fin);
             }
     return StringUtils.split(StringUtils.defaultString(resources.getProperty("dataAccesses")), ",");
     }
-    
 }
