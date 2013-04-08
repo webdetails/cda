@@ -16,7 +16,7 @@ import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.messages.MessageUtil;
 
-import pt.webdetails.cpf.repository.RepositoryAccess;
+import pt.webdetails.cpf.repository.PentahoRepositoryAccess;
 
 /**
  * Utility class for internationalization
@@ -35,7 +35,7 @@ public class Messages {
       InputStream in = null;
       String propertiesFile = "system/" + CdaContentGenerator.PLUGIN_NAME + "/messages.properties";//$NON-NLS-1$ //$NON-NLS-2$
       try {
-        in = RepositoryAccess.getRepository(session).getResourceInputStream(propertiesFile);  
+        in = PentahoRepositoryAccess.getRepository(session).getResourceInputStream(propertiesFile);  
         bundle = new PropertyResourceBundle(in);
         Messages.locales.put(locale, bundle);
       } catch (Exception e) {

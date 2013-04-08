@@ -41,8 +41,9 @@ import pt.webdetails.cpf.SimpleContentGenerator;
 import pt.webdetails.cpf.annotations.AccessLevel;
 import pt.webdetails.cpf.annotations.Audited;
 import pt.webdetails.cpf.annotations.Exposed;
-import pt.webdetails.cpf.repository.RepositoryAccess;
-import pt.webdetails.cpf.repository.RepositoryAccess.FileAccess;
+import pt.webdetails.cpf.repository.IRepositoryAccess;
+import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
+import pt.webdetails.cpf.repository.PentahoRepositoryAccess;
 
 
 public class CdaContentGenerator extends SimpleContentGenerator
@@ -254,7 +255,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
   {
     //TODO: Validate the filename in some way, shape or form!
 
-    RepositoryAccess repository = RepositoryAccess.getRepository(userSession);
+    IRepositoryAccess repository = PentahoRepositoryAccess.getRepository(userSession);
     final IParameterProvider requestParams = getRequestParameters();
     // Check if the file exists and we have permissions to write to it
     String path = getRelativePath(requestParams);
@@ -341,7 +342,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
   {
     // Read file
 
-    RepositoryAccess repository = RepositoryAccess.getRepository(userSession);    
+    IRepositoryAccess repository = PentahoRepositoryAccess.getRepository(userSession);    
     String resourceContents = StringUtils.EMPTY;
     
     if (repository.resourceExists(path))
@@ -370,8 +371,8 @@ public class CdaContentGenerator extends SimpleContentGenerator
   }
 
   
-  public String getResourceAsString(final String path, RepositoryAccess.FileAccess access) throws IOException, AccessDeniedException{
-    RepositoryAccess repository = RepositoryAccess.getRepository(userSession);
+  public String getResourceAsString(final String path, FileAccess access) throws IOException, AccessDeniedException{
+    IRepositoryAccess repository = PentahoRepositoryAccess.getRepository(userSession);
     if(repository.hasAccess(path, access)){
       HashMap<String, String> keys = new HashMap<String, String>();
       Locale locale = LocaleHelper.getLocale();
@@ -392,7 +393,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
   public void editFile(final OutputStream out) throws Exception
   {
 
-    RepositoryAccess repository = RepositoryAccess.getRepository(userSession);
+    IRepositoryAccess repository = PentahoRepositoryAccess.getRepository(userSession);
     
     // Check if the file exists and we have permissions to write to it
     String path = getRelativePath(getRequestParameters());
