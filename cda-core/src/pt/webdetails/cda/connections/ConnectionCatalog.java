@@ -4,8 +4,10 @@
 
 package pt.webdetails.cda.connections;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.apache.commons.logging.Log;
@@ -49,8 +51,10 @@ public class ConnectionCatalog {
     
     if (files != null && files.length > 0) {
       for (IRepositoryFile file : files) {
+        ByteArrayInputStream bais = null;
         try {
-          Document doc = XmlDom4JHelper.getDocFromFile(file.getFullPath(), null);
+          bais = new ByteArrayInputStream(file.getData());
+          Document doc = XmlDom4JHelper.getDocFromStream(bais, null);
           // To figure out whether the component is generic or has a special implementation,
           // we directly look for the class override in the definition
           String className = XmlDom4JHelper.getNodeText("/Connection/Implementation", doc);
@@ -64,6 +68,11 @@ public class ConnectionCatalog {
           }
         } catch (Exception e) {
           logger.error(e);
+        } finally {
+          if (bais != null)
+            try {
+              bais.close();
+            } catch (IOException ioe) {}
         }
       }
     }
