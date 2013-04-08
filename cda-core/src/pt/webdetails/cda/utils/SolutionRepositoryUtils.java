@@ -4,13 +4,12 @@
 
 package pt.webdetails.cda.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.TableModel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.dom4j.Document;
-import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cpf.session.IUserSession;
@@ -50,16 +49,30 @@ public class SolutionRepositoryUtils
     return _instance;
   }
 
+  
+  private void buildCdaList(IRepositoryFile[] originalArray, List<IRepositoryFile> cdaFiles) {
+    for (IRepositoryFile file : originalArray) {      
+      if (file.isDirectory())
+        buildCdaList(file.listFiles(new CdaFilter()),cdaFiles);
+      else
+        cdaFiles.add(file);
+    }    
+  }
+  
   public TableModel getCdaList(final IUserSession userSession)
   {
 
     logger.debug("Getting CDA list");
     //XXX IRepositoryAccess doesn't have getFullSolutionTree(FileAccess fa,CdaFilter cdaFltr) method
     IRepositoryAccess repository = (IRepositoryAccess) CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
-    Document cdaTree = repository.getFullSolutionTree(FileAccess.READ, new CdaFilter());//RepositoryAccess.getRepository(userSession).getFullSolutionTree(FileAccess.READ, new CdaFilter());
+    IRepositoryFile[] cdaTree = repository.getFullSolutionTree(FileAccess.READ, new CdaFilter());
     @SuppressWarnings("unchecked")
-    List<Element> cdaFiles = cdaTree.selectNodes("//leaf[@isDir=\"false\"]");
 
+    List<IRepositoryFile> cdaFiles = new ArrayList<IRepositoryFile>();
+    
+    buildCdaList(cdaTree, cdaFiles);
+    
+    
 
     final int rowCount = cdaFiles.size();
 
@@ -68,10 +81,9 @@ public class SolutionRepositoryUtils
     final Class<?>[] colTypes = {String.class, String.class};
     final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
 
-    for (Object o : cdaFiles)
+    for (IRepositoryFile file : cdaFiles)
     {
-      Element e = (Element) o;
-      typedTableModel.addRow(new Object[]{e.selectSingleNode("leafText").getText(), e.selectSingleNode("path").getText()});
+      typedTableModel.addRow(new Object[]{file.getFileName(), file.getFullPath()});
 
     }
 
