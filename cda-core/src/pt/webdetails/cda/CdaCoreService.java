@@ -468,7 +468,7 @@ public class CdaCoreService
       output.append("{\n");
       for (DataAccessConnectionDescriptor datum : data)
       {
-        output.append(datum.toJSON() + ",\n");
+                output.append(datum.toJSON()).append(",\n");//XXX changed from output.append(datum.toJSON() + ",\n");
       }
       writeOut(out, output.toString().replaceAll(",\n\\z", "\n}"));
     }
