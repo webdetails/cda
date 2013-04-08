@@ -140,7 +140,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
         if (e instanceof QueryException && e.getCause() != null)
         {
-          EventPublisher.getPublisher().publish(new QueryErrorEvent(info, e.getCause()));
+          EventPublisher.getPublisher().publish(new QueryErrorEvent(info, e.getCause()));//XXX via beanfactory
         }
         else
         {
