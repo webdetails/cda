@@ -50,8 +50,6 @@ public class CdaEngine
   {
     logger.info("Initializing CdaEngine");
     environment = env;
-    init();
-
   }
 
   public QueryOptions unwrapQuery(String uuid) throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
@@ -159,7 +157,7 @@ public class CdaEngine
 	        }
 	      }
 	    
-	    return new DefaultCdaEnvironment();
+	    return null;
   }
 
   private ICdaEnvironment getEnv() {
@@ -184,6 +182,9 @@ public class CdaEngine
 		  if (env != null)
 			  env = getConfiguredEnvironment();
 
+		  if (env == null)
+			  env = new DefaultCdaEnvironment();
+		  
 		  _instance = new CdaEngine(env);
 
 
@@ -195,6 +196,8 @@ public class CdaEngine
   }
   
   public static synchronized ICdaEnvironment getEnvironment() {
+	  System.out.println(getInstance());
+	  System.out.println(getInstance().getEnv());
 	  return getInstance().getEnv();
   }
   
