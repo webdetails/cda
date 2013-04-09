@@ -36,7 +36,7 @@ public class EHCacheQueryCache implements IQueryCache {
   private static final String CACHE_NAME = "pentaho-cda-dataaccess";
   private static final String CACHE_CFG_FILE = "ehcache.xml";
   private static final String CACHE_CFG_FILE_DIST = "ehcache-dist.xml";
-  private static final String PLUGIN_PATH = "system/" + CdaCoreService.PLUGIN_NAME + "/";
+  //private static final String PLUGIN_PATH = "system/" + CdaCoreService.PLUGIN_NAME + "/";
   private static final String USE_TERRACOTTA_PROPERTY = "pt.webdetails.cda.UseTerracotta";
   private static CacheManager cacheManager;
   
@@ -79,13 +79,13 @@ public class EHCacheQueryCache implements IQueryCache {
       boolean useTerracotta = Boolean.parseBoolean(CdaBoot.getInstance().getGlobalConfig().getConfigProperty(USE_TERRACOTTA_PROPERTY));
       String cacheConfigFile = useTerracotta ? CACHE_CFG_FILE_DIST : CACHE_CFG_FILE;
 
-      if (CdaEngine.isStandalone())
-      {//look for the one under src/jar
+   
+      //look for the one under src/jar
         URL cfgFile = CdaBoot.class.getResource(cacheConfigFile);
         cacheManager = new net.sf.ehcache.CacheManager(cfgFile);
         logger.debug("Cache started using " + cfgFile);
-      }
-      //XXX no need for pentaho context in core - should the code below be deleted?
+      
+
       /*else
       {//look at cda folder in pentaho
         try
