@@ -4,6 +4,7 @@
 
 package pt.webdetails.cda.utils;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.TableModel;
@@ -29,7 +30,6 @@ public class SolutionRepositoryUtils
 
 
   private static final Log logger = LogFactory.getLog(SolutionRepositoryUtils.class);
-  private static final String EXTENSION = ".cda";
 
   private static SolutionRepositoryUtils _instance;
 
@@ -49,30 +49,17 @@ public class SolutionRepositoryUtils
     return _instance;
   }
 
-  
-  private void buildCdaList(IRepositoryFile[] originalArray, List<IRepositoryFile> cdaFiles) {
-    for (IRepositoryFile file : originalArray) {      
-      if (file.isDirectory())
-        buildCdaList(file.listFiles(new CdaFilter()),cdaFiles);
-      else
-        cdaFiles.add(file);
-    }    
-  }
-  
+
   public TableModel getCdaList(final IUserSession userSession)
   {
 
     logger.debug("Getting CDA list");
-    //XXX IRepositoryAccess doesn't have getFullSolutionTree(FileAccess fa,CdaFilter cdaFltr) method
     IRepositoryAccess repository = (IRepositoryAccess) CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
-    IRepositoryFile[] cdaTree = repository.getFullSolutionTree(FileAccess.READ, new CdaFilter());
+    IRepositoryFile[] cdaTree = repository.getPluginFiles("/",FileAccess.READ);
     @SuppressWarnings("unchecked")
 
-    List<IRepositoryFile> cdaFiles = new ArrayList<IRepositoryFile>();
-    
-    buildCdaList(cdaTree, cdaFiles);
-    
-    
+    List<IRepositoryFile> cdaFiles = new ArrayList<IRepositoryFile>(Arrays.asList(cdaTree));
+       
 
     final int rowCount = cdaFiles.size();
 
@@ -89,27 +76,5 @@ public class SolutionRepositoryUtils
 
     return typedTableModel;
 
-  }
-
-
-  private class CdaFilter implements IRepositoryFileFilter
-  {
-      
-      public boolean keepFile(final IRepositoryFile iRepositoryFile)//XXX the signature of this method was: keepFile(final IRepositoryFile iRepositoryFile, final int i)
-    {
-      if (iRepositoryFile.isDirectory())
-      {
-        return true;
-      }
-      else
-      {
-        return iRepositoryFile.getExtension().equals(EXTENSION);
-      }
-    }
-
-        @Override
-        public boolean accept(IRepositoryFile irf) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
   }
 }

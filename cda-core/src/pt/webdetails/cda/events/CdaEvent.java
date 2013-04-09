@@ -9,7 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 
-import pt.webdetails.cpf.JsonSerializable;
+import pt.webdetails.cpf.messaging.JsonSerializable;
 import pt.webdetails.cpf.messaging.PluginEvent;
 
 public abstract class CdaEvent extends PluginEvent
