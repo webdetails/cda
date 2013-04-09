@@ -23,16 +23,16 @@ import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 
-public class SqlTestFormula extends TestCase {
+public class SqlFormulaTest extends TestCase {
 	
   private static final Log logger = LogFactory.getLog(SqlTest.class);
 
-  public SqlTestFormula()
+  public SqlFormulaTest()
   {
     super();
   }
 
-  public SqlTestFormula(final String name)
+  public SqlFormulaTest(final String name)
   {
     super(name);
   }

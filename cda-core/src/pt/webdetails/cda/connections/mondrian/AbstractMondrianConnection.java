@@ -63,7 +63,7 @@ public abstract class AbstractMondrianConnection extends AbstractConnection impl
   protected String assembleRole(String catalog)
   {
     
-    IMondrianRoleMapper roleMapper = (IMondrianRoleMapper)CdaEngine.getInstance().getBeanFactory().getBean("IMondrianRoleMapper");
+    IMondrianRoleMapper roleMapper = CdaEngine.getEnvironment().getMondrianRoleMapper();
 	  try
 	  {
             if (roleMapper != null)

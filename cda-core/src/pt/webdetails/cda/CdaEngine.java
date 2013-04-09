@@ -11,10 +11,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.table.TableModel;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-//import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
+
 import pt.webdetails.cda.dataaccess.QueryException;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.exporter.ExporterEngine;
@@ -25,6 +26,7 @@ import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 import pt.webdetails.cda.utils.SolutionRepositoryUtils;
 import pt.webdetails.cpf.session.IUserSession;
+//import org.pentaho.platform.api.engine.IPentahoSession;
 
 /**
  * Main engine class that will answer to calls
@@ -39,15 +41,15 @@ public class CdaEngine
 
   private static final Log logger = LogFactory.getLog(CdaEngine.class);
   private static CdaEngine _instance;
+  private final ICdaEnvironment environment;
 
   //TODO: we have to clean this at some point or at least make it a reference map
   private Map<UUID, QueryOptions> wrappedQueries = new ConcurrentHashMap<UUID, QueryOptions>();
 
-  private ICdaBeanFactory beanFactory;
-  
-  protected CdaEngine() throws InitializationException
+  protected CdaEngine(ICdaEnvironment env) throws InitializationException
   {
     logger.info("Initializing CdaEngine");
+    environment = env;
     init();
 
   }
@@ -128,59 +130,73 @@ public class CdaEngine
   }
 
 
-  public static boolean isStandalone()
-  {
-    return "true".equals(CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.Standalone"));
+  private static ICdaEnvironment getConfiguredEnvironment() throws InitializationException {
+	    String className = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.environment.default");
+	    
+	    if (StringUtils.isNotBlank(className)) {
+	      try {
+	        final Class<?> clazz;
+	        clazz = Class.forName(className);
+	        if (!ICdaEnvironment.class.isAssignableFrom(clazz)) {
+	          throw new InitializationException (
+	            "Plugin class specified by property pt.webdetails.cda.beanFactoryClass "
+	            + " must implement "
+	            + ICdaBeanFactory.class.getName(), null);
+	        }
+	          return (ICdaEnvironment) clazz.newInstance();
+	        } catch (ClassNotFoundException e) {
+	          String errorMessage = "Class not found when loading bean factory " + className;
+	          logger.error(errorMessage, e);
+	          throw new InitializationException(errorMessage, e); 
+	        } catch (IllegalAccessException e) {
+	          String errorMessage = "Illegal access when loading bean factory from " + className;
+	          logger.error(errorMessage, e);
+	          throw new InitializationException(errorMessage, e); 
+	        } catch (InstantiationException e) {
+	          String errorMessage = "Instantiation error when loading bean factory from " + className;
+	          logger.error(errorMessage, e);
+	          throw new InitializationException(errorMessage, e); 
+	        }
+	      }
+	    
+	    return new DefaultCdaEnvironment();
   }
 
-
-  private void init() throws InitializationException
-  {
-
-    // Start ClassicEngineBoot
-    CdaBoot.getInstance().start();
-    ClassicEngineBoot.getInstance().start();
-    
-    
-    //Get beanFactory
-    String className = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.beanFactoryClass");
-    
-    if (className != null && !className.isEmpty()) {
-      try {
-        final Class<?> clazz;
-        clazz = Class.forName(className);
-        if (!ICdaBeanFactory.class.isAssignableFrom(clazz)) {
-          throw new InitializationException (
-            "Plugin class specified by property pt.webdetails.cda.beanFactoryClass "
-            + " must implement "
-            + ICdaBeanFactory.class.getName(), null);
-        }
-          beanFactory = (ICdaBeanFactory) clazz.newInstance();
-        } catch (ClassNotFoundException e) {
-          String errorMessage = "Class not found when loading bean factory " + className;
-          logger.error(errorMessage, e);
-          throw new InitializationException(errorMessage, e); 
-        } catch (IllegalAccessException e) {
-          String errorMessage = "Illegal access when loading bean factory from " + className;
-          logger.error(errorMessage, e);
-          throw new InitializationException(errorMessage, e); 
-        } catch (InstantiationException e) {
-          String errorMessage = "Instantiation error when loading bean factory from " + className;
-          logger.error(errorMessage, e);
-          throw new InitializationException(errorMessage, e); 
-        }
-      }
-    
-    
-    
-
-  }
-
-
-  public ICdaBeanFactory getBeanFactory() {
-    return beanFactory;
+  private ICdaEnvironment getEnv() {
+	  return environment;
   }
   
+  public static boolean isInitialized()
+  {
+    return _instance != null;
+  }
+
+  public static void init() throws InitializationException
+  {
+	  init(null);
+  }
+
+  public static void init(ICdaEnvironment env) throws InitializationException
+  {
+	  if (!isInitialized()) {
+		  // try to get the environment from the configuration
+		  // will return the DefaultCdaEnvironment by default
+		  if (env != null)
+			  env = getConfiguredEnvironment();
+
+		  _instance = new CdaEngine(env);
+
+
+		  // Start ClassicEngineBoot
+		  CdaBoot.getInstance().start();
+		  ClassicEngineBoot.getInstance().start();
+	  }
+
+  }
+  
+  public static synchronized ICdaEnvironment getEnvironment() {
+	  return getInstance().getEnv();
+  }
   
   public static synchronized CdaEngine getInstance()
   {
@@ -188,7 +204,7 @@ public class CdaEngine
     if (_instance == null)
     {
       try {
-        _instance = new CdaEngine();
+        init();
       } catch (InitializationException ie) {
         logger.fatal("Initialization failed. CDA will NOT be available", ie);
       }

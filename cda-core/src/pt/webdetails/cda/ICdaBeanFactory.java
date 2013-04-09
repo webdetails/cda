@@ -4,11 +4,12 @@
 
 package pt.webdetails.cda;
 
-import org.springframework.context.ConfigurableApplicationContext;
 
 
 public interface ICdaBeanFactory {
   
-    
   public Object getBean(String id);
+  public boolean containsBean(String id);
+  public String[] getBeanNamesForType(Class clazz);
+  
 }

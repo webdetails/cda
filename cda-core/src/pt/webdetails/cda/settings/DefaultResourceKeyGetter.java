@@ -4,10 +4,14 @@
 
 package pt.webdetails.cda.settings;
 
-import java.io.File;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKeyCreationException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
+
+import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
+import pt.webdetails.cpf.repository.IRepositoryAccess;
+import pt.webdetails.cpf.repository.IRepositoryFile;
 
 /**
  *
@@ -16,10 +20,11 @@ import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 public class DefaultResourceKeyGetter implements IResourceKeyGetter {
 
 
-  @Override
-  public ResourceKey getResourceKey(String id, ResourceManager resourceManager)  throws ResourceKeyCreationException {
-        File settingsFile = new File(id);
-        return resourceManager.createKey(settingsFile);
-  }
-  
+	@Override
+	public ResourceKey getResourceKey(String id, ResourceManager resourceManager)  throws ResourceKeyCreationException {
+		IRepositoryAccess repo = CdaEngine.getEnvironment().getRepositoryAccess();
+		IRepositoryFile f = repo.getRepositoryFile(id, FileAccess.READ);
+		return resourceManager.createKey(f.getFullPath());
+	}
+
 }

@@ -9,20 +9,20 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.io.output.NullOutputStream;
-import org.hibernate.Session;
 
+import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import pt.webdetails.cda.CdaEngine;
-//import pt.webdetails.cda.PluginHibernateException;
-//import pt.webdetails.cda.cache.CacheScheduleManager;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
+//import pt.webdetails.cda.PluginHibernateException;
+//import pt.webdetails.cda.cache.CacheScheduleManager;
 
 /**
  *

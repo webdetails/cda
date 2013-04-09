@@ -4,9 +4,6 @@
 
 package pt.webdetails.cda;
 
-import pt.webdetails.cda.utils.DoQueryParameters;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,13 +13,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
-
 import java.util.Map;
+
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.lang.StringUtils;
 
+import pt.webdetails.cda.cache.ICacheScheduleManager;
 import pt.webdetails.cda.cache.monitor.CacheMonitorHandler;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
@@ -32,11 +30,11 @@ import pt.webdetails.cda.exporter.ExporterEngine;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
-import pt.webdetails.cda.cache.ICacheScheduleManager;
-
-import pt.webdetails.cpf.repository.IRepositoryAccess;
-import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
+import pt.webdetails.cda.utils.DoQueryParameters;
 import pt.webdetails.cpf.http.ICommonParameterProvider;
+import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
+import pt.webdetails.cpf.repository.IRepositoryAccess;
+import pt.webdetails.cpf.repository.IRepositoryFile;
 import pt.webdetails.cpf.session.ISessionUtils;
 
 
@@ -210,7 +208,7 @@ public class CdaCoreService
     if(StringUtils.isEmpty(path)){
       throw new IllegalArgumentException("No path provided");
     }
-    IRepositoryAccess repAccess = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
+    IRepositoryAccess repAccess = CdaEngine.getEnvironment().getRepositoryAccess();
     logger.debug("Do Query: getRelativePath:" + path);
     logger.debug("Do Query: getSolPath:" + repAccess.getSolutionPath(path));
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
@@ -231,7 +229,7 @@ public class CdaCoreService
     final CdaEngine engine = CdaEngine.getInstance();
    // final ICommonParameterProvider requestParams = requParam;
    // final String path = getRelativePath(requestParams);
-    IRepositoryAccess repAccess = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
+    IRepositoryAccess repAccess = CdaEngine.getEnvironment().getRepositoryAccess();
     logger.debug("Do Query: getRelativePath:" + path);
     logger.debug("Do Query: getSolPath:" + repAccess.getSolutionPath(path));
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
@@ -259,7 +257,7 @@ public class CdaCoreService
   public void writeCdaFile(OutputStream out,final String path, final String data ) throws Exception
   {
     //TODO: Validate the filename in some way, shape or form!
-    IRepositoryAccess repository = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
+    IRepositoryAccess repository = CdaEngine.getEnvironment().getRepositoryAccess();
 
     //final ICommonParameterProvider requestParams = requParam;
     // Check if the file exists and we have permissions to write to it
@@ -291,7 +289,7 @@ public class CdaCoreService
 
     final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
     discoveryOptions.setOutputType(outputType);
-    ISessionUtils sessionUtils = (ISessionUtils) CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils");
+	ISessionUtils sessionUtils = CdaEngine.getEnvironment().getSessionUtils();
     String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
     setResponseHeaders(mimeType);
     engine.getCdaList(out, discoveryOptions, sessionUtils.getCurrentSession());
@@ -344,7 +342,7 @@ public class CdaCoreService
   public String getResourceAsString(final String path, final HashMap<String, String> tokens) throws IOException
   {
     // Read file
-    IRepositoryAccess repository = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
+    IRepositoryAccess repository = CdaEngine.getEnvironment().getRepositoryAccess();
     String resourceContents = StringUtils.EMPTY;
     
     if (repository.resourceExists(path))
@@ -374,7 +372,7 @@ public class CdaCoreService
 
   
   public String getResourceAsString(final String path, FileAccess access) throws IOException, AccessDeniedException{
-    IRepositoryAccess repository = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
+    IRepositoryAccess repository = CdaEngine.getEnvironment().getRepositoryAccess();
     if(repository.hasAccess(path, access)){
       HashMap<String, String> keys = new HashMap<String, String>();
       //Locale locale = LocaleHelper.getLocale();
@@ -395,7 +393,7 @@ public class CdaCoreService
   //@Exposed(accessLevel = AccessLevel.PUBLIC)
   public void editFile(final OutputStream out, final String path) throws Exception
   {
-    IRepositoryAccess repository = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
+    IRepositoryAccess repository = CdaEngine.getEnvironment().getRepositoryAccess();
     
     
     // Check if the file exists and we have permissions to write to it
@@ -436,37 +434,21 @@ public class CdaCoreService
     getResource(out, resource);
   }
 
-
-  public void getResource(final OutputStream out, final String rsource) throws Exception
+  public void getResource(final OutputStream out, String resource) throws Exception
   {
     //String resource = requParam.getStringParameter("resource", null);
-      String resource = rsource;
     resource = resource.startsWith("/") ? resource : "/" + resource;
-    getResource(out, resource);
-    
-     IRepositoryAccess repAccess = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
-    final String path = repAccess.getSolutionPath("system/" + PLUGIN_NAME + resource);//PentahoSystem.getApplicationContext().getSolutionPath("system/" + PLUGIN_NAME + resource); //$NON-NLS-1$ //$NON-NLS-2$
-
-    final File file = new File(path);
-    final InputStream in = new FileInputStream(file);
-    
-    try{
-      IOUtils.copy(in, out);
-    }
-    finally {
-      IOUtils.closeQuietly(in);
-    }
-    
-    
-    
-    
-    
+    IRepositoryAccess repAccess =CdaEngine.getEnvironment().getRepositoryAccess();
+    IRepositoryFile resFile = repAccess.getSettingsFile(resource, FileAccess.READ);
+    if (resFile != null && resFile.exists()) {
+    	out.write(resFile.getData());
+  	}
   }
 
 /*
   private void getResource(final OutputStream out, final String resource) throws IOException
   {
-    IRepositoryAccess repAccess = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
+    IRepositoryAccess repAccess = CdaEngine.getEnvironment().getRepositoryAccess();
     final String path = repAccess.getSolutionPath("system/" + PLUGIN_NAME + resource);//PentahoSystem.getApplicationContext().getSolutionPath("system/" + PLUGIN_NAME + resource); //$NON-NLS-1$ //$NON-NLS-2$
 
     final File file = new File(path);
@@ -504,9 +486,10 @@ public class CdaCoreService
   //@Exposed(accessLevel = AccessLevel.PUBLIC)
   public void cacheController(OutputStream out, String method, String obj)
   {
-      ICacheScheduleManager manager = (ICacheScheduleManager) CdaEngine.getInstance().getBeanFactory().getBean("ICacheScheduleManager");
-      manager.handleCall(method, obj, out);
-    //CacheScheduleManager.getInstance().handleCall(requParam, out);
+	  if (CdaEngine.getEnvironment().supportsCacheScheduler()) {
+		  ICacheScheduleManager manager = CdaEngine.getEnvironment().getCacheScheduler();
+		  manager.handleCall(method, obj, out);
+	  }
   }
 
   //@Exposed(accessLevel = AccessLevel.ADMIN)

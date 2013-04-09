@@ -34,7 +34,7 @@ public class XlsExporter extends AbstractKettleExporter
     super(extraSettings);
     this.attachmentName = getSetting(ATTACHMENT_NAME_SETTING, "cda-export." + getType());
     this.templateName = getSetting(TEMPLATE_NAME_SETTING, null);
-    IRepositoryAccess repository = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
+    IRepositoryAccess repository = CdaEngine.getEnvironment().getRepositoryAccess();
     if(templateName != null){
       templateName = repository.getSolutionPath(templateName);
     }

@@ -48,8 +48,9 @@ public class MqlDataAccess extends PREDataAccess {
     final PmdDataFactory returnDataFactory = new PmdDataFactory();
     returnDataFactory.setXmiFile(connection.getConnectionInfo().getXmiFile());
     returnDataFactory.setDomainId(connection.getConnectionInfo().getDomainId());
-    IDataAccessUtils dataAccessUtils = (IDataAccessUtils)CdaEngine.getInstance().getBeanFactory().getBean("IDataAccessUtils");
+    IDataAccessUtils dataAccessUtils = CdaEngine.getEnvironment().getDataAccessUtils();
     dataAccessUtils.setConnectionProvider(returnDataFactory);
+
     // using deprecated method for 3.10 support
     returnDataFactory.setQuery("query", getQuery());
 

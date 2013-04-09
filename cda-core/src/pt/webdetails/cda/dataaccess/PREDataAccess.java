@@ -7,6 +7,7 @@ package pt.webdetails.cda.dataaccess;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.TimeZone;
+
 import javax.swing.table.TableModel;
 
 import org.dom4j.Element;
@@ -15,17 +16,17 @@ import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.engine.classic.core.ReportEnvironmentDataRow;
-import org.pentaho.reporting.engine.classic.core.parameters.CompoundDataRow;
 import org.pentaho.reporting.engine.classic.core.cache.CachingDataFactory;
+import org.pentaho.reporting.engine.classic.core.parameters.CompoundDataRow;
 import org.pentaho.reporting.engine.classic.core.util.CloseableTableModel;
 import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFactory;
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.settings.UnknownConnectionException;
-import pt.webdetails.cda.CdaEngine;
 
 /**
  * This is the DataAccess implementation for PentahoReportingEngine based queries.
@@ -135,7 +136,7 @@ public abstract class PREDataAccess extends SimpleDataAccess
         // fire the query. you always get a tablemodel or an exception.
 
         final ReportEnvironmentDataRow environmentDataRow;
-        IDataAccessUtils dataAccessUtils = (IDataAccessUtils)CdaEngine.getInstance().getBeanFactory().getBean("IDataAccessUtils");
+        IDataAccessUtils dataAccessUtils = CdaEngine.getEnvironment().getDataAccessUtils();
         environmentDataRow = dataAccessUtils.createEnvironmentDataRow(configuration);
 
         final TableModel tm = dataFactory.queryData("query",

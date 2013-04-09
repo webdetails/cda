@@ -16,9 +16,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cpf.session.IUserSession;
 import pt.webdetails.cpf.http.ICommonParameterProvider;
-import pt.webdetails.cpf.session.ISessionUtils;
+import pt.webdetails.cpf.session.IUserSession;
 /**
  * Boilerplate for a JSON content generator
  */
@@ -91,7 +90,7 @@ public abstract class JsonCallHandler {
        
     JSONObject result = null;
     Method method = methods.get(methodName);
-    IUserSession session = ((ISessionUtils)CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils")).getCurrentSession();
+    IUserSession session = (CdaEngine.getEnvironment().getSessionUtils()).getCurrentSession();
 
     try 
     {

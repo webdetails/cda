@@ -6,10 +6,11 @@ package pt.webdetails.cda;
 
 
 public class InitializationException extends Exception {
-  
-  
-  public InitializationException(final String s, final Exception cause) {
-    super(s,cause);
-  }  
-  
+
+	private static final long serialVersionUID = 1089220229330479839L;
+
+	public InitializationException(final String s, final Exception cause) {
+		super(s,cause);
+	}  
+
 }

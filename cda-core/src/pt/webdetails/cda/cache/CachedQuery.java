@@ -41,7 +41,7 @@ public class CachedQuery extends Query
   {
     super(json);
 
-    ISessionUtils sessionUtils = (ISessionUtils) CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils");
+    ISessionUtils sessionUtils = CdaEngine.getEnvironment().getSessionUtils();
     this.userName = sessionUtils.getCurrentSession().getUserName();
     this.cronString = getJsonString(json, "cronString");
     this.lastExecuted = getJsonDate(json, "lastExecuted");
