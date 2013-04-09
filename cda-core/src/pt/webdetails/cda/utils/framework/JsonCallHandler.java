@@ -52,7 +52,7 @@ public abstract class JsonCallHandler {
     
     private String name;
     
-    public abstract JSONObject execute(ICommonParameterProvider params) throws Exception;
+    public abstract JSONObject execute(ICommonParameterProvider requParam) throws Exception;
     
     public void setName(String name){
       this.name = name;
@@ -82,10 +82,10 @@ public abstract class JsonCallHandler {
     return true;
   }
   
-  public void handleCall(ICommonParameterProvider requestParams, OutputStream out)
+  public void handleCall(String methodName, ICommonParameterProvider requParam, OutputStream out)
   {
   //TODO: messages
-    String methodName = requestParams.getStringParameter(methodParameter, defaultMethod);
+    //String methodName = requestParams.getStringParameter(methodParameter, defaultMethod);
        
     JSONObject result = null;
     Method method = methods.get(methodName);
@@ -100,14 +100,14 @@ public abstract class JsonCallHandler {
       {
         result = getErrorJson(MessageFormat.format("Method {0} not found.", methodName));
       }
-      else if(!hasPermission(sessionUtils.getCurrentSession(), method)){//XXX will cpf have an implementation of IUserSession?
+      else if(!hasPermission(session, method)){
         result = getErrorJson(MessageFormat.format("Permission denied to call method {0}:{1}.", this.getClass().getName(), methodName));
       }
       else 
       {
         try
         {
-          result = method.execute(requestParams);
+          result = method.execute(requParam);
         }
         catch(JSONException e){
           logger.error( MessageFormat.format("Error building JSON response in method {0}.", methodName) , e);

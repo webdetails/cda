@@ -20,6 +20,7 @@ import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 
 
 import pt.webdetails.cda.CdaBoot;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.cache.TableCacheKey;
 import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
 import pt.webdetails.cda.connections.Connection;
@@ -47,7 +48,8 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
   protected String query;
   private static final String QUERY_TIME_THRESHOLD_PROPERTY = "pt.webdetails.cda.QueryTimeThreshold";
   private static int queryTimeThreshold = getQueryTimeThresholdFromConfig(3600);//seconds
-  private static IEventPublisher EventPublisher;
+  //private static IEventPublisher EventPublisher;
+  private static IEventPublisher EventPublisher = (IEventPublisher) CdaEngine.getInstance().getBeanFactory().getBean("IEventPublisher");
 
   public SimpleDataAccess()
   {
@@ -138,13 +140,14 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
       {
         CdaEvent.QueryInfo info = new CdaEvent.QueryInfo(getCdaSettings().getId(), getId(), getQuery(), parameterDataRow);
 
+        
         if (e instanceof QueryException && e.getCause() != null)
         {
-          EventPublisher.getPublisher().publish(new QueryErrorEvent(info, e.getCause()));//XXX via beanfactory
-        }
+          EventPublisher.publish(new QueryErrorEvent(info, e.getCause()));//XXX via beanfactory
+        } 
         else
         {
-          EventPublisher.getPublisher().publish(new QueryErrorEvent(info, e));
+          EventPublisher.publish(new QueryErrorEvent(info, e));
         }
       }
       catch (Exception inner)
@@ -252,7 +255,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
       //publish
       try
       {
-        EventPublisher.getPublisher().publish(new QueryTooLongEvent(
+        EventPublisher.publish(new QueryTooLongEvent(
                 new QueryTooLongEvent.QueryInfo(this.getCdaSettings().getId(), queryId, query, Parameter.createParameterDataRowFromParameters(parameters)), duration));
       }
       catch (Exception e)

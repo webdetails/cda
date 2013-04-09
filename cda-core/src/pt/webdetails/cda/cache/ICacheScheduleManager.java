@@ -11,5 +11,5 @@ package pt.webdetails.cda.cache;
 import java.io.OutputStream;
 import pt.webdetails.cpf.http.ICommonParameterProvider;
 public interface ICacheScheduleManager {
-    public void handleCall(ICommonParameterProvider requParam, OutputStream out);
+    public void handleCall(String method,String obj, OutputStream out);
 }
