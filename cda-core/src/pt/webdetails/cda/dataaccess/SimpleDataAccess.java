@@ -48,8 +48,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
   protected String query;
   private static final String QUERY_TIME_THRESHOLD_PROPERTY = "pt.webdetails.cda.QueryTimeThreshold";
   private static int queryTimeThreshold = getQueryTimeThresholdFromConfig(3600);//seconds
-  //private static IEventPublisher EventPublisher;
-  private static IEventPublisher EventPublisher = (IEventPublisher) CdaEngine.getInstance().getBeanFactory().getBean("IEventPublisher");
+  private static IEventPublisher eventPublisher = (IEventPublisher) CdaEngine.getInstance().getBeanFactory().getBean("IEventPublisher");
 
   public SimpleDataAccess()
   {
@@ -143,11 +142,11 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
         
         if (e instanceof QueryException && e.getCause() != null)
         {
-          EventPublisher.publish(new QueryErrorEvent(info, e.getCause()));//XXX via beanfactory
+          eventPublisher.publish(new QueryErrorEvent(info, e.getCause()));//XXX via beanfactory
         } 
         else
         {
-          EventPublisher.publish(new QueryErrorEvent(info, e));
+          eventPublisher.publish(new QueryErrorEvent(info, e));
         }
       }
       catch (Exception inner)
@@ -255,7 +254,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
       //publish
       try
       {
-        EventPublisher.publish(new QueryTooLongEvent(
+        eventPublisher.publish(new QueryTooLongEvent(
                 new QueryTooLongEvent.QueryInfo(this.getCdaSettings().getId(), queryId, query, Parameter.createParameterDataRowFromParameters(parameters)), duration));
       }
       catch (Exception e)

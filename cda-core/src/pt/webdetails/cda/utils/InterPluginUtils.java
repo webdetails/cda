@@ -15,7 +15,8 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cpf.InterPluginCall;
+import pt.webdetails.cpf.AbstractInterPluginCall;
+import pt.webdetails.cpf.plugin.Plugin;
 
 /**
  *
@@ -51,8 +52,8 @@ public class InterPluginUtils
   public static TableModel getTableModelFromJsonPluginCall(String plugin, String method, Map<String, Object> params)
   {
 
-    InterPluginCall pluginCall = (InterPluginCall)CdaEngine.getInstance().getBeanFactory().getBean("InterPluginCall");
-    pluginCall.init(new InterPluginCall.Plugin(plugin), method, params);
+    AbstractInterPluginCall pluginCall = (AbstractInterPluginCall)CdaEngine.getInstance().getBeanFactory().getBean("InterPluginCall");
+    pluginCall.init(new Plugin(plugin), method, params);
 
     return InterPluginUtils.getInstance().getTableModelFromJSONArray(pluginCall.call(), params);
 

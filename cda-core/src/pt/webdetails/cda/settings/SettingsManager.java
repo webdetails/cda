@@ -4,7 +4,6 @@
 
 package pt.webdetails.cda.settings;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -105,6 +104,7 @@ public class SettingsManager {
     try {
       final ResourceManager resourceManager = new ResourceManager();
       resourceManager.registerDefaults();
+
       // add the runtime context so that PentahoResourceData class can get access
       // to the solution repo
       IResourceKeyGetter resourceKeyGetter = (IResourceKeyGetter)CdaEngine.getInstance().getBeanFactory().getBean("IResourceKeyGetter");
