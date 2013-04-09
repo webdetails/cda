@@ -7,13 +7,14 @@ package pt.webdetails.cda.connections;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.InputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
-//import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper; XXX this needs to go
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.CdaCoreService;
 import pt.webdetails.cda.CdaEngine;
@@ -21,11 +22,13 @@ import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
 import pt.webdetails.cpf.repository.IRepositoryAccess;
 import pt.webdetails.cpf.repository.IRepositoryFile;
 import pt.webdetails.cpf.repository.IRepositoryFileFilter;
-
+import org.dom4j.dom.DOMDocument;
+import org.dom4j.Node;
 /**
  *
  * @author pdpi
  */
+import org.dom4j.io.SAXReader;
 public class ConnectionCatalog {
 
   public enum ConnectionType {
@@ -54,9 +57,16 @@ public class ConnectionCatalog {
         ByteArrayInputStream bais = null;
         try {
           bais = new ByteArrayInputStream(file.getData());
-          Document doc = XmlDom4JHelper.getDocFromStream(bais, null);
+          SAXReader reader = new SAXReader();
+          Document doc = reader.read(bais);
+          //Document doc = XmlDom4JHelper.getDocFromStream(bais, null);
           // To figure out whether the component is generic or has a special implementation,
           // we directly look for the class override in the definition
+          List<Node> list = new ArrayList<Node>();//XXX working on this part still
+          list.addAll(doc.selectNodes(".//Connection"));
+          Node n = doc.getRootElement();
+          String name = n.getText();
+          
           String className = XmlDom4JHelper.getNodeText("/Connection/Implementation", doc);
           if (className != null) {
             Connection connection = connectionFromClass(className);

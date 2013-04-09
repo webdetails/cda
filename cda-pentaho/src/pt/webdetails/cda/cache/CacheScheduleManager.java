@@ -74,30 +74,30 @@ public class CacheScheduleManager
   }
 
 
-  public void handleCall(IParameterProvider requestParams, OutputStream out)
+  public void handleCall(final String method,final String obj, OutputStream out)
   {
-    String method = requestParams.getParameter("method").toString();
+    //String method = requestParams.getParameter("method").toString();
     try
     {
       switch (functions.valueOf(method.toUpperCase()))
       {
         case CHANGE:
-          change(requestParams, out);
+          change(obj, out);
           break;
         case RELOAD:
-          load(requestParams, out);
+          load(obj, out);
           break;
         case LIST:
-          list(requestParams, out);
+          list(out);
           break;
         case EXECUTE:
-          execute(requestParams, out);
+          execute(obj, out);
           break;
         case DELETE:
-          delete(requestParams, out);
+          delete(obj, out);
           break;
         case IMPORT:
-          importQueries(requestParams, out);
+          importQueries(obj, out);
           break;
       }
     }
@@ -135,10 +135,10 @@ public class CacheScheduleManager
   }
 
 
-  private void load(IParameterProvider requestParams, OutputStream out) throws Exception
+  private void load(String obj, OutputStream out) throws Exception
   {
     Session s = getHibernateSession();
-    Long id = Long.decode(requestParams.getParameter("id").toString());
+    Long id = Long.decode(obj);
     Query q = (Query) s.load(Query.class, id);
     if (q == null)
     {
@@ -217,9 +217,9 @@ public class CacheScheduleManager
   }
 
 
-  private void change(IParameterProvider requestParams, OutputStream out) throws Exception
+  private void change(String obj, OutputStream out) throws Exception
   {
-    String jsonString = requestParams.getParameter("object").toString();
+    String jsonString = obj;
     JSONTokener jsonTokener = new JSONTokener(jsonString);
     try
     {
@@ -267,7 +267,7 @@ public class CacheScheduleManager
   }
 
 
-  private void list(IParameterProvider requestParams, OutputStream out) throws PluginHibernateException
+  private void list( OutputStream out) throws PluginHibernateException
   {
     JSONObject list = new JSONObject();
     JSONObject meta = new JSONObject();
@@ -303,9 +303,9 @@ public class CacheScheduleManager
     }
   }
 
-  private void importQueries(IParameterProvider requestParams, OutputStream out) throws Exception
+  private void importQueries(String obj, OutputStream out) throws Exception
   {
-    String jsonString = requestParams.getParameter("object").toString();
+    String jsonString = obj;
     JSONTokener jsonTokener = new JSONTokener(jsonString);
     try
     {
@@ -343,9 +343,9 @@ public class CacheScheduleManager
   }
 
 
-  private void execute(IParameterProvider requestParams, OutputStream out) throws PluginHibernateException
+  private void execute(String obj, OutputStream out) throws PluginHibernateException
   {
-    Long id = Long.decode(requestParams.getParameter("id").toString());
+    Long id = Long.decode(obj);
     Session s = getHibernateSession();
     CachedQuery q = (CachedQuery) s.load(CachedQuery.class, id);
 
@@ -384,9 +384,9 @@ public class CacheScheduleManager
   }
 
 
-  private void delete(IParameterProvider requestParams, OutputStream out) throws PluginHibernateException
+  private void delete(String obj, OutputStream out) throws PluginHibernateException
   {
-    Long id = Long.decode(requestParams.getParameter("id").toString());
+    Long id = Long.decode(obj);
     Session s = getHibernateSession();
     s.beginTransaction();
 

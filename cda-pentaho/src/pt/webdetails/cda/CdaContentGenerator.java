@@ -481,7 +481,9 @@ public class CdaContentGenerator extends SimpleContentGenerator
   @Exposed(accessLevel = AccessLevel.PUBLIC)
   public void cacheController(OutputStream out)
   {
-    CacheScheduleManager.getInstance().handleCall(getRequestParameters(), out);
+      String method = getRequestParameters().getParameter("method").toString();
+      String obj = getRequestParameters().getParameter("object").toString();
+      CacheScheduleManager.getInstance().handleCall(method,obj, out);
   }
 
   @Exposed(accessLevel = AccessLevel.ADMIN)

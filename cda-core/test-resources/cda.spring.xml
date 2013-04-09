@@ -14,7 +14,7 @@ http://jax-ws.dev.java.net/spring/servlet http://jax-ws.dev.java.net/spring/serv
 	<context:annotation-config />
 
   <!--
-  <bean id="InterPluginCall" class="" scope="prototype"/>
+  <bean id="InterPluginCall" class="pt.webdetails.cpf" scope="prototype"/>
   <bean id="IDataAccessUtils" class="pt.webdetails.cda.dataccess.DefaultDataAccessUtils" scope="prototype"/>
   <bean id="IResourceKeyGetter" class="pt.webdetails.cda.settings.DefaultResourceKeyGetter" scope="prototype"/>
   <bean id="IConnectionHelper" class="pt.webdetails.cda.connections.DefaultConnectionHelper" scope="prototype"/>
@@ -26,6 +26,7 @@ http://jax-ws.dev.java.net/spring/servlet http://jax-ws.dev.java.net/spring/serv
   <bean id="ICacheScheduleManager" class="pt.webdetails.cda.cache.CacheScheduleManager" scope="prototype"/>
   <bean id="ICdaCoreSessionFormulaContext" class="pt.webdetails.cda.CdaCoreSessionFormulaContext" scope="prototype"/>
   <bean id="ICubeFileProviderSetter" class="pt.webdetails.cda.dataaccess.CubeFileProviderSetter" scope="prototype"/>
+  <bean id="IEventPublisher" class="pt.webdetails.cpf.messaging.EventPublisher" scope="prototype"/>
   
   
 
