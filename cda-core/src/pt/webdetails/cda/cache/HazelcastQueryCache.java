@@ -15,9 +15,7 @@ import javax.swing.table.TableModel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
 
-import pt.webdetails.cda.CdaCoreService;
 import pt.webdetails.cda.CdaPropertiesHelper;
 import pt.webdetails.cda.cache.monitor.CacheElementInfo;
 import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
@@ -46,8 +44,7 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
   public static final String MAP_NAME = "cdaCache";
   public static final String AUX_MAP_NAME = "cdaCacheStats";
   
-  private static final String PLUGIN_PATH = "system/" + CdaCoreService.PLUGIN_NAME + "/";
-  private static final String CACHE_CFG_FILE_HAZELCAST = "hazelcast.xml";
+
 
   private static final String GROUP_NAME = "cdc";
   private static HazelcastInstance hzInstance;
@@ -99,11 +96,9 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
     return hzInstance;
   }
   
-  public HazelcastQueryCache(){
-    this(PentahoSystem.getApplicationContext().getSolutionPath(PLUGIN_PATH + CACHE_CFG_FILE_HAZELCAST),true);
-  }
+
   
-  private HazelcastQueryCache(String cfgFile, boolean superClient){
+  public HazelcastQueryCache(){
     super(Thread.currentThread().getContextClassLoader());
     init();
   }

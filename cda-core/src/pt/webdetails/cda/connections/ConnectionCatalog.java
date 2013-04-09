@@ -13,7 +13,7 @@ import java.util.HashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
-import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
+//import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper; XXX this needs to go
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.CdaCoreService;
 import pt.webdetails.cda.CdaEngine;
