@@ -14,7 +14,7 @@ import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.xml.DomTraversalHelper;
 import pt.webdetails.cda.xml.XmlUtils;
 
-public class XmlRoundtripTest extends XMLTestCase {
+public class RoundtripSuite extends XMLTestCase {
 	
 	private SettingsManager settingsManager;
 	private DomTraversalHelper tHelper;
@@ -24,7 +24,7 @@ public class XmlRoundtripTest extends XMLTestCase {
 		tHelper = new DomTraversalHelper();
 	}
 
-    public XmlRoundtripTest(String name) {
+    public RoundtripSuite(String name) {
         super(name);
     }
 	
