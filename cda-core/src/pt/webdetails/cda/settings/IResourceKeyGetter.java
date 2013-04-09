@@ -13,5 +13,5 @@ import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
  * @author pedrovale
  */
 public interface IResourceKeyGetter {
-  public ResourceKey  getResourceKey(String id, ResourceManager resourceManager) throws ResourceKeyCreationException ;
+  public ResourceKey getResourceKey(String id, ResourceManager resourceManager) throws ResourceKeyCreationException ;
 }

@@ -15,9 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-import org.eclipse.birt.report.model.api.activity.IEventFilter;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
-
 
 import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.CdaEngine;
@@ -26,7 +24,6 @@ import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.DummyConnection;
-import pt.webdetails.cpf.messaging.IEventPublisher;
 import pt.webdetails.cda.events.CdaEvent;
 import pt.webdetails.cda.events.QueryErrorEvent;
 import pt.webdetails.cda.events.QueryTooLongEvent;
@@ -35,6 +32,7 @@ import pt.webdetails.cda.settings.UnknownConnectionException;
 import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.xml.DomVisitable;
 import pt.webdetails.cda.xml.DomVisitor;
+import pt.webdetails.cpf.messaging.IEventPublisher;
 
 /**
  * Implementation of the SimpleDataAccess User: pedro Date: Feb 3, 2010 Time:
@@ -46,12 +44,14 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
   private static final Log logger = LogFactory.getLog(SimpleDataAccess.class);
   protected String connectionId;
   protected String query;
+  private IEventPublisher eventPublisher;
+  
   private static final String QUERY_TIME_THRESHOLD_PROPERTY = "pt.webdetails.cda.QueryTimeThreshold";
   private static int queryTimeThreshold = getQueryTimeThresholdFromConfig(3600);//seconds
-  private static IEventPublisher eventPublisher = (IEventPublisher) CdaEngine.getInstance().getBeanFactory().getBean("IEventPublisher");
 
   public SimpleDataAccess()
   {
+	  this.eventPublisher = CdaEngine.getEnvironment().getEventPublisher();
   }
 
 
@@ -59,9 +59,9 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
   {
 
     super(element);
-    connectionId = element.attributeValue("connection");
-    query = element.selectSingleNode("./Query").getText();
-
+    this.connectionId = element.attributeValue("connection");
+    this.query = element.selectSingleNode("./Query").getText();
+    this.eventPublisher = CdaEngine.getEnvironment().getEventPublisher();
   }
 
 
@@ -77,6 +77,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     super(id, name);
     this.query = query;
     this.connectionId = connectionId;
+    this.eventPublisher = CdaEngine.getEnvironment().getEventPublisher();
   }
 
 
@@ -142,7 +143,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
         
         if (e instanceof QueryException && e.getCause() != null)
         {
-          eventPublisher.publish(new QueryErrorEvent(info, e.getCause()));//XXX via beanfactory
+          eventPublisher.publish(new QueryErrorEvent(info, e.getCause()));
         } 
         else
         {

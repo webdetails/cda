@@ -5,30 +5,26 @@
 package pt.webdetails.cda.connections;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.InputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
-import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
-import pt.webdetails.cda.CdaCoreService;
-import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
-import pt.webdetails.cpf.repository.IRepositoryAccess;
-import pt.webdetails.cpf.repository.IRepositoryFile;
-import pt.webdetails.cpf.repository.IRepositoryFileFilter;
-import org.dom4j.dom.DOMDocument;
 import org.dom4j.Node;
+import org.dom4j.io.SAXReader;
+import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
+
+import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
+import pt.webdetails.cpf.repository.IRepositoryFile;
+//import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper; XXX this needs to go
 /**
  *
  * @author pdpi
  */
-import org.dom4j.io.SAXReader;
 public class ConnectionCatalog {
 
   public enum ConnectionType {
@@ -46,13 +42,9 @@ public class ConnectionCatalog {
   private void getConnections() {
     connectionPool = new HashMap<String, ConnectionInfo>();
 
+    List<IRepositoryFile> files = CdaEngine.getEnvironment().getComponentsFiles();
     
-    
-    IRepositoryAccess repAccess = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
-        
-    IRepositoryFile[] files = repAccess.getSettingsFileTree("resources/components/connections", "xml",FileAccess.READ);
-    
-    if (files != null && files.length > 0) {
+    if (files != null && files.size() > 0) {
       for (IRepositoryFile file : files) {
         ByteArrayInputStream bais = null;
         try {

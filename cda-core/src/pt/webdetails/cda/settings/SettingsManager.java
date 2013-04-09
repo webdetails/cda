@@ -6,11 +6,15 @@ package pt.webdetails.cda.settings;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+
 import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -21,14 +25,13 @@ import org.pentaho.reporting.libraries.resourceloader.ResourceException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 
-import java.text.MessageFormat;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
-import pt.webdetails.cpf.repository.IRepositoryAccess;
 import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
-import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cpf.repository.IRepositoryAccess;
 import pt.webdetails.cpf.repository.IRepositoryFile;
 
 /**
@@ -104,10 +107,7 @@ public class SettingsManager {
     try {
       final ResourceManager resourceManager = new ResourceManager();
       resourceManager.registerDefaults();
-
-      // add the runtime context so that PentahoResourceData class can get access
-      // to the solution repo
-      IResourceKeyGetter resourceKeyGetter = (IResourceKeyGetter)CdaEngine.getInstance().getBeanFactory().getBean("IResourceKeyGetter");
+      IResourceKeyGetter resourceKeyGetter = CdaEngine.getEnvironment().getResourceKeyGetter();
       final ResourceKey key = resourceKeyGetter.getResourceKey(id, resourceManager);
       final Resource resource = resourceManager.create(key, null, org.w3c.dom.Document.class);
       final org.w3c.dom.Document document = (org.w3c.dom.Document) resource.getResource();
@@ -132,7 +132,7 @@ public class SettingsManager {
    */
   private Long getLastSaveTime(final String id) {
     //check if it's a saved file and get its timestamp
-    IRepositoryAccess repository = (IRepositoryAccess)CdaEngine.getInstance().getBeanFactory().getBean("IRepositoryAccess");
+    IRepositoryAccess repository = CdaEngine.getEnvironment().getRepositoryAccess();
     IRepositoryFile savedCda = repository.getRepositoryFile(id,FileAccess.NONE);
     if(savedCda != null) return savedCda.getLastModified();
 
@@ -187,8 +187,8 @@ public class SettingsManager {
     // First we need a list of all the data accesses. We're getting that from a .properties file, as a comma-separated array.
     
     
-    IDataAccess dataAcess = (IDataAccess)CdaEngine.getInstance().getBeanFactory().getBean("IDataAccess");
-    String[] dataAccesses = dataAcess.getDataAcesses();
+    Properties components = CdaEngine.getEnvironment().getCdaComponents();
+    String[] dataAccesses = StringUtils.split(StringUtils.defaultString(components.getProperty("dataAccesses")), ",");
 
     // We apply some sanity checks to the dataAccesses listed:
     //    1. It can't be abstract,

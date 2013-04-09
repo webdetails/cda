@@ -4,24 +4,14 @@
 
 package pt.webdetails.cda.cache;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.net.URL;
 
 import javax.swing.table.TableModel;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.lang.StringUtils;
-
-import pt.webdetails.cda.CdaBoot;
-import pt.webdetails.cda.CdaCoreService;
-import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cda.cache.monitor.CacheElementInfo;
-import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
-
 
 import mondrian.olap.InvalidArgumentException;
 import net.sf.ehcache.Cache;
@@ -30,13 +20,21 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.Status;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import pt.webdetails.cda.CdaBoot;
+import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.cache.monitor.CacheElementInfo;
+import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
+
 public class EHCacheQueryCache implements IQueryCache {
 
   private static final Log logger = LogFactory.getLog(EHCacheQueryCache.class);
   private static final String CACHE_NAME = "pentaho-cda-dataaccess";
   private static final String CACHE_CFG_FILE = "ehcache.xml";
   private static final String CACHE_CFG_FILE_DIST = "ehcache-dist.xml";
-  //private static final String PLUGIN_PATH = "system/" + CdaCoreService.PLUGIN_NAME + "/";
   private static final String USE_TERRACOTTA_PROPERTY = "pt.webdetails.cda.UseTerracotta";
   private static CacheManager cacheManager;
   
@@ -79,28 +77,11 @@ public class EHCacheQueryCache implements IQueryCache {
       boolean useTerracotta = Boolean.parseBoolean(CdaBoot.getInstance().getGlobalConfig().getConfigProperty(USE_TERRACOTTA_PROPERTY));
       String cacheConfigFile = useTerracotta ? CACHE_CFG_FILE_DIST : CACHE_CFG_FILE;
 
-   
-      //look for the one under src/jar
-        URL cfgFile = CdaBoot.class.getResource(cacheConfigFile);
-        cacheManager = new net.sf.ehcache.CacheManager(cfgFile);
-        logger.debug("Cache started using " + cfgFile);
-      
+      byte[] cfgFile = CdaEngine.getEnvironment().getCdaConfigFile(cacheConfigFile);
+      InputStream is = new ByteArrayInputStream(cfgFile);
+      cacheManager = new net.sf.ehcache.CacheManager(is);
+      logger.debug("Cache started using " + cacheConfigFile);
 
-      /*else
-      {//look at cda folder in pentaho
-        try
-        {//preferred way: proper config in plugin folder
-         String cfgFile = PentahoSystem.getApplicationContext().getSolutionPath(PLUGIN_PATH + cacheConfigFile);
-         cacheManager = new net.sf.ehcache.CacheManager(cfgFile);
-         logger.debug("Cache started using " + cfgFile);
-        }
-        catch(CacheException exc)
-        {//fallback to standalone 
-          logger.warn("Cache configuration not found in plugin folder, using fallback.");
-          URL cfgFile = CdaBoot.class.getResource(cacheConfigFile);
-          cacheManager = new net.sf.ehcache.CacheManager(cfgFile);
-        }
-      }*/
       // enable clean shutdown so ehcache's diskPersistent attribute can work
       if (!useTerracotta)
       {

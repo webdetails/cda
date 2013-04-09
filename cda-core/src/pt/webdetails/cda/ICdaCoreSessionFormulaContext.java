@@ -4,7 +4,10 @@
 
 package pt.webdetails.cda;
 
-public interface ICdaCoreSessionFormulaContext {
+import org.pentaho.reporting.libraries.formula.FormulaContext;
+import pt.webdetails.cpf.session.IUserSession;
+
+public interface ICdaCoreSessionFormulaContext extends FormulaContext {
     
     
     public Object resolveReference(final Object name);

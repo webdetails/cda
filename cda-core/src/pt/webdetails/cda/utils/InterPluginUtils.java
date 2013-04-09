@@ -9,14 +9,16 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.swing.table.TableModel;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
+
 import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cpf.AbstractInterPluginCall;
-import pt.webdetails.cpf.plugin.Plugin;
+import pt.webdetails.cpf.IPluginCall;
 
 /**
  *
@@ -51,12 +53,8 @@ public class InterPluginUtils
 
   public static TableModel getTableModelFromJsonPluginCall(String plugin, String method, Map<String, Object> params)
   {
-
-    AbstractInterPluginCall pluginCall = (AbstractInterPluginCall)CdaEngine.getInstance().getBeanFactory().getBean("InterPluginCall");
-    pluginCall.init(new Plugin(plugin), method, params);
-
-    return InterPluginUtils.getInstance().getTableModelFromJSONArray(pluginCall.call(), params);
-
+	  IPluginCall pluginCall = CdaEngine.getEnvironment().createPluginCall(plugin, method, params);
+	  return InterPluginUtils.getInstance().getTableModelFromJSONArray(pluginCall.call(), params);
   }
 
 

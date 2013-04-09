@@ -24,9 +24,12 @@ public class FormulaEvaluator {
     
     if(!StringUtils.contains(text, FORMULA_BEGIN)) return text;
     try{
-        ISessionUtils sessionUtils = (ISessionUtils) CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils");
-        
-      return replaceFormula(text, new CdaCoreSessionFormulaContext(sessionUtils.getCurrentSession()));//XXX CdaCoreSessionFormulaContext got deleted
+      IUserSession session = (CdaEngine.getEnvironment().getSessionUtils()).getCurrentSession();
+      ICdaCoreSessionFormulaContext formulaContext = CdaEngine.getEnvironment().getFormulaContext();
+      formulaContext.setSession(session);
+      
+      return replaceFormula(text, formulaContext);//XXX CdaCoreSessionFormulaContext got deleted
+
 
     }
     catch(Exception e){//TODO: change
@@ -68,10 +71,18 @@ public class FormulaEvaluator {
   {
     try {
       Formula formula = new Formula(localValue);
-      ISessionUtils sessionUtils = (ISessionUtils) CdaEngine.getInstance().getBeanFactory().getBean("ISessionUtils");
+
       // set context if available
-      if (formulaContext != null) formula.initialize(formulaContext);
-      else formula.initialize(new CdaCoreSessionFormulaContext(sessionUtils.getCurrentSession()));
+      if (formulaContext != null) {
+    	  formula.initialize(formulaContext);
+      } else {
+          IUserSession session = (CdaEngine.getEnvironment().getSessionUtils()).getCurrentSession();
+          ICdaCoreSessionFormulaContext formulaContext1 = CdaEngine.getEnvironment().getFormulaContext();
+          formulaContext1.setSession(session);
+          formula.initialize(formulaContext1);
+      }
+
+
       // evaluate
       Object result = formula.evaluate();
       if(result instanceof ArrayList)

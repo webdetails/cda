@@ -43,8 +43,6 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
   
   public static final String MAP_NAME = "cdaCache";
   public static final String AUX_MAP_NAME = "cdaCacheStats";
-  
-
 
   private static final String GROUP_NAME = "cdc";
   private static HazelcastInstance hzInstance;

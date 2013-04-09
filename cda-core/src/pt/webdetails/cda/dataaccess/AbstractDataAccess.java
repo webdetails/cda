@@ -214,13 +214,9 @@ public abstract class AbstractDataAccess implements DataAccess
   public static synchronized IQueryCache getCdaCache(){
     if(cache == null){
       try {
-        cache = (IQueryCache) CdaEngine.getInstance().getBeanFactory().getBean("IQueryCache"); 
+        cache = CdaEngine.getEnvironment().getQueryCache(); 
       } catch (Exception e) {
         logger.error(e.getMessage());
-      }
-      if(cache == null){
-        //fallback
-        cache = new EHCacheQueryCache(); 
       }
     }
     return cache;

@@ -6,6 +6,7 @@ package pt.webdetails.cda.dataaccess;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+
 import javax.swing.table.TableModel;
 
 import org.apache.commons.lang.StringUtils;
@@ -16,6 +17,7 @@ import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.BandedMDXDataFactory;
+
 import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
@@ -129,9 +131,7 @@ public class MdxDataAccess extends PREDataAccess
 
     final AbstractNamedMDXDataFactory mdxDataFactory = createDataFactory();
     
-    IDataAccessUtils dataAccessUtils = (IDataAccessUtils)CdaEngine.getInstance().getBeanFactory().getBean("IDataAccessUtils");
-    dataAccessUtils.setMdxDataFactoryBaseConnectionProperties(connection, mdxDataFactory);
-
+    CdaEngine.getEnvironment().setMdxDataFactoryBaseConnectionProperties(connection, mdxDataFactory);
     
     mdxDataFactory.setDataSourceProvider(connection.getInitializedDataSourceProvider());
     mdxDataFactory.setJdbcPassword(mondrianConnectionInfo.getPass());
@@ -141,7 +141,7 @@ public class MdxDataAccess extends PREDataAccess
     mdxDataFactory.setJdbcPasswordField(mondrianConnectionInfo.getPasswordField());
     mdxDataFactory.setJdbcUserField(mondrianConnectionInfo.getUserField());
 
-    ICubeFileProviderSetter cubeFileProviderSetter = (ICubeFileProviderSetter)CdaEngine.getInstance().getBeanFactory().getBean("ICubeFileProviderSetter");
+    ICubeFileProviderSetter cubeFileProviderSetter = CdaEngine.getEnvironment().getCubeFileProviderSetter();
     cubeFileProviderSetter.setCubeFileProvider(mdxDataFactory, mondrianConnectionInfo.getCatalog());
     
 
