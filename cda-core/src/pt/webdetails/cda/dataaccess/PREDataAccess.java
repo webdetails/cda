@@ -10,6 +10,7 @@ import java.util.TimeZone;
 
 import javax.swing.table.TableModel;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
@@ -165,7 +166,8 @@ public abstract class PREDataAccess extends SimpleDataAccess
     }
     catch (ReportDataFactoryException e)
     {
-      throw new QueryException(e.getMessage(), e);
+    	//e.printStackTrace();
+      throw new QueryException(ExceptionUtils.getRootCauseMessage(e), ExceptionUtils.getRootCause(e));
 //              + ((e.getParentThrowable() == null) ? "" : ("; Parent exception: " + e.getParentThrowable().getMessage())) + "\n" +
 //              ((e.getParentThrowable() != null && e.getParentThrowable().getCause() != null)?e.getParentThrowable().getCause().getMessage() :"") + "\n"
 //              , e);

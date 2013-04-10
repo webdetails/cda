@@ -16,7 +16,7 @@
             <Property name="JdbcPassword">password</Property>
             <Property name="Jdbc">jdbc:hsqldb:res:sampledata</Property>
             <Property name="JdbcDrivers">org.hsqldb.jdbcDriver</Property>
-            <Property name="Catalog">src/test/resources/pt/webdetails/cda/tests/steelwheels.mondrian.xml</Property>
+            <Property name="Catalog">res:pt/webdetails/cda/tests/steelwheels.mondrian.xml</Property>
         </Connection>
     </DataSources>
     <!-- DataAccess object controls the query itself

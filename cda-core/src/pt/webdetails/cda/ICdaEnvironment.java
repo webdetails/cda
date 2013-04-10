@@ -21,6 +21,7 @@ import pt.webdetails.cda.connections.mondrian.MondrianJndiConnectionInfo;
 import pt.webdetails.cda.connections.sql.SqlJndiConnectionInfo;
 import pt.webdetails.cda.dataaccess.ICubeFileProviderSetter;
 import pt.webdetails.cda.dataaccess.IDataAccessUtils;
+import pt.webdetails.cda.formula.ICdaCoreSessionFormulaContext;
 import pt.webdetails.cda.settings.IResourceKeyGetter;
 import pt.webdetails.cpf.IPluginCall;
 import pt.webdetails.cpf.messaging.IEventPublisher;

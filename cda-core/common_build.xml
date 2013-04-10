@@ -277,6 +277,7 @@ TYPICAL TARGET SEQUENCE
 
   <!-- Build Mode properties -->
   <property name="release" value="false" description="Set this to true if you want to generate a release artifact" />
+  <property name="test.roundtrip" value="false" description="Set this to true if you want to test using roundtrip" />
 
   <!-- Set the os property -->
   <condition property="isLinux">
@@ -1276,10 +1277,11 @@ TYPICAL TARGET SEQUENCE
       <classpath refid="test.classpath" />
       <formatter type="plain" />
       <batchtest fork="yes" todir="${testbin.dir}">
-        <fileset dir="${testsrc.dir}" casesensitive="yes">
-          <include name="**/Test*.java" />
-          <include name="**/*Test.java" />
-        </fileset>
+              	<fileset dir="${testsrc.dir}" casesensitive="yes">
+                	<include name="**/RoundTripSuite.java" if="test.roundtrip" />
+                	<include name="**/Test*.java" if="atest.roundtrip" />
+                	<include name="**/*Test.java" if="atest.roundtrip"/>
+              	</fileset>
       </batchtest>
     </junit>
   </target>
@@ -1560,7 +1562,7 @@ TYPICAL TARGET SEQUENCE
       <formatter type="xml" />
       <test name="${testcase}" todir="${testreports.xml.dir}" if="testcase" />
       <batchtest todir="${testreports.xml.dir}" unless="testcase">
-        <fileset dir="${testsrc.dir}" casesensitive="yes">
+        <fileset dir="${testsrc.dir}" casesensitive="yes" if="roundtrip">
           <include name="**/*Test.java" />
           <include name="**/*Test.java" />
         </fileset>

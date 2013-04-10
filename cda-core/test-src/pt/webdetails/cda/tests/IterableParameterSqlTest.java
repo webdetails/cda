@@ -4,39 +4,18 @@ import java.io.File;
 import java.io.OutputStream;
 import java.net.URL;
 
+import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
-import junit.framework.TestCase;
 
 public class IterableParameterSqlTest extends TestCase {
   private static final Log logger = LogFactory.getLog(IterableParameterSqlTest.class);
-
-  public IterableParameterSqlTest()
-  {
-    super();
-  }
-
-  public IterableParameterSqlTest(final String name)
-  {
-    super(name);
-  }
-
-
-  protected void setUp() throws Exception
-  {
-
-    CdaBoot.getInstance().start();
-
-    super.setUp();
-  }
-
 
   public void testIterateStatus() throws Exception
   {

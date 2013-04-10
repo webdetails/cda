@@ -72,7 +72,10 @@ private static final Log logger = LogFactory.getLog(CoreBeanFactory.class);
       if (context == null)
         context = getSpringBeanFactory();
     }
-    return context.getBean(id);
+    if (context.containsBean(id)) {
+    	return context.getBean(id);
+    }
+    return null;
   }
   
   public String[] getBeanNamesForType(Class clazz) {
@@ -81,7 +84,9 @@ private static final Log logger = LogFactory.getLog(CoreBeanFactory.class);
 
   @Override
   public boolean containsBean(String id) {
-	  return context.containsBean(id);
+	  if (context != null)
+		  return context.containsBean(id);
+	  return false;
   }
   
   

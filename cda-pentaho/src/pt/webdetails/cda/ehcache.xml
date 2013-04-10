@@ -54,7 +54,7 @@
         
 	<cache name="pentaho-cda-dataaccess"
         maxElementsInMemory="50"
-				maxElementsOnDisk="500"
+		maxElementsOnDisk="500"
         eternal="false"
         overflowToDisk="true"
         timeToIdleSeconds="0"
