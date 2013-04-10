@@ -28,8 +28,10 @@ public class DoQueryParameters {
     private int pageSize;
     private int pageStart;
     private boolean wrapItUp;
+    private String jsonCallback;
     private List<String> sortBy;
     private Map<String, Object> extraParams;
+    private Map<String, Object> extraSettings;
     
     
     public DoQueryParameters(String path, String solution, String file) {
@@ -44,8 +46,10 @@ public class DoQueryParameters {
         this.pageSize = 0;
         this.pageStart = 0;
         this.wrapItUp = false;
+        this.jsonCallback="<blank>";
         this.sortBy = new ArrayList<String>();
         extraParams = new HashMap<String, Object>();
+        extraSettings = new HashMap<String, Object>();
         
     }
 
@@ -236,6 +240,34 @@ public class DoQueryParameters {
     }
     public Object getAnExtraParameter(String paramName){
         return getExtraParams().get(paramName);
+    }
+
+    /**
+     * @return the extraSettings
+     */
+    public Map<String, Object> getExtraSettings() {
+        return extraSettings;
+    }
+
+    /**
+     * @param extraSettings the extraSettings to set
+     */
+    public void setExtraSettings(Map<String, Object> extraSettings) {
+        this.extraSettings = extraSettings;
+    }
+
+    /**
+     * @return the jsonCallback
+     */
+    public String getJsonCallback() {
+        return jsonCallback;
+    }
+
+    /**
+     * @param jsonCallback the jsonCallback to set
+     */
+    public void setJsonCallback(String jsonCallback) {
+        this.jsonCallback = jsonCallback;
     }
 }
 

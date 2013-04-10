@@ -47,7 +47,7 @@ public class ConnectionCatalog {
         ByteArrayInputStream bais = null;
         try {
           bais = new ByteArrayInputStream(file.getData());
-          SAXReader reader = new SAXReader();
+          SAXReader reader = new SAXReader();//XXX check
           Document doc = reader.read(bais);
           // To figure out whether the component is generic or has a special implementation,
           // we directly look for the class override in the definition

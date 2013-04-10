@@ -31,7 +31,7 @@ public class FormulaEvaluator {
       ICdaCoreSessionFormulaContext formulaContext = CdaEngine.getEnvironment().getFormulaContext();
       formulaContext.setSession(session);
       
-      return replaceFormula(text, formulaContext);//XXX CdaCoreSessionFormulaContext got deleted
+      return replaceFormula(text, formulaContext);
 
 
     }
