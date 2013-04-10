@@ -22,10 +22,18 @@ private static final Log logger = LogFactory.getLog(CoreBeanFactory.class);
   
   protected static ConfigurableApplicationContext context;
   
-  protected ConfigurableApplicationContext getSpringBeanFactory() {
+  public CoreBeanFactory() {
+	  context = getSpringBeanFactory("cda.spring.xml");
+  }
+  
+  public CoreBeanFactory(String config) {
+	  context = getSpringBeanFactory(config);
+  }
+  
+  protected ConfigurableApplicationContext getSpringBeanFactory(String config) {
 	  try {
 		  final ClassLoader cl = this.getClass().getClassLoader();
-		  URL url = cl.getResource("cda.spring.xml");
+		  URL url = cl.getResource(config);
 		  if (url != null) {
 			  File f = new File(url.toURI()); //$NON-NLS-1$
 			  if (f.exists()) {
@@ -68,10 +76,6 @@ private static final Log logger = LogFactory.getLog(CoreBeanFactory.class);
   
   @Override
   public Object getBean(String id) {
-    synchronized(CoreBeanFactory.class) {
-      if (context == null)
-        context = getSpringBeanFactory();
-    }
     if (context.containsBean(id)) {
     	return context.getBean(id);
     }
