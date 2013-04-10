@@ -36,6 +36,7 @@ import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
 import pt.webdetails.cpf.repository.IRepositoryAccess;
 import pt.webdetails.cpf.repository.IRepositoryFile;
 import pt.webdetails.cpf.session.ISessionUtils;
+import pt.webdetails.cpf.session.IUserSession;
 
 
 public class CdaCoreService 
@@ -115,15 +116,28 @@ public class CdaCoreService
     // ... and the query parameters
     // We identify any pathParams starting with "param" as query parameters and extra settings prefixed with "setting"
     @SuppressWarnings("unchecked")
+    
+    final Iterator settings = parameters.getExtraSettings().entrySet().iterator();
+    while (settings.hasNext())
+    {
+        Map.Entry<String,Object> pairs = (Map.Entry)settings.next();
+      final String name = pairs.getKey();
+      final Object parameter = pairs.getValue();
+      if(name.startsWith(PREFIX_SETTING))
+          queryOptions.addSetting(name.substring(PREFIX_SETTING.length()), (String)parameter);
+    }
     final Iterator params = parameters.getExtraParams().entrySet().iterator();
     while (params.hasNext())
     {
         
-      Map.Entry pairs = (Map.Entry)params.next();
-      final String name = (String)pairs.getKey();
+      Map.Entry<String,Object> pairs = (Map.Entry)params.next();
+      final String name = pairs.getKey();
       final Object parameter = pairs.getValue();
-      queryOptions.addParameter(name, parameter);
+      //queryOptions.addParameter(name, parameter);
       
+      //XXX add parameters and settings to queryoptions
+      if(name.startsWith(PREFIX_PARAMETER))
+          queryOptions.addParameter(name.substring(PREFIX_PARAMETER.length()), parameter);
 /*
       if (param.startsWith(PREFIX_PARAMETER))
       {
@@ -133,6 +147,7 @@ public class CdaCoreService
       {
         queryOptions.addSetting(param.substring(PREFIX_SETTING.length()), requestParams.getStringParameter(param, ""));
       }*/
+      
     }
 
     if(parameters.isWrapItUp()) {
@@ -143,9 +158,9 @@ public class CdaCoreService
     }
     
     // we'll allow for the special "callback" param to be used, and passed as settingcallback to jsonp exports
-    if (parameters.hasParameter(JSONP_CALLBACK))
+    if (!parameters.getJsonCallback().equals("<blank>"))
     {
-      queryOptions.addSetting(JSONP_CALLBACK, (String)parameters.getExtraParams().get(JSONP_CALLBACK));
+      queryOptions.addSetting(JSONP_CALLBACK, parameters.getJsonCallback());
     }
 
     Exporter exporter = ExporterEngine.getInstance().getExporter(queryOptions.getOutputType(), queryOptions.getExtraSettings());
@@ -167,12 +182,12 @@ public class CdaCoreService
 
   //@Exposed(accessLevel = AccessLevel.PUBLIC)
   public void unwrapQuery(final OutputStream out,
-          final String path, String solution, String file, final String uuid)  throws Exception
+          final String path, final String solution, final String file, final String uuid)  throws Exception
   {
     final CdaEngine engine = CdaEngine.getInstance();
     //final ICommonParameterProvider requestParams = requParam;
-    //final String path = getRelativePath(requestParams);
-    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
+    final String relativePath = getRelativePath(path,solution,file);
+    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(relativePath);
     //String uuid = requestParams.getStringParameter("uuid", null);
 
     QueryOptions queryOptions = engine.unwrapQuery(uuid);
@@ -185,7 +200,7 @@ public class CdaCoreService
         mimeType = exporter.getMimeType();
       }
       
-      if (path!=null && uuid!= null);//XXX  ==  if (this.parameterProviders != null)  
+      if (relativePath!=null && uuid!= null);//XXX  ==  if (this.parameterProviders != null)  
       {
         setResponseHeaders(mimeType, attachmentName);
       }
@@ -199,19 +214,19 @@ public class CdaCoreService
 
  // @Exposed(accessLevel = AccessLevel.PUBLIC)
   public void listQueries(final OutputStream out,
-          final String path, final String outputType) throws Exception
+          final String path,final String solution,final String file, final String outputType) throws Exception
   {
     final CdaEngine engine = CdaEngine.getInstance();
 
     //final ICommonParameterProvider requestParams = requParam;
-    //final String path = getRelativePath(requestParams);
-    if(StringUtils.isEmpty(path)){
+    final String relativePath = getRelativePath(path,solution,file);
+    if(StringUtils.isEmpty(relativePath)){
       throw new IllegalArgumentException("No path provided");
     }
     IRepositoryAccess repAccess = CdaEngine.getEnvironment().getRepositoryAccess();
-    logger.debug("Do Query: getRelativePath:" + path);
-    logger.debug("Do Query: getSolPath:" + repAccess.getSolutionPath(path));
-    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
+    logger.debug("Do Query: getRelativePath:" + relativePath);
+    logger.debug("Do Query: getSolPath:" + repAccess.getSolutionPath(relativePath));
+    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(relativePath);
 
     // Handle the query itself and its output format...
     final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
@@ -224,15 +239,15 @@ public class CdaCoreService
 
  // @Exposed(accessLevel = AccessLevel.PUBLIC)
   public void listParameters(final OutputStream out, 
-          final String path, final String outputType,final String dataAccessId) throws Exception
+          final String path, final String solution,final String file, final String outputType,final String dataAccessId) throws Exception
   {
     final CdaEngine engine = CdaEngine.getInstance();
    // final ICommonParameterProvider requestParams = requParam;
-   // final String path = getRelativePath(requestParams);
+    final String relativePath = getRelativePath(path,solution,file);
     IRepositoryAccess repAccess = CdaEngine.getEnvironment().getRepositoryAccess();
-    logger.debug("Do Query: getRelativePath:" + path);
-    logger.debug("Do Query: getSolPath:" + repAccess.getSolutionPath(path));
-    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
+    logger.debug("Do Query: getRelativePath:" + relativePath);
+    logger.debug("Do Query: getSolPath:" + repAccess.getSolutionPath(relativePath));
+    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(relativePath);
 
     // Handle the query itself and its output format...
     final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
@@ -254,31 +269,31 @@ public class CdaCoreService
   }
 
  // @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.PLAIN_TEXT)
-  public void writeCdaFile(OutputStream out,final String path, final String data ) throws Exception
+  public void writeCdaFile(OutputStream out,final String path,final String solution, final String file, final String data ) throws Exception
   {
     //TODO: Validate the filename in some way, shape or form!
     IRepositoryAccess repository = CdaEngine.getEnvironment().getRepositoryAccess();
 
     //final ICommonParameterProvider requestParams = requParam;
     // Check if the file exists and we have permissions to write to it
-    //String path = getRelativePath(requestParams);
+    String relativePath = getRelativePath(path,solution,file);
 
-    if (repository.canWrite(path)&&data!=null)
+    if (repository.canWrite(relativePath)&&data!=null)
     { 
-      switch(repository.publishFile(path, data.getBytes(ENCODING), true)){
+      switch(repository.publishFile(relativePath, data.getBytes(ENCODING), true)){
         case OK:
           SettingsManager.getInstance().clearCache();
           writeOut(out, "File saved.");
           break;
         case FAIL:
           writeOut(out, "Save unsuccessful!");
-          logger.error("writeCdaFile: saving " + path);
+          logger.error("writeCdaFile: saving " + relativePath);
           break;
       }
     }
     else
     {
-      throw new AccessDeniedException(path, null);
+      throw new AccessDeniedException(relativePath, null);
     }
   }
 
@@ -305,7 +320,7 @@ public class CdaCoreService
   }
   
  // @Exposed(accessLevel = AccessLevel.ADMIN)
-  public void cacheMonitor(final OutputStream out,String method,ICommonParameterProvider requParam){
+  public void cacheMonitor(final OutputStream out,String method,ICommonParameterProvider requParam){//XXX ICommonParameterProvider?
     CacheMonitorHandler.getInstance().handleCall(method,requParam, out);
   }
 
@@ -391,14 +406,14 @@ public class CdaCoreService
   }
 
   //@Exposed(accessLevel = AccessLevel.PUBLIC)
-  public void editFile(final OutputStream out, final String path) throws Exception
+  public void editFile(final OutputStream out, final String path,final String solution, final String file) throws Exception
   {
     IRepositoryAccess repository = CdaEngine.getEnvironment().getRepositoryAccess();
     
     
     // Check if the file exists and we have permissions to write to it
-    //String path = getRelativePath(requParam);
-    if (repository.canWrite(path))
+    String relativePath = getRelativePath(path,solution,file);
+    if (repository.canWrite(relativePath))
     {
       boolean hasCde = repository.resourceExists("system/pentaho-cdf-dd");
       
@@ -504,7 +519,7 @@ public class CdaCoreService
   }
   
   
-  private void writeOut(OutputStream out,String uuid){//XXX needs checking
+  private void writeOut(OutputStream out,String uuid){//XXX needs checking, wich error to log
       
       try{
       out.write(uuid.getBytes());
@@ -518,9 +533,9 @@ public class CdaCoreService
   private void setResponseHeaders(String mimeType, String attachmentName){//XXX must be done differently. cda-core --> cpf-core -/-> cpf-pentaho 
       
   }
- 
+
   private void setResponseHeaders(String mimeType){
       
   }
-  //
+  
 }
