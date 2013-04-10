@@ -31,4 +31,17 @@ http://jax-ws.dev.java.net/spring/servlet http://jax-ws.dev.java.net/spring/serv
   
 
   -->
+  <bean id="IUserSession" class="pt.webdetails.cpf.impl.SimpleSession">
+  	<property name="userName" value="username"></property>
+  	<property name="attributes">
+  		<map>
+  			<entry key="test" value="thisIsAGoodValue" />
+  		</map>
+  	</property>
+  </bean>
+  <bean id="ISessionUtils" class="pt.webdetails.cpf.impl.SimpleSessionUtils">
+  	<property name="session" ref="IUserSession" />
+  </bean>
+  
+  
 </beans>

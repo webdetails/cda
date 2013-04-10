@@ -22,9 +22,10 @@ public class DefaultResourceKeyGetter implements IResourceKeyGetter {
 
 	@Override
 	public ResourceKey getResourceKey(String id, ResourceManager resourceManager)  throws ResourceKeyCreationException {
-		IRepositoryAccess repo = CdaEngine.getEnvironment().getRepositoryAccess();
-		IRepositoryFile f = repo.getRepositoryFile(id, FileAccess.READ);
-		return resourceManager.createKey(f.getFullPath());
+		//IRepositoryAccess repo = CdaEngine.getEnvironment().getRepositoryAccess();
+		//IRepositoryFile f = repo.getRepositoryFile(id, FileAccess.READ);
+		//return resourceManager.createKey(f.getFullPath());
+		return resourceManager.createKey(id);
 	}
 
 }

@@ -11,8 +11,8 @@ import org.pentaho.reporting.libraries.formula.Formula;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 
 import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cda.ICdaCoreSessionFormulaContext;
 import pt.webdetails.cda.dataaccess.InvalidParameterException;
+import pt.webdetails.cda.formula.ICdaCoreSessionFormulaContext;
 import pt.webdetails.cpf.session.ISessionUtils;
 import pt.webdetails.cpf.session.IUserSession;
 
@@ -81,8 +81,10 @@ public class FormulaEvaluator {
       } else {
           IUserSession session = (CdaEngine.getEnvironment().getSessionUtils()).getCurrentSession();
           ICdaCoreSessionFormulaContext formulaContext1 = CdaEngine.getEnvironment().getFormulaContext();
-          formulaContext1.setSession(session);
-          formula.initialize(formulaContext1);
+          if (formulaContext1 != null) {
+        	  formulaContext1.setSession(session);
+        	  formula.initialize(formulaContext1);
+          }
       }
 
       // evaluate

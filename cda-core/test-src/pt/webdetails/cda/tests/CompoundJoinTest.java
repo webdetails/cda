@@ -5,20 +5,14 @@ import java.io.OutputStream;
 import java.net.URL;
 
 import junit.framework.TestCase;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.dom4j.DocumentException;
-import pt.webdetails.cda.CdaBoot;
+
 import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cda.connections.UnsupportedConnectionException;
-import pt.webdetails.cda.dataaccess.QueryException;
-import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
-import pt.webdetails.cda.exporter.ExporterException;
-import pt.webdetails.cda.exporter.UnsupportedExporterException;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
-import pt.webdetails.cda.settings.UnknownDataAccessException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,26 +25,6 @@ public class CompoundJoinTest extends TestCase
 
   private static final Log logger = LogFactory.getLog(CompoundJoinTest.class);
 
-  public CompoundJoinTest()
-  {
-    super();
-  }
-
-  public CompoundJoinTest(final String name)
-  {
-    super(name);
-  }
-
-
-  protected void setUp() throws Exception
-  {
-
-    CdaBoot.getInstance().start();
-
-    super.setUp();
-  }
-
-
   public void testCompoundQuery() throws Exception
   {
 
@@ -59,16 +33,15 @@ public class CompoundJoinTest extends TestCase
     OutputStream out = System.out;
 
     logger.info("Building CDA settings from sample file");
-
     final SettingsManager settingsManager = SettingsManager.getInstance();
 
     
     URL file = this.getClass().getResource("sample-join.cda");
     File settingsFile = new File(file.toURI());
-    
-    final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
-    logger.debug("Doing query on Cda - Initializing CdaEngine");
     final CdaEngine engine = CdaEngine.getInstance();
+    final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
+    logger.error("Doing query on Cda - Initializing CdaEngine");
+    
 
     QueryOptions queryOptions = new QueryOptions();
     queryOptions.setDataAccessId("3");

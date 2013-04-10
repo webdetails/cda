@@ -196,8 +196,6 @@ public class CdaEngine
   }
   
   public static synchronized ICdaEnvironment getEnvironment() {
-	  System.out.println(getInstance());
-	  System.out.println(getInstance().getEnv());
 	  return getInstance().getEnv();
   }
   
