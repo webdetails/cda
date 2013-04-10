@@ -15,7 +15,6 @@ public class CdaSessionParameterProvider implements ICdaParameterProvider {
 	public Object getParameter(Object name) {
 		IUserSession session = sessionUtils.getCurrentSession();
 		if (session != null) {
-			System.out.println("Found session: " + session);
 			return session.getParameter(name);
 		}
 		return null;
