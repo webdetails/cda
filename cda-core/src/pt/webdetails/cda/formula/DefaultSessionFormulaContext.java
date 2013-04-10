@@ -82,11 +82,9 @@ public class DefaultSessionFormulaContext implements
         {
           if (paramName.startsWith(prefix))
           {
-        	System.out.println("found provider: " + providers.get(prefix));
+        	//logger.debug("Found provider for prefix: " + prefix + " Provider: " + providers.get(prefix));
             paramName = paramName.substring(prefix.length());
-            System.out.println("Parameter name: " + paramName);
             Object value = providers.get(prefix).getParameter(paramName);
-            System.out.println("Valeu: " + value);
             return value;
           }
         }
