@@ -133,8 +133,10 @@ public class SettingsManager {
   private Long getLastSaveTime(final String id) {
     //check if it's a saved file and get its timestamp
     IRepositoryAccess repository = CdaEngine.getEnvironment().getRepositoryAccess();
-    IRepositoryFile savedCda = repository.getRepositoryFile(id,FileAccess.NONE);
-    if(savedCda != null) return savedCda.getLastModified();
+    if (repository != null) {
+    	IRepositoryFile savedCda = repository.getRepositoryFile(id,FileAccess.NONE);
+    	if(savedCda != null && savedCda.exists()) return savedCda.getLastModified();
+    }
 
     return null;
   }

@@ -1,4 +1,7 @@
-package pt.webdetails.cda;
+package pt.webdetails.cda.formula;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.formula.ContextEvaluationException;
@@ -9,16 +12,29 @@ import org.pentaho.reporting.libraries.formula.operators.OperatorFactory;
 import org.pentaho.reporting.libraries.formula.typing.Type;
 import org.pentaho.reporting.libraries.formula.typing.TypeRegistry;
 
+import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cpf.session.ISessionUtils;
 import pt.webdetails.cpf.session.IUserSession;
 
 public class DefaultSessionFormulaContext implements
 		ICdaCoreSessionFormulaContext {
 
 	private DefaultFormulaContext df;
-	private IUserSession session;
+	private Map<String, ICdaParameterProvider> providers = new HashMap<String, ICdaParameterProvider>();
 	
-	public DefaultSessionFormulaContext() {
+	
+	public DefaultSessionFormulaContext(Map<String, ICdaParameterProvider> providers) {
 		this.df = new DefaultFormulaContext();
+		if (providers == null || providers.size() == 0) {
+			ISessionUtils utils = CdaEngine.getEnvironment().getSessionUtils();
+			if (utils != null) {
+				this.providers.put("security:", new CdaSecurityParameterProvider(utils));
+				this.providers.put("session:", new CdaSessionParameterProvider(utils));
+			}
+			this.providers.put("system:", new CdaSystemParameterProvider());
+		} else {
+			this.providers = providers;
+		}
 	}
 	
 	@Override
@@ -55,11 +71,28 @@ public class DefaultSessionFormulaContext implements
 	public Type resolveReferenceType(Object name) throws ContextEvaluationException {
 		return df.resolveReferenceType(name);
 	}
-
-	@Override
-	public Object resolveReference(Object name) {
-		return df.resolveReference(name);
-	}
+	
+    @Override
+    public Object resolveReference(final Object name)
+    {
+      if (name instanceof String)
+      {
+        String paramName = ((String) name).trim();
+        for (String prefix : providers.keySet())
+        {
+          if (paramName.startsWith(prefix))
+          {
+        	System.out.println("found provider: " + providers.get(prefix));
+            paramName = paramName.substring(prefix.length());
+            System.out.println("Parameter name: " + paramName);
+            Object value = providers.get(prefix).getParameter(paramName);
+            System.out.println("Valeu: " + value);
+            return value;
+          }
+        }
+      }
+      return df.resolveReference(name);
+    }
 
 	@Override
 	public Object[] convertToArray(/* here is something missing */) {
@@ -68,8 +101,7 @@ public class DefaultSessionFormulaContext implements
 
 	@Override
 	public void setSession(IUserSession session) {
-		this.session = session;
-
+		// not sure if we need it?
 	}
 
 }

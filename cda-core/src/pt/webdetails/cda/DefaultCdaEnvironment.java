@@ -15,6 +15,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.engine.security.SimpleUser;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.JndiConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.states.datarow.EmptyTableModel;
@@ -42,18 +43,23 @@ import pt.webdetails.cda.dataaccess.ICubeFileProviderSetter;
 import pt.webdetails.cda.dataaccess.IDataAccessUtils;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.exporter.ExporterEngine;
+import pt.webdetails.cda.formula.DefaultSessionFormulaContext;
+import pt.webdetails.cda.formula.ICdaCoreSessionFormulaContext;
 import pt.webdetails.cda.settings.DefaultResourceKeyGetter;
 import pt.webdetails.cda.settings.IResourceKeyGetter;
 import pt.webdetails.cpf.IPluginCall;
 import pt.webdetails.cpf.impl.DefaultRepositoryFile;
 import pt.webdetails.cpf.impl.DummyInterPluginCall;
-import pt.webdetails.cpf.impl.DummySessionUtils;
+import pt.webdetails.cpf.impl.SimpleSessionUtils;
+import pt.webdetails.cpf.impl.SimpleUserSession;
 import pt.webdetails.cpf.messaging.IEventPublisher;
+import pt.webdetails.cpf.messaging.PluginEvent;
 import pt.webdetails.cpf.plugin.Plugin;
 import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
 import pt.webdetails.cpf.repository.IRepositoryAccess;
 import pt.webdetails.cpf.repository.IRepositoryFile;
 import pt.webdetails.cpf.session.ISessionUtils;
+import pt.webdetails.cpf.session.IUserSession;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class DefaultCdaEnvironment implements ICdaEnvironment {
@@ -216,11 +222,13 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 	 */
 	public IQueryCache getQueryCache() {
 		try {
-			return (IQueryCache) beanFactory.getBean("IQueryCache");
+			String id = "IQueryCache";
+			if (beanFactory.containsBean(id)) {
+				return (IQueryCache) beanFactory.getBean(id);
+			}
 		} catch (Exception e) {
 			logger.error("Cannot get bean IQueryCache. Using EHCacheQueryCache", e);
 		}
-
 		return new EHCacheQueryCache();
 		
 //		PENTAHO
@@ -244,12 +252,13 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 	public byte[] getCdaConfigFile(String fileName) {
 		try {
 			IRepositoryAccess repo = getRepositoryAccess();
-			IRepositoryFile ir = repo.getSettingsFile(fileName, FileAccess.READ);
-			if (ir != null && ir.exists()) {
-				return ir.getData();
+			if (repo != null) {
+				IRepositoryFile ir = repo.getSettingsFile(fileName, FileAccess.READ);
+				if (ir != null && ir.exists()) {
+					return ir.getData();
+				}
 			}
-
-			URL is = CdaBoot.class.getResource(fileName);
+			URL is = this.getClass().getClassLoader().getResource(fileName);
 			if (is != null) {
 				File f = new File(is.toURI());
 				if (f.exists() && f.canRead())
@@ -267,11 +276,14 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 	public ICdaCoreSessionFormulaContext getFormulaContext() {
 		
 		try {
-			return (ICdaCoreSessionFormulaContext) beanFactory.getBean("ICdaCoreSessionFormulaContext");
+			String id ="ICdaCoreSessionFormulaContext";
+			if (beanFactory != null && beanFactory.containsBean(id)) {
+				return (ICdaCoreSessionFormulaContext) beanFactory.getBean(id);
+			}
 		} catch (Exception e) {
 			logger.error("Cannot get bean ICdaCoreSessionFormulaContext. Using DefaultCdaCoreSessionFormulaContext", e);
 		}
-		return new DefaultSessionFormulaContext();
+		return new DefaultSessionFormulaContext(null);
 	}
 
 	public Properties getCdaComponents() {
@@ -334,7 +346,15 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 
 
     public IEventPublisher getEventPublisher() {
-      return null;
+    	return new IEventPublisher() {
+			
+			@Override
+			public void publish(PluginEvent arg0) {
+				System.out.println(arg0.getKey() + " : " + arg0.getName());
+				
+			}
+		};
+      
       
       //PENTAHO
 //      return new IEventPublisher() {
@@ -408,7 +428,12 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 
 	@Override
 	public ISessionUtils getSessionUtils() {
-		return new DummySessionUtils();
+		String id = "ISessionUtils";
+		if (beanFactory != null && beanFactory.containsBean(id)) {
+			return (ISessionUtils) beanFactory.getBean(id);
+		}
+		SimpleUserSession su = new SimpleUserSession("", new String[0], false,  null);
+		return new SimpleSessionUtils(su, new String[0], new String[0]);
 	}
 
 
@@ -425,7 +450,12 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 
 	@Override
 	public IRepositoryAccess getRepositoryAccess() {
-		return (IRepositoryAccess) beanFactory.getBean("IRepositoryAccess");
+		String id = "IRepositoryAccess";
+		if (beanFactory != null && beanFactory.containsBean(id)) {
+			return (IRepositoryAccess) beanFactory.getBean(id);
+		}
+
+		return null;
 	}
 
 	@Override
@@ -437,7 +467,10 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 	@Override
 	public IDataAccessUtils getDataAccessUtils() {
 		try {
-			return (IDataAccessUtils) beanFactory.getBean("IDataAccessUtils");
+			String id = "IDataAccessUtils";
+			if (beanFactory != null && beanFactory.containsBean(id)) {
+				return (IDataAccessUtils) beanFactory.getBean(id);
+			}
 		} catch (Exception e) {
 			logger.error("Cannot get bean IDataAccessUtils. Using DefaultDataAccessUtils", e);
 		}
@@ -447,9 +480,12 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 	@Override
 	public IResourceKeyGetter getResourceKeyGetter() {
 		try {
-			return (IResourceKeyGetter) beanFactory.getBean("IResourceKeyGetter");
+			String id = "IResourceKeyGetter";
+			if (beanFactory != null && beanFactory.containsBean(id)) {
+				return (IResourceKeyGetter) beanFactory.getBean(id);
+			}
 		} catch (Exception e) {
-			logger.error("Cannot get bean IDataAccessUtils. Using DefaultResourceKeyGetter", e);
+			logger.error("Cannot get bean IResourceKeyGetter. Using DefaultResourceKeyGetter", e);
 		}
 	      // add the runtime context so that PentahoResourceData class can get access
 	      // to the solution repo

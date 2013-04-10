@@ -53,7 +53,7 @@ public class SortTableModel implements RowProductionManager
   {
     Configuration config = CdaBoot.getInstance().getGlobalConfig();
     String sortType = config.getConfigProperty("pt.webdetails.cda.SortingType");
-    if (sortType.equals("DEFAULT"))
+    if ("DEFAULT".equals(sortType))
     {
       return defaultSort(unsorted, sortBy);
     }

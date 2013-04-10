@@ -7,7 +7,6 @@ import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.dom4j.Document;
 
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
@@ -24,10 +23,6 @@ public class RoundtripSuite extends XMLTestCase {
 		tHelper = new DomTraversalHelper();
 	}
 
-    public RoundtripSuite(String name) {
-        super(name);
-    }
-	
 	public String readCdaFile(String file) throws Exception {
 		URL settingsURL = this.getClass().getResource(file);
 	    File settingsFile = new File(settingsURL.toURI());
@@ -41,12 +36,7 @@ public class RoundtripSuite extends XMLTestCase {
 		
 	    final File settingsFile = new File(file);
 	    final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
-		Document doc = tHelper.traverse(cdaSettings);
-
-		//return XmlUtils.formatXml(tHelper.traverse(cdaSettings).asXML());
 		return XmlUtils.prettyPrint(tHelper.traverse(cdaSettings).asXML());
-		//return tHelper.traverse(cdaSettings).asXML();
-
 	}
 	
     private void equalityCheck(String file) throws Exception {
