@@ -29,7 +29,7 @@
 <dependency org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.8.2" conf='runtime->default'/>
 <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.8" conf='runtime->default' />
 
-<dependency org="javax.ws.rs" name="jsr311-api" rev="1.1-ea"/>
+<dependency org="javax.ws.rs" name="jsr311-api" rev="1.1-ea" conf='runtime->default'/>
 
 
 
