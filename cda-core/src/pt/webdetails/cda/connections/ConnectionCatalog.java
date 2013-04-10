@@ -15,12 +15,10 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
-import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cpf.repository.IRepositoryFile;
-//import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper; XXX this needs to go
 /**
  *
  * @author pdpi
@@ -51,19 +49,15 @@ public class ConnectionCatalog {
           bais = new ByteArrayInputStream(file.getData());
           SAXReader reader = new SAXReader();
           Document doc = reader.read(bais);
-          //Document doc = XmlDom4JHelper.getDocFromStream(bais, null);
           // To figure out whether the component is generic or has a special implementation,
           // we directly look for the class override in the definition
-          List<Node> list = new ArrayList<Node>();//XXX working on this part still
-          list.addAll(doc.selectNodes(".//Connection"));
-          Node n = doc.getRootElement();
-          String name = n.getText();
-          
-          String className = XmlDom4JHelper.getNodeText("/Connection/Implementation", doc);
+          Node implementation = doc.selectSingleNode("/Connection/Implementation");
+          Node type = doc.selectSingleNode("/Connection/Type");
+          String className = implementation.getText();//XmlDom4JHelper.getNodeText("/Connection/Implementation", doc);
           if (className != null) {
             Connection connection = connectionFromClass(className);
             if (connection != null) {
-              String connectionType = XmlDom4JHelper.getNodeText("/Connection/Type", doc);
+              String connectionType = type.getText();//XmlDom4JHelper.getNodeText("/Connection/Type", doc);
               ConnectionType ct = ConnectionType.valueOf(connectionType);
               connectionPool.put(connection.getClass().toString(), new ConnectionInfo(ct, connection.getClass()));
             }
