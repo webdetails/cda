@@ -140,6 +140,7 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 			AbstractNamedMDXDataFactory mdxDataFactory,
 			MondrianConnectionInfo mondrianConnectionInfo) {
 
+    
 	    return new DefaultCubeFileProvider(mondrianConnectionInfo.getCatalog());
 	    
 //		PENTAHO
@@ -365,10 +366,16 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 //      };
     }
 
+    
+    
+    //Probably not used
 	@Override
 	public void setMdxDataFactoryBaseConnectionProperties(
 			MondrianConnection connection,
 			AbstractNamedMDXDataFactory mdxDataFactory) {
+    
+    
+    
 		// TODO Auto-generated method stub
 		
 
@@ -461,6 +468,14 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 
 	@Override
 	public ICubeFileProviderSetter getCubeFileProviderSetter() {
+		try {
+			String id = "ICubeFileProviderSetter";
+			if (beanFactory != null && beanFactory.containsBean(id)) {
+				return (ICubeFileProviderSetter) beanFactory.getBean(id);
+			}
+		} catch (Exception e) {
+			logger.error("Cannot get bean ICubeFileProviderSetter. Using DefaultCubeFileProviderSetter", e);
+		}    
 		return new DefaultCubeFileProviderSetter();
 		
 	}

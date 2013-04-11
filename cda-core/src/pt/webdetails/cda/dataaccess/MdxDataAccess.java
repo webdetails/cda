@@ -131,7 +131,10 @@ public class MdxDataAccess extends PREDataAccess
 
     final AbstractNamedMDXDataFactory mdxDataFactory = createDataFactory();
     
-    CdaEngine.getEnvironment().setMdxDataFactoryBaseConnectionProperties(connection, mdxDataFactory);
+    IDataAccessUtils dataAccessUtils = CdaEngine.getEnvironment().getDataAccessUtils();
+    dataAccessUtils.setMdxDataFactoryBaseConnectionProperties(connection, mdxDataFactory);
+
+    //    CdaEngine.getEnvironment().setMdxDataFactoryBaseConnectionProperties(connection, mdxDataFactory);
     
     mdxDataFactory.setDataSourceProvider(connection.getInitializedDataSourceProvider());
     mdxDataFactory.setJdbcPassword(mondrianConnectionInfo.getPass());
