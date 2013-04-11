@@ -24,12 +24,21 @@ http://jax-ws.dev.java.net/spring/servlet http://jax-ws.dev.java.net/spring/serv
   <bean id="ISessionUtils" class="pt.webdetails.cda.pentaho.SessionUtils" scope="prototype"/>
   <bean id="IRepositoryAccess" class="pt.webdetails.cda.pentaho.RepositoryAccess" scope="prototype"/>
   <bean id="ICacheScheduleManager" class="pt.webdetails.cda.cache.CacheScheduleManager" scope="prototype"/>
-  <bean id="ICdaCoreSessionFormulaContext" class="pt.webdetails.cda.CdaCoreSessionFormulaContext" scope="prototype"/>
+  
   <bean id="ICubeFileProviderSetter" class="pt.webdetails.cda.dataaccess.CubeFileProviderSetter" scope="prototype"/>
   <bean id="IEventPublisher" class="pt.webdetails.cpf.messaging.EventPublisher" scope="prototype"/>
   
+  -->
   
-
+  <!-- by default we will use the standard CdaSecurityParameterProvider, CdaSessionParameterProvider, CdaSystemParameterProvider -->
+  <!-- 
+  <bean id="ICdaCoreSessionFormulaContext" class="pt.webdetails.cda.formula.DefaultSessionFormulaContext" scope="prototype">
+  	<property name="providers">
+  		<map>
+  			<entry key="system:" value-ref="my.impl.ICdaParameterProvider />
+  		</map>
+  	</property>
+  </bean>
   -->
   <bean id="IUserSession" class="pt.webdetails.cpf.impl.SimpleUserSession">
   	<property name="userName" value="username"></property>

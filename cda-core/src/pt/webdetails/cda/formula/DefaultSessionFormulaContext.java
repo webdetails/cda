@@ -19,13 +19,12 @@ import pt.webdetails.cpf.session.IUserSession;
 public class DefaultSessionFormulaContext implements
 		ICdaCoreSessionFormulaContext {
 
-	private DefaultFormulaContext df;
+	private DefaultFormulaContext df = new DefaultFormulaContext();;
 	private Map<String, ICdaParameterProvider> providers = new HashMap<String, ICdaParameterProvider>();
 	
 	
-	public DefaultSessionFormulaContext(Map<String, ICdaParameterProvider> providers) {
-		this.df = new DefaultFormulaContext();
-		if (providers == null || providers.size() == 0) {
+	public DefaultSessionFormulaContext(Map<String, ICdaParameterProvider> ps) {
+		if (ps == null || ps.size() == 0) {
 			ISessionUtils utils = CdaEngine.getEnvironment().getSessionUtils();
 			if (utils != null) {
 				this.providers.put("security:", new CdaSecurityParameterProvider(utils));
@@ -33,7 +32,13 @@ public class DefaultSessionFormulaContext implements
 			}
 			this.providers.put("system:", new CdaSystemParameterProvider());
 		} else {
-			this.providers = providers;
+			this.providers = ps;
+		}
+	}
+	
+	public void setProviders(Map<String, ICdaParameterProvider> _providers) {
+		if (_providers != null) {
+			this.providers.putAll(_providers);
 		}
 	}
 	
