@@ -97,7 +97,14 @@ public class RestEndpoint {
       queryParams.setSortBy(sortBy);
       queryParams.setWrapItUp(wrapItUp);
       queryParams.setJsonCallback(jsonCallback);
-      coreService.doQuery(servletResponse, queryParams);
+      coreService.doQuery(servletResponse.getOutputStream(), queryParams);
+      
+      Map<String,String> map = new HashMap<String, String>();
+      Iterator it = map.entrySet().iterator();
+      while(it.hasNext()){
+          Entry<String,String> rsp = (Entry<String,String>)it.next();
+          servletResponse.setHeader(rsp.getKey(), rsp.getValue());
+      }
       
   }
   
@@ -111,7 +118,8 @@ public class RestEndpoint {
                           @Context HttpServletResponse servletResponse, 
                           @Context HttpServletRequest servletRequest) throws Exception
   {
-      coreService.unwrapQuery(servletResponse, path, solution, file, uuid);
+      coreService.unwrapQuery(servletResponse.getOutputStream(), path, solution, file, uuid);
+      
   }
   
   @GET
@@ -126,7 +134,7 @@ public class RestEndpoint {
                           @Context HttpServletRequest servletRequest) throws Exception
   {
       
-      coreService.listQueries(servletResponse, path,solution,file, outputType);
+      coreService.listQueries(servletResponse.getOutputStream(), path,solution,file, outputType);
   }
   
   
@@ -142,7 +150,7 @@ public class RestEndpoint {
                               @Context HttpServletResponse servletResponse, 
                               @Context HttpServletRequest servletRequest) throws Exception
   {
-      coreService.listParameters(servletResponse, path,solution,file, outputType, dataAccessId);
+      coreService.listParameters(servletResponse.getOutputStream(), path,solution,file, outputType, dataAccessId);
       
       
   }
@@ -190,7 +198,7 @@ public class RestEndpoint {
                          @Context HttpServletResponse servletResponse, 
                          @Context HttpServletRequest servletRequest) throws Exception
   {
-      coreService.getCdaList(servletResponse, outputType);
+      coreService.getCdaList(servletResponse.getOutputStream(), outputType);
   }
 
   @GET
@@ -232,7 +240,7 @@ public class RestEndpoint {
                        @Context HttpServletResponse servletResponse, 
                        @Context HttpServletRequest servletRequest) throws Exception
   {
-      coreService.editFile(servletResponse, path,solution,file);
+      coreService.editFile(servletResponse.getOutputStream(), path,solution,file);
    }
 
   @GET

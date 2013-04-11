@@ -147,7 +147,7 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 	@Override
 	public Properties getCdaComponents() {
 		try {
-			String content = getCdaConfigFileContent("components.properties");
+			String content = getCdaConfigFileContent("resources/components.properties");
 			StringReader sr = new StringReader(content);
 			Properties pr = new Properties();
 			pr.load(sr);

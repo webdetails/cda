@@ -37,11 +37,10 @@ import pt.webdetails.cpf.repository.IRepositoryAccess;
 import pt.webdetails.cpf.repository.IRepositoryFile;
 import pt.webdetails.cpf.session.ISessionUtils;
 import pt.webdetails.cpf.session.IUserSession;
-import javax.servlet.http.HttpServletResponse;
 
 
 public class CdaCoreService 
-{
+{ 
 
   private static Log logger = LogFactory.getLog(CdaCoreService.class);
   public static final String PLUGIN_NAME = "cda";
@@ -60,14 +59,14 @@ public class CdaCoreService
 
   //@Exposed(accessLevel = AccessLevel.PUBLIC)
  // @Audited(action = "doQuery")
-  public void doQuery(final HttpServletResponse response,DoQueryParameters parameters) throws Exception
+  public void doQuery(final OutputStream out,DoQueryParameters parameters) throws Exception
   {        
     final CdaEngine engine = CdaEngine.getInstance();
     final QueryOptions queryOptions = new QueryOptions();
 
     final String path = parameters.getPath();
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
-    final OutputStream out = response.getOutputStream();
+    
     // Handle paging options
     // We assume that any paging options found mean that the user actively wants paging.
     final long pageSize = parameters.getPageSize();
@@ -173,7 +172,7 @@ public class CdaCoreService
     
     if (parameters != null);//XXX + FIXME ==  if (this.parameterProviders != null)  
     {
-      setResponseHeaders(mimeType, attachmentName,response);
+      setResponseHeaders(mimeType, attachmentName);
     }
     // Finally, pass the query to the engine
     engine.doQuery(out, cdaSettings, queryOptions);
@@ -181,7 +180,7 @@ public class CdaCoreService
   }
 
   //@Exposed(accessLevel = AccessLevel.PUBLIC)
-  public void unwrapQuery(final HttpServletResponse response,
+  public void unwrapQuery(final OutputStream out,
           final String path, final String solution, final String file, final String uuid)  throws Exception
   {
     final CdaEngine engine = CdaEngine.getInstance();
@@ -189,7 +188,6 @@ public class CdaCoreService
     final String relativePath = getRelativePath(path,solution,file);
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(relativePath);
     //String uuid = requestParams.getStringParameter("uuid", null);
-    final OutputStream out = response.getOutputStream();
     QueryOptions queryOptions = engine.unwrapQuery(uuid);
     if(queryOptions != null) {
       Exporter exporter = ExporterEngine.getInstance().getExporter(queryOptions.getOutputType(), queryOptions.getExtraSettings());
@@ -202,7 +200,7 @@ public class CdaCoreService
       
       if (relativePath!=null && uuid!= null);//XXX  ==  if (this.parameterProviders != null)  
       {
-        setResponseHeaders(mimeType, attachmentName,response);
+        setResponseHeaders(mimeType, attachmentName);
       }
       engine.doQuery(out, cdaSettings, queryOptions);
     }
@@ -213,11 +211,10 @@ public class CdaCoreService
   }
 
  // @Exposed(accessLevel = AccessLevel.PUBLIC)
-  public void listQueries(final HttpServletResponse response,
+  public void listQueries(final OutputStream out,
           final String path,final String solution,final String file, final String outputType) throws Exception
   {
     final CdaEngine engine = CdaEngine.getInstance();
-    final OutputStream out = response.getOutputStream();
     //final ICommonParameterProvider requestParams = requParam;
     final String relativePath = getRelativePath(path,solution,file);
     if(StringUtils.isEmpty(relativePath)){
@@ -233,15 +230,14 @@ public class CdaCoreService
     discoveryOptions.setOutputType(outputType);
 
     String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
-    setResponseHeaders(mimeType,response);
+    setResponseHeaders(mimeType);
     engine.listQueries(out, cdaSettings, discoveryOptions);
   }
 
  // @Exposed(accessLevel = AccessLevel.PUBLIC)
-  public void listParameters(final HttpServletResponse response, 
+  public void listParameters(final OutputStream out, 
           final String path, final String solution,final String file, final String outputType,final String dataAccessId) throws Exception
   {
-      final OutputStream out = response.getOutputStream();
     final CdaEngine engine = CdaEngine.getInstance();
    // final ICommonParameterProvider requestParams = requParam;
     final String relativePath = getRelativePath(path,solution,file);
@@ -256,7 +252,7 @@ public class CdaCoreService
     discoveryOptions.setDataAccessId(dataAccessId);
 
     String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
-    setResponseHeaders(mimeType,response);
+    setResponseHeaders(mimeType);
 
     engine.listParameters(out, cdaSettings, discoveryOptions);
   }
@@ -298,7 +294,7 @@ public class CdaCoreService
   }
 
  // @Exposed(accessLevel = AccessLevel.PUBLIC)
-  public void getCdaList(final HttpServletResponse response,final String outputType) throws Exception
+  public void getCdaList(final OutputStream out,final String outputType) throws Exception
   {
     final CdaEngine engine = CdaEngine.getInstance();
 
@@ -306,8 +302,8 @@ public class CdaCoreService
     discoveryOptions.setOutputType(outputType);
 	ISessionUtils sessionUtils = CdaEngine.getEnvironment().getSessionUtils();
     String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
-    setResponseHeaders(mimeType,response);
-    engine.getCdaList(response.getOutputStream(), discoveryOptions, sessionUtils.getCurrentSession());
+    setResponseHeaders(mimeType);
+    engine.getCdaList(out, discoveryOptions, sessionUtils.getCurrentSession());
   }
 
  // @Exposed(accessLevel = AccessLevel.ADMIN, outputType = MimeType.PLAIN_TEXT)
@@ -341,7 +337,7 @@ public class CdaCoreService
   }
 
 
-  private String getRelativePath(final String solution, final String originalPath,final String file) throws UnsupportedEncodingException
+  private String getRelativePath(final String originalPath, final String solution,final String file) throws UnsupportedEncodingException
   {
 
     String path = URLDecoder.decode(originalPath, ENCODING);
@@ -392,7 +388,7 @@ public class CdaCoreService
     if(repository.hasAccess(path, access)){
       HashMap<String, String> keys = new HashMap<String, String>();
       //Locale locale = LocaleHelper.getLocale();
-      Locale locale = Locale.getDefault(); //XXX probably not what intended
+      Locale locale = Locale.getDefault(); //FIXME probably not what intended
       if (logger.isDebugEnabled())
       {
         logger.debug("Current Pentaho user locale: " + locale.toString());
@@ -407,11 +403,10 @@ public class CdaCoreService
   }
 
   //@Exposed(accessLevel = AccessLevel.PUBLIC)
-  public void editFile(final HttpServletResponse response, final String path,final String solution, final String file) throws Exception 
+  public void editFile(final OutputStream out, final String path,final String solution, final String file) throws Exception 
   {
     IRepositoryAccess repository = CdaEngine.getEnvironment().getRepositoryAccess();
     
-    final OutputStream out = response.getOutputStream();
     // Check if the file exists and we have permissions to write to it
     String relativePath = getRelativePath(path,solution,file);
     if (repository.canWrite(relativePath))
@@ -423,7 +418,7 @@ public class CdaCoreService
     }
     else
     {
-      setResponseHeaders("text/plain",response);
+      setResponseHeaders("text/plain");
       out.write("Access Denied".getBytes());
     }
 
@@ -531,25 +526,24 @@ public class CdaCoreService
   private String getMimeType(String attachmentName){//FIXME must be done differently. cda-core --> cpf-core -/-> cpf-pentaho 
       return null;
   }
-  private void setResponseHeaders(String mimeType, String attachmentName,HttpServletResponse response){//FIXME must be done differently. cda-core --> cpf-core -/-> cpf-pentaho 
-       setResponseHeaders(mimeType, 0, attachmentName,response);
+  private void setResponseHeaders(String mimeType, String attachmentName){//FIXME must be done differently. cda-core --> cpf-core -/-> cpf-pentaho 
+       setResponseHeaders(mimeType, 0, attachmentName);
   }
 
-  private void setResponseHeaders(String mimeType, HttpServletResponse response){
-      setResponseHeaders(mimeType, 0, null,response);
+  private void setResponseHeaders(String mimeType){
+      setResponseHeaders(mimeType, 0, null);
   }
   //FIXME implement this method?
-  private void setResponseHeaders(final String mimeType, final int cacheDuration, final String attachmentName,HttpServletResponse response)
+  private void setResponseHeaders(final String mimeType, final int cacheDuration, final String attachmentName)
     {
       // Make sure we have the correct mime type
       
-     //FIXME mimeType makes sense here? if not simply remove
       /*    final IMimeTypeListener mimeTypeListener = outputHandler.getMimeTypeListener();
       if (mimeTypeListener != null)
       {
         mimeTypeListener.setMimeType(mimeType);
       }
-      */
+      
 
       if (response == null)
       {
@@ -571,7 +565,7 @@ public class CdaCoreService
       {
         response.setHeader("Cache-Control", "max-age=0, no-store");
       }
-      
+      */
     }
   
   
