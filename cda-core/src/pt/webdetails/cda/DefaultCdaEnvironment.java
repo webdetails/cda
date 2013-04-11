@@ -195,11 +195,17 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 
 	@Override
 	public IEventPublisher getEventPublisher() {
+		String id = "IEventPublisher";
+		if (beanFactory != null && beanFactory.containsBean(id)) {
+			return (IEventPublisher) beanFactory.getBean(id);
+		}
+
+		
 		return new IEventPublisher() {
 
 			@Override
 			public void publish(PluginEvent arg0) {
-				System.out.println(arg0.getKey() + " : " + arg0.getName());
+				logger.debug("Event: " + arg0.getKey() + " : " + arg0.getName() + "\n" + arg0.toString());
 
 			}
 		};
