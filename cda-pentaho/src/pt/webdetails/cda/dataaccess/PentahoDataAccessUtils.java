@@ -39,6 +39,7 @@ import org.pentaho.reporting.engine.classic.core.ReportEnvironmentDataRow;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.JndiConnectionProvider;
 import org.pentaho.reporting.platform.plugin.PentahoReportEnvironment;
+import org.pentaho.reporting.platform.plugin.connection.PentahoMondrianDataSourceProvider;
 
 
 public class PentahoDataAccessUtils implements IDataAccessUtils {
