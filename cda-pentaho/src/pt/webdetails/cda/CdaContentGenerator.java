@@ -8,17 +8,15 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-
-
 import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.pentaho.platform.api.engine.IParameterProvider;
-
-
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
+
 import pt.webdetails.cda.cache.CacheScheduleManager;
 import pt.webdetails.cda.utils.DoQueryParameters;
 import pt.webdetails.cpf.SimpleContentGenerator;
