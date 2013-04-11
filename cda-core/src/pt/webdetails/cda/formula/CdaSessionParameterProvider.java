@@ -12,7 +12,7 @@ public class CdaSessionParameterProvider implements ICdaParameterProvider {
 	}
 
 	@Override
-	public Object getParameter(Object name) {
+	public Object getParameter(String name) {
 		IUserSession session = sessionUtils.getCurrentSession();
 		if (session != null) {
 			return session.getParameter(name);
