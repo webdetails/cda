@@ -40,7 +40,7 @@ import pt.webdetails.cpf.session.IUserSession;
 
 
 public class CdaCoreService 
-{
+{ 
 
   private static Log logger = LogFactory.getLog(CdaCoreService.class);
   public static final String PLUGIN_NAME = "cda";
@@ -337,7 +337,7 @@ public class CdaCoreService
   }
 
 
-  private String getRelativePath(final String solution, final String originalPath,final String file) throws UnsupportedEncodingException
+  private String getRelativePath(final String originalPath, final String solution,final String file) throws UnsupportedEncodingException
   {
 
     String path = URLDecoder.decode(originalPath, ENCODING);

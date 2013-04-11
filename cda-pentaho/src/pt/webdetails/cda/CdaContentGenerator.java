@@ -243,7 +243,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
   public void cacheController(OutputStream out)
   {
       String method = getRequestParameters().getParameter("method").toString();
-      String obj = getRequestParameters().getParameter("object").toString();
+      String obj = getRequestParameters().getStringParameter("object", "");
       
       CacheScheduleManager.getInstance().handleCall(method,obj, out);
   }
