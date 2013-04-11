@@ -56,7 +56,7 @@ public class CdaBoot extends AbstractBoot
    * @return The configuration.
    */
   @Override
-  protected Configuration loadConfiguration()//XXX Added @Override
+  protected Configuration loadConfiguration()
   {
     return createDefaultHierarchicalConfiguration("/pt/webdetails/cda/cda.properties",
             "/cda.properties", true, CdaBoot.class);
@@ -67,7 +67,7 @@ public class CdaBoot extends AbstractBoot
    * Performs the boot.
    */
     @Override
-  protected void performBoot()//XXX Added @Override
+  protected void performBoot()
   {
     // any manual init work goes in here ...
   }
@@ -79,7 +79,7 @@ public class CdaBoot extends AbstractBoot
    * @return The project info.
    */
   @Override
-  protected ProjectInformation getProjectInfo()//XXX Added @Override
+  protected ProjectInformation getProjectInfo()
   {
     return projectInfo;
   }
