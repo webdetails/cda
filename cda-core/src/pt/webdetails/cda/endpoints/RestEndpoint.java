@@ -1,12 +1,14 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package pt.webdetails.cda.endpoints;
 
 
 import java.io.OutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.Iterator;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
@@ -17,6 +19,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 import java.util.List;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -94,7 +97,7 @@ public class RestEndpoint {
       queryParams.setSortBy(sortBy);
       queryParams.setWrapItUp(wrapItUp);
       queryParams.setJsonCallback(jsonCallback);
-      coreService.doQuery(servletResponse.getOutputStream(), queryParams);
+      coreService.doQuery(servletResponse, queryParams);
       
   }
   
@@ -108,8 +111,7 @@ public class RestEndpoint {
                           @Context HttpServletResponse servletResponse, 
                           @Context HttpServletRequest servletRequest) throws Exception
   {
-      coreService.unwrapQuery(servletResponse.getOutputStream(), path, solution, file, uuid);
-      
+      coreService.unwrapQuery(servletResponse, path, solution, file, uuid);
   }
   
   @GET
@@ -124,7 +126,7 @@ public class RestEndpoint {
                           @Context HttpServletRequest servletRequest) throws Exception
   {
       
-      coreService.listQueries(servletResponse.getOutputStream(), path,solution,file, outputType);
+      coreService.listQueries(servletResponse, path,solution,file, outputType);
   }
   
   
@@ -140,7 +142,7 @@ public class RestEndpoint {
                               @Context HttpServletResponse servletResponse, 
                               @Context HttpServletRequest servletRequest) throws Exception
   {
-      coreService.listParameters(servletResponse.getOutputStream(), path,solution,file, outputType, dataAccessId);
+      coreService.listParameters(servletResponse, path,solution,file, outputType, dataAccessId);
       
       
   }
@@ -188,7 +190,7 @@ public class RestEndpoint {
                          @Context HttpServletResponse servletResponse, 
                          @Context HttpServletRequest servletRequest) throws Exception
   {
-      coreService.getCdaList(servletResponse.getOutputStream(), outputType);
+      coreService.getCdaList(servletResponse, outputType);
   }
 
   @GET
@@ -230,7 +232,7 @@ public class RestEndpoint {
                        @Context HttpServletResponse servletResponse, 
                        @Context HttpServletRequest servletRequest) throws Exception
   {
-      coreService.editFile(servletResponse.getOutputStream(), path,solution,file);
+      coreService.editFile(servletResponse, path,solution,file);
    }
 
   @GET
