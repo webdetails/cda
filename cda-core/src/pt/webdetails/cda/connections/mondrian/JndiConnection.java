@@ -15,6 +15,7 @@ import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.EvaluableConnection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
+import pt.webdetails.cda.dataaccess.IDataAccessUtils;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.utils.FormulaEvaluator;
 
@@ -68,7 +69,8 @@ public class JndiConnection extends AbstractMondrianConnection implements Evalua
   public DataSourceProvider getInitializedDataSourceProvider() throws InvalidConnectionException
   {
     logger.debug("Creating new jndi connection");
-    return CdaEngine.getEnvironment().getMondrianJndiDatasourceProvider(connectionInfo);
+    IDataAccessUtils idu = CdaEngine.getEnvironment().getDataAccessUtils();
+    return idu.getMondrianJndiDatasourceProvider(connectionInfo);
     
   }
 
