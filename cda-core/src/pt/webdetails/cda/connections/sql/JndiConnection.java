@@ -14,6 +14,7 @@ import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.Co
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.EvaluableConnection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
+import pt.webdetails.cda.dataaccess.IDataAccessUtils;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.utils.FormulaEvaluator;
 import pt.webdetails.cda.utils.Util;
@@ -53,8 +54,9 @@ public class JndiConnection extends AbstractSqlConnection implements EvaluableCo
   }
 
   public ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException {
-    final ConnectionProvider connectionProvider = 
-    		CdaEngine.getEnvironment().getJndiConnectionProvider(connectionInfo);
+	
+	IDataAccessUtils dUtils = CdaEngine.getEnvironment().getDataAccessUtils();
+    final ConnectionProvider connectionProvider = dUtils.getJndiConnectionProvider(connectionInfo);
 
     try {
       final Connection connection = connectionProvider.createConnection(null, null);

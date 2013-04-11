@@ -12,20 +12,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
-import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.JndiConnectionProvider;
-import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleTransFromFileProducer;
-import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleTransformationProducer;
-import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DataSourceProvider;
-import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.JndiDataSourceProvider;
 
 import pt.webdetails.cda.cache.EHCacheQueryCache;
 import pt.webdetails.cda.cache.ICacheScheduleManager;
 import pt.webdetails.cda.cache.IQueryCache;
-import pt.webdetails.cda.connections.kettle.TransFromFileConnectionInfo;
 import pt.webdetails.cda.connections.mondrian.IMondrianRoleMapper;
-import pt.webdetails.cda.connections.mondrian.MondrianJndiConnectionInfo;
-import pt.webdetails.cda.connections.sql.SqlJndiConnectionInfo;
 import pt.webdetails.cda.dataaccess.DefaultCubeFileProviderSetter;
 import pt.webdetails.cda.dataaccess.DefaultDataAccessUtils;
 import pt.webdetails.cda.dataaccess.ICubeFileProviderSetter;
@@ -55,8 +46,6 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 	private ICdaBeanFactory beanFactory;
 
 	public DefaultCdaEnvironment() throws InitializationException {
-		// PENTAHO
-		// SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession()));
 		init();
 	}
 
@@ -99,57 +88,6 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 		beanFactory = new CoreBeanFactory();
 
 
-	}
-
-	@Override
-	public KettleTransformationProducer getKettleTransformationProducer(
-
-			TransFromFileConnectionInfo connectionInfo, String query) {
-		return new KettleTransFromFileProducer("",
-				connectionInfo.getTransformationFile(),
-				query, null, null, connectionInfo.getDefinedArgumentNames(),
-				connectionInfo.getDefinedVariableNames());
-		//	    PENTAHO
-		//	    return new PentahoKettleTransFromFileProducer("",
-		//	            connectionInfo.getTransformationFile(),
-		//	            query, null, null, connectionInfo.getDefinedArgumentNames(),
-		//	            connectionInfo.getDefinedVariableNames());
-
-
-	}
-
-
-	@Override
-	public ConnectionProvider getJndiConnectionProvider(SqlJndiConnectionInfo connectionInfo) {
-		try {
-			String id = "JndiConnectionProvider";
-			if (beanFactory.containsBean(id)) {
-				return (ConnectionProvider) beanFactory.getBean(id);
-			}
-		} catch (Exception e) {
-			logger.error("Cannot get bean JndiConnectionProvider. Using JndiConnectionProvider", e);
-		}
-		final JndiConnectionProvider provider = new JndiConnectionProvider();
-		provider.setConnectionPath(connectionInfo.getJndi());
-		provider.setUsername(connectionInfo.getUser());
-		provider.setPassword(connectionInfo.getPass());
-		return provider;
-		//	      PENTAHO
-		//	      final PentahoJndiDatasourceConnectionProvider provider = new PentahoJndiDatasourceConnectionProvider();
-		//	      provider.setJndiName(connectionInfo.getJndi());
-		//	      provider.setUsername(connectionInfo.getUser());
-		//	      provider.setPassword(connectionInfo.getPass());
-		//	      return provider;
-	}
-
-	@Override
-	public DataSourceProvider getMondrianJndiDatasourceProvider(MondrianJndiConnectionInfo connectionInfo)
-	{
-
-		return new JndiDataSourceProvider(connectionInfo.getJndi());
-
-		//		PENTAHO
-		//	      return new PentahoMondrianDataSourceProvider(connectionInfo.getJndi());
 	}
 
 	@Override
@@ -300,7 +238,8 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 		String id = "IRepositoryAccess";
 		if (beanFactory != null && beanFactory.containsBean(id)) {
 			IRepositoryAccess repAccess =  (IRepositoryAccess) beanFactory.getBean(id);
-      repAccess.setPlugin(Plugin.CDA);
+			repAccess.setPlugin(Plugin.CDA);
+			return repAccess;
 		}
 
 		return null;

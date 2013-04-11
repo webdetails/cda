@@ -4,16 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
-import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleTransformationProducer;
-import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DataSourceProvider;
-
 import pt.webdetails.cda.cache.ICacheScheduleManager;
 import pt.webdetails.cda.cache.IQueryCache;
-import pt.webdetails.cda.connections.kettle.TransFromFileConnectionInfo;
 import pt.webdetails.cda.connections.mondrian.IMondrianRoleMapper;
-import pt.webdetails.cda.connections.mondrian.MondrianJndiConnectionInfo;
-import pt.webdetails.cda.connections.sql.SqlJndiConnectionInfo;
 import pt.webdetails.cda.dataaccess.ICubeFileProviderSetter;
 import pt.webdetails.cda.dataaccess.IDataAccessUtils;
 import pt.webdetails.cda.formula.ICdaCoreSessionFormulaContext;
@@ -28,14 +21,8 @@ import pt.webdetails.cpf.session.ISessionUtils;
 public interface ICdaEnvironment {
 	
 	public void init() throws InitializationException;
-
-	public KettleTransformationProducer getKettleTransformationProducer(TransFromFileConnectionInfo connectionInfo, String query);
 	
 	public ICubeFileProviderSetter getCubeFileProviderSetter();
-
-	public ConnectionProvider getJndiConnectionProvider(SqlJndiConnectionInfo connectionInfo);
-
-	public DataSourceProvider getMondrianJndiDatasourceProvider(MondrianJndiConnectionInfo connectionInfo);
 
 	public IQueryCache getQueryCache();
 
