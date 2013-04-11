@@ -33,6 +33,7 @@ import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalog;
 import org.pentaho.reporting.engine.classic.extensions.datasources.pmd.PmdDataFactory;
 import org.pentaho.reporting.platform.plugin.connection.PentahoJndiDatasourceConnectionProvider;
 import org.pentaho.reporting.platform.plugin.connection.PentahoKettleTransFromFileProducer;
+import org.pentaho.reporting.platform.plugin.connection.PentahoMondrianDataSourceProvider;
 import org.pentaho.reporting.platform.plugin.connection.PentahoPmdConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.ReportEnvironmentDataRow;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;

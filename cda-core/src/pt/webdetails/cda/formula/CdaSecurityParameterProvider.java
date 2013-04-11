@@ -17,7 +17,7 @@ public class CdaSecurityParameterProvider implements ICdaParameterProvider {
 	}
 	
 	@Override
-	public Object getParameter(Object name) {
+	public Object getParameter(String name) {
 		if (name != null) {
 			IUserSession session = sessionUtils.getCurrentSession();
 			if (session != null) {

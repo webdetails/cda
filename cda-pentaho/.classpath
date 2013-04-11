@@ -207,5 +207,7 @@
 	<classpathentry kind="lib" path="runtime-lib/jackson-core-asl-1.8.2.jar"/>
 	<classpathentry kind="lib" path="runtime-lib/jackson-mapper-asl-1.8.2.jar"/>
 	<classpathentry kind="lib" path="dev-lib/cda-core-TRUNK-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="dev-lib/cpf-core-trunk-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="dev-lib/cpf-pentaho-trunk-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

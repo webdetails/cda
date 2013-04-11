@@ -17,6 +17,8 @@ import org.pentaho.platform.engine.core.solution.SystemSettingsParameterProvider
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.security.SecurityParameterProvider;
 import org.pentaho.platform.plugin.services.connections.javascript.JavaScriptResultSet;
+
+import pt.webdetails.cda.formula.ICdaCoreSessionFormulaContext;
 import pt.webdetails.cpf.session.IUserSession;
 
 public class CdaSessionFormulaContext extends DefaultFormulaContext implements ICdaCoreSessionFormulaContext
@@ -92,5 +94,5 @@ public class CdaSessionFormulaContext extends DefaultFormulaContext implements I
     public void setSession(IUserSession ius) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-  }
+}
 
