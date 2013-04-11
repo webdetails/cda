@@ -6,17 +6,12 @@ import java.util.Properties;
 
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleTransformationProducer;
-import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
-import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.CubeFileProvider;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DataSourceProvider;
-import org.pentaho.reporting.engine.classic.extensions.datasources.pmd.PmdConnectionProvider;
 
 import pt.webdetails.cda.cache.ICacheScheduleManager;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.connections.kettle.TransFromFileConnectionInfo;
 import pt.webdetails.cda.connections.mondrian.IMondrianRoleMapper;
-import pt.webdetails.cda.connections.mondrian.MondrianConnection;
-import pt.webdetails.cda.connections.mondrian.MondrianConnectionInfo;
 import pt.webdetails.cda.connections.mondrian.MondrianJndiConnectionInfo;
 import pt.webdetails.cda.connections.sql.SqlJndiConnectionInfo;
 import pt.webdetails.cda.dataaccess.ICubeFileProviderSetter;
@@ -34,20 +29,13 @@ public interface ICdaEnvironment {
 	
 	public void init() throws InitializationException;
 
-	public KettleTransformationProducer getKettleTransformationProducer(
-			TransFromFileConnectionInfo connectionInfo, String query);
+	public KettleTransformationProducer getKettleTransformationProducer(TransFromFileConnectionInfo connectionInfo, String query);
+	
+	public ICubeFileProviderSetter getCubeFileProviderSetter();
 
-	public CubeFileProvider getCubeFileProvider(
-			AbstractNamedMDXDataFactory mdxDataFactory,
-			MondrianConnectionInfo mondrianConnectionInfo);
+	public ConnectionProvider getJndiConnectionProvider(SqlJndiConnectionInfo connectionInfo);
 
-	public PmdConnectionProvider getPmdConnectionProvider();
-
-	public ConnectionProvider getJndiConnectionProvider(
-			SqlJndiConnectionInfo connectionInfo);
-
-	public DataSourceProvider getMondrianJndiDatasourceProvider(
-			MondrianJndiConnectionInfo connectionInfo);
+	public DataSourceProvider getMondrianJndiDatasourceProvider(MondrianJndiConnectionInfo connectionInfo);
 
 	public IQueryCache getQueryCache();
 
@@ -63,13 +51,9 @@ public interface ICdaEnvironment {
 
 	public IEventPublisher getEventPublisher();
 
-	public void setMdxDataFactoryBaseConnectionProperties(MondrianConnection connection, AbstractNamedMDXDataFactory mdxDataFactory);
-
 	public ISessionUtils getSessionUtils();
 
 	public IRepositoryAccess getRepositoryAccess();
-
-	public ICubeFileProviderSetter getCubeFileProviderSetter();
 
 	public IDataAccessUtils getDataAccessUtils();
 
