@@ -22,6 +22,7 @@ import org.pentaho.reporting.engine.classic.core.parameters.CompoundDataRow;
 import org.pentaho.reporting.engine.classic.core.util.CloseableTableModel;
 import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFactory;
 import org.pentaho.reporting.libraries.base.config.Configuration;
+import org.pentaho.reporting.libraries.base.util.StackableException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 
@@ -166,8 +167,18 @@ public abstract class PREDataAccess extends SimpleDataAccess
     }
     catch (ReportDataFactoryException e)
     {
-    	e.printStackTrace();
-      throw new QueryException(ExceptionUtils.getRootCauseMessage(e), ExceptionUtils.getRootCause(e));
+    	//e.printStackTrace();
+    	Throwable parent = e.getParentThrowable();
+    	Throwable lastKnownParent = null;
+    	for (int i = 0; i < 10 && parent !=  null && !parent.equals(lastKnownParent); i++) {
+	    		lastKnownParent = parent;
+	    		parent = e.getParentThrowable();
+    	}
+    	if (lastKnownParent != null) {
+    		throw new QueryException(lastKnownParent.getMessage(), lastKnownParent);
+    	}
+    	throw new QueryException(e.getMessage(), e);
+      
 //              + ((e.getParentThrowable() == null) ? "" : ("; Parent exception: " + e.getParentThrowable().getMessage())) + "\n" +
 //              ((e.getParentThrowable() != null && e.getParentThrowable().getCause() != null)?e.getParentThrowable().getCause().getMessage() :"") + "\n"
 //              , e);
@@ -179,6 +190,7 @@ public abstract class PREDataAccess extends SimpleDataAccess
 //    }
 
   }
+
 
   @Override
   public ArrayList<PropertyDescriptor> getInterface()
