@@ -172,7 +172,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
   }
   
   @Exposed(accessLevel = AccessLevel.ADMIN)
-  public void cacheMonitor(final OutputStream out){
+  public void cacheMonitor(final OutputStream out) throws Exception{
     CdaCoreService service = new CdaCoreService();
     
     IParameterProvider parameters = getRequestParameters();
