@@ -15,6 +15,10 @@ import org.apache.commons.logging.Log;
 import org.pentaho.platform.api.engine.IParameterProvider;
 
 
+import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import pt.webdetails.cda.cache.CacheScheduleManager;
 import pt.webdetails.cda.utils.DoQueryParameters;
 import pt.webdetails.cpf.SimpleContentGenerator;
@@ -33,10 +37,16 @@ public class CdaContentGenerator extends SimpleContentGenerator
  
 
 
+  
+  
   @Exposed(accessLevel = AccessLevel.PUBLIC)
   @Audited(action = "doQuery")
   public void doQuery(final OutputStream out) throws Exception
   {
+
+    SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession()));     
+    
+    
     final IParameterProvider requestParams = getRequestParameters();
     DoQueryParameters parameters = new DoQueryParameters(
             (String)requestParams.getParameter("path"), 

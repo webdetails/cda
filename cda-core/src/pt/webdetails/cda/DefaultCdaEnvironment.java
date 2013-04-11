@@ -104,16 +104,28 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 	@Override
 	public KettleTransformationProducer getKettleTransformationProducer(
 
-			TransFromFileConnectionInfo connectionInfo, String query) {
-		return new KettleTransFromFileProducer("",
-				connectionInfo.getTransformationFile(),
-				query, null, null, connectionInfo.getDefinedArgumentNames(),
-				connectionInfo.getDefinedVariableNames());
-		//	    PENTAHO
-		//	    return new PentahoKettleTransFromFileProducer("",
-		//	            connectionInfo.getTransformationFile(),
-		//	            query, null, null, connectionInfo.getDefinedArgumentNames(),
-		//	            connectionInfo.getDefinedVariableNames());
+	/* (non-Javadoc)
+	 * @see pt.webdetails.cda.ICdaEnvironment#getCubeFileProvider(org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory, pt.webdetails.cda.connections.mondrian.MondrianConnectionInfo)
+	 */
+	public CubeFileProvider getCubeFileProvider(
+			AbstractNamedMDXDataFactory mdxDataFactory,
+			MondrianConnectionInfo mondrianConnectionInfo) {
+
+    
+	    return new DefaultCubeFileProvider(mondrianConnectionInfo.getCatalog());
+	    
+//		PENTAHO
+//	      mdxDataFactory.setCubeFileProvider(new PentahoCubeFileProvider(mondrianConnectionInfo.getCatalog()));
+//	      try
+//	      {
+//	        mdxDataFactory.setMondrianConnectionProvider((MondrianConnectionProvider) PentahoSystem.getObjectFactory().get(PentahoMondrianConnectionProvider.class, "MondrianConnectionProvider", null));
+//	      }
+//	      catch (ObjectFactoryException e)
+//	      {//couldn't get object
+//	        mdxDataFactory.setMondrianConnectionProvider(new PentahoMondrianConnectionProvider());
+//	      }
+
+
 
 	}
 
@@ -265,14 +277,71 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 			}
 		};
 
+    
+    
+    //Probably not used
+	@Override
+	public void setMdxDataFactoryBaseConnectionProperties(
+			MondrianConnection connection,
+			AbstractNamedMDXDataFactory mdxDataFactory) {
+    
+    
+    
+		// TODO Auto-generated method stub
+		
 
-		//PENTAHO
-		//      return new IEventPublisher() {
-		//        @Override
-		//        public void publishEvent(CdaEvent event) {
-		//          EventPublisher.getPublisher.publish(event);
-		//        }      
-		//      };
+		 
+//	    if (!CdaEngine.isStandalone())
+//	    {
+//	      IMondrianCatalogService catalogService =
+//	          PentahoSystem.get(IMondrianCatalogService.class, "IMondrianCatalogService", null);;
+//	      final List<MondrianCatalog> catalogs =
+//	          catalogService.listCatalogs(PentahoSessionHolder.getSession(), false);
+//
+//	      MondrianCatalog catalog = null;
+//	      for (MondrianCatalog cat : catalogs)
+//	      {
+//	        final String definition = cat.getDefinition();
+//	        final String definitionFileName = IOUtils.getInstance().getFileName(definition);
+//	        if (definitionFileName.equals(IOUtils.getInstance().getFileName(connection.getConnectionInfo().getCatalog())))
+//	        {
+//	          catalog = cat;
+//	          break;
+//	        }
+//	      }
+//	      
+//	      if ( catalog != null){
+//	        
+//	        Properties props = new Properties();
+//	        try
+//	        {
+//	          props.load(new StringReader(catalog.getDataSourceInfo().replace(';', '\n')));
+//	          try
+//	          {
+//	            // Apply the method through reflection
+//	            Method m = AbstractNamedMDXDataFactory.class.getMethod("setBaseConnectionProperties",Properties.class);
+//	            m.invoke(mdxDataFactory, props);
+//	            
+//	          }
+//	          catch (Exception ex)
+//	          {
+//	            // This is a previous version - continue
+//	          }
+//	          
+//	          
+//	        }
+//	        catch (IOException ex)
+//	        {
+//	          logger.warn("Failed to transform DataSourceInfo string '"+ catalog.getDataSourceInfo() +"' into properties");
+//	        }
+//	        
+//	      }
+//	      
+//	      
+//	    }
+//	    
+//	    
+		
 	}
 
 	@Override
@@ -323,7 +392,7 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 			}
 		} catch (Exception e) {
 			logger.error("Cannot get bean ICubeFileProviderSetter. Using DefaultCubeFileProviderSetter", e);
-		}
+		}    
 		return new DefaultCubeFileProviderSetter();
 
 	}
