@@ -166,7 +166,7 @@ public abstract class PREDataAccess extends SimpleDataAccess
     }
     catch (ReportDataFactoryException e)
     {
-    	//e.printStackTrace();
+    	e.printStackTrace();
       throw new QueryException(ExceptionUtils.getRootCauseMessage(e), ExceptionUtils.getRootCause(e));
 //              + ((e.getParentThrowable() == null) ? "" : ("; Parent exception: " + e.getParentThrowable().getMessage())) + "\n" +
 //              ((e.getParentThrowable() != null && e.getParentThrowable().getCause() != null)?e.getParentThrowable().getCause().getMessage() :"") + "\n"

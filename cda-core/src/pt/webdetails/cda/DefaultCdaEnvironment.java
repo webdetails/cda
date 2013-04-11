@@ -452,7 +452,8 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 	public IRepositoryAccess getRepositoryAccess() {
 		String id = "IRepositoryAccess";
 		if (beanFactory != null && beanFactory.containsBean(id)) {
-			return (IRepositoryAccess) beanFactory.getBean(id);
+			IRepositoryAccess repAccess =  (IRepositoryAccess) beanFactory.getBean(id);
+      repAccess.setPlugin(Plugin.CDA);
 		}
 
 		return null;

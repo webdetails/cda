@@ -160,6 +160,10 @@
         <include name="**/*.jar"/>
         <exclude name="**/batik-js-1.7.jar"/>
       </fileset>      
+      <fileset dir="${resource.dir}">
+        
+      <include name="ehcache.xml"/>
+      </fileset>
     </copy>
 
 
@@ -167,6 +171,7 @@
     <copy todir="${stage.dir}/${plugin.name}" overwrite="true">
       <fileset dir="${resource.dir}">
         <include name="**/*"/>
+        <exclude name="ehcache.xml"/>
       </fileset>
     </copy>
 

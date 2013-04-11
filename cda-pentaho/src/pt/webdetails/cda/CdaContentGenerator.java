@@ -4,64 +4,33 @@
 
 package pt.webdetails.cda;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
 
-import org.apache.commons.io.IOUtils;
+
+import java.util.Map;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IParameterProvider;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.util.messages.LocaleHelper;
-import org.apache.commons.lang.StringUtils;
 
-import pt.webdetails.cda.AccessDeniedException;
-import pt.webdetails.cda.AccessDeniedException;
-import pt.webdetails.cda.CdaEngine;
+
 import pt.webdetails.cda.cache.CacheScheduleManager;
-import pt.webdetails.cda.cache.monitor.CacheMonitorHandler;
-import pt.webdetails.cda.dataaccess.AbstractDataAccess;
-import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
-import pt.webdetails.cda.discovery.DiscoveryOptions;
-import pt.webdetails.cda.exporter.Exporter;
-import pt.webdetails.cda.exporter.ExporterEngine;
-import pt.webdetails.cda.query.QueryOptions;
-import pt.webdetails.cda.settings.CdaSettings;
-import pt.webdetails.cda.settings.SettingsManager;
+import pt.webdetails.cda.utils.DoQueryParameters;
 import pt.webdetails.cpf.SimpleContentGenerator;
 import pt.webdetails.cpf.annotations.AccessLevel;
 import pt.webdetails.cpf.annotations.Audited;
 import pt.webdetails.cpf.annotations.Exposed;
-import pt.webdetails.cpf.repository.IRepositoryAccess;
-import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
-import pt.webdetails.cpf.repository.PentahoRepositoryAccess;
+import pt.webdetails.cpf.http.PentahoParameterProvider;
 
 
 public class CdaContentGenerator extends SimpleContentGenerator
 {
-
-  private static Log logger = LogFactory.getLog(CdaContentGenerator.class);
   public static final String PLUGIN_NAME = "cda";
   private static final long serialVersionUID = 1L;
-  private static final String EDITOR_SOURCE = "/editor/editor.html";
-  private static final String EXT_EDITOR_SOURCE = "/editor/editor-cde.html";
-  private static final String PREVIEWER_SOURCE = "/previewer/previewer.html";
-  private static final String CACHE_MANAGER_PATH = "system/" + PLUGIN_NAME + "/cachemanager/cache.html";
-  private static final int DEFAULT_PAGE_SIZE = 20;
-  private static final int DEFAULT_START_PAGE = 0;
   private static final String PREFIX_PARAMETER = "param";
   private static final String PREFIX_SETTING = "setting";
-  private static final String JSONP_CALLBACK = "callback";
-  public static final String ENCODING = "UTF-8";
+ 
 
 
   @Exposed(accessLevel = AccessLevel.PUBLIC)
@@ -69,42 +38,39 @@ public class CdaContentGenerator extends SimpleContentGenerator
   public void doQuery(final OutputStream out) throws Exception
   {
     final IParameterProvider requestParams = getRequestParameters();
-        
-    final CdaEngine engine = CdaEngine.getInstance();
-    final QueryOptions queryOptions = new QueryOptions();
+    DoQueryParameters parameters = new DoQueryParameters(
+            (String)requestParams.getParameter("path"), 
+            (String)requestParams.getParameter("solution"), 
+            (String)requestParams.getParameter("file"));
+    
+    parameters.setBypassCache(Boolean.parseBoolean(requestParams.getStringParameter("bypassCache","false")));
+    parameters.setDataAccessId(requestParams.getStringParameter("dataAccessId", "<blank>"));
+    parameters.setOutputIndexId(Integer.parseInt(requestParams.getStringParameter("outputIndexId", "1")));
+    parameters.setOutputType(requestParams.getStringParameter("outputType", "json"));
+    parameters.setPageSize((int)requestParams.getLongParameter("pageSize", 0));
+    parameters.setPageStart((int)requestParams.getLongParameter("pageStart", 0));
+    parameters.setPaginateQuery(Boolean.parseBoolean(requestParams.getStringParameter("paginateQuery", "false")));
 
-    final String path = getRelativePath(requestParams);
-    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
-
-    // Handle paging options
-    // We assume that any paging options found mean that the user actively wants paging.
-    final long pageSize = requestParams.getLongParameter("pageSize", 0);
-    final long pageStart = requestParams.getLongParameter("pageStart", 0);
-    final boolean paginate = Boolean.parseBoolean(requestParams.getStringParameter("paginateQuery", "false"));
-    if (pageSize > 0 || pageStart > 0 || paginate)
+    Map<String, Object> extraParams = new HashMap<String, Object>();
+    Map<String, Object> extraSettings = new HashMap<String, Object>();
+    final Iterator<String> params = (Iterator<String>) requestParams.getParameterNames();
+    while (params.hasNext())
     {
-      if (pageSize > Integer.MAX_VALUE || pageStart > Integer.MAX_VALUE)
+      final String param = params.next();
+
+      if (param.startsWith(PREFIX_PARAMETER))
       {
-        throw new ArithmeticException("Paging values too large");
+        extraParams.put(param.substring(PREFIX_PARAMETER.length()), requestParams.getParameter(param));
       }
-      queryOptions.setPaginate(true);
-      queryOptions.setPageSize(pageSize > 0 ? (int) pageSize : paginate ? DEFAULT_PAGE_SIZE : 0);
-      queryOptions.setPageStart(pageStart > 0 ? (int) pageStart : paginate ? DEFAULT_START_PAGE : 0);
+      else if (param.startsWith(PREFIX_SETTING))
+      {
+        extraSettings.put(param.substring(PREFIX_SETTING.length()), requestParams.getStringParameter(param, ""));
+      }
     }
     
-    // Support for bypassCache (we'll maintain the name we use in CDE
-    if(requestParams.hasParameter("bypassCache")){
-      queryOptions.setCacheBypass(Boolean.parseBoolean(requestParams.getStringParameter("bypassCache","false")));
-    }
+    parameters.setExtraParams(extraParams);
     
-    // Handle the query itself and its output format...
-    queryOptions.setOutputType(requestParams.getStringParameter("outputType", "json"));
-    queryOptions.setDataAccessId(requestParams.getStringParameter("dataAccessId", "<blank>"));
-    try {
-      queryOptions.setOutputIndexId(Integer.parseInt(requestParams.getStringParameter("outputIndexId", "1")));
-    } catch (NumberFormatException e) {
-      logger.error("Illegal outputIndexId '" + requestParams.getStringParameter("outputIndexId", null) + "'" );
-    }
+    parameters.setExtraSettings(extraSettings);
     
     final ArrayList<String> sortBy = new ArrayList<String>();
     String[] def =
@@ -116,194 +82,92 @@ public class CdaContentGenerator extends SimpleContentGenerator
       {
         sortBy.add((String) obj);
       }
-    }
-    queryOptions.setSortBy(sortBy);
+    }            
+    parameters.setSortBy(sortBy);
+    parameters.setWrapItUp(requestParams.getStringParameter("wrapItUp", null) != null);
 
-
-    // ... and the query parameters
-    // We identify any pathParams starting with "param" as query parameters and extra settings prefixed with "setting"
-    @SuppressWarnings("unchecked")
-    final Iterator<String> params = (Iterator<String>) requestParams.getParameterNames();
-    while (params.hasNext())
-    {
-      final String param = params.next();
-
-      if (param.startsWith(PREFIX_PARAMETER))
-      {
-        queryOptions.addParameter(param.substring(PREFIX_PARAMETER.length()), requestParams.getParameter(param));
-      }
-      else if (param.startsWith(PREFIX_SETTING))
-      {
-        queryOptions.addSetting(param.substring(PREFIX_SETTING.length()), requestParams.getStringParameter(param, ""));
-      }
-    }
-
-    if(requestParams.getStringParameter("wrapItUp", null) != null) {
-      String uuid = engine.wrapQuery(out, cdaSettings, queryOptions);
-      logger.debug("doQuery: query wrapped as " + uuid);
-      writeOut(out, uuid);
-      return;
-    }
-    
-    // we'll allow for the special "callback" param to be used, and passed as settingcallback to jsonp exports
-    if (requestParams.hasParameter(JSONP_CALLBACK))
-    {
-      queryOptions.addSetting(JSONP_CALLBACK, requestParams.getStringParameter(JSONP_CALLBACK, "xxx"));
-    }
-
-    Exporter exporter = ExporterEngine.getInstance().getExporter(queryOptions.getOutputType(), queryOptions.getExtraSettings());
-    
-    String attachmentName = exporter.getAttachmentName();
-    String mimeType = (attachmentName == null) ? null : getMimeType(attachmentName);
-    if(StringUtils.isEmpty(mimeType)){
-      mimeType = exporter.getMimeType();
-    }
-    
-    if (this.parameterProviders != null)
-    {
-      setResponseHeaders(mimeType, attachmentName);
-    }
-    // Finally, pass the query to the engine
-    engine.doQuery(out, cdaSettings, queryOptions);
-
+    CdaCoreService service = new CdaCoreService();
+    service.doQuery(out, parameters);
   }
 
   @Exposed(accessLevel = AccessLevel.PUBLIC)
   public void unwrapQuery(final OutputStream out) throws Exception
   {
-    final CdaEngine engine = CdaEngine.getInstance();
     final IParameterProvider requestParams = getRequestParameters();
-    final String path = getRelativePath(requestParams);
-    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
-    String uuid = requestParams.getStringParameter("uuid", null);
-
-    QueryOptions queryOptions = engine.unwrapQuery(uuid);
-    if(queryOptions != null) {
-      Exporter exporter = ExporterEngine.getInstance().getExporter(queryOptions.getOutputType(), queryOptions.getExtraSettings());
-      
-      String attachmentName = exporter.getAttachmentName();
-      String mimeType = (attachmentName == null) ? null : getMimeType(attachmentName);
-      if(StringUtils.isEmpty(mimeType)){
-        mimeType = exporter.getMimeType();
-      }
-      if (this.parameterProviders != null)
-      {
-        setResponseHeaders(mimeType, attachmentName);
-      }
-      engine.doQuery(out, cdaSettings, queryOptions);
-    }
-    else {
-      logger.error("unwrapQuery: uuid " + uuid + " not found.");
-    }
+    final CdaCoreService coreService = new CdaCoreService();
+    coreService.unwrapQuery(out, (String)requestParams.getParameter("path"), 
+            (String)requestParams.getParameter("solution"), 
+            (String)requestParams.getParameter("file"), 
+            requestParams.getStringParameter("uuid", null));
     
   }
 
   @Exposed(accessLevel = AccessLevel.PUBLIC)
   public void listQueries(final OutputStream out) throws Exception
   {
-    final CdaEngine engine = CdaEngine.getInstance();
-
     final IParameterProvider requestParams = getRequestParameters();
-    final String path = getRelativePath(requestParams);
-    if(StringUtils.isEmpty(path)){
-      throw new IllegalArgumentException("No path provided");
-    }
-    logger.debug("Do Query: getRelativePath:" + path);
-    logger.debug("Do Query: getSolPath:" + PentahoSystem.getApplicationContext().getSolutionPath(path));
-    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
-
-    // Handle the query itself and its output format...
-    final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
-    discoveryOptions.setOutputType(requestParams.getStringParameter("outputType", "json"));
-
-    String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
-    setResponseHeaders(mimeType);
-    engine.listQueries(out, cdaSettings, discoveryOptions);
+    final CdaCoreService service = new CdaCoreService();
+    service.listQueries(out, (String)requestParams.getParameter("path"),
+            (String)requestParams.getParameter("solution"),
+            (String)requestParams.getParameter("file"),
+            requestParams.getStringParameter("outputType", "json"));
   }
 
   @Exposed(accessLevel = AccessLevel.PUBLIC)
   public void listParameters(final OutputStream out) throws Exception
   {
-    final CdaEngine engine = CdaEngine.getInstance();
     final IParameterProvider requestParams = getRequestParameters();
-    final String path = getRelativePath(requestParams);
-    logger.debug("Do Query: getRelativePath:" + path);
-    logger.debug("Do Query: getSolPath:" + PentahoSystem.getApplicationContext().getSolutionPath(path));
-    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
-
-    // Handle the query itself and its output format...
-    final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
-    discoveryOptions.setOutputType(requestParams.getStringParameter("outputType", "json"));
-    discoveryOptions.setDataAccessId(requestParams.getStringParameter("dataAccessId", "<blank>"));
-
-    String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
-    setResponseHeaders(mimeType);
-
-    engine.listParameters(out, cdaSettings, discoveryOptions);
+    CdaCoreService service = new CdaCoreService();
+    service.listParameters(out, (String) requestParams.getParameter("path") , 
+            (String)requestParams.getParameter("solution"),
+            (String)requestParams.getParameter("file"),
+            requestParams.getStringParameter("outputType", "json"), requestParams.getStringParameter("dataAccessId", "<blank>") );
   }
 
 
   @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.XML)
   public void getCdaFile(final OutputStream out) throws Exception
   {
-    String document = getResourceAsString(StringUtils.replace(getRelativePath(getRequestParameters()), "///", "/"), FileAccess.READ);// ISolutionRepository.ACTION_UPDATE);//TODO:check
-    writeOut(out, document);
+    final IParameterProvider requestParams = getRequestParameters();
+    CdaCoreService service = new CdaCoreService();
+    //TO DO - Add the path, solution, file
+    service.getCdaFile(out, requestParams.getStringParameter("path", ""));        
   }
 
   @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.PLAIN_TEXT)
   public void writeCdaFile(OutputStream out) throws Exception
   {
-    //TODO: Validate the filename in some way, shape or form!
-
-    IRepositoryAccess repository = PentahoRepositoryAccess.getRepository(userSession);
+    
     final IParameterProvider requestParams = getRequestParameters();
-    // Check if the file exists and we have permissions to write to it
-    String path = getRelativePath(requestParams);
-
-    if (repository.canWrite(path))
-    { 
-      switch(repository.publishFile(path, ((String) requestParams.getParameter("data")).getBytes(ENCODING), true)){
-        case OK:
-          SettingsManager.getInstance().clearCache();
-          writeOut(out, "File saved.");
-          break;
-        case FAIL:
-          writeOut(out, "Save unsuccessful!");
-          logger.error("writeCdaFile: saving " + path);
-          break;
-      }
-    }
-    else
-    {
-      throw new AccessDeniedException(path, null);
-    }
+    CdaCoreService service = new CdaCoreService();
+    service.writeCdaFile(out, requestParams.getStringParameter("path", ""), 
+            (String)requestParams.getParameter("solution"),
+            (String)requestParams.getParameter("file"),
+            (String) requestParams.getParameter("data"));
   }
 
   @Exposed(accessLevel = AccessLevel.PUBLIC)
   public void getCdaList(final OutputStream out) throws Exception
   {
-    final CdaEngine engine = CdaEngine.getInstance();
-
-    final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
-    discoveryOptions.setOutputType(getRequestParameters().getStringParameter("outputType", "json"));
-
-    String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
-    setResponseHeaders(mimeType);
-    engine.getCdaList(out, discoveryOptions, userSession);
+    
+    CdaCoreService service = new CdaCoreService();
+    service.getCdaList(out, getRequestParameters().getStringParameter("outputType", "json"));
   }
 
   @Exposed(accessLevel = AccessLevel.ADMIN, outputType = MimeType.PLAIN_TEXT)
   public void clearCache(final OutputStream out) throws Exception
   {
-    SettingsManager.getInstance().clearCache();
-    AbstractDataAccess.clearCache();
-
-    out.write("Cache cleared".getBytes());
+    CdaCoreService service = new CdaCoreService();
+    service.clearCache(out);
   }
   
   @Exposed(accessLevel = AccessLevel.ADMIN)
   public void cacheMonitor(final OutputStream out){
-    CacheMonitorHandler.getInstance().handleCall(getRequestParameters(), out);
+    CdaCoreService service = new CdaCoreService();
+    
+    IParameterProvider parameters = getRequestParameters();
+    service.cacheMonitor(out, parameters.getStringParameter("method", ""), 
+            new PentahoParameterProvider(parameters));
   }
 
 
@@ -322,160 +186,49 @@ public class CdaContentGenerator extends SimpleContentGenerator
   }
 
 
-  private String getRelativePath(final IParameterProvider requestParams) throws UnsupportedEncodingException
-  {
 
-    String path = URLDecoder.decode(requestParams.getStringParameter("path", ""), ENCODING);
-
-    final String solution = requestParams.getStringParameter("solution", "");
-    if (StringUtils.isEmpty(solution))
-    {
-      return path;
-    }
-    final String file = requestParams.getStringParameter("file", "");
-
-    return StringUtils.join(new String[] {solution, path, file}, "/" ).replaceAll("//", "/");
-  }
-
-
-  public String getResourceAsString(final String path, final HashMap<String, String> tokens) throws IOException
-  {
-    // Read file
-
-    IRepositoryAccess repository = PentahoRepositoryAccess.getRepository(userSession);    
-    String resourceContents = StringUtils.EMPTY;
-    
-    if (repository.resourceExists(path))
-    {
-      InputStream in = null;
-      try
-      {
-        in = repository.getResourceInputStream(path, FileAccess.READ);
-        resourceContents = IOUtils.toString(in);
-      }
-      finally 
-      {
-        IOUtils.closeQuietly(in);
-      }
-    }
-    
-    // Make replacement of tokens
-    if (tokens != null)
-    {
-      for (final String key : tokens.keySet())
-      { 
-        resourceContents = StringUtils.replace(resourceContents, key, tokens.get(key));
-      }
-    }
-    return resourceContents;
-  }
 
   
-  public String getResourceAsString(final String path, FileAccess access) throws IOException, AccessDeniedException{
-    IRepositoryAccess repository = PentahoRepositoryAccess.getRepository(userSession);
-    if(repository.hasAccess(path, access)){
-      HashMap<String, String> keys = new HashMap<String, String>();
-      Locale locale = LocaleHelper.getLocale();
-      if (logger.isDebugEnabled())
-      {
-        logger.debug("Current Pentaho user locale: " + locale.toString());
-      }
-      keys.put("#{LANGUAGE_CODE}", locale.toString());
-      return getResourceAsString(path, keys);
-    }
-    else
-    {
-      throw new AccessDeniedException(path, null);
-    }
-  }
-
   @Exposed(accessLevel = AccessLevel.PUBLIC)
   public void editFile(final OutputStream out) throws Exception
   {
-
-    IRepositoryAccess repository = PentahoRepositoryAccess.getRepository(userSession);
-    
-    // Check if the file exists and we have permissions to write to it
-    String path = getRelativePath(getRequestParameters());
-    if (repository.canWrite(path))
-    {
-      boolean hasCde = repository.resourceExists("system/pentaho-cdf-dd");
-      
-      final String editorPath = "system/" + PLUGIN_NAME + (hasCde? EXT_EDITOR_SOURCE : EDITOR_SOURCE);
-      writeOut(out, getResourceAsString(editorPath,FileAccess.EXECUTE));
-    }
-    else
-    {
-      setResponseHeaders("text/plain");
-      out.write("Access Denied".getBytes());
-    }
-
-
+    CdaCoreService coreService = new CdaCoreService();
+    coreService.editFile(out, (String)getRequestParameters().getParameter("path"),
+                        (String)getRequestParameters().getParameter("solution"),
+            (String)getRequestParameters().getParameter("file")
+            );
   }
 
   @Exposed(accessLevel = AccessLevel.PUBLIC)
   public void previewQuery(final OutputStream out) throws Exception
   {
-    final String previewerPath = "system/" + PLUGIN_NAME + PREVIEWER_SOURCE;
-    writeOut(out, getResourceAsString(previewerPath, FileAccess.EXECUTE));
+    CdaCoreService service = new CdaCoreService();
+    service.previewQuery(out);
   }
 
 
   @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.CSS)
   public void getCssResource(final OutputStream out) throws Exception
   {
-    getResource( out);
+    CdaCoreService service = new CdaCoreService();
+    service.getCssResource(out, getRequestParameters().getStringParameter("resource", null));
   }
 
   @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.JAVASCRIPT)
   public void getJsResource(final OutputStream out) throws Exception
   {
-    getResource( out);
+    CdaCoreService service = new CdaCoreService();
+    service.getJsResource(out, getRequestParameters().getStringParameter("resource", null));
   }
 
 
-  public void getResource(final OutputStream out) throws Exception
-  {
-    String resource = getRequestParameters().getStringParameter("resource", null);
-    resource = resource.startsWith("/") ? resource : "/" + resource;
-    getResource(out, resource);
-  }
-
-
-  private void getResource(final OutputStream out, final String resource) throws IOException
-  {
-    final String path = PentahoSystem.getApplicationContext().getSolutionPath("system/" + PLUGIN_NAME + resource); //$NON-NLS-1$ //$NON-NLS-2$
-
-    final File file = new File(path);
-    final InputStream in = new FileInputStream(file);
-    
-    try{
-      IOUtils.copy(in, out);
-    }
-    finally {
-      IOUtils.closeQuietly(in);
-    }
-    
-  }
-  
   @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.JSON)
   public void listDataAccessTypes(final OutputStream out) throws Exception
   {
     boolean refreshCache = Boolean.parseBoolean(getRequestParameters().getStringParameter("refreshCache", "false"));
-    
-    DataAccessConnectionDescriptor[] data = SettingsManager.getInstance().
-            getDataAccessDescriptors(refreshCache);
-
-    StringBuilder output = new StringBuilder("");
-    if (data != null)
-    {
-      output.append("{\n");
-      for (DataAccessConnectionDescriptor datum : data)
-      {
-        output.append(datum.toJSON() + ",\n");
-      }
-      writeOut(out, output.toString().replaceAll(",\n\\z", "\n}"));
-    }
+   
+    CdaCoreService coreService = new CdaCoreService();
+    coreService.listDataAccessTypes(out, refreshCache);
   }
 
   @Exposed(accessLevel = AccessLevel.PUBLIC)
@@ -483,14 +236,20 @@ public class CdaContentGenerator extends SimpleContentGenerator
   {
       String method = getRequestParameters().getParameter("method").toString();
       String obj = getRequestParameters().getParameter("object").toString();
+      
       CacheScheduleManager.getInstance().handleCall(method,obj, out);
   }
 
   @Exposed(accessLevel = AccessLevel.ADMIN)
   public void manageCache(final OutputStream out) throws Exception
   {
-    writeOut(out, getResourceAsString(CACHE_MANAGER_PATH, FileAccess.EXECUTE));
+    CdaCoreService coreService = new CdaCoreService();
+    coreService.manageCache(out);            
   }
+  
+  
+  
+  
 
 
   @Override
