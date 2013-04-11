@@ -4,45 +4,16 @@
 
 package pt.webdetails.cda;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
 
-import org.apache.commons.io.IOUtils;
+
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IParameterProvider;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
-import org.pentaho.platform.util.messages.LocaleHelper;
-import org.apache.commons.lang.StringUtils;
 import org.pentaho.platform.api.repository.IContentItem;
 
-import pt.webdetails.cda.cache.CacheScheduleManager;
-import pt.webdetails.cda.cache.monitor.CacheMonitorHandler;
-import pt.webdetails.cda.dataaccess.AbstractDataAccess; 
-import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
-import pt.webdetails.cda.discovery.DiscoveryOptions;
-import pt.webdetails.cda.exporter.Exporter;
-import pt.webdetails.cda.exporter.ExporterEngine;
-import pt.webdetails.cda.query.QueryOptions;
-import pt.webdetails.cda.settings.CdaSettings;
-import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cpf.SimpleContentGenerator;
-import pt.webdetails.cpf.annotations.AccessLevel;
-import pt.webdetails.cpf.annotations.Audited;
-import pt.webdetails.cpf.annotations.Exposed;
-import pt.webdetails.cpf.repository.RepositoryAccess;
-import pt.webdetails.cpf.repository.RepositoryAccess.FileAccess;
-
 
 public class CdaContentGenerator extends SimpleContentGenerator
 {
@@ -58,15 +29,9 @@ public class CdaContentGenerator extends SimpleContentGenerator
   private static final int DEFAULT_START_PAGE = 0;
   private static final String PREFIX_PARAMETER = "param";
   private static final String PREFIX_SETTING = "setting";
-  public static final String ENCODING = "UTF-8";
-  
   
   @Override
   public void createContent() throws Exception {
-    final OutputStream out;
-    final IContentItem contentItem;
-    final IParameterProvider pathParams;
-    
     CdaUtils utils = new CdaUtils();
     utils.previewQuery(getResponse(), getRequest());
   }

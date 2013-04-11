@@ -130,7 +130,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       {
         mergeJoinXML.append("<key>").append(rightColumnNames[i]).append("</key>");
       }
-      mergeJoinXML.append("</keys_2></step>");
+      mergeJoinXML.append("</keys_2><copies>1</copies></step>");
 
       DynamicTransMetaConfig transMetaConfig = new DynamicTransMetaConfig(Type.EMPTY, "JoinCompoundData", null, null);
       DynamicTransConfig transConfig = new DynamicTransConfig();
@@ -261,6 +261,8 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       xml.append("</fields>");
 
     }
+    
+    xml.append("<copies>1</copies>");
 
     xml.append("</step>");
     return xml.toString();

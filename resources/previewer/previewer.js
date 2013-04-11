@@ -27,14 +27,14 @@ refreshTable = function(id){
     // When we change query, we must drop the table and parameters, and rebuild both
     lastQuery = id;
     refreshParams(id);
-    $.getJSON("../../../plugin/cda/api/utils/doQuery",{path:filename, dataAccessId: id},showTable);
+    $.getJSON("../../../plugin/cda/api/doQuery",{path:filename, dataAccessId: id},showTable);
   } else {
     // Same query, we need to get the present parameter values and rebuild the table
     var params = getParams();
     params.path = filename;
     params.dataAccessId = id;
     params.outputIndexId = $('#outputIndexId').val();
-    $.getJSON("../../../plugin/cda/api/utils/doQuery",params, showTable);
+    $.getJSON("../../../plugin/cda/api/doQuery",params, showTable);
   }
 };
 
@@ -134,7 +134,7 @@ cacheThis = function() {
     if (!notification.length) {
       notification = $("<span class='notification'></span>").appendTo('.dialogAction');
     }
-    $.getJSON("../../../plugin/cda/api/utils/cacheController",{method: "change", "object": json}, function(response){
+    $.getJSON("../../../plugin/cda/api/cacheController",{method: "change", "object": json}, function(response){
       if (response.status == 'ok') {
         notification.text('');
         $("#dialog").jqmHide();

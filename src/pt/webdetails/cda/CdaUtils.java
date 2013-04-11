@@ -4,17 +4,10 @@
 
 package pt.webdetails.cda;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
 import java.util.Enumeration;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -25,21 +18,15 @@ import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
@@ -47,9 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.util.messages.LocaleHelper;
 import org.apache.commons.lang.StringUtils;
 
 import pt.webdetails.cda.cache.CacheScheduleManager;
@@ -62,14 +47,9 @@ import pt.webdetails.cda.exporter.ExporterEngine;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
-import pt.webdetails.cpf.SimpleContentGenerator;
-import pt.webdetails.cpf.annotations.AccessLevel;
-import pt.webdetails.cpf.annotations.Audited;
-import pt.webdetails.cpf.annotations.Exposed;
 import pt.webdetails.cpf.repository.RepositoryAccess;
 import pt.webdetails.cpf.repository.RepositoryAccess.FileAccess;
 
-import org.pentaho.platform.web.http.api.resources.AbstractJaxRSResource;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.api.engine.IPluginManager;
@@ -78,9 +58,8 @@ import org.hibernate.Session;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import pt.webdetails.cda.utils.PluginHibernateUtil;
-import pt.webdetails.cda.utils.Util;
 
-@Path("/cda/api/utils")
+@Path("/cda/api")
 public class CdaUtils {
   private static final Log logger = LogFactory.getLog(CdaUtils.class);
   private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -183,7 +162,9 @@ public class CdaUtils {
       else if (param.startsWith(PREFIX_SETTING))
       {
         String value = servletRequest.getParameter(param);
-        if (value == null ) value = "";
+        if (value == null ){
+          value = "";
+        }
         queryOptions.addSetting(param.substring(PREFIX_SETTING.length()), value);
       }
     }
@@ -202,11 +183,14 @@ public class CdaUtils {
     String attachmentName = exporter.getAttachmentName();
     String mimeType = mimeType = exporter.getMimeType();
     
-    if(mimeType != null)
+    if(mimeType != null){
       servletResponse.setHeader("Content-Type", mimeType);
-    
-    if(attachmentName != null)
+    }
+     
+    if(attachmentName != null){
       servletResponse.setHeader("content-disposition", "attachment; filename=" + attachmentName);
+    }
+      
 
     // Finally, pass the query to the engine
     engine.doQuery(servletResponse.getOutputStream(), cdaSettings, queryOptions);
@@ -233,7 +217,6 @@ public class CdaUtils {
       
       String attachmentName = exporter.getAttachmentName();
       String mimeType = mimeType = exporter.getMimeType();
-    
       
       if(mimeType != null){
         servletResponse.setHeader("Content-Type", mimeType);
@@ -595,7 +578,6 @@ public class CdaUtils {
           cacheScheduleManager.importQueries(object, servletResponse.getOutputStream());
         } else {
           logger.error("Method called to cache controller is unknown");
-          return;
         }
       } catch(Exception ex){
         logger.error("Error while calling CacheScheduleManager method "+method, ex);
@@ -603,7 +585,6 @@ public class CdaUtils {
       
     } else {
       logger.error("Method called to cache controller is empty");
-      return;
     }
     
     

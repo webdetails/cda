@@ -151,7 +151,7 @@
       $('#queryUrlDialog').jqm({modal:true});
       toggleAdvanced(false);
       
-      $.getJSON("../../../plugin/cda/api/utils/listQueries",{path: filename},function(queries){
+      $.getJSON("../../../plugin/cda/api/listQueries",{path: filename},function(queries){
         var defaultQuery;
         var defaultDescription;
         for (query in queries.resultset) {

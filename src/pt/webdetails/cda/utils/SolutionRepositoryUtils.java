@@ -56,7 +56,7 @@ public class SolutionRepositoryUtils
     
     return null;
     
-    /*String[] extensions = new String[] {EXTENSION};
+  /*  String[] extensions = new String[] {EXTENSION};
 
     RepositoryFileTree cdaTree = RepositoryAccess.getRepository(userSession).getFullSolutionTree(FileAccess.READ, Arrays.asList(extensions), false);
     
