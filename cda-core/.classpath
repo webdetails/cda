@@ -215,5 +215,6 @@
 	<classpathentry kind="lib" path="runtime-lib/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="runtime-lib/slf4j-api-1.5.8.jar"/>
 	<classpathentry kind="lib" path="runtime-lib/slf4j-log4j12-1.5.8.jar"/>
+	<classpathentry kind="lib" path="dev-lib/cpf-standalone-trunk-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
