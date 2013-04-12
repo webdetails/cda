@@ -31,12 +31,14 @@ import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.utils.DoQueryParameters;
+import pt.webdetails.cda.IResponseTypeHandler;
 import pt.webdetails.cpf.http.ICommonParameterProvider;
 import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
 import pt.webdetails.cpf.repository.IRepositoryAccess;
 import pt.webdetails.cpf.repository.IRepositoryFile;
 import pt.webdetails.cpf.session.ISessionUtils;
 import pt.webdetails.cpf.session.IUserSession;
+
 
 
 public class CdaCoreService 
@@ -55,10 +57,13 @@ public class CdaCoreService
   private static final String PREFIX_SETTING = "setting";
   private static final String JSONP_CALLBACK = "callback";
   public static final String ENCODING = "UTF-8";
-
+  private IResponseTypeHandler responseHandler;
 
   //@Exposed(accessLevel = AccessLevel.PUBLIC)
  // @Audited(action = "doQuery")
+  public CdaCoreService(){}
+  public CdaCoreService(IResponseTypeHandler responseHandler){this.responseHandler = responseHandler;}
+  public void setResponseHandler(IResponseTypeHandler responseHandler){this.responseHandler = responseHandler;}
   public void doQuery(final OutputStream out,DoQueryParameters parameters) throws Exception
   {        
     final CdaEngine engine = CdaEngine.getInstance();
@@ -123,8 +128,7 @@ public class CdaCoreService
         Map.Entry<String,Object> pairs = (Map.Entry)settings.next();
       final String name = pairs.getKey();
       final Object parameter = pairs.getValue();
-      if(name.startsWith(PREFIX_SETTING))
-          queryOptions.addSetting(name.substring(PREFIX_SETTING.length()), (String)parameter);
+      queryOptions.addSetting(name, (String)parameter);
     }
     final Iterator params = parameters.getExtraParams().entrySet().iterator();
     while (params.hasNext())
@@ -133,10 +137,13 @@ public class CdaCoreService
       Map.Entry<String,Object> pairs = (Map.Entry)params.next();
       final String name = pairs.getKey();
       final Object parameter = pairs.getValue();
-      //queryOptions.addParameter(name, parameter);
+      queryOptions.addParameter(name, parameter);
 
-      if(name.startsWith(PREFIX_PARAMETER))
-          queryOptions.addParameter(name.substring(PREFIX_PARAMETER.length()), parameter);
+//      if(name.startsWith(PREFIX_PARAMETER)){
+//          queryOptions.addParameter(name.substring(PREFIX_PARAMETER.length()), parameter);
+//          logger.debug("##########"+name+"##############");
+          
+      }
 /*
       if (param.startsWith(PREFIX_PARAMETER))
       {
@@ -147,7 +154,7 @@ public class CdaCoreService
         queryOptions.addSetting(param.substring(PREFIX_SETTING.length()), requestParams.getStringParameter(param, ""));
       }*/
       
-    }
+    
 
     if(parameters.isWrapItUp()) {
       String uuid = engine.wrapQuery(out, cdaSettings, queryOptions);
@@ -161,7 +168,6 @@ public class CdaCoreService
     {
       queryOptions.addSetting(JSONP_CALLBACK, parameters.getJsonCallback());
     }
-
     Exporter exporter = ExporterEngine.getInstance().getExporter(queryOptions.getOutputType(), queryOptions.getExtraSettings());
     
     String attachmentName = exporter.getAttachmentName();
@@ -536,7 +542,11 @@ public class CdaCoreService
   //FIXME implement this method?
   private void setResponseHeaders(final String mimeType, final int cacheDuration, final String attachmentName)
     {
-      // Make sure we have the correct mime type
+        if (responseHandler!=null)
+            responseHandler.setResponseHeaders(mimeType, cacheDuration, attachmentName);
+      
+        
+        // Make sure we have the correct mime type
       
       /*    final IMimeTypeListener mimeTypeListener = outputHandler.getMimeTypeListener();
       if (mimeTypeListener != null)

@@ -37,6 +37,7 @@ import pt.webdetails.cda.CdaCoreService;
 import pt.webdetails.cda.utils.DoQueryParameters;
 import pt.webdetails.cpf.http.CommonParameterProvider;
 import pt.webdetails.cpf.http.ICommonParameterProvider;
+import pt.webdetails.cda.ResponseTypeHandler;
 
 @Path("/cda/api/utils")
 public class RestEndpoint {
@@ -56,12 +57,7 @@ public class RestEndpoint {
   public static final String ENCODING = "UTF-8";
   
   
-  
-  private CdaCoreService coreService;
-  
-  public RestEndpoint() {
-        this.coreService = new CdaCoreService();//XXX init the coreService here?  
-  }
+ 
   
   protected static String getEncoding() { return ENCODING; }
   
@@ -97,14 +93,10 @@ public class RestEndpoint {
       queryParams.setSortBy(sortBy);
       queryParams.setWrapItUp(wrapItUp);
       queryParams.setJsonCallback(jsonCallback);
+      CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(servletResponse));
       coreService.doQuery(servletResponse.getOutputStream(), queryParams);
       
-      Map<String,String> map = new HashMap<String, String>();
-      Iterator it = map.entrySet().iterator();
-      while(it.hasNext()){
-          Entry<String,String> rsp = (Entry<String,String>)it.next();
-          servletResponse.setHeader(rsp.getKey(), rsp.getValue());
-      }
+      
       
   }
   
@@ -118,6 +110,7 @@ public class RestEndpoint {
                           @Context HttpServletResponse servletResponse, 
                           @Context HttpServletRequest servletRequest) throws Exception
   {
+      CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(servletResponse));
       coreService.unwrapQuery(servletResponse.getOutputStream(), path, solution, file, uuid);
       
   }
@@ -133,7 +126,7 @@ public class RestEndpoint {
                           @Context HttpServletResponse servletResponse, 
                           @Context HttpServletRequest servletRequest) throws Exception
   {
-      
+      CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(servletResponse));
       coreService.listQueries(servletResponse.getOutputStream(), path,solution,file, outputType);
   }
   
@@ -150,6 +143,7 @@ public class RestEndpoint {
                               @Context HttpServletResponse servletResponse, 
                               @Context HttpServletRequest servletRequest) throws Exception
   {
+      CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(servletResponse));
       coreService.listParameters(servletResponse.getOutputStream(), path,solution,file, outputType, dataAccessId);
       
       
@@ -167,6 +161,7 @@ public class RestEndpoint {
                          @Context HttpServletResponse servletResponse, 
                          @Context HttpServletRequest servletRequest) throws Exception
   {
+      CdaCoreService coreService = new CdaCoreService();
       coreService.getCdaFile(servletResponse.getOutputStream(), path);
       
   }
@@ -184,7 +179,8 @@ public class RestEndpoint {
                            @Context HttpServletResponse servletResponse, 
                            @Context HttpServletRequest servletRequest) throws Exception
   {  
-  coreService.writeCdaFile(servletResponse.getOutputStream(), path,solution,file, data);
+      CdaCoreService coreService = new CdaCoreService();
+      coreService.writeCdaFile(servletResponse.getOutputStream(), path,solution,file, data);
   }
   
   @GET
@@ -198,6 +194,7 @@ public class RestEndpoint {
                          @Context HttpServletResponse servletResponse, 
                          @Context HttpServletRequest servletRequest) throws Exception
   {
+      CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(servletResponse));
       coreService.getCdaList(servletResponse.getOutputStream(), outputType);
   }
 
@@ -208,6 +205,7 @@ public class RestEndpoint {
   public void clearCache(@Context HttpServletResponse servletResponse, 
                          @Context HttpServletRequest servletRequest) throws Exception
   {
+      CdaCoreService coreService = new CdaCoreService();
       coreService.clearCache(servletResponse.getOutputStream());
   }
   
@@ -226,6 +224,7 @@ public class RestEndpoint {
           Map.Entry e = (Map.Entry)it.next();
           requParam.put((String)e.getKey(), e.getValue());
       }
+      CdaCoreService coreService = new CdaCoreService();
       coreService.cacheMonitor(servletResponse.getOutputStream(), method, requParam);
   }
   
@@ -240,6 +239,7 @@ public class RestEndpoint {
                        @Context HttpServletResponse servletResponse, 
                        @Context HttpServletRequest servletRequest) throws Exception
   {
+      CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(servletResponse));
       coreService.editFile(servletResponse.getOutputStream(), path,solution,file);
    }
 
@@ -249,6 +249,7 @@ public class RestEndpoint {
   public void previewQuery(@Context HttpServletResponse servletResponse, 
                            @Context HttpServletRequest servletRequest) throws Exception
   {
+      CdaCoreService coreService = new CdaCoreService();
        coreService.previewQuery(servletResponse.getOutputStream());
   }
 
@@ -261,6 +262,7 @@ public class RestEndpoint {
                              @Context HttpServletResponse servletResponse, 
                              @Context HttpServletRequest servletRequest) throws Exception
   {
+      CdaCoreService coreService = new CdaCoreService();
       coreService.getCssResource(servletResponse.getOutputStream(), resource);
   }
 
@@ -273,6 +275,7 @@ public class RestEndpoint {
                             @Context HttpServletResponse servletResponse, 
                             @Context HttpServletRequest servletRequest) throws Exception
   {
+      CdaCoreService coreService = new CdaCoreService();
       coreService.getJsResource(servletResponse.getOutputStream(), resource);
   }
   
@@ -285,6 +288,7 @@ public class RestEndpoint {
                                   @Context HttpServletResponse servletResponse, 
                                   @Context HttpServletRequest servletRequest) throws Exception
   {
+      CdaCoreService coreService = new CdaCoreService();
       coreService.listDataAccessTypes(servletResponse.getOutputStream(), refreshCache);
   }
 
@@ -299,6 +303,7 @@ public class RestEndpoint {
                               @Context HttpServletResponse servletResponse, 
                               @Context HttpServletRequest servletRequest) throws IOException
   {
+      CdaCoreService coreService = new CdaCoreService();
       coreService.cacheController(servletResponse.getOutputStream(), method, id);
   }
 
@@ -309,6 +314,7 @@ public class RestEndpoint {
   public void manageCache(@Context HttpServletResponse servletResponse, 
                           @Context HttpServletRequest servletRequest) throws Exception
   {
+      CdaCoreService coreService = new CdaCoreService();
       coreService.manageCache(servletResponse.getOutputStream());
   }
   
