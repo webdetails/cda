@@ -179,7 +179,7 @@ public class CdaEngine
 	  if (!isInitialized()) {
 		  // try to get the environment from the configuration
 		  // will return the DefaultCdaEnvironment by default
-		  if (env != null)
+		  if (env == null)
 			  env = getConfiguredEnvironment();
 
 		  if (env == null)
