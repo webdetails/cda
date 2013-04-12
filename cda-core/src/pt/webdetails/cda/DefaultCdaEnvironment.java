@@ -48,10 +48,18 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 	public DefaultCdaEnvironment() throws InitializationException {
 		init();
 	}
+	
+	public DefaultCdaEnvironment(ICdaBeanFactory factory) throws InitializationException {
+		init(factory);
+	}
 
 	@Override
 	public void init() throws InitializationException {
 		initBeanFactory();
+	}
+	
+	public void init(ICdaBeanFactory factory) {
+		this.beanFactory = factory;
 	}
 
 

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ws="http://jax-ws.dev.java.net/spring/core"
+	xmlns:wss="http://jax-ws.dev.java.net/spring/servlet"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+http://jax-ws.dev.java.net/spring/core http://jax-ws.dev.java.net/spring/core.xsd
+http://jax-ws.dev.java.net/spring/servlet http://jax-ws.dev.java.net/spring/servlet.xsd">
+
+	<context:annotation-config />
+
+  <bean id="IRepositoryAccess" class="pt.webdetails.cpf.repository.VfsRepositoryAccess" scope="prototype">
+  	<property name="repository" value="res:standalone/repository"></property>
+  	<property name="settings" value="res:standalone/settings"></property>
+  </bean>
+
+  <bean id="IUserSession" class="pt.webdetails.cpf.impl.SimpleUserSession">
+  	<property name="userName" value="username"></property>
+  	<property name="attributes">
+  		<map>
+  			<entry key="test" value="thisIsAGoodValue" />
+  		</map>
+  	</property>
+  </bean>
+  <bean id="ISessionUtils" class="pt.webdetails.cpf.impl.SimpleSessionUtils">
+  	<property name="session" ref="IUserSession" />
+  </bean>
+  
+  
+</beans>
