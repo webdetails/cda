@@ -94,7 +94,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
     parameters.setSortBy(sortBy);
     parameters.setWrapItUp(requestParams.getStringParameter("wrapItUp", null) != null);
 
-    CdaCoreService service = new CdaCoreService();
+    CdaCoreService service = new CdaCoreService(new ResponseTypeHandler(getResponse()));
     service.doQuery(out, parameters);
   }
 
@@ -102,7 +102,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
   public void unwrapQuery(final OutputStream out) throws Exception
   {
     final IParameterProvider requestParams = getRequestParameters();
-    final CdaCoreService coreService = new CdaCoreService();
+    CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(getResponse()));
     coreService.unwrapQuery(out, (String)requestParams.getParameter("path"), 
             (String)requestParams.getParameter("solution"), 
             (String)requestParams.getParameter("file"), 
@@ -114,7 +114,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
   public void listQueries(final OutputStream out) throws Exception
   {
     final IParameterProvider requestParams = getRequestParameters();
-    final CdaCoreService service = new CdaCoreService();
+    CdaCoreService service = new CdaCoreService(new ResponseTypeHandler(getResponse()));
     service.listQueries(out, (String)requestParams.getParameter("path"),
             (String)requestParams.getParameter("solution"),
             (String)requestParams.getParameter("file"),
@@ -125,7 +125,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
   public void listParameters(final OutputStream out) throws Exception
   {
     final IParameterProvider requestParams = getRequestParameters();
-    CdaCoreService service = new CdaCoreService();
+    CdaCoreService service = new CdaCoreService(new ResponseTypeHandler(getResponse()));
     service.listParameters(out, (String) requestParams.getParameter("path") , 
             (String)requestParams.getParameter("solution"),
             (String)requestParams.getParameter("file"),
@@ -158,7 +158,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
   public void getCdaList(final OutputStream out) throws Exception
   {
     
-    CdaCoreService service = new CdaCoreService();
+    CdaCoreService service = new CdaCoreService(new ResponseTypeHandler(getResponse()));
     service.getCdaList(out, getRequestParameters().getStringParameter("outputType", "json"));
   }
 
@@ -200,7 +200,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
   @Exposed(accessLevel = AccessLevel.PUBLIC)
   public void editFile(final OutputStream out) throws Exception
   {
-    CdaCoreService coreService = new CdaCoreService();
+    CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(getResponse()));
     coreService.editFile(out, (String)getRequestParameters().getParameter("path"),
                         (String)getRequestParameters().getParameter("solution"),
             (String)getRequestParameters().getParameter("file")
