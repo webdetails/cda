@@ -40,6 +40,7 @@ import pt.webdetails.cpf.annotations.Audited;
 import pt.webdetails.cpf.annotations.Exposed;
 import pt.webdetails.cpf.repository.RepositoryAccess;
 import pt.webdetails.cpf.repository.RepositoryAccess.FileAccess;
+import pt.webdetails.cpf.utils.MimeTypes;
 
 
 public class CdaContentGenerator extends SimpleContentGenerator
@@ -239,14 +240,14 @@ public class CdaContentGenerator extends SimpleContentGenerator
   }
 
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.XML)
+  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeTypes.XML)
   public void getCdaFile(final OutputStream out) throws Exception
   {
     String document = getResourceAsString(StringUtils.replace(getRelativePath(getRequestParameters()), "///", "/"), FileAccess.READ);// ISolutionRepository.ACTION_UPDATE);//TODO:check
     writeOut(out, document);
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.PLAIN_TEXT)
+  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeTypes.PLAIN_TEXT)
   public void writeCdaFile(OutputStream out) throws Exception
   {
     //TODO: Validate the filename in some way, shape or form!
@@ -288,7 +289,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
     engine.getCdaList(out, discoveryOptions, userSession);
   }
 
-  @Exposed(accessLevel = AccessLevel.ADMIN, outputType = MimeType.PLAIN_TEXT)
+  @Exposed(accessLevel = AccessLevel.ADMIN, outputType = MimeTypes.PLAIN_TEXT)
   public void clearCache(final OutputStream out) throws Exception
   {
     SettingsManager.getInstance().clearCache();
@@ -417,13 +418,13 @@ public class CdaContentGenerator extends SimpleContentGenerator
   }
 
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.CSS)
+  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeTypes.CSS)
   public void getCssResource(final OutputStream out) throws Exception
   {
     getResource( out);
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.JAVASCRIPT)
+  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeTypes.JAVASCRIPT)
   public void getJsResource(final OutputStream out) throws Exception
   {
     getResource( out);
@@ -454,7 +455,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
     
   }
   
-  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.JSON)
+  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeTypes.JSON)
   public void listDataAccessTypes(final OutputStream out) throws Exception
   {
     boolean refreshCache = Boolean.parseBoolean(getRequestParameters().getStringParameter("refreshCache", "false"));
