@@ -162,7 +162,7 @@ public class RestEndpoint {
                          @Context HttpServletRequest servletRequest) throws Exception
   {
       CdaCoreService coreService = new CdaCoreService();
-      coreService.getCdaFile(servletResponse.getOutputStream(), path);
+      coreService.getCdaFile(servletResponse.getOutputStream(), path,new ResponseTypeHandler(servletResponse));
       
   }
   
@@ -240,7 +240,7 @@ public class RestEndpoint {
                        @Context HttpServletRequest servletRequest) throws Exception
   {
       CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(servletResponse));
-      coreService.editFile(servletResponse.getOutputStream(), path,solution,file);
+      coreService.editFile(servletResponse.getOutputStream(), path,solution,file,new ResponseTypeHandler(servletResponse));
    }
 
   @GET
@@ -250,7 +250,7 @@ public class RestEndpoint {
                            @Context HttpServletRequest servletRequest) throws Exception
   {
       CdaCoreService coreService = new CdaCoreService();
-       coreService.previewQuery(servletResponse.getOutputStream());
+       coreService.previewQuery(servletResponse.getOutputStream(),new ResponseTypeHandler(servletResponse));
   }
 
   @GET
@@ -315,7 +315,7 @@ public class RestEndpoint {
                           @Context HttpServletRequest servletRequest) throws Exception
   {
       CdaCoreService coreService = new CdaCoreService();
-      coreService.manageCache(servletResponse.getOutputStream());
+      coreService.manageCache(servletResponse.getOutputStream(),new ResponseTypeHandler(servletResponse));
   }
   
   //XXX could use this getRelativePath instead of the one in CoreService?

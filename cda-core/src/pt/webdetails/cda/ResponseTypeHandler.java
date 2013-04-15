@@ -1,12 +1,14 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package pt.webdetails.cda;
 
 /**
  *
  * @author joao
  */
+import java.util.Locale;
 import javax.servlet.http.HttpServletResponse;
 public class ResponseTypeHandler implements IResponseTypeHandler {
 
@@ -14,7 +16,8 @@ public class ResponseTypeHandler implements IResponseTypeHandler {
     public ResponseTypeHandler(){}
     public ResponseTypeHandler(HttpServletResponse response){this.response=response;}
     public void setHttpServletResponse(HttpServletResponse response){this.response=response;}
-    
+    @Override
+    public boolean hasResponse(){return this.response!=null;}
     @Override
     public void setResponseHeaders(String mimeType, int cacheDuration, String attachmentName) {
         
@@ -25,13 +28,6 @@ public class ResponseTypeHandler implements IResponseTypeHandler {
       if (mimeTypeListener != null)
       {
         mimeTypeListener.setMimeType(mimeType);
-      }
-      */
-       //XXX warn when passing param
-      /*if (response == null)
-      {
-        logger.warn("Parameter 'httpresponse' not found!");
-        return;
       }
       */
       response.setHeader("Content-Type", mimeType);
@@ -49,6 +45,11 @@ public class ResponseTypeHandler implements IResponseTypeHandler {
       {
         response.setHeader("Cache-Control", "max-age=0, no-store");
       }
+    }
+
+    @Override
+    public Locale getLocale() {
+      return response.getLocale();//XXX is it this locale we want?
     }
     
 }
