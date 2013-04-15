@@ -22,9 +22,12 @@ public class DefaultResourceKeyGetter implements IResourceKeyGetter {
 
 	@Override
 	public ResourceKey getResourceKey(String id, ResourceManager resourceManager)  throws ResourceKeyCreationException {
-		//IRepositoryAccess repo = CdaEngine.getEnvironment().getRepositoryAccess();
-		//IRepositoryFile f = repo.getRepositoryFile(id, FileAccess.READ);
-		//return resourceManager.createKey(f.getFullPath());
+		// TODO: we need a resourceloader that can deal with repository relative paths
+		IRepositoryAccess repo = CdaEngine.getEnvironment().getRepositoryAccess();
+		if (repo != null) {
+			IRepositoryFile f = repo.getRepositoryFile(id, FileAccess.READ);
+			return resourceManager.createKey(f.getData());
+		}
 		return resourceManager.createKey(id);
 	}
 
