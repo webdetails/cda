@@ -139,7 +139,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
     final IParameterProvider requestParams = getRequestParameters();
     CdaCoreService service = new CdaCoreService();
     //TO DO - Add the path, solution, file
-    service.getCdaFile(out, requestParams.getStringParameter("path", ""));        
+    service.getCdaFile(out, requestParams.getStringParameter("path", ""),new ResponseTypeHandler(getResponse()));        
   }
 
   @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.PLAIN_TEXT)
@@ -203,7 +203,8 @@ public class CdaContentGenerator extends SimpleContentGenerator
     CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(getResponse()));
     coreService.editFile(out, (String)getRequestParameters().getParameter("path"),
                         (String)getRequestParameters().getParameter("solution"),
-            (String)getRequestParameters().getParameter("file")
+            (String)getRequestParameters().getParameter("file"),
+            new ResponseTypeHandler(getResponse())
             );
   }
 
@@ -211,7 +212,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
   public void previewQuery(final OutputStream out) throws Exception
   {
     CdaCoreService service = new CdaCoreService();
-    service.previewQuery(out);
+    service.previewQuery(out,new ResponseTypeHandler(getResponse()));
   }
 
 
@@ -252,7 +253,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
   public void manageCache(final OutputStream out) throws Exception
   {
     CdaCoreService coreService = new CdaCoreService();
-    coreService.manageCache(out);            
+    coreService.manageCache(out,new ResponseTypeHandler(getResponse()));            
   }
   
   

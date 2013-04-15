@@ -47,17 +47,17 @@ public class ConnectionCatalog {
         ByteArrayInputStream bais = null;
         try {
           bais = new ByteArrayInputStream(file.getData());
-          SAXReader reader = new SAXReader();//XXX check
+          SAXReader reader = new SAXReader();
           Document doc = reader.read(bais);
           // To figure out whether the component is generic or has a special implementation,
           // we directly look for the class override in the definition
           Node implementation = doc.selectSingleNode("/Connection/Implementation");
           Node type = doc.selectSingleNode("/Connection/Type");
-          String className = implementation.getText();//XmlDom4JHelper.getNodeText("/Connection/Implementation", doc);
+          String className = implementation.getText();
           if (className != null) {
             Connection connection = connectionFromClass(className);
             if (connection != null) {
-              String connectionType = type.getText();//XmlDom4JHelper.getNodeText("/Connection/Type", doc);
+              String connectionType = type.getText();
               ConnectionType ct = ConnectionType.valueOf(connectionType);
               connectionPool.put(connection.getClass().toString(), new ConnectionInfo(ct, connection.getClass()));
             }

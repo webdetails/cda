@@ -36,6 +36,7 @@ import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
 import pt.webdetails.cpf.repository.IRepositoryAccess;
 import pt.webdetails.cpf.repository.IRepositoryFile;
 import pt.webdetails.cpf.session.ISessionUtils;
+import pt.webdetails.cpf.utils.Utils;
 
 
 
@@ -124,7 +125,6 @@ public class CdaCoreService
     // ... and the query parameters
     // We identify any pathParams starting with "param" as query parameters and extra settings prefixed with "setting"
     @SuppressWarnings("unchecked")
-    //XXX add parameters and settings to queryoptions
     final Iterator settings = parameters.getExtraSettings().entrySet().iterator();
     while (settings.hasNext())
     {
@@ -266,9 +266,9 @@ public class CdaCoreService
 
 
   //@Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.XML)
-  public void getCdaFile(final OutputStream out,final String path) throws Exception
+  public void getCdaFile(final OutputStream out,final String path, IResponseTypeHandler response) throws Exception
   {
-    String document = getResourceAsString(StringUtils.replace(path, "///", "/"), FileAccess.READ);// ISolutionRepository.ACTION_UPDATE);//TODO:check
+    String document = getResourceAsString(StringUtils.replace(path, "///", "/"), FileAccess.READ,response);// ISolutionRepository.ACTION_UPDATE);//TODO:check
     writeOut(out, document);
   }
 
@@ -407,12 +407,13 @@ public class CdaCoreService
   }
 
   
-  public String getResourceAsString(final String path, FileAccess access) throws IOException, AccessDeniedException{
+  public String getResourceAsString(final String path, FileAccess access,IResponseTypeHandler response) throws IOException, AccessDeniedException{
     IRepositoryAccess repository = CdaEngine.getEnvironment().getRepositoryAccess();
     if(repository.hasAccess(path, access)){
       HashMap<String, String> keys = new HashMap<String, String>();
       //Locale locale = LocaleHelper.getLocale();
-      Locale locale = Locale.getDefault(); //FIXME probably not what intended
+      Locale locale = response.getLocale();
+      
       if (logger.isDebugEnabled())
       {
         logger.debug("Current user locale: " + locale.toString());
@@ -429,7 +430,7 @@ public class CdaCoreService
   //@Exposed(accessLevel = AccessLevel.PUBLIC)
   // TODO: this has to go into cda-pentaho or needs to be refactored
   @Deprecated
-  public void editFile(final OutputStream out, final String path,final String solution, final String file) throws Exception 
+  public void editFile(final OutputStream out, final String path,final String solution, final String file,IResponseTypeHandler response) throws Exception 
   {
     IRepositoryAccess repository = CdaEngine.getEnvironment().getRepositoryAccess();
     
@@ -440,7 +441,7 @@ public class CdaCoreService
       boolean hasCde = repository.resourceExists("system/pentaho-cdf-dd");
       
       final String editorPath = "system/" + PLUGIN_NAME + (hasCde? EXT_EDITOR_SOURCE : EDITOR_SOURCE);
-      writeOut(out, getResourceAsString(editorPath,FileAccess.EXECUTE));
+      writeOut(out, getResourceAsString(editorPath,FileAccess.EXECUTE,response));
     }
     else
     {
@@ -454,10 +455,10 @@ public class CdaCoreService
   // TODO: this has to go into cda-pentaho or needs to be refactored
   @Deprecated
   //@Exposed(accessLevel = AccessLevel.PUBLIC)
-  public void previewQuery(final OutputStream out) throws Exception
+  public void previewQuery(final OutputStream out,IResponseTypeHandler response) throws Exception
   {
     final String previewerPath = "system/" + PLUGIN_NAME + PREVIEWER_SOURCE;
-    writeOut(out, getResourceAsString(previewerPath, FileAccess.EXECUTE));
+    writeOut(out, getResourceAsString(previewerPath, FileAccess.EXECUTE,response));
   }
 
 
@@ -516,14 +517,14 @@ public class CdaCoreService
       output.append("{\n");
       for (DataAccessConnectionDescriptor datum : data)
       {
-                output.append(datum.toJSON()).append(",\n");//XXX changed from output.append(datum.toJSON() + ",\n");
+                output.append(datum.toJSON()).append(",\n");
       }
       writeOut(out, output.toString().replaceAll(",\n\\z", "\n}"));
     }
   }
 
   //@Exposed(accessLevel = AccessLevel.PUBLIC)
-  public void cacheController(OutputStream out, String method, String obj)//XXX 
+  public void cacheController(OutputStream out, String method, String obj)
   {
 	  if (CdaEngine.getEnvironment().supportsCacheScheduler()) {
 		  ICacheScheduleManager manager = CdaEngine.getEnvironment().getCacheScheduler();
@@ -532,9 +533,9 @@ public class CdaCoreService
   }
 
   //@Exposed(accessLevel = AccessLevel.ADMIN)
-  public void manageCache(final OutputStream out) throws Exception
+  public void manageCache(final OutputStream out,IResponseTypeHandler response) throws Exception
   {
-    writeOut(out, getResourceAsString(CACHE_MANAGER_PATH, FileAccess.EXECUTE));
+    writeOut(out, getResourceAsString(CACHE_MANAGER_PATH, FileAccess.EXECUTE,response));
   }
 
 
@@ -543,61 +544,28 @@ public class CdaCoreService
   }
   
   
-  private void writeOut(OutputStream out,String uuid){//XXX needs checking, wich error to log
-      
+  private void writeOut(OutputStream out,String uuid){
       try{
       out.write(uuid.getBytes());
       }catch(IOException e){
-          logger.error("Failed to write to stream");
+          logger.error("Failed to write to stream");//XXX needs checking, wich error to log
       }
   }
-  private String getMimeType(String attachmentName){//FIXME must be done differently. cda-core --> cpf-core -/-> cpf-pentaho 
-      return null;
+  private String getMimeType(String attachmentName){
+      return Utils.getMimeType(attachmentName);
   }
-  private void setResponseHeaders(String mimeType, String attachmentName){//FIXME must be done differently. cda-core --> cpf-core -/-> cpf-pentaho 
+  private void setResponseHeaders(String mimeType, String attachmentName){
        setResponseHeaders(mimeType, 0, attachmentName);
   }
 
   private void setResponseHeaders(String mimeType){
       setResponseHeaders(mimeType, 0, null);
   }
-  //FIXME implement this method?
   private void setResponseHeaders(final String mimeType, final int cacheDuration, final String attachmentName)
     {
-        if (responseHandler!=null)
+        if (responseHandler.hasResponse())
             responseHandler.setResponseHeaders(mimeType, cacheDuration, attachmentName);
-      
-        
-        // Make sure we have the correct mime type
-      
-      /*    final IMimeTypeListener mimeTypeListener = outputHandler.getMimeTypeListener();
-      if (mimeTypeListener != null)
-      {
-        mimeTypeListener.setMimeType(mimeType);
-      }
-      
-
-      if (response == null)
-      {
-        logger.warn("Parameter 'httpresponse' not found!");
-        return;
-      }
-        response.setHeader("Content-Type", mimeType);
-
-      if (attachmentName != null)
-      {
-        response.setHeader("content-disposition", "attachment; filename=" + attachmentName);
-      } // Cache?
-
-      if (cacheDuration > 0)
-      {
-        response.setHeader("Cache-Control", "max-age=" + cacheDuration);
-      }
-      else
-      {
-        response.setHeader("Cache-Control", "max-age=0, no-store");
-      }
-      */
+        else logger.warn("Parameter 'httpresponse' not found!");
     }
   
   
