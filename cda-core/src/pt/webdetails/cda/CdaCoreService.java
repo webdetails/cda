@@ -343,7 +343,7 @@ public class CdaCoreService
   }
   
  // @Exposed(accessLevel = AccessLevel.ADMIN)
-  public void cacheMonitor(final OutputStream out,String method,ICommonParameterProvider requParam) throws Exception{//XXX ICommonParameterProvider?
+  public void cacheMonitor(final OutputStream out,String method,ICommonParameterProvider requParam) throws Exception{
               
     CacheMonitorHandler.getInstance().handleCall(method,requParam, out);
   }
