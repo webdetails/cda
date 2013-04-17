@@ -4,7 +4,8 @@ import java.io.File;
 import java.io.OutputStream;
 import java.net.URL;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,11 +21,12 @@ import pt.webdetails.cda.settings.SettingsManager;
  * Date: Feb 15, 2010
  * Time: 7:53:13 PM
  */
-public class CompoundUnionTest extends TestCase
+public class CompoundUnionTest
 {
 
   private static final Log logger = LogFactory.getLog(CompoundUnionTest.class);
-
+   
+  @Test
   public void testCompoundQuery() throws Exception
   {
 
@@ -36,6 +38,7 @@ public class CompoundUnionTest extends TestCase
     final CdaEngine engine = CdaEngine.getInstance();
     final SettingsManager settingsManager = SettingsManager.getInstance();
     URL file = this.getClass().getResource("sample-union.cda");
+    Assert.assertNotNull(file);
     File settingsFile = new File(file.toURI());
     final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
     logger.error("Doing query on Cda - Initializing CdaEngine");
