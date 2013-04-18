@@ -34,7 +34,7 @@
 -->
 
 
-  <target name="compile.compile" depends="init" description="Performs the actual javac compile">
+  <target name="compile.compile" depends="init, resolve" description="Performs the actual javac compile">
     <javac destdir="${classes.dir}"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
