@@ -410,6 +410,7 @@ TYPICAL TARGET SEQUENCE
     <mkdir dir="${lib.dir}" />
     <mkdir dir="${devlib.dir}" />
     <mkdir dir="${testlib.dir}" />
+        <mkdir dir="${runtimelib.dir}" />
   </target>
 
   <!--=======================================================================
