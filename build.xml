@@ -16,6 +16,12 @@
     </target>
 
 
+    <target name="publish-local" >
+		<ant dir="cda-core"    antfile="build.xml" target="publish-local" inheritAll="true"/>
+        <ant dir="cda-pentaho" antfile="build.xml" target="publish-local" inheritAll="true"/>
+    </target>
+
+
 
     <target name="full-dist" depends="build-and-test-core">
         <copy todir="cda-pentaho/dev-lib" overwrite="true">
