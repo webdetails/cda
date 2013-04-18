@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ws="http://jax-ws.dev.java.net/spring/core"
+	xmlns:wss="http://jax-ws.dev.java.net/spring/servlet"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+http://jax-ws.dev.java.net/spring/core http://jax-ws.dev.java.net/spring/core.xsd
+http://jax-ws.dev.java.net/spring/servlet http://jax-ws.dev.java.net/spring/servlet.xsd">
+
+	<context:annotation-config />
+
+  <!--
+  <bean id="IPluginCall" class="pt.webdetails.cpf.IPluginCall" scope="prototype"/>
+  <bean id="IDataAccessUtils" class="pt.webdetails.cda.dataccess.DefaultDataAccessUtils" scope="prototype"/>
+  <bean id="IResourceKeyGetter" class="pt.webdetails.cda.settings.DefaultResourceKeyGetter" scope="prototype"/>
+  <bean id="IConnectionHelper" class="pt.webdetails.cda.connections.DefaultConnectionHelper" scope="prototype"/>
+  <bean id="IMondrianRoleMapper" class="pt.webdetails.cda.core.DefaultMondrianRoleMapper" scope="prototype"/>  
+  <bean id="IQueryCache" class="pt.webdetails.cda.cache.EHCacheQueryCache" scope="prototype"/>
+  <bean id="ISessionUtils" class="pt.webdetails.cda.pentaho.SessionUtils" scope="prototype"/>
+  <bean id="IRepositoryAccess" class="pt.webdetails.cpf.pentaho.RepositoryAccess" scope="prototype"/>
+  <bean id="ICacheScheduleManager" class="pt.webdetails.cda.cache.ICacheScheduleManager" scope="prototype"/>
+  
+  <bean id="ICubeFileProviderSetter" class="pt.webdetails.cda.dataaccess.DefaultCubeFileProviderSetter" scope="prototype"/>
+  <bean id="IEventPublisher" class="pt.webdetails.cpf.messaging.EventPublisher" scope="prototype"/>
+  
+  -->
+  
+  <!-- by default we will use the standard CdaSecurityParameterProvider, CdaSessionParameterProvider, CdaSystemParameterProvider -->
+  <!-- 
+  <bean id="ICdaCoreSessionFormulaContext" class="pt.webdetails.cda.formula.DefaultSessionFormulaContext" scope="prototype">
+  	<property name="providers">
+  		<map>
+  			<entry key="system:" value-ref="my.impl.ICdaParameterProvider />
+  		</map>
+  	</property>
+  </bean>
+  -->
+  <bean id="IUserSession" class="pt.webdetails.cpf.impl.SimpleUserSession">
+  	<property name="userName" value="username"></property>
+  	<property name="attributes">
+  		<map>
+  			<entry key="test" value="thisIsAGoodValue" />
+  		</map>
+  	</property>
+  </bean>
+  <bean id="ISessionUtils" class="pt.webdetails.cpf.impl.SimpleSessionUtils">
+  	<property name="session" ref="IUserSession" />
+  </bean>
+  
+  
+</beans>

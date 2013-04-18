@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CDADescriptor>
+
+    <DataSources>
+        <Connection id="1" type="mondrian.jndi">
+			<Jndi>SampleData</Jndi>
+			<Catalog>./steelwheels.mondrian.xml</Catalog>
+			<Cube>SteelWheelsSales</Cube>
+        </Connection>
+    </DataSources>
+    
+    
+    <DataAccess id="1" connection="1" type="mdx" access="public">
+      <Name>Mdx Query on Steelwheels</Name>
+      <Query><![CDATA[
+        select {[Measures].[Sales], [Measures].[Quantity]} ON COLUMNS,
+        NON EMPTY  [Time].Children ON ROWS
+        from [SteelWheelsSales]
+        where { ${status} }
+      ]]></Query>
+      <Parameters>
+        <Parameter name="status" type="StringArray" default="[Order Status].[Shipped];[Order Status].[Cancelled]"/>
+      </Parameters>
+    </DataAccess>
+
+</CDADescriptor>

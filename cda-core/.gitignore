@@ -1,0 +1,6 @@
+dist/
+bin/
+lib/
+test-lib/
+dev-lib/
+dev-lib/*.jar
