@@ -45,7 +45,6 @@ public abstract class AbstractDataAccess implements DataAccess
 {
 
   private static final Log logger = LogFactory.getLog(AbstractDataAccess.class);
-//  private static CacheManager cacheManager;
   private static IQueryCache cache;
   
   private CdaSettings cdaSettings;

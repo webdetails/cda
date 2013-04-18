@@ -35,7 +35,7 @@ public class CompoundJoinTest
 
   @BeforeClass
   public static void setUp() throws InitializationException{
-      CoreBeanFactory cbf = new CoreBeanFactory("cda.standalone.spring.xml");
+      CoreBeanFactory cbf = new CoreBeanFactory("cda.spring.xml");
       DefaultCdaEnvironment env = new DefaultCdaEnvironment(cbf);
       CdaEngine.init(env);
   }
