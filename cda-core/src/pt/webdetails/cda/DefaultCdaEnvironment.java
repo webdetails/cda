@@ -41,7 +41,7 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class DefaultCdaEnvironment implements ICdaEnvironment {
 
-	private static Log logger = LogFactory.getLog(DefaultCdaEnvironment.class);
+	protected static Log logger = LogFactory.getLog(DefaultCdaEnvironment.class);
 
 	private ICdaBeanFactory beanFactory;
 

@@ -33,7 +33,7 @@ public class EHCacheQueryCache implements IQueryCache {
 
   private static final Log logger = LogFactory.getLog(EHCacheQueryCache.class);
   private static final String CACHE_NAME = "pentaho-cda-dataaccess";
-  private static final String CACHE_CFG_FILE = "ehcache.xml";
+  private static final String CACHE_CFG_FILE = "ehcache-cda.xml";
   private static final String CACHE_CFG_FILE_DIST = "ehcache-dist.xml";
   private static final String USE_TERRACOTTA_PROPERTY = "pt.webdetails.cda.UseTerracotta";
   private static CacheManager cacheManager;

@@ -38,6 +38,14 @@ public class CdaLifecycleListener implements IPluginLifecycleListener
     try
     {
       Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+      
+      try {
+        CdaEngine.init(new PentahoCdaEnvironment());
+      } catch (InitializationException ie) {
+        throw new PluginLifecycleException("Error initializing CDA Engine", ie);
+      }
+      
+      
       CacheScheduleManager.getInstance().coldInit();
     }
     catch (Exception e)

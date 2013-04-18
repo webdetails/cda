@@ -51,7 +51,7 @@ public class ExporterEngine
 
   public ExporterEngine()
   {
-    logger.info("Initializing CdaEngine");
+    logger.info("Initializing CdaExporterEngine");
     init();
 
   }

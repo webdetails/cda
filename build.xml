@@ -10,6 +10,22 @@
 		<ant dir="cda-core" antfile="build.xml" target="dist" inheritAll="true"/>
     </target>
 
+    <target name="build-and-test-core" >
+		<ant dir="cda-core" antfile="build.xml" target="dist" inheritAll="true"/>
+        <ant dir="cda-core" antfile="build.xml" target="test" inheritAll="true"/>
+    </target>
+
+
+
+    <target name="full-dist" depends="build-and-test-core">
+        <copy todir="cda-pentaho/dev-lib" overwrite="true">
+            <fileset dir="cda-core/dist">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+		<ant dir="cda-pentaho" antfile="build.xml" target="dist" inheritAll="true"/>
+    </target>
+
 
     <target name="dist" depends="build-core">
         <copy todir="cda-pentaho/dev-lib" overwrite="true">
