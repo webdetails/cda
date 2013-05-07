@@ -73,7 +73,7 @@ public class CdaCoreService
     final CdaEngine engine = CdaEngine.getInstance();
     final QueryOptions queryOptions = new QueryOptions();
 
-    final String path = parameters.getPath();
+    final String path = getRelativePath(parameters.getPath() , parameters.getSolution(), parameters.getFile());
     final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
     
     // Handle paging options
