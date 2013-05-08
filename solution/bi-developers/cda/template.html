@@ -1,181 +1,176 @@
 <style type="text/css">
 
-  body {
-    background-color: white;
-  }
+	body {
+		background-color: white;
+	}
 
-  .cdalogo{
+	.cdalogo {
 
-    background-image: url("resources/sample_bg.png");
-    background-repeat: no-repeat;
-    height: 360px;
+		background-image: url("resources/sample_bg.png");
+		background-repeat: repeat-y;
+		height: 360px;
+		color: #f5f5f5;
+		padding-bottom: 20px;
+	}
 
-  }
+	.spacer200 {
+		height: 200px;
+	}
 
-  .spacer200{
-    height: 200px;
-  }
+	.dsTest {
+		font-size: 24px;
+		font-weight: bold;
+		color: white;
+	}
 
-  .dsTest{
-    font-size: 24px;
-    font-weight: bold;
-    color: white;
-  }
+	table#testTable th {
+		font-size: 22px;
+		font-weight: normal;
+		color: black;
+		font-family: Verdana, Helvetica, sans-serif;
+	}
 
-  table#testTable th {
-    font-size: 22px;
-    font-weight: normal;
-    color: black;
-    font-family: Verdana, Helvetica, sans-serif;
-  }
+	div.desc p {
 
-  div.desc p{
+		font-family: Verdana, Helvetica, sans-serif;
+		font-size: 12px;
+	}
 
-    font-family: Verdana, Helvetica, sans-serif;
-    font-size: 12px;
+	#testTable {
+		width: 100%;
+		font-family: Verdana, Helvetica, sans-serif;
+		font-size: 11px;
+	}
 
-  }
+	#testTable tr {
+		height: 20px;
+	}
 
-  #testTable {
-    width: 100%;
-    font-family: serif;
-    font-size: 12px;
-  }
+	.logo {
+		padding-top: 20px;
+		text-align: center;
+		font-family: Verdana, Helvetica, sans-serif;
+	}
 
-  #testTable tr{
-    height: 20px;
-  }
+	#testTable tr td:nth-child(1) {
+		font-family: monospace;
+		font-size: 12px;
+	}
 
+	#testTable tr td:nth-child(4) {
+		text-align: center;
+	}
 
-  .logo{
-    padding-top: 20px;
-    text-align: center;
-    font-family: Verdana, Helvetica, sans-serif;
-  }
+	#testTable td.testPending {
+		font-style: italic;
+		color: blue
+	}
 
+	#testTable td.testPassed {
+		font-style: italic;
+		color: green
+	}
 
-  #testTable tr td:nth-child(1) {
-    font-family: monospace;
-  }
-
-  #testTable tr td:nth-child(4) {
-    text-align: center;
-  }
-
-  #testTable td.testPending{
-    font-style: italic;
-    color: blue
-  }
-
-  #testTable td.testPassed {
-    font-style: italic;
-    color: green
-  }
-
-  #testTable td.testFailed {
-    font-style: italic;
-    color: red
-  }
+	#testTable td.testFailed {
+		font-style: italic;
+		color: red
+	}
 
 
 </style>
 
-
 <link type="text/css" href="../cda/static/blueprint/screen.css" rel="stylesheet" />
-
+<div class="webdetailsHead">
+	<div class="webdetailsLogo">
+		<a href="http://www.webdetails.pt/ctools/cda.html" target="_blank"></a>
+	</div>
+	<div class="buttoncontact ">
+		<a href="mailto:lead@webdetails.pt" title="Contact Webdetails directly here.">Get in Touch</a>
+	</div>
+</div>
 <div class="container">
-  <div class="span-24 clearfix cdalogo">
+	<div class="span-23 clearfix cdalogo">
+		<div class="span-18 clearfix last">
 
-    <div class="span-20 clearfix last">
+			<div class="span-18 clearfix last" style="height: 30px;">
+				&nbsp;
+			</div>
 
-      <div class="span-18 spacer200 clearfix last">&nbsp;</div>
-
-      <div class="span-7 clearfix prepend-1">
-    Version TRUNK-SNAPSHOT 
-      </div>
-      <div class="span-8 append-4 cdaDesc desc last">
-        <p>
-          CDA is the new <b>Data Access component</b> developed for Pentaho
-        </p>
-        <p>
-          Here you can not only access the available datasources but also use it
-          as a test page and reference to the way CDA works
-        </p>
-      </div>
-
-      <div class="span-19 prepend-1 clearfix last dsTest">
-        Datasource Test
-      </div>
-
-    </div>
+			<div class="span-6 clearfix prepend-1">
+				Version TRUNK-SNAPSHOT
+			</div>
+			<div class="span-8 append-3 cdaDesc desc last">
+				<p> CDA is the new <b>Data Access component</b> developed for Pentaho </p>
+				<p> Here you can not only access the available datasources but also use it
+					as a test page and reference to the way CDA works </p>
+			</div>
 
 
-    <div class="span-4 last logos">   
-      <br />
+			<div class="span-18 prepend-1 clearfix last dsTest">
+				Datasource Test
+			</div>
 
-      <div class="logo">
-    <a href="http://cda.webdetails.org/?q=content/documentation-overview" target="_blank">
-           <img border="0" src="resources/pastaCDA.png" />
-        </a>
-        <br/>
-        CDA Documentation
-      </div>
+		</div>
 
+		<div class="span-5 last logos">
+			<div class="logo">
+				<a href="http://www.webdetails.pt/ctools/cda.html#documentation" target="_blank">CDA Documentation <img border="0" src="GetCDFResource?resource=/plugin-samples/cda/resources/pastaCDA.png" /> </a>
 
-      <div class="logo">
-        <a href="http://tinyurl.com/ydfzw4u" target="_blank">
-           <img border="0" src="resources/pastaCDA.png" /><br/>
-        </a>
-        Blog Post
-      </div>
+			</div>
 
-      <div class="logo">
-        <a href="http://www.webdetails.pt/cda/CDA.pdf" target="_blank">
-           <img border="0" src="resources/pastaCDA.png" /><br/>
-        </a>
-        PDF Brochure
-      </div>
-    </div>
+			<div class="logo">
+				<a href="http://tinyurl.com/ydfzw4u" target="_blank">Blog Post <img border="0" src="resources/pastaCDA.png" /> </a>
 
 
-  </div>
+			</div>
+
+			<div class="logo">
+				<a href="http://www.webdetails.pt/cda/CDA.pdf" target="_blank">PDF Brochure <img border="0" src="resources/pastaCDA.png" /> </a>
+
+			</div>
+		</div>
 
 
-  <div class="span-22  prepend-1 append-1 clearfix last">
+	</div>
 
+	<div class="span-22 prepend-1 clearfix last">
 
-    <table id="testTable" cellpadding="0" cellspacing="0">
+		<table id="testTable" cellpadding="0" cellspacing="0">
+			<tr>
+				<th>Access method</th>
+				<th>Description</th>
+				<th>Sample</th>
+				<th>Result</th>
+			</tr>
+		</table>
 
-      <tr>
-        <th>Access method</th>
-        <th>Description</th>
-        <th>Sample</th>
-        <th>Result</th>
-      </tr>
-    </table>
-
-  </div>
+	</div>
 
 </div>
 
+<div class="webdetailsFooter">
+	<div class="webdetailsFooterWebdetails">
+		<a href="http://www.webdetails.pt"></a>
+	</div>
+	<div class="webdetailsFooterCtools">
+		<a href="http://www.webdetails.pt/ctools.html"></a>
+	</div>
+</div>
 
 <script language="javascript" type="text/javascript">
-
-  var components = [];
+	var components = [];
 
 </script>
 
 <script language="javascript" type="text/javascript">
 
-  function load(){
-    Dashboards.init(components);
-  }
+	function load() {
+		Dashboards.init(components);
+	}
 
+	load();
 
-  load();
-
-
-  // To add test cases, just edit this array
+	// To add test cases, just edit this array
 
   var testCases = [
     {
@@ -278,88 +273,83 @@ expectedRows: 1
     }
   ];
 
+	// Init table
 
-  // Init table
+	// Build code to execute
 
+	var Caller = Base.extend({
+		idx : -1,
+		testInfo : {},
 
-  // Build code to execute
+		constructor : function(idx) {
+			this.idx = idx;
+			this.testInfo = testCases[idx];
 
-  var Caller = Base.extend({
-    idx: -1,
-    testInfo: {},
+			this.init();
+		},
 
-    constructor: function(idx){
-      this.idx = idx;
-      this.testInfo = testCases[idx];
+		init : function() {
+			// Add this line to the table
+			var sampleFile = this.testInfo.url.match(/cdafiles\/(.*)/)[0];
+			$("#testTable").append("<tr><td>" + this.testInfo.type + "</td><td>" + this.testInfo.desc + "</td><td><a href='javascript:showFile(\"" + sampleFile + "\")'>" + sampleFile + "</a></td><td class='testResult testPending'><img src=\"GetCDFResource?resource=/plugin-samples/cda/resources/testing.png\" /></td></tr>");
+		},
 
-      this.init();
-    },
+		makeCall : function() {
+			var myself = this;
+			$.getJSON(this.testInfo.url, function(data) {
+				myself.verifyData(data);
+			});
 
-    init: function(){
-      // Add this line to the table
-      var sampleFile = this.testInfo.url.match(/cdafiles\/(.*)/)[0];
-      $("#testTable").append("<tr><td>" + this.testInfo.type + "</td><td>"+
-        this.testInfo.desc+"</td><td><a href='javascript:showFile(\"" + sampleFile +
-        "\")'>"+sampleFile+
-        "</a></td><td class='testResult testPending'><img src='resources/testing.png' /></td></tr>");
-    },
+		},
 
-    makeCall:  function(){
-      var myself = this;
-      $.getJSON(this.testInfo.url,function(data){
-        myself.verifyData(data);
-      });
+		verifyData : function(data) {
 
-    },
+			var valid = true;
+			var statusText = "";
+			var statusImage = "";
+			var cssClass;
 
+			if (data.resultset.length != this.testInfo.expectedRows) {
+				valid = false;
+				statusText += "Unexpected number of rows; ";
+			}
+			if (data.metadata.length != this.testInfo.expectedCols) {
+				valid = false;
+				statusText += "Unexpected number of columns; ";
+			}
 
-    verifyData: function(data){
-      
-      var valid = true;
-      var statusText = "";
-      var statusImage = "";
-      var cssClass;
+			if (valid) {
+				statusText = "";
+				statusImage = "<img src=\"resources/ok.png\" />"
+				cssClass = "testPassed";
+			} else {
+				cssClass = "testFailed";
+			}
 
-      if(data.resultset.length != this.testInfo.expectedRows){
-        valid = false;
-        statusText += "Unexpected number of rows; ";
-      }
-      if(data.metadata.length != this.testInfo.expectedCols){
-        valid = false;
-        statusText += "Unexpected number of columns; ";
-      }
+			// Update status
+			var statusCell = $("#testTable tr:eq(" + (this.idx + 1) + ") td:eq(3)");
+			statusImage.length > 0 ? statusCell.html(statusImage) : statusCell.text(statusText);
+			statusCell.removeClass("testPending");
+			statusCell.addClass(cssClass);
 
-      if(valid){
-        statusText = "";
-        statusImage = "<img src='resources/ok.png' />"
-        cssClass="testPassed";
-      }
-      else{
-        cssClass="testFailed";
-      }
+		}
+	});
 
-      // Update status
-      var statusCell = $("#testTable tr:eq(" + (this.idx + 1) + ") td:eq(3)");
-      statusImage.length > 0?statusCell.html(statusImage):statusCell.text(statusText);
-      statusCell.removeClass("testPending");
-      statusCell.addClass(cssClass);
+	var showFile = function(link) {
+		$.fancybox({
+			type : "iframe",
+			href : webAppPath + "/plugin/cda/api/getCdaFile?path=/public/pentaho-solutions/plugin-samples/cda/" + link,
+			width : $(window).width() - 100,
+			height : $(window).height() - 50
+		});
+		//	GB_show("Source file",webAppPath + "/content/cda/getCdaFile?path=/plugin-samples/cda/" + link, $(window).height() - 50 , $(window).width() - 100);
+	}
+	// Call it
 
-    }
-
-
-  });
-
-  var showFile = function(link){
-    $.fancybox({type:"iframe", href:webAppPath + "/plugin/cda/api/getCdaFile?path=/public/pentaho-solutions/plugin-samples/cda/" + link, width: $(window).width() - 100, height:$(window).height() - 50});
-    //  GB_show("Source file",webAppPath + "/content/cda/getCdaFile?path=/plugin-samples/cda/" + link, $(window).height() - 50 , $(window).width() - 100);
-  }
-
-  // Call it
-
-  for( var i = 0; i< testCases.length; i++){
-    var c = new Caller(i);
-    c.makeCall();
-  }
+	for (var i = 0; i < testCases.length; i++) {
+		var c = new Caller(i);
+		c.makeCall();
+	}
 
 
 </script>

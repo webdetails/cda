@@ -1,6 +1,20 @@
+@font-face {
+	font-family: 'Open Sans';
+	font-style: normal;
+	font-weight: 400;
+	src: local('Open Sans'), local('OpenSans'), url('http://themes.googleusercontent.com/static/fonts/opensans/v4/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff') format('woff');
+}
+
+@font-face {
+	font-family: 'Open Sans';
+	font-style: normal;
+	font-weight: 300;
+	src: local('Open Sans Light'), local('OpenSans-Light'), url('http://themes.googleusercontent.com/static/fonts/opensans/v4/DXI1ORHCpsQm3Vp6mXoaTXhCUOGz7vYGh680lGh-uXM.woff') format('woff');
+}
+
 body {
     padding: 0px;
-    font-family: Calibri, Helvetica, Arial;
+    font-family: 'Open Sans', Arial, sans-serif;
     background-color: #fff
 }
 
@@ -9,11 +23,8 @@ h1 {
 }
 
 .cdalogo{
-
-    background-image: url("../static/headerbg.png");
-    background-repeat: no-repeat;
-    height: 112px;
-
+    height: 50px !important;
+    background: none !important;
   }
 
 .header {
@@ -39,21 +50,25 @@ h1 {
     margin: 0px;
 }
 .button {
-    background-color: #FFF;
-    color:#000 text-decoration:none;
-    height: 20px;
+    background-color: #eee;
+    color:#333;
+    text-decoration:none;
     vertical-align: middle;
     text-align: center;
-    margin-right: 10px;
+    margin-left: 10px;
     border: 0px;
+    font-size: 11px;
+    float: right;
+	-webkit-border-radius: 3px;
+	   -moz-border-radius: 3px;
+			border-radius: 3px;
+			padding: 5px 0px;
 }
 
-.button-hover {
-    border: 1px;
-    border-style: solid;
-    border-color: white;
+.button:hover {
     color: white;
-    background-color: #8ed300;
+    background-color: #005ca4;
+    cursor: pointer;
 }
 a.button {
     font-size: 110%;
@@ -121,4 +136,12 @@ a.input:hover {
     top: 1px;
     vertical-align: middle;
 
+}
+
+#externalEditor {
+	width: 910px;
+}
+
+#controller {
+	width: 910px;
 }
