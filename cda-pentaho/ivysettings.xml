@@ -5,6 +5,9 @@
 
   <settings defaultResolver="default"/>
   <include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
+  
+<caches lockStrategy="artifact-lock" resolutionCacheDir="${ivy.default.ivy.user.dir}/resol-cache${env.EXECUTOR_NUMBER}" />  
+  
   <resolvers>
  <chain name="shared">
       <dual name="pentaho">
