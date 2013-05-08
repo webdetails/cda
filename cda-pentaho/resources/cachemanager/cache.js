@@ -122,7 +122,7 @@ var populateQueries = function(data){
     var deleteFunction = function(id){
       deleteButton.click(function(){
         if(confirm("Want to delete this scheduler?")){
-          $.getJSON("cacheController?method=delete&id=" + id ,function(){
+          $.getJSON("cacheController?method=delete&object=" + id ,function(){
             refreshTable();
           })
         }
@@ -136,7 +136,7 @@ var populateQueries = function(data){
 
         var myself = this;
         $(this).find("img").attr("src","cachemanager/processing.png");
-        $.getJSON("cacheController?method=execute&id=" + id,function(){
+        $.getJSON("cacheController?method=execute&object=" + id,function(){
           refreshTable();
         })
 
