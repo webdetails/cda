@@ -11,11 +11,9 @@ body {
 }
 
 .cdalogo {
-  background-repeat: no-repeat;
-  background-color: #cad2d6;
-  padding: 0px;
+  	background-repeat: no-repeat;
+  	padding: 0px;
 	margin-top: 5px !important;
-	width: 950px !important;
 }
 
 .params {
@@ -30,18 +28,20 @@ body {
   padding: 5px;
   background-color: #f5f5f5;
   width: 125px;
-  height: 40px;
-  /*text-align: center;*/
+  height: 30px;
   background-image: none;
   margin: 10px 5px;
   color: #333;
   float: right;
-  font-size: 16px;
+  font-size: 14px;
   box-shadow: inset 0px 0px 5px #ccc;
+	-webkit-border-radius: 3px;
+	   -moz-border-radius: 3px;
+			border-radius: 3px;
 }
 
 .cdaButton:hover {
-	background: #ddd;
+	background: #eee;
 	cursor: pointer;
 }
 
@@ -50,11 +50,15 @@ body {
 }
 
 .cdaButtonShort {
-	width: 40px;
-	height: 30px;
+	width: 20px;
+	height: 20px;
 	padding: 5px;
 	text-align:center;
 	box-shadow: inset 0px 0px 5px #ccc;
+	font-size: 14px;
+	-webkit-border-radius: 3px;
+	   -moz-border-radius: 3px;
+			border-radius: 3px;
 }
 
 .cdaButtonShort:hover {
@@ -63,23 +67,26 @@ body {
 
 .cdaInputWrapper {
 	float: left;
-	margin-left: -10px;	
+	margin-left: 5px;	
 }
 
 select#dataAccessSelector {
 	float: left;
-	height: 40px;
+	height: 30px;
 	line-height: 40px;
-   	font-size: 16px;
+   	font-size: 14px;
 	box-shadow: none;
-	padding: 10px;
-  	width: 200px;
+	padding: 5px;
+  	width: 150px;
 	box-shadow: inset 0px 0px 5px #ccc;
+	-webkit-border-radius: 3px;
+	   -moz-border-radius: 3px;
+			border-radius: 3px;
 }
 
 select#dataAccessSelector option {
-	height: 20px;
-	padding: 10px;
+	height: 15px;
+	padding: 5px;
 	background: #f5f5f5;
 	color: #222;
 	border: 1px #fff solid;
@@ -106,6 +113,9 @@ input[readonly]{
 	color: #f5f5f5;	
 	width: 40px;
 	box-shadow: none;
+	-webkit-border-radius: 3px;
+	   -moz-border-radius: 3px;
+			border-radius: 3px;
 }
 
 #button:hover {
@@ -119,33 +129,25 @@ input[readonly]{
 .filename {
 	padding: 5px;
 	color: #141919;
-	border: 1px solid #97a4aa;
-	max-width: 943px;
-	background: #c2cbcf; /* Old browsers */
-	background: -moz-linear-gradient(top, #c2cbcf 0%, #b5bec2 49%, #9ba7ac 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#c2cbcf), color-stop(49%,#b5bec2), color-stop(100%,#9ba7ac)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top, #c2cbcf 0%,#b5bec2 49%,#9ba7ac 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top, #c2cbcf 0%,#b5bec2 49%,#9ba7ac 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top, #c2cbcf 0%,#b5bec2 49%,#9ba7ac 100%); /* IE10+ */
-	background: linear-gradient(to bottom, #c2cbcf 0%,#b5bec2 49%,#9ba7ac 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c2cbcf', endColorstr='#9ba7ac',GradientType=0 ); /* IE6-9 */	
+	max-width: 910px;
 }
 
 #about {
 	float: right;
 	margin-right: 10px;
-	color: #216dbf;	
+	color: #007ee0;	
 	text-decoration: none;
+	font-size: 11px;
 }
 
 #about:hover {
-	color: #555;
+	color: #005ca4;
 	cursor: pointer;
 }
 
 #fileid {
 
-  font-size:8pt;
+  font-size:11px;
 	color: #555;
 }
 
@@ -157,7 +159,10 @@ input[readonly]{
   background: #F5D6D6;
   border: 1px #ccc solid;
   padding: 5px 10px;
-  width: 930px;;
+  width: 930px;
+	-webkit-border-radius: 3px;
+	   -moz-border-radius: 3px;
+			border-radius: 3px;
 }
 
 #previewerTable  {
@@ -191,18 +196,19 @@ input[readonly]{
 
 #parameterDimension {
 	float: left;
-	height: 40px;
+	height: 30px;
 	margin-top: 10px;
-	line-height: 40px;
+	line-height: 30px;
 	font-size: 10px;
-	margin-left: -5px;
+	width: 40px;
+	margin-left: 27px;
 }
 
 #dimension {
-	width: 98px !important;
+	width: 80px !important;
 	padding-right: 32px;
 	float:left;
-	height: 30px;
+	height: 20px;
 	cursor: text;
 	box-shadow: inset 0px 0px 5px #ccc;
 }
@@ -216,6 +222,9 @@ input[readonly]{
 	height: 30px;
 	line-height: 30px;
 	padding: 5px;
+	-webkit-border-radius: 3px;
+	   -moz-border-radius: 3px;
+			border-radius: 3px;
 }
 
 #previewerTable input {
@@ -223,7 +232,7 @@ input[readonly]{
 }
 
 #previewerTable input:hover, #previewerTable select:hover {
-	background: #ddd;
+	background: #eee;
 	cursor: pointer;
 }
 
@@ -275,17 +284,17 @@ div#footer{
 
 .helpButton {
     text-align: center;
-    font-size: 14px;
+    font-size: 10px;
     float: right;
     background: #216dbf;
-    height:22px;
-    width:22px;
+    height:14px;
+    width:14px;
     border:1px solid white;
     color:#f5f5f5;
     font-weight:bold;
 	position:absolute;
-	margin-left: 110px;
-	margin-top: 18px;
+	margin-left: 100px;
+	margin-top: 17px;
 	z-index: 100;
 }
 
@@ -295,8 +304,7 @@ div#footer{
 }
 
 #aboutContainer {
-	width: 950px;
-	background: #2d3a3f;
+	width: 910px;
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -312,13 +320,13 @@ div#footer{
 	width: 420px;
 	font-size: 14px;
 	line-height: 20px;
-	color: #bcc7cb;
+	color: #333;
 }
 
 #aboutSubContainerRight {
 	float:right;
 	width: 160px;
-	color: #78878e;
+	color: #333;
 	font-size: 20px;
 	text-align: right;
 }
@@ -340,9 +348,9 @@ div#footer{
 	text-decoration: none;
 	font-size: 17px;
 	display: block;
-	color: #216dbf;
+	color: #007ee0;
 }
 
 .aboutSubContainerBottom a:hover {
-	color: #bcc7cb;
+	color: #005ca4;
 }

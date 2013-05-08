@@ -99,7 +99,7 @@ var populateQueries = function(data){
   
     var r = data.queries[row];
 
-    var row = $("<div class='span-24 last row "+ (r.success?"":"error") +"' id='query_" + r.id + "'></div>");
+    var row = $("<div class='span-23 last row "+ (r.success?"":"error") +"' id='query_" + r.id + "'></div>");
 
     // Name
     var name = r.cdaFile + " (" + r.dataAccessId + ")";
@@ -109,7 +109,7 @@ var populateQueries = function(data){
     for (var param in r.parameters){
       paramPh.append("<dt>"+param+"</dt><dd>"+r.parameters[param]+"</dd>");
     }
-    $("<div class='span-5 left'></div>").append(paramPh).appendTo(row);
+    $("<div class='span-4 left'></div>").append(paramPh).appendTo(row);
 
 
     row.append("<div class='span-2'>" + formatDate(r.lastExecuted) + " </div>");
@@ -231,7 +231,7 @@ var refreshCachedTable = function(cdaSettingsId, dataAccessId){
             callArgs,
             populateCachedQueries,
             function(status, errorMsg){
-              var row = $('<div class="span-24 last"/>').text('Problem accessing cache. Check log for errors or reload to try again.');
+              var row = $('<div class="span-23 last"/>').text('Problem accessing cache. Check log for errors or reload to try again.');
               $("#cachedQueriesOverviewLines").empty().append(row);
             });
 };
@@ -291,10 +291,10 @@ var populateCachedQueriesOverview = function(results)
       //<div class='span-16'>CDA Settings</div>
       //<div class='span-6'>Data Access ID</div>
       //<div class='span-2 last'># Queries</div>
-      var row = $("<div class='span-24 last row'></div>");
+      var row = $("<div class='span-23 last row'></div>");
       var item = results[i];
       var settingsLink = $('<span/>').text(item.cdaSettingsId);
-      row.append($('<div/>').addClass('span-16').append(settingsLink)); //.text(item.cdaSettingsId));
+      row.append($('<div/>').addClass('span-15').append(settingsLink)); //.text(item.cdaSettingsId));
       
       //var dataAccessLink = $('<span/>').text(item.dataAccessId).addClass('span-6');
       row.append($('<div/>').addClass('span-6').text(item.dataAccessId));
