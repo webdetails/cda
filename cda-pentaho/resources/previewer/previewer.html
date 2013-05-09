@@ -81,7 +81,7 @@
 			</div>
 			<div class="span-23 clearfix cdalogo">
 
-				<div class="span-6 center">
+				<div class="span-8 center">
 					<select id="dataAccessSelector" class="cdaButton">
 						<option selected="selected" value="undefined">Data Access</option>
 					</select>
@@ -90,11 +90,7 @@
 					</div>
 				</div>
 
-				<div id="parameterHolder" class="span-6 center">
-					&nbsp;
-				</div>
-
-				<div class="span-12 center last">
+				<div class="span-15 last">
 					<button class="cdaButton" id="button" onclick="refreshTable(lastQuery)"></button>
 					<div>
 						<button class="cdaButton" id="cachethis" onclick='$("#dialog").jqmShow()'>
@@ -113,6 +109,10 @@
 					</div>
 				</div>
 
+			</div>
+
+			<div id="parameterHolder" class="span-23">
+				&nbsp;
 			</div>
 		</div>
 
@@ -135,27 +135,34 @@
 				<dl>
 					<dt>
 						<code>
-							${TODAY()}</code>
+							${TODAY()}
+						</code>
 					</dt>
 					<dd>
 						Today's date
 					</dd>
 					<dt>
 						<code>
-							${YESTERDAY()}</code>
+							${YESTERDAY()}
+						</code>
 					</dt>
 					<dd>
 						Yesterday's date
 					</dd>
 					<dt>
 						<code>
-							$FOREACH(dataAccess,colIdx,param1=val1,...,paramn=valn)</code>
+							$FOREACH(dataAccess,colIdx,param1=val1,...,paramn=valn)
+						</code>
 					</dt>
 					<dd>
-						Iterate over the values for <code>
-							colIdx</code>
-						in query <code>
-							dataAccess</code>
+						Iterate over the values for
+						<code>
+							colIdx
+						</code>
+						in query
+						<code>
+							dataAccess
+						</code>
 						with the given parameters. Queries using this construct return no values, and its main purpose is to provide parameter ranges for cache warming.
 					</dd>
 				</dl><p>Please refer to the Pentaho Reporting Engine <a href='http://wiki.pentaho.com/display/Reporting/9.+Report+Designer+Formula+Expressions' target='_blank'>documentation</a> for a full description of the syntax.</p>
