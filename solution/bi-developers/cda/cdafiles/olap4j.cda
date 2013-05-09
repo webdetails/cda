@@ -16,7 +16,7 @@
             <Property name="JdbcPassword">password</Property>
             <Property name="Jdbc">jdbc:hsqldb:hsql://localhost:9001/Sampledata</Property>
             <Property name="JdbcDrivers">org.hsqldb.jdbcDriver</Property>
-            <Property name="Catalog">SteelWheels</Property>
+            <Property name="Catalog">solution:/public/pentaho-solutions/steel-wheels/analysis/steelwheels.mondrian.xml</Property>
         </Connection>
     </DataSources>
     <!-- DataAccess object controls the query itself
