@@ -118,7 +118,7 @@ var populateQueries = function(data){
     row.append("<div class='span-2'>" + r.timeElapsed + " </div>");
     row.append("<div class='span-2'>" + (r.success?"Success":"Failed") + " </div>");
 
-    var deleteButton = $("<a  href='javascript:'><img src='../../../../api/plugins/cda/files/cachemanager/delete-24x24.png' class='button' alt='delete'></a>");
+    var deleteButton = $("<a  href='javascript:'><img src='/pentaho/api/plugins/cda/files/cachemanager/delete-24x24.png' class='button' alt='delete'></a>");
     var deleteFunction = function(id){
       deleteButton.click(function(){
         if(confirm("Want to delete this scheduler?")){
@@ -130,12 +130,12 @@ var populateQueries = function(data){
     };
     deleteFunction(r.id);
 
-    var refreshButton = $("<a  href='javascript:'><img src='../../../../api/plugins/cda/files/cachemanager/refresh-24x24.png' class='button' alt='refresh'></a>");
+    var refreshButton = $("<a  href='javascript:'><img src='/pentaho/api/plugins/cda/files/cachemanager/refresh-24x24.png' class='button' alt='refresh'></a>");
     var refreshFunction = function(id){
       refreshButton.click(function(){
 
         var myself = this;
-        $(this).find("img").attr("src","cachemanager/processing.png");
+        $(this).find("img").attr("src","/pentaho/api/plugins/cda/files/cachemanager/processing.png");
         $.getJSON("cacheController?method=execute&id=" + id,function(){
           refreshTable();
         })
@@ -392,7 +392,7 @@ var populateCachedQueries = function(resp){
       row.append($('<div/>').addClass('span-1').text(item.hits));
       
       //remove from cache
-      var removeButton = $("<a  href='javascript:'><img src='../../../../api/plugins/cda/files/cachemanager/delete-24x24.png' class='button' alt='remove from cache'></a>");
+      var removeButton = $("<a  href='javascript:'><img src='/pentaho/api/plugins/cda/files/cachemanager/delete-24x24.png' class='button' alt='remove from cache'></a>");
       var setRemoveAction = function(key, row, cdaSettingsId, dataAccessId){
         removeButton.click(function(){
           removeCachedQuery(key,row, cdaSettingsId, dataAccessId);
@@ -401,7 +401,7 @@ var populateCachedQueries = function(resp){
       setRemoveAction(item.key, row, resp.cdaSettingsId, resp.dataAccessId);
       
       //view results
-      var tableButton = $("<a  href='javascript:'><img src='../../../../api/plugins/cda/files/cachemanager/table.png' class='button' alt='view results'></a>");
+      var tableButton = $("<a  href='javascript:'><img src='/pentaho/api/plugins/cda/files/cachemanager/table.png' class='button' alt='view results'></a>");
       var setQueryDetailsAction = function(tableContents, key){
         tableButton.click(function(){
             tableContents.toggle();
@@ -409,7 +409,7 @@ var populateCachedQueries = function(resp){
               tableContents.removeClass('empty');
               if(key)
               {
-                tableContents.append( $('<img src="../../../../api/plugins/cda/files/cachemanager/loading.gif" >' ));
+                tableContents.append( $('<img src="/pentaho/api/plugins/cda/files/cachemanager/loading.gif" >' ));
                 CacheManagerBackend.getJson(
                   {
                     method: 'getDetails',

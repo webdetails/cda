@@ -17,7 +17,7 @@ loadMessageBundles = function(lang) {
 
 			jQuery.i18n.properties({
 			    name:'Messages',
-			    path:'editor/languages/',
+			    path:'/pentaho/api/plugins/cda/files/editor/languages/',
 			    mode:'both',
 			    language:(lang == 'browser' ? jQuery.i18n.browserLang() : lang)
 			});
@@ -25,14 +25,23 @@ loadMessageBundles = function(lang) {
 
 
 loadFile = function() {
-var fileName =$("#filename").val();
-fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
-var b = bespin;
-$.get("getCdaFile",{path:fileName},
-function(data) {
-b.setContent("");
-b.setContent(data);
-})
+    var fileName =$("#filename").val();
+    fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
+    var b = bespin;
+    
+    $.ajax({
+        type: "get",
+        url: "getCdaFile",
+        data: {
+            path: fileName
+        },
+        success: function(data){
+            b.setContent("");
+            b.setContent(data);
+        }
+
+    });
+    
 }
 
 fileChanged = function() {
@@ -40,14 +49,22 @@ fileChanged = function() {
 }
 saveFile = function() {
     $('a#save').text('Save');
-var fileName =$("#filename").val();
-fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
-$('#notifications').html('Saving...');
-$('#notifications').fadeIn().delay(2000).fadeOut('slow');
-$.post("writeCdaFile",{path: fileName,data:bespin.getContent()},function(data){
-$('#notifications').html(data);
-$('#notifications').fadeIn().delay(2000).fadeOut('slow');
-});
+    var fileName =$("#filename").val();
+    fileName = fileName == undefined || fileName == "" ? $("#staticfile").val() : fileName;
+    $('#notifications').html('Saving...');
+    $('#notifications').fadeIn().delay(2000).fadeOut('slow');
+    $.ajax({
+        type:"post",
+        url: "writeCdaFile",
+        data: {
+            path: fileName,
+            data:bespin.getContent()
+        },
+        success: function(data){
+            $('#notifications').html(data);
+            $('#notifications').fadeIn().delay(2000).fadeOut('slow');
+        }
+    });
 }
 previewFile = function() {
 var fileName = $("#staticfile").val();

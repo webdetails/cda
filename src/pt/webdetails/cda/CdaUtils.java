@@ -12,6 +12,7 @@ import java.util.Enumeration;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
+import static javax.ws.rs.core.MediaType.WILDCARD;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 
@@ -22,10 +23,12 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.core.Context;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -302,7 +305,7 @@ public class CdaUtils {
   @GET
   @Path("/getCdaFile")
   @Produces("text/xml")
-  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
+  @Consumes({ WILDCARD })
   public void getCdaFile(@QueryParam("path") String path, 
                          @QueryParam("solution") String solution, 
                          @QueryParam("file") String file,
@@ -315,14 +318,14 @@ public class CdaUtils {
   }
   
   
-  @GET
+  @POST
   @Path("/writeCdaFile")
   @Produces("text/plain")
-  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
-  public void writeCdaFile(@QueryParam("path") String path, 
-                           @QueryParam("solution") String solution, 
-                           @QueryParam("file") String file,
-                           @QueryParam("data") String data,
+  @Consumes({ WILDCARD })
+  public void writeCdaFile(@FormParam("path") String path, 
+                          @FormParam("solution") String solution, 
+                          @FormParam("file") String file,
+                          @FormParam("data") String data,
                             
                            @Context HttpServletResponse servletResponse, 
                            @Context HttpServletRequest servletRequest) throws Exception
@@ -446,7 +449,7 @@ public class CdaUtils {
       if(cdeClassLoader != null){
         editorPath = EXT_EDITOR_SOURCE;
       } else {
-        editorPath = EXT_EDITOR_SOURCE;
+        editorPath = EDITOR_SOURCE;
       }
     
       ClassLoader classLoader = pluginManager.getClassLoader(PLUGIN_NAME);
