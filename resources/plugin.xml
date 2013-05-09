@@ -31,14 +31,16 @@
 	      	<operations>
 		        <operation>
 		          	<id>EDIT</id>
-		          	<command>plugin/cda/api/editFile?solution={solution}&amp;path={path}&amp;file={name}</command>
+                <perspective>cda.edit</perspective>
 		        </operation>
 		        <operation>
 		          	<id>RUN</id>
+                <perspective>viewer</perspective>
 		          	<command>content/cda/previewQuery?solution={solution}&amp;path={path}&amp;file={name}</command>
 		        </operation>
 		        <operation>
 		          	<id>NEWWINDOW</id>
+                <perspective>viewer</perspective>
 		          	<command>content/cda/previewQuery?solution={solution}&amp;path={path}&amp;file={name}</command>
 		        </operation>
 		      </operations>

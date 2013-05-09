@@ -17,4 +17,14 @@
     <bean id="api" class="org.pentaho.platform.web.servlet.JAXRSPluginServlet"/>
     <bean id="cda.api" class="pt.webdetails.cda.CdaUtils" />
     
+    
+    
+	
+
+    <bean id="cda.edit" class="pt.webdetails.cda.CdaContentGenerator" scope="prototype">
+        <property name="edit" value="true" />
+      </bean>
+
+    
+    
 </beans>

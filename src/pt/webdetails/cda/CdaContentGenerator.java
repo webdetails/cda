@@ -17,6 +17,10 @@ import pt.webdetails.cpf.SimpleContentGenerator;
 
 public class CdaContentGenerator extends SimpleContentGenerator
 {
+  
+  
+  
+  private boolean edit = false;
 
   private static Log logger = LogFactory.getLog(CdaContentGenerator.class);
   public static final String PLUGIN_NAME = "cda";
@@ -33,7 +37,11 @@ public class CdaContentGenerator extends SimpleContentGenerator
   @Override
   public void createContent() throws Exception {
     CdaUtils utils = new CdaUtils();
-    utils.previewQuery(getResponse(), getRequest());
+
+    if (edit)
+      utils.editFile(null, null, null, getResponse(), getRequest());
+    else
+      utils.previewQuery(getResponse(), getRequest());
   }
 
   public void syncronize(final IParameterProvider pathParams, final OutputStream out) throws Exception
@@ -53,5 +61,23 @@ public class CdaContentGenerator extends SimpleContentGenerator
   @Override
   public String getPluginName() {
     return "cda";
+  }
+
+
+  /**
+   * @return the edit
+   */
+  public boolean isEdit()
+  {
+    return edit;
+  }
+
+
+  /**
+   * @param edit the edit to set
+   */
+  public void setEdit(boolean edit)
+  {
+    this.edit = edit;
   }
 }
