@@ -31,7 +31,7 @@ loadFile = function() {
     
     $.ajax({
         type: "get",
-        url: "getCdaFile",
+        url: "/pentaho/plugin/cda/api/getCdaFile",
         data: {
             path: fileName
         },
@@ -55,7 +55,7 @@ saveFile = function() {
     $('#notifications').fadeIn().delay(2000).fadeOut('slow');
     $.ajax({
         type:"post",
-        url: "writeCdaFile",
+        url: "/pentaho/plugin/cda/api/writeCdaFile",
         data: {
             path: fileName,
             data:bespin.getContent()
@@ -68,29 +68,34 @@ saveFile = function() {
 }
 previewFile = function() {
 var fileName = $("#staticfile").val();
-window.open('previewQuery?path='+fileName);
+window.open('/pentaho/plugin/cda/api/previewQuery?path='+fileName);
 }
 
 /*
  *  pageParams: get the request variables passed in the url 
  */
-pageParams = function() {
-    var url = document.location.href;
-    var output = {};
-    var index = url.indexOf('?');
-    if (index < 0) {
-        return null;
-    } else {
-        // First we get the part of the url with the parameters in it (i.e. after the '?'), and partition
-        // it into individual 'var=value' pieces. Then we split those pieces and add them to the output object
-        args = url.slice(index + 1).split('&');
-        for(i = 0; i < args.length; i++) {
-            pair = args[i].split('=');
-            output[pair[0]] = pair[1];
-        }
+    pageParams = function() {
+        var url = document.location.href;
+        var output = {};
+
+        if(url.indexOf("cda.edit") > -1){
+          var startIndex = url.indexOf('api/repos/');
+          var endIndex = url.indexOf('/cda.edit');
+
+          var path = (endIndex > 0) ? url.slice(startIndex+10,endIndex).split(":").join("/"):"";
+          output.path = path;
+        } else {
+          // The parameters are in the section between '?' and '#' (if any)
+          var startIndex = url.indexOf('?');
+          var endIndex = url.indexOf('#');
+          var params = (endIndex > 0) ? url.slice(startIndex+1,endIndex).split('&'):url.slice(startIndex+1).split('&');
+          for (param in params){
+            var p = params[param].split('=');
+            output[p[0]] = decodeURIComponent(p[1]);
+          }
+        } 
         return output;
     }
-}
         </script>
     </head>
 <body>
@@ -108,8 +113,7 @@ pageParams = function() {
 <script>
 $(document).ready(function(){
     // Initialize jquery.i18n plugin - load message files
-    var userLocale = '#{LANGUAGE_CODE}';
-    loadMessageBundles(userLocale);
+    loadMessageBundles('');
     var params = pageParams();
     $('#notifications').hide();
       if (params != null && params.initialState != undefined) { 

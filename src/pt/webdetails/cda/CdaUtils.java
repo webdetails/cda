@@ -426,11 +426,7 @@ public class CdaUtils {
   @GET
   @Path("/editFile")
   @Consumes({ APPLICATION_XML, APPLICATION_JSON })
-  public void editFile(@QueryParam("path") String path, 
-                       @QueryParam("solution") String solution, 
-                       @QueryParam("file") String file,
-                       
-                       @Context HttpServletResponse servletResponse, 
+  public void editFile(@Context HttpServletResponse servletResponse, 
                        @Context HttpServletRequest servletRequest) throws Exception
   {
 
