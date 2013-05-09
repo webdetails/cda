@@ -85,14 +85,14 @@ public class CdaSessionFormulaContext extends DefaultFormulaContext
       return result.toArray();
     }
 
-    @Override//XXX will these be required for cda-pentaho? keep them anyway so compiler doesn't complain
+    @Override//XXX Convert what to Array?
     public Object[] convertToArray() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override
     public void setSession(IUserSession ius) {
-        throw new UnsupportedOperationException("Not supported yet.");
+
     }
 }
 
