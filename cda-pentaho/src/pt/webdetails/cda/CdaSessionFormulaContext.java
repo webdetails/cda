@@ -85,10 +85,6 @@ public class CdaSessionFormulaContext extends DefaultFormulaContext implements I
       return result.toArray();
     }
 
-    @Override//XXX Convert what to Array?
-    public Object[] convertToArray() {
-        return null;
-    }
 
     @Override
     public void setSession(IUserSession ius) {
