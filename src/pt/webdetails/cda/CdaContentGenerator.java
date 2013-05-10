@@ -39,7 +39,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
     CdaUtils utils = new CdaUtils();
 
     if (edit)
-      utils.editFile(null, null, null, getResponse(), getRequest());
+      utils.editFile(getResponse(), getRequest());
     else
       utils.previewQuery(getResponse(), getRequest());
   }
