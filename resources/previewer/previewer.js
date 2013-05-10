@@ -70,24 +70,23 @@ ignoreNullRows = function(table){
 };
 
 showQueryUrl = function(dataAccessId){
-	$('#queryUrlDialog input').val(getFullQueryUrl(dataAccessId));
-	$('#queryUrlDialog').jqmShow();
-	$('#queryUrlDialog input').select();
+  $('#queryUrlDialog input').val(getFullQueryUrl(dataAccessId));
+  $('#queryUrlDialog').jqmShow();
+  $('#queryUrlDialog input').select();
 };
 
 exportFunc = function(id){
-	window.open(getFullQueryUrl(id, {outputType: 'xls'}), 'CDA Export');
+  window.open(getFullQueryUrl(id, {outputType: 'xls'}), 'CDA Export');
 };
 
 getFullQueryUrl = function(dataAccessId, extraParams) {
-	if(dataAccessId != lastQuery){
-		lastQuery = id;
-		refreshParams(id);
-	}
-	var params = getParams();
-	return 	window.location.protocol + '//' + window.location.host + 
-			window.location.pathname.slice(0, window.location.pathname.lastIndexOf('/') +1) +
-			'doQuery' + window.location.search + '&' + $.param( $.extend({dataAccessId : dataAccessId}, params, extraParams) );
+  if(dataAccessId != lastQuery){
+    lastQuery = id;
+    refreshParams(id);
+  }
+  var params = getParams();
+  return  window.location.protocol + '//' + window.location.host + "/pentaho/plugin/cda/api/doQuery" +
+   window.location.search + '&' + $.param( $.extend({dataAccessId : dataAccessId}, params, extraParams, pageParams()) );
 };
 
 refreshParams = function(id) {

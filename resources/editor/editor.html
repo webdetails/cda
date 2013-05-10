@@ -38,6 +38,12 @@ loadFile = function() {
         success: function(data){
             b.setContent("");
             b.setContent(data);
+
+            //split file name
+            var index = fileName.lastIndexOf("/");
+
+
+            $("#filename").val(fileName.substring(index+1, fileName.length));
         }
 
     });
@@ -100,9 +106,19 @@ window.open('/pentaho/plugin/cda/api/previewQuery?path='+fileName);
     </head>
 <body>
 <input type="hidden" id="staticfile" value="">
+
+    <div class="webdetailsHead">
+      <div class="webdetailsLogo">
+        <a href="http://www.webdetails.pt/ctools/cda.html" target="_blank"></a>
+      </div>
+      <div class="buttoncontact ">
+        <a href="mailto:lead@webdetails.pt" title="Contact Webdetails directly here.">Get in Touch</a>
+      </div>
+    </div>
+
 <div class='container'>
     <div class='span-24 clearfix cdalogo'>
-        <div style='padding-top: 24px' class="prepend-12 span-11 append-1 last"><span id="controller"></span>
+        <div style='padding-top: 24px' class="prepend-11 span-12 append-1 last"><span id="controller"></span>
 </div>
 <div class="prepend-14 span-9 last" style='margin-top: 10px'><div id="notifications" class='notification'>&nbsp;</div></div>
     </div>
@@ -130,12 +146,13 @@ window.onBespinLoad = function() {
     // If we have fully qualified path, concatenate the pieces together.
     // We mustn't forget to account for double slashes
         path = params.solution + '/' + params.path + '/'+ params.file; 
-    path = path.replace(/\/\//g,"/");
+        path = path.replace(/\/\//g,"/");
     } else if (params != null){
         path = params.path;
     }
     if (path != null) {
-    $("#staticfile").val(path);
+      $("#staticfile").val(path);
+
     }
     loadFile();
 };
@@ -172,7 +189,7 @@ transitions = {
 
     preview: function() {
 //      var button = "<div class='span-2 button last'><a id='preview' class='button' href='javascript:previewFile()'>" + jQuery.i18n.prop('label.preview') + "</a></div>";
-      var button = "<button class='span-2 button last' id='preview' onclick='previewFile()'>" + jQuery.i18n.prop('label.preview') + "</button>";
+      var button = "<button class='span-2 button' id='preview' onclick='previewFile()'>" + jQuery.i18n.prop('label.preview') + "</button>";
       return button;
     },
 

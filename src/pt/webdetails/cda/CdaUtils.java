@@ -86,15 +86,34 @@ public class CdaUtils {
   
   protected static String getEncoding() { return ENCODING; }
   
+  @POST
+  @Path("/doQuery")
+  @Consumes({ APPLICATION_XML, APPLICATION_JSON, APPLICATION_FORM_URLENCODED })
+  public void doQueryPost(@FormParam("path") String path, 
+                      @DefaultValue("json") @FormParam("outputType") String outputType, 
+                      @DefaultValue("1") @FormParam("outputIndexId") int outputIndexId, 
+                      @DefaultValue("1") @FormParam("dataAccessId") String dataAccessId, 
+                      @DefaultValue("false") @FormParam("bypassCache") Boolean bypassCache, 
+                      @DefaultValue("false") @FormParam("paginateQuery") Boolean paginateQuery, 
+                      @DefaultValue("0") @FormParam("pageSize") int pageSize,
+                      @DefaultValue("0") @FormParam("pageStart") int pageStart, 
+                      @DefaultValue("false") @FormParam("wrapItUp") Boolean wrapItUp, 
+                      @FormParam("sortBy") List<String> sortBy, 
+                      
+                      @Context HttpServletResponse servletResponse, 
+                      @Context HttpServletRequest servletRequest) throws Exception
+  {
+    handleDoQuery(path, outputType, outputIndexId, dataAccessId, bypassCache, paginateQuery, pageSize, pageStart, wrapItUp, sortBy, servletResponse, servletRequest);
+  }
+  
+  
   @GET
   @Path("/doQuery")
   @Consumes({ APPLICATION_XML, APPLICATION_JSON, APPLICATION_FORM_URLENCODED })
-  public void doQuery(@QueryParam("path") String path, 
-                      @QueryParam("solution") String solution, 
-                      @QueryParam("file") String file,
+  public void doQueryGet(@QueryParam("path") String path, 
                       @DefaultValue("json") @QueryParam("outputType") String outputType, 
                       @DefaultValue("1") @QueryParam("outputIndexId") int outputIndexId, 
-                      @DefaultValue("<blank>") @QueryParam("dataAccessId") String dataAccessId, 
+                      @DefaultValue("1") @QueryParam("dataAccessId") String dataAccessId, 
                       @DefaultValue("false") @QueryParam("bypassCache") Boolean bypassCache, 
                       @DefaultValue("false") @QueryParam("paginateQuery") Boolean paginateQuery, 
                       @DefaultValue("0") @QueryParam("pageSize") int pageSize,
@@ -105,8 +124,18 @@ public class CdaUtils {
                       @Context HttpServletResponse servletResponse, 
                       @Context HttpServletRequest servletRequest) throws Exception
   {
+    handleDoQuery(path, outputType, outputIndexId, dataAccessId, bypassCache, paginateQuery, pageSize, pageStart, wrapItUp, sortBy, servletResponse, servletRequest);
+  }
+  
+  private void handleDoQuery(String path, 
+                      String outputType, int outputIndexId, String dataAccessId, 
+                      Boolean bypassCache, Boolean paginateQuery, int pageSize,
+                      int pageStart, Boolean wrapItUp, List<String> sortBy, 
+                      HttpServletResponse servletResponse, 
+                      HttpServletRequest servletRequest) throws Exception{
+    
     //final IParameterProvider requestParams = getRequestParameters();
-        
+    
     final CdaEngine engine = CdaEngine.getInstance();
     final QueryOptions queryOptions = new QueryOptions();
 
@@ -198,6 +227,7 @@ public class CdaUtils {
     // Finally, pass the query to the engine
     engine.doQuery(servletResponse.getOutputStream(), cdaSettings, queryOptions);
 
+    
   }
   
   @GET
