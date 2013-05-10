@@ -91,7 +91,7 @@ getFullQueryUrl = function(dataAccessId, extraParams) {
 };
 
 refreshParams = function(id) {
-  $.getJSON("../../../plugin/cda/api/utils/listParameters",{path:filename, dataAccessId: id},function(data){
+  $.getJSON("../../../plugin/cda/api/listParameters",{path:filename, dataAccessId: id},function(data){
     var placeholder = $('#parameterHolder');
     placeholder.empty();
     for (param in data.resultset) {
