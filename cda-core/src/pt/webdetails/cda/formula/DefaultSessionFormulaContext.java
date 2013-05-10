@@ -97,10 +97,6 @@ public class DefaultSessionFormulaContext implements
       return df.resolveReference(name);
     }
 
-	@Override
-	public Object[] convertToArray(/* here is something missing */) {
-		return new Object[0];
-	}
 
 	@Override
 	public void setSession(IUserSession session) {
