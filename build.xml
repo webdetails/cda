@@ -354,6 +354,11 @@
 
     <target name="publish-local" >
 		<ant dir="cda-core"    antfile="build.xml" target="publish-local" inheritAll="true"/>
+        <copy todir="cda-pentaho/dev-lib" overwrite="true">
+            <fileset dir="cda-core/dist">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>		
         <ant dir="cda-pentaho" antfile="build.xml" target="publish-local" inheritAll="true"/>
     </target>
 
