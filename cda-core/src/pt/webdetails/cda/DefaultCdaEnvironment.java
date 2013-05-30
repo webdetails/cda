@@ -32,7 +32,7 @@ import pt.webdetails.cpf.impl.SimpleSessionUtils;
 import pt.webdetails.cpf.impl.SimpleUserSession;
 import pt.webdetails.cpf.messaging.IEventPublisher;
 import pt.webdetails.cpf.messaging.PluginEvent;
-import pt.webdetails.cpf.plugin.Plugin;
+import pt.webdetails.cpf.plugin.CorePlugin;
 import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
 import pt.webdetails.cpf.repository.IRepositoryAccess;
 import pt.webdetails.cpf.repository.IRepositoryFile;
@@ -318,7 +318,7 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 		String id = "IRepositoryAccess";
 		if (beanFactory != null && beanFactory.containsBean(id)) {
 			IRepositoryAccess repAccess =  (IRepositoryAccess) beanFactory.getBean(id);
-			repAccess.setPlugin(Plugin.CDA);
+			repAccess.setPlugin(CorePlugin.CDA);
 			return repAccess;
 		}
 
@@ -374,14 +374,14 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 			String id = "IPluginCall";
 			if (beanFactory != null && beanFactory.containsBean(id)) {
 				IPluginCall pc = (IPluginCall) beanFactory.getBean(id);
-				pc.init(new Plugin(plugin), method,  params);
+				pc.init(new CorePlugin(plugin), method,  params);
 				return pc;
 			}
 		} catch (Exception e) {
 			logger.error("Cannot get bean IPluginCall. Using DummyInterPluginCall", e);
 		}
 		IPluginCall pluginCall = new DummyInterPluginCall();
-		pluginCall.init(new Plugin(plugin), method, params);
+		pluginCall.init(new CorePlugin(plugin), method, params);
 		return pluginCall;
 	}
 

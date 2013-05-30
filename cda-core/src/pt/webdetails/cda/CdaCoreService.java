@@ -36,7 +36,7 @@ import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
 import pt.webdetails.cpf.repository.IRepositoryAccess;
 import pt.webdetails.cpf.repository.IRepositoryFile;
 import pt.webdetails.cpf.session.ISessionUtils;
-import pt.webdetails.cpf.utils.Utils;
+import pt.webdetails.cpf.utils.MimeTypes;
 
 
 
@@ -368,8 +368,8 @@ public class CdaCoreService
   {
 	String joined = "";
 	joined += (StringUtils.isEmpty(solution) ? "" : URLDecoder.decode(solution, ENCODING) + "/");
-	joined += (StringUtils.isEmpty(originalPath) ? "" : URLDecoder.decode(originalPath, ENCODING) + "/");
-	joined += (StringUtils.isEmpty(file) ? "" : URLDecoder.decode(file, ENCODING));
+	joined += (StringUtils.isEmpty(originalPath) ? "" : URLDecoder.decode(originalPath, ENCODING));
+	joined += (StringUtils.isEmpty(file) ? "" : "/" + URLDecoder.decode(file, ENCODING));
 	joined = joined.replaceAll("//", "/");
 	return joined;
   }
@@ -552,7 +552,7 @@ public class CdaCoreService
       }
   }
   private String getMimeType(String attachmentName){
-      return Utils.getMimeType(attachmentName);
+      return MimeTypes.getMimeType(attachmentName);
   }
   private void setResponseHeaders(String mimeType, String attachmentName){
        setResponseHeaders(mimeType, 0, attachmentName);
