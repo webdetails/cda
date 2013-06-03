@@ -1283,6 +1283,8 @@ TYPICAL TARGET SEQUENCE
                 	<include name="**/Test*.java" if="atest.roundtrip" />
                 	<include name="**/*Test.java" if="atest.roundtrip"/>
               	</fileset>
+              	        <formatter type="xml"/>
+
       </batchtest>
     </junit>
   </target>
