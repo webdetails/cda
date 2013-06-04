@@ -1278,12 +1278,12 @@ TYPICAL TARGET SEQUENCE
       <classpath refid="test.classpath" />
       <formatter type="plain" />
       <batchtest fork="yes" todir="${testbin.dir}">
-              	<fileset dir="${testsrc.dir}" casesensitive="yes">
-                	<include name="**/RoundTripSuite.java" if="test.roundtrip" />
-                	<include name="**/Test*.java" if="atest.roundtrip" />
-                	<include name="**/*Test.java" if="atest.roundtrip"/>
-              	</fileset>
-              	        <formatter type="xml"/>
+            <fileset dir="${testsrc.dir}" casesensitive="yes">
+                <include name="**/RoundTripSuite.java" if="test.roundtrip" />
+                <include name="**/Test*.java" if="atest.roundtrip" />
+                <include name="**/*Test.java" if="atest.roundtrip"/>
+            </fileset>
+            <formatter type="xml"/>
 
       </batchtest>
     </junit>
