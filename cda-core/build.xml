@@ -86,6 +86,7 @@
 	                	<include name="**/Test*.java" if="is.not.roundtrip" />
 	                	<include name="**/*Test.java" if="is.not.roundtrip"/>
 	              	</fileset>
+                <formatter type="xml"/>
 	      </batchtest>
 	    </junit>
 	  </target>
