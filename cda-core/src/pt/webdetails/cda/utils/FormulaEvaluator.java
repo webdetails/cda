@@ -14,6 +14,8 @@ import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.dataaccess.InvalidParameterException;
 import pt.webdetails.cda.formula.ICdaCoreSessionFormulaContext;
 import pt.webdetails.cpf.session.ISessionUtils;
+import pt.webdetails.cpf.session.IUserSession;
+
 
 public class FormulaEvaluator {
   
@@ -84,7 +86,6 @@ public class FormulaEvaluator {
         	  formula.initialize(formulaContext1);
           }
       }
-
 
       // evaluate
       Object result = formula.evaluate();

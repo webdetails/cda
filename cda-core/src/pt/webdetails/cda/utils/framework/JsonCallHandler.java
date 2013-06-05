@@ -14,6 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cpf.http.ICommonParameterProvider;
 import pt.webdetails.cpf.session.IUserSession;
@@ -30,6 +31,7 @@ public abstract class JsonCallHandler {
   private HashMap<String, Method> methods = new HashMap<String, Method>();
   private String methodParameter = "method";
   private String defaultMethod = null;
+  
   public static class JsonResultFields 
   {
     public static final String STATUS = "status";
@@ -89,7 +91,6 @@ public abstract class JsonCallHandler {
     JSONObject result = null;
     Method method = methods.get(methodName);
     IUserSession session = (CdaEngine.getEnvironment().getSessionUtils()).getCurrentSession();
-
 
     try 
     {

@@ -21,7 +21,7 @@ import org.pentaho.platform.plugin.services.connections.javascript.JavaScriptRes
 import pt.webdetails.cda.formula.ICdaCoreSessionFormulaContext;
 import pt.webdetails.cpf.session.IUserSession;
 
-public class CdaSessionFormulaContext extends DefaultFormulaContext
+public class CdaSessionFormulaContext extends DefaultFormulaContext implements ICdaCoreSessionFormulaContext
   {
 
     Map<String, IParameterProvider> providers;
