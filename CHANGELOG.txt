@@ -1,3 +1,7 @@
+13.06.05
+    * Whole new layout for CDA and samples
+    * Internal refactoring - CDA broken in CDA-Core and CDA-Pentaho facilitating the use of CDA in a Standalone scenario
+
 13.03.25
     * Fixed [REDMINE-1851] - Added conditions that protect the TableComponent from empty metadata queries (eg. Select include mode with output options [1,0] and an empty query)
     * Fixed [REDMINE-1881] - IntegerArrays not working on sql queries
