@@ -17,6 +17,8 @@
 		<!--  internal dependencies -->
 		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin"
 			rev="${dependency.pentaho-reporting.revision}" changing="true">
+			
+			<exclude module="nekohtml" name="*" type="*" ext="*" conf="" matcher="exact"></exclude>
 		</dependency>
 
     <dependency org="com.hazelcast" name="hazelcast" transitive="false" rev="2.4" conf="default->default;legacy->default"/>
