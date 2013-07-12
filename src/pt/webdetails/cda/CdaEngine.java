@@ -13,10 +13,8 @@ import javax.swing.table.TableModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import pt.webdetails.cda.dataaccess.QueryException;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
@@ -152,12 +150,6 @@ public class CdaEngine
       _instance = new CdaEngine();
     }
 
-    //Avoid problems when vfs is not registered yet
-    if (!isStandalone())
-    {
-      SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession()));
-
-    }
     return _instance;
   }
 }
