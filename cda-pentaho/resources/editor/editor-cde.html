@@ -48,8 +48,19 @@
 
 					$('#notifications').hide();
 				});
-				var width = externalEditor.width() - 10;
-				externalEditor.attr('src', '../pentaho-cdf-dd/extEditor?path=' + path + '&theme=ace/theme/eclipse&editorOnly=true&width=' + width);
+				// try to fit height and width to window size
+				var mainContainer = $('.container');
+				var height = window.innerHeight - $('.webdetailsHead').outerHeight(true) - $('.webdetailsFooter').outerHeight(true);
+				height -= mainContainer.outerHeight(true) - externalEditor.height();
+				externalEditor.height(height);
+				// try to fit width if too big
+				var width = Math.min( window.innerWidth - (mainContainer.outerWidth(true) - externalEditor.width()), externalEditor.width());// = externalEditor.width() - 10;
+				//externalEditor.width(width);
+				// some hcoded margin
+				width -= 10;
+				height -= 10;
+				// load the editor
+				externalEditor.attr('src', '../pentaho-cdf-dd/extEditor?path=' + path + '&theme=ace/theme/eclipse&editorOnly=true&width=' + width + '&height=' + height);
 			}
 			/*
 			 *  pageParams: get the request variables passed in the url
@@ -127,7 +138,7 @@
 				</div>
 			</div>
 
-			<iframe id="externalEditor" marginheight="0" seamless="true" class=" last" ></iframe>
+			<iframe id="externalEditor" style="overflow:hidden;" marginheight="0" seamless="true" class=" last" ></iframe>
 
 		</div>
 		<div class="webdetailsFooter">
