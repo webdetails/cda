@@ -29,6 +29,8 @@ import com.hazelcast.core.LifecycleService;
 import com.hazelcast.core.MapEntry;
 import com.hazelcast.impl.base.DataRecordEntry;
 import com.hazelcast.query.SqlPredicate;
+import java.util.ArrayList;
+import java.util.Map;
 
 import java.util.concurrent.TimeUnit;
 
@@ -451,7 +453,17 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
    */
   public Iterable<Entry<TableCacheKey, ExtraCacheInfo>> getCacheStatsEntries(final String cdaSettingsId,final String dataAccessId)
   {
-    return getCacheStats().entrySet(new SqlPredicate("cdaSettingsId = " + cdaSettingsId + ((dataAccessId != null)? " AND dataAccessId = " + dataAccessId : "")));
+      //sql predicate would need to instantiate extraCacheInfo in host classloader
+    //return getCacheStats().entrySet(new SqlPredicate("cdaSettingsId = " + cdaSettingsId + ((dataAccessId != null)? " AND dataAccessId = " + dataAccessId : "")));
+    ArrayList<Map.Entry<TableCacheKey, ExtraCacheInfo>> result = new ArrayList<Map.Entry<TableCacheKey, ExtraCacheInfo>>();
+    for(Map.Entry<TableCacheKey, ExtraCacheInfo> entry : getCacheStats().entrySet()) {
+      if (entry.getValue().getCdaSettingsId().equals(cdaSettingsId)
+          && (dataAccessId == null || dataAccessId.equals(entry.getValue().getDataAccessId()))) 
+      {
+        result.add(entry);
+      }
+    }
+    return result;
   }
   
 
