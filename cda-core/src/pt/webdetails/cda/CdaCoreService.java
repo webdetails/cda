@@ -565,7 +565,7 @@ public class CdaCoreService
     {
         if (responseHandler.hasResponse())
             responseHandler.setResponseHeaders(mimeType, cacheDuration, attachmentName);
-        else logger.warn("Parameter 'httpresponse' not found!");
+//        else logger.warn("Parameter 'httpresponse' not found!");
     }
   
   

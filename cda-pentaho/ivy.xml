@@ -47,6 +47,7 @@
     <dependency org="net.sf.ehcache" name="ehcache-core" rev="2.0.1" conf="legacy->default"/>
       
       <exclude module="ehcache" />  <!-- Comment this for CDA with 3.6.0 dependencies -->
+      			<exclude module="nekohtml" conf="" matcher="exact"></exclude>
     
 	</dependencies>
 
