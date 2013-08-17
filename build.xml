@@ -294,6 +294,9 @@
 
   </target>
 
+  <target name="publish" depends="publish-pentaho"></target>
+
+
 
   <!--=======================================================================
           publish-pentaho-nojar (override)
