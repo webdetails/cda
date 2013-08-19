@@ -49,7 +49,7 @@ public class ResponseTypeHandler implements IResponseTypeHandler {
 
     @Override
     public Locale getLocale() {
-      return response.getLocale();//XXX is it this locale we want?
+      return response.getLocale();
     }
     
 }

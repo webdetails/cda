@@ -27,17 +27,17 @@ import pt.webdetails.cda.settings.DefaultResourceKeyGetter;
 import pt.webdetails.cda.settings.IResourceKeyGetter;
 import pt.webdetails.cpf.IPluginCall;
 import pt.webdetails.cpf.impl.DefaultRepositoryFile;
-import pt.webdetails.cpf.impl.DummyInterPluginCall;
 import pt.webdetails.cpf.impl.SimpleSessionUtils;
 import pt.webdetails.cpf.impl.SimpleUserSession;
 import pt.webdetails.cpf.messaging.IEventPublisher;
 import pt.webdetails.cpf.messaging.PluginEvent;
 import pt.webdetails.cpf.plugin.CorePlugin;
-import pt.webdetails.cpf.repository.BaseRepositoryAccess.FileAccess;
+import pt.webdetails.cpf.repository.IRepositoryAccess.FileAccess;
 import pt.webdetails.cpf.repository.IRepositoryAccess;
 import pt.webdetails.cpf.repository.IRepositoryFile;
 import pt.webdetails.cpf.session.ISessionUtils;
 import edu.emory.mathcs.backport.java.util.Arrays;
+import pt.webdetails.cpf.AbstractInterPluginCall;
 
 public class DefaultCdaEnvironment implements ICdaEnvironment {
 
@@ -311,12 +311,10 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 				pc.init(new CorePlugin(plugin), method,  params);
 				return pc;
 			}
+                        throw new UnsupportedOperationException("Couldn't get bean factory.");
 		} catch (Exception e) {
-			logger.error("Cannot get bean IPluginCall. Using DummyInterPluginCall", e);
+                    throw new UnsupportedOperationException("Couldn't create plugin call for " + plugin + ",method: " + method);
 		}
-		IPluginCall pluginCall = new DummyInterPluginCall();
-		pluginCall.init(new CorePlugin(plugin), method, params);
-		return pluginCall;
 	}
 
 	@Override
