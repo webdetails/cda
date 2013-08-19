@@ -19,7 +19,7 @@
 			rev="${dependency.pentaho-reporting.revision}" changing="true">		
 		</dependency>
 
-    <dependency org="com.hazelcast" name="hazelcast" transitive="false" rev="2.4" conf="default->default;legacy->default"/>
+    <dependency org="com.hazelcast" name="hazelcast" transitive="false" rev="2.5" conf="default->default;legacy->default"/>
 
 
 	  <dependency org="pt.webdetails" name="cpf-core"
@@ -34,9 +34,10 @@
 
 
         <!-- Legacy -->
+        <!-- Unresolved dependency
     <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin"
       rev="${dependency.pentaho-reporting.revision.legacy}" changing="true" conf="legacy->default"/>
-        
+        -->
     <dependency org="net.sf.ehcache" name="ehcache-core" rev="2.0.1" conf="legacy->default"/>
       <dependency org="net.sf.ehcache" name="ehcache"  rev="1.2.3" conf="test->default"/>
 
