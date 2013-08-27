@@ -87,14 +87,15 @@
 
 
   <echo>distribution.version = ${distribution.version}</echo>
+  <echo>project.revision = ${project.revision}</echo>
 
   <target name="dist" depends="clean,resolve,jar,dist-plugin,dist-samples"/>
   <target name="dist-compile" depends="jar,dist-plugin"/>
 
   <property name="plugin.artifact.id" value="${plugin.name}"/>
-  <property name="plugin.zipfile" value="${plugin.artifact.id}-${distribution.version}.zip"/>
-  <property name="plugin.samples.zipfile" value="${plugin.artifact.id}-samples-${distribution.version}.zip"/>
-  <property name="plugin.solution.zipfile" value="${plugin.artifact.id}-solution-${distribution.version}.zip"/>
+  <property name="plugin.zipfile" value="${plugin.artifact.id}-${project.revision}.zip"/>
+  <property name="plugin.samples.zipfile" value="${plugin.artifact.id}-samples-${project.revision}.zip"/>
+  <property name="plugin.solution.zipfile" value="${plugin.artifact.id}-solution-${project.revision}.zip"/>
 
 
 
@@ -152,6 +153,7 @@
     <copy todir="${stage.dir}/${plugin.name}/lib" overwrite="true">
       <fileset dir="${dist.dir}">
         <include name="${ivy.artifact.id}-${project.revision}.jar"/>
+        <include name="**/cpf-*.jar"/>
       </fileset>
       <fileset dir="${devlib.dir}">
         <include name="**/*.jar"/>
@@ -180,7 +182,7 @@
 	<tstamp/>			
 	<property name="sequential.build.id" value="manual-${DSTAMP}"/>
 
-	<echo file="${stage.dir}/${plugin.name}/version.xml" message="&lt;version branch='TRUNK'  buildId='${sequential.build.id}'>${distribution.version}&lt;/version>"/>		   
+	<echo file="${stage.dir}/${plugin.name}/version.xml" message="&lt;version branch='${project.stage}'>${project.revision}&lt;/version>"/>	   
 
     <replace file="${stage.dir}/${plugin.name}/cachemanager/cache.html" token="@@VERSION@@" value="${distribution.version}"/> 
 
@@ -190,16 +192,7 @@
          includes="cda/**/*"
          excludes="**/Thumbs.db"/>
          
-         
-	<echo file="${dist.dir}/marketplace.xml">&lt;version branch="TRUNK">
-		&lt;version>${distribution.version}&lt;/version>
-		&lt;name>Trunk&lt;/name>
-		&lt;downloadUrl>http://ci.analytical-labs.com/job/Webdetails-CDA/lastSuccessfulBuild/artifact/dist/cda-TRUNK-SNAPSHOT.zip&lt;/downloadUrl>
-		&lt;samplesDownloadUrl>http://ci.analytical-labs.com/job/Webdetails-CDA/lastSuccessfulBuild/artifact/dist/cda-samples-TRUNK-SNAPSHOT.zip&lt;/samplesDownloadUrl>
-		&lt;description>Trunk Snapshot. Install at your own risk....&lt;/description>
-		&lt;buildId>${sequential.build.id}&lt;/buildId>
-		&lt;/version>	</echo>         
-
+  
   </target>
   
   <!-- ================ 
@@ -255,11 +248,13 @@
       </fileset>
     </copy>
     
+    <!--
     <copy todir="${plugin.local.install.solutions.dir}/system/${plugin.name}/lib">
                       <fileset dir="../cpf/dist">
                           <include name="cpf-TRUNK-SNAPSHOT.jar"/>
                       </fileset>
                   </copy>
+                -->
 
     <!-- Copy samples -->
     <copy todir="${plugin.local.install.solutions.dir}/plugin-samples">
