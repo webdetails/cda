@@ -93,11 +93,5 @@ public class CdaSessionFormulaContext extends DefaultFormulaContext implements I
       }
       return result.toArray();
     }
-
-
-    @Override
-    public void setSession(IUserSession ius) {
-
-    }
 }
 
