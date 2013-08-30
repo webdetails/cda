@@ -34,8 +34,6 @@ import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 import pt.webdetails.cda.utils.SolutionRepositoryUtils;
-import pt.webdetails.cpf.session.IUserSession;
-//import org.pentaho.platform.api.engine.IPentahoSession;
 
 /**
  * Main engine class that will answer to calls
@@ -127,10 +125,10 @@ public class CdaEngine
   }
 
 
-  public void getCdaList(final OutputStream out, final DiscoveryOptions discoveryOptions, final IUserSession userSession) throws UnsupportedExporterException, ExporterException
+  public void getCdaList(final OutputStream out, final DiscoveryOptions discoveryOptions) throws UnsupportedExporterException, ExporterException
   {
 
-    final TableModel tableModel = SolutionRepositoryUtils.getInstance().getCdaList(userSession);
+    final TableModel tableModel = SolutionRepositoryUtils.getInstance().getCdaList();
 
     ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).export(out, tableModel);
 

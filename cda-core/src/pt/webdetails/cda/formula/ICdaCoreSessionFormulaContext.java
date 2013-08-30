@@ -20,8 +20,6 @@ import pt.webdetails.cpf.session.IUserSession;
 public interface ICdaCoreSessionFormulaContext extends FormulaContext {
 
     public Object resolveReference(final Object name);
- 
-    public void setSession(IUserSession session);
     
     
     

@@ -44,7 +44,6 @@ import pt.webdetails.cpf.http.ICommonParameterProvider;
 import pt.webdetails.cpf.repository.IRepositoryAccess.FileAccess;
 import pt.webdetails.cpf.repository.IRepositoryAccess;
 import pt.webdetails.cpf.repository.IRepositoryFile;
-import pt.webdetails.cpf.session.ISessionUtils;
 import pt.webdetails.cpf.utils.MimeTypes;
 
 
@@ -336,10 +335,9 @@ public class CdaCoreService
 
     final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
     discoveryOptions.setOutputType(outputType);
-	ISessionUtils sessionUtils = CdaEngine.getEnvironment().getSessionUtils();
     String mimeType = ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).getMimeType();
     setResponseHeaders(mimeType);
-    engine.getCdaList(out, discoveryOptions, sessionUtils.getCurrentSession());
+    engine.getCdaList(out, discoveryOptions);
   }
 
  // @Exposed(accessLevel = AccessLevel.ADMIN, outputType = MimeType.PLAIN_TEXT)

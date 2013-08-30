@@ -26,7 +26,6 @@ import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cpf.repository.IRepositoryAccess.FileAccess;
 import pt.webdetails.cpf.repository.IRepositoryAccess;
 import pt.webdetails.cpf.repository.IRepositoryFile;
-import pt.webdetails.cpf.session.IUserSession;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
@@ -60,7 +59,7 @@ public class SolutionRepositoryUtils
   }
 
 
-  public TableModel getCdaList(final IUserSession userSession)
+  public TableModel getCdaList()
   {
 
     logger.debug("Getting CDA list");
