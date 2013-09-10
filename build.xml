@@ -29,6 +29,9 @@
 
     <target name="publish-local" >
 		<ant dir="cda-core"    antfile="build.xml" target="publish-local" inheritAll="true"/>
+        <delete>
+            <fileset dir="cda-pentaho/dev-lib" includes="cda-core-*"/>
+        </delete>    		
         <copy todir="cda-pentaho/dev-lib" overwrite="true">
             <fileset dir="cda-core/dist">
                 <include name="*.jar"/>
@@ -40,6 +43,9 @@
 
 
     <target name="full-dist" depends="build-and-test-core">
+        <delete>
+            <fileset dir="cda-pentaho/dev-lib" includes="cda-core-*"/>
+        </delete>
         <copy todir="cda-pentaho/dev-lib" overwrite="true">
             <fileset dir="cda-core/dist">
                 <include name="*.jar"/>
@@ -50,6 +56,9 @@
 
 
     <target name="dist" depends="build-core">
+      <delete>
+            <fileset dir="cda-pentaho/dev-lib" includes="cda-core-*"/>
+        </delete>    
         <copy todir="cda-pentaho/dev-lib" overwrite="true">
             <fileset dir="cda-core/dist">
                 <include name="*.jar"/>

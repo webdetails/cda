@@ -1,3 +1,7 @@
+13.09.10
+    * updates CDA settings to declare that this plugin offers datasources that can be listed by CDE
+    * Bug fixing and general cleanup
+
 13.06.05
     * Whole new layout for CDA and samples
     * Internal refactoring - CDA broken in CDA-Core and CDA-Pentaho facilitating the use of CDA in a Standalone scenario
