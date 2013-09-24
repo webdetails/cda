@@ -1,13 +1,15 @@
-/*! --------------------------------------------------------------------
+/*-------------------------------------------------------------------- 
 Scripts for creating and manipulating custom menus based on standard <ul> markup
 Version: 3.0, 03.31.2009
 
-http://www.filamentgroup.com
-* reference articles: http://www.filamentgroup.com/lab/jquery_ipod_style_drilldown_menu/
-
+By: Maggie Costello Wachs (maggie@filamentgroup.com) and Scott Jehl (scott@filamentgroup.com)
+	http://www.filamentgroup.com
+	* reference articles: http://www.filamentgroup.com/lab/jquery_ipod_style_drilldown_menu/
+		
 Copyright (c) 2009 Filament Group
 Dual licensed under the MIT (filamentgroup.com/examples/mit-license.txt) and GPL (filamentgroup.com/examples/gpl-license.txt) licenses.
 --------------------------------------------------------------------*/
+
 
 var allUIMenus = [];
 
