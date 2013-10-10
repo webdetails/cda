@@ -468,11 +468,9 @@ public class CdaUtils {
     //{
       IPluginResourceLoader pluginResourceLoader = PentahoSystem.get(IPluginResourceLoader.class);
       IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class);
-      ClassLoader cdeClassLoader = pluginManager.getClassLoader("cde");
-      
       final String editorPath;
       
-      if(cdeClassLoader != null){
+      if(pluginManager.isBeanRegistered("wcdf")){
         editorPath = EXT_EDITOR_SOURCE;
       } else {
         editorPath = EDITOR_SOURCE;

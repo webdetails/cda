@@ -30,7 +30,7 @@
 				var params = pageParams();
 
 				//build full path
-				var path = getFullPath(params);
+				var path = getFilePathFromUrl();
 				$("#staticfile").text(path);
 
 				var externalEditor = $('#externalEditor');
@@ -49,8 +49,28 @@
 					$('#notifications').hide();
 				});
 				var width = externalEditor.width() - 10;
-				externalEditor.attr('src', '../pentaho-cdf-dd/extEditor?path=' + path + '&theme=ace/theme/eclipse&editorOnly=true&width=' + width);
+
+
+				externalEditor.attr('src', '../../../plugin/pentaho-cdf-dd/api/editor/getExternalEditor?path=' + path + '&theme=ace/theme/eclipse&editorOnly=true&width=' + width);
 			}
+
+            getFilePathFromUrl = function() {
+                // ex: /pentaho/api/repos/:public:plugin-samples:pentaho-cdf-dd:cde_sample1.wcdf/wcdf.edit
+
+
+                if(window.location.pathname.indexOf("/:") == -1){
+                    return "/";
+                } else {
+                    var regExp = window.location.pathname.match("(/:)(.*)(/)");
+
+                    if(regExp[2]){
+                        return "/"+regExp[2].replace(new RegExp(":", "g"), "/");
+                    }
+
+                }
+                return "/";
+            }
+
 			/*
 			 *  pageParams: get the request variables passed in the url
 			 */
