@@ -177,7 +177,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     }
 
     // put the copy into the cache ...
-    if (isCacheEnabled())
+    if (isCacheEnabled() && !queryOptions.isCacheBypass())
     {
       ExtraCacheInfo cInfo = new ExtraCacheInfo(this.getCdaSettings().getId(), queryOptions.getDataAccessId(), queryTime, tableModelCopy);
       getCdaCache().putTableModel(key, tableModelCopy, getCacheDuration(), cInfo);
