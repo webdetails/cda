@@ -26,8 +26,10 @@ import javax.swing.table.TableModel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Attribute;
 import org.dom4j.Element;
 import org.pentaho.di.core.util.StringUtil;
+import org.pentaho.metadata.model.concept.types.JoinType;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
 
 import pt.webdetails.cda.CdaBoot;
@@ -53,6 +55,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
 
   private static final Log logger = LogFactory.getLog(JoinCompoundDataAccess.class);
   private static final String TYPE = "join";
+  private JoinType joinType;
   private String leftId;
   private String rightId;
   private String[] leftKeys;
@@ -73,6 +76,13 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   public JoinCompoundDataAccess(final Element element)
   {
     super(element);
+
+    Attribute joinTypeAttr = element.attribute("joinType");
+    if (joinTypeAttr != null) {
+        joinType = JoinType.valueOf(joinTypeAttr.getValue());
+    } else {
+        joinType = JoinType.FULL_OUTER;
+    }
 
     Element left = (Element) element.selectSingleNode("Left");
     Element right = (Element) element.selectSingleNode("Right");
@@ -127,8 +137,23 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       String sortRightXML = getSortXmlStep("sortRight", rightColumnNames);
 
       StringBuilder mergeJoinXML = new StringBuilder(
-              "<step><name>mergeJoin</name><type>MergeJoin</type><join_type>FULL OUTER</join_type><step1>sortLeft</step1><step2>sortRight</step2>");
-      mergeJoinXML.append("<keys_1>");
+    		  "<step><name>mergeJoin</name><type>MergeJoin</type><join_type>");
+	  switch (joinType) {
+		  case INNER:
+			  mergeJoinXML.append("INNER");
+			  break;
+		  case LEFT_OUTER:
+			  mergeJoinXML.append("LEFT OUTER");
+			  break;
+		  case RIGHT_OUTER:
+			  mergeJoinXML.append("RIGHT OUTER");
+			  break;
+		  case FULL_OUTER:
+			  mergeJoinXML.append("FULL OUTER");
+			  break;
+	  }
+	  mergeJoinXML.append("</join_type><step1>sortLeft</step1><step2>sortRight</step2>");
+	  mergeJoinXML.append("<keys_1>");
 
       for (int i = 0; i < leftKeys.length; i++)
       {
