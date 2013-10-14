@@ -330,45 +330,37 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
    *  BigNumber
    *  Serializable
    *  Binary
-   *  
+   *   
    */
-
   private String getKettleTypeFromColumnClass(Class<?> clazz)
   {
-
     if (clazz == String.class)
     {
       return "String";
     }
-    else if (clazz == Double.class)
+    if (clazz == Double.class || clazz == Float.class)
     {
       return "Number";
     }
-    else if (clazz == java.util.Date.class)
+    if (java.util.Date.class.isAssignableFrom(clazz))
     {
       return "Date";
     }
-    else if (clazz == Long.class || clazz == Integer.class)
+    if (clazz == Long.class || clazz == Integer.class)
     {
       return "Integer";
     }
-    else if (clazz == java.math.BigDecimal.class)
+    if (clazz == java.math.BigDecimal.class)
     {
       return "BigNumber";
     }
-    else if (clazz == Boolean.class )
+    if (clazz == Boolean.class )
     {
       return "Boolean";
     }
-    else
-    {
-      throw new IllegalArgumentException("Unexpected class " + clazz + ", can't convert to kettle type");
-
-    }
-
-
+    
+    throw new IllegalArgumentException("Unexpected class " + clazz + ", can't convert to kettle type");
   }
-
 
   public void startRowProduction()
   {
