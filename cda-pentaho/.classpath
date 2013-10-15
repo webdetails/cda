@@ -70,7 +70,6 @@
 	<classpathentry kind="lib" path="lib/georss-rome-0.9.8.jar"/>
 	<classpathentry kind="lib" path="lib/geronimo-stax-api_1.0_spec-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/groovy-all-1.8.0.jar"/>
-	<classpathentry kind="lib" path="lib/hazelcast-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate-3.2.6.ga.jar"/>
 	<classpathentry kind="lib" path="lib/hsqldb-1.8.0.jar"/>
 	<classpathentry kind="lib" path="lib/httpcore-4.0-beta3.jar"/>
@@ -124,7 +123,6 @@
 	<classpathentry kind="lib" path="lib/mondrian-3.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/nbmdr-200507110943-custom.jar"/>
 	<classpathentry kind="lib" path="lib/neethi-2.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/nekohtml-0.9.5.jar"/>
 	<classpathentry kind="lib" path="lib/ognl-2.6.9.jar"/>
 	<classpathentry kind="lib" path="lib/olap4j-1.0.1.539.jar"/>
 	<classpathentry kind="lib" path="lib/openide-util-200507110943.jar"/>
@@ -167,7 +165,6 @@
 	<classpathentry kind="lib" path="lib/pentaho-reporting-engine-legacy-functions-3.9.1-GA.jar"/>
 	<classpathentry kind="lib" path="lib/pentaho-reporting-engine-wizard-core-3.9.1-GA.jar"/>
 	<classpathentry kind="lib" path="lib/pentaho-versionchecker-2.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/pentaho-vfs-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/pentaho-xul-core-3.3.5.jar"/>
 	<classpathentry kind="lib" path="lib/pentaho-xul-html-3.3.5.jar"/>
 	<classpathentry kind="lib" path="lib/poi-3.6.jar"/>
@@ -203,11 +200,17 @@
 	<classpathentry kind="lib" path="lib/XmlSchema-1.4.2.jar"/>
 	<classpathentry kind="lib" path="lib/xpp3_min-1.1.4c.jar"/>
 	<classpathentry kind="lib" path="lib/xstream-1.4.2.jar"/>
-	<classpathentry kind="lib" path="runtime-lib/cpf-TRUNK-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="runtime-lib/jackson-core-asl-1.8.2.jar"/>
 	<classpathentry kind="lib" path="runtime-lib/jackson-mapper-asl-1.8.2.jar"/>
-	<classpathentry kind="lib" path="dev-lib/cda-core-TRUNK-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="dev-lib/cpf-core-trunk-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="dev-lib/cpf-pentaho-trunk-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/hazelcast-2.5.jar"/>
+	<classpathentry kind="lib" path="lib/pentaho-bi-platform-api-4.8.0-stable-sources.jar"/>
+	<classpathentry kind="lib" path="lib/pentaho-bi-platform-engine-core-4.8.0-stable-sources.jar"/>
+	<classpathentry kind="lib" path="lib/pentaho-bi-platform-engine-security-4.8.0-stable-sources.jar"/>
+	<classpathentry kind="lib" path="lib/pentaho-bi-platform-engine-services-4.8.0-stable-sources.jar"/>
+	<classpathentry kind="lib" path="runtime-lib/cda-core-TRUNK-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="runtime-lib/cpf-core-TRUNK-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="runtime-lib/cpf-pentaho-TRUNK-SNAPSHOT.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/cda-core"/>
+	<classpathentry kind="lib" path="dev-lib/robochef-0.9.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
