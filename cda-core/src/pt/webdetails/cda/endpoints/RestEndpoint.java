@@ -17,7 +17,6 @@ package pt.webdetails.cda.endpoints;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.Iterator;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
@@ -28,7 +27,6 @@ import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 import java.util.List;
 
 import java.util.Map;
-import java.util.Map.Entry;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -53,8 +51,8 @@ public class RestEndpoint {
   //private static final Log logger = LogFactory.getLog(CdaUtils.class);
   //private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
   
-  public static final String PLUGIN_NAME = "cda";
-  private static final long serialVersionUID = 1L;
+//  public static final String PLUGIN_NAME = "cda";
+//  private static final long serialVersionUID = 1L;
   //private static final String EDITOR_SOURCE = "/editor/editor.html";
   //private static final String EXT_EDITOR_SOURCE = "/editor/editor-cde.html";
   //private static final String PREVIEWER_SOURCE = "/previewer/previewer.html";

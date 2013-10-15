@@ -18,7 +18,7 @@ package pt.webdetails.cda.cache;
  * @author Your Name <your.name at your.org>
  */
 import java.io.OutputStream;
-import pt.webdetails.cpf.http.ICommonParameterProvider;
+
 public interface ICacheScheduleManager {
     public void handleCall(String method,String obj, OutputStream out);
 }

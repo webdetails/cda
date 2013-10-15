@@ -122,7 +122,7 @@ public abstract class PREDataAccess extends SimpleDataAccess
   protected IDataSourceQuery performRawQuery(final ParameterDataRow parameterDataRow) throws QueryException
   {
     
-    boolean threadVarSet = false;
+//    boolean threadVarSet = false;
     
     try
     {
