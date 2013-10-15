@@ -24,6 +24,8 @@ import org.pentaho.reporting.engine.classic.core.DataRow;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.BandedMDXTableModel;
+import org.pentaho.reporting.engine.classic.core.metadata.DataFactoryMetaData;
+import org.pentaho.reporting.engine.classic.core.metadata.DataFactoryRegistry;
 
 /**
  * This data-factory operates in Legacy-Mode providing a preprocessed view on the mondrian result.
@@ -55,5 +57,11 @@ public class CompactBandedMDXDataFactory extends AbstractNamedMDXDataFactory
   {
     final Result cellSet = performQuery(queryName, parameters);
     return new CompactBandedMDXTableModel(cellSet, extractQueryLimit(parameters));
+  }
+
+
+  @Override
+  public DataFactoryMetaData getMetaData() {
+    return DataFactoryRegistry.getInstance().getMetaData("org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.BandedMDXDataFactory");
   }
 }
