@@ -131,7 +131,7 @@ public class Parameter implements java.io.Serializable {
         if (Object[].class.isAssignableFrom(obj.getClass())) {
           if (Double[].class.isAssignableFrom(obj.getClass())) {
             return NUMERIC_ARRAY;
-          } else if (Integer[].class.isAssignableFrom(obj.getClass())) {
+          } else if (Long[].class.isAssignableFrom(obj.getClass())) {
             return INTEGER_ARRAY;
           } else if (Date[].class.isAssignableFrom(obj.getClass())) {
             return DATE_ARRAY;
@@ -140,7 +140,7 @@ public class Parameter implements java.io.Serializable {
           }
         } else if (Double.class.isAssignableFrom(obj.getClass())) {
           return NUMERIC;
-        } else if (Integer.class.isAssignableFrom(obj.getClass())) {
+        } else if (Long.class.isAssignableFrom(obj.getClass())) {
           return INTEGER;
         } else if (Date.class.isAssignableFrom(obj.getClass())) {
           return DATE;
@@ -253,7 +253,7 @@ public class Parameter implements java.io.Serializable {
       case STRING:
         return localValue;
       case INTEGER:
-        return Integer.parseInt(localValue);
+        return Long.parseLong(localValue);
       case NUMERIC:
         return Double.parseDouble(localValue);
       case DATE:
@@ -278,7 +278,7 @@ public class Parameter implements java.io.Serializable {
       case DATE_ARRAY:
         return parseToArray(localValue, Type.DATE, new Date[0]);
       case INTEGER_ARRAY:
-        return parseToArray(localValue, Type.INTEGER, new Integer[0]);
+        return parseToArray(localValue, Type.INTEGER, new Long[0]);
       case NUMERIC_ARRAY:
         return parseToArray(localValue, Type.NUMERIC, new Double[0]);
       default:

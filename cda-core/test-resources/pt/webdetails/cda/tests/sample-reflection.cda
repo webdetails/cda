@@ -18,7 +18,7 @@
 	-->
   <DataAccess id="2" type="reflection" access="public">
 		<Name>Sample query on SteelWheelsSales</Name>
-        <Query><![CDATA[org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.StaticDataFactorySample#createSubQuery(status)]]></Query>
+        <Query><![CDATA[pt.webdetails.cda.tests.utils.StaticDataFactorySample#createSubQuery(status)]]></Query>
         <Parameters>
             <Parameter name="status" type="Integer" default="In Process"/>
         </Parameters>
