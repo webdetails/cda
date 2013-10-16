@@ -29,6 +29,7 @@ public class CdaLifecycleListener implements IPluginLifecycleListener
   {
     // boot cda
     CdaBoot.getInstance().start();
+
     PluginHibernateUtil.initialize();
 
 
@@ -46,6 +47,7 @@ public class CdaLifecycleListener implements IPluginLifecycleListener
     try
     {
       Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+      CdaBoot.getInstance().getGlobalConfig(); //Load configuration to ensure class loader is correct
       //CacheScheduleManager.getInstance().coldInit();
     }
     catch (Exception e)
