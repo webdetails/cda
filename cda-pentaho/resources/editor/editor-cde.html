@@ -36,7 +36,7 @@
 				var externalEditor = $('#externalEditor');
 				var header = $('.cdalogo');
 
-				externalEditor.height(window.innerHeight - header.height() - 5);
+				externalEditor.height($(window).height() - header.height() - 5);
 
 				externalEditor.load(function() {
 					var editorEnv = getEditorWindow();
