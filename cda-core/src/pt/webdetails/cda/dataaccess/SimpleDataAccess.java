@@ -28,6 +28,7 @@ import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 
 import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.cache.TableCacheKey;
 import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
 import pt.webdetails.cda.connections.Connection;
@@ -179,8 +180,15 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     // put the copy into the cache ...
     if (isCacheEnabled() && !queryOptions.isCacheBypass())
     {
-      ExtraCacheInfo cInfo = new ExtraCacheInfo(this.getCdaSettings().getId(), queryOptions.getDataAccessId(), queryTime, tableModelCopy);
-      getCdaCache().putTableModel(key, tableModelCopy, getCacheDuration(), cInfo);
+      ExtraCacheInfo cInfo =
+          new ExtraCacheInfo( this.getCdaSettings().getId(), queryOptions.getDataAccessId(), queryTime, tableModelCopy );
+      IQueryCache cache = getCdaCache();
+      if ( cache != null ) {
+        cache.putTableModel( key, tableModelCopy, getCacheDuration(), cInfo );
+      }
+      else {
+        logger.error("Cache enabled but no cache available.");
+      }
     }
 
     // and finally return the copy.

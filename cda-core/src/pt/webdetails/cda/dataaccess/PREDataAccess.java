@@ -19,7 +19,6 @@ import java.util.TimeZone;
 
 import javax.swing.table.TableModel;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
@@ -31,7 +30,6 @@ import org.pentaho.reporting.engine.classic.core.parameters.CompoundDataRow;
 import org.pentaho.reporting.engine.classic.core.util.CloseableTableModel;
 import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFactory;
 import org.pentaho.reporting.libraries.base.config.Configuration;
-import org.pentaho.reporting.libraries.base.util.StackableException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 

@@ -19,11 +19,9 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Properties;
 
-import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleTransFromFileProducer;
 import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleTransformationProducer;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DataSourceProvider;
-import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.JndiDataSourceProvider;
 import org.pentaho.reporting.libraries.base.config.Configuration;
 
 import pt.webdetails.cda.connections.kettle.TransFromFileConnectionInfo;
@@ -33,7 +31,6 @@ import pt.webdetails.cda.connections.sql.SqlJndiConnectionInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-//import org.jfree.io.IOUtils;
 import org.pentaho.reporting.libraries.base.util.IOUtils;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -46,9 +43,7 @@ import org.pentaho.reporting.platform.plugin.connection.PentahoMondrianDataSourc
 import org.pentaho.reporting.platform.plugin.connection.PentahoPmdConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.ReportEnvironmentDataRow;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
-import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.JndiConnectionProvider;
 import org.pentaho.reporting.platform.plugin.PentahoReportEnvironment;
-import org.pentaho.reporting.platform.plugin.connection.PentahoMondrianDataSourceProvider;
 
 
 public class PentahoDataAccessUtils implements IDataAccessUtils {
@@ -91,20 +86,20 @@ public class PentahoDataAccessUtils implements IDataAccessUtils {
         Properties props = new Properties();
         try
         {
+          //TODO: can we drop the old version now?
+          //mdxDataFactory.setBaseConnectionProperties( props );
           props.load(new StringReader(catalog.getDataSourceInfo().replace(';', '\n')));
           try
           {
             // Apply the method through reflection
             Method m = AbstractNamedMDXDataFactory.class.getMethod("setBaseConnectionProperties",Properties.class);
             m.invoke(mdxDataFactory, props);
-            
           }
           catch (Exception ex)
           {
             // This is a previous version - continue
           }
-          
-          
+
         }
         catch (IOException ex)
         {

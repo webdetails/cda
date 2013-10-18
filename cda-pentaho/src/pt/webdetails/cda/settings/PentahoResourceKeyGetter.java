@@ -13,7 +13,6 @@
 
 package pt.webdetails.cda.settings;
 
-import java.io.File;
 import java.util.HashMap;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKeyCreationException;

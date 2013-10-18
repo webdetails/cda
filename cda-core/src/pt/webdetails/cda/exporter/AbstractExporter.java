@@ -84,13 +84,10 @@ public abstract class AbstractExporter implements Exporter
     }
     else
     {
-
       // Unsupported. However, instead of bombing out, we'll try to cast to toString
       //throw new ExporterException("CDA exporter doesn't know how to handle: " + columnClass.toString(), null);
       logger.warn("CDA exporter doesn't know how to handle:" + columnClass.toString() + "; Returning String to allow it to continue");
       return "String";
-
-
     }
 
   }
