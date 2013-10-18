@@ -18,21 +18,23 @@ import java.util.List;
 
 import javax.swing.table.TableModel;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 
-import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cpf.repository.IRepositoryAccess.FileAccess;
-import pt.webdetails.cpf.repository.IRepositoryAccess;
-import pt.webdetails.cpf.repository.IRepositoryFile;
-import edu.emory.mathcs.backport.java.util.Arrays;
+import pt.webdetails.cpf.PluginEnvironment;
+import pt.webdetails.cpf.repository.api.IBasicFile;
+import pt.webdetails.cpf.repository.api.IBasicFileFilter;
+import pt.webdetails.cpf.repository.api.IReadAccess;
+import pt.webdetails.cpf.repository.api.IUserContentAccess;
 
 /**
  * Utility class for SolutionRepository utils
  * User: pedro
  * Date: Feb 16, 2010
  * Time: 6:13:33 PM
+ * @deprecated only lists cda files, 
  */
 public class SolutionRepositoryUtils
 {
@@ -62,13 +64,13 @@ public class SolutionRepositoryUtils
   public TableModel getCdaList()
   {
 
-    logger.debug("Getting CDA list");
-    IRepositoryAccess repository = CdaEngine.getEnvironment().getRepositoryAccess();
-	IRepositoryFile[] cdaTree = repository.getPluginFiles("/",FileAccess.READ);
-    @SuppressWarnings("unchecked")
+    IUserContentAccess userRepo = PluginEnvironment.env().getContentAccessFactory().getUserContentAccess("/");
+    List<IBasicFile> cdaFiles = userRepo.listFiles("", new IBasicFileFilter() {
+      public boolean accept(IBasicFile file) {
+        return StringUtils.equals(file.getExtension(), "cda");
+      }
+    }, IReadAccess.DEPTH_ALL, false) ;
 
-    List<IRepositoryFile> cdaFiles = new ArrayList<IRepositoryFile>(Arrays.asList(cdaTree));
-       
 
     final int rowCount = cdaFiles.size();
 
@@ -77,10 +79,9 @@ public class SolutionRepositoryUtils
     final Class<?>[] colTypes = {String.class, String.class};
     final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
 
-    for (IRepositoryFile file : cdaFiles)
+    for (IBasicFile file : cdaFiles)
     {
-      typedTableModel.addRow(new Object[]{file.getFileName(), file.getFullPath()});
-
+      typedTableModel.addRow(new Object[]{file.getName(), file.getFullPath()});
     }
 
     return typedTableModel;

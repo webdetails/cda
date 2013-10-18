@@ -21,13 +21,16 @@ import org.pentaho.platform.api.engine.PluginLifecycleException;
 import pt.webdetails.cda.cache.CacheScheduleManager;
 import pt.webdetails.cda.utils.PluginHibernateUtil;
 import pt.webdetails.cda.utils.Util;
+import pt.webdetails.cpf.PentahoPluginEnvironment;
+import pt.webdetails.cpf.PluginEnvironment;
+import pt.webdetails.cpf.SimpleLifeCycleListener;
 
 /**
  * This class inits Cda plugin within the bi-platform
  * @author gorman
  *
  */
-public class CdaLifecycleListener implements IPluginLifecycleListener
+public class CdaLifecycleListener extends SimpleLifeCycleListener implements IPluginLifecycleListener
 {
 
   static Log logger = LogFactory.getLog(CacheScheduleManager.class);
@@ -35,6 +38,7 @@ public class CdaLifecycleListener implements IPluginLifecycleListener
 
   public void init() throws PluginLifecycleException
   {
+    super.init();
     // boot cda
     CdaBoot.getInstance().start();
     PluginHibernateUtil.initialize();
@@ -43,6 +47,7 @@ public class CdaLifecycleListener implements IPluginLifecycleListener
 
   public void loaded() throws PluginLifecycleException
   {
+    super.loaded();
     ClassLoader contextCL = Thread.currentThread().getContextClassLoader();
     try
     {
@@ -70,5 +75,11 @@ public class CdaLifecycleListener implements IPluginLifecycleListener
 
   public void unLoaded() throws PluginLifecycleException
   {
+  }
+
+
+  @Override
+  public PluginEnvironment getEnvironment() {
+    return new PentahoPluginEnvironment();
   }
 }

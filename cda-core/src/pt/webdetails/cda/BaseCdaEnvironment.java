@@ -13,18 +13,14 @@
 
 package pt.webdetails.cda;
 
-import java.io.File;
-import java.io.StringReader;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.reporting.libraries.formula.FormulaContext;
 
 import pt.webdetails.cda.cache.EHCacheQueryCache;
 import pt.webdetails.cda.cache.ICacheScheduleManager;
@@ -35,34 +31,36 @@ import pt.webdetails.cda.dataaccess.DefaultDataAccessUtils;
 import pt.webdetails.cda.dataaccess.ICubeFileProviderSetter;
 import pt.webdetails.cda.dataaccess.IDataAccessUtils;
 import pt.webdetails.cda.formula.DefaultSessionFormulaContext;
-import pt.webdetails.cda.formula.ICdaCoreSessionFormulaContext;
 import pt.webdetails.cda.settings.DefaultResourceKeyGetter;
 import pt.webdetails.cda.settings.IResourceKeyGetter;
-import pt.webdetails.cpf.IPluginCall;
-import pt.webdetails.cpf.impl.DefaultRepositoryFile;
+import pt.webdetails.cpf.PluginEnvironment;
 import pt.webdetails.cpf.impl.SimpleSessionUtils;
 import pt.webdetails.cpf.impl.SimpleUserSession;
 import pt.webdetails.cpf.messaging.IEventPublisher;
 import pt.webdetails.cpf.messaging.PluginEvent;
-import pt.webdetails.cpf.plugin.CorePlugin;
-import pt.webdetails.cpf.repository.IRepositoryAccess.FileAccess;
-import pt.webdetails.cpf.repository.IRepositoryAccess;
-import pt.webdetails.cpf.repository.IRepositoryFile;
+import pt.webdetails.cpf.repository.api.IContentAccessFactory;
+import pt.webdetails.cpf.repository.api.IReadAccess;
 import pt.webdetails.cpf.session.ISessionUtils;
-import edu.emory.mathcs.backport.java.util.Arrays;
-import pt.webdetails.cpf.AbstractInterPluginCall;
 
-public class DefaultCdaEnvironment implements ICdaEnvironment {
+// TODO: change bean handling, make ready for sugar version
+public class BaseCdaEnvironment implements ICdaEnvironment {
 
-	protected static Log logger = LogFactory.getLog(DefaultCdaEnvironment.class);
+  protected static Log logger = LogFactory.getLog( BaseCdaEnvironment.class );
+
+  private static final String RESOURCES_DIR = "resources";
+  /**
+   * file with connection and data access types
+   */
+  private static final String COMPONENTS_DEF = "components.properties";
+
 
 	private ICdaBeanFactory beanFactory;
 
-	public DefaultCdaEnvironment() throws InitializationException {
+	public BaseCdaEnvironment() throws InitializationException {
 		init();
 	}
 	
-	public DefaultCdaEnvironment(ICdaBeanFactory factory) throws InitializationException {
+	public BaseCdaEnvironment(ICdaBeanFactory factory) throws InitializationException {
 		init(factory);
 	}
 
@@ -124,40 +122,46 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 		return new EHCacheQueryCache();
 	}
 
-	private String getCdaConfigFileContent(String fileName) {
-		byte[] content = getCdaConfigFile(fileName);
-		return new String(content);
-	}
+//	/**
+//	 * @deprecated
+//	 */
+//	private String getCdaConfigFileContent(String fileName) {
+//		byte[] content = getCdaConfigFile(fileName);
+//		return new String(content);
+//	}
+//
+//	public byte[] getCdaConfigFile( String fileName ) {
+//	  throw new NotImplementedException();
+//	}
+//	@Override
+//	public byte[] getCdaConfigFile(String fileName) {
+//		try {
+//			IRepositoryAccess repo = getRepositoryAccess();
+//			if (repo != null) {
+//				IRepositoryFile ir = repo.getSettingsFile(fileName, FileAccess.READ);
+//				if (ir != null && ir.exists()) {
+//					return ir.getData();
+//				}
+//			}
+//			URL is = this.getClass().getClassLoader().getResource(fileName);
+//			if (is != null) {
+//				File f = new File(is.toURI());
+//				if (f.exists() && f.canRead())
+//					return FileUtils.readFileToByteArray(f);
+//			}
+//		} catch (Exception e) {
+//			logger.error(e);
+//		}
+//		return new byte[0];		
+//	}
 
 	@Override
-	public byte[] getCdaConfigFile(String fileName) {
-		try {
-			IRepositoryAccess repo = getRepositoryAccess();
-			if (repo != null) {
-				IRepositoryFile ir = repo.getSettingsFile(fileName, FileAccess.READ);
-				if (ir != null && ir.exists()) {
-					return ir.getData();
-				}
-			}
-			URL is = this.getClass().getClassLoader().getResource(fileName);
-			if (is != null) {
-				File f = new File(is.toURI());
-				if (f.exists() && f.canRead())
-					return FileUtils.readFileToByteArray(f);
-			}
-		} catch (Exception e) {
-			logger.error(e);
-		}
-		return new byte[0];		
-	}
-
-	@Override
-	public ICdaCoreSessionFormulaContext getFormulaContext() {
+	public FormulaContext getFormulaContext() {
 
 		try {
 			String id ="ICdaCoreSessionFormulaContext";
 			if (beanFactory != null && beanFactory.containsBean(id)) {
-				return (ICdaCoreSessionFormulaContext) beanFactory.getBean(id);
+				return (FormulaContext) beanFactory.getBean(id);
 			}
 		} catch (Exception e) {
 			logger.error("Cannot get bean ICdaCoreSessionFormulaContext. Using DefaultCdaCoreSessionFormulaContext", e);
@@ -165,53 +169,62 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 		return new DefaultSessionFormulaContext(null);
 	}
 
-	@Override
-	public Properties getCdaComponents() {
-		try {
-			String content = getCdaConfigFileContent("resources/components.properties");
-			StringReader sr = new StringReader(content);
-			Properties pr = new Properties();
-			pr.load(sr);
-			return pr;
-		} catch(Exception e) {
-			logger .error("Cannot load components.properties");
-		}
-		return new Properties();
-	}
+  @Override
+  public Properties getCdaComponents() {
+    try {
+      // String content = getCdaConfigFileContent("resources/components.properties");
+      // StringReader sr = new StringReader(content);
+      IReadAccess sysRead = getRepo().getPluginRepositoryReader( RESOURCES_DIR );
+      Properties pr = new Properties();
+      // file with connection and data access types
+      InputStream propertiesFile = null;
+      try {
+        propertiesFile = sysRead.getFileInputStream( COMPONENTS_DEF );
+        pr.load( propertiesFile );
+      }
+      finally {
+        IOUtils.closeQuietly( propertiesFile );
+      }
+      return pr;
+    } catch ( Exception e ) {
+      logger.error( "Cannot load " + COMPONENTS_DEF );
+    }
+    return new Properties();
+  }
 
-	@Override
-	public List<IRepositoryFile> getComponentsFiles() {
-		Properties resources = getCdaComponents();
-		String[] connections = StringUtils.split(StringUtils.defaultString(resources.getProperty("connections")), ",");
-		IRepositoryAccess repo = getRepositoryAccess();
-		List<IRepositoryFile> componentsFiles = new ArrayList<IRepositoryFile>();
-
-		if (repo != null) {
-			IRepositoryFile[] repoFiles = repo.getSettingsFileTree("resources/components/connections", "xml",FileAccess.READ);
-			if (repoFiles != null && repoFiles.length > 0)
-				componentsFiles = Arrays.asList(repoFiles);
-		} 
-		// Ok we couldn't find the files in the repository - lets try the classpath
-		if (repo == null || componentsFiles.size() < 1) {
-			if(connections != null) {
-				for(String con : connections) {
-					try {
-						URL conUrl = CdaEngine.class.getResource("resources/components/connections/" + con + ".xml");
-						if (conUrl != null) {
-							File conFile = new File(conUrl.toURI());
-							if (conFile.exists()) {
-								IRepositoryFile ir = new DefaultRepositoryFile(conFile);
-								componentsFiles.add(ir);
-							}
-						}
-					} catch(Exception e) {
-						logger.debug("Cant access connections file for: " + con);
-					}
-				}
-			}
-		}
-		return componentsFiles;
-	}
+//	@Override
+//	public List<IRepositoryFile> getComponentsFiles() {
+//		Properties resources = getCdaComponents();
+//		String[] connections = StringUtils.split(StringUtils.defaultString(resources.getProperty("connections")), ",");
+//		IRepositoryAccess repo = getRepositoryAccess();
+//		List<IRepositoryFile> componentsFiles = new ArrayList<IRepositoryFile>();
+//
+//		if (repo != null) {
+//			IRepositoryFile[] repoFiles = repo.getSettingsFileTree("resources/components/connections", "xml",FileAccess.READ);
+//			if (repoFiles != null && repoFiles.length > 0)
+//				componentsFiles = Arrays.asList(repoFiles);
+//		} 
+//		// Ok we couldn't find the files in the repository - lets try the classpath
+//		if (repo == null || componentsFiles.size() < 1) {
+//			if(connections != null) {
+//				for(String con : connections) {
+//					try {
+//						URL conUrl = CdaEngine.class.getResource("resources/components/connections/" + con + ".xml");
+//						if (conUrl != null) {
+//							File conFile = new File(conUrl.toURI());
+//							if (conFile.exists()) {
+//								IRepositoryFile ir = new DefaultRepositoryFile(conFile);
+//								componentsFiles.add(ir);
+//							}
+//						}
+//					} catch(Exception e) {
+//						logger.debug("Cant access connections file for: " + con);
+//					}
+//				}
+//			}
+//		}
+//		return componentsFiles;
+//	}
 
 
 	@Override
@@ -260,17 +273,17 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 		};
 	}
 
-	@Override
-	public IRepositoryAccess getRepositoryAccess() {
-		String id = "IRepositoryAccess";
-		if (beanFactory != null && beanFactory.containsBean(id)) {
-			IRepositoryAccess repAccess =  (IRepositoryAccess) beanFactory.getBean(id);
-			repAccess.setPlugin(CorePlugin.CDA);
-			return repAccess;
-		}
-
-		return null;
-	}
+//	@Override
+//	public IRepositoryAccess getRepositoryAccess() {
+//		String id = "IRepositoryAccess";
+//		if (beanFactory != null && beanFactory.containsBean(id)) {
+//			IRepositoryAccess repAccess =  (IRepositoryAccess) beanFactory.getBean(id);
+//			repAccess.setPlugin(CorePlugin.CDA);
+//			return repAccess;
+//		}
+//
+//		return null;
+//	}
 
 	@Override
 	public ICubeFileProviderSetter getCubeFileProviderSetter() {
@@ -315,41 +328,44 @@ public class DefaultCdaEnvironment implements ICdaEnvironment {
 		return new DefaultResourceKeyGetter();
 	}
 
-	@Override
-	public IPluginCall createPluginCall(String plugin, String method, Map<String, Object> params) {
-		try {
-			String id = "IPluginCall";
-			if (beanFactory != null && beanFactory.containsBean(id)) {
-				IPluginCall pc = (IPluginCall) beanFactory.getBean(id);
-				pc.init(new CorePlugin(plugin), method,  params);
-				return pc;
-			}
-                        throw new UnsupportedOperationException("Couldn't get bean factory.");
-		} catch (Exception e) {
-                    throw new UnsupportedOperationException("Couldn't create plugin call for " + plugin + ",method: " + method);
-		}
-	}
+//	@Override
+//	public IPluginCall createPluginCall(String plugin, String method, Map<String, Object> params) {
+//		try {
+//			String id = "IPluginCall";
+//			if (beanFactory != null && beanFactory.containsBean(id)) {
+//				IPluginCall pc = (IPluginCall) beanFactory.getBean(id);
+//				pc.init(new CorePlugin(plugin), method,  params);
+//				return pc;
+//			}
+//                        throw new UnsupportedOperationException("Couldn't get bean factory.");
+//		} catch (Exception e) {
+//                    throw new UnsupportedOperationException("Couldn't create plugin call for " + plugin + ",method: " + method);
+//		}
+//	}
 
-	@Override
-	public boolean supportsCacheScheduler() {
-		if (beanFactory != null && beanFactory.containsBean("ICacheScheduleManager")) {
-			return true;
-		}
-		return false;
-	}
+  @Override
+  public boolean supportsCacheScheduler() {
+    if ( beanFactory != null && beanFactory.containsBean( "ICacheScheduleManager" ) ) {
+      return true;
+    }
+    return false;
+  }
 
-	@Override
-	public ICacheScheduleManager getCacheScheduler() {
-		try {
-			String id = "ICacheScheduleManager";
-			if (beanFactory != null && beanFactory.containsBean(id)) {
-				return (ICacheScheduleManager) beanFactory.getBean(id);
-			}
-		} catch (Exception e) {
-			logger.error("Cannot get bean ICacheScheduleManager. Not using a cache schedule manager", e);
-		}
-		return null;
+  @Override
+  public ICacheScheduleManager getCacheScheduler() {
+    try {
+      String id = "ICacheScheduleManager";
+      if ( beanFactory != null && beanFactory.containsBean( id ) ) {
+        return (ICacheScheduleManager) beanFactory.getBean( id );
+      }
+    } catch ( Exception e ) {
+      logger.error( "Cannot get bean ICacheScheduleManager. Not using a cache schedule manager", e );
+    }
+    return null;
 
-	}
+  }
 
+  public IContentAccessFactory getRepo() {
+    return PluginEnvironment.repository();
+  }
 }

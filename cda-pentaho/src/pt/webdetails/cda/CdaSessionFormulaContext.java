@@ -27,11 +27,18 @@ import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.security.SecurityParameterProvider;
 import org.pentaho.platform.plugin.services.connections.javascript.JavaScriptResultSet;
 
-import pt.webdetails.cda.formula.ICdaCoreSessionFormulaContext;
-import pt.webdetails.cpf.session.IUserSession;
-
-public class CdaSessionFormulaContext extends DefaultFormulaContext implements ICdaCoreSessionFormulaContext
-  {
+/**
+ * Provides access to Pentaho parameter providers for formula reference resolution,
+ *  accessible as [&lt;prefix&gt:&lt;parameter_name&gt;]<br><br>
+ * Available prefixes are:
+ * <ul>
+ * <li> security: {@link SecurityParameterProvider} </li>
+ * <li> session: {@link PentahoSessionParameterProvider}</li>
+ * <li> system: {@link SystemSettingsParameterProvider} </li>
+ * </ul>
+ * 
+ */
+public class CdaSessionFormulaContext extends DefaultFormulaContext {
 
     Map<String, IParameterProvider> providers;
     private static final String SECURITY_PREFIX = "security:";

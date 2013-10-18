@@ -19,7 +19,7 @@ package pt.webdetails.cda.utils;
  * Date: Feb 2, 2010
  * Time: 3:37:46 PM
  */
-public class Util
+public class Util extends pt.webdetails.cpf.Util
 {
 
   public static String getExceptionDescription(final Exception e)

@@ -13,12 +13,11 @@
 
 package pt.webdetails.cda.cache;
 
-/**
- *
- * @author Your Name <your.name at your.org>
- */
 import java.io.OutputStream;
 
+/**
+ * @deprecated to be serviced
+ */
 public interface ICacheScheduleManager {
     public void handleCall(String method,String obj, OutputStream out);
 }

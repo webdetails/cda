@@ -14,7 +14,6 @@
 package pt.webdetails.cda.utils;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 
 import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cpf.IPluginCall;
 
 /**
  *
@@ -53,18 +51,18 @@ public class InterPluginUtils
     return _instance;
   }
 
-
-  public static TableModel getTableModelFromJsonPluginCall(String plugin, String method)
-  {
-    return getTableModelFromJsonPluginCall(plugin, method, new HashMap<String, Object>());
-  }
-
-
-  public static TableModel getTableModelFromJsonPluginCall(String plugin, String method, Map<String, Object> params)
-  {
-	  IPluginCall pluginCall = CdaEngine.getEnvironment().createPluginCall(plugin, method, params);
-	  return InterPluginUtils.getInstance().getTableModelFromJSONArray(pluginCall.call(), params);
-  }
+//FIXME COMPILING
+//  public static TableModel getTableModelFromJsonPluginCall(String plugin, String method)
+//  {
+//    return getTableModelFromJsonPluginCall(plugin, method, new HashMap<String, Object>());
+//  }
+//
+//
+//  public static TableModel getTableModelFromJsonPluginCall(String plugin, String method, Map<String, Object> params)
+//  {
+//	  IPluginCall pluginCall = CdaEngine.getEnvironment().createPluginCall(plugin, method, params);
+//	  return InterPluginUtils.getInstance().getTableModelFromJSONArray(pluginCall.call(), params);
+//  }
 
 
   public TableModel getTableModelFromJSONArray(String json, Map<String, Object> params)

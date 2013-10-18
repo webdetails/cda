@@ -13,56 +13,58 @@
 
 package pt.webdetails.cda;
 
-import java.util.List;
-import java.util.Map;
+//import java.util.List;
+//import java.util.Map;
 import java.util.Properties;
+
+import org.pentaho.reporting.libraries.formula.FormulaContext;
 
 import pt.webdetails.cda.cache.ICacheScheduleManager;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.connections.mondrian.IMondrianRoleMapper;
 import pt.webdetails.cda.dataaccess.ICubeFileProviderSetter;
 import pt.webdetails.cda.dataaccess.IDataAccessUtils;
-import pt.webdetails.cda.formula.ICdaCoreSessionFormulaContext;
 import pt.webdetails.cda.settings.IResourceKeyGetter;
-import pt.webdetails.cpf.IPluginCall;
+//import pt.webdetails.cpf.IPluginCall;
 import pt.webdetails.cpf.messaging.IEventPublisher;
-import pt.webdetails.cpf.repository.IRepositoryAccess;
-import pt.webdetails.cpf.repository.IRepositoryFile;
+import pt.webdetails.cpf.repository.api.IContentAccessFactory;
 import pt.webdetails.cpf.session.ISessionUtils;
 
 
 public interface ICdaEnvironment {
-	
-	public void init() throws InitializationException;
-	
-	public ICubeFileProviderSetter getCubeFileProviderSetter();
 
-	public IQueryCache getQueryCache();
+  public void init() throws InitializationException;
 
-	public IMondrianRoleMapper getMondrianRoleMapper();
+  public ICubeFileProviderSetter getCubeFileProviderSetter();
 
-	public byte[] getCdaConfigFile(String fileName);
+  public IQueryCache getQueryCache();
 
-	public ICdaCoreSessionFormulaContext getFormulaContext();
+  public IMondrianRoleMapper getMondrianRoleMapper();
 
-	public Properties getCdaComponents();
-	
-	public List<IRepositoryFile> getComponentsFiles();
+  /**
+   * {@link FormulaContext} exposing parameters in CDA formulas.<br>
+   * Refer to implementations for available parameters.
+   */
+  public FormulaContext getFormulaContext();
 
-	public IEventPublisher getEventPublisher();
+  public Properties getCdaComponents();
 
-	public ISessionUtils getSessionUtils();
+  public IEventPublisher getEventPublisher();
 
-	public IRepositoryAccess getRepositoryAccess();
+  public ISessionUtils getSessionUtils();
 
-	public IDataAccessUtils getDataAccessUtils();
+  // public IRepositoryAccess getRepositoryAccess();
 
-	public IResourceKeyGetter getResourceKeyGetter();
+  public IDataAccessUtils getDataAccessUtils();
 
-	public IPluginCall createPluginCall(String plugin, String method, Map<String, Object> params);
-	
-	public boolean supportsCacheScheduler();
-	
-	public ICacheScheduleManager getCacheScheduler();
+  public IResourceKeyGetter getResourceKeyGetter();
+
+  // public IPluginCall createPluginCall(String plugin, String method, Map<String, Object> params);
+
+  public boolean supportsCacheScheduler();
+
+  public ICacheScheduleManager getCacheScheduler();
+
+  IContentAccessFactory getRepo();
 
 }

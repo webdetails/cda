@@ -39,9 +39,8 @@ import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
-import pt.webdetails.cpf.repository.IRepositoryAccess.FileAccess;
-import pt.webdetails.cpf.repository.IRepositoryAccess;
-import pt.webdetails.cpf.repository.IRepositoryFile;
+import pt.webdetails.cpf.PluginEnvironment;
+import pt.webdetails.cpf.repository.api.IReadAccess;
 
 /**
  * This file is responsible to build / keep the different cda settings.
@@ -139,15 +138,13 @@ public class SettingsManager {
    * @param savedFileTime 
    * @return null if not a file
    */
-  private Long getLastSaveTime(final String id) {
+  private long getLastSaveTime(final String id) {
     //check if it's a saved file and get its timestamp
-    IRepositoryAccess repository = CdaEngine.getEnvironment().getRepositoryAccess();
-    if (repository != null) {
-    	IRepositoryFile savedCda = repository.getRepositoryFile(id,FileAccess.NONE);
-    	if(savedCda != null && savedCda.exists()) return savedCda.getLastModified();
-    }
-
-    return null;
+    return getRepositoryAccess().getLastModified(id);
+  }
+  
+  private IReadAccess getRepositoryAccess() {
+    return PluginEnvironment.env().getContentAccessFactory().getUserContentAccess("/");
   }
   
   /**

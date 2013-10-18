@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="base-src"/>
+	<classpathentry kind="src" path="src-base"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/annogen-0.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/ant-1.7.1.jar"/>
@@ -191,7 +191,6 @@
 	<classpathentry kind="lib" path="lib/wsdl4j-1.6.2.jar"/>
 	<classpathentry kind="lib" path="lib/wsdl4j-qname-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/wstx-asl-3.2.4.jar"/>
-	<classpathentry kind="lib" path="lib/xalan-2.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl-2.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/xml-apis-1.3.04.jar"/>
 	<classpathentry kind="lib" path="lib/xml-apis-ext-1.3.04.jar"/>
@@ -209,9 +208,10 @@
 	<classpathentry kind="lib" path="lib/pentaho-bi-platform-engine-security-4.8.0-stable-sources.jar"/>
 	<classpathentry kind="lib" path="lib/pentaho-bi-platform-engine-services-4.8.0-stable-sources.jar"/>
 	<classpathentry kind="lib" path="runtime-lib/cda-core-TRUNK-SNAPSHOT.jar" sourcepath="/cda-core/src"/>
-	<classpathentry kind="lib" path="runtime-lib/cpf-core-TRUNK-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="runtime-lib/cpf-pentaho-TRUNK-SNAPSHOT.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/cda-core"/>
 	<classpathentry kind="lib" path="dev-lib/robochef-0.9.6.jar"/>
+	<classpathentry kind="lib" path="lib/xalan-2.6.0.jar"/>
+	<classpathentry kind="lib" path="runtime-lib/cpf-core-REFACTOR-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="runtime-lib/cpf-pentaho-REFACTOR-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

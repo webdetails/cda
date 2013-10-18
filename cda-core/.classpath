@@ -206,7 +206,6 @@
 	<classpathentry kind="lib" path="runtime-lib/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="runtime-lib/slf4j-api-1.5.8.jar"/>
 	<classpathentry kind="lib" path="runtime-lib/slf4j-log4j12-1.5.8.jar"/>
-	<classpathentry kind="lib" path="lib/cpf-core-TRUNK-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/hazelcast-2.5.jar"/>
 	<classpathentry kind="lib" path="lib/pentaho-bi-platform-api-4.8.0-stable-sources.jar"/>
 	<classpathentry kind="lib" path="lib/pentaho-bi-platform-engine-core-4.8.0-stable-sources.jar"/>
@@ -219,5 +218,6 @@
 	<classpathentry kind="lib" path="lib/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.5.8.jar"/>
 	<classpathentry kind="lib" path="lib/xalan-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/cpf-core-REFACTOR-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

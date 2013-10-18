@@ -44,6 +44,13 @@
     </antcall>
   </target>
 
+  <target name="resolve">
+    <antcall target="call">
+      <param name="target" value="resolve"/>
+      <param name="projects" value="${all.projects}"/>
+    </antcall>
+  </target>
+
   <target name="publish-local-core">
     <ant dir="${core.project}" antfile="build.xml" target="publish-local" inheritAll="false"/>
   </target>

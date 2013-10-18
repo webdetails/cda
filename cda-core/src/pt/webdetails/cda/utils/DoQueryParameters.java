@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 
 
 /**
@@ -80,10 +82,17 @@ public class DoQueryParameters {
      * @return the path
      */
     public String getPath() {
-        return path;
+      // legacy path support
+      if (!StringUtils.isEmpty(solution))
+      {
+        // legacy
+        return Util.joinPath(solution, path, file);
+      }
+      return path;
     }
 
     /**
+     * @deprecated
      * @param path the path to set
      */
     public void setPath(String path) {
@@ -91,13 +100,7 @@ public class DoQueryParameters {
     }
 
     /**
-     * @return the solution
-     */
-    public String getSolution() {
-        return solution;
-    }
-
-    /**
+     * @deprecated
      * @param solution the solution to set
      */
     public void setSolution(String solution) {
@@ -105,13 +108,7 @@ public class DoQueryParameters {
     }
 
     /**
-     * @return the file
-     */
-    public String getFile() {
-        return file;
-    }
-
-    /**
+     * @deprecated
      * @param file the file to set
      */
     public void setFile(String file) {

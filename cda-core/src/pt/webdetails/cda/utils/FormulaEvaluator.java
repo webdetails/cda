@@ -21,7 +21,6 @@ import org.pentaho.reporting.libraries.formula.FormulaContext;
 
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.dataaccess.InvalidParameterException;
-import pt.webdetails.cda.formula.ICdaCoreSessionFormulaContext;
 
 
 public class FormulaEvaluator {
@@ -34,7 +33,7 @@ public class FormulaEvaluator {
     
     if(!StringUtils.contains(text, FORMULA_BEGIN)) return text;
     try{
-      ICdaCoreSessionFormulaContext formulaContext = CdaEngine.getEnvironment().getFormulaContext();
+      FormulaContext formulaContext = CdaEngine.getEnvironment().getFormulaContext();
       
       return replaceFormula(text, formulaContext);
 
@@ -82,13 +81,9 @@ public class FormulaEvaluator {
 
       // set context if available
       if (formulaContext != null) {
-    	  formula.initialize(formulaContext);
-      } else {
-          ICdaCoreSessionFormulaContext formulaContext1 = CdaEngine.getEnvironment().getFormulaContext();
-          if (formulaContext1 != null) {
-        	  formula.initialize(formulaContext1);
-          }
+        formulaContext = CdaEngine.getEnvironment().getFormulaContext();
       }
+      formula.initialize(formulaContext);
 
       // evaluate
       Object result = formula.evaluate();

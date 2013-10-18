@@ -24,14 +24,17 @@ import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import pt.webdetails.cpf.http.ICommonParameterProvider;
+import org.pentaho.platform.api.engine.IParameterProvider;
+import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.engine.security.SecurityHelper;
+
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.cache.TableCacheKey;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.utils.framework.JsonCallHandler;
-import pt.webdetails.cpf.session.IUserSession;
 
+//
 public class CacheMonitorHandler extends JsonCallHandler 
 {
   
@@ -54,10 +57,10 @@ public class CacheMonitorHandler extends JsonCallHandler
     registerMethods();
   }
   
-  @Override
-  protected boolean hasPermission(IUserSession session, Method method) 
+
+  protected boolean hasPermission(IPentahoSession session, Method method) 
   {//limit all interaction besides overview to admin role
-    return method.getName().equals("cacheOverview") || session.isAdministrator();
+    return method.getName().equals("cacheOverview") || SecurityHelper.isPentahoAdministrator(session);
   }
   
   private void registerMethods()
@@ -68,7 +71,7 @@ public class CacheMonitorHandler extends JsonCallHandler
       /**
        * get all cached items for given cda file and data access id
        */
-      public JSONObject execute(ICommonParameterProvider params) throws JSONException, ExporterException, IOException {
+      public JSONObject execute(IParameterProvider params) throws JSONException, ExporterException, IOException {
         String cdaSettingsId = params.getStringParameter("cdaSettingsId", null);
         String dataAccessId = params.getStringParameter("dataAccessId", null);
         return listQueriesInCache(cdaSettingsId, dataAccessId);
@@ -80,7 +83,7 @@ public class CacheMonitorHandler extends JsonCallHandler
       /**
        * get details on a particular cached item
        */
-      public JSONObject execute(ICommonParameterProvider params) throws JSONException 
+      public JSONObject execute(IParameterProvider params) throws JSONException 
       {
         String cdaSettingsId = params.getStringParameter("cdaSettingsId", null);
         return getCachedQueriesOverview(cdaSettingsId);
@@ -92,7 +95,7 @@ public class CacheMonitorHandler extends JsonCallHandler
       /**
        * get details on a particular cached item
        */
-      public JSONObject execute(ICommonParameterProvider params) throws UnsupportedEncodingException, JSONException, ExporterException, IOException, ClassNotFoundException  
+      public JSONObject execute(IParameterProvider params) throws UnsupportedEncodingException, JSONException, ExporterException, IOException, ClassNotFoundException  
       {
         try{
           String encodedCacheKey=params.getStringParameter("key", null);
@@ -110,7 +113,7 @@ public class CacheMonitorHandler extends JsonCallHandler
       /**
        * Remove item from cache 
        */
-      public JSONObject execute(ICommonParameterProvider params) throws JSONException, UnsupportedEncodingException, IOException, ClassNotFoundException 
+      public JSONObject execute(IParameterProvider params) throws JSONException, UnsupportedEncodingException, IOException, ClassNotFoundException 
       {
         String serializedCacheKey = params.getStringParameter("key", null);
         return removeQueryFromCache(serializedCacheKey);
@@ -120,7 +123,7 @@ public class CacheMonitorHandler extends JsonCallHandler
     registerMethod("removeAll", new JsonCallHandler.Method() {
       
       @Override
-      public JSONObject execute(ICommonParameterProvider params) throws JSONException {
+      public JSONObject execute(IParameterProvider params) throws JSONException {
         String cdaSettingsId = params.getStringParameter("cdaSettingsId", null);
         String dataAccessId = params.getStringParameter("dataAccessId", null);
         return removeAll(cdaSettingsId, dataAccessId);
@@ -130,7 +133,7 @@ public class CacheMonitorHandler extends JsonCallHandler
     registerMethod("shutdown", new JsonCallHandler.Method() {
       
       @Override
-      public JSONObject execute(ICommonParameterProvider params) throws Exception {
+      public JSONObject execute(IParameterProvider params) throws Exception {
         AbstractDataAccess.shutdownCache();
         return getOKJson("Cache shutdown.");
       }

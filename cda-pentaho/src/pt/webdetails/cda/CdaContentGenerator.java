@@ -13,26 +13,28 @@
 
 package pt.webdetails.cda;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.pentaho.platform.api.engine.IParameterProvider;
-import org.pentaho.platform.api.repository.ISolutionRepository;
-import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 
 import pt.webdetails.cda.cache.CacheScheduleManager;
+import pt.webdetails.cda.cache.monitor.CacheMonitorHandler;
+import pt.webdetails.cda.services.CacheManager;
+import pt.webdetails.cda.services.Editor;
+import pt.webdetails.cda.services.Previewer;
 import pt.webdetails.cda.utils.DoQueryParameters;
 import pt.webdetails.cpf.SimpleContentGenerator;
 import pt.webdetails.cpf.annotations.AccessLevel;
 import pt.webdetails.cpf.annotations.Audited;
 import pt.webdetails.cpf.annotations.Exposed;
-import pt.webdetails.cpf.http.PentahoParameterProvider;
 
 
 public class CdaContentGenerator extends SimpleContentGenerator
@@ -41,19 +43,15 @@ public class CdaContentGenerator extends SimpleContentGenerator
   private static final long serialVersionUID = 1L;
   private static final String PREFIX_PARAMETER = "param";
   private static final String PREFIX_SETTING = "setting";
- 
 
-
-  
-  
   @Exposed(accessLevel = AccessLevel.PUBLIC)
   @Audited(action = "doQuery")
   public void doQuery(final OutputStream out) throws Exception
   {
 
-    SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession()));     
-    
-    
+    // XXX document why this is needed
+    //    SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession()));
+
     final IParameterProvider requestParams = getRequestParameters();
     DoQueryParameters parameters = new DoQueryParameters(
             (String)requestParams.getParameter("path"), 
@@ -70,6 +68,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
 
     Map<String, Object> extraParams = new HashMap<String, Object>();
     Map<String, Object> extraSettings = new HashMap<String, Object>();
+    @SuppressWarnings("unchecked")
     final Iterator<String> params = (Iterator<String>) requestParams.getParameterNames();
     while (params.hasNext())
     {
@@ -146,21 +145,28 @@ public class CdaContentGenerator extends SimpleContentGenerator
   public void getCdaFile(final OutputStream out) throws Exception
   {
     final IParameterProvider requestParams = getRequestParameters();
-    CdaCoreService service = new CdaCoreService();
-    //TO DO - Add the path, solution, file
-    service.getCdaFile(out, requestParams.getStringParameter("path", ""),new ResponseTypeHandler(getResponse()));        
+    // XXX return Json
+    String repoPath = requestParams.getStringParameter("path", null);
+    String result = getEditor().getFile( repoPath );
+    writeOut( out, result );
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.PLAIN_TEXT)
+  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.JSON)
   public void writeCdaFile(OutputStream out) throws Exception
   {
     
     final IParameterProvider requestParams = getRequestParameters();
-    CdaCoreService service = new CdaCoreService();
-    service.writeCdaFile(out, requestParams.getStringParameter("path", ""), 
-            (String)requestParams.getParameter("solution"),
-            (String)requestParams.getParameter("file"),
-            (String) requestParams.getParameter("data"));
+    String path = getPath( requestParams );
+    String data = requestParams.getStringParameter("data", null);
+    if ( data == null ) {
+      throw new IllegalArgumentException( "data" );
+    }
+    if ( StringUtils.isEmpty( path ) ) {
+      throw new IllegalArgumentException( "path" );
+    }
+    boolean result = getEditor().writeFile( path, data );
+    writeOut ( out, "" + result );
+    //FIXME write success/failure json
   }
 
   @Exposed(accessLevel = AccessLevel.PUBLIC)
@@ -180,21 +186,12 @@ public class CdaContentGenerator extends SimpleContentGenerator
   
   @Exposed(accessLevel = AccessLevel.ADMIN)
   public void cacheMonitor(final OutputStream out) throws Exception{
-    CdaCoreService service = new CdaCoreService();
-    
+    //XXX
     IParameterProvider parameters = getRequestParameters();
-    service.cacheMonitor(out, parameters.getStringParameter("method", ""), 
-            new PentahoParameterProvider(parameters));
+    String method = parameters.getStringParameter("method", null);
+    CacheMonitorHandler.getInstance().handleCall(method, parameters, out);
+
   }
-
-
-  public void syncronize(final IParameterProvider pathParams, final OutputStream out) throws Exception
-  {
-    throw new UnsupportedOperationException("Feature not implemented yet");
-//    final SyncronizeCdfStructure syncCdfStructure = new SyncronizeCdfStructure();
-//    syncCdfStructure.syncronize(userSession, out, pathParams);
-  }
-
 
   @Override
   public Log getLogger()
@@ -202,28 +199,26 @@ public class CdaContentGenerator extends SimpleContentGenerator
     return logger;
   }
 
-
-
-
-  
-  @Exposed(accessLevel = AccessLevel.PUBLIC)
+  @Exposed(accessLevel = AccessLevel.PUBLIC,  outputType = MimeType.HTML)
   public void editFile(final OutputStream out) throws Exception
   {
-    CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(getResponse()));
-    coreService.editFile(out, (String)getRequestParameters().getParameter("path"),
-                        (String)getRequestParameters().getParameter("solution"),
-            (String)getRequestParameters().getParameter("file"),
-            new ResponseTypeHandler(getResponse())
-            );
+    String path = getPath(getRequestParameters());
+    InputStream editorSrc = null;
+    try {
+      editorSrc = getEditor().getEditor(path);
+      IOUtils.copy( editorSrc, out );
+    } 
+    finally {
+      IOUtils.closeQuietly( editorSrc );
+    }
   }
 
   @Exposed(accessLevel = AccessLevel.PUBLIC)
   public void previewQuery(final OutputStream out) throws Exception
   {
-    CdaCoreService service = new CdaCoreService();
-    service.previewQuery(out,new ResponseTypeHandler(getResponse()));
+    Previewer previewer = new Previewer();
+    writeOut(out, previewer.previewQuery());
   }
-
 
   @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.CSS)
   public void getCssResource(final OutputStream out) throws Exception
@@ -238,7 +233,6 @@ public class CdaContentGenerator extends SimpleContentGenerator
     CdaCoreService service = new CdaCoreService();
     service.getJsResource(out, getRequestParameters().getStringParameter("resource", null));
   }
-
 
   @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.JSON)
   public void listDataAccessTypes(final OutputStream out) throws Exception
@@ -261,17 +255,28 @@ public class CdaContentGenerator extends SimpleContentGenerator
   @Exposed(accessLevel = AccessLevel.ADMIN)
   public void manageCache(final OutputStream out) throws Exception
   {
-    CdaCoreService coreService = new CdaCoreService();
-    coreService.manageCache(out,new ResponseTypeHandler(getResponse()));            
+    CacheManager cacheMan = new CacheManager();
+    writeOut(out, cacheMan.manageCache());
   }
-  
-  
-  
-  
-
 
   @Override
   public String getPluginName() {
     return "cda";
+  }
+
+  private Editor getEditor() {
+    return new Editor();
+  }
+
+  private DoQueryParameters getParamsWithPath(IParameterProvider requestParams) {
+    return new DoQueryParameters(
+        (String)requestParams.getParameter("path"), 
+        (String)requestParams.getParameter("solution"), 
+        (String)requestParams.getParameter("file"));
+  }
+
+  private String getPath( IParameterProvider requestParams ) {
+    DoQueryParameters parameters = getParamsWithPath(requestParams);
+    return parameters.getPath();
   }
 }

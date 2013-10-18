@@ -25,11 +25,11 @@
     <dependency org="com.hazelcast" name="hazelcast" transitive="false" rev="2.5" conf="default->default;legacy->default"/>
 
       <dependency org="pt.webdetails" name="cpf-core"
-          rev="TRUNK-SNAPSHOT" transitive="false" changing="true" conf='runtime->default'/>
+          rev="REFACTOR-SNAPSHOT" transitive="false" changing="true" conf='runtime->default'/>
 
 
       <dependency org="pt.webdetails" name="cpf-pentaho"
-          rev="TRUNK-SNAPSHOT" transitive="false" changing="true" conf='runtime->default'/>
+          rev="REFACTOR-SNAPSHOT" transitive="false" changing="true" conf='runtime->default'/>
 
       <dependency org="pentaho" name="cda-core" rev="TRUNK-SNAPSHOT" changing="true" transitive="false" conf="runtime->default"/>
 

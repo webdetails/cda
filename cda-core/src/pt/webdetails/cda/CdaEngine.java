@@ -14,6 +14,7 @@
 package pt.webdetails.cda;
 
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
+import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 
 import pt.webdetails.cda.dataaccess.QueryException;
 import pt.webdetails.cda.discovery.DiscoveryOptions;
@@ -33,7 +35,12 @@ import pt.webdetails.cda.exporter.UnsupportedExporterException;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
-import pt.webdetails.cda.utils.SolutionRepositoryUtils;
+import pt.webdetails.cpf.PluginEnvironment;
+import pt.webdetails.cpf.repository.api.IBasicFile;
+import pt.webdetails.cpf.repository.api.IBasicFileFilter;
+import pt.webdetails.cpf.repository.api.IContentAccessFactory;
+import pt.webdetails.cpf.repository.api.IReadAccess;
+import pt.webdetails.cpf.repository.api.IUserContentAccess;
 
 /**
  * Main engine class that will answer to calls
@@ -52,6 +59,42 @@ public class CdaEngine
 
   //TODO: we have to clean this at some point or at least make it a reference map
   private Map<UUID, QueryOptions> wrappedQueries = new ConcurrentHashMap<UUID, QueryOptions>();
+
+  public static synchronized CdaEngine getInstance()
+  {
+
+    if (_instance == null)
+    {
+      try {
+        init();
+      } catch (InitializationException ie) {
+        logger.fatal("Initialization failed. CDA will NOT be available", ie);
+      }
+    }
+
+    return _instance;
+  }
+  
+  public synchronized static void init() throws InitializationException //TODO: public?!
+  {
+      init(null); 
+  }
+  public synchronized static void init(ICdaEnvironment env) throws InitializationException {
+    if (!isInitialized()) {
+      // try to get the environment from the configuration
+      // will return the DefaultCdaEnvironment by default
+      if (env == null) env = getConfiguredEnvironment();
+
+      if (env == null) env = new BaseCdaEnvironment();
+
+      _instance = new CdaEngine(env);
+
+      // Start ClassicEngineBoot
+      CdaBoot.getInstance().start();
+      ClassicEngineBoot.getInstance().start();
+    }
+
+  }
 
   protected CdaEngine(ICdaEnvironment env) throws InitializationException
   {
@@ -125,12 +168,33 @@ public class CdaEngine
   }
 
 
+  /**
+   * Search every CDA cda file in the repository. 
+   */
   public void getCdaList(final OutputStream out, final DiscoveryOptions discoveryOptions) throws UnsupportedExporterException, ExporterException
   {
 
-    final TableModel tableModel = SolutionRepositoryUtils.getInstance().getCdaList();
+    IUserContentAccess userRepo = PluginEnvironment.env().getContentAccessFactory().getUserContentAccess("/");
+    List<IBasicFile> cdaFiles = userRepo.listFiles("", new IBasicFileFilter() {
+      public boolean accept(IBasicFile file) {
+        return StringUtils.equals(file.getExtension(), "cda");
+      }
+    }, IReadAccess.DEPTH_ALL, false) ;
 
-    ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).export(out, tableModel);
+
+    final int rowCount = cdaFiles.size();
+
+    // Define names and types
+    final String[] colNames = {"name", "path"};
+    final Class<?>[] colTypes = {String.class, String.class};
+    final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
+
+    for (IBasicFile file : cdaFiles)
+    {
+      typedTableModel.addRow(new Object[]{file.getName(), file.getFullPath()});
+    }
+
+    ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).export(out, typedTableModel);
 
   }
 
@@ -171,53 +235,24 @@ public class CdaEngine
 	  return environment;
   }
   
+  
+  
   public static boolean isInitialized()
   {
     return _instance != null;
   }
 
-  public static void init() throws InitializationException
-  {
-	  init(null);
-  }
-
-  public static void init(ICdaEnvironment env) throws InitializationException
-  {
-	  if (!isInitialized()) {
-		  // try to get the environment from the configuration
-		  // will return the DefaultCdaEnvironment by default
-		  if (env == null)
-			  env = getConfiguredEnvironment();
-
-		  if (env == null)
-			  env = new DefaultCdaEnvironment();
-		  
-		  _instance = new CdaEngine(env);
 
 
-		  // Start ClassicEngineBoot
-		  CdaBoot.getInstance().start();
-		  ClassicEngineBoot.getInstance().start();
-	  }
 
+  
+  public static IContentAccessFactory getRepo() {
+    return PluginEnvironment.env().getContentAccessFactory();
   }
   
   public static synchronized ICdaEnvironment getEnvironment() {
 	  return getInstance().getEnv();
   }
   
-  public static synchronized CdaEngine getInstance()
-  {
 
-    if (_instance == null)
-    {
-      try {
-        init();
-      } catch (InitializationException ie) {
-        logger.fatal("Initialization failed. CDA will NOT be available", ie);
-      }
-    }
-
-    return _instance;
-  }
 }

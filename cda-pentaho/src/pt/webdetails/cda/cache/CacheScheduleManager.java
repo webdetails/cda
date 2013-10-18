@@ -34,8 +34,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.engine.core.system.StandaloneSession;
+//import org.pentaho.platform.api.engine.IPentahoSession;
+//import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.quartz.CronExpression;
 import pt.webdetails.cda.CdaBoot;
@@ -61,7 +61,7 @@ public class CacheScheduleManager
   enum functions
   {
     LIST, CHANGE, RELOAD, DELETE, PERSIST, MONITOR, DETAILS, TEST, EXECUTE, IMPORT, 
-    CACHED, GETDETAILS, CACHEOVERVIEW, REMOVECACHE
+//    CACHED, GETDETAILS, CACHEOVERVIEW, REMOVECACHE
   }
   
   private static CacheScheduleManager _instance;
@@ -85,7 +85,6 @@ public class CacheScheduleManager
 
   public void handleCall(final String method,final String obj, OutputStream out)
   {
-    //String method = requestParams.getParameter("method").toString();
     try
     {
       switch (functions.valueOf(method.toUpperCase()))
@@ -107,6 +106,9 @@ public class CacheScheduleManager
           break;
         case IMPORT:
           importQueries(obj, out);
+          break;
+        default:
+          logger.error( "Unhandled method " + method );
           break;
       }
     }
@@ -166,32 +168,32 @@ public class CacheScheduleManager
     s.close();
   }
 
+//
+//  private void monitor(IParameterProvider requestParams, OutputStream out)
+//  {
+//    return; //NYI!
+//  }
 
-  private void monitor(IParameterProvider requestParams, OutputStream out)
-  {
-    return; //NYI!
-  }
 
-
-  private void persist(IParameterProvider requestParams, OutputStream out) throws Exception
-  {
-
-    Long id = Long.decode(requestParams.getParameter("id").toString());
-    Session s = getHibernateSession();
-    s.beginTransaction();
-
-    UncachedQuery uq = (UncachedQuery) s.load(UncachedQuery.class, id);
-    CachedQuery cq = uq.cacheMe();
-    if (uq != null)
-    {
-      s.delete(s);
-    }
-    JSONObject json = uq.toJSON();
-    out.write(json.toString(2).getBytes(ENCODING));
-    s.flush();
-    s.getTransaction().commit();
-    s.close();
-  }
+//  private void persist(IParameterProvider requestParams, OutputStream out) throws Exception
+//  {
+//
+//    Long id = Long.decode(requestParams.getParameter("id").toString());
+//    Session s = getHibernateSession();
+//    s.beginTransaction();
+//
+//    UncachedQuery uq = (UncachedQuery) s.load(UncachedQuery.class, id);
+//    CachedQuery cq = uq.cacheMe();
+//    if (uq != null)
+//    {
+//      s.delete(s);
+//    }
+//    JSONObject json = uq.toJSON();
+//    out.write(json.toString(2).getBytes(ENCODING));
+//    s.flush();
+//    s.getTransaction().commit();
+//    s.close();
+//  }
 
 
   public void called(String file, String id, Boolean hit)
@@ -232,13 +234,15 @@ public class CacheScheduleManager
     JSONTokener jsonTokener = new JSONTokener(jsonString);
     try
     {
-      Query q;
+      Query query;
       JSONObject json = new JSONObject(jsonTokener);
       if (json.has("cronString"))
       {
         String cronString = json.getString("cronString");
         try
         {
+          // test if parses ok
+          @SuppressWarnings( "unused" )
           CronExpression ce = new CronExpression(cronString);
         }
         catch (Exception e)
@@ -247,24 +251,24 @@ public class CacheScheduleManager
           out.write("{\"status\": \"error\", \"message\": \"failed to parse Cron String\"}".getBytes(ENCODING));
           return;
         }
-        q = new CachedQuery(json);
-        if (q != null)
+        query = new CachedQuery(json);
+        if (query != null)
         {
-          queue.add((CachedQuery) q);
+          queue.add((CachedQuery) query);
           CacheActivator.reschedule(queue);
         }
       }
       else
       {
-        q = new UncachedQuery(json);
+        query = new UncachedQuery(json);
       }
 
-      Session s = getHibernateSession();
-      s.beginTransaction();
-      s.save(q);
-      s.flush();
-      s.getTransaction().commit();
-      s.close();
+      Session session = getHibernateSession();
+      session.beginTransaction();
+      session.save(query);
+      session.flush();
+      session.getTransaction().commit();
+      session.close();
 
     }
     catch (JSONException jse)
@@ -282,10 +286,12 @@ public class CacheScheduleManager
     JSONObject meta = new JSONObject();
     JSONArray queries = new JSONArray();
     Session s = getHibernateSession();
-    List l = s.createQuery("from CachedQuery").list();
-    for (Object o : l)
+
+    @SuppressWarnings( "unchecked" )
+    List<CachedQuery> cachedQueries = s.createQuery("from CachedQuery").list();
+    for (CachedQuery query : cachedQueries)
     {
-      queries.put(((Query) o).toJSON());
+      queries.put(query.toJSON());
     }
     try
     {
@@ -438,11 +444,11 @@ public class CacheScheduleManager
     Session s = getHibernateSession();
     s.beginTransaction();
 
-    List l = s.createQuery("from CachedQuery").list();
+    @SuppressWarnings( "unchecked" )
+    List<CachedQuery> cachedQueries = s.createQuery("from CachedQuery").list();
     this.queue = new PriorityQueue<CachedQuery>(20, new SortByTimeDue());
-    for (Object o : l)
+    for (CachedQuery cq : cachedQueries)
     {
-      CachedQuery cq = (CachedQuery) o;
       if (cq.getLastExecuted() == null)
       {
         cq.setLastExecuted(new Date(0L));
@@ -506,10 +512,11 @@ public class CacheScheduleManager
     String executeAtStart = config.getConfigProperty("pt.webdetails.cda.cache.executeAtStart");
     if (executeAtStart.equals("true"))
     {
-      IPentahoSession session = new StandaloneSession("CDA");
+//      IPentahoSession session = new StandaloneSession("CDA");
 
       // run all queries
       Session s = getHibernateSession();
+      @SuppressWarnings( "unchecked" )
       List<CachedQuery> cachedQueries = s.createQuery("from CachedQuery").list();
       for (CachedQuery cq : cachedQueries)
       {

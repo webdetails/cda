@@ -16,8 +16,6 @@ package pt.webdetails.cda.endpoints;
 
 import java.io.OutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Iterator;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 
@@ -26,7 +24,6 @@ import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 
 import java.util.List;
 
-import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -38,12 +35,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import pt.webdetails.cda.CdaCoreService;
 import pt.webdetails.cda.utils.DoQueryParameters;
-import pt.webdetails.cpf.http.CommonParameterProvider;
-import pt.webdetails.cpf.http.ICommonParameterProvider;
 import pt.webdetails.cda.ResponseTypeHandler;
 
 @Path("/cda/api/utils")
@@ -64,7 +61,7 @@ public class RestEndpoint {
   public static final String ENCODING = "UTF-8";
   
   
- 
+  private static Log logger = LogFactory.getLog(RestEndpoint.class);
   
   protected static String getEncoding() { return ENCODING; }
   
@@ -157,38 +154,38 @@ public class RestEndpoint {
   }
   
   
-  @GET
-  @Path("/getCdaFile")
-  @Produces("text/xml")
-  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
-  public void getCdaFile(@QueryParam("path") String path, 
-                         @QueryParam("solution") String solution, 
-                         @QueryParam("file") String file,
-                            
-                         @Context HttpServletResponse servletResponse, 
-                         @Context HttpServletRequest servletRequest) throws Exception
-  {
-      CdaCoreService coreService = new CdaCoreService();
-      coreService.getCdaFile(servletResponse.getOutputStream(), path,new ResponseTypeHandler(servletResponse));
-      
-  }
+//  @GET
+//  @Path("/getCdaFile")
+//  @Produces("text/xml")
+//  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
+//  public void getCdaFile(@QueryParam("path") String path, 
+//                         @QueryParam("solution") String solution, 
+//                         @QueryParam("file") String file,
+//                            
+//                         @Context HttpServletResponse servletResponse, 
+//                         @Context HttpServletRequest servletRequest) throws Exception
+//  {
+//      CdaCoreService coreService = new CdaCoreService();
+//      coreService.getCdaFile(servletResponse.getOutputStream(), path,new ResponseTypeHandler(servletResponse));
+//      
+//  }
   
-  
-  @GET
-  @Path("/writeCdaFile")
-  @Produces("text/plain")
-  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
-  public void writeCdaFile(@QueryParam("path") String path, 
-                           @QueryParam("solution") String solution, 
-                           @QueryParam("file") String file,
-                           @QueryParam("data") String data,
-                            
-                           @Context HttpServletResponse servletResponse, 
-                           @Context HttpServletRequest servletRequest) throws Exception
-  {  
-      CdaCoreService coreService = new CdaCoreService();
-      coreService.writeCdaFile(servletResponse.getOutputStream(), path,solution,file, data);
-  }
+//  
+//  @GET
+//  @Path("/writeCdaFile")
+//  @Produces("text/plain")
+//  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
+//  public void writeCdaFile(@QueryParam("path") String path, 
+//                           @QueryParam("solution") String solution, 
+//                           @QueryParam("file") String file,
+//                           @QueryParam("data") String data,
+//                            
+//                           @Context HttpServletResponse servletResponse, 
+//                           @Context HttpServletRequest servletRequest) throws Exception
+//  {  
+//      CdaCoreService coreService = new CdaCoreService();
+//      coreService.writeCdaFile(servletResponse.getOutputStream(), path,solution,file, data);
+//  }
   
   @GET
   @Path("/getCdaList")
@@ -205,60 +202,60 @@ public class RestEndpoint {
       coreService.getCdaList(servletResponse.getOutputStream(), outputType);
   }
 
-  @GET
-  @Path("/clearCache")
-  @Produces("text/plain")
-  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
-  public void clearCache(@Context HttpServletResponse servletResponse, 
-                         @Context HttpServletRequest servletRequest) throws Exception
-  {
-      CdaCoreService coreService = new CdaCoreService();
-      coreService.clearCache(servletResponse.getOutputStream());
-  }
+//  @GET
+//  @Path("/clearCache")
+//  @Produces("text/plain")
+//  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
+//  public void clearCache(@Context HttpServletResponse servletResponse, 
+//                         @Context HttpServletRequest servletRequest) throws Exception
+//  {
+//      CdaCoreService coreService = new CdaCoreService();
+//      coreService.clearCache(servletResponse.getOutputStream());
+//  }
   
-  @GET
-  @Path("/cacheMonitor")
-  @Produces("text/plain")
-  @Consumes({ APPLICATION_XML, APPLICATION_JSON, APPLICATION_FORM_URLENCODED })
-  public void cacheMonitor(@QueryParam("method") String method,
-                           @Context HttpServletResponse servletResponse, 
-                           @Context HttpServletRequest servletRequest) throws Exception{
-      Map parameters = servletRequest.getParameterMap();
-      ICommonParameterProvider requParam= new CommonParameterProvider();
-      Iterator it = parameters.entrySet().iterator();
-      while(it.hasNext())
-      {
-          Map.Entry e = (Map.Entry)it.next();
-          requParam.put((String)e.getKey(), e.getValue());
-      }
-      CdaCoreService coreService = new CdaCoreService();
-      coreService.cacheMonitor(servletResponse.getOutputStream(), method, requParam);
-  }
+//  @GET
+//  @Path("/cacheMonitor")
+//  @Produces("text/plain")
+//  @Consumes({ APPLICATION_XML, APPLICATION_JSON, APPLICATION_FORM_URLENCODED })
+//  public void cacheMonitor(@QueryParam("method") String method,
+//                           @Context HttpServletResponse servletResponse, 
+//                           @Context HttpServletRequest servletRequest) throws Exception{
+//      Map parameters = servletRequest.getParameterMap();
+//      ICommonParameterProvider requParam= new CommonParameterProvider();
+//      Iterator it = parameters.entrySet().iterator();
+//      while(it.hasNext())
+//      {
+//          Map.Entry e = (Map.Entry)it.next();
+//          requParam.put((String)e.getKey(), e.getValue());
+//      }
+//      CdaCoreService coreService = new CdaCoreService();
+//      coreService.cacheMonitor(servletResponse.getOutputStream(), method, requParam);
+//  }
   
   
-  @GET
-  @Path("/editFile")
-  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
-  public void editFile(@QueryParam("path") String path, 
-                       @QueryParam("solution") String solution, 
-                       @QueryParam("file") String file,
-                       
-                       @Context HttpServletResponse servletResponse, 
-                       @Context HttpServletRequest servletRequest) throws Exception
-  {
-      CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(servletResponse));
-      coreService.editFile(servletResponse.getOutputStream(), path,solution,file,new ResponseTypeHandler(servletResponse));
-   }
+//  @GET
+//  @Path("/editFile")
+//  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
+//  public void editFile(@QueryParam("path") String path, 
+//                       @QueryParam("solution") String solution, 
+//                       @QueryParam("file") String file,
+//                       
+//                       @Context HttpServletResponse servletResponse, 
+//                       @Context HttpServletRequest servletRequest) throws Exception
+//  {
+//      CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(servletResponse));
+//      coreService.editFile(servletResponse.getOutputStream(), path,solution,file,new ResponseTypeHandler(servletResponse));
+//   }
 
-  @GET
-  @Path("/previewQuery")
-  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
-  public void previewQuery(@Context HttpServletResponse servletResponse, 
-                           @Context HttpServletRequest servletRequest) throws Exception
-  {
-      CdaCoreService coreService = new CdaCoreService();
-       coreService.previewQuery(servletResponse.getOutputStream(),new ResponseTypeHandler(servletResponse));
-  }
+//  @GET
+//  @Path("/previewQuery")
+//  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
+//  public void previewQuery(@Context HttpServletResponse servletResponse, 
+//                           @Context HttpServletRequest servletRequest) throws Exception
+//  {
+//    //TODO: moved out!
+//    logger.error("previewer has been moved, blame tgf!");
+//  }
 
   @GET
   @Path("/getCssResource")
@@ -299,20 +296,20 @@ public class RestEndpoint {
       coreService.listDataAccessTypes(servletResponse.getOutputStream(), refreshCache);
   }
 
-  @GET
-  @Path("/cacheController")
-  @Produces("text/plain")
-  @Consumes({ APPLICATION_XML, APPLICATION_JSON, APPLICATION_FORM_URLENCODED })
-  public void cacheController(@QueryParam("method") String method,
-                              @QueryParam("object") String object,
-                              @QueryParam("id") String id,
-  
-                              @Context HttpServletResponse servletResponse, 
-                              @Context HttpServletRequest servletRequest) throws IOException
-  {
-      CdaCoreService coreService = new CdaCoreService();
-      coreService.cacheController(servletResponse.getOutputStream(), method, id);
-  }
+//  @GET
+//  @Path("/cacheController")
+//  @Produces("text/plain")
+//  @Consumes({ APPLICATION_XML, APPLICATION_JSON, APPLICATION_FORM_URLENCODED })
+//  public void cacheController(@QueryParam("method") String method,
+//                              @QueryParam("object") String object,
+//                              @QueryParam("id") String id,
+//  
+//                              @Context HttpServletResponse servletResponse, 
+//                              @Context HttpServletRequest servletRequest) throws IOException
+//  {
+//      CdaCoreService coreService = new CdaCoreService();
+//      coreService.cacheController(servletResponse.getOutputStream(), method, id);
+//  }
 
   @GET
   @Path("/manageCache")
@@ -321,20 +318,22 @@ public class RestEndpoint {
   public void manageCache(@Context HttpServletResponse servletResponse, 
                           @Context HttpServletRequest servletRequest) throws Exception
   {
-      CdaCoreService coreService = new CdaCoreService();
-      coreService.manageCache(servletResponse.getOutputStream(),new ResponseTypeHandler(servletResponse));
+    //FIXME
+    throw new NotImplementedException("no cache manager yet");
+//      CdaCoreService coreService = new CdaCoreService();
+//      coreService.manageCache(servletResponse.getOutputStream(),new ResponseTypeHandler(servletResponse));
   }
   
-  //XXX could use this getRelativePath instead of the one in CoreService?
-  private String getRelativePath(String solution, String path, String file) throws UnsupportedEncodingException
-  {
-    if (StringUtils.isEmpty(solution))
-    {
-      return path;
-    }
-
-    return StringUtils.join(new String[] {solution, path, file}, "/" ).replaceAll("//", "/");
-  }
+//  //XXX could use this getRelativePath instead of the one in CoreService?
+//  private String getRelativePath(String solution, String path, String file) throws UnsupportedEncodingException
+//  {
+//    if (StringUtils.isEmpty(solution))
+//    {
+//      return path;
+//    }
+//
+//    return StringUtils.join(new String[] {solution, path, file}, "/" ).replaceAll("//", "/");
+//  }
   
   protected void writeOut(OutputStream out, String contents) throws IOException {
       IOUtils.write(contents, out, getEncoding());

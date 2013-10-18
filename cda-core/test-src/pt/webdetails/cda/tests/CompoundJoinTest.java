@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.BeforeClass;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.CoreBeanFactory;
-import pt.webdetails.cda.DefaultCdaEnvironment;
+import pt.webdetails.cda.BaseCdaEnvironment;
 import pt.webdetails.cda.InitializationException;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
@@ -49,7 +49,7 @@ public class CompoundJoinTest
   @BeforeClass
   public static void setUp() throws InitializationException{
       CoreBeanFactory cbf = new CoreBeanFactory("cda.spring.xml");
-      DefaultCdaEnvironment env = new DefaultCdaEnvironment(cbf);
+      BaseCdaEnvironment env = new BaseCdaEnvironment(cbf);
       CdaEngine.init(env);
   }
   

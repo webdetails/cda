@@ -13,11 +13,17 @@
 
 package pt.webdetails.cda;
 
+import org.pentaho.reporting.libraries.formula.FormulaContext;
+
 import pt.webdetails.cda.cache.IQueryCache;
+import pt.webdetails.cda.settings.IResourceKeyGetter;
+import pt.webdetails.cda.settings.PentahoResourceKeyGetter;
 import pt.webdetails.cda.utils.framework.PluginUtils;
+import pt.webdetails.cpf.PentahoPluginEnvironment;
+import pt.webdetails.cpf.repository.api.IContentAccessFactory;
 
 
-public class PentahoCdaEnvironment extends DefaultCdaEnvironment {
+public class PentahoCdaEnvironment extends BaseCdaEnvironment {
 
   public PentahoCdaEnvironment() throws InitializationException {
     super();
@@ -41,5 +47,22 @@ public class PentahoCdaEnvironment extends DefaultCdaEnvironment {
     }
 
     return super.getQueryCache();
+  }
+
+  public IContentAccessFactory getRepo() {
+    return PentahoPluginEnvironment.repository();
+  }
+
+  /**
+   * @return {@link CdaSessionFormulaContext}
+   */
+  @Override
+  public FormulaContext getFormulaContext() {
+    return new CdaSessionFormulaContext();
+  }
+
+  @Override
+  public IResourceKeyGetter getResourceKeyGetter() {
+    return new PentahoResourceKeyGetter();
   }
 }
