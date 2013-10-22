@@ -7,8 +7,7 @@ package pt.webdetails.cda;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.*;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
@@ -19,7 +18,6 @@ import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -32,6 +30,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.core.Context;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.MultivaluedMap;
 
 
 import org.apache.commons.io.IOUtils;
@@ -87,147 +86,138 @@ public class CdaUtils {
   protected static String getEncoding() { return ENCODING; }
   
   @POST
-  @Path("/doQuery")
-  @Consumes({ APPLICATION_XML, APPLICATION_JSON, APPLICATION_FORM_URLENCODED })
-  public void doQueryPost(@FormParam("path") String path, 
-                      @DefaultValue("json") @FormParam("outputType") String outputType, 
-                      @DefaultValue("1") @FormParam("outputIndexId") int outputIndexId, 
-                      @DefaultValue("1") @FormParam("dataAccessId") String dataAccessId, 
-                      @DefaultValue("false") @FormParam("bypassCache") Boolean bypassCache, 
-                      @DefaultValue("false") @FormParam("paginateQuery") Boolean paginateQuery, 
-                      @DefaultValue("0") @FormParam("pageSize") int pageSize,
-                      @DefaultValue("0") @FormParam("pageStart") int pageStart, 
-                      @DefaultValue("false") @FormParam("wrapItUp") Boolean wrapItUp, 
-                      @FormParam("sortBy") List<String> sortBy, 
-                      
-                      @Context HttpServletResponse servletResponse, 
-                      @Context HttpServletRequest servletRequest) throws Exception
-  {
-    handleDoQuery(path, outputType, outputIndexId, dataAccessId, bypassCache, paginateQuery, pageSize, pageStart, wrapItUp, sortBy, servletResponse, servletRequest);
+  @Path( "/doQuery" )
+  @Consumes( { APPLICATION_XML, APPLICATION_JSON, APPLICATION_FORM_URLENCODED } )
+  public void doQueryPost( @FormParam( "path" ) String path,
+      @DefaultValue( "json" ) @FormParam( "outputType" ) String outputType,
+      @DefaultValue( "1" ) @FormParam( "outputIndexId" ) int outputIndexId,
+      @DefaultValue( "1" ) @FormParam( "dataAccessId" ) String dataAccessId,
+      @DefaultValue( "false" ) @FormParam( "bypassCache" ) Boolean bypassCache,
+      @DefaultValue( "false" ) @FormParam( "paginateQuery" ) Boolean paginateQuery,
+      @DefaultValue( "0" ) @FormParam( "pageSize" ) int pageSize,
+      @DefaultValue( "0" ) @FormParam( "pageStart" ) int pageStart,
+      @DefaultValue( "false" ) @FormParam( "wrapItUp" ) Boolean wrapItUp, @FormParam( "sortBy" ) List<String> sortBy,
+      MultivaluedMap<String, String> formParams, @Context HttpServletResponse servletResponse ) throws Exception {
+
+    HashMap<String, Object> params = new HashMap<String, Object>();
+
+    for ( Map.Entry<String, List<String>> pair : formParams.entrySet() ) {
+      if( pair.getValue().size() == 1) {
+        params.put( pair.getKey(), pair.getValue().get(0) ); //assigns the value
+      } else {
+        params.put( pair.getKey(), pair.getValue().toArray() ); //assigns the array
+      }
+    }
+
+    handleDoQuery( path, outputType, outputIndexId, dataAccessId, bypassCache, paginateQuery, pageSize, pageStart,
+        wrapItUp, sortBy, params, servletResponse );
   }
-  
   
   @GET
-  @Path("/doQuery")
-  @Consumes({ APPLICATION_XML, APPLICATION_JSON, APPLICATION_FORM_URLENCODED })
-  public void doQueryGet(@QueryParam("path") String path, 
-                      @DefaultValue("json") @QueryParam("outputType") String outputType, 
-                      @DefaultValue("1") @QueryParam("outputIndexId") int outputIndexId, 
-                      @DefaultValue("1") @QueryParam("dataAccessId") String dataAccessId, 
-                      @DefaultValue("false") @QueryParam("bypassCache") Boolean bypassCache, 
-                      @DefaultValue("false") @QueryParam("paginateQuery") Boolean paginateQuery, 
-                      @DefaultValue("0") @QueryParam("pageSize") int pageSize,
-                      @DefaultValue("0") @QueryParam("pageStart") int pageStart, 
-                      @DefaultValue("false") @QueryParam("wrapItUp") Boolean wrapItUp, 
-                      @QueryParam("sortBy") List<String> sortBy, 
-                      
-                      @Context HttpServletResponse servletResponse, 
-                      @Context HttpServletRequest servletRequest) throws Exception
-  {
-    handleDoQuery(path, outputType, outputIndexId, dataAccessId, bypassCache, paginateQuery, pageSize, pageStart, wrapItUp, sortBy, servletResponse, servletRequest);
+  @Path( "/doQuery" )
+  @Consumes( { APPLICATION_XML, APPLICATION_JSON, APPLICATION_FORM_URLENCODED } )
+  public void doQueryGet( @QueryParam( "path" ) String path,
+      @DefaultValue( "json" ) @QueryParam( "outputType" ) String outputType,
+      @DefaultValue( "1" ) @QueryParam( "outputIndexId" ) int outputIndexId,
+      @DefaultValue( "1" ) @QueryParam( "dataAccessId" ) String dataAccessId,
+      @DefaultValue( "false" ) @QueryParam( "bypassCache" ) Boolean bypassCache,
+      @DefaultValue( "false" ) @QueryParam( "paginateQuery" ) Boolean paginateQuery,
+      @DefaultValue( "0" ) @QueryParam( "pageSize" ) int pageSize,
+      @DefaultValue( "0" ) @QueryParam( "pageStart" ) int pageStart,
+      @DefaultValue( "false" ) @QueryParam( "wrapItUp" ) Boolean wrapItUp, @QueryParam( "sortBy" ) List<String> sortBy,
+      @Context HttpServletResponse servletResponse, @Context HttpServletRequest servletRequest ) throws Exception {
+
+    HashMap<String, Object> params = new HashMap<String, Object>();
+    final Enumeration enumeration = servletRequest.getParameterNames();
+    while ( enumeration.hasMoreElements() ) {
+      final String param = (String) enumeration.nextElement();
+      params.put( param, servletRequest.getParameterValues( param ) );
+    }
+
+    handleDoQuery( path, outputType, outputIndexId, dataAccessId, bypassCache, paginateQuery, pageSize, pageStart,
+        wrapItUp, sortBy, params, servletResponse );
   }
-  
-  private void handleDoQuery(String path, 
-                      String outputType, int outputIndexId, String dataAccessId, 
-                      Boolean bypassCache, Boolean paginateQuery, int pageSize,
-                      int pageStart, Boolean wrapItUp, List<String> sortBy, 
-                      HttpServletResponse servletResponse, 
-                      HttpServletRequest servletRequest) throws Exception{
-    
-    //final IParameterProvider requestParams = getRequestParameters();
-    
+
+  private void handleDoQuery( String path, String outputType, int outputIndexId, String dataAccessId,
+      Boolean bypassCache, Boolean paginateQuery, int pageSize, int pageStart, Boolean wrapItUp, List<String> sortBy,
+      HashMap<String, Object> params, HttpServletResponse servletResponse ) throws Exception {
+
     final CdaEngine engine = CdaEngine.getInstance();
     final QueryOptions queryOptions = new QueryOptions();
 
-    //final String filePath = getRelativePath(solution, path, file);
-    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(path);
+    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile( path );
 
     // Handle paging options
     // We assume that any paging options found mean that the user actively wants paging.
-    if (pageSize > 0 || pageStart > 0 || paginateQuery)
-    {
-      if (pageSize > Integer.MAX_VALUE || pageStart > Integer.MAX_VALUE)
-      {
-        throw new ArithmeticException("Paging values too large");
+    if ( pageSize > 0 || pageStart > 0 || paginateQuery ) {
+      if ( pageSize > Integer.MAX_VALUE || pageStart > Integer.MAX_VALUE ) {
+        throw new ArithmeticException( "Paging values too large" );
       }
-      queryOptions.setPaginate(true);
-      queryOptions.setPageSize(pageSize > 0 ? (int) pageSize : paginateQuery ? DEFAULT_PAGE_SIZE : 0);
-      queryOptions.setPageStart(pageStart > 0 ? (int) pageStart : paginateQuery ? DEFAULT_START_PAGE : 0);
+      queryOptions.setPaginate( true );
+      queryOptions.setPageSize( pageSize > 0 ? (int) pageSize : paginateQuery ? DEFAULT_PAGE_SIZE : 0 );
+      queryOptions.setPageStart( pageStart > 0 ? (int) pageStart : paginateQuery ? DEFAULT_START_PAGE : 0 );
     }
-    
+
     // Support for bypassCache (we'll maintain the name we use in CDE
-    queryOptions.setCacheBypass(bypassCache);
-    
+    queryOptions.setCacheBypass( bypassCache );
+
     // Handle the query itself and its output format...
-    queryOptions.setOutputType(outputType);
-    queryOptions.setDataAccessId(dataAccessId);
-    
+    queryOptions.setOutputType( outputType );
+    queryOptions.setDataAccessId( dataAccessId );
+
     try {
-      queryOptions.setOutputIndexId(outputIndexId);
-    } catch (NumberFormatException e) {
-      logger.error("Illegal outputIndexId '" + outputIndexId + "'" );
+      queryOptions.setOutputIndexId( outputIndexId );
+    } catch ( NumberFormatException e ) {
+      logger.error( "Illegal outputIndexId '" + outputIndexId + "'" );
     }
-    
-    final ArrayList<String> sort = new ArrayList<String>();    
-    for (String string : sortBy)
-    {
-      if (!((String) string).equals(""))
-      {
-        sort.add((String) string);
+
+    final ArrayList<String> sort = new ArrayList<String>();
+    for ( String string : sortBy ) {
+      if ( !( (String) string ).equals( "" ) ) {
+        sort.add( (String) string );
       }
     }
-    queryOptions.setSortBy(sort);
-    
+    queryOptions.setSortBy( sort );
 
     // ... and the query parameters
     // We identify any pathParams starting with "param" as query parameters
-    @SuppressWarnings("unchecked")
-    final Enumeration enumeration = servletRequest.getParameterNames();
-    while (enumeration.hasMoreElements())
-    {
-      final String param = (String)enumeration.nextElement();
-
-      if (param.startsWith(PREFIX_PARAMETER))
-      {
-        queryOptions.addParameter(param.substring(PREFIX_PARAMETER.length()), servletRequest.getParameter(param));
-      }
-      else if (param.startsWith(PREFIX_SETTING))
-      {
-        String value = servletRequest.getParameter(param);
-        if (value == null ){
+    for( Map.Entry<String, Object> pair : params.entrySet() ) {
+      String param = pair.getKey();
+      if ( param.startsWith( PREFIX_PARAMETER ) ) {
+        queryOptions.addParameter( param.substring( PREFIX_PARAMETER.length() ), pair.getValue() );
+      } else if ( param.startsWith( PREFIX_SETTING ) ) {
+        String value = (String) pair.getValue();
+        if ( value == null ) {
           value = "";
         }
-        queryOptions.addSetting(param.substring(PREFIX_SETTING.length()), value);
+        queryOptions.addSetting( param.substring( PREFIX_SETTING.length() ), value );
       }
     }
 
-    
-    if(wrapItUp) {
-      String uuid = engine.wrapQuery(servletResponse.getOutputStream(), cdaSettings, queryOptions);
-      logger.debug("doQuery: query wrapped as " + uuid);
-      writeOut(servletResponse.getOutputStream(), uuid);
+    if ( wrapItUp ) {
+      String uuid = engine.wrapQuery( servletResponse.getOutputStream(), cdaSettings, queryOptions );
+      logger.debug( "doQuery: query wrapped as " + uuid );
+      writeOut( servletResponse.getOutputStream(), uuid );
       return;
     }
-    
 
-    Exporter exporter = ExporterEngine.getInstance().getExporter(queryOptions.getOutputType(), queryOptions.getExtraSettings());
-    
+    Exporter exporter =
+        ExporterEngine.getInstance().getExporter( queryOptions.getOutputType(), queryOptions.getExtraSettings() );
+
     String attachmentName = exporter.getAttachmentName();
     String mimeType = mimeType = exporter.getMimeType();
-    
-    if(mimeType != null){
-      servletResponse.setHeader("Content-Type", mimeType);
+
+    if ( mimeType != null ) {
+      servletResponse.setHeader( "Content-Type", mimeType );
     }
-     
-    if(attachmentName != null){
-      servletResponse.setHeader("content-disposition", "attachment; filename=" + attachmentName);
+
+    if ( attachmentName != null ) {
+      servletResponse.setHeader( "content-disposition", "attachment; filename=" + attachmentName );
     }
-      
 
     // Finally, pass the query to the engine
-    engine.doQuery(servletResponse.getOutputStream(), cdaSettings, queryOptions);
+    engine.doQuery( servletResponse.getOutputStream(), cdaSettings, queryOptions );
 
-    
   }
   
   @GET
