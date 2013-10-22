@@ -131,7 +131,12 @@ public class CdaUtils {
     final Enumeration enumeration = servletRequest.getParameterNames();
     while ( enumeration.hasMoreElements() ) {
       final String param = (String) enumeration.nextElement();
-      params.put( param, servletRequest.getParameterValues( param ) );
+      final String[] values = servletRequest.getParameterValues( param );
+      if ( values.length == 1 ) {
+        params.put( param, values[0] ); //assigns the value
+      } else {
+        params.put( param, values ); //assigns the array
+      }
     }
 
     handleDoQuery( path, outputType, outputIndexId, dataAccessId, bypassCache, paginateQuery, pageSize, pageStart,
