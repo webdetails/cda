@@ -13,7 +13,7 @@
 
 package pt.webdetails.cda.connections;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
@@ -40,7 +40,7 @@ public interface Connection extends DomVisitable {
 
   public void setCdaSettings(CdaSettings cdaSettings);
 
-  public ArrayList<PropertyDescriptor> getProperties();
+  public List<PropertyDescriptor> getProperties();
 
   public String getTypeForFile();
 }

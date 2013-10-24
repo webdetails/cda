@@ -13,7 +13,7 @@
 
 package pt.webdetails.cda.connections;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.dom4j.Element;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
@@ -48,10 +48,6 @@ public abstract class AbstractConnection implements Connection {
 
   }
 
-//  public AbstractConnection(final HashMap<String,String> settings) throws InvalidConnectionException {
-//    // TODO
-//  }
-
   public abstract ConnectionType getGenericType();
 
   protected abstract void initializeConnection(Element connection) throws InvalidConnectionException;
@@ -76,7 +72,7 @@ public abstract class AbstractConnection implements Connection {
   @Override
   public abstract boolean equals(final Object obj);
 
-  public ArrayList<PropertyDescriptor> getProperties() {
+  public List<PropertyDescriptor> getProperties() {
     // Let implementors know they're missing something important
     throw new UnsupportedOperationException("Not implemented yet!");
   }

@@ -14,6 +14,7 @@
 package pt.webdetails.cda.endpoints;
 
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -22,7 +23,10 @@ import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -36,12 +40,18 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang.StringUtils;
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
 
 import pt.webdetails.cda.CdaCoreService;
+import pt.webdetails.cda.exporter.ExportOptions;
+import pt.webdetails.cda.exporter.ExportedQueryResult;
 import pt.webdetails.cda.utils.DoQueryParameters;
-import pt.webdetails.cda.ResponseTypeHandler;
+import pt.webdetails.cpf.PluginEnvironment;
+import pt.webdetails.cpf.Util;
+import pt.webdetails.cpf.repository.api.IReadAccess;
+import pt.webdetails.cpf.utils.MimeTypes;
 
 @Path("/cda/api/utils")
 public class RestEndpoint {
@@ -61,7 +71,7 @@ public class RestEndpoint {
   public static final String ENCODING = "UTF-8";
   
   
-  private static Log logger = LogFactory.getLog(RestEndpoint.class);
+//  private static Log logger = LogFactory.getLog(RestEndpoint.class);
   
   protected static String getEncoding() { return ENCODING; }
   
@@ -97,11 +107,13 @@ public class RestEndpoint {
       queryParams.setSortBy(sortBy);
       queryParams.setWrapItUp(wrapItUp);
       queryParams.setJsonCallback(jsonCallback);
-      CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(servletResponse));
-      coreService.doQuery(servletResponse.getOutputStream(), queryParams);
-      
-      
-      
+      CdaCoreService coreService = getCoreService();
+      if ( wrapItUp ) {
+        writeOut( servletResponse.getOutputStream(), coreService.wrapQuery( queryParams ) );
+      }
+      else {
+        coreService.doQuery( queryParams ).writeResponse( servletResponse );
+      }
   }
   
   @GET
@@ -114,9 +126,9 @@ public class RestEndpoint {
                           @Context HttpServletResponse servletResponse, 
                           @Context HttpServletRequest servletRequest) throws Exception
   {
-      CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(servletResponse));
-      coreService.unwrapQuery(servletResponse.getOutputStream(), path, solution, file, uuid);
-      
+      CdaCoreService coreService = getCoreService();
+      DoQueryParameters params = new DoQueryParameters(path, solution, file);
+      coreService.unwrapQuery(params.getPath(), uuid ).writeResponse( servletResponse );
   }
   
   @GET
@@ -130,8 +142,10 @@ public class RestEndpoint {
                           @Context HttpServletResponse servletResponse, 
                           @Context HttpServletRequest servletRequest) throws Exception
   {
-      CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(servletResponse));
-      coreService.listQueries(servletResponse.getOutputStream(), path,solution,file, outputType);
+      CdaCoreService coreService = getCoreService();
+      DoQueryParameters params = new DoQueryParameters(path, solution, file);
+      ExportedQueryResult result = coreService.listQueries( params.getPath(), getSimpleExportOptions( outputType ) );
+      result.writeResponse( servletResponse );
   }
   
   
@@ -147,10 +161,11 @@ public class RestEndpoint {
                               @Context HttpServletResponse servletResponse, 
                               @Context HttpServletRequest servletRequest) throws Exception
   {
-      CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(servletResponse));
-      coreService.listParameters(servletResponse.getOutputStream(), path,solution,file, outputType, dataAccessId);
-      
-      
+      CdaCoreService coreService = getCoreService();
+      DoQueryParameters params = new DoQueryParameters(path, solution, file);
+      ExportedQueryResult result = 
+          coreService.listParameters( params.getPath(), dataAccessId, getSimpleExportOptions( outputType ) );
+      result.writeResponse( servletResponse );
   }
   
   
@@ -198,10 +213,28 @@ public class RestEndpoint {
                          @Context HttpServletResponse servletResponse, 
                          @Context HttpServletRequest servletRequest) throws Exception
   {
-      CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(servletResponse));
-      coreService.getCdaList(servletResponse.getOutputStream(), outputType);
+      CdaCoreService coreService = getCoreService();
+      ExportedQueryResult result = coreService.getCdaList( getSimpleExportOptions( outputType) );
+      result.writeResponse( servletResponse );
   }
 
+  private ExportOptions getSimpleExportOptions( String outputType ) {
+    return new ExportOptions() {
+      
+      public String getOutputType() {
+        // TODO Auto-generated method stub
+        return null;
+      }
+      
+      public Map<String, String> getExtraSettings() {
+        return Collections.<String,String>emptyMap();
+      }
+    };
+  }
+
+//  private void writeOut( HttpServletResponse servletResponse, ExportedQueryResult result ) {
+//    servletResponse.
+//  }
 //  @GET
 //  @Path("/clearCache")
 //  @Produces("text/plain")
@@ -266,34 +299,35 @@ public class RestEndpoint {
                              @Context HttpServletResponse servletResponse, 
                              @Context HttpServletRequest servletRequest) throws Exception
   {
-      CdaCoreService coreService = new CdaCoreService();
-      coreService.getCssResource(servletResponse.getOutputStream(), resource);
+     getCssResource(servletResponse.getOutputStream(), resource);
   }
 
   @GET
   @Path("/getJsResource")
-  @Produces("text/javascript")
+  @Produces(MimeTypes.JAVASCRIPT)
   @Consumes({ APPLICATION_XML, APPLICATION_JSON })
   public void getJsResource(@QueryParam("resource") String resource,
           
                             @Context HttpServletResponse servletResponse, 
                             @Context HttpServletRequest servletRequest) throws Exception
   {
-      CdaCoreService coreService = new CdaCoreService();
-      coreService.getJsResource(servletResponse.getOutputStream(), resource);
+     getJsResource(servletResponse.getOutputStream(), resource);
   }
   
   @GET
   @Path("/listDataAccessTypes")
-  @Produces("application/json")
+  @Produces(MimeTypes.JSON)
   @Consumes({ APPLICATION_XML, APPLICATION_JSON })
-  public void listDataAccessTypes(@DefaultValue("false") @QueryParam("refreshCache") Boolean refreshCache,
-          
+  public String listDataAccessTypes(@DefaultValue("false") @QueryParam("refreshCache") Boolean refreshCache,
                                   @Context HttpServletResponse servletResponse, 
                                   @Context HttpServletRequest servletRequest) throws Exception
   {
-      CdaCoreService coreService = new CdaCoreService();
-      coreService.listDataAccessTypes(servletResponse.getOutputStream(), refreshCache);
+      CdaCoreService coreService = getCoreService();
+      return coreService.listDataAccessTypes( refreshCache );
+  }
+
+  private CdaCoreService getCoreService() {
+    return new CdaCoreService();
   }
 
 //  @GET
@@ -323,21 +357,66 @@ public class RestEndpoint {
 //      CdaCoreService coreService = new CdaCoreService();
 //      coreService.manageCache(servletResponse.getOutputStream(),new ResponseTypeHandler(servletResponse));
   }
+
+  protected void writeOut( OutputStream out, String contents ) throws IOException {
+    IOUtils.write( contents, out, getEncoding() );
+    out.flush();
+  }
   
-//  //XXX could use this getRelativePath instead of the one in CoreService?
-//  private String getRelativePath(String solution, String path, String file) throws UnsupportedEncodingException
-//  {
-//    if (StringUtils.isEmpty(solution))
-//    {
-//      return path;
-//    }
-//
-//    return StringUtils.join(new String[] {solution, path, file}, "/" ).replaceAll("//", "/");
-//  }
-  
-  protected void writeOut(OutputStream out, String contents) throws IOException {
-      IOUtils.write(contents, out, getEncoding());
-      out.flush();
+  public String getResourceAsString(final String path, final HashMap<String, String> tokens) throws IOException
+  {
+    // Read file
+    IReadAccess repository = getRepositoryAccess();
+    String resourceContents = StringUtils.EMPTY;
+    
+    if (repository.fileExists(path))
+    {
+      resourceContents = Util.toString( repository.getFileInputStream(path) );
+    }
+    else {
+      return null;
     }
     
+    // Make replacement of tokens
+    if (tokens != null)
+    {
+      for (final String key : tokens.keySet())
+      { 
+        resourceContents = StringUtils.replace(resourceContents, key, tokens.get(key));
+      }
+    }
+    return resourceContents;
+  }
+
+  public void getCssResource(final OutputStream out, final String resource) throws Exception
+  {
+    getResource(out, resource);
+  }
+
+  public void getJsResource(final OutputStream out, final String resource) throws Exception
+  {
+    getResource(out, resource);
+  }
+
+  private void getResource(final OutputStream out, String resource) throws Exception
+  {
+    IReadAccess repo = getRepositoryAccess();
+    if ( repo.fileExists( resource ) ) {
+      InputStream in = null;
+      try {
+        in = repo.getFileInputStream( resource );
+        IOUtils.copy( in, out );
+        out.flush();
+      }
+      finally {
+        IOUtils.closeQuietly( in );
+      }
+      
+    }
+
+  }
+
+  private IReadAccess getRepositoryAccess() {
+    return PluginEnvironment.env().getContentAccessFactory().getUserContentAccess("/");
+  }
 }

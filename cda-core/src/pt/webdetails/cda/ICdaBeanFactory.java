@@ -19,6 +19,6 @@ public interface ICdaBeanFactory {
   
   public Object getBean(String id);
   public boolean containsBean(String id);
-  public String[] getBeanNamesForType(Class clazz);
+  public String[] getBeanNamesForType(Class<?> clazz);
   
 }

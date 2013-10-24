@@ -15,8 +15,11 @@ package pt.webdetails.cda.query;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import pt.webdetails.cda.dataaccess.Parameter;
+import pt.webdetails.cda.exporter.ExportOptions;
 import pt.webdetails.cda.exporter.ExporterEngine;
 
 /**
@@ -25,7 +28,7 @@ import pt.webdetails.cda.exporter.ExporterEngine;
  * Date: Feb 4, 2010
  * Time: 5:25:53 PM
  */
-public class QueryOptions implements Cloneable
+public class QueryOptions implements ExportOptions, Cloneable
 {
 
   private String dataAccessId;
@@ -33,9 +36,9 @@ public class QueryOptions implements Cloneable
   private boolean paginate;
   private int pageSize;
   private int pageStart;
-  private ArrayList<String> sortBy;
-  private ArrayList<Parameter> parameters;
-  private HashMap<String, String> extraSettings;
+  private List<String> sortBy;
+  private List<Parameter> parameters;
+  private Map<String, String> extraSettings;
   private String outputType;
   private boolean cacheBypass;
 
@@ -90,19 +93,19 @@ public class QueryOptions implements Cloneable
   }
 
 
-  public ArrayList<String> getSortBy()
+  public List<String> getSortBy()
   {
     return sortBy;
   }
 
 
-  public void setSortBy(final ArrayList<String> sortBy)
+  public void setSortBy(final List<String> sortBy)
   {
     this.sortBy = sortBy;
   }
 
 
-  public ArrayList<Parameter> getParameters()
+  public List<Parameter> getParameters()
   {
     return parameters;
   }
@@ -208,7 +211,7 @@ public class QueryOptions implements Cloneable
   }
 
 
-  public HashMap<String, String> getExtraSettings()
+  public Map<String, String> getExtraSettings()
   {
     return extraSettings;
   }

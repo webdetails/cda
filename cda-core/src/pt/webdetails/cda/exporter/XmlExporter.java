@@ -20,8 +20,9 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+
 import javax.swing.table.TableModel;
 
 import org.dom4j.Document;
@@ -39,7 +40,7 @@ import org.dom4j.Element;
 public class XmlExporter extends AbstractExporter
 {
 
-  public XmlExporter(HashMap <String,String> extraSettings)
+  public XmlExporter(Map <String,String> extraSettings)
   {
     super();
   }

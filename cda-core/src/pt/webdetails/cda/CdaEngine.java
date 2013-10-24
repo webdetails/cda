@@ -13,7 +13,6 @@
 
 package pt.webdetails.cda;
 
-import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -27,13 +26,16 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 
+import pt.webdetails.cda.dataaccess.DataAccess;
 import pt.webdetails.cda.dataaccess.QueryException;
-import pt.webdetails.cda.discovery.DiscoveryOptions;
+import pt.webdetails.cda.exporter.ExportOptions;
+import pt.webdetails.cda.exporter.Exporter;
 import pt.webdetails.cda.exporter.ExporterEngine;
 import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.exporter.UnsupportedExporterException;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
+import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 import pt.webdetails.cpf.PluginEnvironment;
 import pt.webdetails.cpf.repository.api.IBasicFile;
@@ -59,6 +61,7 @@ public class CdaEngine
 
   //TODO: we have to clean this at some point or at least make it a reference map
   private Map<UUID, QueryOptions> wrappedQueries = new ConcurrentHashMap<UUID, QueryOptions>();
+  private ExporterEngine exporterEngine;
 
   public static synchronized CdaEngine getInstance()
   {
@@ -100,6 +103,59 @@ public class CdaEngine
   {
     logger.info("Initializing CdaEngine");
     environment = env;
+    exporterEngine = new ExporterEngine();
+  }
+
+  public SettingsManager getSettingsManager() {
+    return SettingsManager.getInstance();
+  }
+
+  public Exporter getExporter( ExportOptions opts ) throws UnsupportedExporterException  {
+    return getExporter( opts.getOutputType(), opts.getExtraSettings() );
+  }
+
+  public Exporter getExporter( String outputType ) throws UnsupportedExporterException {
+    return getExporter( outputType, null );
+  }
+
+  public Exporter getExporter( String outputType, Map<String, String> options ) throws UnsupportedExporterException {
+    return getExporterEngine().getExporter( outputType, options );
+  }
+
+  private ExporterEngine getExporterEngine() {
+    return exporterEngine;
+  }
+  /**
+   * Perform all steps of a doQuery except for export
+   * @param cdaSettings
+   * @param queryOptions
+   * @return
+   * @throws UnknownDataAccessException
+   * @throws QueryException
+   */
+  public TableModel doQuery (CdaSettings cdaSettings, QueryOptions queryOptions ) throws UnknownDataAccessException, QueryException {
+    DataAccess dataAccess = cdaSettings.getDataAccess(queryOptions.getDataAccessId());
+    return dataAccess.doQuery( queryOptions );
+  }
+
+  /**
+   * 
+   * @param cdaSettings
+   * @param dataAccessId
+   * @return
+   * @throws UnknownDataAccessException
+   */
+  public TableModel listParameters(CdaSettings cdaSettings, String dataAccessId) throws UnknownDataAccessException {
+    return cdaSettings.getDataAccess(dataAccessId).listParameters();
+  }
+
+  /**
+   * 
+   * @param cdaSettings
+   * @return
+   */
+  public TableModel listQueries ( CdaSettings cdaSettings ) {
+    return cdaSettings.listQueries();
   }
 
   public QueryOptions unwrapQuery(String uuid) throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
@@ -108,7 +164,6 @@ public class CdaEngine
   }
 
   public String wrapQuery(
-      final OutputStream out,
       final CdaSettings cdaSettings,
       final QueryOptions queryOptions)
   {
@@ -117,63 +172,11 @@ public class CdaEngine
     return uuid.toString();
   }
 
-  public void doQuery(final OutputStream out,
-          final CdaSettings cdaSettings,
-          final QueryOptions queryOptions) throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
-  {
-
-    logger.debug("Doing query on CdaSettings [ " + cdaSettings.getId() + " (" + queryOptions.getDataAccessId() + ")]");
-
-    TableModel tableModel = cdaSettings.getDataAccess(queryOptions.getDataAccessId()).doQuery(queryOptions);
-
-    // Handle the exports
-
-    ExporterEngine.getInstance().getExporter(queryOptions.getOutputType(), queryOptions.getExtraSettings()).export(out, tableModel);
-
-  }
-
-
-  public void listQueries(final OutputStream out,
-          final CdaSettings cdaSettings,
-          final DiscoveryOptions discoveryOptions) throws UnsupportedExporterException, ExporterException
-  {
-
-    logger.debug("Getting list of queries on CdaSettings [ " + cdaSettings.getId() + ")]");
-
-
-    final TableModel tableModel = cdaSettings.listQueries(discoveryOptions);
-
-    // Handle the exports
-
-    ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).export(out, tableModel);
-
-  }
-
-
-  public void listParameters(final OutputStream out,
-          final CdaSettings cdaSettings,
-          final DiscoveryOptions discoveryOptions) throws UnknownDataAccessException, UnsupportedExporterException, ExporterException
-  {
-
-    logger.debug("Getting list of queries on CdaSettings [ " + cdaSettings.getId() + ")]");
-
-
-    final TableModel tableModel = cdaSettings.getDataAccess(discoveryOptions.getDataAccessId()).listParameters(discoveryOptions);
-
-    // Handle the exports
-
-    ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).export(out, tableModel);
-
-
-  }
-
-
   /**
-   * Search every CDA cda file in the repository. 
+   * List ALL available cda files in the repository. Handle with care.
+   * @return
    */
-  public void getCdaList(final OutputStream out, final DiscoveryOptions discoveryOptions) throws UnsupportedExporterException, ExporterException
-  {
-
+  public TableModel getCdaList() {
     IUserContentAccess userRepo = PluginEnvironment.env().getContentAccessFactory().getUserContentAccess("/");
     List<IBasicFile> cdaFiles = userRepo.listFiles("", new IBasicFileFilter() {
       public boolean accept(IBasicFile file) {
@@ -193,11 +196,8 @@ public class CdaEngine
     {
       typedTableModel.addRow(new Object[]{file.getName(), file.getFullPath()});
     }
-
-    ExporterEngine.getInstance().getExporter(discoveryOptions.getOutputType()).export(out, typedTableModel);
-
+    return typedTableModel;
   }
-
 
   private static ICdaEnvironment getConfiguredEnvironment() throws InitializationException {
 	    String className = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.environment.default");
@@ -243,9 +243,6 @@ public class CdaEngine
   }
 
 
-
-
-  
   public static IContentAccessFactory getRepo() {
     return PluginEnvironment.env().getContentAccessFactory();
   }

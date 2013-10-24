@@ -52,10 +52,14 @@
   </target>
 
   <target name="publish-local-core">
+    <ant dir="${core.project}" antfile="build.xml" target="resolve" inheritAll="false"/>
     <ant dir="${core.project}" antfile="build.xml" target="publish-local" inheritAll="false"/>
   </target>
+  <target name="resolve-projects">
+    <ant dir="${projects.list}" antfile="build.xml" target="resolve" inheritAll="false"/>
+  </target>
 
-  <target name="dist" depends="publish-local-core">
+  <target name="dist" depends="publish-local-core, resolve-projects">
     <antcall target="call">
       <param name="target" value="dist"/>
       <param name="projects" value="${projects.list}"/>
@@ -72,14 +76,14 @@
 
   <target name="publish-local">
     <antcall target="call">
-      <param name="target" value="publish-local"/>
+      <param name="target" value="publish-local, resolve-projects"/>
       <param name="projects" value="${all.projects}"/>
     </antcall>
   </target>
 
   <target name="full-dist" depends="build-and-test-core,dist"/>
 
-  <target name="install-plugin" depends="publish-local-core">
+  <target name="install-plugin" depends="publish-local-core, resolve-projects">
     <antcall target="call">
       <param name="target" value="install-plugin"/>
       <param name="projects" value="${projects.list}"/>

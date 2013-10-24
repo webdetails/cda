@@ -47,9 +47,7 @@ public abstract class AbstractExporter implements Exporter
 
   public abstract void export(final OutputStream out, final TableModel tableModel) throws ExporterException;
 
-
   public abstract String getMimeType();
-
 
   protected String getColType(final Class<?> columnClass) throws ExporterException
   {

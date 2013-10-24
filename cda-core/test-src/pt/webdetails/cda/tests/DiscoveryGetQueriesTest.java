@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 
@@ -38,6 +37,7 @@ public class DiscoveryGetQueriesTest extends TestCase
 
   private static final Log logger = LogFactory.getLog(DiscoveryGetQueriesTest.class);
 
+  // XXX only tests for lack of exceptions
   public void testGetQueries() throws Exception
   {
 
@@ -55,12 +55,8 @@ public class DiscoveryGetQueriesTest extends TestCase
     logger.debug("Getting parameters info on CDA file");
     final CdaEngine engine = CdaEngine.getInstance();
 
-    final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
-    discoveryOptions.setOutputType("xml");
-
-
-    logger.info("Doing discovery");
-    engine.listQueries(out, cdaSettings, discoveryOptions);
+    logger.info("Listing queries");
+    engine.listQueries(out, cdaSettings, "xml");
 
 
   }

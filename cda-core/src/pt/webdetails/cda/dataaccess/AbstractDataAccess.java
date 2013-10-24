@@ -34,7 +34,6 @@ import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
-import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
@@ -287,7 +286,7 @@ public abstract class AbstractDataAccess implements DataAccess
     }
   }
 
-  public TableModel listParameters(final DiscoveryOptions discoveryOptions)
+  public TableModel listParameters()
   {
 
     return TableModelUtils.dataAccessParametersToTableModel(getParameters());
@@ -455,13 +454,13 @@ public abstract class AbstractDataAccess implements DataAccess
   }
 
 
-  public ArrayList<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors()
+  public List<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors()
   {
     return this.getDataAccessConnectionDescriptors();
   }
 
 
-  public ArrayList<PropertyDescriptor> getInterface()
+  public List<PropertyDescriptor> getInterface()
   {
 
     ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();

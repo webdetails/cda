@@ -58,7 +58,7 @@ public class SortTableModel implements RowProductionManager
   }
 
 
-  public TableModel doSort(TableModel unsorted, ArrayList<String> sortBy) throws SortException
+  public TableModel doSort(TableModel unsorted, List<String> sortBy) throws SortException
   {
     Configuration config = CdaBoot.getInstance().getGlobalConfig();
     String sortType = config.getConfigProperty("pt.webdetails.cda.SortingType");
@@ -73,7 +73,7 @@ public class SortTableModel implements RowProductionManager
   }
 
 
-  public TableModel customSort(TableModel unsorted, ArrayList<String> sortBy, String comparatorClass) throws SortException
+  public TableModel customSort(TableModel unsorted, List<String> sortBy, String comparatorClass) throws SortException
   {
     try
     {
@@ -88,7 +88,7 @@ public class SortTableModel implements RowProductionManager
   }
 
 
-  public TableModel defaultSort(TableModel unsorted, ArrayList<String> sortBy) throws SortException
+  public TableModel defaultSort(TableModel unsorted, List<String> sortBy) throws SortException
   {
 
     if (unsorted == null || unsorted.getRowCount() == 0)
@@ -172,7 +172,7 @@ public class SortTableModel implements RowProductionManager
   }
 
 
-  private String getSortXmlStep(TableModel unsorted, ArrayList<String> sortBy) throws SortException
+  private String getSortXmlStep(TableModel unsorted, List<String> sortBy) throws SortException
   {
 
     StringBuilder sortXML = new StringBuilder(

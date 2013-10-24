@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 
@@ -34,14 +33,15 @@ import pt.webdetails.cda.settings.SettingsManager;
  * Time: 7:53:13 PM
  */
 public class DiscoveryGetParametersTest extends TestCase
-{
+{//TODO: what's the point of this?
 
   private static final Log logger = LogFactory.getLog(DiscoveryGetParametersTest.class);
 
   public void testGetParameters() throws Exception
   {
+    // XXX checks nothing but lack of exceptions
 
-
+    // XXX outputs to stdout
     // Define an outputStream
     OutputStream out = System.out;
 
@@ -54,19 +54,13 @@ public class DiscoveryGetParametersTest extends TestCase
     logger.debug("Doing discovery on the file");
     final CdaEngine engine = CdaEngine.getInstance();
 
-
     // JSON
-
-    final DiscoveryOptions discoveryOptions = new DiscoveryOptions();
-    discoveryOptions.setDataAccessId("2");
-    discoveryOptions.setOutputType("xml");
     logger.info("Doing discovery, return xml");
-    engine.listParameters(out, cdaSettings, discoveryOptions);
+    engine.getExporter( "xml" ).export( out, engine.listParameters(cdaSettings, "2") );
 
     // XML
-    discoveryOptions.setOutputType("json");
     logger.info("Doing discovery, return json");
-    engine.listParameters(out, cdaSettings, discoveryOptions);
+    engine.getExporter( "json" ).export( out, engine.listParameters(cdaSettings, "2") );
 
 
   }

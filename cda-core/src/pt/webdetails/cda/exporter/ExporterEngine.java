@@ -15,6 +15,7 @@ package pt.webdetails.cda.exporter;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -71,7 +72,7 @@ public class ExporterEngine
     return getExporter(outputType, null);
   }
 
-  public Exporter getExporter(final String outputType, final HashMap<String, String> extraSettings) throws UnsupportedExporterException
+  public Exporter getExporter(final String outputType, final Map<String, String> extraSettings) throws UnsupportedExporterException
   {
     Exporter exporter = getExporter( OutputType.parse(outputType), extraSettings);
     if(exporter != null)
@@ -110,7 +111,7 @@ public class ExporterEngine
 
   }
   
-  private Exporter getExporter(OutputType type, HashMap<String, String> extraSettings)
+  private Exporter getExporter(OutputType type, Map<String, String> extraSettings)
   {
     if(type == null) return null;
     

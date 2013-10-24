@@ -20,8 +20,8 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.swing.table.TableModel;
 
@@ -57,7 +57,7 @@ public class HtmlExporter extends AbstractExporter
   private String title = DEFAULT_TITLE;
   private boolean fullHtml = false;
   
-  public HtmlExporter(HashMap <String,String> extraSettings)
+  public HtmlExporter(Map <String,String> extraSettings)
   {
     super();
     //format

@@ -15,7 +15,7 @@ package pt.webdetails.cda.dataaccess;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.table.TableModel;
 
@@ -288,9 +288,9 @@ public class MdxDataAccess extends PREDataAccess
 
 
   @Override
-  public ArrayList<PropertyDescriptor> getInterface()
+  public List<PropertyDescriptor> getInterface()
   {
-    ArrayList<PropertyDescriptor> properties = super.getInterface();
+    List<PropertyDescriptor> properties = super.getInterface();
     properties.add(new PropertyDescriptor("bandedMode", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
   }

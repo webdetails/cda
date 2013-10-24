@@ -13,13 +13,11 @@
 
 package pt.webdetails.cda.cache;
 
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -30,6 +28,7 @@ import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
+import pt.webdetails.cpf.Util;
 //import pt.webdetails.cda.PluginHibernateException;
 //import pt.webdetails.cda.cache.CacheScheduleManager;
 
@@ -49,7 +48,6 @@ public abstract class Query implements Serializable
   private List<CachedParam> parameters;
   private int hitCount, missCount;
 
-
   public Query()
   {
   }
@@ -57,6 +55,7 @@ public abstract class Query implements Serializable
 
   public Query(JSONObject json) throws JSONException
   {
+    this();
     this.cdaFile = getJsonString(json, "cdaFile");
     this.dataAccessId = getJsonString(json, "dataAccessId");
 
@@ -254,22 +253,21 @@ public abstract class Query implements Serializable
       queryOptions.addParameter(param.getName(), param.getValue());
     }
 
-    OutputStream nullOut = new NullOutputStream();
-    Date d = new Date();
-    CdaEngine.getInstance().doQuery(nullOut, cdaSettings, queryOptions);
-    setTimeElapsed(new Date().getTime() - d.getTime());
-    //CacheScheduleManager.logger.debug("Time elapsed: " + Double.toString(new Double(getTimeElapsed()) / 1000) + "s");
-    logger.debug("Time elapsed: " + Double.toString(new Double(getTimeElapsed()) / 1000) + "s");
+    long start = System.currentTimeMillis();
+    CdaEngine.getInstance().doQuery( cdaSettings, queryOptions );
+
+    long elapsed = System.currentTimeMillis() - start;
+    setTimeElapsed( elapsed );
+    logger.debug( "Time elapsed: " + Util.DEFAULT_DURATION_FORMAT_SEC.format( elapsed / 1000d ) );
   }
 
 
   public abstract void setTimeElapsed(long timeElapsed);
 
-
   public abstract long getTimeElapsed();
 
-
-  public void save() throws Exception//PluginHibernateException
+  //XXX
+  public void save() throws Exception//PluginHibernateException 
   {
     if (getId() == 0)
     {

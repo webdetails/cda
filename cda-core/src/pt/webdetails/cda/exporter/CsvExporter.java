@@ -13,7 +13,8 @@
 
 package pt.webdetails.cda.exporter;
 
-import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import pt.webdetails.cda.CdaBoot;
@@ -36,7 +37,7 @@ public class CsvExporter extends AbstractKettleExporter
   private String attachmentName;
   private String showColumnHeaders;
   
-  public CsvExporter(HashMap<String, String> extraSettings) {
+  public CsvExporter(Map<String, String> extraSettings) {
     super(extraSettings);
     
     this.separator = getSetting( 

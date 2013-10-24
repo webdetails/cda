@@ -31,6 +31,7 @@ import pt.webdetails.cda.settings.UnknownDataAccessException;
 import pt.webdetails.cda.utils.Util;
 
 /**
+ * TODO: get tests outta here
  * Main class to test and execute the CDA in standalone mode
  * User: pedro
  * Date: Feb 1, 2010
@@ -190,7 +191,7 @@ public class CdaExecutor
 //    engine.doQuery(out, cdaSettings, queryOptions);
 //  }
 
-
+//
   private void testSingleSqlQuery(final OutputStream out, final CdaSettings cdaSettings) 
       throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
   {
@@ -202,7 +203,7 @@ public class CdaExecutor
     queryOptions.addParameter("orderDate", "2003-04-01");
     queryOptions.setOutputType("csv");
 
-    engine.doQuery(out, cdaSettings, queryOptions);
+    engine.getExporter( queryOptions ).export( out, engine.doQuery( cdaSettings, queryOptions ) );
   }
 
 

@@ -16,7 +16,6 @@ package pt.webdetails.cda.tests;
 import java.io.File;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
@@ -43,7 +42,7 @@ public class SortTest extends TestCase
   public void testSqlQuery() throws Exception
   {
 
-
+    // XXX more stdout tests..
     // Define an outputStream
     OutputStream out = System.out;
 
@@ -62,19 +61,19 @@ public class SortTest extends TestCase
 
     logger.info("Doing query with 2 column sort");
     queryOptions.setDataAccessId("1");
-    queryOptions.setSortBy(new ArrayList(Arrays.asList( new String[]{"0D" , "1A"})));
+    queryOptions.setSortBy( Arrays.asList( new String[] { "0D", "1A" } ) );
     engine.doQuery(out, cdaSettings, queryOptions);
 
     logger.info("\nDoing query with no sort");
-    queryOptions.setSortBy(new ArrayList(Arrays.asList( new String[]{})));
+    queryOptions.setSortBy( Arrays.asList( new String[] {} ) );
     engine.doQuery(out, cdaSettings, queryOptions);
 
     logger.info("\nDoing query with all combinations");
-    queryOptions.setSortBy(new ArrayList(Arrays.asList( new String[]{"0D" , "2", "1A"})));
+    queryOptions.setSortBy( Arrays.asList( new String[] { "0D", "2", "1A" } ) );
     engine.doQuery(out, cdaSettings, queryOptions);
 
     logger.info("\nDoing query with only one sort");
-    queryOptions.setSortBy(new ArrayList(Arrays.asList( new String[]{"1A"})));
+    queryOptions.setSortBy( Arrays.asList( new String[] { "1A" } ) );
     engine.doQuery(out, cdaSettings, queryOptions);
 
   }

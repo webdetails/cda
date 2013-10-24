@@ -13,7 +13,7 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -200,9 +200,9 @@ public abstract class PREDataAccess extends SimpleDataAccess
 
 
   @Override
-  public ArrayList<PropertyDescriptor> getInterface()
+  public List<PropertyDescriptor> getInterface()
   {
-    ArrayList<PropertyDescriptor> properties = super.getInterface();
+    List<PropertyDescriptor> properties = super.getInterface();
     return properties;
   }
 }

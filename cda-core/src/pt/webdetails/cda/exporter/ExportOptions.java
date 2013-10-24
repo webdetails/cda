@@ -11,24 +11,12 @@
 * the license for the specific language governing your rights and limitations.
 */
 
-package pt.webdetails.cda.utils.kettle;
+package pt.webdetails.cda.exporter;
 
-import java.util.List;
+import java.util.Map;
 
-import javax.swing.table.TableModel;
+public interface ExportOptions {
 
-/**
- *
- * @author pdpi
- */
-public class CustomSorter extends SortTableModel
-{
-
-  @Override
-  public TableModel doSort(TableModel unsorted, List<String> sortBy) throws SortException
-  {
-    SortableTableModel sortable = new SortableTableModel(unsorted);
-    sortable.sort();
-    return sortable;
-  }
+  String getOutputType();
+  Map<String, String> getExtraSettings();
 }
