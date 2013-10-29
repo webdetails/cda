@@ -80,7 +80,7 @@ public class FormulaEvaluator {
       Formula formula = new Formula(localValue);
 
       // set context if available
-      if (formulaContext != null) {
+      if (formulaContext == null) {
         formulaContext = CdaEngine.getEnvironment().getFormulaContext();
       }
       formula.initialize(formulaContext);

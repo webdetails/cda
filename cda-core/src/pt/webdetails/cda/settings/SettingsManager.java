@@ -32,8 +32,10 @@ import org.dom4j.io.DOMReader;
 import org.pentaho.reporting.libraries.resourceloader.Resource;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
+import org.pentaho.reporting.libraries.resourceloader.ResourceLoader;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 
+import pt.webdetails.cda.AccessDeniedException;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
@@ -53,22 +55,20 @@ import pt.webdetails.cpf.repository.api.IReadAccess;
  */
 public class SettingsManager {
 
-  // TODO: These are defined in 
-  // org.pentaho.reporting.platform.plugin.RepositoryResourceLoader
-  // we should see if there is a way to have plugins use other plugin classes
   public static final String DATA_ACCESS_PACKAGE = "pt.webdetails.cda.dataaccess";
   private static final Log logger = LogFactory.getLog(SettingsManager.class);
   private static SettingsManager _instance;
   private LRUMap settingsCache;
   private Map<String, Long> settingsTimestamps;
-  
+  private ResourceLoader defaultResourceLoader;
+
   private static final int MAX_SETTINGS_CACHE_SIZE = 50;
 
   /**
    * This class controls how the different .cda files will be read
    * and cached.
    */
-  public SettingsManager() {
+  public SettingsManager( ResourceLoader defaultResourceLoader ) {
 
     // TODO - Read the cache size from disk. Eventually move to ehcache, if necessary
 
@@ -76,7 +76,7 @@ public class SettingsManager {
 
     settingsCache = new LRUMap(MAX_SETTINGS_CACHE_SIZE);
     settingsTimestamps = new HashMap<String, Long>();
-
+    this.defaultResourceLoader = defaultResourceLoader;
   }
 
   /**
@@ -88,10 +88,12 @@ public class SettingsManager {
    * @throws pt.webdetails.cda.connections.UnsupportedConnectionException
    *
    */
-  public synchronized CdaSettings parseSettingsFile(final String id) throws DocumentException, UnsupportedConnectionException, UnsupportedDataAccessException {
+  public synchronized CdaSettings parseSettingsFile(final String id)
+    throws DocumentException, UnsupportedConnectionException, UnsupportedDataAccessException, AccessDeniedException {
+
+    //TODO: check permissions!
 
     // Do we have this on cache?
-
     if (settingsCache.containsKey(id)) {
       CdaSettings cachedCda = (CdaSettings) settingsCache.get(id);
       
@@ -113,10 +115,8 @@ public class SettingsManager {
     }
 
     try {
-      final ResourceManager resourceManager = new ResourceManager();
-      resourceManager.registerDefaults();
-      IResourceKeyGetter resourceKeyGetter = CdaEngine.getEnvironment().getResourceKeyGetter();
-      final ResourceKey key = resourceKeyGetter.getResourceKey(id, resourceManager);
+      final ResourceManager resourceManager = getResourceManager();
+      final ResourceKey key = this.defaultResourceLoader.createKey( id, null );
       final Resource resource = resourceManager.create(key, null, org.w3c.dom.Document.class);
       final org.w3c.dom.Document document = (org.w3c.dom.Document) resource.getResource();
       final DOMReader saxReader = new DOMReader();
@@ -132,6 +132,13 @@ public class SettingsManager {
 
   }
 
+  public ResourceManager getResourceManager() {
+    final ResourceManager resourceManager = new ResourceManager();
+    resourceManager.registerDefaults();
+    resourceManager.registerLoader( this.defaultResourceLoader );
+    return resourceManager;
+  }
+
   /**
    * Returns time of last save if id is a file.
    * @param id CdaSettings ID
@@ -143,9 +150,10 @@ public class SettingsManager {
     return getRepositoryAccess().getLastModified(id);
   }
   
-  private IReadAccess getRepositoryAccess() {
+  private static IReadAccess getRepositoryAccess() {
     return PluginEnvironment.env().getContentAccessFactory().getUserContentAccess("/");
   }
+  
   
   /**
    * (use in synchronized methods)
@@ -180,10 +188,13 @@ public class SettingsManager {
     settingsTimestamps.clear();
   }
 
+  /**
+   * Use CdaEngine
+   */
   public static synchronized SettingsManager getInstance() {
 
     if (_instance == null) {
-      _instance = new SettingsManager();
+      _instance = new SettingsManager( new CdaResourceLoader( getRepositoryAccess() ));
     }
 
     return _instance;

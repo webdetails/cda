@@ -16,23 +16,18 @@ package pt.webdetails.cda;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 
 import pt.webdetails.cda.cache.IQueryCache;
-import pt.webdetails.cda.settings.IResourceKeyGetter;
-import pt.webdetails.cda.settings.PentahoResourceKeyGetter;
 import pt.webdetails.cda.utils.framework.PluginUtils;
 import pt.webdetails.cpf.PentahoPluginEnvironment;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
 
 
-public class PentahoCdaEnvironment extends BaseCdaEnvironment {
+public class PentahoCdaEnvironment extends BaseCdaEnvironment implements ICdaEnvironment {
 
   public PentahoCdaEnvironment() throws InitializationException {
     super();
   }
-  
-  
   private IQueryCache cacheImpl;
-  
-  
+
   //This is kept here for legacy reasons. CDC is writing over plugin.xml to 
   //switch cache types. It should be changed to change the cda.spring.xml.
   //While we don't, we just keep the old method for getting the cache
@@ -61,8 +56,4 @@ public class PentahoCdaEnvironment extends BaseCdaEnvironment {
     return new CdaSessionFormulaContext();
   }
 
-  @Override
-  public IResourceKeyGetter getResourceKeyGetter() {
-    return new PentahoResourceKeyGetter();
-  }
 }

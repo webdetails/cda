@@ -13,7 +13,6 @@
 
 package pt.webdetails.cda;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -24,10 +23,9 @@ public class CdaPropertiesHelper {
   static Log logger = LogFactory.getLog(Parameter.class);
   
   public static String getStringProperty(String key, String defaultValue){
-    String value = CdaBoot.getInstance().getGlobalConfig().getConfigProperty(key);
-    return StringUtils.isEmpty(value) ? defaultValue : value;
+    return CdaEngine.getInstance().getConfigProperty( key, defaultValue );
   }
-  
+
   public static boolean getBoolProperty(String key, boolean defaultValue){
     String value = getStringProperty(key, null);
     if(value != null){

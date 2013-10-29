@@ -1,27 +1,30 @@
 package pt.webdetails.cda.services;
 
 import java.io.IOException;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
 import pt.webdetails.cda.AccessDeniedException;
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cpf.PluginEnvironment;
 import pt.webdetails.cpf.Util;
 import pt.webdetails.cpf.repository.api.FileAccess;
+import pt.webdetails.cpf.repository.api.IReadAccess;
 import pt.webdetails.cpf.repository.api.IUserContentAccess;
 
 // TODO just impl aid, to be changed
 public abstract class BaseService {
-  
-//  private static Log logger = LogFactory.getLog(BaseService.class);
-  protected static final String LOCALE_TOKEN = "#{LANGUAGE_CODE}";//only used in previewer
+
 
 //  private static final Map<String,String> NO_TOKENS = Collections.<String,String>emptyMap();
 
   protected String getPluginId() {
     return "cda";
+  }
+
+  protected IReadAccess getSystemPath( String path ) {
+    return PluginEnvironment.env().getContentAccessFactory().getPluginSystemReader( path );
   }
 
   protected String getResourceAsString(final String path, FileAccess access) throws IOException, AccessDeniedException {
@@ -35,13 +38,13 @@ public abstract class BaseService {
     }
   }
 
-  protected String getResourceAsString(final String path, FileAccess access, Locale locale) throws IOException, AccessDeniedException {
-    String resource = getResourceAsString(path, access);
-    if (locale != null) {
-      resource = StringUtils.replace(resource, LOCALE_TOKEN, locale.toLanguageTag());
-    }
-    return resource;
-  }
+//  protected String getResourceAsString(final String path, FileAccess access, Locale locale) throws IOException, AccessDeniedException {
+//    String resource = getResourceAsString(path, access);
+//    if (locale != null) {
+//      resource = StringUtils.replace(resource, LOCALE_TOKEN, locale.toLanguageTag());
+//    }
+//    return resource;
+//  }
 
   protected String getResourceAsString(final String path) throws IOException, AccessDeniedException {
     return getResourceAsString(path, FileAccess.READ);

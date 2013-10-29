@@ -41,7 +41,6 @@ public class Util extends pt.webdetails.cpf.Util
       }
     }
 
-    e.printStackTrace();
     return out.toString();
 
   }

@@ -18,7 +18,7 @@ import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.base.versioning.ProjectInformation;
 
 /**
- * Todo: Document me!
+ * Properties-based configuration holder.
  * <p/>
  * Date: 09.02.2010
  * Time: 17:51:22

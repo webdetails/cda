@@ -11,12 +11,14 @@
 * the license for the specific language governing your rights and limitations.
 */
 
-package pt.webdetails.cda.cache;
+package pt.webdetails.cda.cache.scheduler;
 
 import java.util.Date;
 import java.util.Map;
 import java.util.PriorityQueue;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.pentaho.platform.api.engine.IAcceptsRuntimeInputs;
@@ -42,6 +44,7 @@ import pt.webdetails.cda.utils.PluginHibernateUtil;
  */
 public class CacheActivator implements IAcceptsRuntimeInputs
 {
+  private static Log logger = LogFactory.getLog(CacheActivator.class);
 
   static final String TRIGGER_NAME = "cacheWarmer";
   static final String BACKUP_TRIGGER_NAME = "backupCacheWarmer";
@@ -87,7 +90,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
       }
       else
       {
-        CacheScheduleManager.logger.info("No work to be done");
+        logger.info("No work to be done");
       }
       while (queue.peek().getNextExecution().before(rightNow))
       {
@@ -123,7 +126,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
   public void processQueries(Session s, PriorityQueue<CachedQuery> queue)
   {
 
-    CacheScheduleManager.logger.debug("Refreshing cached query...");
+    logger.debug("Refreshing cached query");
     CachedQuery q = queue.poll();
     try
     {
@@ -135,7 +138,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
     }
     catch (Exception ex)
     {
-      CacheScheduleManager.logger.error("Failed to execute " + q.toString());
+      logger.error("Failed to execute " + q.toString(), ex);
     }
 
 

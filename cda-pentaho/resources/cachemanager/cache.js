@@ -11,16 +11,21 @@
 * the license for the specific language governing your rights and limitations.
 */
 
+/**
+ * Backend interaction, constants will be overridden by the server
+ **/
 var CacheManagerBackend = {
   
-  CONTENT_HANDLER: 'cacheMonitor',
+  CACHE_MONITOR: null,
+  CACHE_SCHEDULER: null,
+
   STATUS_OK: 'ok',
   STATUS_ERROR: 'error',
-  
+
   defaultErrorHandle: function(status, errorMsg){
     alert('Error :' + errorMsg);
   },
-  
+
   handleResponse: function(response, callback){
     if(response.status == this.STATUS_OK){
       if(typeof(callback) == 'function'){
@@ -39,7 +44,7 @@ var CacheManagerBackend = {
   postJson: function(args, callback, errorCallback){
     var self = this;
     UI.loadingImg.show();
-    $.post(this.CONTENT_HANDLER, args,
+    $.post(this.CACHE_MONITOR, args,
     function(response)
     {
       UI.loadingImg.hide();
@@ -50,26 +55,29 @@ var CacheManagerBackend = {
   getJson: function(args, callback, errorCallback){
     var self = this;
     UI.loadingImg.show();
-    $.getJSON(this.CONTENT_HANDLER, args,
+    $.getJSON(this.CACHE_MONITOR, args,
       function(response)
       {
         UI.loadingImg.hide();
         self.handleResponse(response, callback, errorCallback);
       });
-      
+
   }
-  
+
 };
 
+/**
+ * Holds references to the html objects.
+ **/
 var UI = {
-  
+
   setButtonSelected: function(button, selected){
     if(!button.hasClass('selected')){
       if(selected) button.addClass('selected');
     }
     else if(!selected) button.removeClass('selected');
   },
-  
+
   //define UI elements
   init: function(){
     //main panes
@@ -86,6 +94,15 @@ var UI = {
     this.clearCacheButton = $("#clearCacheButton");
     //loading imgs
     this.loadingImg = $('#loading');
+    this.icons = $('#icons');
+  },
+
+  getIcon: function(iconClass) {
+    return this.icons.children(iconClass).clone();
+  },
+  createButton: function (iconClass) {
+    var button = this.getIcon(iconClass).addClass('button');
+    return $('<a href="javascript:"></a>').append(button);
   }
 };
 
@@ -98,16 +115,15 @@ var refreshTable = function(){
   UI.setButtonSelected(UI.cacheButton, false);
   UI.setButtonSelected(UI.scheduleButton, true);
 
-  $.getJSON('cacheController?method=list', populateQueries);
+  $.getJSON(CacheManagerBackend.CACHE_SCHEDULER + '?method=list', populateQueries);
 };
 
 
 var populateQueries = function(data){
   var ph = $("#lines").empty();
 
-
   for (row in data.queries) {
-  
+
     var r = data.queries[row];
 
     var row = $("<div class='span-23 last row "+ (r.success?"":"error") +"' id='query_" + r.id + "'></div>");
@@ -129,11 +145,11 @@ var populateQueries = function(data){
     row.append("<div class='span-2'>" + r.timeElapsed + " </div>");
     row.append("<div class='span-2'>" + (r.success?"Success":"Failed") + " </div>");
 
-    var deleteButton = $("<a  href='javascript:'><img src='cachemanager/delete-24x24.png' class='button' alt='delete'></a>");
+    var deleteButton =  UI.createButton('.deleteIcon');
     var deleteFunction = function(id){
       deleteButton.click(function(){
-        if(confirm("Want to delete this scheduler?")){
-          $.getJSON("cacheController?method=delete&object=" + id ,function(){
+        if(confirm("Want to delete this scheduler entry?")){
+          $.getJSON(CacheManagerBackend.CACHE_SCHEDULER + "?method=delete&object=" + id ,function(){
             refreshTable();
           })
         }
@@ -141,13 +157,11 @@ var populateQueries = function(data){
     };
     deleteFunction(r.id);
 
-    var refreshButton = $("<a  href='javascript:'><img src='cachemanager/refresh-24x24.png' class='button' alt='refresh'></a>");
+    var refreshButton = UI.createButton('.refreshIcon');
     var refreshFunction = function(id){
       refreshButton.click(function(){
-
-        var myself = this;
-        $(this).find("img").attr("src","cachemanager/processing.png");
-        $.getJSON("cacheController?method=execute&object=" + id,function(){
+        $(this).find('.refreshIcon').removeClass('refreshIcon').addClass('loadingIcon');
+        $.getJSON( CacheManagerBackend.CACHE_SCHEDULER + "?method=execute&object=" + id,function(){
           refreshTable();
         })
 
@@ -253,14 +267,14 @@ var getHumanReadableSize = function(byteSize) {
   var convRate = 1024;
   var okVal = 2047;
   var size = byteSize;
-  
+
   for(i=0; i<units.length; i++)
   {
     if(size < okVal || i== units.length -1){
       return Math.round(size) + ' ' + units[i];
       //return sprintf("%.0f", size) + ' ' + units[i];
     }
-    
+
     size /= convRate;
   }
   return '?';
@@ -299,18 +313,15 @@ var populateCachedQueriesOverview = function(results)
   if(results.length > 0){
     for (var i = 0; i< results.length;i++ )
     {
-      //<div class='span-16'>CDA Settings</div>
-      //<div class='span-6'>Data Access ID</div>
-      //<div class='span-2 last'># Queries</div>
+
       var row = $("<div class='span-23 last row'></div>");
       var item = results[i];
       var settingsLink = $('<span/>').text(item.cdaSettingsId);
-      row.append($('<div/>').addClass('span-15').append(settingsLink)); //.text(item.cdaSettingsId));
-      
-      //var dataAccessLink = $('<span/>').text(item.dataAccessId).addClass('span-6');
+      row.append($('<div/>').addClass('span-15').append(settingsLink));
+
       row.append($('<div/>').addClass('span-6').text(item.dataAccessId));
       row.append($('<div/>').addClass('span-2 last').text(item.count));
-      
+
       var drillDownFunction = function(cdaSettingsId, dataAccessId){
         row.click(function(){
           refreshCachedTable(cdaSettingsId, dataAccessId);
@@ -318,7 +329,7 @@ var populateCachedQueriesOverview = function(results)
         row.addClass('button');
       };
       drillDownFunction(item.cdaSettingsId, item.dataAccessId);
-      
+
       var drillOnSettingsFunc = function(cdaSettingsId){
         settingsLink.click(function(event){
           //alert(cdaSettingsId);
@@ -328,8 +339,7 @@ var populateCachedQueriesOverview = function(results)
       };
       drillOnSettingsFunc(item.cdaSettingsId);
       settingsLink.addClass('link');
-      
-      //row.addClass('button');
+
       ph.append(row);
     }
   }
@@ -363,26 +373,19 @@ var populateCachedQueries = function(resp){
   if(resp.items.length > 0)
   {
     for (var i = 0; i< resp.items.length;i++ ) {
-      //<div class='span-11'>Query</div>
-      //<div class='span-5'>Parameters</div>
-      //<div class='span-1'># Rows</div>
-      //<div class='span-2'>Insertion</div>
-      //<div class='span-2'>Last Update</div>
-      //<div class='span-1'># Hits</div>
-      //<div class='span-2 last'>Operations</div>
-      
-      var row = $("<div class='span-24 last row'></div>");
+
+      var row = $("<div class='span-23 last row'></div>");
       var item = resp.items[i];
-      
+
       //query
-      var queryCol = $('<div/>').addClass('span-9').addClass('queryCol').text(item.query);
+      var queryCol = $('<div/>').addClass('span-8').addClass('queryCol').text(item.query);
       queryCol.click(
         function(){
           alert($(this).text());
         }
       );
       row.append(queryCol);
-      
+
       //parameters
       var paramPh = $("<dl></dl>");
       for (var param in item.parameters){
@@ -401,18 +404,18 @@ var populateCachedQueries = function(resp){
       row.append($('<div/>').addClass('span-2').text(accessDate.toLocaleDateString() + ' ' + accessDate.toLocaleTimeString()));
       //#hits
       row.append($('<div/>').addClass('span-1').text(item.hits));
-      
+
       //remove from cache
-      var removeButton = $("<a  href='javascript:'><img src='cachemanager/delete-24x24.png' class='button' alt='remove from cache'></a>");
+      var removeButton = UI.createButton('.deleteIcon');
       var setRemoveAction = function(key, row, cdaSettingsId, dataAccessId){
         removeButton.click(function(){
           removeCachedQuery(key,row, cdaSettingsId, dataAccessId);
         })
       }
       setRemoveAction(item.key, row, resp.cdaSettingsId, resp.dataAccessId);
-      
+
       //view results
-      var tableButton = $("<a  href='javascript:'><img src='cachemanager/table.png' class='button' alt='view results'></a>");
+      var tableButton = UI.createButton('.tableIcon');
       var setQueryDetailsAction = function(tableContents, key){
         tableButton.click(function(){
             tableContents.toggle();
@@ -420,7 +423,7 @@ var populateCachedQueries = function(resp){
               tableContents.removeClass('empty');
               if(key)
               {
-                tableContents.append( $('<img src="cachemanager/loading.gif" >' ));
+                tableContents.append( UI.getIcon('.loadingIcon') );
                 CacheManagerBackend.postJson(
                   {
                     method: 'getDetails',
@@ -440,17 +443,17 @@ var populateCachedQueries = function(resp){
             }
         });
       };
-      
+
       $("<div class='span-2 last operations'></div>").append(tableButton).append(removeButton).appendTo(row);
-      
+
       row.append($('<span/>').css('display','none').addClass('keyHolder').text( escape(item.key)));
-      
+
       ph.append(row);
-      
+
         //table
       var tableContentsId = "tableContents" + i;
       ph.append($('<div id="' + tableContentsId + '" />').addClass('span-22 prepend-1 append-1 empty last queryTable').css('display','none'));
-      
+
       setQueryDetailsAction($('#' + tableContentsId), item.key);
     }
   }

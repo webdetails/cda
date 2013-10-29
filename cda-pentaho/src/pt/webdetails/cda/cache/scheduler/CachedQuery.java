@@ -11,7 +11,7 @@
 * the license for the specific language governing your rights and limitations.
 */
 
-package pt.webdetails.cda.cache;
+package pt.webdetails.cda.cache.scheduler;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -22,12 +22,10 @@ import org.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.quartz.CronExpression;
 
-import pt.webdetails.cda.CdaEngine;
-
 import pt.webdetails.cda.utils.Util;
-import pt.webdetails.cpf.session.ISessionUtils;
 
 
 /**
@@ -46,12 +44,10 @@ public class CachedQuery extends Query
   private String cronString, userName;
 
 
-  CachedQuery(JSONObject json) throws JSONException
+  public CachedQuery(JSONObject json) throws JSONException
   {
     super(json);
-
-    ISessionUtils sessionUtils = CdaEngine.getEnvironment().getSessionUtils();
-    this.userName = sessionUtils.getCurrentSession().getUserName();
+    this.userName = PentahoSessionHolder.getSession().getName();
     this.cronString = getJsonString(json, "cronString");
     this.lastExecuted = getJsonDate(json, "lastExecuted");
 

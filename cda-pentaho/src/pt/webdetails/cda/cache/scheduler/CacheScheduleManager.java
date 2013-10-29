@@ -11,7 +11,7 @@
 * the license for the specific language governing your rights and limitations.
 */
 
-package pt.webdetails.cda.cache;
+package pt.webdetails.cda.cache.scheduler;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,9 +36,10 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 //import org.pentaho.platform.api.engine.IPentahoSession;
 //import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.reporting.libraries.base.config.Configuration;
+//import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.quartz.CronExpression;
-import pt.webdetails.cda.CdaBoot;
+//import pt.webdetails.cda.CdaBoot;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.PluginHibernateException;
 import pt.webdetails.cda.utils.PluginHibernateUtil;
 import pt.webdetails.cda.utils.Util;
@@ -51,7 +52,7 @@ public class CacheScheduleManager
 {
 
   private static final String ENCODING = "UTF-8";
-  static Log logger = LogFactory.getLog(CacheScheduleManager.class);
+  private static Log logger = LogFactory.getLog(CacheScheduleManager.class);
   final String PLUGIN_PATH = PentahoSystem.getApplicationContext().getSolutionPath("system/" + CdaContentGenerator.PLUGIN_NAME);
   public static int DEFAULT_MAX_AGE = 3600;  // 1 hour
   PriorityQueue<CachedQuery> queue;
@@ -445,7 +446,7 @@ public class CacheScheduleManager
     s.beginTransaction();
 
     @SuppressWarnings( "unchecked" )
-    List<CachedQuery> cachedQueries = s.createQuery("from CachedQuery").list();
+    List<CachedQuery> cachedQueries = s.createQuery( "from " + CachedQuery.class.getSimpleName() ).list(); //TODO: simple name?
     this.queue = new PriorityQueue<CachedQuery>(20, new SortByTimeDue());
     for (CachedQuery cq : cachedQueries)
     {
@@ -508,8 +509,8 @@ public class CacheScheduleManager
   {
 
 
-    Configuration config = CdaBoot.getInstance().getGlobalConfig();
-    String executeAtStart = config.getConfigProperty("pt.webdetails.cda.cache.executeAtStart");
+//    Configuration config = CdaBoot.getInstance().getGlobalConfig();
+    String executeAtStart = CdaEngine.getInstance().getConfigProperty("pt.webdetails.cda.cache.executeAtStart");
     if (executeAtStart.equals("true"))
     {
 //      IPentahoSession session = new StandaloneSession("CDA");

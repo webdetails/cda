@@ -28,7 +28,6 @@ import javax.swing.table.TableModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import java.util.Comparator;
-import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig.EntryType;
@@ -37,7 +36,7 @@ import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig.Type;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransformation;
 import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
 import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
-import pt.webdetails.cda.CdaBoot;
+import pt.webdetails.cda.CdaEngine;
 
 /**
  *
@@ -60,8 +59,7 @@ public class SortTableModel implements RowProductionManager
 
   public TableModel doSort(TableModel unsorted, List<String> sortBy) throws SortException
   {
-    Configuration config = CdaBoot.getInstance().getGlobalConfig();
-    String sortType = config.getConfigProperty("pt.webdetails.cda.SortingType");
+    String sortType = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.SortingType" );
     if ("DEFAULT".equals(sortType))
     {
       return defaultSort(unsorted, sortBy);
@@ -141,9 +139,10 @@ public class SortTableModel implements RowProductionManager
 
   public void startRowProduction()
   {
-    String timeoutStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout");
+    String timeoutStr = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeout" );
     long timeout =  StringUtils.isEmpty(timeoutStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
-    String unitStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
+    String unitStr =
+        CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
     TimeUnit unit = StringUtils.isEmpty(unitStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
     startRowProduction(timeout, unit);
   }

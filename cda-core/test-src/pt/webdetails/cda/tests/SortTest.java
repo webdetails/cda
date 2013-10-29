@@ -13,12 +13,7 @@
 
 package pt.webdetails.cda.tests;
 
-import java.io.File;
-import java.io.OutputStream;
-import java.net.URL;
 import java.util.Arrays;
-
-import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,7 +21,6 @@ import org.apache.commons.logging.LogFactory;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
-import pt.webdetails.cda.settings.SettingsManager;
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,7 +28,7 @@ import pt.webdetails.cda.settings.SettingsManager;
  * Date: Feb 15, 2010
  * Time: 7:53:13 PM
  */
-public class SortTest extends TestCase
+public class SortTest extends CdaTestCase
 {
 
   private static final Log logger = LogFactory.getLog(SortTest.class);
@@ -42,18 +36,10 @@ public class SortTest extends TestCase
   public void testSqlQuery() throws Exception
   {
 
-    // XXX more stdout tests..
-    // Define an outputStream
-    OutputStream out = System.out;
+    // XXX more stdout tests..compare results!
 
-    logger.info("Building CDA settings from sample file");
-
-    final SettingsManager settingsManager = SettingsManager.getInstance();
-    URL file = this.getClass().getResource("sample-mondrian-compact.cda");
-    File settingsFile = new File(file.toURI());
-    final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
-    logger.debug("Doing query on Cda - Initializing CdaEngine");
-    final CdaEngine engine = CdaEngine.getInstance();
+    final CdaSettings cdaSettings = parseSettingsFile("sample-mondrian-compact.cda");
+    CdaEngine engine = getEngine();
 
     QueryOptions queryOptions = new QueryOptions();
     queryOptions.setOutputType("json");
@@ -62,19 +48,19 @@ public class SortTest extends TestCase
     logger.info("Doing query with 2 column sort");
     queryOptions.setDataAccessId("1");
     queryOptions.setSortBy( Arrays.asList( new String[] { "0D", "1A" } ) );
-    engine.doQuery(out, cdaSettings, queryOptions);
+    engine.doQuery(cdaSettings, queryOptions);
 
     logger.info("\nDoing query with no sort");
     queryOptions.setSortBy( Arrays.asList( new String[] {} ) );
-    engine.doQuery(out, cdaSettings, queryOptions);
+    engine.doQuery(cdaSettings, queryOptions);
 
     logger.info("\nDoing query with all combinations");
     queryOptions.setSortBy( Arrays.asList( new String[] { "0D", "2", "1A" } ) );
-    engine.doQuery(out, cdaSettings, queryOptions);
+    engine.doQuery(cdaSettings, queryOptions);
 
     logger.info("\nDoing query with only one sort");
     queryOptions.setSortBy( Arrays.asList( new String[] { "1A" } ) );
-    engine.doQuery(out, cdaSettings, queryOptions);
+    engine.doQuery(cdaSettings, queryOptions);
 
   }
 

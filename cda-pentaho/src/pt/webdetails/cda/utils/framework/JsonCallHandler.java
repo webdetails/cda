@@ -87,8 +87,8 @@ public abstract class JsonCallHandler {
    * @param method Method being executed
    * @return
    */
-  protected boolean hasPermission(IUserSession session,  Method method){
-    return true;
+  protected boolean hasPermission( Method method ) {
+    return true; //FIXME
   }
   
   public void handleCall(String methodName, IParameterProvider requParam, OutputStream out)
@@ -98,7 +98,8 @@ public abstract class JsonCallHandler {
        
     JSONObject result = null;
     Method method = methods.get(methodName);
-    IUserSession session = (CdaEngine.getEnvironment().getSessionUtils()).getCurrentSession();
+    //FIXME
+//    IUserSession session = (CdaEngine.getEnvironment().getSessionUtils()).getCurrentSession();
 
     try 
     {
@@ -109,7 +110,7 @@ public abstract class JsonCallHandler {
       {
         result = getErrorJson(MessageFormat.format("Method {0} not found.", methodName));
       }
-      else if(!hasPermission(session, method)){
+      else if(!hasPermission( method )){
         result = getErrorJson(MessageFormat.format("Permission denied to call method {0}:{1}.", this.getClass().getName(), methodName));
       }
       else 

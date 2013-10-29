@@ -13,18 +13,13 @@
 
 package pt.webdetails.cda.tests;
 
-import java.io.File;
 import java.io.OutputStream;
-import java.net.URL;
-
-import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.settings.CdaSettings;
-import pt.webdetails.cda.settings.SettingsManager;
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,7 +27,7 @@ import pt.webdetails.cda.settings.SettingsManager;
  * Date: Feb 15, 2010
  * Time: 7:53:13 PM
  */
-public class DiscoveryGetParametersTest extends TestCase
+public class DiscoveryGetParametersTest extends CdaTestCase
 {//TODO: what's the point of this?
 
   private static final Log logger = LogFactory.getLog(DiscoveryGetParametersTest.class);
@@ -45,12 +40,7 @@ public class DiscoveryGetParametersTest extends TestCase
     // Define an outputStream
     OutputStream out = System.out;
 
-    logger.info("Building CDA settings from sample file");
-
-    final SettingsManager settingsManager = SettingsManager.getInstance();
-    URL file = this.getClass().getResource("sample-discovery.cda");
-    File settingsFile = new File(file.toURI());
-    final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
+    final CdaSettings cdaSettings = parseSettingsFile("sample-discovery.cda");
     logger.debug("Doing discovery on the file");
     final CdaEngine engine = CdaEngine.getInstance();
 

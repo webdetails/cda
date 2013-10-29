@@ -69,7 +69,7 @@ public class CdaExecutor
     try
     {
 
-      // Init CDA      
+      // Init CDA TODO
       CdaBoot.getInstance().start();
 
 
@@ -112,17 +112,21 @@ public class CdaExecutor
     catch (ExporterException e)
     {
       logger.fatal("ExporterException " + Util.getExceptionDescription(e));
+    } catch ( AccessDeniedException e ) {
+      logger.error("Access denied " + Util.getExceptionDescription(e));
     }
 
 
   }
 
   private void testBlocks(final OutputStream out)
-      throws DocumentException, UnsupportedConnectionException, UnsupportedDataAccessException, UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
+ throws DocumentException, UnsupportedConnectionException,
+    UnsupportedDataAccessException, UnknownDataAccessException, QueryException, UnsupportedExporterException,
+    ExporterException, AccessDeniedException
   {
 
     logger.info("Testing CDA file interaction through blocks");
-    final SettingsManager settingsManager = SettingsManager.getInstance();
+    final SettingsManager settingsManager = CdaEngine.getInstance().getSettingsManager();
 
     final File settingsFile = new File("samples/sample-gen.cda");
     final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());

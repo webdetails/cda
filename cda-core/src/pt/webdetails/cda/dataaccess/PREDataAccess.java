@@ -127,7 +127,7 @@ public abstract class PREDataAccess extends SimpleDataAccess
 
       final CachingDataFactory dataFactory = new CachingDataFactory(getDataFactory(), false);
 
-      final ResourceManager resourceManager = new ResourceManager();
+      final ResourceManager resourceManager = CdaEngine.getInstance().getSettingsManager().getResourceManager();
       resourceManager.registerDefaults();
       final ResourceKey contextKey = getCdaSettings().getContextKey();
 

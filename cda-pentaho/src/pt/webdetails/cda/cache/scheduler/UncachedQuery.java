@@ -11,9 +11,8 @@
 * the license for the specific language governing your rights and limitations.
 */
 
-package pt.webdetails.cda.cache;
+package pt.webdetails.cda.cache.scheduler;
 
-import java.io.Serializable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,66 +20,34 @@ import org.json.JSONObject;
  *
  * @author pdpi
  */
-public class CachedParam implements Serializable
+public class UncachedQuery extends Query
 {
 
   private static final long serialVersionUID = 1L;
 
-  private long id;
-  private String name, value;
 
-
-  public CachedParam()
+  public UncachedQuery(JSONObject json) throws JSONException
   {
+    super(json);
   }
 
 
-  public CachedParam(String name, String value)
+  public CachedQuery cacheMe()
   {
-    this.name = name;
-    this.value = value;
+    return new CachedQuery(this);
   }
 
 
-  CachedParam(JSONObject json) throws JSONException
+  @Override
+  public void setTimeElapsed(long timeElapsed)
   {
-    this.name = json.getString("name");
-    this.value = json.getString("value");
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
 
-  public long getId()
+  @Override
+  public long getTimeElapsed()
   {
-    return id;
-  }
-
-
-  public void setId(long id)
-  {
-    this.id = id;
-  }
-
-
-  public String getName()
-  {
-    return name;
-  }
-
-
-  public void setName(String name)
-  {
-    this.name = name;
-  }
-
-
-  public String getValue()
-  {
-    return value;
-  }
-
-
-  public void setValue(String value)
-  {
-    this.value = value;
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

@@ -2,16 +2,16 @@
 <html>
 	<head>
 		<title>CDA Cache Manager</title>
-		<link href="static/blueprint/screen.css" type="text/css" rel="stylesheet"/>
-		<link href="static/cda.css" type="text/css" rel="stylesheet"/>
-		<link href="cachemanager/cache.css" type="text/css" rel="stylesheet"/>
-		<link href="static/jquery-ui-1.8rc3.custom.css" type="text/css" rel="stylesheet"/>
-		<script type="text/javascript" src="static/jquery.js"></script>
-		<script type="text/javascript" src="static/cda.js"></script>
-		<script type="text/javascript" src="cachemanager/cache.js"></script>
-		<script type="text/javascript" src="static/jquery.i18n.properties.js"></script>
-		<script type="text/javascript" src="static/jquery-ui-1.8rc3.custom.min.js"></script>
-		<script type="text/javascript" src="previewer/dataTables/js/jquery.dataTables.js"></script>
+		<link href="../static/blueprint/screen.css" type="text/css" rel="stylesheet"/>
+		<link href="../static/cda.css" type="text/css" rel="stylesheet"/>
+		<link href="cache.css" type="text/css" rel="stylesheet"/>
+		<link href="../static/jquery-ui-1.8rc3.custom.css" type="text/css" rel="stylesheet"/>
+		<script type="text/javascript" src="../static/jquery.js"></script>
+		<script type="text/javascript" src="../static/cda.js"></script>
+		<script type="text/javascript" src="cache.js"></script>
+		<script type="text/javascript" src="../static/jquery.i18n.properties.js"></script>
+		<script type="text/javascript" src="../static/jquery-ui-1.8rc3.custom.min.js"></script>
+		<script type="text/javascript" src="../previewer/dataTables/js/jquery.dataTables.js"></script>
 	</head>
 	<body>
 		<div class="webdetailsHead">
@@ -74,13 +74,14 @@
 
 		<div id="cachedQueries" class="container" style="display:none;" >
 
-			<div id="mapInfo" class="span-24 last"></div>
-			<div id="membersInfo" class="span-24 last"></div>
+			<div id="mapInfo" class="span-23 last"></div>
+			<div id="membersInfo" class="span-23 last"></div>
 
 			<div class='section span-5'>
 				Queries in cache
 			</div>
-			<div class='section span-1'><img id="loading" style="display:none;" src="cachemanager/loading.gif"/>
+			<div class='section span-1'>
+				<img id="loading" style="display:none;" src="loading.gif"/>
 			</div>
 			<div class='button' style='text-align:right;'>
 				<span id="clearCacheButton" class="button"> Clear all</span>
@@ -104,9 +105,9 @@
 			</div>
 
 			<div id="cachedQueriesDetail" style="display:none;">
-				<div class='span-24 last'>
-					<div class="tableHeader container" id="cachedQueriesHeader">
-						<div class='span-9'>
+				<div class='span-23 last'>
+					<div class="tableHeader" id="cachedQueriesHeader">
+						<div class='span-8'>
 							Query
 						</div>
 						<div class='span-5'>
@@ -145,6 +146,13 @@
 			<div class="webdetailsFooterCtools">
 				<a href="http://www.webdetails.pt/ctools.html"></a>
 			</div>
+		</div>
+		<!-- ROW ICONS -->
+		<div id="icons" style="display:none;">
+                  <img src="delete-24x24.png" class="deleteIcon" alt="remove">
+                  <img src="table.png" class="tableIcon" alt="view results"> 
+                  <img src="loading.gif" class="loadingIcon" alt="loading..."> 
+                  <img src="refresh-24x24.png" class="refreshIcon" alt='refresh'>
 		</div>
 	</body>
 	<script>

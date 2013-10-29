@@ -28,11 +28,11 @@ public class DefaultSessionFormulaContext extends DefaultFormulaContext {
   public DefaultSessionFormulaContext( Map<String, ICdaParameterProvider> ps ) {
     super();
     if ( ps == null || ps.size() == 0 ) {
-      ISessionUtils utils = CdaEngine.getEnvironment().getSessionUtils();
-      if ( utils != null ) {
-        this.providers.put( "security:", new CdaSecurityParameterProvider( utils ) );
-        this.providers.put( "session:", new CdaSessionParameterProvider( utils ) );
-      }
+//      ISessionUtils utils = CdaEngine.getEnvironment().getSessionUtils();
+//      if ( utils != null ) {
+//        this.providers.put( "security:", new CdaSecurityParameterProvider( utils ) );
+//        this.providers.put( "session:", new CdaSessionParameterProvider( utils ) );
+//      }
       this.providers.put( "system:", new CdaSystemParameterProvider() );
     } else {
       this.providers = ps;

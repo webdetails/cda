@@ -30,7 +30,7 @@
 <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.8" conf='runtime->default' />
 
 <dependency org="javax.ws.rs" name="jsr311-api" rev="1.1-ea" conf='runtime->default'/>
-
+  <dependency org="net.htmlparser.jericho" name="jericho-html" rev="3.1" conf="runtime->default"/>
 
 
         <!-- Legacy -->

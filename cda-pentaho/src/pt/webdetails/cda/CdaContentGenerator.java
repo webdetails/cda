@@ -26,8 +26,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.pentaho.platform.api.engine.IParameterProvider;
 
-import pt.webdetails.cda.cache.CacheScheduleManager;
 import pt.webdetails.cda.cache.monitor.CacheMonitorHandler;
+import pt.webdetails.cda.cache.scheduler.CacheScheduleManager;
 import pt.webdetails.cda.exporter.ExportOptions;
 import pt.webdetails.cda.exporter.ExportedQueryResult;
 import pt.webdetails.cda.services.CacheManager;

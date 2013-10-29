@@ -14,7 +14,7 @@
       <Url>jdbc:hsqldb:res:sampledata</Url>
       <User>pentaho_user</User>
       <Pass>password</Pass>
-      <Catalog>./steelwheels.mondrian.xml</Catalog>
+      <Catalog>res:repository/steelwheels.mondrian.xml</Catalog>
       <Cube>SteelWheelsSales</Cube>
     </Connection>
   </DataSources>

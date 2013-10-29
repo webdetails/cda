@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
+import org.pentaho.reporting.libraries.base.config.Configuration;
 
 import pt.webdetails.cda.dataaccess.DataAccess;
 import pt.webdetails.cda.dataaccess.QueryException;
@@ -45,7 +46,7 @@ import pt.webdetails.cpf.repository.api.IReadAccess;
 import pt.webdetails.cpf.repository.api.IUserContentAccess;
 
 /**
- * Main engine class that will answer to calls
+ * Main singleton, brokering access to most functionality.
  * <p/>
  * Created by IntelliJ IDEA.
  * User: pedro
@@ -68,11 +69,12 @@ public class CdaEngine
 
     if (_instance == null)
     {
-      try {
-        init();
-      } catch (InitializationException ie) {
-        logger.fatal("Initialization failed. CDA will NOT be available", ie);
-      }
+      throw new InitializationException( "CdaEngine not initialized", null );
+//      try {
+//        init();
+//      } catch (InitializationException ie) {
+//        logger.fatal("Initialization failed. CDA will NOT be available", ie);
+//      }
     }
 
     return _instance;
@@ -83,10 +85,10 @@ public class CdaEngine
       init(null); 
   }
   public synchronized static void init(ICdaEnvironment env) throws InitializationException {
-    if (!isInitialized()) {
+//    if (!isInitialized()) {
       // try to get the environment from the configuration
       // will return the DefaultCdaEnvironment by default
-      if (env == null) env = getConfiguredEnvironment();
+//      if (env == null) env = getConfiguredEnvironment();
 
       if (env == null) env = new BaseCdaEnvironment();
 
@@ -95,7 +97,7 @@ public class CdaEngine
       // Start ClassicEngineBoot
       CdaBoot.getInstance().start();
       ClassicEngineBoot.getInstance().start();
-    }
+//    }
 
   }
 
@@ -199,44 +201,43 @@ public class CdaEngine
     return typedTableModel;
   }
 
-  private static ICdaEnvironment getConfiguredEnvironment() throws InitializationException {
-	    String className = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.environment.default");
-	    
-	    if (StringUtils.isNotBlank(className)) {
-	      try {
-	        final Class<?> clazz;
-	        clazz = Class.forName(className);
-	        if (!ICdaEnvironment.class.isAssignableFrom(clazz)) {
-	          throw new InitializationException (
-	            "Plugin class specified by property pt.webdetails.cda.beanFactoryClass "
-	            + " must implement "
-	            + ICdaBeanFactory.class.getName(), null);
-	        }
-	          return (ICdaEnvironment) clazz.newInstance();
-	        } catch (ClassNotFoundException e) {
-	          String errorMessage = "Class not found when loading bean factory " + className;
-	          logger.error(errorMessage, e);
-	          throw new InitializationException(errorMessage, e); 
-	        } catch (IllegalAccessException e) {
-	          String errorMessage = "Illegal access when loading bean factory from " + className;
-	          logger.error(errorMessage, e);
-	          throw new InitializationException(errorMessage, e); 
-	        } catch (InstantiationException e) {
-	          String errorMessage = "Instantiation error when loading bean factory from " + className;
-	          logger.error(errorMessage, e);
-	          throw new InitializationException(errorMessage, e); 
-	        }
-	      }
-	    
-	    return null;
-  }
+//  private static ICdaEnvironment getConfiguredEnvironment() throws InitializationException {
+////	    String className = getInstance().getConfigProperty("pt.webdetails.cda.environment.default");
+////	    
+//	    if (StringUtils.isNotBlank(className)) {
+//	      try {
+//	        final Class<?> clazz;
+//	        clazz = Class.forName(className);
+//	        if (!ICdaEnvironment.class.isAssignableFrom(clazz)) {
+//	          throw new InitializationException (
+//	            "Plugin class specified by property pt.webdetails.cda.beanFactoryClass "
+//	            + " must implement "
+//	            + ICdaBeanFactory.class.getName(), null);
+//	        }
+//	          return (ICdaEnvironment) clazz.newInstance();
+//	        } catch (ClassNotFoundException e) {
+//	          String errorMessage = "Class not found when loading bean factory " + className;
+//	          logger.error(errorMessage, e);
+//	          throw new InitializationException(errorMessage, e); 
+//	        } catch (IllegalAccessException e) {
+//	          String errorMessage = "Illegal access when loading bean factory from " + className;
+//	          logger.error(errorMessage, e);
+//	          throw new InitializationException(errorMessage, e); 
+//	        } catch (InstantiationException e) {
+//	          String errorMessage = "Instantiation error when loading bean factory from " + className;
+//	          logger.error(errorMessage, e);
+//	          throw new InitializationException(errorMessage, e); 
+//	        }
+//	      }
+//	    
+//	    return null;
+//  }
 
   private ICdaEnvironment getEnv() {
 	  return environment;
   }
-  
-  
-  
+
+
   public static boolean isInitialized()
   {
     return _instance != null;
@@ -244,12 +245,20 @@ public class CdaEngine
 
 
   public static IContentAccessFactory getRepo() {
-    return PluginEnvironment.env().getContentAccessFactory();
+    return getInstance().getEnv().getRepo();
   }
   
-  public static synchronized ICdaEnvironment getEnvironment() {
+  public static ICdaEnvironment getEnvironment() {
 	  return getInstance().getEnv();
   }
-  
 
+  public String getConfigProperty(String property) {
+    return getConfig().getConfigProperty( property, null );
+  }
+  public String getConfigProperty(String property, String defaultValue) {
+    return getConfig().getConfigProperty( property, defaultValue );
+  }
+  public Configuration getConfig() {
+    return getEnv().getBaseConfig();
+  }
 }

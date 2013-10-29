@@ -28,7 +28,6 @@ import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.BandedMDXDataFactory;
 
-import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
@@ -67,7 +66,7 @@ public class MdxDataAccess extends PREDataAccess
     super(id, name, connectionId, query);
     try
     {
-      String _mode = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.BandedMDXMode");
+      String _mode = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.BandedMDXMode" );
       if (_mode != null)
       {
         bandedMode = BANDED_MODE.valueOf(_mode);
@@ -94,7 +93,7 @@ public class MdxDataAccess extends PREDataAccess
       // Getting defaults
       try
       {
-        String _mode = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.BandedMDXMode");
+        String _mode = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.BandedMDXMode" );
         if (_mode != null)
         {
           bandedMode = BANDED_MODE.valueOf(_mode);

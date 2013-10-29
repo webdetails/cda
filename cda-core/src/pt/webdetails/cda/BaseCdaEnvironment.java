@@ -17,30 +17,30 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.reporting.libraries.base.config.Configuration;
+import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 
 import pt.webdetails.cda.cache.EHCacheQueryCache;
-import pt.webdetails.cda.cache.ICacheScheduleManager;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.connections.mondrian.IMondrianRoleMapper;
 import pt.webdetails.cda.dataaccess.DefaultCubeFileProviderSetter;
 import pt.webdetails.cda.dataaccess.DefaultDataAccessUtils;
 import pt.webdetails.cda.dataaccess.ICubeFileProviderSetter;
 import pt.webdetails.cda.dataaccess.IDataAccessUtils;
-import pt.webdetails.cda.formula.DefaultSessionFormulaContext;
-import pt.webdetails.cda.settings.DefaultResourceKeyGetter;
-import pt.webdetails.cda.settings.IResourceKeyGetter;
+//import pt.webdetails.cda.formula.DefaultSessionFormulaContext;
+//import pt.webdetails.cda.settings.DefaultResourceKeyGetter;
+//import pt.webdetails.cda.settings.IResourceKeyGetter;
 import pt.webdetails.cpf.PluginEnvironment;
-import pt.webdetails.cpf.impl.SimpleSessionUtils;
-import pt.webdetails.cpf.impl.SimpleUserSession;
+//import pt.webdetails.cpf.impl.SimpleSessionUtils;
+//import pt.webdetails.cpf.impl.SimpleUserSession;
 import pt.webdetails.cpf.messaging.IEventPublisher;
 import pt.webdetails.cpf.messaging.PluginEvent;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
 import pt.webdetails.cpf.repository.api.IReadAccess;
-import pt.webdetails.cpf.session.ISessionUtils;
+//import pt.webdetails.cpf.session.ISessionUtils;
 
 // TODO: change bean handling, make ready for sugar version
 public class BaseCdaEnvironment implements ICdaEnvironment {
@@ -75,34 +75,34 @@ public class BaseCdaEnvironment implements ICdaEnvironment {
 
 
 	private void initBeanFactory() throws InitializationException {
-		//Get beanFactory
-		String className = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.beanFactoryClass");
-
-		if (className != null && !className.isEmpty()) {
-			try {
-				final Class<?> clazz;
-				clazz = Class.forName(className);
-				if (!ICdaBeanFactory.class.isAssignableFrom(clazz)) {
-					throw new InitializationException (
-							"Plugin class specified by property pt.webdetails.cda.beanFactoryClass "
-									+ " must implement "
-									+ ICdaBeanFactory.class.getName(), null);
-				}
-				beanFactory = (ICdaBeanFactory) clazz.newInstance();
-			} catch (ClassNotFoundException e) {
-				String errorMessage = "Class not found when loading bean factory " + className;
-				logger.error(errorMessage, e);
-				throw new InitializationException(errorMessage, e); 
-			} catch (IllegalAccessException e) {
-				String errorMessage = "Illegal access when loading bean factory from " + className;
-				logger.error(errorMessage, e);
-				throw new InitializationException(errorMessage, e); 
-			} catch (InstantiationException e) {
-				String errorMessage = "Instantiation error when loading bean factory from " + className;
-				logger.error(errorMessage, e);
-				throw new InitializationException(errorMessage, e); 
-			}
-		}
+//		//Get beanFactory
+//		String className = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.beanFactoryClass" );
+//
+//		if (className != null && !className.isEmpty()) {
+//			try {
+//				final Class<?> clazz;
+//				clazz = Class.forName(className);
+//				if (!ICdaBeanFactory.class.isAssignableFrom(clazz)) {
+//					throw new InitializationException (
+//							"Plugin class specified by property pt.webdetails.cda.beanFactoryClass "
+//									+ " must implement "
+//									+ ICdaBeanFactory.class.getName(), null);
+//				}
+//				beanFactory = (ICdaBeanFactory) clazz.newInstance();
+//			} catch (ClassNotFoundException e) {
+//				String errorMessage = "Class not found when loading bean factory " + className;
+//				logger.error(errorMessage, e);
+//				throw new InitializationException(errorMessage, e); 
+//			} catch (IllegalAccessException e) {
+//				String errorMessage = "Illegal access when loading bean factory from " + className;
+//				logger.error(errorMessage, e);
+//				throw new InitializationException(errorMessage, e); 
+//			} catch (InstantiationException e) {
+//				String errorMessage = "Instantiation error when loading bean factory from " + className;
+//				logger.error(errorMessage, e);
+//				throw new InitializationException(errorMessage, e); 
+//			}
+//		}
 
 		beanFactory = new CoreBeanFactory();
 
@@ -158,15 +158,16 @@ public class BaseCdaEnvironment implements ICdaEnvironment {
 	@Override
 	public FormulaContext getFormulaContext() {
 
-		try {
-			String id ="ICdaCoreSessionFormulaContext";
-			if (beanFactory != null && beanFactory.containsBean(id)) {
-				return (FormulaContext) beanFactory.getBean(id);
-			}
-		} catch (Exception e) {
-			logger.error("Cannot get bean ICdaCoreSessionFormulaContext. Using DefaultCdaCoreSessionFormulaContext", e);
-		}
-		return new DefaultSessionFormulaContext(null);
+//		try {
+//			String id ="ICdaCoreSessionFormulaContext";
+//			if (beanFactory != null && beanFactory.containsBean(id)) {
+//				return (FormulaContext) beanFactory.getBean(id);
+//			}
+//		} catch (Exception e) {
+//			logger.error("Cannot get bean ICdaCoreSessionFormulaContext. Using DefaultFormulaContext", e);
+//		}
+		return new DefaultFormulaContext();
+//		return new DefaultSessionFormulaContext(null);
 	}
 
   @Override
@@ -245,15 +246,15 @@ public class BaseCdaEnvironment implements ICdaEnvironment {
 		};
 	}
 
-	@Override
-	public ISessionUtils getSessionUtils() {
-		String id = "ISessionUtils";
-		if (beanFactory != null && beanFactory.containsBean(id)) {
-			return (ISessionUtils) beanFactory.getBean(id);
-		}
-		SimpleUserSession su = new SimpleUserSession("", new String[0], false,  null);
-		return new SimpleSessionUtils(su, new String[0], new String[0]);
-	}
+//	@Override
+//	public ISessionUtils getSessionUtils() {
+//		String id = "ISessionUtils";
+//		if (beanFactory != null && beanFactory.containsBean(id)) {
+//			return (ISessionUtils) beanFactory.getBean(id);
+//		}
+//		SimpleUserSession su = new SimpleUserSession("", new String[0], false,  null);
+//		return new SimpleSessionUtils(su, new String[0], new String[0]);
+//	}
 
 
 	@Override
@@ -312,22 +313,6 @@ public class BaseCdaEnvironment implements ICdaEnvironment {
 		return new DefaultDataAccessUtils();
 	}
 
-	@Override
-	public IResourceKeyGetter getResourceKeyGetter() {
-		try {
-			String id = "IResourceKeyGetter";
-			if (beanFactory != null && beanFactory.containsBean(id)) {
-				return (IResourceKeyGetter) beanFactory.getBean(id);
-			}
-		} catch (Exception e) {
-			logger.error("Cannot get bean IResourceKeyGetter. Using DefaultResourceKeyGetter", e);
-		}
-		// add the runtime context so that PentahoResourceData class can get access
-		// to the solution repo
-
-		return new DefaultResourceKeyGetter();
-	}
-
 //	@Override
 //	public IPluginCall createPluginCall(String plugin, String method, Map<String, Object> params) {
 //		try {
@@ -343,29 +328,11 @@ public class BaseCdaEnvironment implements ICdaEnvironment {
 //		}
 //	}
 
-  @Override
-  public boolean supportsCacheScheduler() {
-    if ( beanFactory != null && beanFactory.containsBean( "ICacheScheduleManager" ) ) {
-      return true;
-    }
-    return false;
-  }
-
-  @Override
-  public ICacheScheduleManager getCacheScheduler() {
-    try {
-      String id = "ICacheScheduleManager";
-      if ( beanFactory != null && beanFactory.containsBean( id ) ) {
-        return (ICacheScheduleManager) beanFactory.getBean( id );
-      }
-    } catch ( Exception e ) {
-      logger.error( "Cannot get bean ICacheScheduleManager. Not using a cache schedule manager", e );
-    }
-    return null;
-
-  }
-
   public IContentAccessFactory getRepo() {
     return PluginEnvironment.repository();
+  }
+
+  public Configuration getBaseConfig() {
+    return CdaBoot.getInstance().getGlobalConfig();
   }
 }

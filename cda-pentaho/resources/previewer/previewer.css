@@ -133,7 +133,7 @@ input[readonly]{
 	max-width: 910px;
 }
 
-#about {
+#about,#back  {
 	float: right;
 	margin-right: 10px;
 	color: #007ee0;	

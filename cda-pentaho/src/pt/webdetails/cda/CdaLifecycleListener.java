@@ -18,7 +18,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPluginLifecycleListener;
 import org.pentaho.platform.api.engine.PluginLifecycleException;
-import pt.webdetails.cda.cache.CacheScheduleManager;
+
+import pt.webdetails.cda.cache.scheduler.CacheScheduleManager;
 import pt.webdetails.cda.utils.PluginHibernateUtil;
 import pt.webdetails.cda.utils.Util;
 import pt.webdetails.cpf.PentahoPluginEnvironment;
@@ -39,8 +40,10 @@ public class CdaLifecycleListener extends SimpleLifeCycleListener implements IPl
   public void init() throws PluginLifecycleException
   {
     super.init();
-    // boot cda
-    CdaBoot.getInstance().start();
+//    // boot cda
+//    CdaBoot.getInstance().start();
+//    
+    CdaEngine.init(new PentahoCdaEnvironment());
     PluginHibernateUtil.initialize();
   }
 
@@ -48,18 +51,19 @@ public class CdaLifecycleListener extends SimpleLifeCycleListener implements IPl
   public void loaded() throws PluginLifecycleException
   {
     super.loaded();
+    // TODO: why?
     ClassLoader contextCL = Thread.currentThread().getContextClassLoader();
     try
     {
       Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
       
-      try {
-        CdaEngine.init(new PentahoCdaEnvironment());
-      } catch (InitializationException ie) {
-        throw new PluginLifecycleException("Error initializing CDA Engine", ie);
-      }
+//      try {
+//        CdaEngine.init(new PentahoCdaEnvironment());
+//      } catch (InitializationException ie) {
+//        throw new PluginLifecycleException("Error initializing CDA Engine", ie);
+//      }
       
-      
+      // TODO: why?
       CacheScheduleManager.getInstance().coldInit();
     }
     catch (Exception e)

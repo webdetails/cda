@@ -32,7 +32,7 @@ import org.pentaho.di.core.util.StringUtil;
 import org.pentaho.metadata.model.concept.types.JoinType;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
 
-import pt.webdetails.cda.CdaBoot;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
@@ -304,7 +304,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
 
   private int getMaxTypeSearchRowCount(TableModel t) {
     int maxRowsTypeSearch = DEFAULT_MAX_ROWS_VALUE_TYPE_SEARCH;
-    String maxRowsTypeSearchProperty = CdaBoot.getInstance().getGlobalConfig().getConfigProperty(MAX_ROWS_VALUE_TYPE_SEARCH_PROPERTY);
+    String maxRowsTypeSearchProperty = CdaEngine.getInstance().getConfigProperty(MAX_ROWS_VALUE_TYPE_SEARCH_PROPERTY);
     if(!StringUtils.isEmpty(maxRowsTypeSearchProperty)){
       try{
         maxRowsTypeSearch = Integer.parseInt(maxRowsTypeSearchProperty);
@@ -365,9 +365,9 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   public void startRowProduction()
   {
 
-    String timeoutStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout");
+    String timeoutStr = CdaEngine.getInstance().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout");
     long timeout = StringUtil.isEmpty(timeoutStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
-    String unitStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
+    String unitStr = CdaEngine.getInstance().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
     TimeUnit unit = StringUtil.isEmpty(unitStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
     startRowProduction(timeout, unit);
   }

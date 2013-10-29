@@ -34,8 +34,7 @@ public class ExporterEngine
 {
 
   private static final Log logger = LogFactory.getLog(ExporterEngine.class);
-  private static ExporterEngine _instance;
-  
+
   public enum OutputType{
   	
   	JSON("json"),
@@ -61,8 +60,6 @@ public class ExporterEngine
 
   public ExporterEngine()
   {
-    logger.info("Initializing CdaExporterEngine");
-    init();
 
   }
 
@@ -133,18 +130,4 @@ public class ExporterEngine
     }
   }
 
-  private void init()
-  {
-  }
-
-  public static synchronized ExporterEngine getInstance()
-  {
-
-    if (_instance == null)
-    {
-      _instance = new ExporterEngine();
-    }
-
-    return _instance;
-  }
 }

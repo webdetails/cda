@@ -46,11 +46,6 @@ public interface DataAccess
 
   DataAccessEnums.ACCESS_TYPE getAccess();
 
-  /**
-   * @deprecated use {@link #isCacheEnabled()}
-   */
-  boolean isCache();
-  
   boolean isCacheEnabled();
   
   int getCacheDuration();

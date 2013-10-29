@@ -26,7 +26,6 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 
-import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.cache.TableCacheKey;
@@ -178,7 +177,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     }
 
     // put the copy into the cache ...
-    if (isCacheEnabled() && !queryOptions.isCacheBypass())
+    if (isCacheEnabled())
     {
       ExtraCacheInfo cInfo =
           new ExtraCacheInfo( this.getCdaSettings().getId(), queryOptions.getDataAccessId(), queryTime, tableModelCopy );
@@ -360,7 +359,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
   private static int getQueryTimeThresholdFromConfig(int defaultValue)
   {
-    String strVal = CdaBoot.getInstance().getGlobalConfig().getConfigProperty(QUERY_TIME_THRESHOLD_PROPERTY);
+    String strVal = CdaEngine.getInstance().getConfigProperty( QUERY_TIME_THRESHOLD_PROPERTY );
     if (!StringUtils.isEmpty(strVal))
     {
       try

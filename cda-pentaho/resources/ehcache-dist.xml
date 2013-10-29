@@ -1,4 +1,4 @@
-<ehcache>
+<ehcache name="cdaCache">
 
     <!--CDA Cache configuration for distributed cache. -->
 

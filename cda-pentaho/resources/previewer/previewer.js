@@ -11,6 +11,34 @@
 * the license for the specific language governing your rights and limitations.
 */
 
+var PreviewerBackend = {
+  /* overridden by backend */
+  PATH_doQuery: null,
+  PATH_listParameters: null,
+  PATH_listQueries: null,
+  PATH_cacheController: null,
+  PATH_about: null,
+  LOCALE_dataTablesObj: null,
+  LOCALE_locale: 'browser',
+  PATH_locales: null,
+  /**/
+  listQueries: function(params, callback) {
+    $.getJSON(this.PATH_listQueries, params, callback);
+  },
+
+  listParameters: function(params, callback) {
+    $.getJSON(this.PATH_listParameters, params, callback);
+  },
+
+  doQuery: function(params, callback) {
+    $.getJSON(this.PATH_doQuery, params, callback);
+  },
+
+  cacheController: function(params, callback) {
+    $.getJSON(this.PATH_cacheController, params, callback);
+  }
+}
+
 pageParams = function() {
         var url = document.location.href;
         var output = {};
@@ -32,15 +60,17 @@ refreshTable = function(id){
     // When we change query, we must drop the table and parameters, and rebuild both
     lastQuery = id;
     refreshParams(id);
-    $.getJSON("doQuery",{path:filename, dataAccessId: id},showTable);
+    var params = {path:filename, dataAccessId: id};
+    //$.getJSON("doQuery",params ,showTable);
   } else {
     // Same query, we need to get the present parameter values and rebuild the table
     var params = getParams();
     params.path = filename;
     params.dataAccessId = id;
     params.outputIndexId = $('#outputIndexId').val();
-    $.getJSON("doQuery",params, showTable);
+    //$.getJSON("doQuery",params , showTable);
   }
+  PreviewerBackend.doQuery(params, showTable);
 };
 
 showTable = function(data){
@@ -96,7 +126,8 @@ getFullQueryUrl = function(dataAccessId, extraParams) {
 };
 
 refreshParams = function(id) {
-  $.getJSON("listParameters",{path:filename, dataAccessId: id},function(data){
+  //$.getJSON("listParameters",{path:filename, dataAccessId: id},function(data){
+  PreviewerBackend.listParameters({path:filename, dataAccessId: id},function(data){
     var placeholder = $('#parameterHolder');
     placeholder.empty();
     for (param in data.resultset) {
@@ -139,7 +170,8 @@ cacheThis = function() {
     if (!notification.length) {
       notification = $("<span class='notification'></span>").appendTo('.dialogAction');
     }
-    $.getJSON("cacheController",{method: "change", "object": json}, function(response){
+    //$.getJSON("cacheController",{method: "change", "object": json}, function(response){
+    PreviewerBackend.cacheController({method: "change", "object": json}, function(response){
       if (response.status == 'ok') {
         notification.text('');
         $("#dialog").jqmHide();
