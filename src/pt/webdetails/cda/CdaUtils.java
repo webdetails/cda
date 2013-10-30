@@ -59,6 +59,8 @@ import org.pentaho.platform.api.engine.IPluginManager;
 import org.hibernate.Session;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.security.SecurityHelper;
+import org.pentaho.util.messages.LocaleHelper;
+
 import pt.webdetails.cda.utils.PluginHibernateUtil;
 
 @Path("/cda/api")
@@ -77,6 +79,8 @@ public class CdaUtils {
   private static final String PREFIX_PARAMETER = "param";
   private static final String PREFIX_SETTING = "setting";
   public static final String ENCODING = "UTF-8";
+  public static final String WRAP_QUERY_TRUE_VALUE = "wrapIt";
+  public static final String LANGUAGE_CODE_TOKEN = "LANGUAGE_CODE"; //i18n
   
   
   public CdaUtils() {
@@ -96,7 +100,7 @@ public class CdaUtils {
       @DefaultValue( "false" ) @FormParam( "paginateQuery" ) Boolean paginateQuery,
       @DefaultValue( "0" ) @FormParam( "pageSize" ) int pageSize,
       @DefaultValue( "0" ) @FormParam( "pageStart" ) int pageStart,
-      @DefaultValue( "false" ) @FormParam( "wrapItUp" ) Boolean wrapItUp, @FormParam( "sortBy" ) List<String> sortBy,
+      @DefaultValue( "" ) @FormParam( "wrapItUp" ) String wrapItUp, @FormParam( "sortBy" ) List<String> sortBy,
       MultivaluedMap<String, String> formParams, @Context HttpServletResponse servletResponse ) throws Exception {
 
     HashMap<String, Object> params = new HashMap<String, Object>();
@@ -108,9 +112,11 @@ public class CdaUtils {
         params.put( pair.getKey(), pair.getValue().toArray() ); //assigns the array
       }
     }
+    
+    boolean wrapIt = WRAP_QUERY_TRUE_VALUE.equalsIgnoreCase(wrapItUp);
 
     handleDoQuery( path, outputType, outputIndexId, dataAccessId, bypassCache, paginateQuery, pageSize, pageStart,
-        wrapItUp, sortBy, params, servletResponse );
+        wrapIt, sortBy, params, servletResponse );
   }
   
   @GET
@@ -124,7 +130,7 @@ public class CdaUtils {
       @DefaultValue( "false" ) @QueryParam( "paginateQuery" ) Boolean paginateQuery,
       @DefaultValue( "0" ) @QueryParam( "pageSize" ) int pageSize,
       @DefaultValue( "0" ) @QueryParam( "pageStart" ) int pageStart,
-      @DefaultValue( "false" ) @QueryParam( "wrapItUp" ) Boolean wrapItUp, @QueryParam( "sortBy" ) List<String> sortBy,
+      @DefaultValue( "" ) @QueryParam( "wrapItUp" ) String wrapItUp, @QueryParam( "sortBy" ) List<String> sortBy,
       @Context HttpServletResponse servletResponse, @Context HttpServletRequest servletRequest ) throws Exception {
 
     HashMap<String, Object> params = new HashMap<String, Object>();
@@ -139,8 +145,10 @@ public class CdaUtils {
       }
     }
 
+    boolean wrapIt = WRAP_QUERY_TRUE_VALUE.equalsIgnoreCase(wrapItUp);
+    
     handleDoQuery( path, outputType, outputIndexId, dataAccessId, bypassCache, paginateQuery, pageSize, pageStart,
-        wrapItUp, sortBy, params, servletResponse );
+        wrapIt, sortBy, params, servletResponse );
   }
 
   private void handleDoQuery( String path, String outputType, int outputIndexId, String dataAccessId,
@@ -506,8 +514,14 @@ public class CdaUtils {
     StringWriter writer = new StringWriter();
     IOUtils.copy(inputStream, writer);
     
+    String result = ( writer == null || writer.toString() == null ) ? "" : writer.toString();
     
-    writeOut(servletResponse.getOutputStream(), writer.toString());
+    // i18n token replacement
+    if( result.contains( LANGUAGE_CODE_TOKEN ) ){ 
+    	result = result.replaceAll( "#\\{"+ LANGUAGE_CODE_TOKEN + "\\}", LocaleHelper.getLocale().getLanguage() ); 
+    }
+    
+    writeOut(servletResponse.getOutputStream(), result);
   }
 
   @GET
