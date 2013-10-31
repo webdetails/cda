@@ -181,13 +181,14 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
 
     try{
       IOUtils.copy(is, os);
+      if( os != null ){ os.flush(); }
     } 
     finally {
       IOUtils.closeQuietly(is);
     }
 
     // temp file not needed anymore - delete it
-    file.delete();
+    file.deleteOnExit();
 
   }
 

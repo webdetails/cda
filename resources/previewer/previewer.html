@@ -195,7 +195,7 @@
 			var userLocale = '#{LANGUAGE_CODE}';
 			loadMessageBundles(userLocale);
 			// Initialize language support for jQuery dataTables
-			$.getJSON("/pentaho/api/plugins/cda/files/previewer/dataTables/languages/Messages_" + userLocale + ".txt", function(json) {
+			$.getJSON(("/pentaho/api/plugins/cda/files/previewer/dataTables/languages/Messages_" + userLocale + ".properties"), function(json) {
 				oLanguage = json;
 			});
 			//$('#button').button();
@@ -226,7 +226,7 @@
 				modal : true
 			});
 			toggleAdvanced(false);
-			$.getJSON("../../../plugin/cda/api/listQueries", {
+			$.getJSON("/pentaho/plugin/cda/api/listQueries", {
 				path : filename
 			}, function(queries) {
 				var defaultQuery;
