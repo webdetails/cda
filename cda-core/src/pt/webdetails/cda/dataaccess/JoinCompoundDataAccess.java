@@ -77,16 +77,15 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   {
     super(element);
 
-    Attribute joinTypeAttr = element.attribute("joinType");
-    if (joinTypeAttr != null) {
-        joinType = JoinType.valueOf(joinTypeAttr.getValue());
+    Element joinTypeNode = (Element) element.selectSingleNode("JoinType");
+    if(joinTypeNode != null){
+      joinType = JoinType.valueOf(joinTypeNode.getText());
     } else {
-        joinType = JoinType.FULL_OUTER;
+      joinType = JoinType.FULL_OUTER;
     }
 
     Element left = (Element) element.selectSingleNode("Left");
     Element right = (Element) element.selectSingleNode("Right");
-
     leftId = left.attributeValue("id");
     rightId = right.attributeValue("id");
 
@@ -439,6 +438,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     properties.add(new PropertyDescriptor("right", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     properties.add(new PropertyDescriptor("parameters", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     properties.add(new PropertyDescriptor("output", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD));
+    properties.add(new PropertyDescriptor("joinType", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
   }
 
