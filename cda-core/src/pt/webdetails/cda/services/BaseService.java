@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import pt.webdetails.cda.AccessDeniedException;
 import pt.webdetails.cda.CdaEngine;
@@ -16,7 +18,9 @@ import pt.webdetails.cpf.repository.api.IUserContentAccess;
 // TODO just impl aid, to be changed
 public abstract class BaseService {
 
-
+  protected Log getLog() {
+    return LogFactory.getLog( getClass() );
+  }
 //  private static final Map<String,String> NO_TOKENS = Collections.<String,String>emptyMap();
 
   protected String getPluginId() {

@@ -15,7 +15,7 @@ package pt.webdetails.cda.cache.scheduler;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.Queue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,7 +35,6 @@ import org.quartz.Scheduler;
 import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.utils.PluginHibernateUtil;
 
 /**
@@ -50,7 +49,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
   static final String BACKUP_TRIGGER_NAME = "backupCacheWarmer";
   static final String JOB_GROUP = "CDA";
   static final String JOB_ACTION = "scheduler.xaction";
-  static final String BACKUP_JOB_ACTION = "backupScheduler.xaction";
+  static final String BACKUP_JOB_ACTION = JOB_ACTION;
   static final long ONE_HOUR = 3600000; // In miliseconds
 
 
@@ -82,7 +81,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
        * reason the queue fails to reschedule after excuting all due queries, we'll
        * still recover at some point in the future.
        */
-      PriorityQueue<CachedQuery> queue = CacheScheduleManager.getInstance().getQueue();
+      Queue<CachedQuery> queue = CacheScheduleManager.getInstance().getQueue();
       if (queue.peek().getNextExecution().before(rightNow))
       {
         Date anHourFromNow = new Date(rightNow.getTime() + ONE_HOUR);
@@ -107,6 +106,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
       if (transaction != null) {
         transaction.rollback();
       }
+      logger.error(e);
       return false;
     }
     finally
@@ -123,7 +123,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
   }
 
 
-  public void processQueries(Session s, PriorityQueue<CachedQuery> queue)
+  public void processQueries(Session s, Queue<CachedQuery> queue)
   {
 
     logger.debug("Refreshing cached query");
@@ -148,7 +148,7 @@ public class CacheActivator implements IAcceptsRuntimeInputs
   }
 
 
-  public static void reschedule(PriorityQueue<CachedQuery> queue)
+  public static void reschedule(Queue<CachedQuery> queue)
   {
     CachedQuery q = queue.peek();
 
@@ -158,7 +158,6 @@ public class CacheActivator implements IAcceptsRuntimeInputs
 
     SchedulerHelper.deleteJob(session, JOB_ACTION, JOB_GROUP);
     SchedulerHelper.createSimpleTriggerJob(session, "system", "cda/actions", JOB_ACTION, TRIGGER_NAME, JOB_GROUP, "", dueAt, null, 0, 0);
-
   }
 
 
@@ -186,12 +185,12 @@ public class CacheActivator implements IAcceptsRuntimeInputs
   }
 
 
-  public static void rescheduleBackup()
-  {
-    String cron = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.cache.backupWarmerCron");
-    cron = cron == null ? "0 0 0/30 * * ?" : cron;
-    IPentahoSession session = new StandaloneSession(JOB_GROUP);
-    SchedulerHelper.deleteJob(session, BACKUP_JOB_ACTION, JOB_GROUP);
-    SchedulerHelper.createCronJob(session, "system", "cda/actions", BACKUP_JOB_ACTION, BACKUP_TRIGGER_NAME, JOB_GROUP, "", cron);
-  }
+//  public static void rescheduleBackup()
+//  { //TODO: ?!
+//    String cron = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.cache.backupWarmerCron");
+//    cron = cron == null ? "0 0 0/30 * * ?" : cron;
+//    IPentahoSession session = new StandaloneSession(JOB_GROUP);
+//    SchedulerHelper.deleteJob(session, BACKUP_JOB_ACTION, JOB_GROUP);
+//    SchedulerHelper.createCronJob(session, "system", "cda/actions", BACKUP_JOB_ACTION, BACKUP_TRIGGER_NAME, JOB_GROUP, "", cron);
+//  }
 }

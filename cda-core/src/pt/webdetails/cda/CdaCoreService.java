@@ -182,7 +182,7 @@ public class CdaCoreService
     queryOptions.setDataAccessId(parameters.getDataAccessId());
 
     // parameters
-    for ( Map.Entry<String, Object> entry : parameters.getExtraParams().entrySet() ) {
+    for ( Map.Entry<String, Object> entry : parameters.getParameters().entrySet() ) {
       final String name = entry.getKey();
       final Object parameter = entry.getValue();
       queryOptions.addParameter(name, parameter);

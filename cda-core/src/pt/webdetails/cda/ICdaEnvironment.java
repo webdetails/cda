@@ -15,8 +15,12 @@ package pt.webdetails.cda;
 
 import java.util.Properties;
 
+import org.pentaho.reporting.engine.classic.core.DataFactory;
+import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
+import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
+import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 
 //import pt.webdetails.cda.cache.ICacheScheduleManager;
 import pt.webdetails.cda.cache.IQueryCache;
@@ -59,4 +63,13 @@ public interface ICdaEnvironment {
   public IContentAccessFactory getRepo();
 
   public Configuration getBaseConfig();
+
+  /**
+   * Differs between pentaho 4.x and 5.x
+   */
+  public void initializeDataFactory(
+      final DataFactory dataFactory,
+      final Configuration configuration,
+      final ResourceKey contextKey,
+      final ResourceManager resourceManager ) throws ReportDataFactoryException;
 }

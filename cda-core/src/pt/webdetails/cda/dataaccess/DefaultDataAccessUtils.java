@@ -13,10 +13,16 @@
 
 package pt.webdetails.cda.dataaccess;
 
+import java.util.Locale;
+import java.util.TimeZone;
+
+import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.DefaultReportEnvironment;
+import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.engine.classic.core.ReportEnvironmentDataRow;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.JndiConnectionProvider;
+import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleTransFromFileProducer;
 import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleTransformationProducer;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
@@ -25,7 +31,10 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.Jndi
 import org.pentaho.reporting.engine.classic.extensions.datasources.pmd.PmdConnectionProvider;
 import org.pentaho.reporting.engine.classic.extensions.datasources.pmd.PmdDataFactory;
 import org.pentaho.reporting.libraries.base.config.Configuration;
+import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
+import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.kettle.TransFromFileConnectionInfo;
 import pt.webdetails.cda.connections.mondrian.MondrianConnection;
 import pt.webdetails.cda.connections.mondrian.MondrianJndiConnectionInfo;
@@ -71,5 +80,16 @@ public class DefaultDataAccessUtils implements IDataAccessUtils {
 	{
 		return new JndiDataSourceProvider(connectionInfo.getJndi());
 	}
+
+  public void initializeDataFactory( final DataFactory dataFactory, final Configuration configuration, ResourceKey contextKey )
+      throws ReportDataFactoryException {
+      final ResourceManager resourceManager = CdaEngine.getInstance().getSettingsManager().getResourceManager();
+      resourceManager.registerDefaults();
+
+      dataFactory.initialize(configuration, resourceManager, contextKey,
+              new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
+
+      dataFactory.open();
+    }
 
 }

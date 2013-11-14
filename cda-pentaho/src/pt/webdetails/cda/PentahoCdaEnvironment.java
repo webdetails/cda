@@ -13,47 +13,41 @@
 
 package pt.webdetails.cda;
 
+import java.util.Locale;
+import java.util.TimeZone;
+
+import org.pentaho.reporting.engine.classic.core.DataFactory;
+import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
+import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFactory;
+import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
+import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
+import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.utils.framework.PluginUtils;
-import pt.webdetails.cpf.PentahoPluginEnvironment;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
 
 
-public class PentahoCdaEnvironment extends BaseCdaEnvironment implements ICdaEnvironment {
+public class PentahoCdaEnvironment extends PentahoBaseCdaEnvironment implements ICdaEnvironment {
 
   public PentahoCdaEnvironment() throws InitializationException {
     super();
   }
-  private IQueryCache cacheImpl;
 
-  //This is kept here for legacy reasons. CDC is writing over plugin.xml to 
-  //switch cache types. It should be changed to change the cda.spring.xml.
-  //While we don't, we just keep the old method for getting the cache
-  @Override  
-  public IQueryCache getQueryCache() {
-    try {
-      if (cacheImpl == null)
-        cacheImpl = PluginUtils.getPluginBean("cda.", IQueryCache.class);
-      return cacheImpl;
-    } catch (Exception e) {
-      logger.error(e.getMessage());
-    }
+  public void initializeDataFactory(
+      final DataFactory dataFactory,
+      final Configuration configuration,
+      final ResourceKey contextKey,
+      final ResourceManager resourceManager ) throws ReportDataFactoryException
+  {
+//      CdaEngine.getEnvironment().initializeDataFactory( dataFactory, configuration );
 
-    return super.getQueryCache();
-  }
 
-  public IContentAccessFactory getRepo() {
-    return PentahoPluginEnvironment.repository();
-  }
+      dataFactory.initialize(configuration, resourceManager, contextKey,
+              new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
 
-  /**
-   * @return {@link CdaSessionFormulaContext}
-   */
-  @Override
-  public FormulaContext getFormulaContext() {
-    return new CdaSessionFormulaContext();
+      dataFactory.open();
   }
 
 }

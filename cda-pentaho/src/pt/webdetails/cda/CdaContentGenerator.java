@@ -13,6 +13,7 @@
 
 package pt.webdetails.cda;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -32,13 +33,18 @@ import pt.webdetails.cda.exporter.ExportOptions;
 import pt.webdetails.cda.exporter.ExportedQueryResult;
 import pt.webdetails.cda.services.CacheManager;
 import pt.webdetails.cda.services.Editor;
+import pt.webdetails.cda.services.ExtEditor;
 import pt.webdetails.cda.services.Previewer;
 import pt.webdetails.cda.utils.DoQueryParameters;
+import pt.webdetails.cpf.PluginEnvironment;
 import pt.webdetails.cpf.SimpleContentGenerator;
 import pt.webdetails.cpf.annotations.AccessLevel;
 import pt.webdetails.cpf.annotations.Audited;
 import pt.webdetails.cpf.annotations.Exposed;
+import pt.webdetails.cpf.messaging.JsonResult;
 import pt.webdetails.cpf.repository.api.IReadAccess;
+import pt.webdetails.cpf.utils.JsonHelper;
+import pt.webdetails.cpf.utils.MimeTypes;
 
 
 public class CdaContentGenerator extends SimpleContentGenerator
@@ -99,33 +105,62 @@ public class CdaContentGenerator extends SimpleContentGenerator
     result.writeResponse( getResponse() );
 
   }
-
-
-  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.XML)
-  public void getCdaFile(final OutputStream out) throws Exception
+  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeTypes.JSON)
+  public void canEdit(final OutputStream out) throws Exception
   {
     final IParameterProvider requestParams = getRequestParameters();
-    // XXX return Json
-    String repoPath = requestParams.getStringParameter("path", null);
-    String result = getEditor().getFile( repoPath );
-    writeOut( out, result );
+    String path = requestParams.getStringParameter("path", null);
+    boolean canEdit = getEditor().canEdit( path );
+    JsonHelper.writeJson( new JsonResult( true, JsonHelper.toJson( canEdit ) ), out );
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.JSON)
+  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeTypes.JSON)
+  public void getCdaFile(final OutputStream out) throws Exception
+  {
+    try {
+      final IParameterProvider requestParams = getRequestParameters();
+      // XXX return Json
+      String repoPath = requestParams.getStringParameter("path", null);
+      String result = getEditor().getFile( repoPath );
+      JsonHelper.writeJson( new JsonResult( true, result ), out);
+    }
+    catch (Exception e) {
+      writeErrorResult( e, out );
+    }
+  }
+
+  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeTypes.HTML)
+  public void extEditor(final OutputStream out) throws Exception
+  {
+    writeOut( out, getExtEditor().getExtEditor());
+  }
+
+  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeTypes.JSON)
   public void writeCdaFile(OutputStream out) throws Exception
   {
-    final IParameterProvider requestParams = getRequestParameters();
-    String path = getPath( requestParams );
-    String data = requestParams.getStringParameter("data", null);
-    if ( data == null ) {
-      throw new IllegalArgumentException( "data" );
+    try {
+      final IParameterProvider requestParams = getRequestParameters();
+      String path = getPath( requestParams );
+      String data = requestParams.getStringParameter("data", null);
+      if ( data == null ) {
+        throw new IllegalArgumentException( "data" );
+      }
+      if ( StringUtils.isEmpty( path ) ) {
+        throw new IllegalArgumentException( "path" );
+      }
+      boolean result = getEditor().writeFile( path, data );
+      JsonHelper.writeJson( new JsonResult( result, path ), out);
     }
-    if ( StringUtils.isEmpty( path ) ) {
-      throw new IllegalArgumentException( "path" );
+    catch (Exception e) {
+      writeErrorResult( e, out );
     }
-    boolean result = getEditor().writeFile( path, data );
-    writeOut ( out, "" + result );
     //FIXME write success/failure json
+  }
+
+  @Exposed(accessLevel = AccessLevel.PUBLIC,  outputType = MimeTypes.HTML)
+  public void editFile(final OutputStream out) throws Exception
+  {
+    writeOut( out, getExtEditor().getMainEditor() );
   }
 
   @Exposed(accessLevel = AccessLevel.PUBLIC)
@@ -147,7 +182,11 @@ public class CdaContentGenerator extends SimpleContentGenerator
   public void cacheMonitor(final OutputStream out) throws Exception{
     //XXX
     IParameterProvider parameters = getRequestParameters();
-    String method = parameters.getStringParameter("method", null);
+    String method = getMethodArg( out );
+    if( method == null ) {
+      writeErrorResult( new IllegalArgumentException( "method not specified" ), out );
+      return;
+    }
     CacheMonitorHandler.getInstance().handleCall(method, parameters, out);
   }
 
@@ -157,41 +196,29 @@ public class CdaContentGenerator extends SimpleContentGenerator
     return logger;
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC,  outputType = MimeType.HTML)
-  public void editFile(final OutputStream out) throws Exception
-  {
-    String path = getPath(getRequestParameters());
-    InputStream editorSrc = null;
-    try {
-      editorSrc = getEditor().getEditor(path);
-      IOUtils.copy( editorSrc, out );
-    } 
-    finally {
-      IOUtils.closeQuietly( editorSrc );
-    }
-  }
+
 
   @Exposed(accessLevel = AccessLevel.PUBLIC)
   public void previewQuery(final OutputStream out) throws Exception
   {
-    Previewer previewer = new Previewer();
-    writeOut(out, previewer.previewQuery());
+    Previewer previewer = new Previewer(PluginEnvironment.env().getUrlProvider(), CdaEngine.getEnvironment().getRepo());
+    writeOut( out, previewer.previewQuery( getParamsWithPath( getRequestParameters() ).getPath() ) );
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.CSS)
+  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeTypes.CSS)
   public void getCssResource(final OutputStream out) throws Exception
   {
     
     getSystemResource(out, getRequestParameters().getStringParameter("resource", null));
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.JAVASCRIPT)
+  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeTypes.JAVASCRIPT)
   public void getJsResource(final OutputStream out) throws Exception
   {
     getSystemResource(out, getRequestParameters().getStringParameter("resource", null));
   }
 
-  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeType.JSON)
+  @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeTypes.JSON)
   public void listDataAccessTypes(final OutputStream out) throws Exception
   {
     boolean refreshCache = Boolean.parseBoolean(getRequestParameters().getStringParameter("refreshCache", "false"));
@@ -201,18 +228,46 @@ public class CdaContentGenerator extends SimpleContentGenerator
   }
 
   @Exposed(accessLevel = AccessLevel.PUBLIC)
-  public void cacheController(OutputStream out)
+  public void cacheController(OutputStream out) throws IOException
   {
-      String method = getRequestParameters().getParameter("method").toString();
-      String obj = getRequestParameters().getStringParameter("object", "");
-      
-      CacheScheduleManager.getInstance().handleCall(method,obj, out);
+    
+    String method = getMethodArg( out );
+    if( method == null ) {
+      writeErrorResult( new IllegalArgumentException( "method not specified" ), out );
+      return;
+    }
+    String obj = getRequestParameters().getStringParameter("object", null);
+    
+    CacheScheduleManager.getInstance().handleCall(method,obj, out);
+  }
+
+
+  /**
+   * get method arg as either path param or query arg
+   */
+  private String getMethodArg( OutputStream out ) throws IOException {
+    String method = getRequestParameters().getStringParameter("method", null);
+    if ( StringUtils.isEmpty( method ) ) {
+      return getPathParameter( 1 );
+    }
+    return method;
+  }
+
+  private String getPathParameter( int pos ) {
+    String path = getPathParameters().getStringParameter( "path", null );
+    if ( !StringUtils.isEmpty( path ) ) {
+      String[] pathSections = StringUtils.split( path, '/' );
+      if ( pathSections.length > pos ) {
+        return pathSections[pos];
+      }
+    }
+    return null;
   }
 
   @Exposed(accessLevel = AccessLevel.ADMIN)
   public void manageCache(final OutputStream out) throws Exception
   {
-    CacheManager cacheMan = new CacheManager();
+    CacheManager cacheMan = new CacheManager(PluginEnvironment.env().getUrlProvider(), CdaEngine.getEnvironment().getRepo());
     writeOut(out, cacheMan.manageCache());
   }
 
@@ -249,11 +304,11 @@ public class CdaContentGenerator extends SimpleContentGenerator
         extraSettings.put(param.substring(PREFIX_SETTING.length()), requestParams.getStringParameter(param, ""));
       }
     }
-    
-    parameters.setExtraParams(extraParams);
-    
+
+    parameters.setParameters(extraParams);
+
     parameters.setExtraSettings(extraSettings);
-    
+
     final ArrayList<String> sortBy = new ArrayList<String>();
     String[] def =
     {
@@ -272,6 +327,9 @@ public class CdaContentGenerator extends SimpleContentGenerator
 
   private Editor getEditor() {
     return new Editor();
+  }
+  private ExtEditor getExtEditor() {
+    return new ExtEditor( PluginEnvironment.env().getUrlProvider(), CdaEngine.getEnvironment().getRepo() );
   }
 
   private DoQueryParameters getParamsWithPath(IParameterProvider requestParams) {
@@ -306,6 +364,10 @@ public class CdaContentGenerator extends SimpleContentGenerator
     };
   }
 
+  private void writeErrorResult(Exception e, OutputStream out) throws IOException {
+    logger.error( e );
+    JsonHelper.writeJson( new JsonResult( false, e.getLocalizedMessage() ), out );
+  }
 
   private void getSystemResource(final OutputStream out, String resource) throws Exception
   {

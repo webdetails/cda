@@ -13,6 +13,7 @@
 
 package pt.webdetails.cda;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -20,6 +21,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.libraries.base.config.Configuration;
+import org.pentaho.reporting.libraries.base.config.HierarchicalConfiguration;
+import org.pentaho.reporting.libraries.base.config.PropertyFileConfiguration;
 import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 
@@ -43,7 +46,7 @@ import pt.webdetails.cpf.repository.api.IReadAccess;
 //import pt.webdetails.cpf.session.ISessionUtils;
 
 // TODO: change bean handling, make ready for sugar version
-public class BaseCdaEnvironment implements ICdaEnvironment {
+public abstract class BaseCdaEnvironment implements ICdaEnvironment {
 
   protected static Log logger = LogFactory.getLog( BaseCdaEnvironment.class );
 
@@ -52,9 +55,12 @@ public class BaseCdaEnvironment implements ICdaEnvironment {
    * file with connection and data access types
    */
   private static final String COMPONENTS_DEF = "components.properties";
+  private static final String BASE_PROPERTIES = "cda.properties";
 
 
-	private ICdaBeanFactory beanFactory;
+  private ICdaBeanFactory beanFactory;
+
+  private HierarchicalConfiguration config;
 
 	public BaseCdaEnvironment() throws InitializationException {
 		init();
@@ -332,7 +338,25 @@ public class BaseCdaEnvironment implements ICdaEnvironment {
     return PluginEnvironment.repository();
   }
 
-  public Configuration getBaseConfig() {
-    return CdaBoot.getInstance().getGlobalConfig();
+  public synchronized Configuration getBaseConfig() {
+    if ( config == null ) {
+      config = new HierarchicalConfiguration();
+      IReadAccess sysReader = getRepo().getPluginSystemReader( "" );
+      if ( sysReader.fileExists( BASE_PROPERTIES ) ) {
+        PropertyFileConfiguration properties = new PropertyFileConfiguration();
+        try {
+          properties.load( sysReader.getFileInputStream( BASE_PROPERTIES ) );
+          config.insertConfiguration( properties );
+          logger.debug( BASE_PROPERTIES + " read ok." );
+          
+        } catch ( IOException e ) {
+          logger.error( "Error reading " + BASE_PROPERTIES, e );
+        }
+      }
+      else {
+        logger.error( "Unable to load " + BASE_PROPERTIES );
+      }
+    }
+    return config;
   }
 }

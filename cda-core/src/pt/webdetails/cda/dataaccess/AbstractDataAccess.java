@@ -229,11 +229,13 @@ public abstract class AbstractDataAccess implements DataAccess
     return cache;
   }
 
-  @Deprecated
-  public static synchronized net.sf.ehcache.Cache getCache()
-  {
-    return ((EHCacheQueryCache) getCdaCache()).getCache();
-  }
+//  /**
+//   * @deprecated use {@link #getCdaCache()}
+//   */
+//  public static synchronized net.sf.ehcache.Cache getCache()
+//  {
+//    return ((EHCacheQueryCache) getCdaCache()).getCache();
+//  }
 
   public static synchronized void shutdownCache(){
     if(cache != null){
@@ -264,7 +266,7 @@ public abstract class AbstractDataAccess implements DataAccess
      *  1. Sort
      *  2. Show only the output columns
      *  3. Paginate
-     *  4. Call the appropriate exporter
+     *  
      *
      */
 
@@ -371,14 +373,6 @@ public abstract class AbstractDataAccess implements DataAccess
     return access;
   }
 
-  /**
-   * @deprecated use {@link #isCacheEnabled()} instead
-   */
-  public boolean isCache()
-  {
-    return cacheEnabled;
-  }
-  
   public boolean isCacheEnabled(){
     return cacheEnabled;
   }

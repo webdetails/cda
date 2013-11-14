@@ -18,7 +18,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import pt.webdetails.cpf.PluginEnvironment;
 import pt.webdetails.cpf.context.api.IUrlProvider;
 import pt.webdetails.cpf.packager.origin.PathOrigin;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
@@ -38,11 +37,19 @@ public abstract class ProcessedHtmlPage extends BaseService {
   private static final String CODE_SNIPPET_START_TAG = String.format( "<script type=\"%s\">\n", MimeTypes.JAVASCRIPT) ;
   private static final String CODE_SNIPPET_END_TAG = "\n</script>\n";
 
+  private IUrlProvider urlProvider;
+  private IContentAccessFactory access;
+
+  protected ProcessedHtmlPage( IUrlProvider urlProvider, IContentAccessFactory access ) {
+    this.urlProvider = urlProvider;
+    this.access = access;
+  }
+
   private IUrlProvider getUrlProvider() {
-    return PluginEnvironment.env().getUrlProvider();
+    return urlProvider;
   }
   private IContentAccessFactory getRepo() {
-    return PluginEnvironment.env().getContentAccessFactory();
+    return access;
   }
 
   protected String processPage(PathOrigin baseDir, String pagePath) throws IOException {

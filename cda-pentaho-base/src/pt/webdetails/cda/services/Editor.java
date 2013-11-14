@@ -10,6 +10,7 @@ import pt.webdetails.cda.AccessDeniedException;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cpf.Util;
 import pt.webdetails.cpf.repository.api.FileAccess;
+import pt.webdetails.cpf.repository.api.IContentAccessFactory;
 import pt.webdetails.cpf.repository.api.IReadAccess;
 import pt.webdetails.cpf.repository.api.IUserContentAccess;
 
@@ -22,6 +23,15 @@ public class Editor extends BaseService {
   private static final String EXT_EDITOR_SOURCE = "editor-cde.html";
   private static final String CDE = "pentaho-cdf-dd";
   private static Boolean hasCde = null;
+  private IContentAccessFactory contentAccess;
+
+  public Editor() {
+    this( CdaEngine.getRepo() );
+  }
+
+  public Editor( IContentAccessFactory contentAccess ) {
+    this.contentAccess = contentAccess;
+  }
 
   public InputStream getEditor ( String path ) throws AccessDeniedException, IOException {
     IUserContentAccess repository = getRepository();
@@ -44,13 +54,12 @@ public class Editor extends BaseService {
   /**
    * 
    */
-  public String getFile(String filePath) throws AccessDeniedException {
-    try {
+  public String getFile(String filePath) throws AccessDeniedException, IOException {
       return getResourceAsString(filePath);
-    } catch (IOException e) {
-      logger.error(e);
-      return null;
-    }
+  }
+
+  public boolean canEdit( String filePath ) {
+    return getRepository().hasAccess( filePath, FileAccess.WRITE );
   }
 
   /**
@@ -87,7 +96,7 @@ public class Editor extends BaseService {
   }
 
   private IUserContentAccess getRepository() {
-    return CdaEngine.getRepo().getUserContentAccess("/");
+    return contentAccess.getUserContentAccess("/");
   }
 
 }

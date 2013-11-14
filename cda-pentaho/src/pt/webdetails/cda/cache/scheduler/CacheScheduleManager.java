@@ -19,7 +19,8 @@ import java.text.ParseException;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,14 +56,14 @@ public class CacheScheduleManager
   private static Log logger = LogFactory.getLog(CacheScheduleManager.class);
   final String PLUGIN_PATH = PentahoSystem.getApplicationContext().getSolutionPath("system/" + CdaContentGenerator.PLUGIN_NAME);
   public static int DEFAULT_MAX_AGE = 3600;  // 1 hour
-  PriorityQueue<CachedQuery> queue;
+  PriorityBlockingQueue<CachedQuery> queue;
   
 //  private static final String ENCODING = "UTF-8";
 
   enum functions
   {
-    LIST, CHANGE, RELOAD, DELETE, PERSIST, MONITOR, DETAILS, TEST, EXECUTE, IMPORT, 
-//    CACHED, GETDETAILS, CACHEOVERVIEW, REMOVECACHE
+    LIST, CHANGE, RELOAD, DELETE, EXECUTE, IMPORT, 
+//    CACHED, GETDETAILS, CACHEOVERVIEW, REMOVECACHE PERSIST, MONITOR,TEST, DETAILS, 
   }
   
   private static CacheScheduleManager _instance;
@@ -197,36 +198,36 @@ public class CacheScheduleManager
 //  }
 
 
-  public void called(String file, String id, Boolean hit)
-  {
-    return; //not implemented yet!
-    /*
-    Session s = getSession();
-    Query q;
-    List l = s.createQuery("from CachedQuery where cdaFile=? and dataAccessId=?") //
-    .setString(0, file) //
-    .setString(1, id) //
-    .list();
-    
-    if (l.size() == 0)
-    {
-    // No results, create a new (uncached) query object.
-    q = new UncachedQuery();
-    }
-    else if (l.size() == 1)
-    {
-    q = (Query) l.get(0);
-    }
-    else
-    {
-    q = (Query) l.get(0);
-    // Find correct params set
-    //
-    }
-    q.registerRequest(hit);
-    s.save(q);
-     */
-  }
+//  public void called(String file, String id, Boolean hit)
+//  {
+//    return; //not implemented yet!
+//    /*
+//    Session s = getSession();
+//    Query q;
+//    List l = s.createQuery("from CachedQuery where cdaFile=? and dataAccessId=?") //
+//    .setString(0, file) //
+//    .setString(1, id) //
+//    .list();
+//    
+//    if (l.size() == 0)
+//    {
+//    // No results, create a new (uncached) query object.
+//    q = new UncachedQuery();
+//    }
+//    else if (l.size() == 1)
+//    {
+//    q = (Query) l.get(0);
+//    }
+//    else
+//    {
+//    q = (Query) l.get(0);
+//    // Find correct params set
+//    //
+//    }
+//    q.registerRequest(hit);
+//    s.save(q);
+//     */
+//  }
 
 
   private void change(String obj, OutputStream out) throws Exception
@@ -447,7 +448,7 @@ public class CacheScheduleManager
 
     @SuppressWarnings( "unchecked" )
     List<CachedQuery> cachedQueries = s.createQuery( "from " + CachedQuery.class.getSimpleName() ).list(); //TODO: simple name?
-    this.queue = new PriorityQueue<CachedQuery>(20, new SortByTimeDue());
+    this.queue = new PriorityBlockingQueue<CachedQuery>(20, new SortByTimeDue());
     for (CachedQuery cq : cachedQueries)
     {
       if (cq.getLastExecuted() == null)
@@ -495,6 +496,7 @@ public class CacheScheduleManager
     }
     catch (Exception e)
     {
+      logger.error( "PluginHibernateUtil.rebuildSessionFactory", e );
       return;
     }
     //}
@@ -534,7 +536,7 @@ public class CacheScheduleManager
     }
 
     CacheActivator.reschedule(queue);
-    CacheActivator.rescheduleBackup();
+//    CacheActivator.rescheduleBackup();
   }
 
 
@@ -548,7 +550,7 @@ public class CacheScheduleManager
   }
 
 
-  public PriorityQueue<CachedQuery> getQueue()
+  public Queue<CachedQuery> getQueue()
   {
     return queue;
   }

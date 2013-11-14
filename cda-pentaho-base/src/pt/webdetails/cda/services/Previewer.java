@@ -16,6 +16,7 @@ import org.pentaho.util.messages.LocaleHelper;
 import pt.webdetails.cpf.Util;
 import pt.webdetails.cpf.context.api.IUrlProvider;
 import pt.webdetails.cpf.packager.origin.StaticSystemOrigin;
+import pt.webdetails.cpf.repository.api.IContentAccessFactory;
 import pt.webdetails.cpf.repository.api.IReadAccess;
 import pt.webdetails.cpf.utils.Pair;
 
@@ -25,6 +26,7 @@ import pt.webdetails.cpf.utils.Pair;
  */
 public class Previewer extends ProcessedHtmlPage {
 
+
   private static Log logger = LogFactory.getLog(BaseService.class);
 
   private static final String SYS_PATH = "previewer";
@@ -32,6 +34,12 @@ public class Previewer extends ProcessedHtmlPage {
 
   private static final String SYS_ABOUT_PATH = "static/about.html";
   private static final String UI_BACKEND_PREFIX = "PreviewerBackend.";
+
+  private String cdaPath;
+
+  public Previewer( IUrlProvider urlProvider, IContentAccessFactory access ) {
+    super( urlProvider, access );
+  }
 
   /**
    * exposed to page
@@ -46,6 +54,7 @@ public class Previewer extends ProcessedHtmlPage {
     pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "PATH_about", quote(urlProvider.getPluginStaticBaseUrl(), SYS_ABOUT_PATH )) );
     Locale locale = LocaleHelper.getLocale();
     pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "PATH_page", quote(urlProvider.getPluginStaticBaseUrl(), SYS_PATH ) ) );
+    pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "Path", quote( cdaPath ) ) );
     pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "LOCALE_locale", quote(locale.toString() ) ) );
     addDataTablesLocalization( pairs, UI_BACKEND_PREFIX + "LOCALE_dataTables", locale );
     return pairs;
@@ -83,9 +92,10 @@ public class Previewer extends ProcessedHtmlPage {
     return String.format( "dataTables/languages/Messages%s.json", localeRep );
   }
 
-  public String previewQuery() throws Exception
+  public String previewQuery(String cdaPath) throws Exception
   {
     //TODO: add cache
+    this.cdaPath = cdaPath;
     return processPage( new StaticSystemOrigin( SYS_PATH ), PAGE );
   }
 

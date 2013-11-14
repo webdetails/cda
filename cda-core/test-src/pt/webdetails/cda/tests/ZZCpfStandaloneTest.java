@@ -39,7 +39,7 @@ public class ZZCpfStandaloneTest {
 	@BeforeClass
 	public static void setUp() throws Exception {
 		CoreBeanFactory cbf = new CoreBeanFactory("cda.spring.xml");
-		env= new BaseCdaEnvironment(cbf);
+//		env= new BaseCdaEnvironment(cbf);
 		CdaEngine.init(env);
 	}
 	

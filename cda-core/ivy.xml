@@ -15,21 +15,65 @@
 		<!--  pentaho dependencies -->
 		
 		<!--  internal dependencies -->
-		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin"
-			rev="${dependency.pentaho-reporting.revision}" changing="true">		
-		</dependency>
+<!--		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin"
+			rev="${dependency.bi-platform.revision}" changing="true" transitive="true" >	
+			<exclude module="pentaho-reporting-engine-wizard-core"/>
+		</dependency>-->
+		        <!--  Pentaho Reporting Library -->
+	  <dependency org="pentaho-library" name="libloader" rev="1.2.8"/>
+    <dependency org="pentaho" name="mondrian" rev="${dependency.mondrian.revision}" transitive="false"/>
+    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core"
+                rev="${dependency.pentaho-reporting.revision}" changing="true"/>
+		
+    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions"
+                rev="${dependency.pentaho-reporting.revision}" changing="true" />
+    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-kettle"
+                rev="${dependency.pentaho-reporting.revision}" changing="true" transitive="true"/>
+
+    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-mondrian"
+                rev="${dependency.pentaho-reporting.revision}" changing="true" transitive="false"/>
+
+    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-olap4j"
+                rev="${dependency.pentaho-reporting.revision}" changing="true" transitive="true"/>
+
+    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-pmd"
+                rev="${dependency.pentaho-reporting.revision}" changing="true" transitive="true"/>
+
+    <dependency org="pentaho-reporting-engine"
+                name="pentaho-reporting-engine-classic-extensions-reportdesigner-parser"
+                rev="${dependency.pentaho-reporting.revision}" changing="true" transitive="false"/>
+    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-sampledata"
+                rev="${dependency.pentaho-reporting.revision}" changing="true" transitive="false"/>
+    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-scripting"
+                rev="${dependency.pentaho-reporting.revision}" changing="true" transitive="false"/>
+    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-xpath"
+                rev="${dependency.pentaho-reporting.revision}" changing="true" transitive="false"/>
+		
+
+<!--    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-drill-down"
+                rev="${dependency.pentaho-reporting.revision}" changing="true" transitive="false"/>
+    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-toc"
+                rev="${dependency.pentaho-reporting.revision}" changing="true" transitive="false"/>
+    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-legacy-charts"
+                rev="${dependency.pentaho-reporting.revision}" changing="true" transitive="false"/>-->
+		
+		
+    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-legacy-functions"
+                rev="${dependency.pentaho-reporting.revision}" changing="true" transitive="false" />
+    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-wizard-core"
+                rev="${dependency.pentaho-reporting.revision}" changing="true" transitive="false"/>
 
     <dependency org="com.hazelcast" name="hazelcast" transitive="false" rev="2.5" conf="default->default;legacy->default"/>
 
 
     <dependency org="pt.webdetails" name="cpf-core"
-            rev="REFACTOR-SNAPSHOT" transitive="false" changing="true" conf='default->default'/>
+            rev="REFACTOR-SNAPSHOT" transitive="true" changing="true" conf='default->default'/>
 
 
-<dependency org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.8.2" conf='runtime->default'/>
-<dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.8" conf='runtime->default' />
+<dependency org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.8.2" conf='runtime->default' transitive="false"/>
+<!--<dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.8" conf='runtime->default' transitive="false" />-->
 
-<dependency org="javax.ws.rs" name="jsr311-api" rev="1.1-ea" conf='runtime->default'/>
+<dependency org="javax.ws.rs" name="jsr311-api" rev="1.1-ea" conf='runtime->default' transitive="false"/>
   <dependency org="net.htmlparser.jericho" name="jericho-html" rev="3.1" conf="runtime->default"/>
 
 
@@ -38,14 +82,14 @@
     <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin"
       rev="${dependency.pentaho-reporting.revision.legacy}" changing="true" conf="legacy->default"/>
         -->
-    <dependency org="net.sf.ehcache" name="ehcache-core" rev="2.0.1" conf="legacy->default"/>
-    <dependency org="net.sf.ehcache" name="ehcache"  rev="1.2.3" conf="test->default"/>
+<!--    <dependency org="net.sf.ehcache" name="ehcache-core" rev="2.0.1" conf="legacy->default" transitive="false"/>-->
+    <dependency org="net.sf.ehcache" name="ehcache"  rev="1.2.3" conf="test->default" transitive="false"/>
 
-    <dependency org="hsqldb" name="hsqldb" rev="1.8.0" conf="test->default"/>
+    <dependency org="hsqldb" name="hsqldb" rev="1.8.0" conf="test->default" transitive="false"/>
              <dependency org="junit" name="junit" conf="test->default" rev='4.10'/>     
               <dependency org="xmlunit" name="xmlunit" rev="1.3" conf="test->default"/>      
       
-     <exclude module="ehcache" conf="default,runtime"/> <!--   Comment this for CDA with 3.6.0 dependencies -->
+     <exclude module="ehcache" conf="default,runtime" />
 			<exclude module="nekohtml" conf="" matcher="exact"></exclude>      
 
       

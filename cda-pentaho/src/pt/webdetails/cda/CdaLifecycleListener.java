@@ -84,6 +84,6 @@ public class CdaLifecycleListener extends SimpleLifeCycleListener implements IPl
 
   @Override
   public PluginEnvironment getEnvironment() {
-    return new PentahoPluginEnvironment();
+    return PentahoPluginEnvironment.getInstance();
   }
 }

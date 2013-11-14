@@ -14,7 +14,6 @@ import pt.webdetails.cda.cache.TableCacheKey;
 import pt.webdetails.cda.cache.monitor.CacheElementInfo;
 import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
-import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.utils.framework.JsonCallHandler;
 import pt.webdetails.cda.utils.framework.JsonCallHandler.JsonResultFields;
 import pt.webdetails.cda.utils.framework.JsonCallHandler.ResponseStatus;
@@ -24,7 +23,7 @@ import pt.webdetails.cda.utils.framework.JsonCallHandler.ResponseStatus;
  */
 public class CacheMonitor extends BaseService {
 
-  //TODO: switch to jackson
+  //TODO: switch to jackson?
 
   /**
    * formerly known as "cached"
@@ -53,7 +52,7 @@ public class CacheMonitor extends BaseService {
    * @param dataAccessId
    * @return JSON
    */
-  public String listQueriesInCache(String cdaSettingsId, String dataAccessId) throws JSONException, ExporterException, IOException {
+  public JSONObject listQueriesInCache(String cdaSettingsId, String dataAccessId) throws JSONException, IOException {
     
     JSONArray results = new JSONArray();
     
@@ -89,7 +88,7 @@ public class CacheMonitor extends BaseService {
     response.put(ResultFields.STATUS, ResponseStatus.OK);
     response.put(ResultFields.RESULT, result);
     
-    return getJsonString( response );
+    return response;
   }
 
   /**
@@ -97,28 +96,33 @@ public class CacheMonitor extends BaseService {
    * @param encodedCacheKey base64-encoded cache key
    * @return
    */
-  public JSONObject getCacheQueryTable(String encodedCacheKey) throws JSONException, ExporterException, UnsupportedEncodingException, IOException, ClassNotFoundException {
-    
-    if(encodedCacheKey == null){
-      throw new IllegalArgumentException("No cache key received.");
-    }
-    
-    JSONObject result = new JSONObject();
-    IQueryCache cdaCache = AbstractDataAccess.getCdaCache();
+  public JSONObject getCacheQueryTable(String encodedCacheKey) throws JSONException {
 
-    TableCacheKey lookupCacheKey = TableCacheKey.getTableCacheKeyFromString(encodedCacheKey);
-    ExtraCacheInfo info = cdaCache.getCacheEntryInfo(lookupCacheKey);
-
-    if(info != null){
-      // put query results
-      result.put(ResultFields.RESULT, info.getTableSnapshot());
-      result.put(JsonResultFields.STATUS, ResponseStatus.OK);
+    try {
+      if(encodedCacheKey == null){
+        throw new IllegalArgumentException("No cache key received.");
+      }
+      
+      JSONObject result = new JSONObject();
+      IQueryCache cdaCache = AbstractDataAccess.getCdaCache();
+  
+      TableCacheKey lookupCacheKey = TableCacheKey.getTableCacheKeyFromString(encodedCacheKey);
+      ExtraCacheInfo info = cdaCache.getCacheEntryInfo(lookupCacheKey);
+  
+      if(info != null){
+        // put query results
+        result.put(ResultFields.RESULT, info.getTableSnapshot());
+        result.put(JsonResultFields.STATUS, ResponseStatus.OK);
+      }
+      else {
+        return JsonCallHandler.getErrorJson(ErrorMsgs.CACHE_ITEM_NOT_FOUND);
+      }
+      
+      return result;
     }
-    else {
-      return JsonCallHandler.getErrorJson(ErrorMsgs.CACHE_ITEM_NOT_FOUND);
+    catch (Exception e) {
+      return JsonCallHandler.getErrorJson( e.getLocalizedMessage() );
     }
-    
-    return result;
     
   }
 
@@ -204,7 +208,7 @@ public class CacheMonitor extends BaseService {
    * @throws ClassNotFoundException
    * @throws JSONException
    */
-  public String removeQueryFromCache(String serializedCacheKey) throws UnsupportedEncodingException, IOException, ClassNotFoundException, JSONException 
+  public JSONObject removeQueryFromCache(String serializedCacheKey) throws UnsupportedEncodingException, IOException, ClassNotFoundException, JSONException 
   {
     TableCacheKey key = TableCacheKey.getTableCacheKeyFromString(serializedCacheKey);
     
@@ -215,11 +219,19 @@ public class CacheMonitor extends BaseService {
     if(success){
       result.put(JsonResultFields.STATUS, ResponseStatus.OK);
       result.put(JsonResultFields.RESULT, true);
-      return getJsonString( result );
+      return result;
     }
     else {
       return getErrorJson(ErrorMsgs.CACHE_ITEM_NOT_FOUND);
     }
+  }
+
+  public JSONObject removeAll(String cdaSettingsId, String dataAccessId) throws JSONException
+  {
+    IQueryCache cdaCache = AbstractDataAccess.getCdaCache();
+    int result = cdaCache.removeAll(cdaSettingsId, dataAccessId);
+    
+    return getOkJson(result);
   }
 
   /**
@@ -227,7 +239,7 @@ public class CacheMonitor extends BaseService {
    * @return
    * @throws JSONException
    */
-  public String shutdown() throws JSONException {
+  public JSONObject shutdown() throws JSONException {
     AbstractDataAccess.shutdownCache();
     return getOkJson("Cache shutdown.");
   }
@@ -236,12 +248,12 @@ public class CacheMonitor extends BaseService {
     return json.toString(JsonCallHandler.INDENT_FACTOR);
   }
   
-  protected String getOkJson(Object obj) throws JSONException {
-    return getJsonString( JsonCallHandler.getOKJson(obj) );
+  protected JSONObject getOkJson(Object obj) throws JSONException {
+    return JsonCallHandler.getOKJson(obj);
   }
   
-  protected String getErrorJson(String msg) throws JSONException {
-    return getJsonString( JsonCallHandler.getErrorJson(msg) );
+  protected JSONObject getErrorJson(String msg) throws JSONException {
+    return JsonCallHandler.getErrorJson(msg);
   }
 
 }

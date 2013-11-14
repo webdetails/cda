@@ -1,11 +1,19 @@
 package pt.webdetails.cda.tests;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.swing.table.TableModel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.reporting.engine.classic.core.DataFactory;
+import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
+import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFactory;
+import org.pentaho.reporting.libraries.base.config.Configuration;
+import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
+import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 //import org.pentaho.reporting.libraries.base.config.Configuration;
 //import org.pentaho.reporting.libraries.base.config.HierarchicalConfiguration;
 
@@ -96,6 +104,14 @@ public abstract class CdaTestCase extends TestCase {
       super( new CoreBeanFactory() );
       this.factory = factory;
 //      testConfig = new HierarchicalConfiguration( CdaBoot.getInstance().getGlobalConfig() );
+    }
+
+    public void initializeDataFactory( DataFactory dataFactory, Configuration configuration, ResourceKey contextKey,
+        ResourceManager resourceManager ) throws ReportDataFactoryException {
+      dataFactory.initialize(configuration, resourceManager, contextKey,
+          new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
+      dataFactory.open();
+      
     }
 
 //    public Configuration getBaseConfig() {

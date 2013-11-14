@@ -23,10 +23,7 @@ import pt.webdetails.cda.exporter.ExportOptions;
 import pt.webdetails.cda.exporter.ExporterEngine;
 
 /**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 4, 2010
- * Time: 5:25:53 PM
+ * 
  */
 public class QueryOptions implements ExportOptions, Cloneable
 {

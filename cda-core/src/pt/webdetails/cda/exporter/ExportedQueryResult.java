@@ -1,5 +1,6 @@
 package pt.webdetails.cda.exporter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -8,6 +9,7 @@ import javax.swing.table.TableModel;
 
 import org.apache.commons.lang.StringUtils;
 
+import pt.webdetails.cpf.Util;
 import pt.webdetails.cpf.utils.MimeTypes;
 
 /**
@@ -37,6 +39,12 @@ public class ExportedQueryResult {
 
   public void writeOut( OutputStream out ) throws ExporterException {
     exporter.export( out, table );
+  }
+
+  public String asString() throws ExporterException {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    writeOut( out );
+    return Util.toString( out.toByteArray() );
   }
 
   private static void setResponseHeaders(HttpServletResponse response, String mimeType, String attachmentName) {

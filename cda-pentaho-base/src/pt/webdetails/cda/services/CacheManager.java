@@ -8,12 +8,17 @@ import org.apache.commons.lang.StringUtils;
 import pt.webdetails.cda.AccessDeniedException;
 import pt.webdetails.cpf.context.api.IUrlProvider;
 import pt.webdetails.cpf.packager.origin.StaticSystemOrigin;
+import pt.webdetails.cpf.repository.api.IContentAccessFactory;
 import pt.webdetails.cpf.utils.Pair;
 
 /**
- * manageCache entry point
+ * manageCache entry point, frontend for {@link CacheMonitor} and {@link CacheScheduler}
  */
 public class CacheManager extends ProcessedHtmlPage {
+
+  public CacheManager( IUrlProvider urlProvider, IContentAccessFactory access ) {
+    super( urlProvider, access );
+  }
 
   public String manageCache() throws AccessDeniedException, IOException {
     return processPage( new StaticSystemOrigin( "cachemanager" ), "cache.html" );
@@ -28,6 +33,7 @@ public class CacheManager extends ProcessedHtmlPage {
   }
 
   private String quote(String...text) {
+   
     return '"' + StringUtils.join(text) + '"';
   }
 }

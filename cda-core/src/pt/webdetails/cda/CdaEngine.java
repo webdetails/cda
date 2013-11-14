@@ -79,26 +79,13 @@ public class CdaEngine
 
     return _instance;
   }
-  
-  public synchronized static void init() throws InitializationException //TODO: public?!
-  {
-      init(null); 
-  }
+
   public synchronized static void init(ICdaEnvironment env) throws InitializationException {
-//    if (!isInitialized()) {
-      // try to get the environment from the configuration
-      // will return the DefaultCdaEnvironment by default
-//      if (env == null) env = getConfiguredEnvironment();
-
-      if (env == null) env = new BaseCdaEnvironment();
-
+      assert env != null;
       _instance = new CdaEngine(env);
 
       // Start ClassicEngineBoot
-      CdaBoot.getInstance().start();
       ClassicEngineBoot.getInstance().start();
-//    }
-
   }
 
   protected CdaEngine(ICdaEnvironment env) throws InitializationException
@@ -200,38 +187,6 @@ public class CdaEngine
     }
     return typedTableModel;
   }
-
-//  private static ICdaEnvironment getConfiguredEnvironment() throws InitializationException {
-////	    String className = getInstance().getConfigProperty("pt.webdetails.cda.environment.default");
-////	    
-//	    if (StringUtils.isNotBlank(className)) {
-//	      try {
-//	        final Class<?> clazz;
-//	        clazz = Class.forName(className);
-//	        if (!ICdaEnvironment.class.isAssignableFrom(clazz)) {
-//	          throw new InitializationException (
-//	            "Plugin class specified by property pt.webdetails.cda.beanFactoryClass "
-//	            + " must implement "
-//	            + ICdaBeanFactory.class.getName(), null);
-//	        }
-//	          return (ICdaEnvironment) clazz.newInstance();
-//	        } catch (ClassNotFoundException e) {
-//	          String errorMessage = "Class not found when loading bean factory " + className;
-//	          logger.error(errorMessage, e);
-//	          throw new InitializationException(errorMessage, e); 
-//	        } catch (IllegalAccessException e) {
-//	          String errorMessage = "Illegal access when loading bean factory from " + className;
-//	          logger.error(errorMessage, e);
-//	          throw new InitializationException(errorMessage, e); 
-//	        } catch (InstantiationException e) {
-//	          String errorMessage = "Instantiation error when loading bean factory from " + className;
-//	          logger.error(errorMessage, e);
-//	          throw new InitializationException(errorMessage, e); 
-//	        }
-//	      }
-//	    
-//	    return null;
-//  }
 
   private ICdaEnvironment getEnv() {
 	  return environment;

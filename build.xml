@@ -6,7 +6,7 @@
   </description>
 
 
-  <property name="projects.list" value="cda-pentaho" description="directories of dependant projects"/> <!--TODO:,cda-pentaho5-->
+  <property name="projects.list" value="cda-pentaho,cda-pentaho5" description="directories of dependant projects"/>
   <property name="core.project" value="cda-core" description="the core project on which all depend"/>
 
   <!-- just to steal install-antcontrib from subfloor -->
@@ -56,7 +56,10 @@
     <ant dir="${core.project}" antfile="build.xml" target="publish-local" inheritAll="false"/>
   </target>
   <target name="resolve-projects">
-    <ant dir="${projects.list}" antfile="build.xml" target="resolve" inheritAll="false"/>
+    <antcall target="call">
+      <param name="target" value="resolve"/>
+      <param name="projects" value="${projects.list}"/>
+    </antcall>
   </target>
 
   <target name="dist" depends="publish-local-core, resolve-projects">
