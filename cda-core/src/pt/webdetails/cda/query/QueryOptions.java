@@ -25,7 +25,7 @@ import pt.webdetails.cda.exporter.ExporterEngine;
 /**
  * 
  */
-public class QueryOptions implements ExportOptions, Cloneable
+public class QueryOptions implements ExportOptions, IQueryArguments, Cloneable
 {
 
   private String dataAccessId;
@@ -65,7 +65,6 @@ public class QueryOptions implements ExportOptions, Cloneable
     this.paginate = paginate;
   }
 
-
   public int getPageSize()
   {
     return pageSize;
@@ -76,7 +75,6 @@ public class QueryOptions implements ExportOptions, Cloneable
   {
     this.pageSize = pageSize;
   }
-
 
   public int getPageStart()
   {
@@ -100,7 +98,6 @@ public class QueryOptions implements ExportOptions, Cloneable
   {
     this.sortBy = sortBy;
   }
-
 
   public List<Parameter> getParameters()
   {
@@ -138,12 +135,6 @@ public class QueryOptions implements ExportOptions, Cloneable
 
   }
 
-
-  /**
-   * 
-   * @param name
-   * @return null if not found
-   */
   public Parameter getParameter(final String name)
   {
 
@@ -227,7 +218,7 @@ public class QueryOptions implements ExportOptions, Cloneable
 
 
   @Override
- public Object clone() throws CloneNotSupportedException {
+  public Object clone() throws CloneNotSupportedException {
     return super.clone();
   }
 

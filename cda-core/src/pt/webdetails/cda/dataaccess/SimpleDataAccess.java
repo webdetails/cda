@@ -180,7 +180,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     if (isCacheEnabled())
     {
       ExtraCacheInfo cInfo =
-          new ExtraCacheInfo( this.getCdaSettings().getId(), queryOptions.getDataAccessId(), queryTime, tableModelCopy );
+          new ExtraCacheInfo( this.getCdaSettings().getId(), getId(), queryTime, tableModelCopy );
       IQueryCache cache = getCdaCache();
       if ( cache != null ) {
         cache.putTableModel( key, tableModelCopy, getCacheDuration(), cInfo );
@@ -193,7 +193,6 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     // and finally return the copy.
     return tableModelCopy;
   }
-
 
   private List<Parameter> getFilledParameters(final QueryOptions queryOptions) throws QueryException
   {

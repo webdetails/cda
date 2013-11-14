@@ -29,7 +29,6 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 
 import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cda.cache.EHCacheQueryCache;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog;

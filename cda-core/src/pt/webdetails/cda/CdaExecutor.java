@@ -26,6 +26,7 @@ import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.exporter.UnsupportedExporterException;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
+import pt.webdetails.cda.settings.CdaSettingsReadException;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 import pt.webdetails.cda.utils.Util;
@@ -85,43 +86,21 @@ public class CdaExecutor
 
 
     }
-    catch (DocumentException e)
-    {
-      logger.fatal("Unable to parse settings dom: " + Util.getExceptionDescription(e));
-    }
-    catch (UnsupportedConnectionException e)
-    {
-      logger.fatal("ConnectionException " + Util.getExceptionDescription(e));
-    }
-    catch (UnsupportedDataAccessException e)
-    {
-      logger.fatal("DataAccessException " + Util.getExceptionDescription(e));
-    }
-    catch (UnknownDataAccessException e)
-    {
-      logger.fatal("DataAccess id not found " + Util.getExceptionDescription(e));
-    }
-    catch (QueryException e)
-    {
-      logger.fatal("QueryException " + Util.getExceptionDescription(e));
-    }
-    catch (UnsupportedExporterException e)
-    {
-      logger.fatal("UnsupportedExporterException " + Util.getExceptionDescription(e));
-    }
     catch (ExporterException e)
     {
       logger.fatal("ExporterException " + Util.getExceptionDescription(e));
     } catch ( AccessDeniedException e ) {
       logger.error("Access denied " + Util.getExceptionDescription(e));
     }
+    catch (Exception e) {
+      logger.fatal( e.getLocalizedMessage() + ": " + Util.getExceptionDescription( e ) );
+    }
 
 
   }
 
   private void testBlocks(final OutputStream out)
- throws DocumentException, UnsupportedConnectionException,
-    UnsupportedDataAccessException, UnknownDataAccessException, QueryException, UnsupportedExporterException,
+ throws CdaSettingsReadException, UnknownDataAccessException, QueryException, UnsupportedExporterException,
     ExporterException, AccessDeniedException
   {
 

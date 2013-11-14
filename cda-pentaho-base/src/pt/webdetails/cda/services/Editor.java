@@ -3,9 +3,6 @@ package pt.webdetails.cda.services;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import pt.webdetails.cda.AccessDeniedException;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cpf.Util;
@@ -15,8 +12,6 @@ import pt.webdetails.cpf.repository.api.IReadAccess;
 import pt.webdetails.cpf.repository.api.IUserContentAccess;
 
 public class Editor extends BaseService {
-
-  private static Log logger = LogFactory.getLog(Editor.class);
 
   private static final String EDITOR_PATH = "editor";
   private static final String EDITOR_SOURCE = "editor.html";

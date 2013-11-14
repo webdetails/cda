@@ -70,11 +70,6 @@ public class CdaEngine
     if (_instance == null)
     {
       throw new InitializationException( "CdaEngine not initialized", null );
-//      try {
-//        init();
-//      } catch (InitializationException ie) {
-//        logger.fatal("Initialization failed. CDA will NOT be available", ie);
-//      }
     }
 
     return _instance;
@@ -147,12 +142,12 @@ public class CdaEngine
     return cdaSettings.listQueries();
   }
 
-  public QueryOptions unwrapQuery(String uuid) throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
+  public synchronized QueryOptions unwrapQuery(String uuid) throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
   {
     return wrappedQueries.remove(UUID.fromString(uuid));
   }
 
-  public String wrapQuery(
+  public synchronized String wrapQuery(
       final CdaSettings cdaSettings,
       final QueryOptions queryOptions)
   {

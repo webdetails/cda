@@ -42,7 +42,9 @@ import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
 import pt.webdetails.cpf.PluginEnvironment;
+import pt.webdetails.cpf.repository.api.FileAccess;
 import pt.webdetails.cpf.repository.api.IReadAccess;
+import pt.webdetails.cpf.repository.api.IUserContentAccess;
 
 /**
  * This file is responsible to build / keep the different cda settings.
@@ -89,10 +91,11 @@ public class SettingsManager {
    *
    */
   public synchronized CdaSettings parseSettingsFile(final String id)
-    throws DocumentException, UnsupportedConnectionException, UnsupportedDataAccessException, AccessDeniedException {
+    throws CdaSettingsReadException, AccessDeniedException {
 
-    //TODO: check permissions!
-
+    if ( !canAccess( id ) ) {
+      throw new AccessDeniedException( String.format( "Current user cannot access \"%s\"", id ), null );
+    }
     // Do we have this on cache?
     if (settingsCache.containsKey(id)) {
       CdaSettings cachedCda = (CdaSettings) settingsCache.get(id);
@@ -127,14 +130,25 @@ public class SettingsManager {
       
       return settings;
     } catch (ResourceException re) {
-      throw new UnsupportedDataAccessException(re.getMessage(), re);
+      throw new CdaSettingsReadException(re.getMessage(), re);
+    } catch ( UnsupportedConnectionException e ) {
+      throw new CdaSettingsReadException( "Unrecognized connection.", e );
+    } catch ( UnsupportedDataAccessException e ) {
+      throw new CdaSettingsReadException( "Unrecognized data access definition.", e );
     }
 
+  }
+
+  private boolean canAccess( String id ) {
+    return getRepositoryAccess().hasAccess( id, FileAccess.READ );
   }
 
   public ResourceManager getResourceManager() {
     final ResourceManager resourceManager = new ResourceManager();
     resourceManager.registerDefaults();
+//    // Create only default loaders and factories, not the caches
+//    resourceManager.registerDefaultLoaders();
+//    resourceManager.registerDefaultFactories();
     resourceManager.registerLoader( this.defaultResourceLoader );
     return resourceManager;
   }
@@ -145,12 +159,12 @@ public class SettingsManager {
    * @param savedFileTime 
    * @return null if not a file
    */
-  private long getLastSaveTime(final String id) {
+  public long getLastSaveTime(final String id) {
     //check if it's a saved file and get its timestamp
     return getRepositoryAccess().getLastModified(id);
   }
   
-  private static IReadAccess getRepositoryAccess() {
+  private static IUserContentAccess getRepositoryAccess() {
     return PluginEnvironment.env().getContentAccessFactory().getUserContentAccess("/");
   }
   

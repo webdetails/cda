@@ -83,28 +83,34 @@ public class EHCacheQueryCache implements IQueryCache {
   {
     if (cacheManager == null)
     {// 'new CacheManager' used instead of 'CacheManager.create' to avoid overriding default cache
-      boolean useTerracotta = Boolean.parseBoolean(CdaEngine.getInstance().getConfigProperty(USE_TERRACOTTA_PROPERTY));
-      String configFilePath = useTerracotta ? CACHE_CFG_FILE_DIST : CACHE_CFG_FILE;
-
-      InputStream configFile = null;
+      final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
       try {
-        configFile = CdaEngine.getRepo().getPluginSystemReader( "" ).getFileInputStream( configFilePath );
-        cacheManager = new net.sf.ehcache.CacheManager(configFile);
-        logger.debug("Cache started using " + configFilePath);
-      }
-      catch (IOException ioe) {
-        logger.error( "Error reading " + configFilePath );
+        Thread.currentThread().setContextClassLoader( EHCacheQueryCache.class.getClassLoader() );
+        boolean useTerracotta = Boolean.parseBoolean(CdaEngine.getInstance().getConfigProperty(USE_TERRACOTTA_PROPERTY));
+        String configFilePath = useTerracotta ? CACHE_CFG_FILE_DIST : CACHE_CFG_FILE;
+  
+        InputStream configFile = null;
+        try {
+          configFile = CdaEngine.getRepo().getPluginSystemReader( "" ).getFileInputStream( configFilePath );
+          cacheManager = new net.sf.ehcache.CacheManager(configFile);
+          logger.debug("Cache started using " + configFilePath);
+        }
+        catch (IOException ioe) {
+          logger.error( "Error reading " + configFilePath );
+        }
+        finally {
+          IOUtils.closeQuietly( configFile );
+        }
+  
+        // enable clean shutdown so ehcache's diskPersistent attribute can work
+        if (!useTerracotta)
+        {
+          enableCacheProperShutdown(true);
+        }
       }
       finally {
-        IOUtils.closeQuietly( configFile );
+        Thread.currentThread().setContextClassLoader( contextClassLoader );
       }
-
-      // enable clean shutdown so ehcache's diskPersistent attribute can work
-      if (!useTerracotta)
-      {
-        enableCacheProperShutdown(true);
-      }
-
     }
 
     if (cacheManager.cacheExists(CACHE_NAME) == false)
