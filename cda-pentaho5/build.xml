@@ -196,7 +196,7 @@
 
     <mkdir dir="${samples.stage.dir}"/>
 
-    <!-- copy over all the xactions within the cdf-samples folder -->
+    <!-- copy samples -->
     <copy todir="${samples.stage.dir}/bi-developers" overwrite="true" >
       <fileset dir="solution/bi-developers"></fileset>
     </copy>
