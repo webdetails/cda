@@ -39,10 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
-//import org.apache.commons.logging.Log;
-//import org.apache.commons.logging.LogFactory;
 
 import pt.webdetails.cda.CdaCoreService;
 import pt.webdetails.cda.exporter.ExportOptions;
@@ -51,29 +48,15 @@ import pt.webdetails.cda.utils.DoQueryParameters;
 import pt.webdetails.cpf.PluginEnvironment;
 import pt.webdetails.cpf.Util;
 import pt.webdetails.cpf.repository.api.IReadAccess;
+import pt.webdetails.cpf.utils.CharsetHelper;
 import pt.webdetails.cpf.utils.MimeTypes;
 
 @Path("/cda/api/utils")
+/**
+ * @deprecated
+ */
 public class RestEndpoint {
-  //private static final Log logger = LogFactory.getLog(CdaUtils.class);
-  //private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-  
-//  public static final String PLUGIN_NAME = "cda";
-//  private static final long serialVersionUID = 1L;
-  //private static final String EDITOR_SOURCE = "/editor/editor.html";
-  //private static final String EXT_EDITOR_SOURCE = "/editor/editor-cde.html";
-  //private static final String PREVIEWER_SOURCE = "/previewer/previewer.html";
-  //private static final String CACHE_MANAGER_PATH = "/cachemanager/cache.html";
-  //private static final int DEFAULT_PAGE_SIZE = 20;
-  //private static final int DEFAULT_START_PAGE = 0;
-  //private static final String PREFIX_PARAMETER = "param";
-  //private static final String PREFIX_SETTING = "setting";
-  public static final String ENCODING = "UTF-8";
-  
-  
-//  private static Log logger = LogFactory.getLog(RestEndpoint.class);
-  
-  protected static String getEncoding() { return ENCODING; }
+  private static String getEncoding() { return CharsetHelper.getEncoding(); }
   
   @GET
   @Path("/doQuery")
@@ -167,41 +150,8 @@ public class RestEndpoint {
           coreService.listParameters( params.getPath(), dataAccessId, getSimpleExportOptions( outputType ) );
       result.writeResponse( servletResponse );
   }
-  
-  
-//  @GET
-//  @Path("/getCdaFile")
-//  @Produces("text/xml")
-//  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
-//  public void getCdaFile(@QueryParam("path") String path, 
-//                         @QueryParam("solution") String solution, 
-//                         @QueryParam("file") String file,
-//                            
-//                         @Context HttpServletResponse servletResponse, 
-//                         @Context HttpServletRequest servletRequest) throws Exception
-//  {
-//      CdaCoreService coreService = new CdaCoreService();
-//      coreService.getCdaFile(servletResponse.getOutputStream(), path,new ResponseTypeHandler(servletResponse));
-//      
-//  }
-  
-//  
-//  @GET
-//  @Path("/writeCdaFile")
-//  @Produces("text/plain")
-//  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
-//  public void writeCdaFile(@QueryParam("path") String path, 
-//                           @QueryParam("solution") String solution, 
-//                           @QueryParam("file") String file,
-//                           @QueryParam("data") String data,
-//                            
-//                           @Context HttpServletResponse servletResponse, 
-//                           @Context HttpServletRequest servletRequest) throws Exception
-//  {  
-//      CdaCoreService coreService = new CdaCoreService();
-//      coreService.writeCdaFile(servletResponse.getOutputStream(), path,solution,file, data);
-//  }
-  
+
+
   @GET
   @Path("/getCdaList")
   @Consumes({ APPLICATION_XML, APPLICATION_JSON })
@@ -218,77 +168,18 @@ public class RestEndpoint {
       result.writeResponse( servletResponse );
   }
 
-  private ExportOptions getSimpleExportOptions( String outputType ) {
+  private ExportOptions getSimpleExportOptions(final String outputType ) {
     return new ExportOptions() {
-      
+
       public String getOutputType() {
-        // TODO Auto-generated method stub
-        return null;
+        return outputType;
       }
-      
+
       public Map<String, String> getExtraSettings() {
         return Collections.<String,String>emptyMap();
       }
     };
   }
-
-//  private void writeOut( HttpServletResponse servletResponse, ExportedQueryResult result ) {
-//    servletResponse.
-//  }
-//  @GET
-//  @Path("/clearCache")
-//  @Produces("text/plain")
-//  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
-//  public void clearCache(@Context HttpServletResponse servletResponse, 
-//                         @Context HttpServletRequest servletRequest) throws Exception
-//  {
-//      CdaCoreService coreService = new CdaCoreService();
-//      coreService.clearCache(servletResponse.getOutputStream());
-//  }
-  
-//  @GET
-//  @Path("/cacheMonitor")
-//  @Produces("text/plain")
-//  @Consumes({ APPLICATION_XML, APPLICATION_JSON, APPLICATION_FORM_URLENCODED })
-//  public void cacheMonitor(@QueryParam("method") String method,
-//                           @Context HttpServletResponse servletResponse, 
-//                           @Context HttpServletRequest servletRequest) throws Exception{
-//      Map parameters = servletRequest.getParameterMap();
-//      ICommonParameterProvider requParam= new CommonParameterProvider();
-//      Iterator it = parameters.entrySet().iterator();
-//      while(it.hasNext())
-//      {
-//          Map.Entry e = (Map.Entry)it.next();
-//          requParam.put((String)e.getKey(), e.getValue());
-//      }
-//      CdaCoreService coreService = new CdaCoreService();
-//      coreService.cacheMonitor(servletResponse.getOutputStream(), method, requParam);
-//  }
-  
-  
-//  @GET
-//  @Path("/editFile")
-//  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
-//  public void editFile(@QueryParam("path") String path, 
-//                       @QueryParam("solution") String solution, 
-//                       @QueryParam("file") String file,
-//                       
-//                       @Context HttpServletResponse servletResponse, 
-//                       @Context HttpServletRequest servletRequest) throws Exception
-//  {
-//      CdaCoreService coreService = new CdaCoreService(new ResponseTypeHandler(servletResponse));
-//      coreService.editFile(servletResponse.getOutputStream(), path,solution,file,new ResponseTypeHandler(servletResponse));
-//   }
-
-//  @GET
-//  @Path("/previewQuery")
-//  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
-//  public void previewQuery(@Context HttpServletResponse servletResponse, 
-//                           @Context HttpServletRequest servletRequest) throws Exception
-//  {
-//    //TODO: moved out!
-//    logger.error("previewer has been moved, blame tgf!");
-//  }
 
   @GET
   @Path("/getCssResource")
@@ -328,34 +219,6 @@ public class RestEndpoint {
 
   private CdaCoreService getCoreService() {
     return new CdaCoreService();
-  }
-
-//  @GET
-//  @Path("/cacheController")
-//  @Produces("text/plain")
-//  @Consumes({ APPLICATION_XML, APPLICATION_JSON, APPLICATION_FORM_URLENCODED })
-//  public void cacheController(@QueryParam("method") String method,
-//                              @QueryParam("object") String object,
-//                              @QueryParam("id") String id,
-//  
-//                              @Context HttpServletResponse servletResponse, 
-//                              @Context HttpServletRequest servletRequest) throws IOException
-//  {
-//      CdaCoreService coreService = new CdaCoreService();
-//      coreService.cacheController(servletResponse.getOutputStream(), method, id);
-//  }
-
-  @GET
-  @Path("/manageCache")
-  @Produces("text/plain")
-  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
-  public void manageCache(@Context HttpServletResponse servletResponse, 
-                          @Context HttpServletRequest servletRequest) throws Exception
-  {
-    //FIXME
-    throw new NotImplementedException("no cache manager yet");
-//      CdaCoreService coreService = new CdaCoreService();
-//      coreService.manageCache(servletResponse.getOutputStream(),new ResponseTypeHandler(servletResponse));
   }
 
   protected void writeOut( OutputStream out, String contents ) throws IOException {
