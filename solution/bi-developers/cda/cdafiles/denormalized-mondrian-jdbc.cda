@@ -14,7 +14,7 @@
 			<Url>jdbc:hsqldb:mem:SampleData</Url>
             <User>sa</User>
             <Pass></Pass>
-			<Catalog>SteelWheels</Catalog>
+			<Catalog>mondrian:/SteelWheels</Catalog>
 			<Cube>SteelWheelsSales</Cube>
         </Connection>
     </DataSources>
