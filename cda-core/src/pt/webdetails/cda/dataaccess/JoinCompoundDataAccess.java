@@ -345,17 +345,18 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     return maxRowsTypeSearch;
   }
 
-  /*
-   * This method returns the correct kettle type from the column class. Possible values:
-   *  String
-   *  Date
-   *  Boolean
-   *  Integer
-   *  BigNumber
-   *  Serializable
-   *  Binary
-   *   
-   */
+  /**
+   * This method returns the correct kettle type from the column class.<br> Possible values:
+   * <ul>
+   * <li>String</li>
+   * <li>Date</li>
+   * <li>Boolean</li>
+   * <li>Integer</li>
+   * <li>BigNumber</li>
+   * <li>Serializable</li>
+   * <li>Binary</li>
+   * </ul>
+   **/
   private String getKettleTypeFromColumnClass(Class<?> clazz)
   {
     if (clazz == String.class)
