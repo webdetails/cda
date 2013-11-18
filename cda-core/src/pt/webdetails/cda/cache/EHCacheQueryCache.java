@@ -79,20 +79,22 @@ public class EHCacheQueryCache implements IQueryCache {
     
   }
   
-  protected static synchronized net.sf.ehcache.Cache getCacheFromManager() throws CacheException
+  protected static synchronized Cache getCacheFromManager(final boolean switchClassLoader) throws CacheException
   {
     if (cacheManager == null)
     {// 'new CacheManager' used instead of 'CacheManager.create' to avoid overriding default cache
       final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
       try {
-        Thread.currentThread().setContextClassLoader( EHCacheQueryCache.class.getClassLoader() );
+        if (switchClassLoader) {
+          Thread.currentThread().setContextClassLoader( EHCacheQueryCache.class.getClassLoader() );
+        }
         boolean useTerracotta = Boolean.parseBoolean(CdaEngine.getInstance().getConfigProperty(USE_TERRACOTTA_PROPERTY));
         String configFilePath = useTerracotta ? CACHE_CFG_FILE_DIST : CACHE_CFG_FILE;
   
         InputStream configFile = null;
         try {
           configFile = CdaEngine.getRepo().getPluginSystemReader( "" ).getFileInputStream( configFilePath );
-          cacheManager = new net.sf.ehcache.CacheManager(configFile);
+          cacheManager = new CacheManager(configFile);
           logger.debug("Cache started using " + configFilePath);
         }
         catch (IOException ioe) {
@@ -109,7 +111,9 @@ public class EHCacheQueryCache implements IQueryCache {
         }
       }
       finally {
-        Thread.currentThread().setContextClassLoader( contextClassLoader );
+        if (switchClassLoader) {
+          Thread.currentThread().setContextClassLoader( contextClassLoader );
+        }
       }
     }
 
@@ -129,7 +133,7 @@ public class EHCacheQueryCache implements IQueryCache {
     {
       try
       {
-        System.getProperty(net.sf.ehcache.CacheManager.ENABLE_SHUTDOWN_HOOK_PROPERTY);
+        System.getProperty(CacheManager.ENABLE_SHUTDOWN_HOOK_PROPERTY);
         return;//unless force, ignore if already set
       }
       catch (NullPointerException npe)
@@ -143,7 +147,7 @@ public class EHCacheQueryCache implements IQueryCache {
         return;//no permissions to set
       }
     }
-    System.setProperty(net.sf.ehcache.CacheManager.ENABLE_SHUTDOWN_HOOK_PROPERTY, "true");
+    System.setProperty(CacheManager.ENABLE_SHUTDOWN_HOOK_PROPERTY, "true");
   }
   
   Cache cache = null;
@@ -153,7 +157,11 @@ public class EHCacheQueryCache implements IQueryCache {
   }
   
   public EHCacheQueryCache(){
-    this(getCacheFromManager());
+    this(getCacheFromManager(true));
+  }
+
+  public EHCacheQueryCache( boolean switchClassLoader ) {
+    this( getCacheFromManager( switchClassLoader ) );
   }
 
   public void putTableModel(TableCacheKey key, TableModel table, int ttlSec, ExtraCacheInfo info) 

@@ -21,7 +21,7 @@
 		</dependency>-->
 		        <!--  Pentaho Reporting Library -->
 	  <dependency org="pentaho-library" name="libloader" rev="1.2.8"/>
-    <dependency org="pentaho" name="mondrian" rev="${dependency.mondrian.revision}" transitive="false"/>
+    <dependency org="pentaho" name="mondrian" rev="${dependency.mondrian.revision}" transitive="true"/>
     <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core"
                 rev="${dependency.pentaho-reporting.revision}" changing="true"/>
 		
@@ -77,13 +77,13 @@
   <dependency org="net.htmlparser.jericho" name="jericho-html" rev="3.1" conf="runtime->default"/>
 
 
+    <!-- sl4j is a runtime dependency for ehcache -->
+    <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.8" conf='test->default' />
         <!-- Legacy -->
         <!-- Unresolved dependency
     <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin"
       rev="${dependency.pentaho-reporting.revision.legacy}" changing="true" conf="legacy->default"/>
         -->
-<!--    <dependency org="net.sf.ehcache" name="ehcache-core" rev="2.0.1" conf="legacy->default" transitive="false"/>-->
-    <dependency org="net.sf.ehcache" name="ehcache"  rev="1.2.3" conf="test->default" transitive="false"/>
 
     <dependency org="hsqldb" name="hsqldb" rev="1.8.0" conf="test->default" transitive="false"/>
              <dependency org="junit" name="junit" conf="test->default" rev='4.10'/>     

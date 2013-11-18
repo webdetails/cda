@@ -22,6 +22,8 @@ import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.CoreBeanFactory;
 import pt.webdetails.cda.ICdaEnvironment;
 import pt.webdetails.cda.InitializationException;
+import pt.webdetails.cda.cache.EHCacheQueryCache;
+import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.exporter.ExportOptions;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
@@ -49,6 +51,7 @@ public abstract class CdaTestCase extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
     CdaTestingContentAccessFactory factory = new CdaTestingContentAccessFactory();
+    log().info("factory:" + factory);
     // always need to make sure there is a plugin environment initialized
     PluginEnvironment.init( new CdaPluginTestEnvironment(factory) );
 
@@ -103,7 +106,6 @@ public abstract class CdaTestCase extends TestCase {
     public CdaTestEnvironment( CdaTestingContentAccessFactory factory ) throws InitializationException {
       super( new CoreBeanFactory() );
       this.factory = factory;
-//      testConfig = new HierarchicalConfiguration( CdaBoot.getInstance().getGlobalConfig() );
     }
 
     public void initializeDataFactory( DataFactory dataFactory, Configuration configuration, ResourceKey contextKey,
@@ -114,6 +116,14 @@ public abstract class CdaTestCase extends TestCase {
       
     }
 
+    @Override
+    public IQueryCache getQueryCache() {
+      return new EHCacheQueryCache(false);
+    }
+
+    public IContentAccessFactory getRepo() {
+      return factory;
+    }
 //    public Configuration getBaseConfig() {
 //      return testConfig;
 //    }

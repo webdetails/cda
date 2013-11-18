@@ -17,6 +17,27 @@
   <!-- Import subfloor.xml which contains all the default tasks -->
   <import file="../subfloor.xml"/>
 
+    <!-- Setup the classpath used for testing -->
+  <path id="test.classpath">
+    <fileset dir="${lib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${devlib.dir}">
+      <include name="*" />
+    </fileset>
+    <fileset dir="${testlib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${runtimelib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <dirset dir="${testclasses.dir}" />
+    <dirset dir="${classes.dir}" />
+    <fileset dir="${runtimelib.dir}">
+      <include name="*.jar" />
+    </fileset>
+  </path>
+
   <property name="plugin.name"
             value="cda"
             description="Name of the plugin"/>
@@ -56,9 +77,7 @@
       </copy>
       <unzip src="${testclasses.dir}/sampledata.zip" dest="${testclasses.dir}/sampledata" />
   </target>
-	
 
-  <!-- TODO what is this RoundtripSuite? -->
   <condition property="is.roundtrip">
     <istrue value="${test.roundtrip}"/>
   </condition>
@@ -67,11 +86,11 @@
   </condition>
   
   <target name="test" depends="compile,compile-tests" description="Compiles and runs unit tests">
-    <junit printsummary="yes" haltonfailure="${junit.haltonfailure}" >
+    <junit printsummary="yes" haltonfailure="${junit.haltonfailure}" fork="yes" dir="${testclasses.dir}" >
       <sysproperty key="java.awt.headless" value="${headless.unittest}"/>
       <classpath refid="test.classpath" />
       <formatter type="plain" />
-      <batchtest fork="yes" todir="${testbin.dir}">
+      <batchtest todir="${testbin.dir}">
           <fileset dir="${testsrc.dir}" casesensitive="yes">
               <include name="**/RoundtripSuite.java" if="is.roundtrip" />
               <include name="**/Test*.java" if="is.not.roundtrip" />

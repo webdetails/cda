@@ -154,7 +154,6 @@ public class CdaContentGenerator extends SimpleContentGenerator
     catch (Exception e) {
       writeErrorResult( e, out );
     }
-    //FIXME write success/failure json
   }
 
   @Exposed(accessLevel = AccessLevel.PUBLIC,  outputType = MimeTypes.HTML)

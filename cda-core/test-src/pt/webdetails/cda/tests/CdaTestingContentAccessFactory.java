@@ -63,6 +63,10 @@ public class CdaTestingContentAccessFactory implements IContentAccessFactory {
     throw new UnsupportedOperationException();
   }
 
+  public String toString() {
+    return getClass().getName() + ": " + "system= '" + baseSystem + "', repo='" + baseRepository + "'";
+  }
+
   public static class TestRepositoryAccess extends FileBasedResourceAccess implements IUserContentAccess {
 
     private final File baseDir;

@@ -20,13 +20,8 @@ import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFactory;
 import org.pentaho.reporting.libraries.base.config.Configuration;
-import org.pentaho.reporting.libraries.formula.FormulaContext;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
-
-import pt.webdetails.cda.cache.IQueryCache;
-import pt.webdetails.cda.utils.framework.PluginUtils;
-import pt.webdetails.cpf.repository.api.IContentAccessFactory;
 
 
 public class PentahoCdaEnvironment extends PentahoBaseCdaEnvironment implements ICdaEnvironment {
@@ -35,19 +30,13 @@ public class PentahoCdaEnvironment extends PentahoBaseCdaEnvironment implements 
     super();
   }
 
-  public void initializeDataFactory(
-      final DataFactory dataFactory,
-      final Configuration configuration,
-      final ResourceKey contextKey,
-      final ResourceManager resourceManager ) throws ReportDataFactoryException
-  {
-//      CdaEngine.getEnvironment().initializeDataFactory( dataFactory, configuration );
+  public void initializeDataFactory( final DataFactory dataFactory, final Configuration configuration,
+      final ResourceKey contextKey, final ResourceManager resourceManager ) throws ReportDataFactoryException {
+    // not compatible with pentaho5 version init
+    dataFactory.initialize( configuration, resourceManager, contextKey, new LibLoaderResourceBundleFactory(
+        resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault() ) );
 
-
-      dataFactory.initialize(configuration, resourceManager, contextKey,
-              new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
-
-      dataFactory.open();
+    dataFactory.open();
   }
 
 }

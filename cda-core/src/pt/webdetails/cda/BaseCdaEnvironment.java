@@ -116,7 +116,7 @@ public abstract class BaseCdaEnvironment implements ICdaEnvironment {
 	}
 
 	@Override
-	public IQueryCache getQueryCache() {
+	public IQueryCache getQueryCache() { //TODO: use no cache if no bean defined?
 		try {
 			String id = "IQueryCache";
 			if (beanFactory.containsBean(id)) {
@@ -128,52 +128,11 @@ public abstract class BaseCdaEnvironment implements ICdaEnvironment {
 		return new EHCacheQueryCache();
 	}
 
-//	/**
-//	 * @deprecated
-//	 */
-//	private String getCdaConfigFileContent(String fileName) {
-//		byte[] content = getCdaConfigFile(fileName);
-//		return new String(content);
-//	}
-//
-//	public byte[] getCdaConfigFile( String fileName ) {
-//	  throw new NotImplementedException();
-//	}
-//	@Override
-//	public byte[] getCdaConfigFile(String fileName) {
-//		try {
-//			IRepositoryAccess repo = getRepositoryAccess();
-//			if (repo != null) {
-//				IRepositoryFile ir = repo.getSettingsFile(fileName, FileAccess.READ);
-//				if (ir != null && ir.exists()) {
-//					return ir.getData();
-//				}
-//			}
-//			URL is = this.getClass().getClassLoader().getResource(fileName);
-//			if (is != null) {
-//				File f = new File(is.toURI());
-//				if (f.exists() && f.canRead())
-//					return FileUtils.readFileToByteArray(f);
-//			}
-//		} catch (Exception e) {
-//			logger.error(e);
-//		}
-//		return new byte[0];		
-//	}
 
 	@Override
 	public FormulaContext getFormulaContext() {
 
-//		try {
-//			String id ="ICdaCoreSessionFormulaContext";
-//			if (beanFactory != null && beanFactory.containsBean(id)) {
-//				return (FormulaContext) beanFactory.getBean(id);
-//			}
-//		} catch (Exception e) {
-//			logger.error("Cannot get bean ICdaCoreSessionFormulaContext. Using DefaultFormulaContext", e);
-//		}
 		return new DefaultFormulaContext();
-//		return new DefaultSessionFormulaContext(null);
 	}
 
   @Override
@@ -252,17 +211,6 @@ public abstract class BaseCdaEnvironment implements ICdaEnvironment {
 		};
 	}
 
-//	@Override
-//	public ISessionUtils getSessionUtils() {
-//		String id = "ISessionUtils";
-//		if (beanFactory != null && beanFactory.containsBean(id)) {
-//			return (ISessionUtils) beanFactory.getBean(id);
-//		}
-//		SimpleUserSession su = new SimpleUserSession("", new String[0], false,  null);
-//		return new SimpleSessionUtils(su, new String[0], new String[0]);
-//	}
-
-
 	@Override
 	public IMondrianRoleMapper getMondrianRoleMapper() {
 		String id = "IMondrianRoleMapper";
@@ -280,17 +228,6 @@ public abstract class BaseCdaEnvironment implements ICdaEnvironment {
 		};
 	}
 
-//	@Override
-//	public IRepositoryAccess getRepositoryAccess() {
-//		String id = "IRepositoryAccess";
-//		if (beanFactory != null && beanFactory.containsBean(id)) {
-//			IRepositoryAccess repAccess =  (IRepositoryAccess) beanFactory.getBean(id);
-//			repAccess.setPlugin(CorePlugin.CDA);
-//			return repAccess;
-//		}
-//
-//		return null;
-//	}
 
 	@Override
 	public ICubeFileProviderSetter getCubeFileProviderSetter() {
@@ -319,20 +256,6 @@ public abstract class BaseCdaEnvironment implements ICdaEnvironment {
 		return new DefaultDataAccessUtils();
 	}
 
-//	@Override
-//	public IPluginCall createPluginCall(String plugin, String method, Map<String, Object> params) {
-//		try {
-//			String id = "IPluginCall";
-//			if (beanFactory != null && beanFactory.containsBean(id)) {
-//				IPluginCall pc = (IPluginCall) beanFactory.getBean(id);
-//				pc.init(new CorePlugin(plugin), method,  params);
-//				return pc;
-//			}
-//                        throw new UnsupportedOperationException("Couldn't get bean factory.");
-//		} catch (Exception e) {
-//                    throw new UnsupportedOperationException("Couldn't create plugin call for " + plugin + ",method: " + method);
-//		}
-//	}
 
   public IContentAccessFactory getRepo() {
     return PluginEnvironment.repository();

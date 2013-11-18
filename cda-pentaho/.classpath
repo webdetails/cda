@@ -69,7 +69,6 @@
 	<classpathentry kind="lib" path="lib/georss-rome-0.9.8.jar"/>
 	<classpathentry kind="lib" path="lib/groovy-all-1.8.0.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate-3.2.6.ga.jar"/>
-	<classpathentry kind="lib" path="lib/hsqldb-1.8.0.jar"/>
 	<classpathentry kind="lib" path="lib/httpcore-4.0-beta3.jar"/>
 	<classpathentry kind="lib" path="lib/icu4j-3.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/itext-2.1.7.jar"/>

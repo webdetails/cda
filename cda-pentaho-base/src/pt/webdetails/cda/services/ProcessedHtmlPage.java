@@ -72,6 +72,12 @@ public abstract class ProcessedHtmlPage extends BaseService {
 
   }
 
+  /**
+   * Updates relative source attributes to externally accessible abs paths
+   * @param html the document
+   * @param baseDir html location
+   * @param out processed document
+   */
   protected void modifyDocument( Source html, PathOrigin baseDir, OutputDocument out ) {
     replaceUrlAttribute( html.getAllStartTags( HTMLElementName.LINK ), "href", baseDir, out);
     replaceUrlAttribute( html.getAllStartTags( HTMLElementName.SCRIPT ), "src", baseDir, out);
@@ -133,13 +139,4 @@ public abstract class ProcessedHtmlPage extends BaseService {
     }
   }
 
-//
-//  protected void addModifiers( SAXModifier saxModifier ) {
-//    // css includes
-//    saxModifier.addModifier( "/html/header/link", new HtmlPathReplacer( "href", getBaseDir(), getUrlProvider() ) );
-//    // script includes
-//    saxModifier.addModifier( "/html/header/script", new HtmlPathReplacer( "src", getBaseDir(), getUrlProvider() ) );
-//    // img src
-//    saxModifier.addModifier( "**/img", new HtmlPathReplacer( "src", getBaseDir(), getUrlProvider() ) );
-//  }
 }

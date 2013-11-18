@@ -60,7 +60,7 @@ public class SortTableModel implements RowProductionManager
   public TableModel doSort(TableModel unsorted, List<String> sortBy) throws SortException
   {
     String sortType = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.SortingType" );
-    if ("DEFAULT".equals(sortType))
+    if ("DEFAULT".equals(sortType) || StringUtils.isEmpty( sortType ))
     {
       return defaultSort(unsorted, sortBy);
     }

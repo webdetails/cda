@@ -182,7 +182,6 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     return output;
   }
 
-
   private String getMergeJoinXml( String[] leftColumnNames, String[] rightColumnNames ) {
     StringBuilder mergeJoinXML = new StringBuilder( "<step><name>mergeJoin</name><type>MergeJoin</type><join_type>" );
     mergeJoinXML.append( getMergeJoinType( joinType ) );
