@@ -19,6 +19,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -27,12 +28,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.io.DOMReader;
 import org.pentaho.reporting.libraries.resourceloader.Resource;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
-import org.pentaho.reporting.libraries.resourceloader.ResourceLoader;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 
 import pt.webdetails.cda.AccessDeniedException;
@@ -41,10 +40,6 @@ import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
-import pt.webdetails.cpf.PluginEnvironment;
-import pt.webdetails.cpf.repository.api.FileAccess;
-import pt.webdetails.cpf.repository.api.IReadAccess;
-import pt.webdetails.cpf.repository.api.IUserContentAccess;
 
 /**
  * This file is responsible to build / keep the different cda settings.
@@ -58,11 +53,14 @@ import pt.webdetails.cpf.repository.api.IUserContentAccess;
 public class SettingsManager {
 
   public static final String DATA_ACCESS_PACKAGE = "pt.webdetails.cda.dataaccess";
+  private static final String DEFAULT_RESOURCE_LOADER_NAME = "";
+  private static final String SYSTEM_RESOURCE_LOADER_NAME = "system";
   private static final Log logger = LogFactory.getLog(SettingsManager.class);
-  private static SettingsManager _instance;
-  private LRUMap settingsCache;
+//  private static SettingsManager _instance;
+  private Map<String, CdaSettings> settingsCache;
   private Map<String, Long> settingsTimestamps;
-  private ResourceLoader defaultResourceLoader;
+  private ICdaResourceLoader defaultResourceLoader;
+  private Map<String, ICdaResourceLoader> resourceLoaders;
 
   private static final int MAX_SETTINGS_CACHE_SIZE = 50;
 
@@ -70,7 +68,7 @@ public class SettingsManager {
    * This class controls how the different .cda files will be read
    * and cached.
    */
-  public SettingsManager( ResourceLoader defaultResourceLoader ) {
+  public SettingsManager( ) {
 
     // TODO - Read the cache size from disk. Eventually move to ehcache, if necessary
 
@@ -78,27 +76,37 @@ public class SettingsManager {
 
     settingsCache = new LRUMap(MAX_SETTINGS_CACHE_SIZE);
     settingsTimestamps = new HashMap<String, Long>();
-    this.defaultResourceLoader = defaultResourceLoader;
+
+    this.defaultResourceLoader = new CdaRepositoryResourceLoader( DEFAULT_RESOURCE_LOADER_NAME );
+    // order is important
+    this.resourceLoaders = new LinkedHashMap<String, ICdaResourceLoader>();
+    this.resourceLoaders.put( DEFAULT_RESOURCE_LOADER_NAME, defaultResourceLoader );
+    this.resourceLoaders.put( SYSTEM_RESOURCE_LOADER_NAME, new CdaSystemResourceLoader( SYSTEM_RESOURCE_LOADER_NAME ) );
   }
 
-  /**
-   * @param id The identifier for this settings file (path to file).
-   * @return
-   * @throws pt.webdetails.cda.dataaccess.UnsupportedDataAccessException
-   *
-   * @throws org.dom4j.DocumentException
-   * @throws pt.webdetails.cda.connections.UnsupportedConnectionException
-   *
-   */
-  public synchronized CdaSettings parseSettingsFile(final String id)
+  public synchronized CdaSettings getCdaSettings( final String resourceLoader, final String id )
     throws CdaSettingsReadException, AccessDeniedException {
+    ICdaResourceLoader loader = resourceLoaders.get( resourceLoader );
+    if ( loader == null ) {
+      logger.error( String.format( "resource loader \"%s\" not recognized. Using default", resourceLoader ) );
+      loader = defaultResourceLoader;
+    }
+    return getCdaSettings( loader, id );
+  }
 
-    if ( !canAccess( id ) ) {
+  private CdaSettings getCdaSettings( ICdaResourceLoader loader, String id )
+    throws CdaSettingsReadException, AccessDeniedException {
+    
+    if ( !loader.hasReadAccess( id ) ) {
       throw new AccessDeniedException( String.format( "Current user cannot access \"%s\"", id ), null );
     }
-    // Do we have this on cache?
+    CdaSettings cda = getFromCache( loader, id );
+    return ( cda == null ) ? readCdaSettings( loader, id ) : cda;
+  }
+
+  private CdaSettings getFromCache(ICdaResourceLoader loader, String id ) {
     if (settingsCache.containsKey(id)) {
-      CdaSettings cachedCda = (CdaSettings) settingsCache.get(id);
+      CdaSettings cachedCda = settingsCache.get(id);
       
       if(!settingsTimestamps.containsKey(id)){
        //something went very wrong
@@ -107,7 +115,7 @@ public class SettingsManager {
       else {
         // Is cache up to date?
         long cachedTime = settingsTimestamps.get(id);
-        Long savedFileTime = getLastSaveTime(id);
+        Long savedFileTime = loader.getLastModified( id );
         
         if (savedFileTime != null && //don't cache on-the-fly items 
             savedFileTime <= cachedTime){
@@ -116,10 +124,13 @@ public class SettingsManager {
         }
       }
     }
-
+    return null;
+  }
+  
+  private CdaSettings readCdaSettings( ICdaResourceLoader loader, String id ) throws CdaSettingsReadException {
     try {
       final ResourceManager resourceManager = getResourceManager();
-      final ResourceKey key = this.defaultResourceLoader.createKey( id, null );
+      final ResourceKey key = loader.createKey( id, null );
       final Resource resource = resourceManager.create(key, null, org.w3c.dom.Document.class);
       final org.w3c.dom.Document document = (org.w3c.dom.Document) resource.getResource();
       final DOMReader saxReader = new DOMReader();
@@ -136,11 +147,27 @@ public class SettingsManager {
     } catch ( UnsupportedDataAccessException e ) {
       throw new CdaSettingsReadException( "Unrecognized data access definition.", e );
     }
-
   }
+  
+  /**
+   * @param id The identifier for this settings file (path to file).
+   * @return
+   * @throws pt.webdetails.cda.dataaccess.UnsupportedDataAccessException
+   *
+   * @throws org.dom4j.DocumentException
+   * @throws pt.webdetails.cda.connections.UnsupportedConnectionException
+   *
+   */
+  public synchronized CdaSettings parseSettingsFile(final String id)
+    throws CdaSettingsReadException, AccessDeniedException {
 
-  private boolean canAccess( String id ) {
-    return getRepositoryAccess().hasAccess( id, FileAccess.READ );
+    // see if a loader accepts this
+    for ( ICdaResourceLoader loader : resourceLoaders.values() ) {
+      if ( loader.isValidId( id ) ) {
+        return getCdaSettings( loader, id );
+      }
+    }
+    throw new CdaSettingsReadException( "No resource loader is able to handle id: " + id, null );
   }
 
   public ResourceManager getResourceManager() {
@@ -153,22 +180,10 @@ public class SettingsManager {
     return resourceManager;
   }
 
-  /**
-   * Returns time of last save if id is a file.
-   * @param id CdaSettings ID
-   * @param savedFileTime 
-   * @return null if not a file
-   */
-  public long getLastSaveTime(final String id) {
-    //check if it's a saved file and get its timestamp
-    return getRepositoryAccess().getLastModified(id);
+  
+  public ICdaResourceLoader getResourceLoader( String name ) {
+    return resourceLoaders.get( name );
   }
-  
-  private static IUserContentAccess getRepositoryAccess() {
-    return PluginEnvironment.env().getContentAccessFactory().getUserContentAccess("/");
-  }
-  
-  
   /**
    * (use in synchronized methods)
    * @param settings
@@ -202,24 +217,11 @@ public class SettingsManager {
     settingsTimestamps.clear();
   }
 
-  /**
-   * Use CdaEngine
-   */
-  public static synchronized SettingsManager getInstance() {
-
-    if (_instance == null) {
-      _instance = new SettingsManager( new CdaResourceLoader( getRepositoryAccess() ));
-    }
-
-    return _instance;
-  }
-
   public DataAccessConnectionDescriptor[] getDataAccessDescriptors(boolean refreshCache) {
       
     ArrayList<DataAccessConnectionDescriptor> descriptors = new ArrayList<DataAccessConnectionDescriptor>();
     // First we need a list of all the data accesses. We're getting that from a .properties file, as a comma-separated array.
-    
-    
+
     Properties components = CdaEngine.getEnvironment().getCdaComponents();
     String[] dataAccesses = StringUtils.split(StringUtils.defaultString(components.getProperty("dataAccesses")), ",");
 
