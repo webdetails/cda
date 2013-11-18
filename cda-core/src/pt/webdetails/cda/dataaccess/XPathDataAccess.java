@@ -87,9 +87,9 @@ public class XPathDataAccess extends PREDataAccess
                   ArrayUtils.toString( argTypesFallback ) ) );
           throw e2;
         }
-        method.invoke( object, args );
-        return true;
       }
+      method.invoke( object, args );
+      return true;
     }
     catch (Exception e) {
       logger.error( String.format( "%s call failed ", methodName ), e );
