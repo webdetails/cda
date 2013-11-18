@@ -173,7 +173,7 @@ public class CdaCoreService
   }
 
   public void clearCache() {
-    SettingsManager.getInstance().clearCache();
+    CdaEngine.getInstance().getSettingsManager().clearCache();
     AbstractDataAccess.clearCache();
   }
 

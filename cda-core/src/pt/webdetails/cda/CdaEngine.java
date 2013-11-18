@@ -35,6 +35,7 @@ import pt.webdetails.cda.exporter.ExporterEngine;
 import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.exporter.UnsupportedExporterException;
 import pt.webdetails.cda.query.QueryOptions;
+import pt.webdetails.cda.settings.CdaFileResourceLoader;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
@@ -63,7 +64,12 @@ public class CdaEngine
   //TODO: we have to clean this at some point or at least make it a reference map
   private Map<UUID, QueryOptions> wrappedQueries = new ConcurrentHashMap<UUID, QueryOptions>();
   private ExporterEngine exporterEngine;
+  private SettingsManager defaultSettingsManager;
 
+  /**
+   * Must have been initialized at least once first;
+   * @return
+   */
   public static synchronized CdaEngine getInstance()
   {
 
@@ -88,10 +94,11 @@ public class CdaEngine
     logger.info("Initializing CdaEngine");
     environment = env;
     exporterEngine = new ExporterEngine();
+    defaultSettingsManager = new SettingsManager( );
   }
 
   public SettingsManager getSettingsManager() {
-    return SettingsManager.getInstance();
+    return defaultSettingsManager;
   }
 
   public Exporter getExporter( ExportOptions opts ) throws UnsupportedExporterException  {

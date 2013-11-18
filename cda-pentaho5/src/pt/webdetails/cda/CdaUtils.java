@@ -287,11 +287,9 @@ public class CdaUtils {
       }
       else {
         json = new JsonResult( false, "Unable to read file." );
-//        throw new WebApplicationException( new Throwable("Unable to read file.") );
       }
     }
     catch (Exception e) {
-//      throw new WebApplicationException( e );
       return toErrorResult( e );
     }
     return toStreamingOutput( json );
@@ -305,7 +303,7 @@ public class CdaUtils {
     return toStreamingOutput(new JsonResult( true, JsonHelper.toJson( canEdit ) ) );
   }
 
-  private Editor getEditor() {//TODO
+  private Editor getEditor() {
     return new Editor();
   }
 
@@ -317,7 +315,6 @@ public class CdaUtils {
   {  
     //TODO: Validate the filename in some way, shape or form!
     if ( data == null ) {
-      //writeOut( servletResponse.getOutputStream(), "Save unsuccessful!" );
       logger.error( "writeCdaFile: no data to save provided " + path );
       return toStreamingOutput( new JsonResult( false, "No Data!" ) );
     }
@@ -429,22 +426,22 @@ public class CdaUtils {
       return null;
   }
   private Previewer getPreviewer() {
-    return new Previewer( PluginEnvironment.env().getUrlProvider(), CdaEngine.getEnvironment().getRepo() );//TODO:
+    return new Previewer( PluginEnvironment.env().getUrlProvider(), CdaEngine.getEnvironment().getRepo() );
   }
   private ExtEditor getExtEditor() {
     return new ExtEditor( PluginEnvironment.env().getUrlProvider(), CdaEngine.getEnvironment().getRepo() );
   }
 
+  /**
+   * For CDE discovery
+   */
   @GET
   @Path("/listDataAccessTypes")
   @Produces(APPLICATION_JSON)
   @Consumes({ APPLICATION_XML, APPLICATION_JSON })
-  /**
-   * For CDE discovery
-   */
   public String listDataAccessTypes(@DefaultValue("false") @QueryParam("refreshCache") Boolean refreshCache) throws Exception
   {
-    DataAccessConnectionDescriptor[] data = SettingsManager.getInstance().getDataAccessDescriptors(refreshCache);
+    DataAccessConnectionDescriptor[] data = CdaEngine.getInstance().getSettingsManager().getDataAccessDescriptors(refreshCache);
 
     StringBuilder output = new StringBuilder("");
     if (data != null)

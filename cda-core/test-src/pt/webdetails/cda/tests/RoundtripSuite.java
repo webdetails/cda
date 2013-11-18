@@ -14,17 +14,20 @@
 package pt.webdetails.cda.tests;
 
 import java.io.File;
-import java.net.URL;
 
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
+import pt.webdetails.cda.tests.CdaTestCase.CdaPluginTestEnvironment;
+import pt.webdetails.cda.tests.CdaTestCase.CdaTestEnvironment;
 import pt.webdetails.cda.xml.DomTraversalHelper;
 import pt.webdetails.cda.xml.XmlUtils;
+import pt.webdetails.cpf.PluginEnvironment;
 
 public class RoundtripSuite extends XMLTestCase {
 	
@@ -32,14 +35,20 @@ public class RoundtripSuite extends XMLTestCase {
 	private DomTraversalHelper tHelper;
 
 	public void setUp(){
-		settingsManager = SettingsManager.getInstance();
+    CdaTestingContentAccessFactory factory = new CdaTestingContentAccessFactory();
+    // always need to make sure there is a plugin environment initialized
+    PluginEnvironment.init( new CdaPluginTestEnvironment(factory) );
+    // cda-specific environment
+    // cda init
+    CdaEngine.init( new CdaTestEnvironment(factory) );
+		settingsManager = CdaEngine.getInstance().getSettingsManager();
 		tHelper = new DomTraversalHelper();
 	}
 
 	public String readCdaFile(String file) throws Exception {
-		URL settingsURL = this.getClass().getResource(file);
-	    File settingsFile = new File(settingsURL.toURI());
-	    final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
+//		URL settingsURL = this.getClass().getResource(file);
+//	    File settingsFile = new File(settingsURL.toURI());
+	    final CdaSettings cdaSettings = settingsManager.parseSettingsFile(file);
 	    return cdaSettings.asXML();
 	}
 	
@@ -48,6 +57,7 @@ public class RoundtripSuite extends XMLTestCase {
 	public String generateXml(String file) throws Exception {
 		
 	    final File settingsFile = new File(file);
+	    
 	    final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
 		return XmlUtils.prettyPrint(tHelper.traverse(cdaSettings).asXML());
 	}
@@ -68,7 +78,6 @@ public class RoundtripSuite extends XMLTestCase {
 
         assertTrue("pieces of XML are similar " + myDiff, myDiff.similar());
 
-        
     }
 
     public void testDiscovery() throws Exception{

@@ -113,7 +113,7 @@ public class CdaQueryComponent {
 
     final QueryOptions queryOptions = new QueryOptions();
 
-    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(file);
+    final CdaSettings cdaSettings = CdaEngine.getInstance().getSettingsManager().parseSettingsFile(file);
     
     final String CDA_PARAMS = "cdaParameterString";
     final String CDA_PARAM_SEPARATOR = ";";

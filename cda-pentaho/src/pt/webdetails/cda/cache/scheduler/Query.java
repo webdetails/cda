@@ -240,7 +240,7 @@ public abstract class Query implements Serializable
   protected void executeQuery() throws Exception
   {
 
-    final CdaSettings cdaSettings = SettingsManager.getInstance().parseSettingsFile(getCdaFile());
+    final CdaSettings cdaSettings = CdaEngine.getInstance().getSettingsManager().parseSettingsFile(getCdaFile());
 
     final QueryOptions queryOptions = new QueryOptions();
     queryOptions.setDataAccessId(getDataAccessId());
