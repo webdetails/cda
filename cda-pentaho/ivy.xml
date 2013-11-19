@@ -33,7 +33,8 @@
 
       <dependency org="pentaho" name="cda-core" rev="TRUNK-SNAPSHOT" changing="true" transitive="false" conf="runtime->default"/>
 
-<dependency org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.8.2" conf='runtime->default'/>
+    <dependency org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.8.2" conf='runtime->default'/>
+    <dependency org="org.json" name="json" rev="3.1" conf='runtime->default'/>
     <dependency org="net.htmlparser.jericho" name="jericho-html" rev="3.1" conf="runtime->default" />
 
         <!-- Legacy -->

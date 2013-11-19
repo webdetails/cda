@@ -38,6 +38,7 @@
       <dependency org="pentaho-kettle" name="kettle5-log4j-plugin" rev="${dependency.kettle.revision}" transitive="false" changing="false"/>
 
       <dependency org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.9.3" />
+      <dependency org="org.json" name="json" rev="3.1" conf='runtime->default'/>
 
         <!-- Legacy -->
     <!--<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin"
