@@ -35,7 +35,6 @@ import pt.webdetails.cda.exporter.ExporterEngine;
 import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.exporter.UnsupportedExporterException;
 import pt.webdetails.cda.query.QueryOptions;
-import pt.webdetails.cda.settings.CdaFileResourceLoader;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.settings.UnknownDataAccessException;

@@ -157,18 +157,18 @@ public class CdaCoreService
    * @param refreshCache reload list of data access types
    * @return JSON
    */
-  // TODO
   public String listDataAccessTypes(final boolean refreshCache)
   {
 
     DataAccessConnectionDescriptor[] data = settingsManager.getDataAccessDescriptors(refreshCache);
-  
+
     StringBuilder output = new StringBuilder();
     output.append("{\n");
     for (DataAccessConnectionDescriptor datum : data) {
       output.append(datum.toJSON()).append(",\n");
     }
-    return output.toString().replaceAll(",\n\\z", "\n}");
+    output.append( "\n}" );
+    return output.toString().replaceAll(",\n\\z", "\n");
 
   }
 

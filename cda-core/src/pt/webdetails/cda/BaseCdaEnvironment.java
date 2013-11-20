@@ -140,7 +140,7 @@ public abstract class BaseCdaEnvironment implements ICdaEnvironment {
     try {
       // String content = getCdaConfigFileContent("resources/components.properties");
       // StringReader sr = new StringReader(content);
-      IReadAccess sysRead = getRepo().getPluginRepositoryReader( RESOURCES_DIR );
+      IReadAccess sysRead = getRepo().getPluginSystemReader( RESOURCES_DIR );
       Properties pr = new Properties();
       // file with connection and data access types
       InputStream propertiesFile = null;

@@ -49,7 +49,6 @@ import pt.webdetails.cda.services.CacheManager;
 import pt.webdetails.cda.services.Editor;
 import pt.webdetails.cda.services.ExtEditor;
 import pt.webdetails.cda.services.Previewer;
-import pt.webdetails.cda.settings.SettingsManager;
 
 import org.pentaho.platform.api.engine.IPentahoSession;
 
