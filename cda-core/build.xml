@@ -68,6 +68,8 @@
       DON'T OVERRIDE SUBFLOOR UNLESS YOU HAVE TO
     -->
 
+    <target name="dist" depends="jar, test" description="Creates a distribution" />
+
   <!-- override: add test resources dir and sample data -->
   <target name="init-tests" depends="clean-tests">
       <mkdir dir="${testclasses.dir}" />
