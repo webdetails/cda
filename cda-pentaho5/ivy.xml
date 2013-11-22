@@ -12,113 +12,56 @@
 	</configurations>
 
 	<dependencies defaultconf="default->default">
-		<!--  pentaho dependencies -->
-		<!--<dependency org="pentaho" name="pentaho-bi-platform-scheduler" rev="${dependency.bi-platform.revision}" transitive="false" changing="true"/>-->
-		<!--  internal dependencies -->
-	<!--	<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin"
-			rev="${dependency.pentaho-reporting.revision}" changing="true">
-		</dependency>
-		<dependency org="pentaho" name="pentaho-bi-platform-plugin-services"
-			rev="${dependency.bi-platform.revision}" transitive="false" changing="true"/>
-		<dependency org="pentaho" name="pentaho-bi-platform-plugin-actions"
-			rev="${dependency.bi-platform.revision}" transitive="false" changing="true"/>
-    <dependency org="com.hazelcast" name="hazelcast" transitive="false" rev="2.0.2" conf="default->default;legacy->default"/>-->
-
-      <dependency org="pt.webdetails" name="cpf-core"
-          rev="REFACTOR-SNAPSHOT" transitive="false" changing="true" conf='runtime->default'/>
-
- 
-      <dependency org="pt.webdetails" name="cpf-pentaho5"
-          rev="REFACTOR-SNAPSHOT" transitive="false" changing="true" conf='runtime->default'/>
-
-      <dependency org="pentaho" name="cda-core" rev="TRUNK-SNAPSHOT" changing="true" transitive="false" conf="runtime->default"/>
-
-      <dependency org="net.htmlparser.jericho" name="jericho-html" rev="3.1" conf="runtime->default" />
-      
-      <dependency org="pentaho-kettle" name="kettle5-log4j-plugin" rev="${dependency.kettle.revision}" transitive="false" changing="false"/>
-
-      <dependency org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.9.3" />
-      <dependency org="org.json" name="json" rev="3.1" conf='runtime->default'/>
-
-        <!-- Legacy -->
-    <!--<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin"
-      rev="${dependency.pentaho-reporting.revision.legacy}" changing="true" conf="legacy->default"/>-->
-       
-    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin" 
-                rev="${dependency.pentaho-reporting-plugin.revision}" changing="true"/>
-    
-    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin-package" 
-                rev="${dependency.pentaho-reporting-plugin.revision}" transitive="false" changing="true" />
-    
-    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core" 
-                rev="${dependency.pentaho-reporting.revision}" changing="true" />
-    
+		<!--  internal dependencies -->      
+        <dependency org="com.hazelcast"        name="hazelcast"                    rev="2.0.2"                                             conf="default->default;legacy->default" transitive="false"/>        		
+        <dependency org="org.codehaus.jackson" name="jackson-mapper-asl"           rev="1.9.3" />	
+        <dependency org="pentaho"              name="data-access-plugin"           rev="${dependency.data-access-plugin.revision}"         changing="false" transitive="false" />        
+        <dependency org="pentaho"              name="mondrian"                     rev="${dependency.mondrian.revision}"                   changing="false">         
+            <exclude org="commons-dbcp" name="commons-dbcp"/>
+            <exclude org="javax.servlet" name="jsp-api"/>
+            <exclude org="javax.servlet" name="servlet-api"/>
+        </dependency>        
+        <dependency org="pentaho"              name="pentaho-platform-extensions"  rev="${dependency.bi-platform.revision}"                changing="false" transitive="true" />
+        <dependency org="pentaho"              name="pentaho-user-console-package" rev="${dependency.bi-platform.revision}"                changing="false" transitive="true" />
+        <dependency org="pentaho"              name="pentaho-platform-api"         rev="${dependency.bi-platform.revision}"                changing="false" transitive="true" />
+        <dependency org="pentaho"              name="pentaho-platform-core"        rev="${dependency.bi-platform.revision}"                changing="false" transitive="true" />
+        <dependency org="pentaho"              name="pentaho-platform-repository"  rev="${dependency.bi-platform.revision}"                changing="false" transitive="true" />
+        <dependency org="pentaho"              name="pentaho-platform-scheduler"   rev="${dependency.bi-platform.revision}"                changing="false" transitive="true" />
+        <dependency org="pentaho"              name="common-ui"                    rev="${dependency.bi-platform.revision}"                changing="false" transitive="true" >
+            <artifact name="common-ui" type="zip" />                         
+        </dependency>        
+        <dependency org="pentaho"              name="pentaho-report-wizard-core"   rev="${dependency.pentaho-report-wizard-core.revision}" changing="true"/>        
+        <dependency org="pentaho-kettle"       name="kettle5-log4j-plugin"         rev="${dependency.kettle.revision}"                     transitive="false" changing="false"/>
+           
         <!--  Pentaho Reporting Library -->
-    <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-core"
-                rev="${dependency.pentaho-reporting.revision}" changing="true"/>
-    <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions"
-                rev="${dependency.pentaho-reporting.revision}" changing="true"/>
-    <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-kettle"
-                rev="${dependency.pentaho-reporting.revision}" changing="true" transitive="false"/>
-    <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-mondrian"
-                rev="${dependency.pentaho-reporting.revision}" changing="true"/>
-    <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-olap4j"
-                rev="${dependency.pentaho-reporting.revision}" changing="true"/>
-    <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-pmd"
-                rev="${dependency.pentaho-reporting.revision}" changing="true" transitive="false"/>
-    <dependency org="${dependency.reporting-engine.group}"
-                name="pentaho-reporting-engine-classic-extensions-reportdesigner-parser"
-                rev="${dependency.pentaho-reporting.revision}" changing="true"/>
-    <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-sampledata"
-                rev="${dependency.pentaho-reporting.revision}" changing="true"/>
-    <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-scripting"
-                rev="${dependency.pentaho-reporting.revision}" changing="true"/>
-    <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-xpath"
-                rev="${dependency.pentaho-reporting.revision}" changing="true"/>
-    <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-drill-down"
-                rev="${dependency.pentaho-reporting-extension-drilldown.revision}" changing="true"/>
-    <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-toc"
-                rev="${dependency.pentaho-reporting.revision}" changing="true"/>
-    <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-legacy-charts"
-                rev="${dependency.pentaho-reporting.revision}" changing="true"/>
-    <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-legacy-functions"
-                rev="${dependency.pentaho-reporting.revision}" changing="true"/>
-    <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-wizard-core"
-                rev="${dependency.pentaho-reporting.revision}" changing="true" transitive="false"/>
-    <dependency org="pentaho" name="pentaho-report-wizard-core" rev="${dependency.pentaho-report-wizard-core.revision}"
-                changing="true"/>
-
-
-    <!-- olap -->
-    <dependency org="pentaho" name="mondrian" rev="${dependency.mondrian.revision}" changing="false">
-      <exclude org="commons-dbcp" name="commons-dbcp"/>
-      <exclude org="javax.servlet" name="jsp-api"/>
-      <exclude org="javax.servlet" name="servlet-api"/>
-    </dependency>
-    
-    <dependency org="pentaho" name="data-access-plugin" rev="${dependency.data-access-plugin.revision}" changing="false" transitive="false" />
-    
-    <dependency org="com.hazelcast" name="hazelcast" transitive="false" rev="2.0.2" conf="default->default;legacy->default"/>
-    
-    <dependency org="pentaho" name="pentaho-platform-extensions" 
-                rev="${dependency.bi-platform.revision}" transitive="true" changing="false" />
-    <dependency org="pentaho" name="pentaho-user-console-package" 
-                rev="${dependency.bi-platform.revision}" transitive="true" changing="false" />
-    <dependency org="pentaho" name="pentaho-platform-api" 
-                rev="${dependency.bi-platform.revision}" changing="false" transitive="true" />
-    <dependency org="pentaho" name="pentaho-platform-core" 
-                rev="${dependency.bi-platform.revision}" changing="false" transitive="true" />
-    <dependency org="pentaho" name="pentaho-platform-repository" 
-                rev="${dependency.bi-platform.revision}" changing="false" transitive="true" />
-    <dependency org="pentaho" name="pentaho-platform-scheduler" 
-                rev="${dependency.bi-platform.revision}" changing="false" transitive="true" />
-    <dependency org="pentaho" name="common-ui" 
-                rev="${dependency.bi-platform.revision}" changing="false" transitive="true" >
-      <artifact name="common-ui" type="zip" />
-    </dependency>
+        <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-core"                             rev="${dependency.pentaho-reporting.revision}"                     changing="true"/>                
+        <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-wizard-core"                              rev="${dependency.pentaho-reporting.revision}"                     changing="true" transitive="false"/>                           
+        <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions"                       rev="${dependency.pentaho-reporting.revision}"                     changing="true"/>    
+        <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-kettle"                rev="${dependency.pentaho-reporting.revision}"                     changing="true" transitive="false"/>                
+        <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-mondrian"              rev="${dependency.pentaho-reporting.revision}"                     changing="true"/>                
+        <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-olap4j"                rev="${dependency.pentaho-reporting.revision}"                     changing="true"/>               
+        <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-pmd"                   rev="${dependency.pentaho-reporting.revision}"                     changing="true" transitive="false"/>               
+        <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-reportdesigner-parser" rev="${dependency.pentaho-reporting.revision}"                     changing="true"/>                                
+        <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-sampledata"            rev="${dependency.pentaho-reporting.revision}"                     changing="true"/>
+        <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-scripting"             rev="${dependency.pentaho-reporting.revision}"                     changing="true"/>                
+        <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-xpath"                 rev="${dependency.pentaho-reporting.revision}"                     changing="true"/>                
+        <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-drill-down"            rev="${dependency.pentaho-reporting-extension-drilldown.revision}" changing="true"/>                
+        <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions-toc"                   rev="${dependency.pentaho-reporting.revision}"                     changing="true"/>                
+        <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-legacy-charts"                            rev="${dependency.pentaho-reporting.revision}"                     changing="true"/>               
+        <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-legacy-functions"                         rev="${dependency.pentaho-reporting.revision}"                     changing="true"/>               
+        <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-core-platform-plugin"             rev="${dependency.pentaho-reporting-plugin.revision}"              changing="true"/>                   
+        <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-core-platform-plugin-package"     rev="${dependency.pentaho-reporting-plugin.revision}"              changing="true" transitive="false"  />                   
+                
+        <!-- Runtime defaults -->     
+        <dependency org="pentaho"                name="cpf-core"     rev="${dependency.pentaho-cpf-plugin.revision}"   conf='runtime->default' transitive="false" changing="true"/> 
+        <dependency org="pentaho"                name="cpf-pentaho5" rev="${dependency.pentaho-cpf-plugin.revision}"   conf='runtime->default' transitive="false" changing="true"/>
+        <dependency org="pentaho"                name="cda-core"     rev="${project.revision}"                         conf="runtime->default" changing="true" transitive="false"/>
+        <dependency org="net.htmlparser.jericho" name="jericho-html" rev="3.1"                                         conf="runtime->default" />
+        <dependency org="org.json"               name="json"         rev="3.1"                                         conf='runtime->default'/>
      
-      <exclude module="ehcache" />  <!-- Comment this for CDA with 3.6.0 dependencies -->
-                <exclude module="nekohtml" conf="" matcher="exact"></exclude>
+        <!-- Excludes -->     
+        <exclude module="ehcache" />  <!-- Comment this for CDA with 3.6.0 dependencies -->
+        <exclude module="nekohtml" conf="" matcher="exact"></exclude>
     
 	</dependencies>
 
