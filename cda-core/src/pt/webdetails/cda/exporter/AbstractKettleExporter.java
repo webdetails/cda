@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+
 import javax.swing.table.TableModel;
 
 import org.apache.commons.io.IOUtils;
@@ -42,6 +43,7 @@ import pt.webdetails.cda.CdaBoot;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransformation;
+import pt.webdetails.cda.utils.kettle.RowCountListener;
 import pt.webdetails.cda.utils.kettle.RowMetaToTableModel;
 import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
 import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
@@ -116,7 +118,6 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
 
   public void export(final OutputStream out, final TableModel tableModel) throws ExporterException
   {
-    TableModel output = null;
     inputCallables.clear();
 
     try
@@ -135,8 +136,8 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
       inputCallables.add(input.getCallableRowProducer(tableModel, true));
 
 
-      RowMetaToTableModel outputListener = new RowMetaToTableModel(false, true, false);
-      transConfig.addOutput("export", outputListener);
+      RowCountListener countListener = new RowCountListener();
+      transConfig.addOutput("export", countListener);
 
       DynamicTransformation trans = new DynamicTransformation(transConfig, transMetaConfig);
       trans.executeCheckedSuccess(null, null, this);
@@ -145,10 +146,7 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
       // Transformation executed ok, let's return the file
       copyFileToOutputStream(out);
 
-      output = outputListener.getRowsWritten();
-      if(output != null){
-        logger.debug(output.getRowCount() + " rows written.");
-      }
+      logger.debug(countListener.getRowsWritten() + " rows written.");
     }
     catch (KettleException e)
     {
