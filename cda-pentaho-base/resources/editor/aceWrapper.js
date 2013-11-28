@@ -80,7 +80,7 @@ var CodeEditor = function() {
     $.ajax({
 	url: ExternalEditor.SAVE_FILE_URL,
 	type: "POST",
-	contentType: "application/json",
+//	contentType: "application/json",
 	dataType: "json",
 	data: { path: fileName, data: contents },
 	success: function(data){
