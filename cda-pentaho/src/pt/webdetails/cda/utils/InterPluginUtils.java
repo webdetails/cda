@@ -63,6 +63,7 @@ public class InterPluginUtils
   public static TableModel getTableModelFromJsonPluginCall(String plugin, String method, Map<String, Object> params)
   {
 	  IPluginCall pluginCall = new PentahoInterPluginCall( new CorePlugin( plugin ), method );
+      ((PentahoInterPluginCall)pluginCall).setRequestParameters(params);
 	  return InterPluginUtils.getInstance().getTableModelFromJSONArray(pluginCall.call(), params);
   }
 
