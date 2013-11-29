@@ -31,6 +31,13 @@ public class ExportedQueryResult {
     return exporter;
   }
 
+
+  public void writeHeaders( HttpServletResponse response  ) throws IOException {
+    setResponseHeaders( response, exporter.getMimeType(), exporter.getAttachmentName() );
+  }
+
+
+
   public void writeResponse( HttpServletResponse response ) throws ExporterException, IOException {
     setResponseHeaders( response, exporter.getMimeType(), exporter.getAttachmentName() );
     OutputStream out = response.getOutputStream();

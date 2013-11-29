@@ -31,6 +31,7 @@ import pt.webdetails.cda.cache.monitor.CacheMonitorHandler;
 import pt.webdetails.cda.cache.scheduler.CacheScheduleManager;
 import pt.webdetails.cda.exporter.ExportOptions;
 import pt.webdetails.cda.exporter.ExportedQueryResult;
+import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.services.CacheManager;
 import pt.webdetails.cda.services.Editor;
 import pt.webdetails.cda.services.ExtEditor;
@@ -45,6 +46,8 @@ import pt.webdetails.cpf.messaging.JsonResult;
 import pt.webdetails.cpf.repository.api.IReadAccess;
 import pt.webdetails.cpf.utils.JsonHelper;
 import pt.webdetails.cpf.utils.MimeTypes;
+
+import javax.servlet.http.HttpServletResponse;
 
 
 public class CdaContentGenerator extends SimpleContentGenerator
@@ -65,10 +68,18 @@ public class CdaContentGenerator extends SimpleContentGenerator
       writeOut( out, service.wrapQuery( parameters ) );
     }
     else {
-      service.doQuery( parameters ).writeResponse( getResponse() );
+      ExportedQueryResult result = service.doQuery( parameters );
+      writeOut( result, getResponse(), out );
     }
   }
 
+  protected void writeOut(ExportedQueryResult result, HttpServletResponse response, OutputStream out)
+          throws IOException, ExporterException {
+    //We're breaking the write in two because when in InterpluginCalls the output stream to write to is not
+    //the one in response
+    result.writeHeaders( getResponse() );
+    result.writeOut ( out );
+  }
 
 
   @Exposed(accessLevel = AccessLevel.PUBLIC)
@@ -77,7 +88,8 @@ public class CdaContentGenerator extends SimpleContentGenerator
     final IParameterProvider requestParams = getRequestParameters();
     String cda = getPath( requestParams );
     CdaCoreService coreService = getCoreService();
-    coreService.unwrapQuery( cda, requestParams.getStringParameter("uuid", null) ).writeResponse( getResponse() );
+    ExportedQueryResult result = coreService.unwrapQuery(cda, requestParams.getStringParameter("uuid", null));
+    writeOut( result, getResponse(), out );
 
   }
 
@@ -88,7 +100,8 @@ public class CdaContentGenerator extends SimpleContentGenerator
     CdaCoreService service = getCoreService();
     String cda = getPath( requestParams );
     String outputType = requestParams.getStringParameter("outputType", "json");
-    service.listQueries( cda, getSimpleExportOptions( outputType ) ).writeResponse( getResponse() );
+    ExportedQueryResult result =  service.listQueries(cda, getSimpleExportOptions(outputType));
+    writeOut( result, getResponse(), out );
   }
 
   @Exposed(accessLevel = AccessLevel.PUBLIC)
@@ -102,7 +115,7 @@ public class CdaContentGenerator extends SimpleContentGenerator
             params.getPath(),
             params.getDataAccessId(),
             getSimpleExportOptions( params.getOutputType() ) );
-    result.writeResponse( getResponse() );
+    writeOut( result, getResponse(), out );
 
   }
   @Exposed(accessLevel = AccessLevel.PUBLIC, outputType = MimeTypes.JSON)
