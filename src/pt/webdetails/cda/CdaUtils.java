@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 
 
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,10 +64,10 @@ import org.pentaho.util.messages.LocaleHelper;
 
 import pt.webdetails.cda.utils.PluginHibernateUtil;
 
-@Path("/cda/api")
+@Path( "/cda/api" )
 public class CdaUtils {
-  private static final Log logger = LogFactory.getLog(CdaUtils.class);
-  private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+  private static final Log logger = LogFactory.getLog( CdaUtils.class );
+  private static final SimpleDateFormat format = new SimpleDateFormat( "yyyy-MM-dd HH:mm" );
   
   public static final String PLUGIN_NAME = "cda";
   private static final long serialVersionUID = 1L;
@@ -130,11 +131,12 @@ public class CdaUtils {
                            @DefaultValue( "false" ) @FormParam( "paginateQuery" ) Boolean paginateQuery,
                            @DefaultValue( "0" ) @FormParam( "pageSize" ) int pageSize,
                            @DefaultValue( "0" ) @FormParam( "pageStart" ) int pageStart,
-                           @DefaultValue( "false" ) @FormParam( "wrapItUp" ) Boolean wrapItUp, @FormParam( "sortBy" ) List<String> sortBy,
-                           MultivaluedMap<String, String> formParams, @Context HttpServletResponse servletResponse ) throws Exception {
+                           @DefaultValue( "false" ) @FormParam( "wrapItUp" ) Boolean wrapItUp,
+                           @FormParam( "sortBy" ) List<String> sortBy,
+                           @Context HttpServletResponse servletResponse ) throws Exception {
 
     doQueryPost( path, outputType, outputIndexId, dataAccessId, bypassCache, paginateQuery, pageSize, pageStart,
-            wrapItUp ? WRAP_QUERY_TRUE_VALUE : "", sortBy, formParams, servletResponse );
+            wrapItUp ? WRAP_QUERY_TRUE_VALUE : "", sortBy, new MultivaluedMapImpl(), servletResponse );
 
   }
 
