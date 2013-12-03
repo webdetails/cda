@@ -118,7 +118,30 @@ public class CdaUtils {
     handleDoQuery( path, outputType, outputIndexId, dataAccessId, bypassCache, paginateQuery, pageSize, pageStart,
         wrapIt, sortBy, params, servletResponse );
   }
-  
+
+  //Adding this because of compatibility with the reporting plugin on 5.0.1. The cda datasource on the reporting plugin
+  //is expecting this signature
+  @Deprecated
+  public void doQueryPost( @FormParam( "path" ) String path,
+                           @DefaultValue( "json" ) @FormParam( "outputType" ) String outputType,
+                           @DefaultValue( "1" ) @FormParam( "outputIndexId" ) int outputIndexId,
+                           @DefaultValue( "1" ) @FormParam( "dataAccessId" ) String dataAccessId,
+                           @DefaultValue( "false" ) @FormParam( "bypassCache" ) Boolean bypassCache,
+                           @DefaultValue( "false" ) @FormParam( "paginateQuery" ) Boolean paginateQuery,
+                           @DefaultValue( "0" ) @FormParam( "pageSize" ) int pageSize,
+                           @DefaultValue( "0" ) @FormParam( "pageStart" ) int pageStart,
+                           @DefaultValue( "false" ) @FormParam( "wrapItUp" ) Boolean wrapItUp, @FormParam( "sortBy" ) List<String> sortBy,
+                           MultivaluedMap<String, String> formParams, @Context HttpServletResponse servletResponse ) throws Exception {
+
+    doQueryPost( path, outputType, outputIndexId, dataAccessId, bypassCache, paginateQuery, pageSize, pageStart,
+            wrapItUp ? WRAP_QUERY_TRUE_VALUE : "", sortBy, formParams, servletResponse );
+
+  }
+
+
+
+
+
   @GET
   @Path( "/doQuery" )
   @Consumes( { APPLICATION_XML, APPLICATION_JSON, APPLICATION_FORM_URLENCODED } )
