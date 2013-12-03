@@ -133,7 +133,8 @@ public class CdaUtils {
                            @DefaultValue( "0" ) @FormParam( "pageStart" ) int pageStart,
                            @DefaultValue( "false" ) @FormParam( "wrapItUp" ) Boolean wrapItUp,
                            @FormParam( "sortBy" ) List<String> sortBy,
-                           @Context HttpServletResponse servletResponse ) throws Exception {
+                           @Context HttpServletResponse servletResponse,
+                           @Context HttpServletRequest servletRequest) throws Exception {
 
     doQueryPost( path, outputType, outputIndexId, dataAccessId, bypassCache, paginateQuery, pageSize, pageStart,
             wrapItUp ? WRAP_QUERY_TRUE_VALUE : "", sortBy, new MultivaluedMapImpl(), servletResponse );
