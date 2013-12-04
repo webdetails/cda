@@ -177,6 +177,7 @@ public class SettingsManager {
 //    resourceManager.registerDefaultLoaders();
 //    resourceManager.registerDefaultFactories();
     resourceManager.registerLoader( this.defaultResourceLoader );
+    resourceManager.registerLoader( resourceLoaders.get( SYSTEM_RESOURCE_LOADER_NAME ) );
     return resourceManager;
   }
 
