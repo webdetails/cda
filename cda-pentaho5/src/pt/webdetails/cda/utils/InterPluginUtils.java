@@ -138,8 +138,6 @@ public class InterPluginUtils {
         }
 
       }
-
-
       return tm;
     } catch ( IOException ex ) {
       logger.error( "Error parsing json: " + json, ex );

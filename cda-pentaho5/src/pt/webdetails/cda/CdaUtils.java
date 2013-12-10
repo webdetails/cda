@@ -1,6 +1,15 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*!
+* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+*
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 
 package pt.webdetails.cda;
 
@@ -98,35 +107,30 @@ public class CdaUtils {
   }
 
 
-    //This method was created to be used with inter plugin call
-    //There are some issues to be resolved in InterPluginCall
-    //ONE: that is very bug prone is the reflection analysis to get de method to invoke, if there are two methods
-    //with same name but invocation signatures different the first one is chooses
-    //TWO: we are only reading annotated params so if we try to call a method with no annotated params but with params
-    //those params are not passed to the invoked method.
-   public String doQueryInterPlugin( @Context HttpServletRequest servletRequest ) throws Exception {
-       MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-       final Enumeration enumeration = servletRequest.getParameterNames();
-       while ( enumeration.hasMoreElements() ) {
-           final String param = (String) enumeration.nextElement();
-           final String[] values = servletRequest.getParameterValues( param );
-           if ( values.length == 1 ) {
-               params.add(param, values[0]);
-           } else {
-             List<String> list = new ArrayList<String>();
-             for (int i = 0; i < values.length; i++) {
-               list.add(values[i]);
-             }
-             params.put( param, list ); //assigns the array
-           }
-       }
-       return doQueryInternal(getDoQueryParameters(params)).asString();
-   }
-
-    protected ExportedQueryResult doQueryInternal(DoQueryParameters parameters) throws Exception {
-        CdaCoreService core = getCdaCoreService();
-        return core.doQuery( parameters );
+  //This method was created to be used with inter plugin call
+  public String doQueryInterPlugin( @Context HttpServletRequest servletRequest ) throws Exception {
+    MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+    final Enumeration enumeration = servletRequest.getParameterNames();
+    while ( enumeration.hasMoreElements() ) {
+      final String param = (String) enumeration.nextElement();
+      final String[] values = servletRequest.getParameterValues( param );
+      if ( values.length == 1 ) {
+        params.add( param, values[ 0 ] );
+      } else {
+        List<String> list = new ArrayList<String>();
+        for ( int i = 0; i < values.length; i++ ) {
+          list.add( values[ i ] );
+        }
+        params.put( param, list ); //assigns the array
+      }
     }
+    return doQueryInternal( getDoQueryParameters( params ) ).asString();
+  }
+
+  protected ExportedQueryResult doQueryInternal( DoQueryParameters parameters ) throws Exception {
+    CdaCoreService core = getCdaCoreService();
+    return core.doQuery( parameters );
+  }
 
 
   public StreamingOutput doQuery( MultivaluedMap<String, String> params ) throws WebApplicationException {
@@ -149,11 +153,6 @@ public class CdaUtils {
       }
     };
   }
-
-  /*private String wrapQueryInternal( DoQueryParameters parameters ) throws Exception {
-    return getCdaCoreService().wrapQuery( parameters );
-  } */
-
 
   private DoQueryParameters getDoQueryParameters( MultivaluedMap<String, String> parameters ) throws Exception {
     DoQueryParameters doQueryParams = new DoQueryParameters( );
