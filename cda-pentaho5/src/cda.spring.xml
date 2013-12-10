@@ -20,5 +20,5 @@ http://jax-ws.dev.java.net/spring/servlet http://jax-ws.dev.java.net/spring/serv
   <bean id="IQueryCache" class="pt.webdetails.cda.cache.EHCacheQueryCache" scope="prototype"/>
   <!--<bean id="ISessionUtils" class="pt.webdetails.cpf.session.PentahoSessionUtils" scope="prototype"/>-->
   <bean id="ICubeFileProviderSetter" class="pt.webdetails.cda.dataaccess.PentahoCubeFileProviderSetter" scope="prototype"/>      
-<!--  <bean id="IEventPublisher" class="pt.webdetails.cpf.messaging.EventPublisher" scope="prototype"/>-->
+  <bean id="IEventPublisher" class="pt.webdetails.cpf.messaging.EventPublisher" scope="prototype"/>
 </beans>

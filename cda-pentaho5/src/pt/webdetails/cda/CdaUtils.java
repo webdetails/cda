@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -96,27 +97,63 @@ public class CdaUtils {
     return doQuery( formParams );
   }
 
+
+    //This method was created to be used with inter plugin call
+    //There are some issues to be resolved in InterPluginCall
+    //ONE: that is very bug prone is the reflection analysis to get de method to invoke, if there are two methods
+    //with same name but invocation signatures different the first one is chooses
+    //TWO: we are only reading annotated params so if we try to call a method with no annotated params but with params
+    //those params are not passed to the invoked method.
+   public String doQueryInterPlugin( @Context HttpServletRequest servletRequest ) throws Exception {
+       MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+       final Enumeration enumeration = servletRequest.getParameterNames();
+       while ( enumeration.hasMoreElements() ) {
+           final String param = (String) enumeration.nextElement();
+           final String[] values = servletRequest.getParameterValues( param );
+           if ( values.length == 1 ) {
+               params.add(param, values[0]);
+           } else {
+             List<String> list = new ArrayList<String>();
+             for (int i = 0; i < values.length; i++) {
+               list.add(values[i]);
+             }
+             params.put( param, list ); //assigns the array
+           }
+       }
+       return doQueryInternal(getDoQueryParameters(params)).asString();
+   }
+
+    protected ExportedQueryResult doQueryInternal(DoQueryParameters parameters) throws Exception {
+        CdaCoreService core = getCdaCoreService();
+        return core.doQuery( parameters );
+    }
+
+
   public StreamingOutput doQuery( MultivaluedMap<String, String> params ) throws WebApplicationException {
     try {
-      DoQueryParameters parameters = getDoQueryParameters( params );
-      if( parameters.isWrapItUp() ) {
-        return wrapQuery( parameters );
-      }
-      CdaCoreService core = getCdaCoreService();
-      return toStreamingOutput( core.doQuery( parameters ) );
+        DoQueryParameters parameters = getDoQueryParameters( params );
+        if( parameters.isWrapItUp() ) {
+            return wrapQuery( parameters );
+        }
+      return toStreamingOutput( doQueryInternal(parameters) );
     } catch ( Exception e ) {
       throw new WebApplicationException( e, 501 );// TODO:
     }
   }
 
   private StreamingOutput wrapQuery( DoQueryParameters parameters ) throws Exception {
-    final String uuid = getCdaCoreService().wrapQuery( parameters );
+      final String uuid = getCdaCoreService().wrapQuery( parameters );
     return new StreamingOutput() {
       public void write( OutputStream out ) throws IOException, WebApplicationException {
         IOUtils.write( uuid, out );
       }
     };
   }
+
+  /*private String wrapQueryInternal( DoQueryParameters parameters ) throws Exception {
+    return getCdaCoreService().wrapQuery( parameters );
+  } */
+
 
   private DoQueryParameters getDoQueryParameters( MultivaluedMap<String, String> parameters ) throws Exception {
     DoQueryParameters doQueryParams = new DoQueryParameters( );
