@@ -26,8 +26,8 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 
-import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.cache.TableCacheKey;
 import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
 import pt.webdetails.cda.connections.Connection;
@@ -177,16 +177,22 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     }
 
     // put the copy into the cache ...
-    if (isCacheEnabled() && !queryOptions.isCacheBypass())
+    if (isCacheEnabled())
     {
-      ExtraCacheInfo cInfo = new ExtraCacheInfo(this.getCdaSettings().getId(), queryOptions.getDataAccessId(), queryTime, tableModelCopy);
-      getCdaCache().putTableModel(key, tableModelCopy, getCacheDuration(), cInfo);
+      ExtraCacheInfo cInfo =
+          new ExtraCacheInfo( this.getCdaSettings().getId(), getId(), queryTime, tableModelCopy );
+      IQueryCache cache = getCdaCache();
+      if ( cache != null ) {
+        cache.putTableModel( key, tableModelCopy, getCacheDuration(), cInfo );
+      }
+      else {
+        logger.error("Cache enabled but no cache available.");
+      }
     }
 
     // and finally return the copy.
     return tableModelCopy;
   }
-
 
   private List<Parameter> getFilledParameters(final QueryOptions queryOptions) throws QueryException
   {
@@ -339,9 +345,9 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
 
   @Override
-  public ArrayList<PropertyDescriptor> getInterface()
+  public List<PropertyDescriptor> getInterface()
   {
-    ArrayList<PropertyDescriptor> properties = super.getInterface();
+    List<PropertyDescriptor> properties = super.getInterface();
     properties.add(new PropertyDescriptor("query", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     properties.add(new PropertyDescriptor("connection", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
     properties.add(new PropertyDescriptor("cache", PropertyDescriptor.Type.BOOLEAN, PropertyDescriptor.Placement.ATTRIB));
@@ -352,7 +358,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
   private static int getQueryTimeThresholdFromConfig(int defaultValue)
   {
-    String strVal = CdaBoot.getInstance().getGlobalConfig().getConfigProperty(QUERY_TIME_THRESHOLD_PROPERTY);
+    String strVal = CdaEngine.getInstance().getConfigProperty( QUERY_TIME_THRESHOLD_PROPERTY );
     if (!StringUtils.isEmpty(strVal))
     {
       try

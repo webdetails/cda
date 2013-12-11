@@ -22,7 +22,7 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
+// TODO: meld with std bean factory..
 public class CoreBeanFactory implements ICdaBeanFactory {
 
 
@@ -35,10 +35,14 @@ public class CoreBeanFactory implements ICdaBeanFactory {
 	}
 
 	public CoreBeanFactory(String config) {
+	  
 		context = getSpringBeanFactory(config);
+		
+
 	}
 
 	protected ConfigurableApplicationContext getSpringBeanFactory(String config) {
+	  logger.debug( "bean factory ini" );
 		try {
 			final ClassLoader cl = this.getClass().getClassLoader();
 			URL url = cl.getResource(config);
@@ -68,6 +72,7 @@ public class CoreBeanFactory implements ICdaBeanFactory {
 						return cl;
 					}
 				};
+		    logger.debug( "bean factory context" );
 				return context;
 			}
 		} catch (Exception e) {
@@ -86,7 +91,7 @@ public class CoreBeanFactory implements ICdaBeanFactory {
 		return null;
 	}
 
-	public String[] getBeanNamesForType(Class clazz) {
+	public String[] getBeanNamesForType(Class<?> clazz) {
 		return context.getBeanNamesForType(clazz);
 	}
 

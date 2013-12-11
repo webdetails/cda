@@ -18,10 +18,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+import org.apache.commons.lang.StringUtils;
 
 /**
- *
+ * TODO: merge with queryOptions?
  * @author joao
  */
 public class DoQueryParameters {
@@ -31,7 +31,7 @@ public class DoQueryParameters {
     private String file;
     private String outputType;
     private int outputIndexId;
-    private String DataAccessId;
+    private String dataAccessId;
     private boolean bypassCache;
     private boolean paginateQuery;
     private int pageSize;
@@ -39,7 +39,7 @@ public class DoQueryParameters {
     private boolean wrapItUp;
     private String jsonCallback;
     private List<String> sortBy;
-    private Map<String, Object> extraParams;
+    private Map<String, Object> parameters;
     private Map<String, Object> extraSettings;
     
     
@@ -49,17 +49,19 @@ public class DoQueryParameters {
         this.file = file;
         this.outputType = "json";
         this.outputIndexId = 1;
-        this.DataAccessId = "<blank>";
-        this.bypassCache = false;
-        this.paginateQuery = false;
-        this.pageSize = 0;
-        this.pageStart = 0;
-        this.wrapItUp = false;
+        this.dataAccessId = "<blank>";
         this.jsonCallback="<blank>";
         this.sortBy = new ArrayList<String>();
-        extraParams = new HashMap<String, Object>();
+        parameters = new HashMap<String, Object>();
         extraSettings = new HashMap<String, Object>();
-        
+    }
+
+    public DoQueryParameters( String cdaSettingsPath ) {
+      this( cdaSettingsPath, null, null );
+    }
+
+    public DoQueryParameters( ) {
+      this(null, null, null);
     }
 
     /**
@@ -80,10 +82,17 @@ public class DoQueryParameters {
      * @return the path
      */
     public String getPath() {
-        return path;
+      // legacy path support
+      if (!StringUtils.isEmpty(solution))
+      {
+        // legacy
+        return Util.joinPath(solution, path, file);
+      }
+      return path;
     }
 
     /**
+     * @deprecated
      * @param path the path to set
      */
     public void setPath(String path) {
@@ -91,13 +100,7 @@ public class DoQueryParameters {
     }
 
     /**
-     * @return the solution
-     */
-    public String getSolution() {
-        return solution;
-    }
-
-    /**
+     * @deprecated
      * @param solution the solution to set
      */
     public void setSolution(String solution) {
@@ -105,13 +108,7 @@ public class DoQueryParameters {
     }
 
     /**
-     * @return the file
-     */
-    public String getFile() {
-        return file;
-    }
-
-    /**
+     * @deprecated
      * @param file the file to set
      */
     public void setFile(String file) {
@@ -122,14 +119,14 @@ public class DoQueryParameters {
      * @return the DataAccessId
      */
     public String getDataAccessId() {
-        return DataAccessId;
+        return dataAccessId;
     }
 
     /**
      * @param DataAccessId the DataAccessId to set
      */
     public void setDataAccessId(String DataAccessId) {
-        this.DataAccessId = DataAccessId;
+        this.dataAccessId = DataAccessId;
     }
 
     /**
@@ -233,22 +230,19 @@ public class DoQueryParameters {
     /**
      * @return the extraParams
      */
-    public Map<String, Object> getExtraParams() {
-        return extraParams;
+    public Map<String, Object> getParameters() {
+        return parameters;
     }
 
     /**
      * @param extraParams the extraParams to set
      */
-    public void setExtraParams(Map<String, Object> extraParams) {
-        this.extraParams = extraParams;
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = parameters;
     }
 
-    public boolean hasParameter(String JSONP_CALLBACK) {
-        return (getExtraParams().containsKey(JSONP_CALLBACK));
-    }
-    public Object getAnExtraParameter(String paramName){
-        return getExtraParams().get(paramName);
+    public Object getParameter(String paramName){
+        return getParameters().get(paramName);
     }
 
     /**

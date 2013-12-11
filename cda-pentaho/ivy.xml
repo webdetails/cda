@@ -13,42 +13,31 @@
 
     <dependencies defaultconf="default->default">
         <!--  pentaho dependencies -->
-        <dependency org="pentaho" name="pentaho-bi-platform-scheduler" rev="${dependency.bi-platform.revision}" transitive="false" changing="true"/>
+        <dependency org="pentaho" name="pentaho-bi-platform-scheduler" rev="${dependency.bi-platform.revision}" changing="true"  transitive="false"/>
+
         <!--  internal dependencies -->
-        <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin"
-            rev="${dependency.pentaho-reporting.revision}" changing="true">
-        </dependency>
-        <dependency org="pentaho" name="pentaho-bi-platform-plugin-services"
-            rev="${dependency.bi-platform.revision}" transitive="false" changing="true"/>
-        <dependency org="pentaho" name="pentaho-bi-platform-plugin-actions"
-            rev="${dependency.bi-platform.revision}" transitive="false" changing="true"/>
-    <dependency org="com.hazelcast" name="hazelcast" transitive="false" rev="2.5" conf="default->default;legacy->default"/>
+        <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin" rev="${dependency.pentaho-reporting.revision}" changing="true"/>            
+        <dependency org="pentaho"                  name="pentaho-bi-platform-plugin-services"                   rev="${dependency.bi-platform.revision}"       changing="true"  transitive="false"/>
+        <dependency org="pentaho"                  name="pentaho-bi-platform-plugin-actions"                    rev="${dependency.bi-platform.revision}"       changing="true" transitive="false"/>
+        <dependency org="com.hazelcast"            name="hazelcast"                                             rev="2.5"                                      conf="default->default;legacy->default" transitive="false" />
 
-      <dependency org="pt.webdetails" name="cpf-core"
-          rev="TRUNK-SNAPSHOT" transitive="false" changing="true" conf='runtime->default'/>
-
-
-      <dependency org="pt.webdetails" name="cpf-pentaho"
-          rev="TRUNK-SNAPSHOT" transitive="false" changing="true" conf='runtime->default'/>
-
-
-<dependency org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.8.2" conf='runtime->default'/>
+        <!-- Runtime dependencies -->
+        <dependency org="pentaho"                name="cpf-core"           rev="REFACTOR-SNAPSHOT"   conf='runtime->default'/>
+        <dependency org="pentaho"                name="cpf-pentaho"        rev="REFACTOR-SNAPSHOT"   conf='runtime->default' changing="true" transitive="false"/>
+        <dependency org="pentaho"                name="cda-core"           rev="${project.revision}" conf="runtime->default" changing="true" transitive="false"/>
+        <dependency org="org.codehaus.jackson"   name="jackson-mapper-asl" rev="1.8.2"               conf='runtime->default'/>
+        <dependency org="org.json"               name="json"               rev="3.1"                 conf='runtime->default'/>
+        <dependency org="net.htmlparser.jericho" name="jericho-html"       rev="3.1"                 conf="runtime->default"/>
 
         <!-- Legacy -->
-        <!-- Unresolved dependency
-    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin"
-      rev="${dependency.pentaho-reporting.revision.legacy}" changing="true" conf="legacy->default"/>
-        -->
-    <dependency org="pentaho" name="pentaho-bi-platform-scheduler" 
-      rev="${dependency.bi-platform.revision.legacy}" transitive="false" changing="true" conf="legacy->default"/>
-    <dependency org="pentaho" name="pentaho-bi-platform-plugin-services"
-      rev="${dependency.bi-platform.revision.legacy}" transitive="false" changing="true" conf="legacy->default"/>
-    <dependency org="pentaho" name="pentaho-bi-platform-plugin-actions"
-      rev="${dependency.bi-platform.revision.legacy}" transitive="false" changing="true" conf="legacy->default"/>
-    <dependency org="net.sf.ehcache" name="ehcache-core" rev="2.0.1" conf="legacy->default"/>
+        <dependency org="net.sf.ehcache" name="ehcache-core"                        rev="2.0.1"                                     conf="legacy->default"/>        
+        <dependency org="pentaho"        name="pentaho-bi-platform-scheduler"       rev="${dependency.bi-platform.revision.legacy}" conf="legacy->default" transitive="false" changing="true" />
+        <dependency org="pentaho"        name="pentaho-bi-platform-plugin-services" rev="${dependency.bi-platform.revision.legacy}" conf="legacy->default" transitive="false" changing="true"/>
+        <dependency org="pentaho"        name="pentaho-bi-platform-plugin-actions"  rev="${dependency.bi-platform.revision.legacy}" conf="legacy->default" transitive="false" changing="true"/>
       
-      <exclude module="ehcache" />  <!-- Comment this for CDA with 3.6.0 dependencies -->
-                <exclude module="nekohtml" conf="" matcher="exact"></exclude>
+        <!-- Excludes -->
+        <exclude module="ehcache" />  <!-- Comment this for CDA with 3.6.0 dependencies -->
+        <exclude module="nekohtml" conf="" matcher="exact"/>
     
     </dependencies>
 

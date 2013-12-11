@@ -17,7 +17,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Blob;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.Map;
+
 import javax.swing.table.TableModel;
 
 /**
@@ -40,7 +41,7 @@ public class BinaryExporter extends AbstractExporter
   }
 
 
-  public BinaryExporter(HashMap<String, String> extraSettings)
+  public BinaryExporter(Map<String, String> extraSettings)
   {
     super(extraSettings);
     mimeType = getSetting(MYMETYPE_SETTING, "octet-stream");

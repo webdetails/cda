@@ -13,56 +13,42 @@
 
 package pt.webdetails.cda.tests;
 
-import java.io.File;
-import java.io.OutputStream;
-import java.net.URL;
-
-import junit.framework.TestCase;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
-import pt.webdetails.cda.settings.SettingsManager;
 
-public class IterableParameterSqlTest extends TestCase {
+public class IterableParameterSqlTest extends CdaTestCase {
   private static final Log logger = LogFactory.getLog(IterableParameterSqlTest.class);
 
   public void testIterateStatus() throws Exception
-  {
+  { //TODO what is going on here??
   	//Configuration configuration = new Configuration();
     // Define an outputStream
-    OutputStream out = System.out;
+//    OutputStream out = System.out;
 
     logger.info("Building CDA settings from sample file");
 
-    final SettingsManager settingsManager = SettingsManager.getInstance();
-    URL file = this.getClass().getResource("sample-iterable-sql.cda");
-    File settingsFile = new File(file.toURI());
-    final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
+    final CdaSettings cdaSettings = parseSettingsFile("sample-iterable-sql.cda");
     logger.debug("Doing query on Cda - Initializing CdaEngine");
     final CdaEngine engine = CdaEngine.getInstance();
     QueryOptions queryOptions;
 
-    
-    for(int i=0; i<2;i++){
+    //TODO: why?
+//    for(int i=0; i<2;i++){
     	queryOptions = new QueryOptions();
 	    queryOptions.setDataAccessId("1");
 	    queryOptions.addParameter("status", "$FOREACH(2,0)");
 	    queryOptions.addParameter("year", "$FOREACH(3,0,minYear=2003)");
 	    queryOptions.getParameter("year").setDefaultValue("2004");
 	    queryOptions.setOutputType("csv");
-	    // queryOptions.addParameter("status","In Process");
+	     queryOptions.addParameter("status","In Process");
 	
 	    logger.info("Doing first query");
-	    try {
-	    engine.doQuery(out, cdaSettings, queryOptions);
-	    } catch(Exception e){
-	    	throw e;
-	    }
-    }
+      engine.doQuery( cdaSettings, queryOptions );
+//    }
     
     queryOptions = new QueryOptions();
     queryOptions.setDataAccessId("4");
@@ -72,11 +58,7 @@ public class IterableParameterSqlTest extends TestCase {
     queryOptions.setOutputType("csv");
 
     logger.info("Doing second query");
-    try {
-    engine.doQuery(out, cdaSettings, queryOptions);
-    } catch(Exception e){
-    	throw e;
-    }
+    engine.doQuery( cdaSettings, queryOptions );
     
 //    queryOptions = new QueryOptions();
 //    queryOptions.setDataAccessId("1");

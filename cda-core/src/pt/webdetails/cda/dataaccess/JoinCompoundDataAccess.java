@@ -32,7 +32,7 @@ import org.pentaho.di.core.util.StringUtil;
 import org.pentaho.metadata.model.concept.types.JoinType;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
 
-import pt.webdetails.cda.CdaBoot;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
@@ -135,35 +135,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       String sortLeftXML = getSortXmlStep("sortLeft", leftColumnNames);
       String sortRightXML = getSortXmlStep("sortRight", rightColumnNames);
 
-      StringBuilder mergeJoinXML = new StringBuilder(
-    		  "<step><name>mergeJoin</name><type>MergeJoin</type><join_type>");
-	  switch (joinType) {
-		  case INNER:
-			  mergeJoinXML.append("INNER");
-			  break;
-		  case LEFT_OUTER:
-			  mergeJoinXML.append("LEFT OUTER");
-			  break;
-		  case RIGHT_OUTER:
-			  mergeJoinXML.append("RIGHT OUTER");
-			  break;
-		  case FULL_OUTER:
-			  mergeJoinXML.append("FULL OUTER");
-			  break;
-	  }
-	  mergeJoinXML.append("</join_type><step1>sortLeft</step1><step2>sortRight</step2>");
-	  mergeJoinXML.append("<keys_1>");
-
-      for (int i = 0; i < leftKeys.length; i++)
-      {
-        mergeJoinXML.append("<key>").append(leftColumnNames[i]).append("</key>");
-      }
-      mergeJoinXML.append("</keys_1><keys_2>");
-      for (int i = 0; i < rightKeys.length; i++)
-      {
-        mergeJoinXML.append("<key>").append(rightColumnNames[i]).append("</key>");
-      }
-      mergeJoinXML.append("</keys_2></step>");
+      String mergeJoinXML = getMergeJoinXml( leftColumnNames, rightColumnNames );
 
       DynamicTransMetaConfig transMetaConfig = new DynamicTransMetaConfig(Type.EMPTY, "JoinCompoundData", null, null);
       DynamicTransConfig transConfig = new DynamicTransConfig();
@@ -175,7 +147,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       transConfig.addConfigEntry(EntryType.STEP, "input2", input2Xml);
       transConfig.addConfigEntry(EntryType.STEP, "sortLeft", sortLeftXML);
       transConfig.addConfigEntry(EntryType.STEP, "sortRight", sortRightXML);
-      transConfig.addConfigEntry(EntryType.STEP, "mergeJoin", mergeJoinXML.toString());
+      transConfig.addConfigEntry(EntryType.STEP, "mergeJoin", mergeJoinXML);
 
       transConfig.addConfigEntry(EntryType.HOP, "input1", "sortLeft");
       transConfig.addConfigEntry(EntryType.HOP, "input2", "sortRight");
@@ -209,6 +181,60 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     return output;
   }
 
+  private String getMergeJoinXml( String[] leftColumnNames, String[] rightColumnNames ) {
+    StringBuilder mergeJoinXML = new StringBuilder( "<step><name>mergeJoin</name><type>MergeJoin</type><join_type>" );
+    mergeJoinXML.append( getMergeJoinType( joinType ) );
+    mergeJoinXML.append( "</join_type><copies>1</copies><step1>sortLeft</step1><step2>sortRight</step2>" );
+    mergeJoinXML.append( "<keys_1>" );
+
+    for (int i = 0; i < leftKeys.length; i++)
+    {
+      mergeJoinXML.append("<key>").append(leftColumnNames[i]).append("</key>");
+    }
+    mergeJoinXML.append("</keys_1><keys_2>");
+
+    for (int i = 0; i < rightKeys.length; i++)
+    {
+      mergeJoinXML.append("<key>").append(rightColumnNames[i]).append("</key>");
+    }
+    mergeJoinXML.append("</keys_2></step>");
+
+    return mergeJoinXML.toString();
+  }
+
+  private static String getMergeJoinType( JoinType joinType ) {
+    switch ( joinType ) {
+      case INNER:
+        return "INNER" ;
+      case LEFT_OUTER:
+        return "LEFT OUTER";
+      case RIGHT_OUTER:
+        return "RIGHT OUTER";
+      case FULL_OUTER:
+      default:
+        return "FULL OUTER";
+    }
+  }
+
+//  private String getSortXmlStep( final String name, final String[] columnNames ) throws KettleException  {
+//    SortRowsMeta sort = new SortRowsMeta();
+//    sort.setDefault();
+//
+//    // column names
+//    sort.setFieldName( columnNames );
+//    // ascending=true
+//    boolean[] ascending = new boolean[columnNames.length];
+//    Arrays.fill( ascending, true );
+//    sort.setAscending( ascending );
+//    //caseSensitive=false
+//    boolean[] caseSensitive = new boolean[columnNames.length];
+//    Arrays.fill( caseSensitive, false );
+//    sort.setCaseSensitive( caseSensitive );
+//    sort.setPresorted //-version mismatch..
+//
+//    StepMeta step = new StepMeta( name, sort );
+//    return step.getXML();
+//  }
 
   private String getSortXmlStep(final String name, final String[] columnNames)
   {
@@ -254,12 +280,11 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     return sortXML.toString();
   }
 
-
   private String getInjectorStepXmlString(String name, TableModel t)
   {
     StringBuilder xml = new StringBuilder("<step><name>");
     Class<?> columnClass;
-    xml.append(name).append("</name><type>Injector</type>");
+    xml.append(name).append("</name><type>Injector</type><copies>1</copies>");
 
     int maxRowsTypeSearch = getMaxTypeSearchRowCount(t);
     
@@ -303,7 +328,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
 
   private int getMaxTypeSearchRowCount(TableModel t) {
     int maxRowsTypeSearch = DEFAULT_MAX_ROWS_VALUE_TYPE_SEARCH;
-    String maxRowsTypeSearchProperty = CdaBoot.getInstance().getGlobalConfig().getConfigProperty(MAX_ROWS_VALUE_TYPE_SEARCH_PROPERTY);
+    String maxRowsTypeSearchProperty = CdaEngine.getInstance().getConfigProperty(MAX_ROWS_VALUE_TYPE_SEARCH_PROPERTY);
     if(!StringUtils.isEmpty(maxRowsTypeSearchProperty)){
       try{
         maxRowsTypeSearch = Integer.parseInt(maxRowsTypeSearchProperty);
@@ -320,17 +345,18 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     return maxRowsTypeSearch;
   }
 
-  /*
-   * This method returns the correct kettle type from the column class. Possible values:
-   *  String
-   *  Date
-   *  Boolean
-   *  Integer
-   *  BigNumber
-   *  Serializable
-   *  Binary
-   *   
-   */
+  /**
+   * This method returns the correct kettle type from the column class.<br> Possible values:
+   * <ul>
+   * <li>String</li>
+   * <li>Date</li>
+   * <li>Boolean</li>
+   * <li>Integer</li>
+   * <li>BigNumber</li>
+   * <li>Serializable</li>
+   * <li>Binary</li>
+   * </ul>
+   **/
   private String getKettleTypeFromColumnClass(Class<?> clazz)
   {
     if (clazz == String.class)
@@ -364,9 +390,9 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   public void startRowProduction()
   {
 
-    String timeoutStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout");
+    String timeoutStr = CdaEngine.getInstance().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout");
     long timeout = StringUtil.isEmpty(timeoutStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
-    String unitStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
+    String unitStr = CdaEngine.getInstance().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
     TimeUnit unit = StringUtil.isEmpty(unitStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
     startRowProduction(timeout, unit);
   }

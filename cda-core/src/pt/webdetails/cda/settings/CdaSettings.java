@@ -54,7 +54,6 @@ import pt.webdetails.cda.dataaccess.SqlDataAccess;
 import pt.webdetails.cda.dataaccess.UnionCompoundDataAccess;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
 import pt.webdetails.cda.dataaccess.XPathDataAccess;
-import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.Util;
 import pt.webdetails.cda.xml.DomTraversalHelper;
@@ -135,7 +134,7 @@ public class CdaSettings {
     dataAccessMap = new HashMap<String, DataAccess>();
   }
 
-  public TableModel listQueries(DiscoveryOptions discoveryOptions) {
+  public TableModel listQueries() {
     return TableModelUtils.dataAccessMapToTableModel(dataAccessMap);
   }
 

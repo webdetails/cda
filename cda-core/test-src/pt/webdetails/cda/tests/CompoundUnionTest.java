@@ -13,20 +13,13 @@
 
 package pt.webdetails.cda.tests;
 
-import java.io.File;
-import java.io.OutputStream;
-import java.net.URL;
+import javax.swing.table.TableModel;
 
-import org.junit.Assert;
 import org.junit.Test;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
-import pt.webdetails.cda.settings.SettingsManager;
+import pt.webdetails.cda.tests.utils.CdaTestHelper;
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,38 +27,41 @@ import pt.webdetails.cda.settings.SettingsManager;
  * Date: Feb 15, 2010
  * Time: 7:53:13 PM
  */
-public class CompoundUnionTest
+public class CompoundUnionTest extends CdaTestCase
 {
 
-  private static final Log logger = LogFactory.getLog(CompoundUnionTest.class);
-   
   @Test
   public void testCompoundQuery() throws Exception
   {
 
-
-    // Define an outputStream
-    OutputStream out = System.out;
-
-    logger.info("Building CDA settings from sample file");
-    final CdaEngine engine = CdaEngine.getInstance();
-    final SettingsManager settingsManager = SettingsManager.getInstance();
-    URL file = this.getClass().getResource("sample-union.cda");
-    Assert.assertNotNull(file);
-    File settingsFile = new File(file.toURI());
-    final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
-    logger.error("Doing query on Cda - Initializing CdaEngine");
+    final CdaSettings cdaSettings = getSettingsManager().parseSettingsFile("sample-union.cda");
 
     QueryOptions queryOptions = new QueryOptions();
     //queryOptions.addParameter("year","2005");
+
+    queryOptions.setDataAccessId( "1" );
+    final TableModel top = getEngine().doQuery( cdaSettings, queryOptions );
+
+    queryOptions.setDataAccessId( "2" );
+    final TableModel bottom = getEngine().doQuery( cdaSettings, queryOptions );
+
     queryOptions.setDataAccessId("3");
     queryOptions.setOutputType("json");
     // queryOptions.addParameter("status","In Process");
 
-    logger.info("Doing query");
-    engine.doQuery(out, cdaSettings, queryOptions);
 
+    final TableModel union = getEngine().doQuery(cdaSettings, queryOptions);
 
+    assertEquals(union.getColumnCount(), Math.max( top.getColumnCount(), bottom.getColumnCount() )  );
+    assertEquals(union.getRowCount(), top.getRowCount() + bottom.getRowCount()  );
+
+    assertEquals(union.getValueAt( 0, 0 ), top.getValueAt( 0, 0 ) );
+    assertEquals(union.getValueAt( 0, 1 ), top.getValueAt( 0, 1 ) );
+    final int lastRowUnion = union.getRowCount() - 1;
+    final int lastRowBottom = bottom.getRowCount() - 1;
+    assertTrue( CdaTestHelper.numericEquals(
+        union.getValueAt( lastRowUnion, 1 ).toString(), 
+        bottom.getValueAt( lastRowBottom, 1 ).toString(), 0.000001 ) );
   }
 
 }

@@ -23,13 +23,10 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 import org.apache.commons.io.IOUtils;
-import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.messages.MessageUtil;
 
-import pt.webdetails.cpf.repository.PentahoRepositoryAccess;
 
 /**
  * Utility class for internationalization
@@ -44,11 +41,10 @@ public class Messages {
     Locale locale = LocaleHelper.getLocale();
     ResourceBundle bundle = Messages.locales.get(locale);
     if (bundle == null) {
-      IPentahoSession session = new StandaloneSession("dashboards messages"); //$NON-NLS-1$
+//      IPentahoSession session = new StandaloneSession("dashboards messages"); //$NON-NLS-1$
       InputStream in = null;
-      String propertiesFile = "system/" + CdaContentGenerator.PLUGIN_NAME + "/messages.properties";//$NON-NLS-1$ //$NON-NLS-2$
       try {
-        in = PentahoRepositoryAccess.getRepository(session).getResourceInputStream(propertiesFile);  
+        in = CdaEngine.getRepo().getPluginSystemReader( null ).getFileInputStream( "messages.properties" ); //$NON-NLS-1$
         bundle = new PropertyResourceBundle(in);
         Messages.locales.put(locale, bundle);
       } catch (Exception e) {

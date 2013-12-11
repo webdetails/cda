@@ -29,12 +29,10 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 
 import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cda.cache.EHCacheQueryCache;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
-import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
@@ -230,11 +228,13 @@ public abstract class AbstractDataAccess implements DataAccess
     return cache;
   }
 
-  @Deprecated
-  public static synchronized net.sf.ehcache.Cache getCache()
-  {
-    return ((EHCacheQueryCache) getCdaCache()).getCache();
-  }
+//  /**
+//   * @deprecated use {@link #getCdaCache()}
+//   */
+//  public static synchronized net.sf.ehcache.Cache getCache()
+//  {
+//    return ((EHCacheQueryCache) getCdaCache()).getCache();
+//  }
 
   public static synchronized void shutdownCache(){
     if(cache != null){
@@ -265,7 +265,7 @@ public abstract class AbstractDataAccess implements DataAccess
      *  1. Sort
      *  2. Show only the output columns
      *  3. Paginate
-     *  4. Call the appropriate exporter
+     *  
      *
      */
 
@@ -287,7 +287,7 @@ public abstract class AbstractDataAccess implements DataAccess
     }
   }
 
-  public TableModel listParameters(final DiscoveryOptions discoveryOptions)
+  public TableModel listParameters()
   {
 
     return TableModelUtils.dataAccessParametersToTableModel(getParameters());
@@ -372,14 +372,6 @@ public abstract class AbstractDataAccess implements DataAccess
     return access;
   }
 
-  /**
-   * @deprecated use {@link #isCacheEnabled()} instead
-   */
-  public boolean isCache()
-  {
-    return cacheEnabled;
-  }
-  
   public boolean isCacheEnabled(){
     return cacheEnabled;
   }
@@ -455,13 +447,13 @@ public abstract class AbstractDataAccess implements DataAccess
   }
 
 
-  public ArrayList<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors()
+  public List<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors()
   {
     return this.getDataAccessConnectionDescriptors();
   }
 
 
-  public ArrayList<PropertyDescriptor> getInterface()
+  public List<PropertyDescriptor> getInterface()
   {
 
     ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
