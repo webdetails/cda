@@ -494,7 +494,7 @@ public class CdaUtils {
 
 
   //Interplugin calls  - Should be moved to a dedicated bean and method signature should be changed
-
+  @Deprecated
   public void doQueryInterPluginOld(@Context HttpServletResponse servletResponse,
                                     @Context HttpServletRequest servletRequest ) throws Exception {
     MultivaluedMap<String, String> params = getParameterMapFromRequest( servletRequest );
