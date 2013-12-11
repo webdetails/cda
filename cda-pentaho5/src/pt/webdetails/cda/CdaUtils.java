@@ -106,27 +106,6 @@ public class CdaUtils {
     return doQuery( formParams );
   }
 
-
-  //This method was created to be used with inter plugin call
-  public String doQueryInterPlugin( @Context HttpServletRequest servletRequest ) throws Exception {
-    MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-    final Enumeration enumeration = servletRequest.getParameterNames();
-    while ( enumeration.hasMoreElements() ) {
-      final String param = (String) enumeration.nextElement();
-      final String[] values = servletRequest.getParameterValues( param );
-      if ( values.length == 1 ) {
-        params.add( param, values[ 0 ] );
-      } else {
-        List<String> list = new ArrayList<String>();
-        for ( int i = 0; i < values.length; i++ ) {
-          list.add( values[ i ] );
-        }
-        params.put( param, list ); //assigns the array
-      }
-    }
-    return doQueryInternal( getDoQueryParameters( params ) ).asString();
-  }
-
   protected ExportedQueryResult doQueryInternal( DoQueryParameters parameters ) throws Exception {
     CdaCoreService core = getCdaCoreService();
     return core.doQuery( parameters );
@@ -510,6 +489,72 @@ public class CdaUtils {
 
   private CdaCoreService getCdaCoreService() {
     return new CdaCoreService( CdaEngine.getInstance() );
+  }
+
+
+
+  //Interplugin calls  - Should be moved to a dedicated bean and method signature should be changed
+
+  public void doQueryInterPluginOld(@Context HttpServletResponse servletResponse,
+                                    @Context HttpServletRequest servletRequest ) throws Exception {
+    MultivaluedMap<String, String> params = getParameterMapFromRequest( servletRequest );
+    ExportedQueryResult result = doQueryInternal( getDoQueryParameters( params) );
+    result.writeResponse( servletResponse );
+  }
+
+  public String doQueryInterPlugin( @Context HttpServletRequest servletRequest ) throws Exception {
+
+    return doQueryInternal( getDoQueryParameters( getParameterMapFromRequest( servletRequest ) ) ).asString();
+  }
+
+  private MultivaluedMap<String, String> getParameterMapFromRequest( HttpServletRequest servletRequest ) {
+    MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+    final Enumeration enumeration = servletRequest.getParameterNames();
+    while ( enumeration.hasMoreElements() ) {
+      final String param = (String) enumeration.nextElement();
+      final String[] values = servletRequest.getParameterValues( param );
+      if ( values.length == 1 ) {
+        params.add( param, values[ 0 ] );
+      } else {
+        List<String> list = new ArrayList<String>();
+        for ( int i = 0; i < values.length; i++ ) {
+          list.add( values[ i ] );
+        }
+        params.put( param, list ); //assigns the array
+      }
+    }
+    return params;
+  }
+
+
+  //Adding this because of compatibility with the reporting plugin on 5.0.1. The cda datasource on the reporting plugin
+  //is expecting this signature
+  @Deprecated
+  public void doQueryPost( @FormParam( "path" ) String path,
+                           @DefaultValue( "json" ) @FormParam( "outputType" ) String outputType,
+                           @DefaultValue( "1" ) @FormParam( "outputIndexId" ) int outputIndexId,
+                           @DefaultValue( "1" ) @FormParam( "dataAccessId" ) String dataAccessId,
+                           @DefaultValue( "false" ) @FormParam( "bypassCache" ) Boolean bypassCache,
+                           @DefaultValue( "false" ) @FormParam( "paginateQuery" ) Boolean paginateQuery,
+                           @DefaultValue( "0" ) @FormParam( "pageSize" ) int pageSize,
+                           @DefaultValue( "0" ) @FormParam( "pageStart" ) int pageStart,
+                           @DefaultValue( "false" ) @FormParam( "wrapItUp" ) Boolean wrapItUp,
+                           @FormParam( "sortBy" ) List<String> sortBy,
+                           @Context HttpServletResponse servletResponse,
+                           @Context HttpServletRequest servletRequest) throws Exception {
+
+    DoQueryParameters parameters = new DoQueryParameters( path, null, null );
+    parameters.setOutputType( outputType );
+    parameters.setOutputIndexId( outputIndexId );
+    parameters.setDataAccessId( dataAccessId );
+    parameters.setBypassCache( bypassCache );
+    parameters.setPageSize( pageSize );
+    parameters.setPageStart( pageStart );
+    parameters.setWrapItUp( wrapItUp );
+    parameters.setSortBy( sortBy );
+
+    ExportedQueryResult result = doQueryInternal( parameters );
+    result.writeResponse( servletResponse );
   }
 
 
