@@ -20,9 +20,12 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.Kettle
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKeyCreationException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
+
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.kettle.KettleConnection;
+import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 
 /**
@@ -69,10 +72,9 @@ public class KettleDataAccess extends PREDataAccess
   }
   
   @Override 
-  public void setCdaSettings(pt.webdetails.cda.settings.CdaSettings cdaSettings) {
+  public void setCdaSettings(CdaSettings cdaSettings) {
     super.setCdaSettings(cdaSettings);
-    final ResourceManager resourceManager = new ResourceManager();
-    resourceManager.registerDefaults();
+    final ResourceManager resourceManager = CdaEngine.getInstance().getSettingsManager().getResourceManager();
     ResourceKey fileKey;
     try {
       fileKey = resourceManager.deriveKey(getCdaSettings().getContextKey(), "");
@@ -81,11 +83,7 @@ public class KettleDataAccess extends PREDataAccess
       path = null;//shouldn't happen and will blow down the road
     }
   };
-  
-//  protected ResourceKey getResourceKey(){
-//    return new ResourceKey(RepositoryResourceLoader.SOLUTION_SCHEMA_NAME, path, new HashMap<Object,Object>(0));
-//  }
-  
+
   /**
    * ContextKey is used to resolve the transformation file, and so must be stored in the cache key.
    * We only use solution paths, only the path needs to be stored.

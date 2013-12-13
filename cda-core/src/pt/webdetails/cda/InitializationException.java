@@ -14,7 +14,7 @@
 package pt.webdetails.cda;
 
 
-public class InitializationException extends Exception {
+public class InitializationException extends RuntimeException {
 
 	private static final long serialVersionUID = 1089220229330479839L;
 

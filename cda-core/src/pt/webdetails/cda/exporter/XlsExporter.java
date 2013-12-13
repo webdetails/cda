@@ -13,7 +13,7 @@
 
 package pt.webdetails.cda.exporter;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,8 +21,6 @@ import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.steps.exceloutput.ExcelOutputMeta;
 
-import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cpf.repository.IRepositoryAccess;
 
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM
@@ -38,15 +36,17 @@ public class XlsExporter extends AbstractKettleExporter
   private String templateName;
   private boolean includeHeader;
 
-  public XlsExporter(HashMap <String,String> extraSettings)
+  public XlsExporter(Map <String,String> extraSettings)
   {
     super(extraSettings);
     this.attachmentName = getSetting(ATTACHMENT_NAME_SETTING, "cda-export." + getType());
     this.templateName = getSetting(TEMPLATE_NAME_SETTING, null);
-    IRepositoryAccess repository = CdaEngine.getEnvironment().getRepositoryAccess();
-    if(templateName != null){
-      templateName = repository.getSolutionPath(templateName);
-    }
+    //IReadAccess repository = CdaEngine.getRepo().getUserContentAccess("/");
+    // TODO: test this
+    // paths should already be provided in relation to the 'solution base'
+//    if(templateName != null){
+//      templateName = repository.getSolutionPath(templateName);
+//    }
     includeHeader = Boolean.parseBoolean(getSetting( COLUMN_HEADERS_SETTING, "true"));
   }
   
@@ -66,69 +66,70 @@ public class XlsExporter extends AbstractKettleExporter
       return meta.getXML();
     } catch (KettleException e) {
       logger.error(e);
-      //kept as a fallback for now
-      return getExportStepDefinitionS(name);
+//      //kept as a fallback for now
+//      return getExportStepDefinitionS(name);
+      return null;
     }
   }
 
-  protected String getExportStepDefinitionS(String name)
-  {
-    StringBuilder xml = new StringBuilder();
-
-    //TODO: use meta instead of string xml?
-    
-    xml.append("<step>\n" +
-        "    <name>"+ name + "</name>\n" +
-        "    <type>ExcelOutput</type>\n" +
-        "    <description/>\n" +
-        "    <distribute>Y</distribute>\n" +
-        "    <copies>1</copies>\n" +
-        "         <partitioning>\n" +
-        "           <method>none</method>\n" +
-        "           <schema_name/>\n" +
-        "           </partitioning>\n" +
-        "    <header>"+ (includeHeader? "Y" : "N")  + "</header>\n" +
-        "    <footer>N</footer>\n" +
-        "    <encoding/>\n" +
-        "    <append>N</append>\n" +
-        "    <add_to_result_filenames>Y</add_to_result_filenames>\n" +
-        "    <file>\n" +
-        "      <name>${java.io.tmpdir}&#47;");
-
-    xml.append(getFileName());
-
-    xml.append("</name>\n" +
-        "      <extention>xls</extention>\n" +
-        "      <do_not_open_newfile_init>N</do_not_open_newfile_init>\n" +
-        "      <split>N</split>\n" +
-        "      <add_date>N</add_date>\n" +
-        "      <add_time>N</add_time>\n" +
-        "      <SpecifyFormat>N</SpecifyFormat>\n" +
-        "      <date_time_format/>\n" +
-        "      <sheetname>Sheet1</sheetname>\n" +
-        "      <autosizecolums>N</autosizecolums>\n" +
-        "      <protect_sheet>N</protect_sheet>\n" +
-        "      <password>Encrypted </password>\n" +
-        "      <splitevery>0</splitevery>\n" +
-        "      </file>\n" +
-        "    <template>\n" +
-        "      <enabled>" + (this.templateName != null ? "Y" : "N") + "</enabled>\n" +
-        "      <append>Y</append>\n" +
-        "      <filename>" + (this.templateName != null ? this.templateName : "template.xls") + "</filename>\n" +
-        "    </template>\n" +
-        "    <fields>\n" +
-        "    </fields>\n" +
-        "     <cluster_schema/>\n" +
-        " <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>\n" +
-        "      <xloc>498</xloc>\n" +
-        "      <yloc>253</yloc>\n" +
-        "      <draw>Y</draw>\n" +
-        "      </GUI>\n" +
-        "    </step>");
-
-    return xml.toString();
-
-  }
+//  protected String getExportStepDefinitionS(String name)
+//  {
+//    StringBuilder xml = new StringBuilder();
+//
+//    //TODO: use meta instead of string xml?
+//    
+//    xml.append("<step>\n" +
+//        "    <name>"+ name + "</name>\n" +
+//        "    <type>ExcelOutput</type>\n" +
+//        "    <description/>\n" +
+//        "    <distribute>Y</distribute>\n" +
+//        "    <copies>1</copies>\n" +
+//        "         <partitioning>\n" +
+//        "           <method>none</method>\n" +
+//        "           <schema_name/>\n" +
+//        "           </partitioning>\n" +
+//        "    <header>"+ (includeHeader? "Y" : "N")  + "</header>\n" +
+//        "    <footer>N</footer>\n" +
+//        "    <encoding/>\n" +
+//        "    <append>N</append>\n" +
+//        "    <add_to_result_filenames>Y</add_to_result_filenames>\n" +
+//        "    <file>\n" +
+//        "      <name>${java.io.tmpdir}&#47;");
+//
+//    xml.append(getFileName());
+//
+//    xml.append("</name>\n" +
+//        "      <extention>xls</extention>\n" +
+//        "      <do_not_open_newfile_init>N</do_not_open_newfile_init>\n" +
+//        "      <split>N</split>\n" +
+//        "      <add_date>N</add_date>\n" +
+//        "      <add_time>N</add_time>\n" +
+//        "      <SpecifyFormat>N</SpecifyFormat>\n" +
+//        "      <date_time_format/>\n" +
+//        "      <sheetname>Sheet1</sheetname>\n" +
+//        "      <autosizecolums>N</autosizecolums>\n" +
+//        "      <protect_sheet>N</protect_sheet>\n" +
+//        "      <password>Encrypted </password>\n" +
+//        "      <splitevery>0</splitevery>\n" +
+//        "      </file>\n" +
+//        "    <template>\n" +
+//        "      <enabled>" + (this.templateName != null ? "Y" : "N") + "</enabled>\n" +
+//        "      <append>Y</append>\n" +
+//        "      <filename>" + (this.templateName != null ? this.templateName : "template.xls") + "</filename>\n" +
+//        "    </template>\n" +
+//        "    <fields>\n" +
+//        "    </fields>\n" +
+//        "     <cluster_schema/>\n" +
+//        " <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>\n" +
+//        "      <xloc>498</xloc>\n" +
+//        "      <yloc>253</yloc>\n" +
+//        "      <draw>Y</draw>\n" +
+//        "      </GUI>\n" +
+//        "    </step>");
+//
+//    return xml.toString();
+//
+//  }
 
   public String getMimeType()
   {

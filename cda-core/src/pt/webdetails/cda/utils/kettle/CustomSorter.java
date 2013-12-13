@@ -13,7 +13,8 @@
 
 package pt.webdetails.cda.utils.kettle;
 
-import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.table.TableModel;
 
 /**
@@ -24,7 +25,7 @@ public class CustomSorter extends SortTableModel
 {
 
   @Override
-  public TableModel doSort(TableModel unsorted, ArrayList<String> sortBy) throws SortException
+  public TableModel doSort(TableModel unsorted, List<String> sortBy) throws SortException
   {
     SortableTableModel sortable = new SortableTableModel(unsorted);
     sortable.sort();

@@ -22,7 +22,6 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.CdaQueryComponent;
 /**
  * Created by IntelliJ IDEA.
@@ -30,7 +29,7 @@ import pt.webdetails.cda.CdaQueryComponent;
  * Date: Feb 15, 2010
  * Time: 7:53:13 PM
  */
-public class CdaQueryComponentTest extends TestCase
+public class CdaQueryComponentTest extends CdaTestCase
 {
 
   private static final Log logger = LogFactory.getLog(CdaQueryComponentTest.class);
@@ -45,21 +44,9 @@ public class CdaQueryComponentTest extends TestCase
     super(name);
   }
 
-
-  protected void setUp() throws Exception
-  {
-
-    CdaBoot.getInstance().start();
-
-    super.setUp();
-  }
-
-  
   public void testCdaQueryComponent() throws Exception {
     CdaQueryComponent component = new CdaQueryComponent();
-    URL file = this.getClass().getResource("sample-sql.cda");
-    File f = new File(file.toURI());
-    component.setFile(f.getAbsolutePath());
+    component.setFile("sample-sql.cda");
     Map<String, Object> inputs = new HashMap<String, Object>();
     inputs.put("dataAccessId", "1");
     inputs.put("paramorderDate", "2003-04-01");

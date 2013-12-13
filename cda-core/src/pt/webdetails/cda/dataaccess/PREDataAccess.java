@@ -13,13 +13,10 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.List;
 
 import javax.swing.table.TableModel;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
@@ -29,9 +26,7 @@ import org.pentaho.reporting.engine.classic.core.ReportEnvironmentDataRow;
 import org.pentaho.reporting.engine.classic.core.cache.CachingDataFactory;
 import org.pentaho.reporting.engine.classic.core.parameters.CompoundDataRow;
 import org.pentaho.reporting.engine.classic.core.util.CloseableTableModel;
-import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFactory;
 import org.pentaho.reporting.libraries.base.config.Configuration;
-import org.pentaho.reporting.libraries.base.util.StackableException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 
@@ -122,34 +117,23 @@ public abstract class PREDataAccess extends SimpleDataAccess
   protected IDataSourceQuery performRawQuery(final ParameterDataRow parameterDataRow) throws QueryException
   {
     
-    boolean threadVarSet = false;
+//    boolean threadVarSet = false;
     
     try
     {
-
       final CachingDataFactory dataFactory = new CachingDataFactory(getDataFactory(), false);
-
-      final ResourceManager resourceManager = new ResourceManager();
-      resourceManager.registerDefaults();
-      final ResourceKey contextKey = getCdaSettings().getContextKey();
-
-
+      
       final Configuration configuration = ClassicEngineBoot.getInstance().getGlobalConfig();
-      dataFactory.initialize(configuration, resourceManager, contextKey,
-              new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
 
-      dataFactory.open();
+      initializeDataFactory( dataFactory, configuration );
 
-      
-      PREDataSourceQuery queryExecution = null;
-      
-      try {
         // fire the query. you always get a tablemodel or an exception.
 
-        final ReportEnvironmentDataRow environmentDataRow;
-        IDataAccessUtils dataAccessUtils = CdaEngine.getEnvironment().getDataAccessUtils();
-        environmentDataRow = dataAccessUtils.createEnvironmentDataRow(configuration);
+      IDataAccessUtils dataAccessUtils = CdaEngine.getEnvironment().getDataAccessUtils();
+      final ReportEnvironmentDataRow environmentDataRow = dataAccessUtils.createEnvironmentDataRow(configuration);
 
+      PREDataSourceQuery queryExecution = null;
+      try {
         final TableModel tm = dataFactory.queryData("query",
                 new CompoundDataRow(environmentDataRow, parameterDataRow));
 
@@ -176,12 +160,11 @@ public abstract class PREDataAccess extends SimpleDataAccess
     }
     catch (ReportDataFactoryException e)
     {
-    	//e.printStackTrace();
-    	Throwable parent = e.getParentThrowable();
+    	Throwable parent = e.getCause();
     	Throwable lastKnownParent = null;
     	for (int i = 0; i < 10 && parent !=  null && !parent.equals(lastKnownParent); i++) {
 	    		lastKnownParent = parent;
-	    		parent = e.getParentThrowable();
+	    		parent = parent.getCause();
     	}
     	if (lastKnownParent != null) {
     		throw new QueryException(lastKnownParent.getMessage(), lastKnownParent);
@@ -201,10 +184,19 @@ public abstract class PREDataAccess extends SimpleDataAccess
   }
 
 
+  public void initializeDataFactory( final DataFactory dataFactory, final Configuration configuration )
+    throws ReportDataFactoryException {
+    final ResourceManager resourceManager = CdaEngine.getInstance().getSettingsManager().getResourceManager();
+    final ResourceKey contextKey = getCdaSettings().getContextKey();
+    CdaEngine.getEnvironment().initializeDataFactory( dataFactory, configuration, contextKey, resourceManager );
+    //    dataFactory.open();
+  }
+
+
   @Override
-  public ArrayList<PropertyDescriptor> getInterface()
+  public List<PropertyDescriptor> getInterface()
   {
-    ArrayList<PropertyDescriptor> properties = super.getInterface();
+    List<PropertyDescriptor> properties = super.getInterface();
     return properties;
   }
 }

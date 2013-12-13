@@ -13,10 +13,12 @@
 
 package pt.webdetails.cda.exporter;
 
-import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import pt.webdetails.cda.CdaBoot;
+
+import pt.webdetails.cda.CdaEngine;
 
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM
@@ -36,16 +38,18 @@ public class CsvExporter extends AbstractKettleExporter
   private String attachmentName;
   private String showColumnHeaders;
   
-  public CsvExporter(HashMap<String, String> extraSettings) {
+  public CsvExporter(Map<String, String> extraSettings) {
     super(extraSettings);
     
     this.separator = getSetting( 
-        CSV_SEPARATOR_SETTING, 
-        CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.exporter.csv.Separator", DEFAULT_CSV_SEPARATOR_SETTING));
+        CSV_SEPARATOR_SETTING,
+        CdaEngine.getInstance().getConfigProperty(
+            "pt.webdetails.cda.exporter.csv.Separator", DEFAULT_CSV_SEPARATOR_SETTING ) );
 
     this.enclosure = getSetting(
         CSV_QUOTE_SETTING,
-        CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.exporter.csv.Enclosure", DEFAULT_CSV_ENCLOSURE_SETTING));
+        CdaEngine.getInstance().getConfigProperty(
+            "pt.webdetails.cda.exporter.csv.Enclosure", DEFAULT_CSV_ENCLOSURE_SETTING ) );
     
     this.attachmentName = getSetting(ATTACHMENT_NAME_SETTING, "cda-export.csv");
 

@@ -14,6 +14,8 @@
 package pt.webdetails.cda.connections.metadata;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import org.dom4j.Element;
 import pt.webdetails.cda.connections.AbstractConnection;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
@@ -94,7 +96,7 @@ public class MetadataConnection extends AbstractConnection {
   }
 
   @Override
-  public ArrayList<PropertyDescriptor> getProperties() {
+  public List<PropertyDescriptor> getProperties() {
     ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
     properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
     properties.add(new PropertyDescriptor("xmiFile", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));

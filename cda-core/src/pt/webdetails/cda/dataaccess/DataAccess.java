@@ -16,7 +16,6 @@ package pt.webdetails.cda.dataaccess;
 import java.util.ArrayList;
 import javax.swing.table.TableModel;
 
-import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import org.dom4j.Element;
@@ -47,11 +46,6 @@ public interface DataAccess
 
   DataAccessEnums.ACCESS_TYPE getAccess();
 
-  /**
-   * @deprecated use {@link #isCacheEnabled()}
-   */
-  boolean isCache();
-  
   boolean isCacheEnabled();
   
   int getCacheDuration();
@@ -76,7 +70,7 @@ public interface DataAccess
   
   OutputMode getOutputMode(int id);
 
-  TableModel listParameters(DiscoveryOptions discoveryOptions);
+  TableModel listParameters();
 
   void storeDescriptor(DataAccessConnectionDescriptor descriptor);
   

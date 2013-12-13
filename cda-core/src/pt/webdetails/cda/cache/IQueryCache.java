@@ -19,6 +19,9 @@ import pt.webdetails.cda.cache.TableCacheKey;
 import pt.webdetails.cda.cache.monitor.CacheElementInfo;
 import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
 
+/**
+ * Caches query results and basic info about them
+ */
 public interface IQueryCache {
   
   /**
@@ -66,7 +69,7 @@ public interface IQueryCache {
   public Iterable<TableCacheKey> getKeys();
   
   public CacheElementInfo getElementInfo(TableCacheKey key);
-//  
+
   public ExtraCacheInfo getCacheEntryInfo(TableCacheKey key);
   
   public void shutdownIfRunning();

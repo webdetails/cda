@@ -69,7 +69,8 @@ public class TableCacheKey implements Serializable
 
       this.connectionHash = connection.hashCode();
       this.query = query;
-      this.parameters = parameters.toArray(new Parameter[parameters.size()]); //createParametersFromParameterDataRow(parameterDataRow);
+      this.parameters = parameters.toArray(new Parameter[parameters.size()]);
+      sortParameters( this.parameters );
       this.extraCacheKey = extraCacheKey;
     }
 
@@ -173,9 +174,9 @@ public class TableCacheKey implements Serializable
     /**
      * @see TableCacheKey#getTableCacheKeyAsString(TableCacheKey)
      */
-    public static TableCacheKey getTableCacheKeyFromString(String encodedCacheKey) throws IOException, UnsupportedEncodingException, ClassNotFoundException {
+    public static TableCacheKey getTableCacheKeyFromString(String encodedCacheKey) throws IOException, ClassNotFoundException {
       ByteArrayInputStream keyStream = new ByteArrayInputStream( Base64.decodeBase64(encodedCacheKey.getBytes()));
-      ObjectInputStream objStream = new ObjectInputStream(keyStream);   
+      ObjectInputStream objStream = new ObjectInputStream(keyStream);
       TableCacheKey cacheKey = new TableCacheKey();
       cacheKey.readObject(objStream);
       return cacheKey;
@@ -233,7 +234,15 @@ public class TableCacheKey implements Serializable
           "\tParameters: [" + StringUtils.join(getParameters(), ", ") + "]\n" +
           "\tExtra: [" + getExtraCacheKey() + "]\n";
     }
-    
+
+    private static void sortParameters( Parameter[] params ) {
+      Arrays.sort(params, new Comparator<Parameter> () {
+        public int compare(Parameter o1, Parameter o2) {
+         return o1.getName().compareTo(o2.getName()); 
+        }
+      });
+    }
+
     /**
      * for serialization
      **/
@@ -250,11 +259,7 @@ public class TableCacheKey implements Serializable
       }
       Parameter[] params = parameters.toArray(new Parameter[parameters.size()]);
       //so comparisons will not fail when parameters are added in different order
-      Arrays.sort(params, new Comparator<Parameter> () {
-        public int compare(Parameter o1, Parameter o2) {
-         return o1.getName().compareTo(o2.getName()); 
-        }
-      });
+      sortParameters( params );
       return params;
     }
    

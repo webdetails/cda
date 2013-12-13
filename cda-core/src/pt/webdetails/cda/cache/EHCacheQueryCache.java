@@ -13,7 +13,6 @@
 
 package pt.webdetails.cda.cache;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -29,11 +28,11 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.Status;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.cache.monitor.CacheElementInfo;
 import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
@@ -46,14 +45,15 @@ public class EHCacheQueryCache implements IQueryCache {
   private static final String CACHE_CFG_FILE_DIST = "ehcache-dist.xml";
   private static final String USE_TERRACOTTA_PROPERTY = "pt.webdetails.cda.UseTerracotta";
   private static CacheManager cacheManager;
-  
+
   private static class CacheElement implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private TableModel table;
     private ExtraCacheInfo info;
-    
+
+
     public CacheElement(TableModel table, ExtraCacheInfo info){
       this.table = table;
       this.info = info;
@@ -79,24 +79,42 @@ public class EHCacheQueryCache implements IQueryCache {
     
   }
   
-  protected static synchronized net.sf.ehcache.Cache getCacheFromManager() throws CacheException
+  protected static synchronized Cache getCacheFromManager(final boolean switchClassLoader) throws CacheException
   {
     if (cacheManager == null)
     {// 'new CacheManager' used instead of 'CacheManager.create' to avoid overriding default cache
-      boolean useTerracotta = Boolean.parseBoolean(CdaBoot.getInstance().getGlobalConfig().getConfigProperty(USE_TERRACOTTA_PROPERTY));
-      String cacheConfigFile = useTerracotta ? CACHE_CFG_FILE_DIST : CACHE_CFG_FILE;
-
-      byte[] cfgFile = CdaEngine.getEnvironment().getCdaConfigFile(cacheConfigFile);
-      InputStream is = new ByteArrayInputStream(cfgFile);
-      cacheManager = new net.sf.ehcache.CacheManager(is);
-      logger.debug("Cache started using " + cacheConfigFile);
-
-      // enable clean shutdown so ehcache's diskPersistent attribute can work
-      if (!useTerracotta)
-      {
-        enableCacheProperShutdown(true);
+      final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+      try {
+        if (switchClassLoader) {
+          Thread.currentThread().setContextClassLoader( EHCacheQueryCache.class.getClassLoader() );
+        }
+        boolean useTerracotta = Boolean.parseBoolean(CdaEngine.getInstance().getConfigProperty(USE_TERRACOTTA_PROPERTY));
+        String configFilePath = useTerracotta ? CACHE_CFG_FILE_DIST : CACHE_CFG_FILE;
+  
+        InputStream configFile = null;
+        try {
+          configFile = CdaEngine.getRepo().getPluginSystemReader( "" ).getFileInputStream( configFilePath );
+          cacheManager = new CacheManager(configFile);
+          logger.debug("Cache started using " + configFilePath);
+        }
+        catch (IOException ioe) {
+          logger.error( "Error reading " + configFilePath );
+        }
+        finally {
+          IOUtils.closeQuietly( configFile );
+        }
+  
+        // enable clean shutdown so ehcache's diskPersistent attribute can work
+        if (!useTerracotta)
+        {
+          enableCacheProperShutdown(true);
+        }
       }
-
+      finally {
+        if (switchClassLoader) {
+          Thread.currentThread().setContextClassLoader( contextClassLoader );
+        }
+      }
     }
 
     if (cacheManager.cacheExists(CACHE_NAME) == false)
@@ -115,7 +133,7 @@ public class EHCacheQueryCache implements IQueryCache {
     {
       try
       {
-        System.getProperty(net.sf.ehcache.CacheManager.ENABLE_SHUTDOWN_HOOK_PROPERTY);
+        System.getProperty(CacheManager.ENABLE_SHUTDOWN_HOOK_PROPERTY);
         return;//unless force, ignore if already set
       }
       catch (NullPointerException npe)
@@ -129,24 +147,23 @@ public class EHCacheQueryCache implements IQueryCache {
         return;//no permissions to set
       }
     }
-    System.setProperty(net.sf.ehcache.CacheManager.ENABLE_SHUTDOWN_HOOK_PROPERTY, "true");
+    System.setProperty(CacheManager.ENABLE_SHUTDOWN_HOOK_PROPERTY, "true");
   }
   
   Cache cache = null;
   
-  public EHCacheQueryCache(Cache cache){
+  public EHCacheQueryCache(final Cache cache){
     this.cache = cache;
   }
   
   public EHCacheQueryCache(){
-    this.cache = getCacheFromManager();
+    this(getCacheFromManager(true));
   }
-  
-  @Deprecated
-  public void putTableModel(TableCacheKey key, TableModel table, int ttlSec){
-    putTableModel(key,table,ttlSec,new ExtraCacheInfo("","",-1,table));
+
+  public EHCacheQueryCache( boolean switchClassLoader ) {
+    this( getCacheFromManager( switchClassLoader ) );
   }
-  
+
   public void putTableModel(TableCacheKey key, TableModel table, int ttlSec, ExtraCacheInfo info) 
   {
     final CacheElement cacheElement = new CacheElement(table, info);
@@ -168,16 +185,18 @@ public class EHCacheQueryCache implements IQueryCache {
       //TODO: ehcache 2.5 has ClassLoaderAwareCache
       Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
       final Element element = cache.get(key);
-      if (element != null) // Are we explicitly saying to bypass the cache?
+      if (element != null)
       {
         final TableModel cachedTableModel = (TableModel) ((CacheElement) element.getObjectValue()).getTable();
         if (cachedTableModel != null)
         {
-          // we have a entry in the cache ... great!
-          logger.debug("Found tableModel in cache. Returning");
-          // Print cache status size
-          logger.debug("Cache status: " + cache.getMemoryStoreSize() + " in memory, " + 
-                  cache.getDiskStoreSize() + " in disk");
+          if (logger.isDebugEnabled()) {
+            // we have a entry in the cache ... great!
+            logger.debug("Found tableModel in cache. Returning");
+            // Print cache status size
+            logger.debug("Cache status: " + cache.getMemoryStoreSize() + " in memory, " + 
+                    cache.getDiskStoreSize() + " in disk");
+          }
           return cachedTableModel;
         }
       }

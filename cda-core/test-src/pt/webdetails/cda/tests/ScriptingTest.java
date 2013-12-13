@@ -13,19 +13,11 @@
 
 package pt.webdetails.cda.tests;
 
-import java.io.File;
-import java.io.OutputStream;
-import java.net.URL;
-
-import junit.framework.TestCase;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
-import pt.webdetails.cda.settings.SettingsManager;
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,7 +25,7 @@ import pt.webdetails.cda.settings.SettingsManager;
  * Date: Feb 15, 2010
  * Time: 7:53:13 PM
  */
-public class ScriptingTest extends TestCase
+public class ScriptingTest extends CdaTestCase
 {
 
   private static final Log logger = LogFactory.getLog(ScriptingTest.class);
@@ -43,16 +35,7 @@ public class ScriptingTest extends TestCase
 
 
     // Define an outputStream
-    OutputStream out = System.out;
-
-    logger.info("Building CDA settings from sample file");
-
-    final SettingsManager settingsManager = SettingsManager.getInstance();
-    URL file = this.getClass().getResource("sample-scripting.cda");
-    File settingsFile = new File(file.toURI());
-    final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
-    logger.debug("Doing query on Cda - Initializing CdaEngine");
-    final CdaEngine engine = CdaEngine.getInstance();
+    final CdaSettings cdaSettings = parseSettingsFile("sample-scripting.cda");
 
     final QueryOptions queryOptions = new QueryOptions();
     queryOptions.setDataAccessId("2");
@@ -60,7 +43,7 @@ public class ScriptingTest extends TestCase
     queryOptions.addParameter("status", "Shipped");
 
     logger.info("Doing query");
-    engine.doQuery(out, cdaSettings, queryOptions);
+    doQuery(cdaSettings, queryOptions);
 
 
   }

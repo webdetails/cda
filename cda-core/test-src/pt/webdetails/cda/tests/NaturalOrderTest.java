@@ -13,12 +13,10 @@
 
 package pt.webdetails.cda.tests;
 
-import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.utils.NaturalOrderComparator;
 import junit.framework.Assert;
-import junit.framework.TestCase;
 
-public class NaturalOrderTest extends TestCase {
+public class NaturalOrderTest extends CdaTestCase {
 
 
   public NaturalOrderTest()
@@ -29,15 +27,6 @@ public class NaturalOrderTest extends TestCase {
   public NaturalOrderTest(final String name)
   {
     super(name);
-  }
-
-
-  protected void setUp() throws Exception
-  {
-
-    CdaBoot.getInstance().start();
-
-    super.setUp();
   }
 
 

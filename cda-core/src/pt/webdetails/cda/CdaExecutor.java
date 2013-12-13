@@ -18,19 +18,18 @@ import java.io.OutputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.dom4j.DocumentException;
-import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.QueryException;
-import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
 import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.exporter.UnsupportedExporterException;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
+import pt.webdetails.cda.settings.CdaSettingsReadException;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 import pt.webdetails.cda.utils.Util;
 
 /**
+ * TODO: get tests outta here
  * Main class to test and execute the CDA in standalone mode
  * User: pedro
  * Date: Feb 1, 2010
@@ -68,7 +67,7 @@ public class CdaExecutor
     try
     {
 
-      // Init CDA      
+      // Init CDA TODO
       CdaBoot.getInstance().start();
 
 
@@ -84,44 +83,26 @@ public class CdaExecutor
 
 
     }
-    catch (DocumentException e)
-    {
-      logger.fatal("Unable to parse settings dom: " + Util.getExceptionDescription(e));
-    }
-    catch (UnsupportedConnectionException e)
-    {
-      logger.fatal("ConnectionException " + Util.getExceptionDescription(e));
-    }
-    catch (UnsupportedDataAccessException e)
-    {
-      logger.fatal("DataAccessException " + Util.getExceptionDescription(e));
-    }
-    catch (UnknownDataAccessException e)
-    {
-      logger.fatal("DataAccess id not found " + Util.getExceptionDescription(e));
-    }
-    catch (QueryException e)
-    {
-      logger.fatal("QueryException " + Util.getExceptionDescription(e));
-    }
-    catch (UnsupportedExporterException e)
-    {
-      logger.fatal("UnsupportedExporterException " + Util.getExceptionDescription(e));
-    }
     catch (ExporterException e)
     {
       logger.fatal("ExporterException " + Util.getExceptionDescription(e));
+    } catch ( AccessDeniedException e ) {
+      logger.error("Access denied " + Util.getExceptionDescription(e));
+    }
+    catch (Exception e) {
+      logger.fatal( e.getLocalizedMessage() + ": " + Util.getExceptionDescription( e ) );
     }
 
 
   }
 
   private void testBlocks(final OutputStream out)
-      throws DocumentException, UnsupportedConnectionException, UnsupportedDataAccessException, UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
+ throws CdaSettingsReadException, UnknownDataAccessException, QueryException, UnsupportedExporterException,
+    ExporterException, AccessDeniedException
   {
 
     logger.info("Testing CDA file interaction through blocks");
-    final SettingsManager settingsManager = SettingsManager.getInstance();
+    final SettingsManager settingsManager = CdaEngine.getInstance().getSettingsManager();
 
     final File settingsFile = new File("samples/sample-gen.cda");
     final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
@@ -190,7 +171,7 @@ public class CdaExecutor
 //    engine.doQuery(out, cdaSettings, queryOptions);
 //  }
 
-
+//
   private void testSingleSqlQuery(final OutputStream out, final CdaSettings cdaSettings) 
       throws UnknownDataAccessException, QueryException, UnsupportedExporterException, ExporterException
   {
@@ -202,7 +183,7 @@ public class CdaExecutor
     queryOptions.addParameter("orderDate", "2003-04-01");
     queryOptions.setOutputType("csv");
 
-    engine.doQuery(out, cdaSettings, queryOptions);
+    engine.getExporter( queryOptions ).export( out, engine.doQuery( cdaSettings, queryOptions ) );
   }
 
 

@@ -15,7 +15,8 @@ package pt.webdetails.cda.exporter;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
+import java.util.Map;
+
 import javax.swing.table.TableModel;
 
 import org.json.JSONArray;
@@ -41,7 +42,7 @@ public class JsonExporter extends AbstractExporter
   }
 
 
-  public JsonExporter(HashMap<String, String> extraSettings)
+  public JsonExporter(Map<String, String> extraSettings)
   {
     super(extraSettings);
     if (this.getSetting("callback", null) != null)

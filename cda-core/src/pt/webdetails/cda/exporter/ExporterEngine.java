@@ -15,6 +15,7 @@ package pt.webdetails.cda.exporter;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -33,8 +34,7 @@ public class ExporterEngine
 {
 
   private static final Log logger = LogFactory.getLog(ExporterEngine.class);
-  private static ExporterEngine _instance;
-  
+
   public enum OutputType{
   	
   	JSON("json"),
@@ -60,8 +60,6 @@ public class ExporterEngine
 
   public ExporterEngine()
   {
-    logger.info("Initializing CdaExporterEngine");
-    init();
 
   }
 
@@ -71,7 +69,7 @@ public class ExporterEngine
     return getExporter(outputType, null);
   }
 
-  public Exporter getExporter(final String outputType, final HashMap<String, String> extraSettings) throws UnsupportedExporterException
+  public Exporter getExporter(final String outputType, final Map<String, String> extraSettings) throws UnsupportedExporterException
   {
     Exporter exporter = getExporter( OutputType.parse(outputType), extraSettings);
     if(exporter != null)
@@ -110,7 +108,7 @@ public class ExporterEngine
 
   }
   
-  private Exporter getExporter(OutputType type, HashMap<String, String> extraSettings)
+  private Exporter getExporter(OutputType type, Map<String, String> extraSettings)
   {
     if(type == null) return null;
     
@@ -132,18 +130,4 @@ public class ExporterEngine
     }
   }
 
-  private void init()
-  {
-  }
-
-  public static synchronized ExporterEngine getInstance()
-  {
-
-    if (_instance == null)
-    {
-      _instance = new ExporterEngine();
-    }
-
-    return _instance;
-  }
 }

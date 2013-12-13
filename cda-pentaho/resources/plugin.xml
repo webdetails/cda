@@ -50,5 +50,5 @@
     <menu-item id="cda_cacheman" anchor="tools-submenu" label="CDA Cache Manager" command="content/cda/manageCache" type="MENU_ITEM" how="LAST_CHILD"/>
   </menu-items>
 
-  <bean id="CdaScheduler" class="pt.webdetails.cda.cache.CacheActivator"/>
+  <bean id="CdaScheduler" class="pt.webdetails.cda.cache.scheduler.CacheActivator"/>
 </plugin>

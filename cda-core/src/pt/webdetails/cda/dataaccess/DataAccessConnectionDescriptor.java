@@ -14,6 +14,8 @@
 package pt.webdetails.cda.dataaccess;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
 import pt.webdetails.cda.connections.Connection;
@@ -67,8 +69,8 @@ public class DataAccessConnectionDescriptor {
   }
 
   public String toJSON() {
-    ArrayList<PropertyDescriptor> dataAccessInfo = this.dataAccess.getInterface();
-    ArrayList<PropertyDescriptor> connectionInfo = this.conn.getProperties();
+    List<PropertyDescriptor> dataAccessInfo = this.dataAccess.getInterface();
+    List<PropertyDescriptor> connectionInfo = this.conn.getProperties();
     StringBuilder output = new StringBuilder();
     if (dataAccessInfo.size() > 0) {
       output.append("\"" + name + "\": {\n");
