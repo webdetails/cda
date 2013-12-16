@@ -12,8 +12,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.table.TableModel;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.database.DatabaseMeta;
@@ -30,7 +28,6 @@ import plugins.org.pentaho.di.robochef.kettle.DynamicTransformation;
 import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
 import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
 import pt.webdetails.cda.CdaBoot;
-import pt.webdetails.cda.dataaccess.Parameter;
 import pt.webdetails.cda.dataaccess.kettle.DataAccessKettleAdapter;
 import pt.webdetails.cda.dataaccess.kettle.KettleAdapterException;
 import pt.webdetails.cda.utils.kettle.RowCountListener;
@@ -40,9 +37,10 @@ import pt.webdetails.cda.utils.kettle.RowCountListener;
  * 
  * @author Michael Spector
  */
-public class StreamingExporter implements RowProductionManager {
+public class DefaultStreamExporter implements RowProductionManager, StreamExporter {
 
-	private static final Log logger = LogFactory.getLog(StreamingExporter.class);
+	private static final Log logger = LogFactory
+			.getLog(DefaultStreamExporter.class);
 	private static long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
 	private static TimeUnit DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT = TimeUnit.SECONDS;
 
@@ -51,13 +49,10 @@ public class StreamingExporter implements RowProductionManager {
 	private ExecutorService executorService = Executors.newCachedThreadPool();
 	private Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
 
-	public StreamingExporter(AbstractKettleExporter exporter, DataAccessKettleAdapter dataAccess) {
+	public DefaultStreamExporter(AbstractKettleExporter exporter,
+			DataAccessKettleAdapter dataAccess) {
 		this.exporter = exporter;
 		this.dataAccess = dataAccess;
-	}
-
-	public final void export(OutputStream out, TableModel tableModel) throws ExporterException {
-		throw new IllegalStateException("This method is disabled");
 	}
 
 	public void export(OutputStream out) throws ExporterException {
@@ -66,24 +61,30 @@ public class StreamingExporter implements RowProductionManager {
 		try {
 			DynamicTransConfig transConfig = new DynamicTransConfig();
 
-			String dataAccessStep = dataAccess.getKettleStepDefinition("DataAccess");
+			String dataAccessStep = dataAccess
+					.getKettleStepDefinition("DataAccess");
 
 			String[] parameterNames = dataAccess.getParameterNames();
 			DataRow parameters = dataAccess.getParameters();
 			if (parameterNames.length > 0) {
-				transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP, "Input",
+				transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP,
+						"Input",
 						"<step><name>Input</name><type>Injector</type></step>");
-				dataAccessStep = dataAccessStep.replaceFirst("<lookup/>", "<lookup>Input</lookup>");
+				dataAccessStep = dataAccessStep.replaceFirst("<lookup/>",
+						"<lookup>Input</lookup>");
 			}
 
-			transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP, "DataAccess", dataAccessStep);
-			transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP, "Export",
-					exporter.getExportStepDefinition("Export"));
+			transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP,
+					"DataAccess", dataAccessStep);
+			transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP,
+					"Export", exporter.getExportStepDefinition("Export"));
 
 			if (parameterNames.length > 0) {
-				transConfig.addConfigEntry(DynamicTransConfig.EntryType.HOP, "Input", "DataAccess");
+				transConfig.addConfigEntry(DynamicTransConfig.EntryType.HOP,
+						"Input", "DataAccess");
 			}
-			transConfig.addConfigEntry(DynamicTransConfig.EntryType.HOP, "DataAccess", "Export");
+			transConfig.addConfigEntry(DynamicTransConfig.EntryType.HOP,
+					"DataAccess", "Export");
 
 			if (parameterNames.length > 0) {
 				List<String> columnNames = new LinkedList<String>();
@@ -100,12 +101,14 @@ public class StreamingExporter implements RowProductionManager {
 						}
 					} else {
 						columnNames.add(parameterName);
-						columnClasses.add(value == null ? Object.class : value.getClass());
+						columnClasses.add(value == null ? Object.class : value
+								.getClass());
 						values.add(value);
 					}
 				}
 
-				TypedTableModel model = new TypedTableModel(columnNames.toArray(new String[columnNames.size()]),
+				TypedTableModel model = new TypedTableModel(
+						columnNames.toArray(new String[columnNames.size()]),
 						columnClasses.toArray(new Class[columnClasses.size()]));
 				model.addRow(values.toArray());
 
@@ -118,8 +121,10 @@ public class StreamingExporter implements RowProductionManager {
 			transConfig.addOutput("Export", countListener);
 
 			ExtendedDynamicTransMetaConfig transMetaConfig = new ExtendedDynamicTransMetaConfig(
-					DynamicTransMetaConfig.Type.EMPTY, "Streaming Exporter", null, null, dataAccess.getDatabases());
-			DynamicTransformation trans = new DynamicTransformation(transConfig, transMetaConfig);
+					DynamicTransMetaConfig.Type.EMPTY, "Streaming Exporter",
+					null, null, dataAccess.getDatabases());
+			DynamicTransformation trans = new DynamicTransformation(
+					transConfig, transMetaConfig);
 			trans.executeCheckedSuccess(null, null, this);
 			logger.info(trans.getReadWriteThroughput());
 
@@ -129,26 +134,32 @@ public class StreamingExporter implements RowProductionManager {
 			logger.debug(countListener.getRowsWritten() + " rows written.");
 
 		} catch (KettleAdapterException e) {
-			throw new ExporterException("Data access to Kettle adapter exception during " + exporter.getType()
-					+ " query ", e);
+			throw new ExporterException(
+					"Data access to Kettle adapter exception during "
+							+ exporter.getType() + " query ", e);
 		} catch (KettleException e) {
-			throw new ExporterException("Kettle exception during " + exporter.getType() + " query ", e);
+			throw new ExporterException("Kettle exception during "
+					+ exporter.getType() + " query ", e);
 		} catch (Exception e) {
-			throw new ExporterException("Unknown exception during " + exporter.getType() + " query ", e);
+			throw new ExporterException("Unknown exception during "
+					+ exporter.getType() + " query ", e);
 		}
 	}
 
-	public static class ExtendedDynamicTransMetaConfig extends DynamicTransMetaConfig {
+	public static class ExtendedDynamicTransMetaConfig extends
+			DynamicTransMetaConfig {
 
 		private DatabaseMeta[] databases;
 
-		public ExtendedDynamicTransMetaConfig(Type type, String name, String configDataSource,
-				RepositoryConfig repoConfig, DatabaseMeta[] databases) throws KettleException {
+		public ExtendedDynamicTransMetaConfig(Type type, String name,
+				String configDataSource, RepositoryConfig repoConfig,
+				DatabaseMeta[] databases) throws KettleException {
 			super(type, name, configDataSource, repoConfig);
 			this.databases = databases;
 		}
 
-		protected TransMeta getTransMeta(VariableSpace variableSpace) throws KettleException {
+		protected TransMeta getTransMeta(VariableSpace variableSpace)
+				throws KettleException {
 			TransMeta transMeta = super.getTransMeta(variableSpace);
 			if (databases != null) {
 				for (DatabaseMeta database : databases) {
@@ -160,18 +171,27 @@ public class StreamingExporter implements RowProductionManager {
 	}
 
 	public void startRowProduction() {
-		String timeoutStr = CdaBoot.getInstance().getGlobalConfig()
-				.getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout");
-		long timeout = StringUtil.isEmpty(timeoutStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
-		String unitStr = CdaBoot.getInstance().getGlobalConfig()
-				.getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
-		TimeUnit unit = StringUtil.isEmpty(unitStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
+		String timeoutStr = CdaBoot
+				.getInstance()
+				.getGlobalConfig()
+				.getConfigProperty(
+						"pt.webdetails.cda.DefaultRowProductionTimeout");
+		long timeout = StringUtil.isEmpty(timeoutStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT
+				: Long.parseLong(timeoutStr);
+		String unitStr = CdaBoot
+				.getInstance()
+				.getGlobalConfig()
+				.getConfigProperty(
+						"pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
+		TimeUnit unit = StringUtil.isEmpty(unitStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT
+				: TimeUnit.valueOf(unitStr);
 		startRowProduction(timeout, unit);
 	}
 
 	public void startRowProduction(long timeout, TimeUnit unit) {
 		try {
-			List<Future<Boolean>> results = executorService.invokeAll(inputCallables, timeout, unit);
+			List<Future<Boolean>> results = executorService.invokeAll(
+					inputCallables, timeout, unit);
 			for (Future<Boolean> result : results) {
 				result.get();
 			}
@@ -180,5 +200,13 @@ public class StreamingExporter implements RowProductionManager {
 		} catch (ExecutionException e) {
 			logger.error(e);
 		}
+	}
+
+	public String getMimeType() {
+		return exporter.getMimeType();
+	}
+
+	public String getAttachmentName() {
+		return exporter.getAttachmentName();
 	}
 }

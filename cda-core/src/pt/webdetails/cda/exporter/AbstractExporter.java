@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 5, 2010 Time: 5:06:31 PM
  */
-public abstract class AbstractExporter implements Exporter
+public abstract class AbstractExporter implements TableExporter
 {
 
   public static final String ATTACHMENT_NAME_SETTING = "attachmentName";    

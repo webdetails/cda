@@ -71,6 +71,8 @@ public interface DataAccess
   OutputMode getOutputMode(int id);
 
   TableModel listParameters();
+  
+  boolean hasIterableParameterValues(final QueryOptions queryOptions) throws QueryException;
 
   void storeDescriptor(DataAccessConnectionDescriptor descriptor);
   

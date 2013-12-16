@@ -18,6 +18,7 @@ import java.io.OutputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import pt.webdetails.cda.dataaccess.QueryException;
 import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.exporter.UnsupportedExporterException;
@@ -183,7 +184,7 @@ public class CdaExecutor
     queryOptions.addParameter("orderDate", "2003-04-01");
     queryOptions.setOutputType("csv");
 
-    engine.getExporter( queryOptions ).export( out, engine.doQuery( cdaSettings, queryOptions ) );
+    engine.doExportQuery(cdaSettings, queryOptions).writeOut(out);
   }
 
 

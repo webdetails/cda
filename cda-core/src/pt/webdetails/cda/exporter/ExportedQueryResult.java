@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.table.TableModel;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -15,28 +14,22 @@ import pt.webdetails.cpf.utils.MimeTypes;
 /**
  * Standard cda query result
  */
-public class ExportedQueryResult {
+public abstract class ExportedQueryResult {
 
   private Exporter exporter;
-  private TableModel table;
 
-  public ExportedQueryResult ( Exporter exporter, TableModel table ) {
-    assert exporter != null && table != null;
-
+  public ExportedQueryResult ( Exporter exporter) {
+    assert exporter != null;
     this.exporter = exporter;
-    this.table = table;
   }
 
   public Exporter getExporter() {
     return exporter;
   }
 
-
   public void writeHeaders( HttpServletResponse response  ) throws IOException {
     setResponseHeaders( response, exporter.getMimeType(), exporter.getAttachmentName() );
   }
-
-
 
   public void writeResponse( HttpServletResponse response ) throws ExporterException, IOException {
     setResponseHeaders( response, exporter.getMimeType(), exporter.getAttachmentName() );
@@ -44,9 +37,7 @@ public class ExportedQueryResult {
     writeOut( out );
   }
 
-  public void writeOut( OutputStream out ) throws ExporterException {
-    exporter.export( out, table );
-  }
+  public abstract void writeOut( OutputStream out ) throws ExporterException;
 
   public String asString() throws ExporterException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -65,5 +56,4 @@ public class ExportedQueryResult {
       response.setHeader("content-disposition", "attachment; filename=" + attachmentName);
     } 
   }
-
 }

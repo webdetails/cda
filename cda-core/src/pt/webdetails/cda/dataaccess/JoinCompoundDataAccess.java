@@ -26,7 +26,6 @@ import javax.swing.table.TableModel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.dom4j.Attribute;
 import org.dom4j.Element;
 import org.pentaho.di.core.util.StringUtil;
 import org.pentaho.metadata.model.concept.types.JoinType;

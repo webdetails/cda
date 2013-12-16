@@ -3,8 +3,6 @@ package pt.webdetails.cda.dataaccess.kettle;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.reporting.engine.classic.core.DataRow;
 
-import pt.webdetails.cda.dataaccess.Parameter;
-
 /**
  * Adapts data access to Kettle transformation step
  * 

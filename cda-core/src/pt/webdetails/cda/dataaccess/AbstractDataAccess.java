@@ -485,6 +485,16 @@ public abstract class AbstractDataAccess implements DataAccess
   {
     return this.getClass().toString().toLowerCase().replaceAll("class pt.webdetails.cda.dataaccess.(.*)connection", "$1");
   }
+  
+  public boolean hasIterableParameterValues(final QueryOptions queryOptions) throws QueryException {
+      for (Parameter param : queryOptions.getParameters()) {
+          String value = param.getStringValue();
+          if (value != null && value.startsWith(PARAM_ITERATOR_BEGIN)) {
+              return true;
+          }
+      }
+      return false;
+  }
 
 
   /**

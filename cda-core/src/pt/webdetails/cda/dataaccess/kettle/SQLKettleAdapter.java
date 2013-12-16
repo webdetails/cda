@@ -1,22 +1,17 @@
 package pt.webdetails.cda.dataaccess.kettle;
 
-import java.util.List;
-
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.database.GenericDatabaseMeta;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.steps.tableinput.TableInputMeta;
 import org.pentaho.reporting.engine.classic.core.DataRow;
-import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.SQLParameterLookupParser;
 
 import pt.webdetails.cda.connections.sql.JdbcConnection;
 import pt.webdetails.cda.connections.sql.JdbcConnectionInfo;
 import pt.webdetails.cda.connections.sql.JndiConnection;
 import pt.webdetails.cda.connections.sql.SqlConnection;
-import pt.webdetails.cda.dataaccess.InvalidParameterException;
 import pt.webdetails.cda.dataaccess.Parameter;
-import pt.webdetails.cda.dataaccess.QueryException;
 import pt.webdetails.cda.dataaccess.SqlDataAccess;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownConnectionException;

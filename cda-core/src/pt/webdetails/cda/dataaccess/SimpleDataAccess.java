@@ -194,7 +194,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     return tableModelCopy;
   }
 
-  private List<Parameter> getFilledParameters(final QueryOptions queryOptions) throws QueryException
+  public List<Parameter> getFilledParameters(final QueryOptions queryOptions) throws QueryException
   {
 
     // Get parameters from definition and apply their values

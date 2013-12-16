@@ -26,7 +26,9 @@ import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.exporter.ExportOptions;
 import pt.webdetails.cda.exporter.ExportedQueryResult;
+import pt.webdetails.cda.exporter.ExportedTableQueryResult;
 import pt.webdetails.cda.exporter.Exporter;
+import pt.webdetails.cda.exporter.TableExporter;
 import pt.webdetails.cda.exporter.UnsupportedExporterException;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
@@ -77,10 +79,9 @@ public class CdaCoreService
   public ExportedQueryResult doQuery( DoQueryParameters parameters ) throws Exception {
     final String path = parameters.getPath();
     final CdaSettings cdaSettings = settingsManager.parseSettingsFile(path);
-
     final QueryOptions queryOptions = getQueryOptions( parameters );
-    TableModel table = engine.doQuery( cdaSettings, queryOptions );
-    return exportQuery( table, queryOptions );
+    
+    return engine.doExportQuery(cdaSettings, queryOptions);
   }
 
   /**
@@ -149,7 +150,7 @@ public class CdaCoreService
 
   private ExportedQueryResult exportQuery( TableModel table, ExportOptions opts ) throws UnsupportedExporterException {
     Exporter exporter = engine.getExporter( opts );
-    return new ExportedQueryResult( exporter, table );
+    return new ExportedTableQueryResult( (TableExporter) exporter, table );
   }
 
   /**

@@ -64,14 +64,14 @@ public class ExporterEngine
   }
 
   
-  public Exporter getExporter(final String outputType) throws UnsupportedExporterException
+  public TableExporter getExporter(final String outputType) throws UnsupportedExporterException
   {
     return getExporter(outputType, null);
   }
 
-  public Exporter getExporter(final String outputType, final Map<String, String> extraSettings) throws UnsupportedExporterException
+  public TableExporter getExporter(final String outputType, final Map<String, String> extraSettings) throws UnsupportedExporterException
   {
-    Exporter exporter = getExporter( OutputType.parse(outputType), extraSettings);
+	TableExporter exporter = getExporter( OutputType.parse(outputType), extraSettings);
     if(exporter != null)
     {
       return exporter;
@@ -91,7 +91,7 @@ public class ExporterEngine
         HashMap.class
       };
 
-      exporter = (Exporter) clazz.getConstructor(params).newInstance(new Object[]
+      exporter = (TableExporter) clazz.getConstructor(params).newInstance(new Object[]
               {
                 extraSettings
               });
@@ -108,7 +108,7 @@ public class ExporterEngine
 
   }
   
-  private Exporter getExporter(OutputType type, Map<String, String> extraSettings)
+  private TableExporter getExporter(OutputType type, Map<String, String> extraSettings)
   {
     if(type == null) return null;
     

@@ -44,7 +44,6 @@ import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransformation;
 import pt.webdetails.cda.utils.kettle.RowCountListener;
-import pt.webdetails.cda.utils.kettle.RowMetaToTableModel;
 import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
 import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
 
@@ -169,7 +168,7 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
   }
 
   
-  private void copyFileToOutputStream(OutputStream os) throws IOException
+  protected void copyFileToOutputStream(OutputStream os) throws IOException
   {
     
     File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + "." + getType());

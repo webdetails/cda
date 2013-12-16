@@ -18,8 +18,6 @@ import java.util.Map;
 
 import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 
-import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cpf.session.ISessionUtils;
 
 public class DefaultSessionFormulaContext extends DefaultFormulaContext {
 

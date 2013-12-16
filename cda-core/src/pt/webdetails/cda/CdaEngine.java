@@ -29,10 +29,18 @@ import org.pentaho.reporting.libraries.base.config.Configuration;
 
 import pt.webdetails.cda.dataaccess.DataAccess;
 import pt.webdetails.cda.dataaccess.QueryException;
+import pt.webdetails.cda.dataaccess.kettle.DataAccessKettleAdapter;
+import pt.webdetails.cda.dataaccess.kettle.DataAccessKettleAdapterFactory;
+import pt.webdetails.cda.exporter.AbstractKettleExporter;
+import pt.webdetails.cda.exporter.DefaultStreamExporter;
 import pt.webdetails.cda.exporter.ExportOptions;
-import pt.webdetails.cda.exporter.Exporter;
+import pt.webdetails.cda.exporter.ExportedQueryResult;
+import pt.webdetails.cda.exporter.ExportedStreamQueryResult;
+import pt.webdetails.cda.exporter.ExportedTableQueryResult;
 import pt.webdetails.cda.exporter.ExporterEngine;
 import pt.webdetails.cda.exporter.ExporterException;
+import pt.webdetails.cda.exporter.StreamExporter;
+import pt.webdetails.cda.exporter.TableExporter;
 import pt.webdetails.cda.exporter.UnsupportedExporterException;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
@@ -100,21 +108,22 @@ public class CdaEngine
     return defaultSettingsManager;
   }
 
-  public Exporter getExporter( ExportOptions opts ) throws UnsupportedExporterException  {
+  public TableExporter getExporter( ExportOptions opts ) throws UnsupportedExporterException  {
     return getExporter( opts.getOutputType(), opts.getExtraSettings() );
   }
 
-  public Exporter getExporter( String outputType ) throws UnsupportedExporterException {
+  public TableExporter getExporter( String outputType ) throws UnsupportedExporterException {
     return getExporter( outputType, null );
   }
 
-  public Exporter getExporter( String outputType, Map<String, String> options ) throws UnsupportedExporterException {
+  public TableExporter getExporter( String outputType, Map<String, String> options ) throws UnsupportedExporterException {
     return getExporterEngine().getExporter( outputType, options );
   }
 
   private ExporterEngine getExporterEngine() {
     return exporterEngine;
   }
+  
   /**
    * Perform all steps of a doQuery except for export
    * @param cdaSettings
@@ -127,6 +136,33 @@ public class CdaEngine
     DataAccess dataAccess = cdaSettings.getDataAccess(queryOptions.getDataAccessId());
     return dataAccess.doQuery( queryOptions );
   }
+  
+	public ExportedQueryResult doExportQuery(CdaSettings cdaSettings, QueryOptions queryOptions) throws QueryException, UnknownDataAccessException, UnsupportedExporterException {
+		DataAccess dataAccess = cdaSettings.getDataAccess(queryOptions
+				.getDataAccessId());
+		TableExporter exporter = getExporter(queryOptions);
+
+		StreamExporter streamingExporter = null;
+		if (!dataAccess.hasIterableParameterValues(queryOptions)
+				&& exporter instanceof AbstractKettleExporter) {
+			// Try to initiate a streaming Kettle transformation:
+			DataAccessKettleAdapter dataAccessKettleAdapter = DataAccessKettleAdapterFactory
+					.create(dataAccess, queryOptions);
+			if (dataAccessKettleAdapter != null) {
+				streamingExporter = new DefaultStreamExporter(
+						(AbstractKettleExporter) exporter,
+						dataAccessKettleAdapter);
+			}
+		}
+
+		// Handle the exports
+		if (streamingExporter != null) {
+			return new ExportedStreamQueryResult(streamingExporter);
+		} else {
+			TableModel table = doQuery(cdaSettings, queryOptions);
+			return new ExportedTableQueryResult(exporter, table);
+		}
+	}
 
   /**
    * 

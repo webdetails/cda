@@ -13,8 +13,6 @@
 
 package pt.webdetails.cda.exporter;
 
-import java.io.OutputStream;
-import javax.swing.table.TableModel;
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,5 +25,4 @@ public interface Exporter
 
   public String getMimeType();
   public String getAttachmentName();
-  public void export(OutputStream out, final TableModel tableModel) throws ExporterException;
 }
