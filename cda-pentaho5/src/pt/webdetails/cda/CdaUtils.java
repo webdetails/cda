@@ -53,6 +53,7 @@ import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.exporter.ExportOptions;
 import pt.webdetails.cda.exporter.ExportedQueryResult;
 import pt.webdetails.cda.exporter.Exporter;
+import pt.webdetails.cda.exporter.TableExporter;
 import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.exporter.UnsupportedExporterException;
 import pt.webdetails.cda.services.CacheManager;
@@ -256,7 +257,7 @@ public class CdaUtils {
     }
   }
 
-  private Exporter useExporter( final CdaEngine engine, final String outputType, HttpServletResponse servletResponse )
+  private TableExporter useExporter( final CdaEngine engine, final String outputType, HttpServletResponse servletResponse )
     throws UnsupportedExporterException {
     return useExporter( engine, new ExportOptions() {
 
@@ -270,7 +271,7 @@ public class CdaUtils {
     }, servletResponse );
   }
 
-  private Exporter useExporter( final CdaEngine engine, ExportOptions opts, HttpServletResponse servletResponse )
+  private TableExporter useExporter( final CdaEngine engine, ExportOptions opts, HttpServletResponse servletResponse )
       throws UnsupportedExporterException {
       // Handle the query itself and its output format...
       Exporter exporter = engine.getExporter( opts );
@@ -284,7 +285,7 @@ public class CdaUtils {
       if ( attachmentName != null ) {
         servletResponse.setHeader( "content-disposition", "attachment; filename=" + attachmentName );
       }
-      return exporter;
+      return (TableExporter)exporter;
   }
 
   @GET
@@ -350,8 +351,9 @@ public class CdaUtils {
                          @Context HttpServletRequest servletRequest) throws Exception
   {
     final CdaEngine engine = CdaEngine.getInstance();
-    Exporter exporter = useExporter( engine, outputType, servletResponse );
+    TableExporter exporter = useExporter( engine, outputType, servletResponse );
     exporter.export( servletResponse.getOutputStream(), engine.getCdaList() );
+    servletResponse.getOutputStream().flush();
   }
 
   @GET
