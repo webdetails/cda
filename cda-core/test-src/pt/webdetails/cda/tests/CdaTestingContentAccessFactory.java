@@ -1,7 +1,6 @@
 package pt.webdetails.cda.tests;
 
 import java.io.File;
-import java.net.URISyntaxException;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -24,15 +23,10 @@ public class CdaTestingContentAccessFactory implements IContentAccessFactory {
   File baseRepository;
 
   public CdaTestingContentAccessFactory (  ) {
-    try {
-      // assumes test resources were copied to classpath
-      File base = new File( CdaTestingContentAccessFactory.class.getClassLoader().getResource( "." ).toURI() );
-      baseSystem = base;
-      baseRepository = new File(base, DEFAULT_REPOSITORY);
-    } catch ( URISyntaxException e ) {
-      throw new RuntimeException( e );
-    }
-
+    // assumes test resources were copied to classpath
+    File base = new File( CdaTestingContentAccessFactory.class.getProtectionDomain().getCodeSource().getLocation().getPath() );
+    baseSystem = base;
+    baseRepository = new File(base, DEFAULT_REPOSITORY);
   }
 
   public IUserContentAccess getUserContentAccess( String basePath ) {
