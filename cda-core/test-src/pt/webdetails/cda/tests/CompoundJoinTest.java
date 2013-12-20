@@ -18,34 +18,40 @@ import org.junit.Test;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.pentaho.di.core.util.Assert;
+import org.pentaho.metadata.model.concept.types.JoinType;
+import pt.webdetails.cda.dataaccess.JoinCompoundDataAccess;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 
-/**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 15, 2010
- * Time: 7:53:13 PM
- */
-public class CompoundJoinTest extends CdaTestCase
-{
 
-  private static final Log logger = LogFactory.getLog(CompoundJoinTest.class);
+public class CompoundJoinTest extends CdaTestCase {
+
+  private static final Log logger = LogFactory.getLog( CompoundJoinTest.class );
 
   @Test
-  public void testCompoundQuery() throws Exception
-  {
+  public void testCompoundQuery() throws Exception {
 
-    final CdaSettings cdaSettings = getSettingsManager().parseSettingsFile("sample-join.cda");
-    logger.error("Doing query on Cda - Initializing CdaEngine");
+    final CdaSettings cdaSettings = getSettingsManager().parseSettingsFile( "sample-join.cda" );
+    logger.error( "Doing query on Cda - Initializing CdaEngine" );
 
     QueryOptions queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("3");
-    //queryOptions.setOutputType("json");
-    //queryOptions.addParameter("status","In Process");
-    logger.info("Doing query");
+    queryOptions.setDataAccessId( "3" );
+    logger.info( "Doing query" );
 
-    getEngine().doQuery(cdaSettings, queryOptions);
+    getEngine().doQuery( cdaSettings, queryOptions );
+
+  }
+
+
+  @Test
+  public void testCDA43_CreationWithNullJoinType() throws Exception {
+
+    CdaSettings cdaSettings = getSettingsManager().parseSettingsFile( "sample-join-null-jointype.cda" );
+    JoinCompoundDataAccess jcda = (JoinCompoundDataAccess) cdaSettings.getDataAccess( "3" );
+
+    Assert.assertTrue( jcda.getJoinType() == JoinType.FULL_OUTER );
+
 
   }
 
