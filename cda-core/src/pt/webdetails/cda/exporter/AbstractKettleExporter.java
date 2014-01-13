@@ -126,7 +126,7 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
       final DynamicTransMetaConfig transMetaConfig = new DynamicTransMetaConfig(DynamicTransMetaConfig.Type.EMPTY, "Exporter", null, null);
       final DynamicTransConfig transConfig = new DynamicTransConfig();
 
-      transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP, "input", "<step><name>input</name><type>Injector</type></step>");
+      transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP, "input", "<step><name>input</name><type>Injector</type><copies>1</copies></step>");
       transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP, "export", getExportStepDefinition("export"));
 
       transConfig.addConfigEntry(DynamicTransConfig.EntryType.HOP, "input", "export");
