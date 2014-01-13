@@ -107,7 +107,7 @@ public class SortTableModel implements RowProductionManager
         DynamicTransMetaConfig transMetaConfig = new DynamicTransMetaConfig(Type.EMPTY, "JoinCompoundData", null, null);
         DynamicTransConfig transConfig = new DynamicTransConfig();
 
-        transConfig.addConfigEntry(EntryType.STEP, "input", "<step><name>input</name><type>Injector</type></step>");
+        transConfig.addConfigEntry(EntryType.STEP, "input", "<step><name>input</name><type>Injector</type><copies>1</copies></step>");
         transConfig.addConfigEntry(EntryType.STEP, "sort", sort);
         transConfig.addConfigEntry(EntryType.HOP, "input", "sort");
 
