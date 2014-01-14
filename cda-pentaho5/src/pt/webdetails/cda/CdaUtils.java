@@ -95,16 +95,17 @@ public class CdaUtils {
   @GET
   @Path( "/doQuery" )
   @Produces( {MimeTypes.JSON, MimeTypes.XML, MimeTypes.CSV, MimeTypes.XLS, MimeTypes.PLAIN_TEXT, MimeTypes.HTML} )
-  public StreamingOutput doQueryGet( @Context UriInfo urii ) throws WebApplicationException {
-    return doQuery( urii.getQueryParameters() );
+  public StreamingOutput doQueryGet( @Context UriInfo urii, @Context HttpServletResponse servletResponse ) throws WebApplicationException {
+    return doQuery( urii.getQueryParameters(), servletResponse );
   }
 
   @POST
   @Path( "/doQuery" )
   @Consumes ( APPLICATION_FORM_URLENCODED )
   @Produces( {MimeTypes.JSON, MimeTypes.XML, MimeTypes.CSV, MimeTypes.XLS, MimeTypes.PLAIN_TEXT, MimeTypes.HTML} )
-  public StreamingOutput doQueryPost( MultivaluedMap<String, String> formParams ) throws WebApplicationException {
-    return doQuery( formParams );
+  public StreamingOutput doQueryPost( MultivaluedMap<String, String> formParams,
+                                      @Context HttpServletResponse servletResponse ) throws WebApplicationException {
+    return doQuery( formParams, servletResponse );
   }
 
   protected ExportedQueryResult doQueryInternal( DoQueryParameters parameters ) throws Exception {
@@ -113,13 +114,16 @@ public class CdaUtils {
   }
 
 
-  public StreamingOutput doQuery( MultivaluedMap<String, String> params ) throws WebApplicationException {
+  public StreamingOutput doQuery( MultivaluedMap<String, String> params,
+                                  HttpServletResponse servletResponse ) throws WebApplicationException {
     try {
-        DoQueryParameters parameters = getDoQueryParameters( params );
-        if( parameters.isWrapItUp() ) {
-            return wrapQuery( parameters );
-        }
-      return toStreamingOutput( doQueryInternal(parameters) );
+      DoQueryParameters parameters = getDoQueryParameters( params );
+      if( parameters.isWrapItUp() ) {
+        return wrapQuery( parameters );
+      }
+      ExportedQueryResult eqr = doQueryInternal( parameters );
+      eqr.writeHeaders( servletResponse );
+      return toStreamingOutput( eqr );
     } catch ( Exception e ) {
       throw new WebApplicationException( e, 501 );// TODO:
     }
@@ -168,7 +172,9 @@ public class CdaUtils {
       @Context HttpServletResponse servletResponse, @Context HttpServletRequest servletRequest )
     throws WebApplicationException {
     try {
-      return toStreamingOutput( getCdaCoreService().unwrapQuery( path, uuid ) );
+      ExportedQueryResult eqr = getCdaCoreService().unwrapQuery( path, uuid );
+      eqr.writeHeaders( servletResponse );
+      return toStreamingOutput( eqr );
     } catch ( Exception e ) {
       logger.error( e );
       throw new WebApplicationException( e, Response.Status.INTERNAL_SERVER_ERROR );
