@@ -359,6 +359,10 @@ public class Parameter implements java.io.Serializable {
     } else if (type != null) {
       switch (type) {
         case STRING_ARRAY://csvTokenizer compatible
+
+          if(value instanceof List){
+            value = ((List) value).toArray();
+          }
           
           if(!(value instanceof String[]) && (value instanceof Object[])){
             Object[] oldVal = (Object[]) value;
