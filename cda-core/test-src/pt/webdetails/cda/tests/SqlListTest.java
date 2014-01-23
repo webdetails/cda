@@ -24,6 +24,8 @@ import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.tests.utils.CdaTestHelper;
 
+import java.util.LinkedList;
+
 public class SqlListTest extends CdaTestCase {
 //  private static final Log logger = LogFactory.getLog(SqlTest.class);
 
@@ -45,6 +47,25 @@ public class SqlListTest extends CdaTestCase {
     QueryOptions queryOptions = new QueryOptions();
     queryOptions.setDataAccessId("1");
     queryOptions.addParameter("status", new String[]{"Shipped","Cancelled"});
+    queryOptions.setOutputType(ExporterEngine.OutputType.XML);
+
+    final TableModel table = engine.doQuery(cdaSettings, queryOptions);
+    assertTrue( CdaTestHelper.columnContains( table, 0, "Shipped", "Cancelled" ) );
+    assertFalse( CdaTestHelper.columnContains( table, 0, "Disputed" ) );
+
+  }
+
+  public void testStringArrayAsListParameter() throws Exception
+  {
+    final CdaSettings cdaSettings = parseSettingsFile("sample-sql-list.cda");
+    final CdaEngine engine = CdaEngine.getInstance();
+
+    QueryOptions queryOptions = new QueryOptions();
+    queryOptions.setDataAccessId("1");
+    LinkedList l = new LinkedList<String>();
+    l.add("Shipped");
+    l.add("Cancelled");
+    queryOptions.addParameter("status", l);
     queryOptions.setOutputType(ExporterEngine.OutputType.XML);
 
     final TableModel table = engine.doQuery(cdaSettings, queryOptions);
