@@ -188,6 +188,13 @@
       expectedRows: 2
     },
     {
+     type: "sql.stringarray.jndi",
+     desc: "Sql query with string array over a jndi datasource",
+     url: "/pentaho/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/sql-stringArray-jndi.cda",
+     expectedCols: 2,
+     expectedRows: 48
+    },
+    {
       type: "mondrian.jdbc",
       desc: "Mdx query over a jdbc mondrian connection",
       url: "/pentaho/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/mondrian-jdbc.cda",
