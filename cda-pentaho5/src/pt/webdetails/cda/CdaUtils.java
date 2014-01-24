@@ -162,6 +162,7 @@ public class CdaUtils {
   private Object getParam( List<String> paramValues ) {
     if( paramValues == null ) return null;
     if (paramValues.size() == 1) return paramValues.get( 0 );
+    if (paramValues instanceof List) return paramValues.toArray();
     return paramValues;
   }
 

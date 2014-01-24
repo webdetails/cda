@@ -49,18 +49,11 @@ public class SqlListTest extends CdaTestCase {
     queryOptions.addParameter("status", new String[]{"Shipped","Cancelled"});
     queryOptions.setOutputType(ExporterEngine.OutputType.XML);
 
-    final TableModel table = engine.doQuery(cdaSettings, queryOptions);
+    TableModel table = engine.doQuery(cdaSettings, queryOptions);
     assertTrue( CdaTestHelper.columnContains( table, 0, "Shipped", "Cancelled" ) );
     assertFalse( CdaTestHelper.columnContains( table, 0, "Disputed" ) );
 
-  }
-
-  public void testStringArrayAsListParameter() throws Exception
-  {
-    final CdaSettings cdaSettings = parseSettingsFile("sample-sql-list.cda");
-    final CdaEngine engine = CdaEngine.getInstance();
-
-    QueryOptions queryOptions = new QueryOptions();
+    queryOptions = new QueryOptions();
     queryOptions.setDataAccessId("1");
     LinkedList l = new LinkedList<String>();
     l.add("Shipped");
@@ -68,7 +61,7 @@ public class SqlListTest extends CdaTestCase {
     queryOptions.addParameter("status", l);
     queryOptions.setOutputType(ExporterEngine.OutputType.XML);
 
-    final TableModel table = engine.doQuery(cdaSettings, queryOptions);
+    table = engine.doQuery(cdaSettings, queryOptions);
     assertTrue( CdaTestHelper.columnContains( table, 0, "Shipped", "Cancelled" ) );
     assertFalse( CdaTestHelper.columnContains( table, 0, "Disputed" ) );
 
