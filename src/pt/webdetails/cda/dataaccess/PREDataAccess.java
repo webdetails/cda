@@ -10,6 +10,7 @@ import java.util.TimeZone;
 import javax.swing.table.TableModel;
 
 import org.dom4j.Element;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.reporting.engine.classic.core.*;
 import org.pentaho.reporting.engine.classic.core.parameters.CompoundDataRow;
@@ -17,10 +18,12 @@ import org.pentaho.reporting.engine.classic.core.cache.CachingDataFactory;
 import org.pentaho.reporting.engine.classic.core.util.CloseableTableModel;
 import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFactory;
 import org.pentaho.reporting.libraries.base.config.Configuration;
+import org.pentaho.reporting.libraries.formula.FormulaContext;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 import org.pentaho.reporting.platform.plugin.PentahoReportEnvironment;
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.CdaSessionFormulaContext;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 
@@ -135,6 +138,11 @@ public abstract class PREDataAccess extends SimpleDataAccess
           public ResourceBundleFactory getResourceBundleFactory() {
               return new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault());
           }
+
+          public FormulaContext getFormulaContext() {
+            return new CdaSessionFormulaContext( );
+          }
+
 
           public DataFactory getContextDataFactory() {
               return dataFactory;
