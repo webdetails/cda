@@ -63,6 +63,7 @@
         <!-- Excludes -->     
         <exclude module="ehcache" />  <!-- Comment this for CDA with 3.6.0 dependencies -->
         <exclude module="nekohtml" conf="" matcher="exact"></exclude>
+        <exclude module="pentaho-actionsequence-dom"/>
     
 	</dependencies>
 

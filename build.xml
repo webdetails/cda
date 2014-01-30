@@ -6,6 +6,11 @@
   </description>
 
 
+  <property file="override.properties"
+            description="Properties customized for your development environment belong in this file.  This file will never be checked into the SCM." />
+  <property file="build.properties"
+            description="Properties customized for your particular project belong in this file." />
+
   <property name="projects.list" value="cda-pentaho,cda-pentaho5" description="directories of dependant projects"/>
   <property name="core.project" value="cda-core" description="the core project on which all depend"/>
 
@@ -26,6 +31,9 @@
         <echo level="info">   CALL ${target} on @{proj}</echo>
         <echo level="info">###############################</echo>
         <ant dir="@{proj}" antfile="build.xml" target="${target}" inheritAll="false"/>
+        <echo level="info">###############################</echo>
+        <echo level="info">FINISHED</echo>        
+        <echo level="info">###############################</echo>
       </sequential>
     </for>
   </target>
@@ -62,7 +70,7 @@
     </antcall>
   </target>
 
-  <target name="dist" depends="publish-local-core, resolve-projects">
+  <target name="dist" depends="publish-local-core, resolve-projects"> 
     <antcall target="call">
       <param name="target" value="dist"/>
       <param name="projects" value="${projects.list}"/>
