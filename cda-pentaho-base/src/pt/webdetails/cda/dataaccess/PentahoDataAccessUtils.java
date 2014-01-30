@@ -112,7 +112,7 @@ public class PentahoDataAccessUtils implements IDataAccessUtils {
 	@Override
 	public KettleTransformationProducer createKettleTransformationProducer(TransFromFileConnectionInfo connectionInfo, String query) 
 	{
-		return new PentahoKettleTransFromFileProducer("",
+		return new CdaPentahoKettleTransFromFileProducer("",
 				connectionInfo.getTransformationFile(),
 				query, null, null, connectionInfo.getDefinedArgumentNames(),
 				connectionInfo.getDefinedVariableNames());

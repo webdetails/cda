@@ -95,7 +95,7 @@ public abstract class CdaFileResourceLoader implements ICdaResourceLoader {
 
   public ResourceData load( ResourceKey key ) throws ResourceLoadingException {
     assert key.getSchema().equals( schema );
-    return new CdaResourceData(name, key, getReader(), key.getIdentifierAsString() );
+    return new CdaResourceData( name, key, getReader(), key.getIdentifierAsString() );
   }
 
   public URL toURL( ResourceKey key ) {
