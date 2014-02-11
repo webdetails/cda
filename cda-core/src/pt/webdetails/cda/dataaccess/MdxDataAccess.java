@@ -16,6 +16,7 @@ package pt.webdetails.cda.dataaccess;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Properties;
 
 import javax.swing.table.TableModel;
 
@@ -151,9 +152,20 @@ public class MdxDataAccess extends PREDataAccess
     mdxDataFactory.setJdbcPasswordField(mondrianConnectionInfo.getPasswordField());
     mdxDataFactory.setJdbcUserField(mondrianConnectionInfo.getUserField());
 
+    Properties baseProperties = mdxDataFactory.getBaseConnectionProperties();
+    //these properties may come enclosed in quotes, cleanQuotes removes them
+    String dynamicSchemaProcessor = cleanQuotes( baseProperties.getProperty( "DynamicSchemaProcessor" ) );
+    String useContentChecksum = cleanQuotes( baseProperties.getProperty( "UseContentChecksum" ) );
+    if ( dynamicSchemaProcessor != null) {
+      mdxDataFactory.setDynamicSchemaProcessor( dynamicSchemaProcessor );
+    }
+    if ( useContentChecksum != null ) {
+      mdxDataFactory.setUseContentChecksum( Boolean.parseBoolean( useContentChecksum ) );
+    }
+
     ICubeFileProviderSetter cubeFileProviderSetter = CdaEngine.getEnvironment().getCubeFileProviderSetter();
     cubeFileProviderSetter.setCubeFileProvider(mdxDataFactory, mondrianConnectionInfo.getCatalog());
-    
+
 
     // using deprecated method for 3.10 support
     mdxDataFactory.setQuery("query", getQuery());
@@ -318,5 +330,13 @@ public class MdxDataAccess extends PREDataAccess
 
     return super.performRawQuery(new ParameterDataRow(columnNames, values));
 
+  }
+
+  private String cleanQuotes( String str ) {
+
+    if (  str != null && str.charAt( 0 ) == '"' && str.charAt( str.length() - 1 ) == '"' ) {
+      return str.substring( 1, str.length() - 1 );
+    }
+    return str;
   }
 }
