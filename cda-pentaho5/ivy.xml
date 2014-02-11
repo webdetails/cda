@@ -21,15 +21,12 @@
             <exclude org="javax.servlet" name="jsp-api"/>
             <exclude org="javax.servlet" name="servlet-api"/>
         </dependency>        
-        <dependency org="pentaho"              name="pentaho-platform-extensions"  rev="${dependency.bi-platform.revision}"                changing="false" transitive="true" />
+   
         <dependency org="pentaho"              name="pentaho-user-console-package" rev="${dependency.bi-platform.revision}"                changing="false" transitive="true" />
         <dependency org="pentaho"              name="pentaho-platform-api"         rev="${dependency.bi-platform.revision}"                changing="false" transitive="true" />
         <dependency org="pentaho"              name="pentaho-platform-core"        rev="${dependency.bi-platform.revision}"                changing="false" transitive="true" />
         <dependency org="pentaho"              name="pentaho-platform-repository"  rev="${dependency.bi-platform.revision}"                changing="false" transitive="true" />
         <dependency org="pentaho"              name="pentaho-platform-scheduler"   rev="${dependency.bi-platform.revision}"                changing="false" transitive="true" />
-        <dependency org="pentaho"              name="common-ui"                    rev="${dependency.bi-platform.revision}"                changing="false" transitive="true" >
-            <artifact name="common-ui" type="zip" />                         
-        </dependency>        
         <dependency org="pentaho"              name="pentaho-report-wizard-core"   rev="${dependency.pentaho-report-wizard-core.revision}" changing="true"/>        
 
            
