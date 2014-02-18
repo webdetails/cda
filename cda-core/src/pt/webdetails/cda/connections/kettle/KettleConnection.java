@@ -15,6 +15,7 @@ package pt.webdetails.cda.connections.kettle;
 
 import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleTransformationProducer;
 import pt.webdetails.cda.connections.Connection;
+import pt.webdetails.cda.settings.CdaSettings;
 
 /**
  * There should be two implementations for Kettle connections. One for running a *.ktr file and one
@@ -24,12 +25,11 @@ import pt.webdetails.cda.connections.Connection;
  *
  * @author Thomas Morgner.
  */
-public interface KettleConnection extends Connection
-{
+public interface KettleConnection extends Connection {
   /**
    *
    * @param query the name of the transformation step that should be polled.
    * @return the initialized transformation producer.
    */
-  public KettleTransformationProducer createTransformationProducer(final String query);
+  public KettleTransformationProducer createTransformationProducer( final String query, CdaSettings cdaSettings );
 }

@@ -24,6 +24,8 @@ import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.IDataAccessUtils;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
+import pt.webdetails.cda.settings.CdaSettings;
+
 /**
  * Todo: Document me!
  * <p/>
@@ -53,10 +55,10 @@ public class TransFromFileConnection extends AbstractConnection implements Kettl
    * @param query the name of the transformation step that should be polled.
    * @return the initialized transformation producer.
    */
-  public KettleTransformationProducer createTransformationProducer(final String query)
+  public KettleTransformationProducer createTransformationProducer(final String query, CdaSettings cdaSettings)
   {
 	IDataAccessUtils dataAccessUtils = CdaEngine.getEnvironment().getDataAccessUtils();
-	return dataAccessUtils.createKettleTransformationProducer(connectionInfo, query);
+	return dataAccessUtils.createKettleTransformationProducer(connectionInfo, query, cdaSettings);
   }
 
 

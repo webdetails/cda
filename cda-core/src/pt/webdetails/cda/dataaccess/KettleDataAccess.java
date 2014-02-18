@@ -56,7 +56,7 @@ public class KettleDataAccess extends PREDataAccess
     final KettleConnection connection = (KettleConnection) getCdaSettings().getConnection(getConnectionId());
 
     final KettleDataFactory dataFactory = new KettleDataFactory();
-    dataFactory.setQuery("query", connection.createTransformationProducer(getQuery()));
+    dataFactory.setQuery("query", connection.createTransformationProducer(getQuery(), getCdaSettings()));
     return dataFactory;
   }
 

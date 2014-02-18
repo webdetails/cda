@@ -39,6 +39,7 @@ import pt.webdetails.cda.connections.kettle.TransFromFileConnectionInfo;
 import pt.webdetails.cda.connections.mondrian.MondrianConnection;
 import pt.webdetails.cda.connections.mondrian.MondrianJndiConnectionInfo;
 import pt.webdetails.cda.connections.sql.SqlJndiConnectionInfo;
+import pt.webdetails.cda.settings.CdaSettings;
 
 public class DefaultDataAccessUtils implements IDataAccessUtils {
 
@@ -57,7 +58,7 @@ public class DefaultDataAccessUtils implements IDataAccessUtils {
 	}
 
 	@Override
-	public KettleTransformationProducer createKettleTransformationProducer(TransFromFileConnectionInfo connectionInfo, String query) 
+	public KettleTransformationProducer createKettleTransformationProducer(TransFromFileConnectionInfo connectionInfo, String query, CdaSettings settings )
 	{
 		return new KettleTransFromFileProducer("",
 				connectionInfo.getTransformationFile(),

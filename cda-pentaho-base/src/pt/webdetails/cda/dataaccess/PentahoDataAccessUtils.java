@@ -28,6 +28,8 @@ import pt.webdetails.cda.connections.kettle.TransFromFileConnectionInfo;
 import pt.webdetails.cda.connections.mondrian.MondrianConnection;
 import pt.webdetails.cda.connections.mondrian.MondrianJndiConnectionInfo;
 import pt.webdetails.cda.connections.sql.SqlJndiConnectionInfo;
+import pt.webdetails.cda.settings.CdaSettings;
+import pt.webdetails.cda.utils.PathRelativizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -108,15 +110,16 @@ public class PentahoDataAccessUtils implements IDataAccessUtils {
         
       }
   }
-  
-	@Override
-	public KettleTransformationProducer createKettleTransformationProducer(TransFromFileConnectionInfo connectionInfo, String query) 
-	{
-		return new CdaPentahoKettleTransFromFileProducer("",
-				connectionInfo.getTransformationFile(),
-				query, null, null, connectionInfo.getDefinedArgumentNames(),
-				connectionInfo.getDefinedVariableNames());
-	}
+
+  @Override
+  public KettleTransformationProducer createKettleTransformationProducer( TransFromFileConnectionInfo connectionInfo,
+      String query, CdaSettings cdaSettings ) {
+
+    String relPath = PathRelativizer.relativizePath( cdaSettings.getId(), connectionInfo.getTransformationFile() );
+    return new CdaPentahoKettleTransFromFileProducer("",
+        relPath, query, null, null, connectionInfo.getDefinedArgumentNames(),
+        connectionInfo.getDefinedVariableNames());
+  }
 	
 	@Override
 	public ConnectionProvider getJndiConnectionProvider(SqlJndiConnectionInfo connectionInfo) {

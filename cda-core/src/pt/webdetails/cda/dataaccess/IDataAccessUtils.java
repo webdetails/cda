@@ -25,6 +25,7 @@ import pt.webdetails.cda.connections.kettle.TransFromFileConnectionInfo;
 import pt.webdetails.cda.connections.mondrian.MondrianConnection;
 import pt.webdetails.cda.connections.mondrian.MondrianJndiConnectionInfo;
 import pt.webdetails.cda.connections.sql.SqlJndiConnectionInfo;
+import pt.webdetails.cda.settings.CdaSettings;
 
 public interface IDataAccessUtils {
 
@@ -34,7 +35,7 @@ public interface IDataAccessUtils {
 
   public ReportEnvironmentDataRow createEnvironmentDataRow(Configuration configuration);
 
-  public KettleTransformationProducer createKettleTransformationProducer(TransFromFileConnectionInfo connectionInfo, String query);
+  public KettleTransformationProducer createKettleTransformationProducer(TransFromFileConnectionInfo connectionInfo, String query, CdaSettings cdaSettings);
 
   public ConnectionProvider getJndiConnectionProvider(SqlJndiConnectionInfo connectionInfo);
   
