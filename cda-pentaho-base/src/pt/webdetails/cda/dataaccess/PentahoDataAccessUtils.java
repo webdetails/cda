@@ -115,10 +115,17 @@ public class PentahoDataAccessUtils implements IDataAccessUtils {
   public KettleTransformationProducer createKettleTransformationProducer( TransFromFileConnectionInfo connectionInfo,
       String query, CdaSettings cdaSettings ) {
 
-    String relPath = PathRelativizer.relativizePath( cdaSettings.getId(), connectionInfo.getTransformationFile() );
-    return new CdaPentahoKettleTransFromFileProducer("",
+    String ktrPath = connectionInfo.getTransformationFile();
+    String relPath = "";
+    if ( ktrPath.charAt( 0 ) == '/' ) {
+      relPath = PathRelativizer.relativizePath( cdaSettings.getId(), ktrPath );
+    } else {
+      relPath = ktrPath;
+    }
+
+    return new CdaPentahoKettleTransFromFileProducer( "",
         relPath, query, null, null, connectionInfo.getDefinedArgumentNames(),
-        connectionInfo.getDefinedVariableNames());
+        connectionInfo.getDefinedVariableNames() );
   }
 	
 	@Override
