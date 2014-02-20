@@ -53,10 +53,10 @@ public class KettleDataAccess extends PREDataAccess
 
   public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException
   {
-    final KettleConnection connection = (KettleConnection) getCdaSettings().getConnection(getConnectionId());
+    final KettleConnection connection = (KettleConnection) getCdaSettings().getConnection( getConnectionId() );
 
     final KettleDataFactory dataFactory = new KettleDataFactory();
-    dataFactory.setQuery("query", connection.createTransformationProducer(getQuery(), getCdaSettings()));
+    dataFactory.setQuery("query", connection.createTransformationProducer( getQuery(), getCdaSettings()) );
     return dataFactory;
   }
 

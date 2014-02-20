@@ -14,8 +14,15 @@
     This build file is used to create the CDA project
   </description>
 
+
+  <property file="../override.properties"
+            description="Top level Properties customized for your development environment belong in this file.  This file will never be checked into the SCM." />
+  <property file="../build.properties"
+            description="Top level Properties customized for your particular project belong in this file." />
+
+
   <!-- Import subfloor.xml which contains all the default tasks -->
-  <import file="../subfloor.xml"/>
+  <import file="../build-res/subfloor.xml"/>
 
     <!-- Setup the classpath used for testing -->
   <path id="test.classpath">
@@ -37,6 +44,7 @@
       <include name="*.jar" />
     </fileset>
   </path>
+
 
   <property name="plugin.name"
             value="cda"
@@ -63,7 +71,7 @@
   <property name="distribution.version" value="${project.stage}-${project.version}"/>
 
 
-  <echo>distribution.version = ${distribution.version}</echo>
+  <echo>Core: distribution.version = ${distribution.version}</echo>
   <!--
       DON'T OVERRIDE SUBFLOOR UNLESS YOU HAVE TO
     -->
