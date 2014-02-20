@@ -73,7 +73,7 @@
   <target name="publish">
     <antcall target="call">
       <param name="target" value="publish"/>
-      <param name="projects" value="${projects.list}"/>
+      <param name="projects" value="${all.projects}"/>
     </antcall>  
   </target>
 
@@ -94,7 +94,7 @@
 
   <target name="publish-local">
     <antcall target="call">
-      <param name="target" value="publish-local, resolve-projects"/>
+      <param name="target" value="publish-local"/>
       <param name="projects" value="${all.projects}"/>
     </antcall>
   </target>
