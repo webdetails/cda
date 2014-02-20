@@ -13,12 +13,13 @@
 package pt.webdetails.cda.dataaccess;
 
 import org.pentaho.reporting.engine.classic.core.ParameterMapping;
+import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleTransFromFileProducer;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.reporting.platform.plugin.connection.PentahoKettleTransFromFileProducer;
 import org.pentaho.reporting.platform.plugin.RepositoryResourceLoader;
 
-public class CdaPentahoKettleTransFromFileProducer extends PentahoKettleTransFromFileProducer {
+public class CdaPentahoKettleTransFromFileProducer extends KettleTransFromFileProducer {
   public CdaPentahoKettleTransFromFileProducer( final String repositoryName,
                                                 final String transformationFile,
                                                 final String stepName,
@@ -27,6 +28,7 @@ public class CdaPentahoKettleTransFromFileProducer extends PentahoKettleTransFro
                                                 final String[] definedArgumentNames,
                                                 final ParameterMapping[] definedVariableNames)
   {
+
     super( repositoryName, transformationFile, stepName, username, password, definedArgumentNames,
       definedVariableNames );
   }
