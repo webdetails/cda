@@ -58,6 +58,13 @@
       <param name="projects" value="${all.projects}"/>
     </antcall>
   </target>
+  
+  <target name="test">
+    <antcall target="call">
+      <param name="target" value="test"/>
+      <param name="projects" value="${all.projects}"/>
+    </antcall>  
+  </target>    
 
   <target name="publish-local-core">
     <ant dir="${core.project}" antfile="build.xml" target="resolve" inheritAll="false" />
@@ -77,11 +84,21 @@
     </antcall>  
   </target>
 
-  <target name="dist" depends="publish-local-core, resolve-projects"> 
+  <target name="dist" depends="publish-local-core, resolve-projects, subfloor.install-antcontrib"> 
     <antcall target="call">
       <param name="target" value="dist"/>
       <param name="projects" value="${projects.list}"/>
     </antcall>
+    
+    <for list="${projects.list}" param="proj">
+      <sequential>
+        <mkdir dir="dist/@{proj}"/>
+        <copy todir='dist/@{proj}'>
+            <fileset dir='@{proj}/dist'/>
+        </copy>
+      </sequential>
+    </for>    
+    
   </target>
   
   <target name="build-core" >

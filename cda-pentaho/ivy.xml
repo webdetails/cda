@@ -22,8 +22,8 @@
         <dependency org="com.hazelcast"            name="hazelcast"                                             rev="2.5"                                      conf="default->default;legacy->default" transitive="false" />
 
         <!-- Runtime dependencies -->
-        <dependency org="pentaho"                name="cpf-core"           rev="REFACTOR-SNAPSHOT"   conf='runtime->default'/>
-        <dependency org="pentaho"                name="cpf-pentaho"        rev="REFACTOR-SNAPSHOT"   conf='runtime->default' changing="true" transitive="false"/>
+        <dependency org="pentaho"                name="cpf-core"           rev="${dependency.pentaho-cpf-plugin.revision}"   conf='runtime->default'/>
+        <dependency org="pentaho"                name="cpf-pentaho"        rev="${dependency.pentaho-cpf-plugin.revision}"   conf='runtime->default' changing="true" transitive="false"/>
         <dependency org="pentaho"                name="cda-core"           rev="${project.revision}" conf="runtime->default" changing="true" transitive="false"/>
         <dependency org="org.codehaus.jackson"   name="jackson-mapper-asl" rev="1.8.2"               conf='runtime->default'/>
         <dependency org="org.json"               name="json"               rev="3.1"                 conf='runtime->default'/>
