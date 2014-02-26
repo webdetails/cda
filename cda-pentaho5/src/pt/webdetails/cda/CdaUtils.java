@@ -504,6 +504,18 @@ public class CdaUtils {
 
   //Interplugin calls  - Should be moved to a dedicated bean and method signature should be changed
   @Deprecated
+  //Compatibility with CDF 5-Trunk
+  public void listQueriesInterPluginOld(
+          @QueryParam("path") String path,
+          @DefaultValue("json") @QueryParam("outputType") String outputType,
+          @Context HttpServletResponse servletResponse,
+          @Context HttpServletRequest servletRequest) throws WebApplicationException, IOException
+  {
+    StreamingOutput so = listQueries( path, outputType, servletResponse );
+    so.write( servletResponse.getOutputStream() );
+  }
+
+    @Deprecated
   public void doQueryInterPluginOld(@Context HttpServletResponse servletResponse,
                                     @Context HttpServletRequest servletRequest ) throws Exception {
     MultivaluedMap<String, String> params = getParameterMapFromRequest( servletRequest );
