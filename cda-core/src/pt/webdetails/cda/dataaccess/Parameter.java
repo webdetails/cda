@@ -209,9 +209,14 @@ public class Parameter implements java.io.Serializable {
   public Object getValue() throws InvalidParameterException
   {
     Object objValue = value == null ? getDefaultValue() : value;
-	
-	if(objValue instanceof String[] && (Type.INTEGER_ARRAY.equals(getType())) ||  Type.NUMERIC_ARRAY.equals(getType())){
-    	objValue = stringArrayToString((String[])value, getSeparator());
+
+    if ( objValue instanceof Object[] && ( Type.INTEGER_ARRAY.equals( getType() ) )
+        || Type.NUMERIC_ARRAY.equals( getType() ) ) {
+      ArrayList<String> parsed = new ArrayList<String>();
+      for ( Object obj : (Object[]) objValue ) {
+        parsed.add( obj.toString() );
+      }
+      objValue = stringArrayToString( parsed.toArray(new String[parsed.size()]), getSeparator() );
     }
 
     if(objValue instanceof String){//may be a string or a parsed value
