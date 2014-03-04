@@ -114,7 +114,7 @@
 
 		<div class="span-5 last logos">
 			<div class="logo">
-				<a href="http://www.webdetails.pt/ctools/cda.html#documentation" target="_blank">CDA Documentation <img border="0" src="GetCDFResource?resource=/plugin-samples/cda/resources/pastaCDA.png" /> </a>
+				<a href="http://www.webdetails.pt/ctools/cda.html#documentation" target="_blank">CDA Documentation <img border="0" src="resources/pastaCDA.png" /> </a>
 
 			</div>
 
@@ -291,7 +291,7 @@ expectedRows: 1
 		init : function() {
 			// Add this line to the table
 			var sampleFile = this.testInfo.url.match(/cdafiles\/(.*)/)[0];
-			$("#testTable").append("<tr><td>" + this.testInfo.type + "</td><td>" + this.testInfo.desc + "</td><td><a href='javascript:showFile(\"" + sampleFile + "\")'>" + sampleFile + "</a></td><td class='testResult testPending'><img src=\"GetCDFResource?resource=/plugin-samples/cda/resources/testing.png\" /></td></tr>");
+			$("#testTable").append("<tr><td>" + this.testInfo.type + "</td><td>" + this.testInfo.desc + "</td><td><a href='javascript:showFile(\"" + sampleFile + "\")'>" + sampleFile + "</a></td><td class='testResult testPending'><img src=\"resources/testing.png\" /></td></tr>");
 		},
 
 		makeCall : function() {
