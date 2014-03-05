@@ -94,8 +94,17 @@ public class TableModelUtils
 
     //  2. Show only the output columns we want, filter rows
     List<Integer> outputIndexes = getOutputIndexes(dataAccess, queryOptions, table);
-    DataTableFilter rowFilter = getRowFilter(queryOptions, outputIndexes);
-    table = filterTable(table, outputIndexes, rowFilter);
+    DataTableFilter rowFilter = getRowFilter( queryOptions, outputIndexes );
+    //mdx and denormalizedMdx queries with an empty result set can return different metadata (less columns),
+    //in this cases, the output indexes will be ignored
+    boolean useOutputIndexes = true;
+    if ( table.getRowCount() == 0 && ( dataAccess.getType().equals( "mdx" ) || dataAccess.getType()
+        .equals( "denormalizedMdx" ) ) ) {
+      useOutputIndexes = false;
+      logger.warn( "Mdx query returned empty result set, output indexes will be ignored." );
+    }
+    table = useOutputIndexes ? filterTable( table, outputIndexes, rowFilter ) :
+        filterTable( table, new ArrayList<Integer>(), rowFilter );
 
     //  3. Sort
     if (!queryOptions.getSortBy().isEmpty())
