@@ -164,6 +164,7 @@
     <echo file="${stage.dir}/${plugin.name}/version.xml" message="&lt;version branch='${project.stage}'  buildId='${sequential.build.id}'>${distribution.version}&lt;/version>"/>		   
 
     <replace file="${stage.dir}/${plugin.name}/cachemanager/cache.html" token="@@VERSION@@" value="${distribution.version}"/> 
+    <replace file="${stage.dir}/${plugin.name}/static/about.html" token="@@VERSION@@" value="${distribution.version}"/>     
 
     <!-- create a zip file -->
     <zip zipfile="${dist.dir}/${plugin.zipfile}"
