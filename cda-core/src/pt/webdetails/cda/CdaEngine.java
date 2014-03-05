@@ -143,6 +143,9 @@ public class CdaEngine
 		TableExporter exporter = getExporter(queryOptions);
 
 		StreamExporter streamingExporter = null;
+
+    /*
+
 		if (!dataAccess.hasIterableParameterValues(queryOptions)
 				&& exporter instanceof AbstractKettleExporter) {
 			// Try to initiate a streaming Kettle transformation:
@@ -154,6 +157,7 @@ public class CdaEngine
 						dataAccessKettleAdapter);
 			}
 		}
+    */
 
 		// Handle the exports
 		if (streamingExporter != null) {

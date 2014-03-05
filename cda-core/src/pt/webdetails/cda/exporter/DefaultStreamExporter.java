@@ -69,7 +69,7 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
 			if (parameterNames.length > 0) {
 				transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP,
 						"Input",
-						"<step><name>Input</name><type>Injector</type></step>");
+						"<step><name>Input</name><type>Injector</type><copies>1</copies></step>");
 				dataAccessStep = dataAccessStep.replaceFirst("<lookup/>",
 						"<lookup>Input</lookup>");
 			}
