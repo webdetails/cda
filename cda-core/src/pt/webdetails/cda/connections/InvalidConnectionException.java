@@ -11,7 +11,7 @@
 * the license for the specific language governing your rights and limitations.
 */
 
-package pt.webdetails.cda;
+package pt.webdetails.cda.connections;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,11 +19,11 @@ package pt.webdetails.cda;
  * Date: Feb 2, 2010
  * Time: 6:38:21 PM
  */
-public class PluginHibernateException extends Exception {
+public class InvalidConnectionException extends Exception {
 
   private static final long serialVersionUID = 1L;
 
-  public PluginHibernateException(final String s, final Exception cause) {
+  public InvalidConnectionException(final String s, final Exception cause) {
     super(s,cause);
   }
 }

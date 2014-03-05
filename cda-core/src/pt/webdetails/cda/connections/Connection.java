@@ -11,19 +11,36 @@
 * the license for the specific language governing your rights and limitations.
 */
 
-package pt.webdetails.cda;
+package pt.webdetails.cda.connections;
+
+import java.util.List;
+
+import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
+import pt.webdetails.cda.dataaccess.PropertyDescriptor;
+import pt.webdetails.cda.settings.CdaSettings;
+import pt.webdetails.cda.xml.DomVisitable;
 
 /**
+ * Holds the Connections Settings of a file
+ *
  * Created by IntelliJ IDEA.
  * User: pedro
  * Date: Feb 2, 2010
- * Time: 6:38:21 PM
+ * Time: 2:44:01 PM
  */
-public class PluginHibernateException extends Exception {
+public interface Connection extends DomVisitable {
 
-  private static final long serialVersionUID = 1L;
+  public String getId();
 
-  public PluginHibernateException(final String s, final Exception cause) {
-    super(s,cause);
-  }
+  public String getType();
+
+  public ConnectionType getGenericType();
+
+  public CdaSettings getCdaSettings();
+
+  public void setCdaSettings(CdaSettings cdaSettings);
+
+  public List<PropertyDescriptor> getProperties();
+
+  public String getTypeForFile();
 }

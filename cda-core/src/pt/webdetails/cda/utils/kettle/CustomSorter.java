@@ -11,19 +11,24 @@
 * the license for the specific language governing your rights and limitations.
 */
 
-package pt.webdetails.cda;
+package pt.webdetails.cda.utils.kettle;
+
+import java.util.List;
+
+import javax.swing.table.TableModel;
 
 /**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 2, 2010
- * Time: 6:38:21 PM
+ *
+ * @author pdpi
  */
-public class PluginHibernateException extends Exception {
+public class CustomSorter extends SortTableModel
+{
 
-  private static final long serialVersionUID = 1L;
-
-  public PluginHibernateException(final String s, final Exception cause) {
-    super(s,cause);
+  @Override
+  public TableModel doSort(TableModel unsorted, List<String> sortBy) throws SortException
+  {
+    SortableTableModel sortable = new SortableTableModel(unsorted);
+    sortable.sort();
+    return sortable;
   }
 }

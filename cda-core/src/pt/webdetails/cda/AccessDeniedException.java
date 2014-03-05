@@ -19,11 +19,11 @@ package pt.webdetails.cda;
  * Date: Feb 2, 2010
  * Time: 6:38:21 PM
  */
-public class PluginHibernateException extends Exception {
+public class AccessDeniedException extends Exception {
 
   private static final long serialVersionUID = 1L;
 
-  public PluginHibernateException(final String s, final Exception cause) {
+  public AccessDeniedException(final String s, final Exception cause) {
     super(s,cause);
   }
 }

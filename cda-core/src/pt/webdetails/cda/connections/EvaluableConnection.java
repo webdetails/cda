@@ -11,19 +11,17 @@
 * the license for the specific language governing your rights and limitations.
 */
 
-package pt.webdetails.cda;
+package pt.webdetails.cda.connections;
 
 /**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 2, 2010
- * Time: 6:38:21 PM
+ * A connection with fields that need to be evaluated in some form prior to execution.<br> 
+ * Needs to be stored in pre-evaluated form in settings cache but evaluated before being used in a table cache key or query execution.  
  */
-public class PluginHibernateException extends Exception {
+public interface EvaluableConnection {
 
-  private static final long serialVersionUID = 1L;
-
-  public PluginHibernateException(final String s, final Exception cause) {
-    super(s,cause);
-  }
+  /**
+   * @return Clone of this connection with all evaluable fields evaluated.
+   */
+  public Connection evaluate();
+  
 }

@@ -11,19 +11,25 @@
 * the license for the specific language governing your rights and limitations.
 */
 
-package pt.webdetails.cda;
+package pt.webdetails.cda.connections.mondrian;
+
+import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DataSourceProvider;
+import pt.webdetails.cda.connections.Connection;
+import pt.webdetails.cda.connections.InvalidConnectionException;
 
 /**
  * Created by IntelliJ IDEA.
  * User: pedro
- * Date: Feb 2, 2010
- * Time: 6:38:21 PM
+ * Date: Feb 9, 2010
+ * Time: 12:13:28 PM
  */
-public class PluginHibernateException extends Exception {
+public interface MondrianConnection extends Connection
+{
 
-  private static final long serialVersionUID = 1L;
 
-  public PluginHibernateException(final String s, final Exception cause) {
-    super(s,cause);
-  }
+  public DataSourceProvider getInitializedDataSourceProvider() throws InvalidConnectionException;
+
+
+  public MondrianConnectionInfo getConnectionInfo();
+
 }

@@ -11,19 +11,18 @@
 * the license for the specific language governing your rights and limitations.
 */
 
-package pt.webdetails.cda;
+package pt.webdetails.cda.exporter;
+
 
 /**
  * Created by IntelliJ IDEA.
  * User: pedro
- * Date: Feb 2, 2010
- * Time: 6:38:21 PM
+ * Date: Feb 5, 2010
+ * Time: 5:02:17 PM
  */
-public class PluginHibernateException extends Exception {
+public interface Exporter
+{
 
-  private static final long serialVersionUID = 1L;
-
-  public PluginHibernateException(final String s, final Exception cause) {
-    super(s,cause);
-  }
+  public String getMimeType();
+  public String getAttachmentName();
 }

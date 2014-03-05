@@ -21,10 +21,6 @@ import org.pentaho.reporting.libraries.formula.FormulaContext;
 
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.dataaccess.InvalidParameterException;
-import pt.webdetails.cda.formula.ICdaCoreSessionFormulaContext;
-import pt.webdetails.cpf.session.ISessionUtils;
-import pt.webdetails.cpf.session.IUserSession;
-
 
 
 public class FormulaEvaluator {

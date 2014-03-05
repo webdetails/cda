@@ -11,19 +11,36 @@
 * the license for the specific language governing your rights and limitations.
 */
 
-package pt.webdetails.cda;
+package pt.webdetails.cda.connections.scripting;
+
+import org.dom4j.Element;
 
 /**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 2, 2010
- * Time: 6:38:21 PM
+ * Todo: Document me!
+ * <p/>
+ * Date: 16.02.2010
+ * Time: 13:22:17
+ *
+ * @author Thomas Morgner.
  */
-public class PluginHibernateException extends Exception {
+public class ScriptingConnectionInfo
+{
+  private String language;
+  private String initScript;
 
-  private static final long serialVersionUID = 1L;
+  public ScriptingConnectionInfo(final Element connection)
+  {
+    language = ((String) connection.selectObject("string(./Language)"));
+    initScript = ((String) connection.selectObject("string(./InitScript)"));
+  }
 
-  public PluginHibernateException(final String s, final Exception cause) {
-    super(s,cause);
+  public String getLanguage()
+  {
+    return language;
+  }
+
+  public String getInitScript()
+  {
+    return initScript;
   }
 }

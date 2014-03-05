@@ -11,19 +11,19 @@
 * the license for the specific language governing your rights and limitations.
 */
 
-package pt.webdetails.cda;
+package pt.webdetails.cda.settings;
 
 /**
  * Created by IntelliJ IDEA.
  * User: pedro
  * Date: Feb 2, 2010
- * Time: 6:38:21 PM
+ * Time: 3:12:17 PM
  */
-public class PluginHibernateException extends Exception {
+public class UnknownConnectionException extends Exception {
 
   private static final long serialVersionUID = 1L;
 
-  public PluginHibernateException(final String s, final Exception cause) {
+  public UnknownConnectionException(final String s, final Exception cause) {
     super(s,cause);
   }
 }

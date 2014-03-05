@@ -11,19 +11,26 @@
 * the license for the specific language governing your rights and limitations.
 */
 
-package pt.webdetails.cda;
+package pt.webdetails.cda.connections.sql;
+
+import org.dom4j.Element;
 
 /**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 2, 2010
- * Time: 6:38:21 PM
+ * Todo: Document me!
+ * <p/>
+ * Date: 16.02.2010
+ * Time: 12:54:53
+ *
+ * @author Thomas Morgner.
  */
-public class PluginHibernateException extends Exception {
-
-  private static final long serialVersionUID = 1L;
-
-  public PluginHibernateException(final String s, final Exception cause) {
-    super(s,cause);
+public class SqlJndiConnectionInfo extends pt.webdetails.cda.connections.JndiConnectionInfo
+{
+  public SqlJndiConnectionInfo(final Element connection) {
+    super(connection);
   }
+  
+  public SqlJndiConnectionInfo(String jndi, String userName, String password, String userFormula, String passFormula){
+    super(jndi, userName, password, userFormula, passFormula);
+  }
+
 }
