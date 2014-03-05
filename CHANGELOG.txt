@@ -1,3 +1,6 @@
+14.03.07
+    * Lots of changes. Support for Pentaho 5 being the biggest one.
+
 13.09.10
     * updates CDA settings to declare that this plugin offers datasources that can be listed by CDE
     * Bug fixing and general cleanup
