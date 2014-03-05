@@ -95,7 +95,7 @@
 			</div>
 
 			<div class="span-6 clearfix prepend-1">
-				Version @@VERSION@@
+				Version TRUNK-SNAPSHOT
 			</div>
 			<div class="span-8 append-3 cdaDesc desc last">
 				<p> CDA is the new <b>Data Access component</b> developed for Pentaho </p>
@@ -178,6 +178,12 @@
 		url : "../cda/doQuery?dataAccessId=1&path=/plugin-samples/cda/cdafiles/sql-jndi.cda",
 		expectedCols : 4,
 		expectedRows : 2
+	}, {
+		type : "sql.stringarray.jndi",
+		desc : "Sql query with string array over a jndi datasource",
+		url : "../cda/doQuery?dataAccessId=1&path=/plugin-samples/cda/cdafiles/sql-stringArray-jndi.cda",
+		expectedCols : 2,
+		expectedRows : 48
 	}, {
 		type : "mondrian.jdbc",
 		desc : "Mdx query over a jdbc mondrian connection",

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin title="Pentaho Community Data Access" name="cda"> <!--loader="OVERRIDING"-->
+	<overlays>
+		<overlay id="startup.cda" resourcebundle="api/repos/data-access/resources/messages/messages.properties">
+			<menubar id="toolsmenu">
+	        	<menubarseparator id="openSeparator" insertafter="refreshmenu"/>
+	        	<menuitem id="cdaCacheManager" label="CDA Cache Manager" command="mantleXulHandler.openUrl('CDA Cache Manager','CDA Cache Manager','plugin/cda/api/manageCache')"/>
+	      	</menubar>
+	      	<menubar id="refreshmenu">
+	        	<menuitem id="cdaClearCache" insertafter="purgeReportingDataCacheMenuItem" label="CDA Cache" command="mantleXulHandler.openUrl('CDA Cache','CDA Cache','plugin/cda/api/clearCache')"/>
+	      	</menubar>
+	    </overlay>
+  	</overlays>
+
+	<lifecycle-listener class="pt.webdetails.cda.CdaLifecycleListener"/>
+	
+	<content-types>
+	    <static-paths>
+	      	<static-path url="/cda/cachemanager" localFolder="cachemanager"/>
+	      	<static-path url="/cda/editor" localFolder="editor"/>
+	      	<static-path url="/cda/previewer" localFolder="previewer"/>
+	      	<static-path url="/cda/resources" localFolder="resources"/>
+	      	<static-path url="/cda/static" localFolder="static"/>
+	    </static-paths> 
+
+		<content-type type="cda" mime-type="text/html">
+    		<title>Data Access</title>
+     		<description>Community Data Access File</description>
+	    	<icon-url>content/cda/resources/cdaFileType.png</icon-url>
+	    	<meta-provider>pt.webdetails.cda.CdaFileMetaProvider</meta-provider>
+	      	<operations>
+		        <operation>
+		          	<id>EDIT</id>
+                	<perspective>cda.edit</perspective>
+		        </operation>
+		        <operation>
+		          	<id>RUN</id>
+		        </operation>
+		        <operation>
+		          	<id>NEWWINDOW</id>
+		        </operation>
+		      </operations>
+    	</content-type>
+	</content-types>
+ 
+
+
+</plugin>

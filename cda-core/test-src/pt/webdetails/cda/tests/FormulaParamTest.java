@@ -1,45 +1,71 @@
-package pt.webdetails.cda.tests;
+/*!
+* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* 
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 
-import java.io.File;
-import java.net.URL;
+package pt.webdetails.cda.tests;
 
 import javax.swing.table.TableModel;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Test;
+import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
+import org.pentaho.reporting.libraries.formula.FormulaContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.InitializationException;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
-import pt.webdetails.cda.settings.SettingsManager;
 
-public class FormulaParamTest extends TestCase {
-  private static final Log logger = LogFactory.getLog(SqlFormulaTest.class);
+public class FormulaParamTest extends CdaTestCase {
 
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    CdaEngine.init( new FormulaTestEnvironment() );
+  }
+
+  public static class FormulaTestEnvironment extends CdaTestEnvironment {
+
+    public FormulaTestEnvironment() throws InitializationException {
+      super(new CdaTestingContentAccessFactory());
+    }
+    public FormulaContext getFormulaContext() {
+      return new TestFormulaContext();
+    }
+  }
+
+  public static class TestFormulaContext extends DefaultFormulaContext {
+    public Object resolveReference( Object name ) {
+      if ( name instanceof String && StringUtils.startsWith( (String) name, "session:" ) ) {
+        return "thisIsAGoodValue";
+      }
+      return super.resolveReference( name );
+    }
+  }
+
+  @Test
   public void testParam()throws Exception
   {
 
-    logger.info("Building CDA settings from sample file");
+    final CdaSettings cdaSettings = parseSettingsFile( "sample-securityParam.cda" );
 
-    final SettingsManager settingsManager = SettingsManager.getInstance();
-    URL file = this.getClass().getResource("sample-securityParam.cda");
-    File settingsFile = new File(file.toURI());
-    Assert.assertTrue(settingsFile.exists());
-    
-    final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
-    //set a session parameter
-    final String testParamValue = "thisIsAGoodValue";
-    
     QueryOptions queryOptions = new QueryOptions();
 
     queryOptions.setDataAccessId("junitDataAccess");
     TableModel tableModel = cdaSettings.getDataAccess(queryOptions.getDataAccessId()).doQuery(queryOptions);
-    Assert.assertEquals(1, tableModel.getRowCount());
-    Assert.assertEquals(1, tableModel.getColumnCount());
+    assertEquals(1, tableModel.getRowCount());
+    assertEquals(1, tableModel.getColumnCount());
     String result = (String) tableModel.getValueAt(0, 0);
-    Assert.assertEquals(testParamValue, result);
+    assertEquals("thisIsAGoodValue", result);
   }
   
 }

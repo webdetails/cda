@@ -1,6 +1,15 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*!
+* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* 
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 
 package pt.webdetails.cda.utils.kettle;
 
@@ -19,7 +28,6 @@ import javax.swing.table.TableModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import java.util.Comparator;
-import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig.EntryType;
@@ -28,7 +36,7 @@ import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig.Type;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransformation;
 import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
 import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
-import pt.webdetails.cda.CdaBoot;
+import pt.webdetails.cda.CdaEngine;
 
 /**
  *
@@ -49,11 +57,10 @@ public class SortTableModel implements RowProductionManager
   }
 
 
-  public TableModel doSort(TableModel unsorted, ArrayList<String> sortBy) throws SortException
+  public TableModel doSort(TableModel unsorted, List<String> sortBy) throws SortException
   {
-    Configuration config = CdaBoot.getInstance().getGlobalConfig();
-    String sortType = config.getConfigProperty("pt.webdetails.cda.SortingType");
-    if ("DEFAULT".equals(sortType))
+    String sortType = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.SortingType" );
+    if ("DEFAULT".equals(sortType) || StringUtils.isEmpty( sortType ))
     {
       return defaultSort(unsorted, sortBy);
     }
@@ -64,7 +71,7 @@ public class SortTableModel implements RowProductionManager
   }
 
 
-  public TableModel customSort(TableModel unsorted, ArrayList<String> sortBy, String comparatorClass) throws SortException
+  public TableModel customSort(TableModel unsorted, List<String> sortBy, String comparatorClass) throws SortException
   {
     try
     {
@@ -79,7 +86,7 @@ public class SortTableModel implements RowProductionManager
   }
 
 
-  public TableModel defaultSort(TableModel unsorted, ArrayList<String> sortBy) throws SortException
+  public TableModel defaultSort(TableModel unsorted, List<String> sortBy) throws SortException
   {
 
     if (unsorted == null || unsorted.getRowCount() == 0)
@@ -100,7 +107,7 @@ public class SortTableModel implements RowProductionManager
         DynamicTransMetaConfig transMetaConfig = new DynamicTransMetaConfig(Type.EMPTY, "JoinCompoundData", null, null);
         DynamicTransConfig transConfig = new DynamicTransConfig();
 
-        transConfig.addConfigEntry(EntryType.STEP, "input", "<step><name>input</name><type>Injector</type></step>");
+        transConfig.addConfigEntry(EntryType.STEP, "input", "<step><name>input</name><type>Injector</type><copies>1</copies></step>");
         transConfig.addConfigEntry(EntryType.STEP, "sort", sort);
         transConfig.addConfigEntry(EntryType.HOP, "input", "sort");
 
@@ -132,9 +139,10 @@ public class SortTableModel implements RowProductionManager
 
   public void startRowProduction()
   {
-    String timeoutStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout");
+    String timeoutStr = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeout" );
     long timeout =  StringUtils.isEmpty(timeoutStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
-    String unitStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
+    String unitStr =
+        CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
     TimeUnit unit = StringUtils.isEmpty(unitStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
     startRowProduction(timeout, unit);
   }
@@ -163,7 +171,7 @@ public class SortTableModel implements RowProductionManager
   }
 
 
-  private String getSortXmlStep(TableModel unsorted, ArrayList<String> sortBy) throws SortException
+  private String getSortXmlStep(TableModel unsorted, List<String> sortBy) throws SortException
   {
 
     StringBuilder sortXML = new StringBuilder(

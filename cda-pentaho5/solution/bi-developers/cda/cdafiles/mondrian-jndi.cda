@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CDADescriptor>
+
+    <!-- DataSource definition. 
+	
+	Type controls what the datasource type is.
+	The connection and query controls how the data is fetched. These values
+	are specific to each access type
+
+	-->
+    <DataSources>
+        <Connection id="1" type="mondrian.jndi">
+			<Jndi>SampleData</Jndi>
+			<Catalog>mondrian:/SteelWheels</Catalog>
+			<Cube>SteelWheelsSales</Cube>
+        </Connection>
+    </DataSources>
+    <!-- DataAccess object controls the query itself
+
+	Access controls if the datasource can be seen from the outside or is to
+	be used from a Compound datasource only
+
+	-->
+    <DataAccess id="1" connection="1" type="mdx" access="public">
+		<Name>Mdx Query on SampleData - Jndi</Name>
+        <Query>
+			select {[Measures].[Sales]} ON COLUMNS,
+			NON EMPTY  [Time].Children ON ROWS
+			from [SteelWheelsSales]
+			where ([Order Status].[${status}])
+		</Query>
+        <Parameters>
+            <Parameter name="status" type="String" default="Shipped"/>
+        </Parameters>
+		<Columns>
+			<Column idx="1">
+				<Name>Year</Name>
+			</Column>
+			<Column idx="2">
+				<Name>price</Name>
+			</Column>
+			<CalculatedColumn>
+				<Name>PriceInK</Name>
+				<Formula>=[price]/1000000</Formula>
+			</CalculatedColumn>
+		</Columns>
+    </DataAccess>
+</CDADescriptor>

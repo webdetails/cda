@@ -1,6 +1,15 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*!
+* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* 
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 
 package pt.webdetails.cda;
 
@@ -13,7 +22,7 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
+// TODO: meld with std bean factory..
 public class CoreBeanFactory implements ICdaBeanFactory {
 
 
@@ -26,10 +35,14 @@ public class CoreBeanFactory implements ICdaBeanFactory {
 	}
 
 	public CoreBeanFactory(String config) {
+	  
 		context = getSpringBeanFactory(config);
+		
+
 	}
 
 	protected ConfigurableApplicationContext getSpringBeanFactory(String config) {
+	  logger.debug( "bean factory ini" );
 		try {
 			final ClassLoader cl = this.getClass().getClassLoader();
 			URL url = cl.getResource(config);
@@ -59,6 +72,7 @@ public class CoreBeanFactory implements ICdaBeanFactory {
 						return cl;
 					}
 				};
+		    logger.debug( "bean factory context" );
 				return context;
 			}
 		} catch (Exception e) {
@@ -77,7 +91,7 @@ public class CoreBeanFactory implements ICdaBeanFactory {
 		return null;
 	}
 
-	public String[] getBeanNamesForType(Class clazz) {
+	public String[] getBeanNamesForType(Class<?> clazz) {
 		return context.getBeanNamesForType(clazz);
 	}
 

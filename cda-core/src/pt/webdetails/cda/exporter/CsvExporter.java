@@ -1,13 +1,24 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*!
+* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* 
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 
 package pt.webdetails.cda.exporter;
 
-import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import pt.webdetails.cda.CdaBoot;
+
+import pt.webdetails.cda.CdaEngine;
 
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM
@@ -27,16 +38,18 @@ public class CsvExporter extends AbstractKettleExporter
   private String attachmentName;
   private String showColumnHeaders;
   
-  public CsvExporter(HashMap<String, String> extraSettings) {
+  public CsvExporter(Map<String, String> extraSettings) {
     super(extraSettings);
     
     this.separator = getSetting( 
-        CSV_SEPARATOR_SETTING, 
-        CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.exporter.csv.Separator", DEFAULT_CSV_SEPARATOR_SETTING));
+        CSV_SEPARATOR_SETTING,
+        CdaEngine.getInstance().getConfigProperty(
+            "pt.webdetails.cda.exporter.csv.Separator", DEFAULT_CSV_SEPARATOR_SETTING ) );
 
     this.enclosure = getSetting(
         CSV_QUOTE_SETTING,
-        CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.exporter.csv.Enclosure", DEFAULT_CSV_ENCLOSURE_SETTING));
+        CdaEngine.getInstance().getConfigProperty(
+            "pt.webdetails.cda.exporter.csv.Enclosure", DEFAULT_CSV_ENCLOSURE_SETTING ) );
     
     this.attachmentName = getSetting(ATTACHMENT_NAME_SETTING, "cda-export.csv");
 

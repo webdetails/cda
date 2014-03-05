@@ -1,11 +1,22 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*!
+* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* 
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
+
 package pt.webdetails.cda.dataaccess;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 import javax.swing.table.TableModel;
 
@@ -18,7 +29,6 @@ import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.BandedMDXDataFactory;
 
-import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
@@ -57,7 +67,7 @@ public class MdxDataAccess extends PREDataAccess
     super(id, name, connectionId, query);
     try
     {
-      String _mode = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.BandedMDXMode");
+      String _mode = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.BandedMDXMode" );
       if (_mode != null)
       {
         bandedMode = BANDED_MODE.valueOf(_mode);
@@ -84,7 +94,7 @@ public class MdxDataAccess extends PREDataAccess
       // Getting defaults
       try
       {
-        String _mode = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.BandedMDXMode");
+        String _mode = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.BandedMDXMode" );
         if (_mode != null)
         {
           bandedMode = BANDED_MODE.valueOf(_mode);
@@ -142,9 +152,20 @@ public class MdxDataAccess extends PREDataAccess
     mdxDataFactory.setJdbcPasswordField(mondrianConnectionInfo.getPasswordField());
     mdxDataFactory.setJdbcUserField(mondrianConnectionInfo.getUserField());
 
+    Properties baseProperties = mdxDataFactory.getBaseConnectionProperties();
+    //these properties may come enclosed in quotes, cleanQuotes removes them
+    String dynamicSchemaProcessor = cleanQuotes( baseProperties.getProperty( "DynamicSchemaProcessor" ) );
+    String useContentChecksum = cleanQuotes( baseProperties.getProperty( "UseContentChecksum" ) );
+    if ( dynamicSchemaProcessor != null) {
+      mdxDataFactory.setDynamicSchemaProcessor( dynamicSchemaProcessor );
+    }
+    if ( useContentChecksum != null ) {
+      mdxDataFactory.setUseContentChecksum( Boolean.parseBoolean( useContentChecksum ) );
+    }
+
     ICubeFileProviderSetter cubeFileProviderSetter = CdaEngine.getEnvironment().getCubeFileProviderSetter();
     cubeFileProviderSetter.setCubeFileProvider(mdxDataFactory, mondrianConnectionInfo.getCatalog());
-    
+
 
     // using deprecated method for 3.10 support
     mdxDataFactory.setQuery("query", getQuery());
@@ -278,9 +299,9 @@ public class MdxDataAccess extends PREDataAccess
 
 
   @Override
-  public ArrayList<PropertyDescriptor> getInterface()
+  public List<PropertyDescriptor> getInterface()
   {
-    ArrayList<PropertyDescriptor> properties = super.getInterface();
+    List<PropertyDescriptor> properties = super.getInterface();
     properties.add(new PropertyDescriptor("bandedMode", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     return properties;
   }
@@ -309,5 +330,13 @@ public class MdxDataAccess extends PREDataAccess
 
     return super.performRawQuery(new ParameterDataRow(columnNames, values));
 
+  }
+
+  private String cleanQuotes( String str ) {
+
+    if (  str != null && str.charAt( 0 ) == '"' && str.charAt( str.length() - 1 ) == '"' ) {
+      return str.substring( 1, str.length() - 1 );
+    }
+    return str;
   }
 }

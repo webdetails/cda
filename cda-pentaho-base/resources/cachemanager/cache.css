@@ -1,0 +1,154 @@
+@font-face {
+	font-family: 'Open Sans';
+	font-style: normal;
+	font-weight: 400;
+	src: local('Open Sans'), local('OpenSans'), url('http://themes.googleusercontent.com/static/fonts/opensans/v4/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff') format('woff');
+}
+
+@font-face {
+	font-family: 'Open Sans';
+	font-style: normal;
+	font-weight: 300;
+	src: local('Open Sans Light'), local('OpenSans-Light'), url('http://themes.googleusercontent.com/static/fonts/opensans/v4/DXI1ORHCpsQm3Vp6mXoaTXhCUOGz7vYGh680lGh-uXM.woff') format('woff');
+}
+
+body {
+	font-size: 9pt;
+	font-family: 'Open Sans', Arial, sans-serif;
+}
+
+#versionInfo {
+	float: right;
+	padding: 2px;
+}
+
+div.tableHeader {
+	font-weight: bold;
+	text-align: center;
+	border-bottom: 1px solid black;
+	border-top: 1px solid black;
+	margin-top: 10px;
+}
+
+div.section {
+	font-size: 22px;
+	margin-bottom: 8px;
+	color: #005ca4;
+}
+
+div.row, div.row.error {
+	border-top: 1px solid silver;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	text-align: center;
+	font-size: 8pt;
+}
+
+div.error {
+	border: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	background-color: #FFC9C9;
+}
+
+div.left {
+	text-align: left;
+}
+
+div.operations a {
+	display: inline-block;
+	padding-right: 5px;
+}
+
+img.button {
+	position: relative;
+	top: 2px;
+	height: 16px
+}
+
+dt {
+	float: left;
+	clear: left;
+	color: #888;
+}
+
+dt:after {
+	content: ":";
+}
+
+dd {
+	float: left;
+	font-style: italic;
+}
+
+#tabButtons {
+	position: relative;
+	top: 20px;
+	width: 910px;
+	text-align: center;
+}
+
+#tabButtons .button {
+	position: relative;
+	top: 10px;
+	padding: 5px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	font-size: 12px;
+}
+
+#clearCacheButton {
+	text-align: right;
+	background: none repeat scroll 0 0 #FFEEEE;
+	padding: 5px;
+	line-height: 35px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+#clearCacheButton:hover {
+	background: #005ca4;
+	color: #fff;
+}
+
+#tabButtons .button.selected {
+	color: #fff;
+	background: #005ca4;
+}
+
+.button {
+	cursor: pointer;
+}
+
+.link:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.dataTables_wrapper {
+	margin-bottom: 10px;
+}
+
+#cachedQueriesLines th {
+	background: none repeat scroll 0 0 #CCCCCC;
+}
+
+#cachedQueriesLines tr.even td {
+	background: none repeat scroll 0 0 #EEEEEE;
+}
+
+#cachedQueriesLines div.row.toDelete {
+	background: none repeat scroll 0 0 #FFEEEE;
+}
+
+.queryCol {
+	overflow: auto;
+	max-height: 100px;
+	cursor: pointer;
+}
+
+.queryTable {
+	overflow: auto;
+}

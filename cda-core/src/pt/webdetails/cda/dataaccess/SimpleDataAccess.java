@@ -1,6 +1,15 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*!
+* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* 
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 
 package pt.webdetails.cda.dataaccess;
 
@@ -17,8 +26,8 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 
-import pt.webdetails.cda.CdaBoot;
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.cache.TableCacheKey;
 import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
 import pt.webdetails.cda.connections.Connection;
@@ -170,16 +179,22 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     // put the copy into the cache ...
     if (isCacheEnabled())
     {
-      ExtraCacheInfo cInfo = new ExtraCacheInfo(this.getCdaSettings().getId(), queryOptions.getDataAccessId(), queryTime, tableModelCopy);
-      getCdaCache().putTableModel(key, tableModelCopy, getCacheDuration(), cInfo);
+      ExtraCacheInfo cInfo =
+          new ExtraCacheInfo( this.getCdaSettings().getId(), getId(), queryTime, tableModelCopy );
+      IQueryCache cache = getCdaCache();
+      if ( cache != null ) {
+        cache.putTableModel( key, tableModelCopy, getCacheDuration(), cInfo );
+      }
+      else {
+        logger.error("Cache enabled but no cache available.");
+      }
     }
 
     // and finally return the copy.
     return tableModelCopy;
   }
 
-
-  private List<Parameter> getFilledParameters(final QueryOptions queryOptions) throws QueryException
+  public List<Parameter> getFilledParameters(final QueryOptions queryOptions) throws QueryException
   {
 
     // Get parameters from definition and apply their values
@@ -330,9 +345,9 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
 
   @Override
-  public ArrayList<PropertyDescriptor> getInterface()
+  public List<PropertyDescriptor> getInterface()
   {
-    ArrayList<PropertyDescriptor> properties = super.getInterface();
+    List<PropertyDescriptor> properties = super.getInterface();
     properties.add(new PropertyDescriptor("query", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
     properties.add(new PropertyDescriptor("connection", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
     properties.add(new PropertyDescriptor("cache", PropertyDescriptor.Type.BOOLEAN, PropertyDescriptor.Placement.ATTRIB));
@@ -343,7 +358,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
   private static int getQueryTimeThresholdFromConfig(int defaultValue)
   {
-    String strVal = CdaBoot.getInstance().getGlobalConfig().getConfigProperty(QUERY_TIME_THRESHOLD_PROPERTY);
+    String strVal = CdaEngine.getInstance().getConfigProperty( QUERY_TIME_THRESHOLD_PROPERTY );
     if (!StringUtils.isEmpty(strVal))
     {
       try

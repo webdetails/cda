@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CDADescriptor>
+
+    <!-- DataSource definition. 
+	
+	Type controls what the datasource type is.
+	The connection and query controls how the data is fetched. These values
+	are specific to each access type
+
+	-->
+    <DataSources>
+    </DataSources>
+    <!-- DataAccess object controls the query itself
+
+	Access controls if the datasource can be seen from the outside or is to
+	be used from a Compound datasource only
+
+	-->
+  <DataAccess id="2" type="reflection" access="public">
+		<Name>Sample query on SteelWheelsSales</Name>
+        <Query><![CDATA[pt.webdetails.cda.tests.utils.StaticDataFactorySample#createSubQuery(status)]]></Query>
+        <Parameters>
+            <Parameter name="status" type="Integer" default="In Process"/>
+        </Parameters>
+    </DataAccess>
+</CDADescriptor>

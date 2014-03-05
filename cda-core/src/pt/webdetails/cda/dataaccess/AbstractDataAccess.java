@@ -1,6 +1,15 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*!
+* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* 
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 
 package pt.webdetails.cda.dataaccess;
 
@@ -20,12 +29,10 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 
 import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cda.cache.EHCacheQueryCache;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
-import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
@@ -221,11 +228,13 @@ public abstract class AbstractDataAccess implements DataAccess
     return cache;
   }
 
-  @Deprecated
-  public static synchronized net.sf.ehcache.Cache getCache()
-  {
-    return ((EHCacheQueryCache) getCdaCache()).getCache();
-  }
+//  /**
+//   * @deprecated use {@link #getCdaCache()}
+//   */
+//  public static synchronized net.sf.ehcache.Cache getCache()
+//  {
+//    return ((EHCacheQueryCache) getCdaCache()).getCache();
+//  }
 
   public static synchronized void shutdownCache(){
     if(cache != null){
@@ -256,7 +265,7 @@ public abstract class AbstractDataAccess implements DataAccess
      *  1. Sort
      *  2. Show only the output columns
      *  3. Paginate
-     *  4. Call the appropriate exporter
+     *  
      *
      */
 
@@ -278,7 +287,7 @@ public abstract class AbstractDataAccess implements DataAccess
     }
   }
 
-  public TableModel listParameters(final DiscoveryOptions discoveryOptions)
+  public TableModel listParameters()
   {
 
     return TableModelUtils.dataAccessParametersToTableModel(getParameters());
@@ -363,14 +372,6 @@ public abstract class AbstractDataAccess implements DataAccess
     return access;
   }
 
-  /**
-   * @deprecated use {@link #isCacheEnabled()} instead
-   */
-  public boolean isCache()
-  {
-    return cacheEnabled;
-  }
-  
   public boolean isCacheEnabled(){
     return cacheEnabled;
   }
@@ -446,13 +447,13 @@ public abstract class AbstractDataAccess implements DataAccess
   }
 
 
-  public ArrayList<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors()
+  public List<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors()
   {
     return this.getDataAccessConnectionDescriptors();
   }
 
 
-  public ArrayList<PropertyDescriptor> getInterface()
+  public List<PropertyDescriptor> getInterface()
   {
 
     ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
@@ -483,6 +484,16 @@ public abstract class AbstractDataAccess implements DataAccess
   public String getTypeForFile()
   {
     return this.getClass().toString().toLowerCase().replaceAll("class pt.webdetails.cda.dataaccess.(.*)connection", "$1");
+  }
+  
+  public boolean hasIterableParameterValues(final QueryOptions queryOptions) throws QueryException {
+      for (Parameter param : queryOptions.getParameters()) {
+          String value = param.getStringValue();
+          if (value != null && value.startsWith(PARAM_ITERATOR_BEGIN)) {
+              return true;
+          }
+      }
+      return false;
   }
 
 

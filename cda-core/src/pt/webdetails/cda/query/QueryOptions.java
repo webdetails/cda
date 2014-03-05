@@ -1,22 +1,31 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*!
+* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* 
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 
 package pt.webdetails.cda.query;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import pt.webdetails.cda.dataaccess.Parameter;
+import pt.webdetails.cda.exporter.ExportOptions;
 import pt.webdetails.cda.exporter.ExporterEngine;
 
 /**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 4, 2010
- * Time: 5:25:53 PM
+ * 
  */
-public class QueryOptions implements Cloneable
+public class QueryOptions implements ExportOptions, IQueryArguments, Cloneable
 {
 
   private String dataAccessId;
@@ -24,9 +33,9 @@ public class QueryOptions implements Cloneable
   private boolean paginate;
   private int pageSize;
   private int pageStart;
-  private ArrayList<String> sortBy;
-  private ArrayList<Parameter> parameters;
-  private HashMap<String, String> extraSettings;
+  private List<String> sortBy;
+  private List<Parameter> parameters;
+  private Map<String, String> extraSettings;
   private String outputType;
   private boolean cacheBypass;
 
@@ -56,7 +65,6 @@ public class QueryOptions implements Cloneable
     this.paginate = paginate;
   }
 
-
   public int getPageSize()
   {
     return pageSize;
@@ -67,7 +75,6 @@ public class QueryOptions implements Cloneable
   {
     this.pageSize = pageSize;
   }
-
 
   public int getPageStart()
   {
@@ -81,19 +88,18 @@ public class QueryOptions implements Cloneable
   }
 
 
-  public ArrayList<String> getSortBy()
+  public List<String> getSortBy()
   {
     return sortBy;
   }
 
 
-  public void setSortBy(final ArrayList<String> sortBy)
+  public void setSortBy(final List<String> sortBy)
   {
     this.sortBy = sortBy;
   }
 
-
-  public ArrayList<Parameter> getParameters()
+  public List<Parameter> getParameters()
   {
     return parameters;
   }
@@ -129,12 +135,6 @@ public class QueryOptions implements Cloneable
 
   }
 
-
-  /**
-   * 
-   * @param name
-   * @return null if not found
-   */
   public Parameter getParameter(final String name)
   {
 
@@ -199,7 +199,7 @@ public class QueryOptions implements Cloneable
   }
 
 
-  public HashMap<String, String> getExtraSettings()
+  public Map<String, String> getExtraSettings()
   {
     return extraSettings;
   }
@@ -218,7 +218,7 @@ public class QueryOptions implements Cloneable
 
 
   @Override
- public Object clone() throws CloneNotSupportedException {
+  public Object clone() throws CloneNotSupportedException {
     return super.clone();
   }
 

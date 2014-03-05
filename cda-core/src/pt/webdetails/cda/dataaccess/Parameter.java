@@ -1,6 +1,15 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*!
+* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* 
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 
 package pt.webdetails.cda.dataaccess;
 
@@ -122,7 +131,7 @@ public class Parameter implements java.io.Serializable {
         if (Object[].class.isAssignableFrom(obj.getClass())) {
           if (Double[].class.isAssignableFrom(obj.getClass())) {
             return NUMERIC_ARRAY;
-          } else if (Integer[].class.isAssignableFrom(obj.getClass())) {
+          } else if (Long[].class.isAssignableFrom(obj.getClass())) {
             return INTEGER_ARRAY;
           } else if (Date[].class.isAssignableFrom(obj.getClass())) {
             return DATE_ARRAY;
@@ -131,7 +140,7 @@ public class Parameter implements java.io.Serializable {
           }
         } else if (Double.class.isAssignableFrom(obj.getClass())) {
           return NUMERIC;
-        } else if (Integer.class.isAssignableFrom(obj.getClass())) {
+        } else if (Long.class.isAssignableFrom(obj.getClass())) {
           return INTEGER;
         } else if (Date.class.isAssignableFrom(obj.getClass())) {
           return DATE;
@@ -200,9 +209,14 @@ public class Parameter implements java.io.Serializable {
   public Object getValue() throws InvalidParameterException
   {
     Object objValue = value == null ? getDefaultValue() : value;
-	
-	if(objValue instanceof String[] && (Type.INTEGER_ARRAY.equals(getType())) ||  Type.NUMERIC_ARRAY.equals(getType())){
-    	objValue = stringArrayToString((String[])value, getSeparator());
+
+    if ( objValue instanceof Object[] && ( Type.INTEGER_ARRAY.equals( getType() ) )
+        || Type.NUMERIC_ARRAY.equals( getType() ) ) {
+      ArrayList<String> parsed = new ArrayList<String>();
+      for ( Object obj : (Object[]) objValue ) {
+        parsed.add( obj.toString() );
+      }
+      objValue = stringArrayToString( parsed.toArray(new String[parsed.size()]), getSeparator() );
     }
 
     if(objValue instanceof String){//may be a string or a parsed value
@@ -244,7 +258,7 @@ public class Parameter implements java.io.Serializable {
       case STRING:
         return localValue;
       case INTEGER:
-        return Integer.parseInt(localValue);
+        return Long.parseLong(localValue);
       case NUMERIC:
         return Double.parseDouble(localValue);
       case DATE:
@@ -269,7 +283,7 @@ public class Parameter implements java.io.Serializable {
       case DATE_ARRAY:
         return parseToArray(localValue, Type.DATE, new Date[0]);
       case INTEGER_ARRAY:
-        return parseToArray(localValue, Type.INTEGER, new Integer[0]);
+        return parseToArray(localValue, Type.INTEGER, new Long[0]);
       case NUMERIC_ARRAY:
         return parseToArray(localValue, Type.NUMERIC, new Double[0]);
       default:
@@ -350,6 +364,10 @@ public class Parameter implements java.io.Serializable {
     } else if (type != null) {
       switch (type) {
         case STRING_ARRAY://csvTokenizer compatible
+
+          if(value instanceof List){
+            value = ((List) value).toArray();
+          }
           
           if(!(value instanceof String[]) && (value instanceof Object[])){
             Object[] oldVal = (Object[]) value;

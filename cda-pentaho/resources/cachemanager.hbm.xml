@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-  <class name="pt.webdetails.cda.cache.Query" table="cda_cacheControl">
+  <class name="pt.webdetails.cda.cache.scheduler.Query" table="cda_cacheControl">
     <cache usage="read-write"/>
     <id column="queryId" length="100" name="id" type="long" unsaved-value="null">
       <generator class="native"/>
@@ -25,9 +25,9 @@
     <list cascade="all" lazy="false" name="parameters">
       <key column="paramid"/>
       <list-index column="idx"/>
-      <one-to-many class="pt.webdetails.cda.cache.CachedParam"/>
+      <one-to-many class="pt.webdetails.cda.cache.scheduler.CachedParam"/>
     </list>
-    <subclass discriminator-value="CACHED" name="pt.webdetails.cda.cache.CachedQuery">
+    <subclass discriminator-value="CACHED" name="pt.webdetails.cda.cache.scheduler.CachedQuery">
       <property name="userName" type="string">
         <column name="uname"/>
       </property>
@@ -44,9 +44,9 @@
         <column name="success"/>
       </property>
     </subclass>
-    <subclass discriminator-value="UNCACHED" name="pt.webdetails.cda.cache.UncachedQuery"/>
+    <subclass discriminator-value="UNCACHED" name="pt.webdetails.cda.cache.scheduler.UncachedQuery"/>
   </class>
-  <class name="pt.webdetails.cda.cache.CachedParam" table="cda_cachedParams">
+  <class name="pt.webdetails.cda.cache.scheduler.CachedParam" table="cda_cachedParams">
     <id column="id" name="id" type="long" unsaved-value="0">
       <generator class="increment"/>
     </id>

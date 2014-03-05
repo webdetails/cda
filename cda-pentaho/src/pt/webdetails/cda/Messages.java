@@ -1,6 +1,15 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*!
+* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* 
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 
 package pt.webdetails.cda;
 
@@ -14,13 +23,10 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 import org.apache.commons.io.IOUtils;
-import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.messages.MessageUtil;
 
-import pt.webdetails.cpf.repository.PentahoRepositoryAccess;
 
 /**
  * Utility class for internationalization
@@ -35,11 +41,10 @@ public class Messages {
     Locale locale = LocaleHelper.getLocale();
     ResourceBundle bundle = Messages.locales.get(locale);
     if (bundle == null) {
-      IPentahoSession session = new StandaloneSession("dashboards messages"); //$NON-NLS-1$
+//      IPentahoSession session = new StandaloneSession("dashboards messages"); //$NON-NLS-1$
       InputStream in = null;
-      String propertiesFile = "system/" + CdaContentGenerator.PLUGIN_NAME + "/messages.properties";//$NON-NLS-1$ //$NON-NLS-2$
       try {
-        in = PentahoRepositoryAccess.getRepository(session).getResourceInputStream(propertiesFile);  
+        in = CdaEngine.getRepo().getPluginSystemReader( null ).getFileInputStream( "messages.properties" ); //$NON-NLS-1$
         bundle = new PropertyResourceBundle(in);
         Messages.locales.put(locale, bundle);
       } catch (Exception e) {

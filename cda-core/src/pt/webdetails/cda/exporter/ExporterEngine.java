@@ -1,11 +1,21 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*!
+* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* 
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 
 package pt.webdetails.cda.exporter;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -24,8 +34,7 @@ public class ExporterEngine
 {
 
   private static final Log logger = LogFactory.getLog(ExporterEngine.class);
-  private static ExporterEngine _instance;
-  
+
   public enum OutputType{
   	
   	JSON("json"),
@@ -51,20 +60,18 @@ public class ExporterEngine
 
   public ExporterEngine()
   {
-    logger.info("Initializing CdaExporterEngine");
-    init();
 
   }
 
   
-  public Exporter getExporter(final String outputType) throws UnsupportedExporterException
+  public TableExporter getExporter(final String outputType) throws UnsupportedExporterException
   {
     return getExporter(outputType, null);
   }
 
-  public Exporter getExporter(final String outputType, final HashMap<String, String> extraSettings) throws UnsupportedExporterException
+  public TableExporter getExporter(final String outputType, final Map<String, String> extraSettings) throws UnsupportedExporterException
   {
-    Exporter exporter = getExporter( OutputType.parse(outputType), extraSettings);
+	TableExporter exporter = getExporter( OutputType.parse(outputType), extraSettings);
     if(exporter != null)
     {
       return exporter;
@@ -84,7 +91,7 @@ public class ExporterEngine
         HashMap.class
       };
 
-      exporter = (Exporter) clazz.getConstructor(params).newInstance(new Object[]
+      exporter = (TableExporter) clazz.getConstructor(params).newInstance(new Object[]
               {
                 extraSettings
               });
@@ -101,7 +108,7 @@ public class ExporterEngine
 
   }
   
-  private Exporter getExporter(OutputType type, HashMap<String, String> extraSettings)
+  private TableExporter getExporter(OutputType type, Map<String, String> extraSettings)
   {
     if(type == null) return null;
     
@@ -123,18 +130,4 @@ public class ExporterEngine
     }
   }
 
-  private void init()
-  {
-  }
-
-  public static synchronized ExporterEngine getInstance()
-  {
-
-    if (_instance == null)
-    {
-      _instance = new ExporterEngine();
-    }
-
-    return _instance;
-  }
 }

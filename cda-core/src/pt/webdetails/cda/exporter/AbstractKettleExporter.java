@@ -1,6 +1,15 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*!
+* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* 
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 
 package pt.webdetails.cda.exporter;
 
@@ -21,6 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+
 import javax.swing.table.TableModel;
 
 import org.apache.commons.io.IOUtils;
@@ -29,11 +39,11 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.util.StringUtil;
 
-import pt.webdetails.cda.CdaBoot;
+import pt.webdetails.cda.CdaEngine;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransformation;
-import pt.webdetails.cda.utils.kettle.RowMetaToTableModel;
+import pt.webdetails.cda.utils.kettle.RowCountListener;
 import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
 import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
 
@@ -76,9 +86,10 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
 
   public void startRowProduction()
   {
-    String timeoutStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeout");
+    String timeoutStr = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeout" );
     long timeout = StringUtil.isEmpty(timeoutStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
-    String unitStr = CdaBoot.getInstance().getGlobalConfig().getConfigProperty("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
+    String unitStr =
+        CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
     TimeUnit unit = StringUtil.isEmpty(unitStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
     startRowProduction(timeout, unit);
   }
@@ -107,7 +118,6 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
 
   public void export(final OutputStream out, final TableModel tableModel) throws ExporterException
   {
-    TableModel output = null;
     inputCallables.clear();
 
     try
@@ -116,7 +126,7 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
       final DynamicTransMetaConfig transMetaConfig = new DynamicTransMetaConfig(DynamicTransMetaConfig.Type.EMPTY, "Exporter", null, null);
       final DynamicTransConfig transConfig = new DynamicTransConfig();
 
-      transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP, "input", "<step><name>input</name><type>Injector</type></step>");
+      transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP, "input", "<step><name>input</name><type>Injector</type><copies>1</copies></step>");
       transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP, "export", getExportStepDefinition("export"));
 
       transConfig.addConfigEntry(DynamicTransConfig.EntryType.HOP, "input", "export");
@@ -126,8 +136,8 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
       inputCallables.add(input.getCallableRowProducer(tableModel, true));
 
 
-      RowMetaToTableModel outputListener = new RowMetaToTableModel(false, true, false);
-      transConfig.addOutput("export", outputListener);
+      RowCountListener countListener = new RowCountListener();
+      transConfig.addOutput("export", countListener);
 
       DynamicTransformation trans = new DynamicTransformation(transConfig, transMetaConfig);
       trans.executeCheckedSuccess(null, null, this);
@@ -136,10 +146,7 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
       // Transformation executed ok, let's return the file
       copyFileToOutputStream(out);
 
-      output = outputListener.getRowsWritten();
-      if(output != null){
-        logger.debug(output.getRowCount() + " rows written.");
-      }
+      logger.debug(countListener.getRowsWritten() + " rows written.");
     }
     catch (KettleException e)
     {
@@ -161,7 +168,7 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
   }
 
   
-  private void copyFileToOutputStream(OutputStream os) throws IOException
+  protected void copyFileToOutputStream(OutputStream os) throws IOException
   {
     
     File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + "." + getType());

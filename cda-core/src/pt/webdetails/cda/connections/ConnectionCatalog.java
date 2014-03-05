@@ -1,15 +1,24 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*!
+* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* 
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 
 package pt.webdetails.cda.connections;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -18,7 +27,9 @@ import org.dom4j.io.SAXReader;
 
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
-import pt.webdetails.cpf.repository.IRepositoryFile;
+import pt.webdetails.cpf.repository.api.IBasicFile;
+import pt.webdetails.cpf.repository.api.IReadAccess;
+import pt.webdetails.cpf.repository.util.RepositoryHelper;
 /**
  *
  * @author pdpi
@@ -29,6 +40,9 @@ public class ConnectionCatalog {
 
     SQL, MQL, MDX, OLAP4J, SCRIPTING, NONE, XPATH, KETTLE
   };
+  
+  private static final String CONN_PATH = "resources/components/connections";
+  
   private static ConnectionCatalog _instance;
   private static Log logger = LogFactory.getLog(ConnectionCatalog.class);
   private HashMap<String, ConnectionInfo> connectionPool;
@@ -40,15 +54,15 @@ public class ConnectionCatalog {
   private void getConnections() {
     connectionPool = new HashMap<String, ConnectionInfo>();
 
-    List<IRepositoryFile> files = CdaEngine.getEnvironment().getComponentsFiles();
-    
+    IReadAccess connectionsReader = CdaEngine.getRepo().getPluginSystemReader(CONN_PATH);
+    List<IBasicFile> files = connectionsReader.listFiles("", RepositoryHelper.getSimpleExtensionFilter("xml"));
     if (files != null && files.size() > 0) {
-      for (IRepositoryFile file : files) {
-        ByteArrayInputStream bais = null;
+      for (IBasicFile file : files) {
+        InputStream in = null;
         try {
-          bais = new ByteArrayInputStream(file.getData());
+          in = file.getContents();
           SAXReader reader = new SAXReader();
-          Document doc = reader.read(bais);
+          Document doc = reader.read(in);
           // To figure out whether the component is generic or has a special implementation,
           // we directly look for the class override in the definition
           Node implementation = doc.selectSingleNode("/Connection/Implementation");
@@ -65,10 +79,7 @@ public class ConnectionCatalog {
         } catch (Exception e) {
           logger.error(e);
         } finally {
-          if (bais != null)
-            try {
-              bais.close();
-            } catch (IOException ioe) {}
+          IOUtils.closeQuietly( in );
         }
       }
     }

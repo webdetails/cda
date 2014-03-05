@@ -1,0 +1,181 @@
+@font-face {
+	font-family: 'Open Sans';
+	font-style: normal;
+	font-weight: 400;
+	src: local('Open Sans'), local('OpenSans'), url('http://themes.googleusercontent.com/static/fonts/opensans/v4/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff') format('woff');
+}
+
+@font-face {
+	font-family: 'Open Sans';
+	font-style: normal;
+	font-weight: 300;
+	src: local('Open Sans Light'), local('OpenSans-Light'), url('http://themes.googleusercontent.com/static/fonts/opensans/v4/DXI1ORHCpsQm3Vp6mXoaTXhCUOGz7vYGh680lGh-uXM.woff') format('woff');
+}
+
+body {
+	font-family: 'Open Sans', Arial, sans-serif;
+	font-size: 10pt;
+}
+
+div.header {
+	height: 80px;
+	margin-bottom: 8px;
+}
+
+.cdalogo {
+	height: auto;
+	background: none;
+}
+
+/*
+ * jqModal window formatting
+ */
+
+.jqmWindow {
+	display: none;
+	position: fixed;
+	top: 17%;
+	left: 50%;
+	margin-left: -300px;
+	width: 620px;
+	background-color: #f5f5f5;
+	color: #333;
+	border: 1px solid #aaa !important;
+	padding: 0;
+	text-size: 10pt;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	overflow: hidden;
+}
+
+.helpWindow {
+	font-size: 10pt;
+}
+
+dt {
+	font-weight: bold;
+}
+dd {
+}
+/*
+ * Dialog Formatting
+ */
+
+.dialog {
+	font-family: 'Open Sans', Arial, sans-serif;
+}
+.dialogTitle {
+	width: 585px;
+	margin-left: -12px;
+	margin-top: -10px;
+	margin-bottom: 20px;
+	padding: 3px;
+	padding-left: 10px;
+	font-size: 20px;
+	color: #005ca4;
+}
+
+.dialogAction {
+	font-size: 13pt;
+	text-align: right;
+}
+
+.dialogToggle {
+	font-size: 10px;
+	line-height: 22px;
+	float: right;
+	padding-right: 8px;
+	color: #4d94e0;
+}
+
+.dialogToggle:hover {
+	color: #005ca4;
+}
+.dialogText {
+}
+
+select#periodType {
+	float: left;
+	height: 30px;
+	line-height: 30px;
+	font-size: 12px;
+	box-shadow: none;
+	padding: 5px;
+	width: 200px;
+	box-shadow: inset 0px 0px 5px #ccc;
+	margin-right: 5px;
+	border: none;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+select#periodType option {
+	height: 20px;
+	padding: 5px;
+	background: #f5f5f5;
+	color: #222;
+}
+
+.jqmWindow span {
+	line-height: 40px;
+	font-size: 11px;
+}
+
+.jqmWindow input {
+	border: none;
+	padding: 5px;
+	background-color: #f5f5f5;
+	width: 125px;
+	height: 20px;
+	/*text-align: center;*/
+	background-image: none;
+	color: #333;
+	font-size: 12px;
+	box-shadow: inset 0px 0px 5px #ccc;
+	margin: 0 5px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.jqmWindow input:hover {
+	background: #eee;
+	cursor: text;
+}
+
+select#periodType:hover {
+	background: #eee;
+	cursor: pointer;
+}
+
+a.jqmConfirm:link, a.jqmConfirm:visited, a.jqmClose:link, a.jqmClose:visited {
+	height: 20px;
+	padding: 5px;
+	background: #ddd;
+	width: 100px;
+	display: inline-block;
+	text-align: center;
+	line-height: 20px;
+	text-decoration: none;
+	color: #222;
+	border: none;
+	margin-top: 20px;
+	margin-left: 10px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+a.jqmConfirm:hover, a.jqmClose:hover {
+	background: #005ca4;
+	color: #fff;
+}
+
+a.jqmConfirm:active, a.jqmClose:active {
+	box-shadow: inset 0px 0px 2px #333;
+}

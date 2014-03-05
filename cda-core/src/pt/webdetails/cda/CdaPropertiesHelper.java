@@ -1,10 +1,18 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*!
+* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* 
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 
 package pt.webdetails.cda;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -15,10 +23,9 @@ public class CdaPropertiesHelper {
   static Log logger = LogFactory.getLog(Parameter.class);
   
   public static String getStringProperty(String key, String defaultValue){
-    String value = CdaBoot.getInstance().getGlobalConfig().getConfigProperty(key);
-    return StringUtils.isEmpty(value) ? defaultValue : value;
+    return CdaEngine.getInstance().getConfigProperty( key, defaultValue );
   }
-  
+
   public static boolean getBoolProperty(String key, boolean defaultValue){
     String value = getStringProperty(key, null);
     if(value != null){

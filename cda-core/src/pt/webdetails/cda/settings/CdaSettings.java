@@ -1,6 +1,15 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*!
+* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* 
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 
 package pt.webdetails.cda.settings;
 
@@ -45,7 +54,6 @@ import pt.webdetails.cda.dataaccess.SqlDataAccess;
 import pt.webdetails.cda.dataaccess.UnionCompoundDataAccess;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
 import pt.webdetails.cda.dataaccess.XPathDataAccess;
-import pt.webdetails.cda.discovery.DiscoveryOptions;
 import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.Util;
 import pt.webdetails.cda.xml.DomTraversalHelper;
@@ -126,7 +134,7 @@ public class CdaSettings {
     dataAccessMap = new HashMap<String, DataAccess>();
   }
 
-  public TableModel listQueries(DiscoveryOptions discoveryOptions) {
+  public TableModel listQueries() {
     return TableModelUtils.dataAccessMapToTableModel(dataAccessMap);
   }
 

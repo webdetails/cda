@@ -1,6 +1,15 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*!
+* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* 
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 
 package pt.webdetails.cda.utils.mondrian;
 
@@ -26,11 +35,8 @@ import org.pentaho.reporting.engine.classic.core.wizard.DataAttributes;
 import org.pentaho.reporting.engine.classic.core.wizard.DefaultConceptQueryMapper;
 import org.pentaho.reporting.engine.classic.core.wizard.DefaultDataAttributes;
 import org.pentaho.reporting.engine.classic.core.wizard.EmptyDataAttributes;
-import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DenormalizedMDXTableModel;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.MDXMetaDataCellAttributes;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.MDXMetaDataMemberAttributes;
-import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.MondrianUtil;
-import org.pentaho.reporting.libraries.base.util.FastStack;
 
 /**
  * This tablemodel performs some preprocessing to get multi-dimensional resultset (with row and column headers) into a
@@ -42,13 +48,12 @@ import org.pentaho.reporting.libraries.base.util.FastStack;
  *
  * @author : Thomas Morgner
  */
-@SuppressWarnings(
-{
-  "UnnecessaryUnboxing"
-})
+
 public class CompactBandedMDXTableModel extends AbstractTableModel
         implements CloseableTableModel, MetaTableModel
 {
+
+  private static final long serialVersionUID = 1L;
 
   private static final Log logger = LogFactory.getLog(CompactBandedMDXTableModel.class);
   private boolean noMeasures;
@@ -77,7 +82,9 @@ public class CompactBandedMDXTableModel extends AbstractTableModel
     this.rowCount = 0;
     this.axesSize = new int[axes.length];
     final int[] axesMembers = new int[axes.length];
+    @SuppressWarnings( "unchecked" )
     final List<Dimension>[] dimensionsForMembersPerAxis = new List[axes.length];
+    @SuppressWarnings( "unchecked" )
     final List<Integer>[] membersPerAxis = new List[axes.length];
 
     // process the column axis first ..
@@ -116,12 +123,12 @@ public class CompactBandedMDXTableModel extends AbstractTableModel
           final Dimension dimension = m.getDimension();
           int hierarchyLevelCount = 1; // Originally was 0
 
-          // Change compared to BandedMDXTM - we don't want all levels
-          while (false && m != null)
-          {
-            m = m.getParentMember();
-            hierarchyLevelCount += 1;
-          }
+//          // Change compared to BandedMDXTM - we don't want all levels
+//          while (false && m != null)
+//          {
+//            m = m.getParentMember();
+//            hierarchyLevelCount += 1;
+//          }
 
           if (memberList.size() <= positionIndex)
           {
@@ -183,7 +190,7 @@ public class CompactBandedMDXTableModel extends AbstractTableModel
     int columnIndex = 0;
     int dimColIndex = 0;
 
-    final FastStack memberStack = new FastStack();
+//    final FastStack memberStack = new FastStack();
     for (int axesIndex = axes.length - 1; axesIndex >= 1; axesIndex -= 1)
     {
       final Axis axis = axes[axesIndex];
@@ -194,7 +201,7 @@ public class CompactBandedMDXTableModel extends AbstractTableModel
         final Position position = positions.get(positionsIndex);
         for (int positionIndex = 0; positionIndex < position.size(); positionIndex++)
         {
-          memberStack.clear();
+//          memberStack.clear();
           Member m = position.get(positionIndex);
           // Get member's hierarchy
           final String name = m.getHierarchy().getName();

@@ -1,6 +1,15 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*!
+* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* 
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 
 package pt.webdetails.cda.cache;
 
@@ -60,7 +69,8 @@ public class TableCacheKey implements Serializable
 
       this.connectionHash = connection.hashCode();
       this.query = query;
-      this.parameters = parameters.toArray(new Parameter[parameters.size()]); //createParametersFromParameterDataRow(parameterDataRow);
+      this.parameters = parameters.toArray(new Parameter[parameters.size()]);
+      sortParameters( this.parameters );
       this.extraCacheKey = extraCacheKey;
     }
 
@@ -164,9 +174,9 @@ public class TableCacheKey implements Serializable
     /**
      * @see TableCacheKey#getTableCacheKeyAsString(TableCacheKey)
      */
-    public static TableCacheKey getTableCacheKeyFromString(String encodedCacheKey) throws IOException, UnsupportedEncodingException, ClassNotFoundException {
+    public static TableCacheKey getTableCacheKeyFromString(String encodedCacheKey) throws IOException, ClassNotFoundException {
       ByteArrayInputStream keyStream = new ByteArrayInputStream( Base64.decodeBase64(encodedCacheKey.getBytes()));
-      ObjectInputStream objStream = new ObjectInputStream(keyStream);   
+      ObjectInputStream objStream = new ObjectInputStream(keyStream);
       TableCacheKey cacheKey = new TableCacheKey();
       cacheKey.readObject(objStream);
       return cacheKey;
@@ -224,7 +234,15 @@ public class TableCacheKey implements Serializable
           "\tParameters: [" + StringUtils.join(getParameters(), ", ") + "]\n" +
           "\tExtra: [" + getExtraCacheKey() + "]\n";
     }
-    
+
+    private static void sortParameters( Parameter[] params ) {
+      Arrays.sort(params, new Comparator<Parameter> () {
+        public int compare(Parameter o1, Parameter o2) {
+         return o1.getName().compareTo(o2.getName()); 
+        }
+      });
+    }
+
     /**
      * for serialization
      **/
@@ -241,11 +259,7 @@ public class TableCacheKey implements Serializable
       }
       Parameter[] params = parameters.toArray(new Parameter[parameters.size()]);
       //so comparisons will not fail when parameters are added in different order
-      Arrays.sort(params, new Comparator<Parameter> () {
-        public int compare(Parameter o1, Parameter o2) {
-         return o1.getName().compareTo(o2.getName()); 
-        }
-      });
+      sortParameters( params );
       return params;
     }
    
