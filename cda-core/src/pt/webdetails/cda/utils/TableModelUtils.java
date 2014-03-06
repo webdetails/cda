@@ -340,7 +340,17 @@ public class TableModelUtils
     }
     final int rowCount = t.getRowCount();
     logger.debug(rowCount == 0 ? "No data found" : "Found " + rowCount + " rows");
-
+    //if the first row has no values, the class will be Object, however, next rows can have values, we evaluate those
+    for ( int i = 0; i < colTypes.length; i++ ) {
+      if ( colTypes[i] == Object.class ) {
+        for ( int k = 0; k < t.getRowCount(); k++ ) {
+          if ( t.getValueAt( k, i ) != null ) {
+            colTypes[i] = t.getValueAt( k, i ).getClass();
+            break;
+          }
+        }
+      }
+    }
 
     final TypedTableModel typedTableModel = new TypedTableModel(colNames, colTypes, rowCount);
     for (int r = 0; r < rowCount; r++)
