@@ -60,7 +60,6 @@ public class PentahoCdaEnvironment extends PentahoBaseCdaEnvironment implements 
             return dataFactory;
         }
 
-        @Override
         public FormulaContext getFormulaContext() {
           return null;
         }
