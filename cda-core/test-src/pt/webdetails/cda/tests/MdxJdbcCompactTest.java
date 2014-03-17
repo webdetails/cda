@@ -13,11 +13,13 @@
 
 package pt.webdetails.cda.tests;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
+import junit.framework.Assert;
 
 /**
  * Created by IntelliJ IDEA.
@@ -55,6 +57,31 @@ public class MdxJdbcCompactTest extends CdaTestCase
     queryOptions.setDataAccessId("4");
     doQuery(cdaSettings, queryOptions);
 
+  }
+  
+  public void testMdxExceptionHandling() throws Exception
+  {
+
+    final CdaSettings cdaSettings = parseSettingsFile("sample-mondrian-compact.cda");
+
+    QueryOptions queryOptions = new QueryOptions();
+    queryOptions.setOutputType("json");
+    queryOptions.addParameter("status", "Shipperyship");
+
+    logger.info("Doing query 1");
+    queryOptions.setDataAccessId("1");
+    boolean failed = false;
+    try {
+    	doQuery(cdaSettings, queryOptions);
+    } catch (Exception e) {
+		String msg = ExceptionUtils.getRootCauseMessage(e.getCause());
+		Assert.assertEquals("MondrianException: Mondrian Error:MDX object '[Order Status].[Shipperyship]' not found in cube 'SteelWheelsSales'", msg);
+		failed = true;
+    }
+    // Did it fail as expected?
+    Assert.assertEquals(failed, true);
+    
+    
   }
 
   /*

@@ -160,12 +160,8 @@ public abstract class PREDataAccess extends SimpleDataAccess
     }
     catch (ReportDataFactoryException e)
     {
-    	Throwable parent = e.getCause();
-    	Throwable lastKnownParent = null;
-    	for (int i = 0; i < 10 && parent !=  null && !parent.equals(lastKnownParent); i++) {
-	    		lastKnownParent = parent;
-	    		parent = parent.getCause();
-    	}
+    	// break this and pstoellberger will haunt you!
+    	Throwable lastKnownParent = e.getParentThrowable();
     	if (lastKnownParent != null) {
     		throw new QueryException(lastKnownParent.getMessage(), lastKnownParent);
     	}
