@@ -16,6 +16,8 @@ package pt.webdetails.cda;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -318,10 +320,16 @@ public class CdaContentGenerator extends SimpleContentGenerator {
   }
 
   private DoQueryParameters getParamsWithPath( IParameterProvider requestParams ) {
-    return new DoQueryParameters(
-        (String) requestParams.getParameter( "path" ),
+    DoQueryParameters dqp = null;
+    try {
+      dqp = new DoQueryParameters(
+        URLDecoder.decode( (String) requestParams.getParameter( "path" ), "UTF-8" ),
         (String) requestParams.getParameter( "solution" ),
         (String) requestParams.getParameter( "file" ) );
+    } catch ( UnsupportedEncodingException use ) {
+      //This won't happen as long as UTF-8 is used
+    }
+    return dqp;
   }
 
   private String getPath( IParameterProvider requestParams ) {
