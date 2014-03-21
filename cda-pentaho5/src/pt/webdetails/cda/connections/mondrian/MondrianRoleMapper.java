@@ -16,6 +16,7 @@ package pt.webdetails.cda.connections.mondrian;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IConnectionUserRoleMapper;
+import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -25,16 +26,26 @@ public class MondrianRoleMapper implements IMondrianRoleMapper {
 
   private static final Log logger = LogFactory.getLog( MondrianRoleMapper.class );
 
+  protected IPentahoSession getSession() {
+    return PentahoSessionHolder.getSession();
+  }
+
+  protected IConnectionUserRoleMapper getConnectionUserRoleMapper() {
+    return PentahoSystem.get(IConnectionUserRoleMapper.class, MDXConnection.MDX_CONNECTION_MAPPER_KEY, null);
+  }
+
+  protected boolean isObjectDefined() {
+    return PentahoSystem.getObjectFactory().objectDefined( MDXConnection.MDX_CONNECTION_MAPPER_KEY );
+  }
+
   public String getRoles( String catalog ) {
-    if ( PentahoSystem.getObjectFactory().objectDefined( MDXConnection.MDX_CONNECTION_MAPPER_KEY ) ) {
-      final IConnectionUserRoleMapper mondrianUserRoleMapper =
-          PentahoSystem.get( IConnectionUserRoleMapper.class, MDXConnection.MDX_CONNECTION_MAPPER_KEY, null );
+    if ( isObjectDefined() ) {
+      final IConnectionUserRoleMapper mondrianUserRoleMapper = getConnectionUserRoleMapper();
 
       try {
         final String[] validMondrianRolesForUser;
         //XXX report the exception
-        validMondrianRolesForUser =
-            mondrianUserRoleMapper.mapConnectionRoles( PentahoSessionHolder.getSession(), catalog );
+        validMondrianRolesForUser = mondrianUserRoleMapper.mapConnectionRoles(getSession(), catalog );
 
         if ( ( validMondrianRolesForUser != null ) && ( validMondrianRolesForUser.length > 0 ) ) {
           final StringBuffer buff = new StringBuffer();
@@ -59,4 +70,6 @@ public class MondrianRoleMapper implements IMondrianRoleMapper {
 
     return "";
   }
+
+
 }
