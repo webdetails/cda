@@ -22,28 +22,18 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Ignore;
+import org.junit.Test;
 import pt.webdetails.cda.CdaQueryComponent;
-/**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 15, 2010
- * Time: 7:53:13 PM
- */
-public class CdaQueryComponentTest extends CdaTestCase
+
+public class CdaQueryComponentTest
 {
 
   private static final Log logger = LogFactory.getLog(CdaQueryComponentTest.class);
 
-  public CdaQueryComponentTest()
-  {
-    super();
-  }
 
-  public CdaQueryComponentTest(final String name)
-  {
-    super(name);
-  }
-
+  @Test
+  @Ignore
   public void testCdaQueryComponent() throws Exception {
     CdaQueryComponent component = new CdaQueryComponent();
     component.setFile("sample-sql.cda");
@@ -54,10 +44,10 @@ public class CdaQueryComponentTest extends CdaTestCase
     
     component.validate();
     component.execute();
-    Assert.assertNotNull(component.getResultSet());
+    Assert.assertNotNull( component.getResultSet());
     
-    Assert.assertEquals(4, component.getResultSet().getColumnCount());
-    Assert.assertEquals(3, component.getResultSet().getRowCount());
+    Assert.assertEquals( 4, component.getResultSet().getColumnCount() );
+    Assert.assertEquals( 3, component.getResultSet().getRowCount() );
     
   }
 }
