@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -31,57 +31,45 @@ import pt.webdetails.cda.dataaccess.PropertyDescriptor;
  * Date: Feb 2, 2010
  * Time: 5:09:59 PM
  */
-public abstract class AbstractMondrianConnection extends AbstractConnection implements MondrianConnection
-{
+public abstract class AbstractMondrianConnection extends AbstractConnection implements MondrianConnection {
 
-  private static final Log logger = LogFactory.getLog(AbstractMondrianConnection.class);
+  private static final Log logger = LogFactory.getLog( AbstractMondrianConnection.class );
 	
-  public AbstractMondrianConnection()
-  {
+  public AbstractMondrianConnection() {
   }
 
-  public AbstractMondrianConnection(String id)
-  {
-    super(id);
-  }
-  public AbstractMondrianConnection(final Element connection) throws InvalidConnectionException
-  {
-
-    super(connection);
-
+  public AbstractMondrianConnection( String id ) {
+    super( id );
   }
 
+  public AbstractMondrianConnection(final Element connection) throws InvalidConnectionException {
+    super( connection );
+  }
 
   @Override
-  public ConnectionType getGenericType()
-  {
+  public ConnectionType getGenericType() {
     return ConnectionType.MDX;
   }
 
 
   @Override
-  public ArrayList<PropertyDescriptor> getProperties()
-  {
+  public ArrayList<PropertyDescriptor> getProperties()  {
     final ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
-    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
-    properties.add(new PropertyDescriptor("catalog", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    properties.add(new PropertyDescriptor( "id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB ) );
+    properties.add(new PropertyDescriptor( "catalog", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
     return properties;
   }
 
 
-  protected String assembleRole(String catalog)
-  {
+  protected String assembleRole( String catalog ) {
     
     IMondrianRoleMapper roleMapper = CdaEngine.getEnvironment().getMondrianRoleMapper();
-	  try
-	  {
-            if (roleMapper != null)
-                return roleMapper.getRoles(catalog);
+	  try {
+      if ( roleMapper != null )
+        return roleMapper.getRoles(catalog);
 
-	  }
-	  catch (Exception e)
-	  {
-		  logger.error("Error assembling role for mondrian connection", e);
+	  } catch ( Exception e ) {
+		  logger.error( "Error assembling role for mondrian connection", e );
 	  }
 	  return "";
   }
