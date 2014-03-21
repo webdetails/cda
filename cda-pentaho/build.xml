@@ -59,7 +59,7 @@
 
   <echo>distribution.version = ${distribution.version}</echo>
 
-  <target name="dist" depends="clean,resolve,jar,dist-plugin,dist-samples"/>
+  <target name="dist" depends="clean,resolve,jar,test,dist-plugin,dist-samples"/>
   <target name="dist-compile" depends="jar,dist-plugin"/>
 
   <property name="plugin.artifact.id" value="${plugin.name}"/>
