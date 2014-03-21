@@ -176,56 +176,56 @@
     {
       type: "sql.jdbc",
       desc: "Sql query over a jdbc datasource",
-      url: "/pentaho/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/sql-jdbc.cda",
+      url: webAppPath + "/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/sql-jdbc.cda",
       expectedCols: 4,
       expectedRows: 3
     },
     {
       type: "sql.jndi",
       desc: "Sql query over a jndi datasource",
-      url: "/pentaho/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/sql-jndi.cda",
+      url: webAppPath + "/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/sql-jndi.cda",
       expectedCols: 4,
       expectedRows: 2
     },
     {
      type: "sql.stringarray.jndi",
      desc: "Sql query with string array over a jndi datasource",
-     url: "/pentaho/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/sql-stringArray-jndi.cda",
+     url: webAppPath + "/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/sql-stringArray-jndi.cda",
      expectedCols: 2,
      expectedRows: 48
     },
     {
       type: "mondrian.jdbc",
       desc: "Mdx query over a jdbc mondrian connection",
-      url: "/pentaho/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/mondrian-jdbc.cda",
+      url: webAppPath + "/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/mondrian-jdbc.cda",
       expectedCols: 4,
       expectedRows: 3
     },
     {
       type: "mondrian.jndi",
       desc: "Mdx query over a jndi mondrian connection",
-      url: "/pentaho/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/mondrian-jndi.cda",
+      url: webAppPath + "/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/mondrian-jndi.cda",
       expectedCols: 4,
       expectedRows: 3
     },
     {
       type: "mondrian.jdbc (denormalized)",
       desc: "Denormalized Mdx query over a jdbc mondrian connection",
-      url: "/pentaho/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/denormalized-mondrian-jndi.cda",
+      url: webAppPath + "/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/denormalized-mondrian-jndi.cda",
       expectedCols: 5,
       expectedRows: 6
     },
     {
       type: "mondrian.jndi (denormalized)",
       desc: "Denormalized Mdx query over a jndi mondrian connection",
-      url: "/pentaho/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/denormalized-mondrian-jndi.cda",
+      url: webAppPath + "/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/denormalized-mondrian-jndi.cda",
       expectedCols: 5,
       expectedRows: 6
     },
     {
       type: "olap4j",
       desc: "Mdx query over a olap4j connection",
-      url: "/pentaho/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/olap4j.cda",
+      url: webAppPath + "/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/olap4j.cda",
       expectedCols: 4,
       expectedRows: 1
     },
@@ -239,35 +239,35 @@ expectedRows: 1
     {
       type: "kettle",
       desc: "Kettle transformation",
-      url: "/pentaho/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/kettle.cda",
+      url: webAppPath + "/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/kettle.cda",
       expectedCols: 4,
       expectedRows: 1
     },
     {
       type: "metadata",
       desc: "Mql query over a metadata connection",
-      url: "/pentaho/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/metadata.cda",
+      url: webAppPath + "/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/metadata.cda",
       expectedCols: 2,
       expectedRows: 198
     },
     {
       type: "scripting",
       desc: "Scripting data access",
-      url: "/pentaho/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/scripting.cda",
+      url: webAppPath + "/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/scripting.cda",
       expectedCols: 5,
       expectedRows: 4
     },
     {
       type: "Compound join",
       desc: "Joining 2 different datasets",
-      url: "/pentaho/plugin/cda/api/doQuery?dataAccessId=3&path=/public/plugin-samples/cda/cdafiles/compoundJoin.cda",
+      url: webAppPath + "/plugin/cda/api/doQuery?dataAccessId=3&path=/public/plugin-samples/cda/cdafiles/compoundJoin.cda",
       expectedCols: 5,
       expectedRows: 12
     },
     {
       type: "Compound Union",
       desc: "Appending two different unions",
-      url: "/pentaho/plugin/cda/api/doQuery?dataAccessId=3&path=/public/plugin-samples/cda/cdafiles/compoundUnion.cda",
+      url: webAppPath + "/plugin/cda/api/doQuery?dataAccessId=3&path=/public/plugin-samples/cda/cdafiles/compoundUnion.cda",
       expectedCols: 2,
       expectedRows: 4
     }
