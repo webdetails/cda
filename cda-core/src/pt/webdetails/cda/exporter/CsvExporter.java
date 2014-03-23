@@ -108,7 +108,7 @@ public class CsvExporter extends AbstractKettleExporter
         "      <date_time_format/>\n" +
         "      <add_to_result_filenames>Y</add_to_result_filenames>\n" +
         "      <pad>N</pad>\n" +
-        "      <fast_dump>N</fast_dump>\n" +
+        "      <fast_dump>Y</fast_dump>\n" +
         "      <splitevery>0</splitevery>\n" +
         "    </file>\n" +
         "    <fields>\n" +
