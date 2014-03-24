@@ -41,10 +41,16 @@ public class MondrianRoleMapper implements IMondrianRoleMapper {
   public String getRoles( String catalog ) {
     if ( isObjectDefined() ) {
       final IConnectionUserRoleMapper mondrianUserRoleMapper = getConnectionUserRoleMapper();
+      final String[] validMondrianRolesForUser;
 
       try {
-        final String[] validMondrianRolesForUser;
-        validMondrianRolesForUser = mondrianUserRoleMapper.mapConnectionRoles(getSession(), "solution:" + catalog.replaceAll("solution/", "" ) ); //XXX report the exception
+        try {
+          validMondrianRolesForUser = mondrianUserRoleMapper.mapConnectionRoles(getSession(), "solution:" + catalog.replaceAll("solution/", "" ) ); //XXX report the exception
+
+        } catch ( NullPointerException ex ) {
+          logger.debug( "NullPointerException when trying to resolve role for " + getSession().getName() );
+          return "";
+        }
 
         if ( ( validMondrianRolesForUser != null ) && ( validMondrianRolesForUser.length > 0 ) ) {
           final StringBuffer buff = new StringBuffer();
