@@ -1,6 +1,7 @@
 package pt.webdetails.cda.dataaccess.kettle;
 
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.reporting.engine.classic.core.DataRow;
 
 /**
@@ -11,12 +12,11 @@ import org.pentaho.reporting.engine.classic.core.DataRow;
 public interface DataAccessKettleAdapter {
 
 	/**
-	 * @param name
-	 *            Data access step name
+	 * @param name Step name
 	 * @return Kettle step definition
 	 * @throws KettleAdapterException
 	 */
-	public String getKettleStepDefinition(String name) throws KettleAdapterException;
+	public StepMeta getKettleStepMeta(String name) throws KettleAdapterException;
 
 	/**
 	 * @return return used database connections if any, otherwise
