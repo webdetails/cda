@@ -19,6 +19,9 @@ import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.util.StringUtil;
 import org.pentaho.di.core.variables.VariableSpace;
 import org.pentaho.di.trans.TransMeta;
+import org.pentaho.di.trans.step.StepMeta;
+import org.pentaho.di.trans.steps.injector.InjectorMeta;
+import org.pentaho.di.trans.steps.tableinput.TableInputMeta;
 import org.pentaho.reporting.engine.classic.core.DataRow;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 
@@ -27,7 +30,7 @@ import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransformation;
 import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
 import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
-import pt.webdetails.cda.CdaBoot;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.dataaccess.kettle.DataAccessKettleAdapter;
 import pt.webdetails.cda.dataaccess.kettle.KettleAdapterException;
 import pt.webdetails.cda.utils.kettle.RowCountListener;
@@ -61,31 +64,39 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
 		try {
 			DynamicTransConfig transConfig = new DynamicTransConfig();
 
-			String dataAccessStep = dataAccess
-					.getKettleStepDefinition("DataAccess");
+			StepMeta dataAccessStepMeta = dataAccess
+					.getKettleStepMeta("DataAccess");
+			
+			StepMeta injectorStepMeta = null;
 
 			String[] parameterNames = dataAccess.getParameterNames();
 			DataRow parameters = dataAccess.getParameters();
 			if (parameterNames.length > 0) {
+				injectorStepMeta = new StepMeta("Input", new InjectorMeta());
+				injectorStepMeta.setCopies(1);
 				transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP,
-						"Input",
-						"<step><name>Input</name><type>Injector</type><copies>1</copies></step>");
-				dataAccessStep = dataAccessStep.replaceFirst("<lookup/>",
-						"<lookup>Input</lookup>");
+						injectorStepMeta.getName(),
+						injectorStepMeta.getXML());
+				if (dataAccessStepMeta.getStepMetaInterface() instanceof TableInputMeta) {
+					((TableInputMeta) dataAccessStepMeta.getStepMetaInterface()).setLookupFromStep(injectorStepMeta);
+				}
 			}
 
 			transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP,
-					"DataAccess", dataAccessStep);
+					dataAccessStepMeta.getName(), dataAccessStepMeta.getXML());
+			
+			StepMeta exportStepMeta = exporter.getExportStepMeta("Export");
 			transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP,
-					"Export", exporter.getExportStepDefinition("Export"));
+					exportStepMeta.getName(), exportStepMeta.getXML());
 
 			if (parameterNames.length > 0) {
 				transConfig.addConfigEntry(DynamicTransConfig.EntryType.HOP,
-						"Input", "DataAccess");
+						injectorStepMeta.getName(), dataAccessStepMeta.getName());
 			}
 			transConfig.addConfigEntry(DynamicTransConfig.EntryType.HOP,
-					"DataAccess", "Export");
+					dataAccessStepMeta.getName(), exportStepMeta.getName());
 
+			// Prepare parameters as data of the injector step:
 			if (parameterNames.length > 0) {
 				List<String> columnNames = new LinkedList<String>();
 				List<Class<?>> columnClasses = new LinkedList<Class<?>>();
@@ -113,12 +124,12 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
 				model.addRow(values.toArray());
 
 				TableModelInput input = new TableModelInput();
-				transConfig.addInput("Input", input);
+				transConfig.addInput(injectorStepMeta.getName(), input);
 				inputCallables.add(input.getCallableRowProducer(model, true));
 			}
 
 			RowCountListener countListener = new RowCountListener();
-			transConfig.addOutput("Export", countListener);
+			transConfig.addOutput(exportStepMeta.getName(), countListener);
 
 			ExtendedDynamicTransMetaConfig transMetaConfig = new ExtendedDynamicTransMetaConfig(
 					DynamicTransMetaConfig.Type.EMPTY, "Streaming Exporter",
@@ -171,20 +182,11 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
 	}
 
 	public void startRowProduction() {
-		String timeoutStr = CdaBoot
-				.getInstance()
-				.getGlobalConfig()
-				.getConfigProperty(
-						"pt.webdetails.cda.DefaultRowProductionTimeout");
-		long timeout = StringUtil.isEmpty(timeoutStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT
-				: Long.parseLong(timeoutStr);
-		String unitStr = CdaBoot
-				.getInstance()
-				.getGlobalConfig()
-				.getConfigProperty(
-						"pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit");
-		TimeUnit unit = StringUtil.isEmpty(unitStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT
-				: TimeUnit.valueOf(unitStr);
+		String timeoutStr = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeout" );
+	    long timeout = StringUtil.isEmpty(timeoutStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
+	    String unitStr =
+	        CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
+	    TimeUnit unit = StringUtil.isEmpty(unitStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
 		startRowProduction(timeout, unit);
 	}
 

@@ -35,7 +35,7 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
 		this.queryOptions = queryOptions;
 	}
 
-	public String getKettleStepDefinition(String name) throws KettleAdapterException {
+	public StepMeta getKettleStepMeta(String name) throws KettleAdapterException {
 		try {
 			TableInputMeta tableInputMeta = new TableInputMeta();
 			tableInputMeta.setDatabaseMeta(getDatabaseMeta());
@@ -43,9 +43,10 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
 			prepareQuery();
 			tableInputMeta.setSQL(translatedQuery);
 
-			StepMeta meta = new StepMeta(name, tableInputMeta);
-			return meta.getXML();
-
+			StepMeta stepMeta = new StepMeta(name, tableInputMeta);
+			stepMeta.setCopies(1);
+			return stepMeta;
+			
 		} catch (Exception e) {
 			throw new KettleAdapterException("Error initializing Kettle step for SQL data access type", e);
 		}
