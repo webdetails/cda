@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -32,17 +32,17 @@ public class CsvExporter extends AbstractKettleExporter
   public static final String CSV_SEPARATOR_SETTING = "csvSeparator";
   public static final String CSV_QUOTE_SETTING = "csvQuote";
 
-  private static final Log logger = LogFactory.getLog(CsvExporter.class);
+  private static final Log logger = LogFactory.getLog( CsvExporter.class );
   private static final String DEFAULT_CSV_SEPARATOR_SETTING = ";";
-  private static final String DEFAULT_CSV_ENCLOSURE_SETTING = "&quot;";
+  private static final String DEFAULT_CSV_ENCLOSURE_SETTING = "\"";
   private String separator;
 
   private String enclosure;
   private String attachmentName;
   private boolean showColumnHeaders;
   
-  public CsvExporter(Map<String, String> extraSettings) {
-    super(extraSettings);
+  public CsvExporter( Map<String, String> extraSettings ) {
+    super( extraSettings );
     
     this.separator = getSetting( 
         CSV_SEPARATOR_SETTING,
@@ -54,38 +54,38 @@ public class CsvExporter extends AbstractKettleExporter
         CdaEngine.getInstance().getConfigProperty(
             "pt.webdetails.cda.exporter.csv.Enclosure", DEFAULT_CSV_ENCLOSURE_SETTING ) );
     
-    this.attachmentName = getSetting(ATTACHMENT_NAME_SETTING, "cda-export.csv");
+    this.attachmentName = getSetting( ATTACHMENT_NAME_SETTING, "cda-export.csv" );
 
-    this.showColumnHeaders = Boolean.parseBoolean(getSetting(COLUMN_HEADERS_SETTING, "true"));
+    this.showColumnHeaders = Boolean.parseBoolean( getSetting( COLUMN_HEADERS_SETTING, "true" ) );
 
-    logger.debug("Initialized CsvExporter with attachement filename '" + attachmentName + "'");
-    logger.debug("Initialized CsvExporter with enclosure '" + enclosure + "'");
-    logger.debug("Initialized CsvExporter with show columns '" + showColumnHeaders + "'");
+    logger.debug( "Initialized CsvExporter with attachement filename '" + attachmentName + "'" );
+    logger.debug( "Initialized CsvExporter with enclosure '" + enclosure + "'" );
+    logger.debug( "Initialized CsvExporter with show columns '" + showColumnHeaders + "'" );
 
-    logger.debug("Initialized CsvExporter with separator '" + separator + "'");
+    logger.debug( "Initialized CsvExporter with separator '" + separator + "'" );
 
   }
 
-  protected StepMeta getExportStepMeta(String name)
-  {
+  protected StepMeta getExportStepMeta( String name ) {
 	  TextFileOutputMeta csvOutputStepMeta = new TextFileOutputMeta();
-	  csvOutputStepMeta.setOutputFields(new TextFileField[0]);
-	  csvOutputStepMeta.setSeparator(this.separator);
-	  csvOutputStepMeta.setEnclosure(this.enclosure);
-	  csvOutputStepMeta.setEnclosureForced(true);
-	  csvOutputStepMeta.setHeaderEnabled(this.showColumnHeaders);
-	  csvOutputStepMeta.setFooterEnabled(false);
-	  csvOutputStepMeta.setFilename("${java.io.tmpdir}/" + getFileName());
-	  csvOutputStepMeta.setExtension("csv");
-	  csvOutputStepMeta.setFastDump(true);
+	  csvOutputStepMeta.setOutputFields( new TextFileField[0] );
+	  csvOutputStepMeta.setSeparator( this.separator );
+	  csvOutputStepMeta.setEnclosure( this.enclosure );
+	  csvOutputStepMeta.setEnclosureForced( true );
+	  csvOutputStepMeta.setHeaderEnabled( this.showColumnHeaders );
+	  csvOutputStepMeta.setFooterEnabled( false );
+	  csvOutputStepMeta.setFilename( "${java.io.tmpdir}/" + getFileName() );
+	  csvOutputStepMeta.setExtension( "csv" );
+	  csvOutputStepMeta.setFastDump( false );
 	  
-	  StepMeta stepMeta = new StepMeta(name, csvOutputStepMeta);
-	  stepMeta.setCopies(1);
+	  StepMeta stepMeta = new StepMeta( name, csvOutputStepMeta );
+	  stepMeta.setCopies( 1 );
 	  return stepMeta;
   }
 
   public String getMimeType()
   {
+
     return "text/csv";
   }
 
