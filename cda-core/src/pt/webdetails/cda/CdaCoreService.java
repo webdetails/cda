@@ -130,7 +130,7 @@ public class CdaCoreService
     final CdaSettings cdaSettings = settingsManager.parseSettingsFile( path );
     QueryOptions queryOptions = engine.unwrapQuery( uuid );
     if ( queryOptions != null ) {
-      return exportQuery ( engine.doQuery( cdaSettings, queryOptions ), queryOptions ); 
+      return engine.doExportQuery( cdaSettings, queryOptions ); 
     } else {
       logger.error( "unwrapQuery: uuid " + uuid + " not found." );
       return null;

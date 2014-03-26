@@ -38,14 +38,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.util.StringUtil;
+import org.pentaho.di.trans.step.StepMeta;
+import org.pentaho.di.trans.steps.injector.InjectorMeta;
 
-import pt.webdetails.cda.CdaEngine;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig;
 import plugins.org.pentaho.di.robochef.kettle.DynamicTransformation;
-import pt.webdetails.cda.utils.kettle.RowCountListener;
 import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
 import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
+import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.utils.kettle.RowCountListener;
 
 /**
  * Generic Kettle class to handle exports
@@ -78,7 +80,11 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
   }
   
   
-  protected abstract String getExportStepDefinition(String name);
+  /**
+   * @param name Step name
+   * @return Kettle export step meta
+   */
+  protected abstract StepMeta getExportStepMeta(String name);
 
   
   protected abstract String getType();
@@ -122,22 +128,25 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
 
     try
     {
-
       final DynamicTransMetaConfig transMetaConfig = new DynamicTransMetaConfig(DynamicTransMetaConfig.Type.EMPTY, "Exporter", null, null);
       final DynamicTransConfig transConfig = new DynamicTransConfig();
 
-      transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP, "input", "<step><name>input</name><type>Injector</type><copies>1</copies></step>");
-      transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP, "export", getExportStepDefinition("export"));
+      StepMeta injectorStepMeta = new StepMeta("input", new InjectorMeta());
+      injectorStepMeta.setCopies(1);
+      transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP, injectorStepMeta.getName(), injectorStepMeta.getXML());
+      
+      StepMeta exportStepMeta = getExportStepMeta("export");
+      transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP, exportStepMeta.getName(), exportStepMeta.getXML());
 
-      transConfig.addConfigEntry(DynamicTransConfig.EntryType.HOP, "input", "export");
+      transConfig.addConfigEntry(DynamicTransConfig.EntryType.HOP, injectorStepMeta.getName(), exportStepMeta.getName());
 
       TableModelInput input = new TableModelInput();
-      transConfig.addInput("input", input);
+      transConfig.addInput(injectorStepMeta.getName(), input);
       inputCallables.add(input.getCallableRowProducer(tableModel, true));
 
 
       RowCountListener countListener = new RowCountListener();
-      transConfig.addOutput("export", countListener);
+      transConfig.addOutput(exportStepMeta.getName(), countListener);
 
       DynamicTransformation trans = new DynamicTransformation(transConfig, transMetaConfig);
       trans.executeCheckedSuccess(null, null, this);
@@ -156,8 +165,6 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
     {
       throw new ExporterException("Unknown exception during " + getType() + " query ", e);
     }
-
-
   }
 
 
