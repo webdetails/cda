@@ -1,3 +1,17 @@
+/*!
+* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
+*
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
+
+
 package pt.webdetails.cda.exporter;
 
 import java.io.OutputStream;
@@ -37,178 +51,169 @@ import pt.webdetails.cda.utils.kettle.RowCountListener;
 
 /**
  * Direct exporter from data access to stream using Kettle
- * 
+ *
  * @author Michael Spector
  */
 public class DefaultStreamExporter implements RowProductionManager, StreamExporter {
 
-	private static final Log logger = LogFactory
-			.getLog(DefaultStreamExporter.class);
-	private static long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
-	private static TimeUnit DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT = TimeUnit.SECONDS;
+  private static final Log logger = LogFactory.getLog( DefaultStreamExporter.class );
+  private static long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
+  private static TimeUnit DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT = TimeUnit.SECONDS;
 
-	private DataAccessKettleAdapter dataAccess;
-	private AbstractKettleExporter exporter;
-	private ExecutorService executorService = Executors.newCachedThreadPool();
-	private Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
+  private DataAccessKettleAdapter dataAccess;
+  private AbstractKettleExporter exporter;
+  private ExecutorService executorService = Executors.newCachedThreadPool();
+  private Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
 
-	public DefaultStreamExporter(AbstractKettleExporter exporter,
-			DataAccessKettleAdapter dataAccess) {
-		this.exporter = exporter;
-		this.dataAccess = dataAccess;
-	}
+  public DefaultStreamExporter( AbstractKettleExporter exporter,
+                               DataAccessKettleAdapter dataAccess ) {
+    this.exporter = exporter;
+    this.dataAccess = dataAccess;
+  }
 
-	public void export(OutputStream out) throws ExporterException {
-		inputCallables.clear();
+  public void export( OutputStream out ) throws ExporterException {
+    inputCallables.clear();
 
-		try {
-			DynamicTransConfig transConfig = new DynamicTransConfig();
+    try {
+      DynamicTransConfig transConfig = new DynamicTransConfig();
 
-			StepMeta dataAccessStepMeta = dataAccess
-					.getKettleStepMeta("DataAccess");
-			
-			StepMeta injectorStepMeta = null;
+      StepMeta dataAccessStepMeta = dataAccess
+              .getKettleStepMeta( "DataAccess" );
 
-			String[] parameterNames = dataAccess.getParameterNames();
-			DataRow parameters = dataAccess.getParameters();
-			if (parameterNames.length > 0) {
-				injectorStepMeta = new StepMeta("Input", new InjectorMeta());
-				injectorStepMeta.setCopies(1);
-				transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP,
-						injectorStepMeta.getName(),
-						injectorStepMeta.getXML());
-				if (dataAccessStepMeta.getStepMetaInterface() instanceof TableInputMeta) {
-					((TableInputMeta) dataAccessStepMeta.getStepMetaInterface()).setLookupFromStep(injectorStepMeta);
-				}
-			}
+      StepMeta injectorStepMeta = null;
 
-			transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP,
-					dataAccessStepMeta.getName(), dataAccessStepMeta.getXML());
-			
-			StepMeta exportStepMeta = exporter.getExportStepMeta("Export");
-			transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP,
-					exportStepMeta.getName(), exportStepMeta.getXML());
+      String[] parameterNames = dataAccess.getParameterNames();
+      DataRow parameters = dataAccess.getParameters();
+      if ( parameterNames.length > 0 ) {
+        injectorStepMeta = new StepMeta( "Input", new InjectorMeta() );
+        injectorStepMeta.setCopies( 1 );
+        transConfig.addConfigEntry( DynamicTransConfig.EntryType.STEP,
+                injectorStepMeta.getName(),
+                injectorStepMeta.getXML() );
+        if ( dataAccessStepMeta.getStepMetaInterface() instanceof TableInputMeta ) {
+          ( (TableInputMeta) dataAccessStepMeta.getStepMetaInterface() ).setLookupFromStep( injectorStepMeta );
+        }
+      }
 
-			if (parameterNames.length > 0) {
-				transConfig.addConfigEntry(DynamicTransConfig.EntryType.HOP,
-						injectorStepMeta.getName(), dataAccessStepMeta.getName());
-			}
-			transConfig.addConfigEntry(DynamicTransConfig.EntryType.HOP,
-					dataAccessStepMeta.getName(), exportStepMeta.getName());
+      transConfig.addConfigEntry( DynamicTransConfig.EntryType.STEP,
+              dataAccessStepMeta.getName(), dataAccessStepMeta.getXML() );
 
-			// Prepare parameters as data of the injector step:
-			if (parameterNames.length > 0) {
-				List<String> columnNames = new LinkedList<String>();
-				List<Class<?>> columnClasses = new LinkedList<Class<?>>();
-				List<Object> values = new LinkedList<Object>();
-				for (String parameterName : parameterNames) {
-					Object value = parameters.get(parameterName);
-					if (value instanceof Object[]) {
-						Object[] array = (Object[]) value;
-						for (int c = 0; c < array.length; ++c) {
-							columnNames.add(parameterName + "_" + c);
-							columnClasses.add(array[c].getClass());
-							values.add(array[c]);
-						}
-					} else {
-						columnNames.add(parameterName);
-						columnClasses.add(value == null ? Object.class : value
-								.getClass());
-						values.add(value);
-					}
-				}
+      StepMeta exportStepMeta = exporter.getExportStepMeta( "Export" );
+      transConfig.addConfigEntry( DynamicTransConfig.EntryType.STEP,
+              exportStepMeta.getName(), exportStepMeta.getXML() );
 
-				TypedTableModel model = new TypedTableModel(
-						columnNames.toArray(new String[columnNames.size()]),
-						columnClasses.toArray(new Class[columnClasses.size()]));
-				model.addRow(values.toArray());
+      if ( parameterNames.length > 0 ) {
+        transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
+                injectorStepMeta.getName(), dataAccessStepMeta.getName() );
+      }
+      transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
+              dataAccessStepMeta.getName(), exportStepMeta.getName() );
 
-				TableModelInput input = new TableModelInput();
-				transConfig.addInput(injectorStepMeta.getName(), input);
-				inputCallables.add(input.getCallableRowProducer(model, true));
-			}
+      // Prepare parameters as data of the injector step:
+      if ( parameterNames.length > 0 ) {
+        List<String> columnNames = new LinkedList<String>();
+        List<Class<?>> columnClasses = new LinkedList<Class<?>>();
+        List<Object> values = new LinkedList<Object>();
+        for ( String parameterName : parameterNames ) {
+          Object value = parameters.get( parameterName );
+          if ( value instanceof Object[] ) {
+            Object[] array = (Object[]) value;
+            for ( int c = 0; c < array.length; ++c ) {
+              columnNames.add( parameterName + "_" + c );
+              columnClasses.add( array[c].getClass() );
+              values.add( array[c] );
+            }
+          } else {
+            columnNames.add( parameterName );
+            columnClasses.add( value == null ? Object.class : value.getClass() );
+            values.add( value );
+          }
+        }
 
-			RowCountListener countListener = new RowCountListener();
-			transConfig.addOutput(exportStepMeta.getName(), countListener);
+        TypedTableModel model = new TypedTableModel(
+                columnNames.toArray( new String[columnNames.size()] ),
+                columnClasses.toArray( new Class[columnClasses.size()] ) );
+        model.addRow( values.toArray() );
 
-			ExtendedDynamicTransMetaConfig transMetaConfig = new ExtendedDynamicTransMetaConfig(
-					DynamicTransMetaConfig.Type.EMPTY, "Streaming Exporter",
-					null, null, dataAccess.getDatabases());
-			DynamicTransformation trans = new DynamicTransformation(
-					transConfig, transMetaConfig);
-			trans.executeCheckedSuccess(null, null, this);
-			logger.info(trans.getReadWriteThroughput());
+        TableModelInput input = new TableModelInput();
+        transConfig.addInput( injectorStepMeta.getName(), input );
+        inputCallables.add( input.getCallableRowProducer( model, true ) );
+      }
 
-			// Transformation executed ok, let's return the file
-			exporter.copyFileToOutputStream(out);
+      RowCountListener countListener = new RowCountListener();
+      transConfig.addOutput( exportStepMeta.getName(), countListener );
 
-			logger.debug(countListener.getRowsWritten() + " rows written.");
+      ExtendedDynamicTransMetaConfig transMetaConfig = new ExtendedDynamicTransMetaConfig(
+              DynamicTransMetaConfig.Type.EMPTY, "Streaming Exporter",
+              null, null, dataAccess.getDatabases() );
+      DynamicTransformation trans = new DynamicTransformation( transConfig, transMetaConfig );
+      trans.executeCheckedSuccess( null, null, this );
+      logger.info( trans.getReadWriteThroughput() );
 
-		} catch (KettleAdapterException e) {
-			throw new ExporterException(
-					"Data access to Kettle adapter exception during "
-							+ exporter.getType() + " query ", e);
-		} catch (KettleException e) {
-			throw new ExporterException("Kettle exception during "
-					+ exporter.getType() + " query ", e);
-		} catch (Exception e) {
-			throw new ExporterException("Unknown exception during "
-					+ exporter.getType() + " query ", e);
-		}
-	}
+      // Transformation executed ok, let's return the file
+      exporter.copyFileToOutputStream( out );
 
-	public static class ExtendedDynamicTransMetaConfig extends
-			DynamicTransMetaConfig {
+      logger.debug( countListener.getRowsWritten() + " rows written." );
 
-		private DatabaseMeta[] databases;
+    } catch ( KettleAdapterException e ) {
+      throw new ExporterException( "Data access to Kettle adapter exception during "
+        + exporter.getType() + " query ", e );
+    } catch ( KettleException e ) {
+      throw new ExporterException( "Kettle exception during " + exporter.getType() + " query ", e );
+    } catch ( Exception e ) {
+      throw new ExporterException( "Unknown exception during " + exporter.getType() + " query ", e );
+    }
+  }
 
-		public ExtendedDynamicTransMetaConfig(Type type, String name,
-				String configDataSource, RepositoryConfig repoConfig,
-				DatabaseMeta[] databases) throws KettleException {
-			super(type, name, configDataSource, repoConfig);
-			this.databases = databases;
-		}
+  public void startRowProduction() {
+    String timeoutStr = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeout" );
+    long timeout = StringUtil.isEmpty( timeoutStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong( timeoutStr );
+    String unitStr =
+            CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
+    TimeUnit unit = StringUtil.isEmpty( unitStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf( unitStr );
+    startRowProduction( timeout, unit );
+  }
 
-		protected TransMeta getTransMeta(VariableSpace variableSpace)
-				throws KettleException {
-			TransMeta transMeta = super.getTransMeta(variableSpace);
-			if (databases != null) {
-				for (DatabaseMeta database : databases) {
-					transMeta.addOrReplaceDatabase(database);
-				}
-			}
-			return transMeta;
-		}
-	}
+  public void startRowProduction( long timeout, TimeUnit unit ) {
+    try {
+      List<Future<Boolean>> results = executorService.invokeAll( inputCallables, timeout, unit );
+      for ( Future<Boolean> result : results ) {
+        result.get();
+      }
+    } catch ( InterruptedException e ) {
+      logger.error( e );
+    } catch ( ExecutionException e ) {
+      logger.error( e );
+    }
+  }
 
-	public void startRowProduction() {
-		String timeoutStr = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeout" );
-	    long timeout = StringUtil.isEmpty(timeoutStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
-	    String unitStr =
-	        CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
-	    TimeUnit unit = StringUtil.isEmpty(unitStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
-		startRowProduction(timeout, unit);
-	}
+  public String getMimeType() {
+    return exporter.getMimeType();
+  }
 
-	public void startRowProduction(long timeout, TimeUnit unit) {
-		try {
-			List<Future<Boolean>> results = executorService.invokeAll(
-					inputCallables, timeout, unit);
-			for (Future<Boolean> result : results) {
-				result.get();
-			}
-		} catch (InterruptedException e) {
-			logger.error(e);
-		} catch (ExecutionException e) {
-			logger.error(e);
-		}
-	}
+  public String getAttachmentName() {
+    return exporter.getAttachmentName();
+  }
 
-	public String getMimeType() {
-		return exporter.getMimeType();
-	}
+  public static class ExtendedDynamicTransMetaConfig extends DynamicTransMetaConfig {
 
-	public String getAttachmentName() {
-		return exporter.getAttachmentName();
-	}
+    private DatabaseMeta[] databases;
+
+    public ExtendedDynamicTransMetaConfig( Type type, String name,
+                                          String configDataSource, RepositoryConfig repoConfig,
+                                          DatabaseMeta[] databases ) throws KettleException {
+      super( type, name, configDataSource, repoConfig );
+      this.databases = databases;
+    }
+
+    protected TransMeta getTransMeta( VariableSpace variableSpace ) throws KettleException {
+      TransMeta transMeta = super.getTransMeta( variableSpace );
+      if ( databases != null ) {
+        for ( DatabaseMeta database : databases ) {
+          transMeta.addOrReplaceDatabase( database );
+        }
+      }
+      return transMeta;
+    }
+  }
 }
