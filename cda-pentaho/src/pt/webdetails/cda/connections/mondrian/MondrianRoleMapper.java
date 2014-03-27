@@ -48,7 +48,7 @@ public class MondrianRoleMapper implements IMondrianRoleMapper {
           validMondrianRolesForUser = mondrianUserRoleMapper.mapConnectionRoles(getSession(), "solution:" + catalog.replaceAll("solution/", "" ) ); //XXX report the exception
 
         } catch ( NullPointerException ex ) {
-          logger.debug( "NullPointerException when trying to resolve role for " + getSession().getName() );
+          logger.warn( "NullPointerException when trying to resolve role for " + getSession().getName() );
           return "";
         }
 
