@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -15,8 +15,10 @@ package pt.webdetails.cda.cache.scheduler;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,61 +29,45 @@ import org.json.JSONObject;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
-import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cpf.Util;
-//import pt.webdetails.cda.PluginHibernateException;
-//import pt.webdetails.cda.cache.CacheScheduleManager;
 
-/**
- *
- * @author pdpi
- */
-public abstract class Query implements Serializable
-{
+
+public abstract class Query implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private static Log logger = LogFactory.getLog(Query.class);
+  private static Log logger = LogFactory.getLog( Query.class );
   private long id;
   private String cdaFile;
   private String dataAccessId;
   private List<CachedParam> parameters;
   private int hitCount, missCount;
 
-  public Query()
-  {
+  public Query() {
   }
 
 
-  public Query(JSONObject json) throws JSONException
-  {
+  public Query( JSONObject json ) throws JSONException {
     this();
-    this.cdaFile = getJsonString(json, "cdaFile");
-    this.dataAccessId = getJsonString(json, "dataAccessId");
+    this.cdaFile = getJsonString( json, "cdaFile" );
+    this.dataAccessId = getJsonString( json, "dataAccessId" );
 
-    this.hitCount = getJsonInt(json, "hitCount");
-    this.missCount = getJsonInt(json, "missCount");
+    this.hitCount = getJsonInt( json, "hitCount" );
+    this.missCount = getJsonInt( json, "missCount" );
 
-    if (json.has("parameters"))
-    {
+    if ( json.has( "parameters" ) ) {
       this.parameters = new ArrayList<CachedParam>();
-      Object params = json.get("parameters");
+      Object params = json.get( "parameters" );
 
-      if (params instanceof JSONArray)
-      {
-        for (int i = 0; i < ((JSONArray) params).length(); i++)
-        {
-          this.parameters.add(new CachedParam(((JSONArray) params).getJSONObject(i)));
+      if ( params instanceof JSONArray ) {
+        for ( int i = 0; i < ( (JSONArray) params ).length(); i++ ) {
+          this.parameters.add( new CachedParam( ( (JSONArray) params ).getJSONObject( i ) ) );
         }
-      }
-      else
-      {
-        String[] names = JSONObject.getNames((JSONObject) params);
-        if (names != null)
-        {
-          for (String name : names)
-          {
-            this.parameters.add(new CachedParam(name, ((JSONObject) params).getString(name)));
+      } else {
+        String[] names = JSONObject.getNames( (JSONObject) params );
+        if ( names != null ) {
+          for ( String name : names ) {
+            this.parameters.add( new CachedParam( name, ( (JSONObject) params ).getString( name ) ) );
           }
         }
       }
@@ -90,167 +76,171 @@ public abstract class Query implements Serializable
   }
 
 
-  public long getId()
-  {
+  public long getId() {
     return id;
   }
 
 
-  public void setId(long id)
-  {
+  public void setId( long id ) {
     this.id = id;
   }
 
 
-  public String getCdaFile()
-  {
+  public String getCdaFile() {
     return cdaFile;
   }
 
 
-  public void setCdaFile(String cdaFile)
-  {
+  public void setCdaFile( String cdaFile ) {
     this.cdaFile = cdaFile;
   }
 
 
-  public String getDataAccessId()
-  {
+  public String getDataAccessId() {
     return dataAccessId;
   }
 
 
-  public void setDataAccessId(String dataAccessId)
-  {
+  public void setDataAccessId( String dataAccessId ) {
     this.dataAccessId = dataAccessId;
   }
 
 
-  public int getHitCount()
-  {
+  public int getHitCount() {
     return hitCount;
   }
 
 
-  public void setHitCount(int hitCount)
-  {
+  public void setHitCount( int hitCount ) {
     this.hitCount = hitCount;
   }
 
 
-  public int getMissCount()
-  {
+  public int getMissCount() {
     return missCount;
   }
 
 
-  public void setMissCount(int missCount)
-  {
+  public void setMissCount( int missCount ) {
     this.missCount = missCount;
   }
 
 
-  public List<CachedParam> getParameters()
-  {
+  public List<CachedParam> getParameters() {
     return parameters;
   }
 
+  public String getParametersAsString() {
+    String p = "";
+    List<CachedParam> parameters = getParameters();
+    Collections.sort( parameters, new Comparator<CachedParam>() {
 
-  public void setParameters(List<CachedParam> parameters)
-  {
+      @Override
+      public int compare( CachedParam o1, CachedParam o2 ) {
+        if ( o1 == null && o2 != null ) {
+          return 1;
+        }
+        if ( o2 == null && o1 != null ) {
+          return -1;
+        }
+        if ( o2 == null && o1 == null ) {
+          return 0;
+        }
+        if ( o1.getName() == null && o2.getName() != null ) {
+          return 1;
+        }
+        if ( o1.getName() != null && o2.getName() == null ) {
+          return -1;
+        }
+        if ( o2.getName() == null && o1.getName() == null ) {
+          return 0;
+        }
+        return o1.getName().compareTo( o2.getName() );
+      }
+    } );
+    for ( CachedParam param : parameters ) {
+      p += param.getName() + ':' + param.getValue() + ';';
+    }
+    return p;
+  }
+
+
+  public void setParameters( List<CachedParam> parameters ) {
     this.parameters = parameters;
   }
 
+  /* Doesn't do anything.  Provides congruence with getParametersAsString for
+  * hibernate. */
+  public void setParametersAsString( String parameters ) {
+  }
 
-  public void addParameter(CachedParam p)
-  {
-    if (parameters == null)
-    {
+
+  public void addParameter( CachedParam p ) {
+    if ( parameters == null ) {
       this.parameters = new ArrayList<CachedParam>();
     }
-    this.parameters.add(p);
+    this.parameters.add( p );
   }
 
 
-  public void registerRequest(boolean hit)
-  {
-    if (hit)
-    {
-      setHitCount(getHitCount() + 1);
-    }
-    else
-    {
-      setMissCount(getMissCount() + 1);
+  public void registerRequest( boolean hit ) {
+    if ( hit ) {
+      setHitCount( getHitCount() + 1 );
+    } else {
+      setMissCount( getMissCount() + 1 );
     }
   }
 
 
-  public JSONObject toJSON()
-  {
+  public JSONObject toJSON() {
     JSONObject output = new JSONObject();
     JSONObject params = new JSONObject();
-    try
-    {
-      for (CachedParam param : getParameters())
-      {
-        params.put(param.getName(), param.getValue());
+    try {
+      for ( CachedParam param : getParameters() ) {
+        params.put( param.getName(), param.getValue() );
       }
-    }
-    catch (JSONException jse)
-    {
-      //CacheScheduleManager.logger.error("Failed to build parameters for query: " + getCdaFile() + "/" + getDataAccessId());
-        logger.error("Failed to build parameters for query: " + getCdaFile() + "/" + getDataAccessId());
+    } catch ( JSONException jse ) {
+      logger.error( "Failed to build parameters for query: " + getCdaFile() + "/" + getDataAccessId() );
       return null;
     }
-    try
-    {
-      output.put("id", getId());
+    try {
+      output.put( "id", getId() );
 
-      output.put("cdaFile", getCdaFile());
-      output.put("dataAccessId", getDataAccessId());
-      output.put("parameters", params);
+      output.put( "cdaFile", getCdaFile() );
+      output.put( "dataAccessId", getDataAccessId() );
+      output.put( "parameters", params );
 
-      output.put("hitCount", getHitCount());
-      output.put("missCount", getMissCount());
-    }
-    catch (JSONException jse)
-    {
-      //CacheScheduleManager.logger.error("Failed to build JSON for query: " + getCdaFile() + "/" + getDataAccessId());
-        logger.error("Failed to build JSON for query: " + getCdaFile() + "/" + getDataAccessId());
+      output.put( "hitCount", getHitCount() );
+      output.put( "missCount", getMissCount() );
+    } catch ( JSONException jse ) {
+      logger.error( "Failed to build JSON for query: " + getCdaFile() + "/" + getDataAccessId() );
       return null;
     }
     return output;
   }
 
 
-  public void execute() throws Exception
-  {
-    try
-    {
+  public void execute() throws Exception {
+    try {
       executeQuery();
-    }
-    catch (Exception e)
-    {
-      //CacheScheduleManager.logger.error("Failed to execute query " + toString());
-      logger.error("Failed to execute query " + toString());
+    } catch ( Exception e ) {
+      logger.error( "Failed to execute query " + toString() );
     }
   }
 
 
-  protected void executeQuery() throws Exception
-  {
+  protected void executeQuery() throws Exception {
 
-    final CdaSettings cdaSettings = CdaEngine.getInstance().getSettingsManager().parseSettingsFile(getCdaFile());
+    final CdaSettings cdaSettings = CdaEngine.getInstance().getSettingsManager().parseSettingsFile( getCdaFile() );
 
     final QueryOptions queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId(getDataAccessId());
+    queryOptions.setDataAccessId( getDataAccessId() );
     // force query to be refreshed
-    queryOptions.setCacheBypass(true);
+    queryOptions.setCacheBypass( true );
 
-    for (Object o : getParameters())
-    {
+    for ( Object o : getParameters() ) {
       CachedParam param = (CachedParam) o;
-      queryOptions.addParameter(param.getName(), param.getValue());
+      queryOptions.addParameter( param.getName(), param.getValue() );
     }
 
     long start = System.currentTimeMillis();
@@ -262,70 +252,50 @@ public abstract class Query implements Serializable
   }
 
 
-  public abstract void setTimeElapsed(long timeElapsed);
+  public abstract void setTimeElapsed( long timeElapsed );
 
   public abstract long getTimeElapsed();
 
   //XXX
-  public void save() throws Exception//PluginHibernateException 
-  {
-    if (getId() == 0)
-    {
-      
+  public void save() throws Exception {
+//    if ( getId() == 0 ) {
 //      Session s = PluginHibernateUtil.getSession();
-      
 //      s.save(this);
-    }
+//    }
   }
 
 
-  protected static String getJsonString(JSONObject json, String expr)
-  {
-    try
-    {
-      return json.getString(expr);
-    }
-    catch (Exception e)
-    {
+  protected static String getJsonString( JSONObject json, String expr ) {
+    try {
+      return json.getString( expr );
+    } catch ( Exception e ) {
       return "";
     }
   }
 
 
-  protected static int getJsonInt(JSONObject json, String expr)
-  {
-    try
-    {
-      return json.getInt(expr);
-    }
-    catch (Exception e)
-    {
+  protected static int getJsonInt( JSONObject json, String expr ) {
+    try {
+      return json.getInt( expr );
+    } catch ( Exception e ) {
       return 0;
     }
   }
 
 
-  protected static Date getJsonDate(JSONObject json, String expr)
-  {
-    try
-    {
-      return new Date(json.getLong(expr));
-    }
-    catch (Exception e)
-    {
-      return new Date(0);
+  protected static Date getJsonDate( JSONObject json, String expr ) {
+    try {
+      return new Date( json.getLong( expr ) );
+    } catch ( Exception e ) {
+      return new Date( 0 );
     }
   }
 
 
-  protected static boolean getJsonBoolean(JSONObject json, String expr)
-  {
-    try
-    {
-      return json.getBoolean(expr);
-    }
-    catch (Exception e)
-    {
+  protected static boolean getJsonBoolean( JSONObject json, String expr ) {
+    try {
+      return json.getBoolean( expr );
+    } catch ( Exception e ) {
       return false;
     }
   }
