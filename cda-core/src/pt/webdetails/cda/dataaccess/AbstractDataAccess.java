@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -44,16 +44,13 @@ import pt.webdetails.cda.utils.kettle.SortException;
 /**
  * This is the top level implementation of a DataAccess. Only the common methods are used here
  * <p/>
- * User: pedro
- * Date: Feb 3, 2010
- * Time: 11:05:38 AM
+ * User: pedro Date: Feb 3, 2010 Time: 11:05:38 AM
  */
-public abstract class AbstractDataAccess implements DataAccess
-{
+public abstract class AbstractDataAccess implements DataAccess {
 
-  private static final Log logger = LogFactory.getLog(AbstractDataAccess.class);
+  private static final Log logger = LogFactory.getLog( AbstractDataAccess.class );
   private static IQueryCache cache;
-  
+
   private CdaSettings cdaSettings;
   private String id;
   private String name;
@@ -70,23 +67,21 @@ public abstract class AbstractDataAccess implements DataAccess
   private static final String PARAM_ITERATOR_END = ")";
   private static final String PARAM_ITERATOR_ARG_SEPARATOR = ",";
 
-  protected AbstractDataAccess()
-  {
+  protected AbstractDataAccess() {
   }
 
 
-  protected AbstractDataAccess(final Element element)
-  {
+  protected AbstractDataAccess( final Element element ) {
     name = "";
     columnDefinitionIndexMap = new HashMap<Integer, ColumnDefinition>();
     columnDefinitions = new ArrayList<ColumnDefinition>();
     parameters = new ArrayList<Parameter>();
     outputs = new HashMap<Integer, ArrayList<Integer>>();
-    outputs.put(1, new ArrayList<Integer>());
+    outputs.put( 1, new ArrayList<Integer>() );
     outputMode = new HashMap<Integer, OutputMode>();
-    outputMode.put(1, OutputMode.INCLUDE);
+    outputMode.put( 1, OutputMode.INCLUDE );
 
-    parseOptions(element);
+    parseOptions( element );
 
   }
 
@@ -95,8 +90,7 @@ public abstract class AbstractDataAccess implements DataAccess
    * @param id
    * @param name
    */
-  protected AbstractDataAccess(String id, String name)
-  {
+  protected AbstractDataAccess( String id, String name ) {
     this.name = name;
     this.id = id;
 
@@ -104,160 +98,139 @@ public abstract class AbstractDataAccess implements DataAccess
     columnDefinitions = new ArrayList<ColumnDefinition>();
     parameters = new ArrayList<Parameter>();
     outputs = new HashMap<Integer, ArrayList<Integer>>();
-    outputs.put(1, new ArrayList<Integer>());
+    outputs.put( 1, new ArrayList<Integer>() );
     outputMode = new HashMap<Integer, OutputMode>();
-    outputMode.put(1, OutputMode.INCLUDE);
+    outputMode.put( 1, OutputMode.INCLUDE );
   }
 
 
   /**
-   * 
    * @param params
    */
-  public void setParameters(Collection<Parameter> params)
-  {
+  public void setParameters( Collection<Parameter> params ) {
     this.parameters.clear();
-    this.parameters.addAll(params);
+    this.parameters.addAll( params );
   }
 
 
   public abstract String getType();
 
 
-  private void parseOptions(final Element element)
-  {
-    id = element.attributeValue("id");
+  private void parseOptions( final Element element ) {
+    id = element.attributeValue( "id" );
 
-    final Element nameElement = (Element) element.selectSingleNode("./Name");
-    if (nameElement != null)
-    {
+    final Element nameElement = (Element) element.selectSingleNode( "./Name" );
+    if ( nameElement != null ) {
       name = nameElement.getTextTrim();
     }
 
-    if (element.attributeValue("access") != null && element.attributeValue("access").equals("private"))
-    {
+    if ( element.attributeValue( "access" ) != null && element.attributeValue( "access" ).equals( "private" ) ) {
       access = DataAccessEnums.ACCESS_TYPE.PRIVATE;
     }
 
-    if (element.attributeValue("cache") != null && element.attributeValue("cache").equals("true"))
-    {
+    if ( element.attributeValue( "cache" ) != null && element.attributeValue( "cache" ).equals( "true" ) ) {
       cacheEnabled = true;
     }
 
-    if (element.attribute("cacheDuration") != null && !element.attribute("cacheDuration").toString().equals(""))
-    {
-      cacheDuration = Integer.parseInt(element.attributeValue("cacheDuration"));
+    if ( element.attribute( "cacheDuration" ) != null && !element.attribute( "cacheDuration" ).toString()
+      .equals( "" ) ) {
+      cacheDuration = Integer.parseInt( element.attributeValue( "cacheDuration" ) );
     }
 
 
     // Parse parameters
-    @SuppressWarnings("unchecked")
-    final List<Element> parameterNodes = element.selectNodes("Parameters/Parameter");
+    @SuppressWarnings( "unchecked" )
+    final List<Element> parameterNodes = element.selectNodes( "Parameters/Parameter" );
 
-    for (final Element p : parameterNodes)
-    {
-      parameters.add(new Parameter(p));
+    for ( final Element p : parameterNodes ) {
+      parameters.add( new Parameter( p ) );
     }
 
     // Parse outputs
-    @SuppressWarnings("unchecked")
-    final List<Element> outputNodes = element.selectNodes("Output");
+    @SuppressWarnings( "unchecked" )
+    final List<Element> outputNodes = element.selectNodes( "Output" );
 
-    for (final Element outputNode : outputNodes)
-    {
+    for ( final Element outputNode : outputNodes ) {
       ArrayList<Integer> myOutputs = new ArrayList<Integer>();
-      if (outputNode != null)
-      {
+      if ( outputNode != null ) {
         int localId = 1;
-        if (outputNode.attribute("id") != null && !outputNode.attribute("id").toString().equals(""))
-        {
+        if ( outputNode.attribute( "id" ) != null && !outputNode.attribute( "id" ).toString().equals( "" ) ) {
           // if parseInt fails an exception will be thrown and the cda file will not be accepted
-          localId = Integer.parseInt(outputNode.attributeValue("id"));
-        }
-        else
-        {
+          localId = Integer.parseInt( outputNode.attributeValue( "id" ) );
+        } else {
           // if an output has not a defined or empty id then it will have key = 1
           localId = 1;
         }
 
-        try
-        {
-          outputMode.put(localId, OutputMode.valueOf(outputNode.attributeValue("mode").toUpperCase()));
-        }
-        catch (Exception e)
-        {
+        try {
+          outputMode.put( localId, OutputMode.valueOf( outputNode.attributeValue( "mode" ).toUpperCase() ) );
+        } catch ( Exception e ) {
           // if there are any errors, go back to the default					
-          outputMode.put(localId, OutputMode.INCLUDE);
+          outputMode.put( localId, OutputMode.INCLUDE );
         }
 
-        final String[] indexes = outputNode.attributeValue("indexes").split(",");
-        for (final String index : indexes)
-        {
-          myOutputs.add(Integer.parseInt(index));
+        final String[] indexes = outputNode.attributeValue( "indexes" ).split( "," );
+        for ( final String index : indexes ) {
+          myOutputs.add( Integer.parseInt( index ) );
         }
-        outputs.put(localId, myOutputs);
+        outputs.put( localId, myOutputs );
       }
     }
 
     // Parse Columns
-    @SuppressWarnings("unchecked")
-    final List<Element> columnNodes = element.selectNodes("Columns/*");
+    @SuppressWarnings( "unchecked" )
+    final List<Element> columnNodes = element.selectNodes( "Columns/*" );
 
-    for (final Element p : columnNodes)
-    {
-      columnDefinitions.add(new ColumnDefinition(p));
+    for ( final Element p : columnNodes ) {
+      columnDefinitions.add( new ColumnDefinition( p ) );
     }
 
     // Build the columnDefinitionIndexMap
     final ArrayList<ColumnDefinition> cols = getColumns();
-    for (final ColumnDefinition columnDefinition : cols)
-    {
-      columnDefinitionIndexMap.put(columnDefinition.getIndex(), columnDefinition);
+    for ( final ColumnDefinition columnDefinition : cols ) {
+      columnDefinitionIndexMap.put( columnDefinition.getIndex(), columnDefinition );
     }
 
   }
-  
-  public static synchronized IQueryCache getCdaCache(){
-    if(cache == null){
+
+  public static synchronized IQueryCache getCdaCache() {
+    if ( cache == null ) {
       try {
-        cache = CdaEngine.getEnvironment().getQueryCache(); 
-      } catch (Exception e) {
-        logger.error(e.getMessage());
+        cache = CdaEngine.getEnvironment().getQueryCache();
+      } catch ( Exception e ) {
+        logger.error( e.getMessage() );
       }
     }
     return cache;
   }
 
-//  /**
-//   * @deprecated use {@link #getCdaCache()}
-//   */
-//  public static synchronized net.sf.ehcache.Cache getCache()
-//  {
-//    return ((EHCacheQueryCache) getCdaCache()).getCache();
-//  }
+  //  /**
+  //   * @deprecated use {@link #getCdaCache()}
+  //   */
+  //  public static synchronized net.sf.ehcache.Cache getCache()
+  //  {
+  //    return ((EHCacheQueryCache) getCdaCache()).getCache();
+  //  }
 
-  public static synchronized void shutdownCache(){
-    if(cache != null){
+  public static synchronized void shutdownCache() {
+    if ( cache != null ) {
       cache.shutdownIfRunning();
       cache = null;
     }
   }
 
-  public static synchronized void clearCache()
-  {
+  public static synchronized void clearCache() {
     IQueryCache cache = getCdaCache();
     cache.clearCache();
   }
 
 
-  public TableModel doQuery(final QueryOptions queryOptions) throws QueryException
-  {
+  public TableModel doQuery( final QueryOptions queryOptions ) throws QueryException {
 
-    Map<String, Iterable<String>> iterableParameters = getIterableParametersValues(queryOptions);
+    Map<String, Iterable<String>> iterableParameters = getIterableParametersValues( queryOptions );
 
-    if (!iterableParameters.isEmpty())
-    {
-      return doQueryOnIterableParameters(queryOptions, iterableParameters);
+    if ( !iterableParameters.isEmpty() ) {
+      return doQueryOnIterableParameters( queryOptions, iterableParameters );
     }
 
     /*
@@ -269,48 +242,39 @@ public abstract class AbstractDataAccess implements DataAccess
      *
      */
 
-    final TableModel tableModel = queryDataSource(queryOptions);
-    
-    try
-    {
-      final TableModel outputTableModel = TableModelUtils.postProcessTableModel(this, queryOptions, tableModel);
-      logger.debug("Query " + getId() + " done successfully - returning tableModel");
+    final TableModel tableModel = queryDataSource( queryOptions );
+
+    try {
+      final TableModel outputTableModel = TableModelUtils.postProcessTableModel( this, queryOptions, tableModel );
+      logger.debug( "Query " + getId() + " done successfully - returning tableModel" );
       return outputTableModel;
-    }
-    catch (InvalidOutputIndexException e)
-    {
-      throw new QueryException("Error while setting output index id ", e);
-    }
-    catch (SortException e)
-    {
-      throw new QueryException("Error while sorting output ", e);
+    } catch ( InvalidOutputIndexException e ) {
+      throw new QueryException( "Error while setting output index id ", e );
+    } catch ( SortException e ) {
+      throw new QueryException( "Error while sorting output ", e );
     }
   }
 
-  public TableModel listParameters()
-  {
+  public TableModel listParameters() {
 
-    return TableModelUtils.dataAccessParametersToTableModel(getParameters());
+    return TableModelUtils.dataAccessParametersToTableModel( getParameters() );
 
   }
 
 
-  protected abstract TableModel queryDataSource(final QueryOptions queryOptions) throws QueryException;
+  protected abstract TableModel queryDataSource( final QueryOptions queryOptions ) throws QueryException;
 
 
   //public abstract void closeDataSource() throws QueryException;
 
 
-  public ArrayList<ColumnDefinition> getColumns()
-  {
+  public ArrayList<ColumnDefinition> getColumns() {
 
     final ArrayList<ColumnDefinition> list = new ArrayList<ColumnDefinition>();
 
-    for (final ColumnDefinition definition : columnDefinitions)
-    {
-      if (definition.getType() == ColumnDefinition.TYPE.COLUMN)
-      {
-        list.add(definition);
+    for ( final ColumnDefinition definition : columnDefinitions ) {
+      if ( definition.getType() == ColumnDefinition.TYPE.COLUMN ) {
+        list.add( definition );
       }
     }
     return list;
@@ -318,24 +282,20 @@ public abstract class AbstractDataAccess implements DataAccess
   }
 
 
-  public ColumnDefinition getColumnDefinition(final int idx)
-  {
+  public ColumnDefinition getColumnDefinition( final int idx ) {
 
-    return columnDefinitionIndexMap.get(new Integer(idx));
+    return columnDefinitionIndexMap.get( new Integer( idx ) );
 
   }
 
 
-  public ArrayList<ColumnDefinition> getCalculatedColumns()
-  {
+  public ArrayList<ColumnDefinition> getCalculatedColumns() {
 
     final ArrayList<ColumnDefinition> list = new ArrayList<ColumnDefinition>();
 
-    for (final ColumnDefinition definition : columnDefinitions)
-    {
-      if (definition.getType() == ColumnDefinition.TYPE.CALCULATED_COLUMN)
-      {
-        list.add(definition);
+    for ( final ColumnDefinition definition : columnDefinitions ) {
+      if ( definition.getType() == ColumnDefinition.TYPE.CALCULATED_COLUMN ) {
+        list.add( definition );
       }
     }
     return list;
@@ -343,125 +303,112 @@ public abstract class AbstractDataAccess implements DataAccess
   }
 
 
-  public void storeDescriptor(DataAccessConnectionDescriptor descriptor)
-  {
+  public void storeDescriptor( DataAccessConnectionDescriptor descriptor ) {
     ////
   }
 
 
-  public String getId()
-  {
+  public String getId() {
     return id;
   }
 
 
-  public String getName()
-  {
+  public String getName() {
     return name;
   }
 
 
-  public void setName(final String name)
-  {
+  public void setName( final String name ) {
     this.name = name;
   }
 
 
-  public DataAccessEnums.ACCESS_TYPE getAccess()
-  {
+  public DataAccessEnums.ACCESS_TYPE getAccess() {
     return access;
   }
 
-  public boolean isCacheEnabled(){
+  public boolean isCacheEnabled() {
     return cacheEnabled;
   }
-  
-  public void setCacheEnabled(boolean enabled){
+
+  public void setCacheEnabled( boolean enabled ) {
     cacheEnabled = enabled;
   }
 
 
-  public int getCacheDuration()
-  {
+  public int getCacheDuration() {
     return cacheDuration;
   }
-  
-  public void setCacheDuration(int cacheDuration) {
+
+  public void setCacheDuration( int cacheDuration ) {
     this.cacheDuration = cacheDuration;
   }
 
 
-  public CdaSettings getCdaSettings()
-  {
+  public CdaSettings getCdaSettings() {
     return cdaSettings;
   }
 
 
-  public void setCdaSettings(final CdaSettings cdaSettings)
-  {
+  public void setCdaSettings( final CdaSettings cdaSettings ) {
     this.cdaSettings = cdaSettings;
   }
 
 
-  public ArrayList<Parameter> getParameters()
-  {
+  public ArrayList<Parameter> getParameters() {
     return parameters;
   }
 
 
-  public ArrayList<Integer> getOutputs()
-  {
-    if (outputs.isEmpty())
-    {
+  public ArrayList<Integer> getOutputs() {
+    if ( outputs.isEmpty() ) {
       return new ArrayList<Integer>();
     }
-    return (ArrayList<Integer>) outputs.get(1);
+    return (ArrayList<Integer>) outputs.get( 1 );
   }
 
 
-  public ArrayList<Integer> getOutputs(int id)
-  {
-    return (ArrayList<Integer>) outputs.get(id);
+  public ArrayList<Integer> getOutputs( int id ) {
+    return (ArrayList<Integer>) outputs.get( id );
   }
 
 
   /**
-   * 
    * @param outputIndexes indexes of columns to output
    */
-  public void setOutputs(HashMap<Integer, ArrayList<Integer>> outputIndexes)
-  {
+  public void setOutputs( HashMap<Integer, ArrayList<Integer>> outputIndexes ) {
     this.outputs = outputIndexes;
   }
 
 
-  public OutputMode getOutputMode()
-  {
-    return outputMode.get(1);
+  public OutputMode getOutputMode() {
+    return outputMode.get( 1 );
   }
 
 
-  public OutputMode getOutputMode(int id)
-  {
-    return outputMode.get(id);
+  public OutputMode getOutputMode( int id ) {
+    return outputMode.get( id );
   }
 
 
-  public List<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors()
-  {
+  public List<DataAccessConnectionDescriptor> getDataAccessConnectionDescriptors() {
     return this.getDataAccessConnectionDescriptors();
   }
 
 
-  public List<PropertyDescriptor> getInterface()
-  {
+  public List<PropertyDescriptor> getInterface() {
 
     ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
-    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
-    properties.add(new PropertyDescriptor("access", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
-    properties.add(new PropertyDescriptor("parameters", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD));
-    properties.add(new PropertyDescriptor("output", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD));
-    properties.add(new PropertyDescriptor("columns", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD));
+    properties
+      .add( new PropertyDescriptor( "id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB ) );
+    properties
+      .add( new PropertyDescriptor( "access", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB ) );
+    properties
+      .add( new PropertyDescriptor( "parameters", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD ) );
+    properties
+      .add( new PropertyDescriptor( "output", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD ) );
+    properties
+      .add( new PropertyDescriptor( "columns", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD ) );
     return properties;
   }
 
@@ -469,31 +416,29 @@ public abstract class AbstractDataAccess implements DataAccess
   public abstract ConnectionType getConnectionType();
 
 
-  public Connection[] getAvailableConnections()
-  {
-    return ConnectionCatalog.getInstance(false).getConnectionsByType(getConnectionType());
+  public Connection[] getAvailableConnections() {
+    return ConnectionCatalog.getInstance( false ).getConnectionsByType( getConnectionType() );
   }
 
 
-  public Connection[] getAvailableConnections(boolean skipCache)
-  {
-    return ConnectionCatalog.getInstance(skipCache).getConnectionsByType(getConnectionType());
+  public Connection[] getAvailableConnections( boolean skipCache ) {
+    return ConnectionCatalog.getInstance( skipCache ).getConnectionsByType( getConnectionType() );
   }
 
 
-  public String getTypeForFile()
-  {
-    return this.getClass().toString().toLowerCase().replaceAll("class pt.webdetails.cda.dataaccess.(.*)connection", "$1");
+  public String getTypeForFile() {
+    return this.getClass().toString().toLowerCase()
+      .replaceAll( "class pt.webdetails.cda.dataaccess.(.*)connection", "$1" );
   }
-  
-  public boolean hasIterableParameterValues(final QueryOptions queryOptions) throws QueryException {
-      for (Parameter param : queryOptions.getParameters()) {
-          String value = param.getStringValue();
-          if (value != null && value.startsWith(PARAM_ITERATOR_BEGIN)) {
-              return true;
-          }
+
+  public boolean hasIterableParameterValues( final QueryOptions queryOptions ) throws QueryException {
+    for ( Parameter param : queryOptions.getParameters() ) {
+      String value = param.getStringValue();
+      if ( value != null && value.startsWith( PARAM_ITERATOR_BEGIN ) ) {
+        return true;
       }
-      return false;
+    }
+    return false;
   }
 
 
@@ -501,65 +446,53 @@ public abstract class AbstractDataAccess implements DataAccess
    * Identify $FOREACH directives and get their iterators
    */
   private Map<String, Iterable<String>> getIterableParametersValues(
-          final QueryOptions queryOptions) throws QueryException
-  {
+    final QueryOptions queryOptions ) throws QueryException {
 
     //name, values
     Map<String, Iterable<String>> iterableParameters = new HashMap<String, Iterable<String>>();
-    final String splitRegex = PARAM_ITERATOR_ARG_SEPARATOR + "(?=([^\"]*\"[^\"]*\")*[^\"]*$)";//ignore separator inside dquotes
+    final String splitRegex =
+      PARAM_ITERATOR_ARG_SEPARATOR + "(?=([^\"]*\"[^\"]*\")*[^\"]*$)"; //ignore separator inside dquotes
 
-    for (Parameter param : queryOptions.getParameters())
-    {
+    for ( Parameter param : queryOptions.getParameters() ) {
       String value = param.getStringValue();
-      if (value != null && value.startsWith(PARAM_ITERATOR_BEGIN))
-      {
-        String[] args = Util.getContentsBetween(value, PARAM_ITERATOR_BEGIN, PARAM_ITERATOR_END).split(splitRegex);
+      if ( value != null && value.startsWith( PARAM_ITERATOR_BEGIN ) ) {
+        String[] args = Util.getContentsBetween( value, PARAM_ITERATOR_BEGIN, PARAM_ITERATOR_END ).split( splitRegex );
 
-        if (args.length < 2)
-        {
-          throw new QueryException("Parameter '" + param.getName() + "': "
-                  + "Error iterating parameter.", new IllegalArgumentException("$FOREACH: need at least dataAccessId and column index"));
+        if ( args.length < 2 ) {
+          throw new QueryException( "Parameter '" + param.getName() + "': "
+            + "Error iterating parameter.",
+            new IllegalArgumentException( "$FOREACH: need at least dataAccessId and column index" ) );
         }
 
         //dataAccessId
-        String dataAccessId = StringUtils.trim(args[0]);
-        try
-        {//validate
-          getCdaSettings().getDataAccess(dataAccessId);
-        }
-        catch (UnknownDataAccessException e)
-        {
-          throw new QueryException("$FOREACH: Invalid dataAccessId.", e);
+        String dataAccessId = StringUtils.trim( args[ 0 ] );
+        try { //validate
+          getCdaSettings().getDataAccess( dataAccessId );
+        } catch ( UnknownDataAccessException e ) {
+          throw new QueryException( "$FOREACH: Invalid dataAccessId.", e );
         }
 
         //column index
         int columnIdx = 0;
-        try
-        {
-          columnIdx = Integer.parseInt(StringUtils.trim(args[1]));
-        }
-        catch (NumberFormatException nfe)
-        {
-          throw new QueryException("$FOREACH: Unable to parse 2nd argument.", nfe);
+        try {
+          columnIdx = Integer.parseInt( StringUtils.trim( args[ 1 ] ) );
+        } catch ( NumberFormatException nfe ) {
+          throw new QueryException( "$FOREACH: Unable to parse 2nd argument.", nfe );
         }
 
         //parameters for query
         String[] dataAccessParams = null;
-        if (args.length > 2)
-        {
-          dataAccessParams = new String[args.length - 2];
-          System.arraycopy(args, 2, dataAccessParams, 0, dataAccessParams.length);
+        if ( args.length > 2 ) {
+          dataAccessParams = new String[ args.length - 2 ];
+          System.arraycopy( args, 2, dataAccessParams, 0, dataAccessParams.length );
         }
 
-        Iterable<String> paramValues = expandParameterIteration(dataAccessId, columnIdx, dataAccessParams);
+        Iterable<String> paramValues = expandParameterIteration( dataAccessId, columnIdx, dataAccessParams );
 
-        if (paramValues == null)
-        {//no values, clear so it can fallback to default (if any)
-          param.setValue(null);
-        }
-        else
-        {
-          iterableParameters.put(param.getName(), paramValues);
+        if ( paramValues == null ) { //no values, clear so it can fallback to default (if any)
+          param.setValue( null );
+        } else {
+          iterableParameters.put( param.getName(), paramValues );
         }
       }
     }
@@ -567,66 +500,60 @@ public abstract class AbstractDataAccess implements DataAccess
   }
 
   /**
-   * Get a value iterator from a $FOREACH directive 
+   * Get a value iterator from a $FOREACH directive
+   *
    * @return Iterable over values, or null if no results
    */
-  private Iterable<String> expandParameterIteration(String dataAccessId, int outColumnIdx, String[] dataAccessParameters)
-          throws QueryException
-  {
+  private Iterable<String> expandParameterIteration( String dataAccessId, int outColumnIdx,
+                                                     String[] dataAccessParameters )
+    throws QueryException {
     final String EXC_TEXT = "Unable to expand parameter iteration. ";
 
     QueryOptions queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId(dataAccessId);
+    queryOptions.setDataAccessId( dataAccessId );
 
     //set query parameters
-    if (dataAccessParameters != null)
-    {
-      for (String paramDef : dataAccessParameters)
-      {
-        int attribIdx = StringUtils.indexOf(paramDef, '=');
-        if(attribIdx > 0){
-          String paramName = StringUtils.trim(StringUtils.substring(paramDef, 0, attribIdx));
-          String paramValue = StringUtils.trim(StringUtils.substring(paramDef, attribIdx+1));
-          queryOptions.addParameter(paramName, paramValue);
-        }
-        else {
-          logger.error("Bad parameter definition, skipping: " + paramDef);
+    if ( dataAccessParameters != null ) {
+      for ( String paramDef : dataAccessParameters ) {
+        int attribIdx = StringUtils.indexOf( paramDef, '=' );
+        if ( attribIdx > 0 ) {
+          String paramName = StringUtils.trim( StringUtils.substring( paramDef, 0, attribIdx ) );
+          String paramValue = StringUtils.trim( StringUtils.substring( paramDef, attribIdx + 1 ) );
+          queryOptions.addParameter( paramName, paramValue );
+        } else {
+          logger.error( "Bad parameter definition, skipping: " + paramDef );
         }
       }
     }
 
     //do query and get selected columns
-    logger.debug("expandParameterIteration: Doing inner query on CdaSettings [ " + cdaSettings.getId()
-            + " (" + queryOptions.getDataAccessId() + ")]");
-    try
-    {
+    logger.debug( "expandParameterIteration: Doing inner query on CdaSettings [ " + cdaSettings.getId()
+      + " (" + queryOptions.getDataAccessId() + ")]" );
+    try {
 
-      DataAccess dataAccess = getCdaSettings().getDataAccess(queryOptions.getDataAccessId());
-      TableModel tableModel = dataAccess.doQuery(queryOptions);
+      DataAccess dataAccess = getCdaSettings().getDataAccess( queryOptions.getDataAccessId() );
+      TableModel tableModel = dataAccess.doQuery( queryOptions );
 
-      if (outColumnIdx < 0 || outColumnIdx >= tableModel.getColumnCount())
-      {
-        throw new QueryException(EXC_TEXT, new IllegalArgumentException("Output column index " + outColumnIdx + " out of range."));
+      if ( outColumnIdx < 0 || outColumnIdx >= tableModel.getColumnCount() ) {
+        throw new QueryException( EXC_TEXT,
+          new IllegalArgumentException( "Output column index " + outColumnIdx + " out of range." ) );
       }
 
-      if (tableModel.getRowCount() < 1)
-      {
+      if ( tableModel.getRowCount() < 1 ) {
         return null;
       }
-      return new StringColumnIterable(tableModel, outColumnIdx);
+      return new StringColumnIterable( tableModel, outColumnIdx );
 
-    }
-    catch (UnknownDataAccessException e)
-    {
-      throw new QueryException(EXC_TEXT, e);
+    } catch ( UnknownDataAccessException e ) {
+      throw new QueryException( EXC_TEXT, e );
     }
 
   }
 
 
-  private TableModel doQueryOnIterableParameters(QueryOptions queryOptions, Map<String, Iterable<String>> iterableParameters)
-          throws QueryException
-  {
+  private TableModel doQueryOnIterableParameters( QueryOptions queryOptions,
+                                                  Map<String, Iterable<String>> iterableParameters )
+    throws QueryException {
     //all iterators need to have at least one value..
     List<String> names = new ArrayList<String>();
     List<Iterator<String>> iterators = new ArrayList<Iterator<String>>();
@@ -634,55 +561,43 @@ public abstract class AbstractDataAccess implements DataAccess
     List<String> values = new ArrayList<String>();
     TableModel result = null;
 
-    try
-    {
+    try {
       //0) init
       int paramCount = 0;
-      for (String name : iterableParameters.keySet())
-      {
-        names.add(name);
-        iterables.add(iterableParameters.get(name));
-        iterators.add(iterables.get(paramCount).iterator());
-        values.add(iterators.get(paramCount).next());
+      for ( String name : iterableParameters.keySet() ) {
+        names.add( name );
+        iterables.add( iterableParameters.get( name ) );
+        iterators.add( iterables.get( paramCount ).iterator() );
+        values.add( iterators.get( paramCount ).next() );
         paramCount++;
       }
       boolean exhausted = false;
 
-      while (!exhausted)
-      {// til last iteration from bottom of stack
+      while ( !exhausted ) { // til last iteration from bottom of stack
         //1.1) set parameters
-        for (int i = 0; i < paramCount; i++)
-        {
-          queryOptions.setParameter(names.get(i), values.get(i));
+        for ( int i = 0; i < paramCount; i++ ) {
+          queryOptions.setParameter( names.get( i ), values.get( i ) );
         }
         //1.2) execute query
-        TableModel tableModel = doQuery(queryOptions);
-//				//1.3) cache only, just keep last result //join results x
-//				if (result == null) { result = tableModel; }
-//				else { result = TableModelUtils.getInstance().appendTableModel(result,tableModel); }
+        TableModel tableModel = doQuery( queryOptions );
+        //1.3) cache only, just keep last result //join results x
+        //				if (result == null) { result = tableModel; }
+        //				else { result = TableModelUtils.getInstance().appendTableModel(result,tableModel); }
         result = tableModel;
         //2) get next set of values
-        for (int i = 0; i < paramCount; i++)
-        {// traverse until we can get a next() or bottom of stack reached
-          if (iterators.get(i).hasNext())
-          {
-            values.set(i, iterators.get(i).next());//new value
+        for ( int i = 0; i < paramCount; i++ ) { // traverse until we can get a next() or bottom of stack reached
+          if ( iterators.get( i ).hasNext() ) {
+            values.set( i, iterators.get( i ).next() ); //new value
             break;
-          }
-          else if (i < paramCount - 1)
-          {//this one exhausted, reset if not last
-            iterators.set(i, iterables.get(i).iterator());//reset
-            values.set(i, iterators.get(i).next());
-          }
-          else
-          {
-            exhausted = true;//end of the line, no more resets
+          } else if ( i < paramCount - 1 ) { //this one exhausted, reset if not last
+            iterators.set( i, iterables.get( i ).iterator() ); //reset
+            values.set( i, iterators.get( i ).next() );
+          } else {
+            exhausted = true; //end of the line, no more resets
           }
         }
       }
-    }
-    catch (NoSuchElementException e)
-    {
+    } catch ( NoSuchElementException e ) {
       //will happen if one of the iterators has no value
     }
 
@@ -692,60 +607,52 @@ public abstract class AbstractDataAccess implements DataAccess
   /**
    * Iterates a table model over a given column index.
    */
-  private class StringColumnIterable implements Iterable<String>
-  {
+  private class StringColumnIterable implements Iterable<String> {
 
     private final TableModel table;
     private final int columnIndex;
 
 
-    public StringColumnIterable(TableModel tableModel, int columnIndex)
-    {
+    public StringColumnIterable( TableModel tableModel, int columnIndex ) {
       this.table = tableModel;
       this.columnIndex = columnIndex;
     }
 
 
     @Override
-    public Iterator<String> iterator()
-    {
+    public Iterator<String> iterator() {
       return new StringColumnIterator();
     }
 
-    private class StringColumnIterator implements Iterator<String>
-    {
+    private class StringColumnIterator implements Iterator<String> {
 
       int rowIndex = 0;
 
 
       @Override
-      public boolean hasNext()
-      {
+      public boolean hasNext() {
         return table.getRowCount() > rowIndex;
       }
 
 
       @Override
-      public String next()
-      {
-        if (!hasNext())
-        {
+      public String next() {
+        if ( !hasNext() ) {
           throw new NoSuchElementException();
         }
-        return table.getValueAt(rowIndex++, columnIndex).toString();
+        return table.getValueAt( rowIndex++, columnIndex ).toString();
       }
 
 
       @Override
-      public void remove()
-      {
+      public void remove() {
         throw new UnsupportedOperationException();
       }
     }
   }
 
   public ArrayList<ColumnDefinition> getColumnDefinitions() {
-	  return columnDefinitions;
+    return columnDefinitions;
   }
-  
+
 }
