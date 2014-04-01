@@ -2,6 +2,7 @@
 */bin/
 */lib/
 */runtime-lib/
+*/test-lib/
 *~
 .metadata
 .project
