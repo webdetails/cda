@@ -316,8 +316,6 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     List<PropertyDescriptor> properties = super.getInterface();
     properties.add( new PropertyDescriptor( "query", PropertyDescriptor.Type.STRING,
         PropertyDescriptor.Placement.CHILD ) );
-    properties.add( new PropertyDescriptor( "queryType", PropertyDescriptor.Type.STRING,
-        PropertyDescriptor.Placement.CHILD ) );
     properties.add( new PropertyDescriptor( "connection", PropertyDescriptor.Type.STRING,
         PropertyDescriptor.Placement.ATTRIB ) );
     properties.add( new PropertyDescriptor( "cache", PropertyDescriptor.Type.BOOLEAN,
