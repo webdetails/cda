@@ -76,7 +76,7 @@ public class CsvExporter extends AbstractKettleExporter
 	  csvOutputStepMeta.setFooterEnabled( false );
 	  csvOutputStepMeta.setFilename( "${java.io.tmpdir}/" + getFileName() );
 	  csvOutputStepMeta.setExtension( "csv" );
-	  csvOutputStepMeta.setFastDump( false );
+	  csvOutputStepMeta.setFastDump( true );
 	  
 	  StepMeta stepMeta = new StepMeta( name, csvOutputStepMeta );
 	  stepMeta.setCopies( 1 );
