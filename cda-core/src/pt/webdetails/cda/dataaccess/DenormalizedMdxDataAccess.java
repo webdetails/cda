@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -17,19 +17,19 @@ import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DenormalizedMDXDataFactory;
 
+import java.util.List;
+
 /**
  * Implementation of a DataAccess that will get data from a SQL database
  * <p/>
- * User: pedro
- * Date: Feb 3, 2010
- * Time: 12:18:05 PM
+ * User: pedro Date: Feb 3, 2010 Time: 12:18:05 PM
  */
-public class DenormalizedMdxDataAccess extends MdxDataAccess {
+public class DenormalizedMdxDataAccess extends GlobalMdxDataAccess {
 
-//  private static final Log logger = LogFactory.getLog(DenormalizedMdxDataAccess.class);
+  //  private static final Log logger = LogFactory.getLog(DenormalizedMdxDataAccess.class);
 
-  public DenormalizedMdxDataAccess(final Element element) {
-    super(element);
+  public DenormalizedMdxDataAccess( final Element element ) {
+    super( element );
   }
 
   public DenormalizedMdxDataAccess() {
@@ -41,5 +41,11 @@ public class DenormalizedMdxDataAccess extends MdxDataAccess {
 
   public String getType() {
     return "denormalizedMdx";
+  }
+
+  @Override
+  public List<PropertyDescriptor> getInterface() {
+    List<PropertyDescriptor> properties = super.getInterface();
+    return properties;
   }
 }
