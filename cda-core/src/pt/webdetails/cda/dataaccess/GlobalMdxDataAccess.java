@@ -15,8 +15,6 @@ package pt.webdetails.cda.dataaccess;
 
 import java.util.Properties;
 
-import javax.swing.table.TableModel;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -117,20 +115,6 @@ public class GlobalMdxDataAccess extends PREDataAccess {
   @Override
   public ConnectionType getConnectionType() {
     return ConnectionType.MDX;
-  }
-
-
-  @Override
-  protected TableModel postProcessTableModel( TableModel tm ) {
-    //    logger.debug("Determining if we need to transform the BandedMDXTableModel");
-    //
-    //
-    //    if( tm instanceof BandedMDXDataFactory){
-    //    BandedMDXDataFactory df = (BandedMDXDataFactory) tm;
-    //    TableModel t = new CompactBandedMDXTableModel(df. (df., rowLimit)
-    //    }
-
-    return tm;
   }
 
 
