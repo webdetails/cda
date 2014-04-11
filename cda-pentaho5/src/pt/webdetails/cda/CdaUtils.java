@@ -104,8 +104,17 @@ public class CdaUtils {
   @Consumes ( APPLICATION_FORM_URLENCODED )
   @Produces( {MimeTypes.JSON, MimeTypes.XML, MimeTypes.CSV, MimeTypes.XLS, MimeTypes.PLAIN_TEXT, MimeTypes.HTML} )
   public StreamingOutput doQueryPost( MultivaluedMap<String, String> formParams,
+                                      @Context HttpServletRequest servletRequest,
                                       @Context HttpServletResponse servletResponse ) throws WebApplicationException {
-    return doQuery( formParams, servletResponse );
+    MultivaluedMap<String, String> params = formParams;
+    if ( formParams.size() == 0 ) {
+      //CDA-72: CAS http filters will clear out formParams - try to get data from the request parameter Map
+      params = getParameterMapFromRequest( servletRequest );
+    }
+
+
+
+    return doQuery( params, servletResponse );
   }
 
   protected ExportedQueryResult doQueryInternal( DoQueryParameters parameters ) throws Exception {
