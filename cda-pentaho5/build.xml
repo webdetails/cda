@@ -75,7 +75,7 @@
   </taskdef>
 
     <!--=======================================================================
-      compile.compile : overridden for 
+      compile.compile : overridden for
 
       Performs the actual compile
       ====================================================================-->
@@ -108,7 +108,7 @@
   <target name="resolve-runtime" depends="resolve-init">
     <ivy:resolve file="ivy.xml" conf="runtime" />
     <ivy:retrieve conf="runtime" pattern="${runtimelib.dir}/[module]-[revision](-[classifier]).[ext]" />
-  </target>  
+  </target>
 
 
 
@@ -161,10 +161,10 @@
     <!-- create the version file -->
     <property name="sequential.build.id" value="manual-${DSTAMP}"/>
 
-    <echo file="${stage.dir}/${plugin.name}/version.xml" message="&lt;version branch='${project.stage}'  buildId='${sequential.build.id}'>${distribution.version}&lt;/version>"/>		   
+    <echo file="${stage.dir}/${plugin.name}/version.xml" message="&lt;version branch='${project.stage}'  buildId='${sequential.build.id}'>${distribution.version}&lt;/version>"/>
 
-    <replace file="${stage.dir}/${plugin.name}/cachemanager/cache.html" token="@@VERSION@@" value="${distribution.version}"/> 
-    <replace file="${stage.dir}/${plugin.name}/static/about.html" token="@@VERSION@@" value="${distribution.version}"/>     
+    <replace file="${stage.dir}/${plugin.name}/cachemanager/cache.html" token="@@VERSION@@" value="${distribution.version}"/>
+    <replace file="${stage.dir}/${plugin.name}/static/about.html" token="@@VERSION@@" value="${distribution.version}"/>
 
     <!-- create a zip file -->
     <zip zipfile="${dist.dir}/${plugin.zipfile}"
@@ -180,21 +180,21 @@
         &lt;samples_url>${marketplace.metadata.samples_url}&lt;/samples_url>
         &lt;description>${marketplace.metadata.description}&lt;/description>
 		&lt;build_id>${sequential.build.id}&lt;/build_id>
-        &lt;min_parent_version>${marketplace.metadata.min_parent_version}&lt;/min_parent_version>		
+        &lt;min_parent_version>${marketplace.metadata.min_parent_version}&lt;/min_parent_version>
 		&lt;/version>	</echo>
 
   </target>
 
   <!-- =================
          Legacy Compat
-       ================= --> 
+       ================= -->
   <target name="resolve-legacy" depends="resolve-init">
     <ivy:resolve file="ivy.xml" conf="legacy" />
     <ivy:retrieve conf="legacy" pattern="${lib.dir}/[module]-[revision](-[classifier]).[ext]" />
   </target>
   <target name="dist-legacy" depends="clean,resolve-legacy,jar,dist-plugin"/>
 
-  <!-- ================= --> 
+  <!-- ================= -->
 
   <!--====================================================================
               dist-samples
@@ -210,7 +210,7 @@
       <fileset dir="solution/bi-developers"></fileset>
     </copy>
 
-    <replace file="${samples.stage.dir}/bi-developers/${plugin.name}/template.html" token="@@VERSION@@" value="${distribution.version}"/> 
+    <replace file="${samples.stage.dir}/bi-developers/${plugin.name}/template.html" token="@@VERSION@@" value="${distribution.version}"/>
 
     <zip zipfile="${dist.dir}/${plugin.samples.zipfile}"
          basedir="${samples.stage.dir}/bi-developers"
@@ -277,11 +277,11 @@
           ====================================================================-->
   <target name="publish-pentaho-nojar"
           depends="install-antcontrib,create-pom,ivy.deliver">
-    <ant antfile="common_build.xml" target="publish-pentaho-nojar"/>
+    <ant antfile="../build-res/subfloor.xml" target="publish-nojar"/>
 
-    <ivy:makepom ivyfile="package-ivy.xml" pomfile="plugin-pom.xml"/>
+    <ivy:makepom ivyfile="package-ivy-plugin.xml" pomfile="plugin-pom.xml"/>
     <ivy:makepom ivyfile="package-ivy.xml" pomfile="samples-pom.xml"/>
-    <ivy:makepom ivyfile="package-ivy.xml" pomfile="solution-pom.xml"/>
+    <ivy:makepom ivyfile="package-ivy-plugin.xml" pomfile="solution-pom.xml"/>
 
     <replace file="plugin-pom.xml" token="jar" value="zip"/>
     <replace file="plugin-pom.xml" token="%artifact-name%" value="${plugin.artifact.id}"/>
@@ -305,12 +305,12 @@
       <param name="publish.file" value="${dist.dir}/${plugin.solution.zipfile}"/>
     </antcall> -->
   </target>
-  
+
   <!-- SONAR (CDA) -->
 
    <!-- Add the target -->
   <target name="check-sonar-props">
-      <available file="/home/tomcat/sonar.properties" property="sonar.props"/>    
+      <available file="/home/tomcat/sonar.properties" property="sonar.props"/>
       <echo level="info">${sonar.props}</echo>
   </target>
 
@@ -318,14 +318,14 @@
     <echo>Prop file exists</echo>
     <loadproperties srcFile="/home/tomcat/sonar.properties"/>
   </target>
- 
+
   <target name="sonar" depends='read-sonar-props'>
     <!-- list of mandatories Sonar properties -->
     <property name="sonar.sources" value="${src.dir}" />
- 
+
     <!-- list of optional Sonar properties -->
     <property name="sonar.binaries" value="${classes.dir}" />
-    
+
     <sonar:sonar key="pt.webdetails:CDA" version="${distribution.version}" xmlns:sonar="antlib:org.sonar.ant"/>
   </target>
 </project>
