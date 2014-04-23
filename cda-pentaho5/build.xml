@@ -275,7 +275,7 @@
 
           Publishes the jar and plugin zip package to the Maven repository
           ====================================================================-->
-  <target name="publish-pentaho-nojar"
+  <target name="publish-nojar"
           depends="install-antcontrib,create-pom,ivy.deliver">
     <ant antfile="../build-res/subfloor.xml" target="publish-nojar"/>
 
