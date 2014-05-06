@@ -34,6 +34,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriInfo;
@@ -177,14 +178,14 @@ public class CdaUtils {
 
   @GET
   @Path( "/unwrapQuery" )
-  @Produces( { MimeTypes.JSON, MimeTypes.XML, MimeTypes.CSV, MimeTypes.XLS, MimeTypes.PLAIN_TEXT, MimeTypes.HTML } )
-  public StreamingOutput unwrapQuery( @QueryParam( "path" ) String path, @QueryParam( "uuid" ) String uuid,
+  @Produces( { MediaType.WILDCARD } )
+  public void unwrapQuery( @QueryParam( "path" ) String path, @QueryParam( "uuid" ) String uuid,
       @Context HttpServletResponse servletResponse, @Context HttpServletRequest servletRequest )
     throws WebApplicationException {
     try {
       ExportedQueryResult eqr = getCdaCoreService().unwrapQuery( path, uuid );
-      eqr.writeHeaders( servletResponse );
-      return toStreamingOutput( eqr );
+      eqr.writeResponse( servletResponse );
+
     } catch ( Exception e ) {
       logger.error( e );
       throw new WebApplicationException( e, Response.Status.INTERNAL_SERVER_ERROR );
@@ -214,7 +215,7 @@ public class CdaUtils {
     return toStreamingOutput( result );
   }
 
-  private StreamingOutput toStreamingOutput (final ExportedQueryResult result ) {
+  private StreamingOutput toStreamingOutput (final ExportedQueryResult result) {
     return new StreamingOutput() {
       
       public void write( OutputStream out ) throws IOException, WebApplicationException {

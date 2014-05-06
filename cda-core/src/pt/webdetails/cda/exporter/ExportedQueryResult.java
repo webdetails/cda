@@ -18,7 +18,7 @@ public abstract class ExportedQueryResult {
 
   private Exporter exporter;
 
-  public ExportedQueryResult ( Exporter exporter) {
+  public ExportedQueryResult( Exporter exporter ) {
     assert exporter != null;
     this.exporter = exporter;
   }
@@ -27,7 +27,7 @@ public abstract class ExportedQueryResult {
     return exporter;
   }
 
-  public void writeHeaders( HttpServletResponse response  ) throws IOException {
+  public void writeHeaders( HttpServletResponse response ) throws IOException {
     setResponseHeaders( response, exporter.getMimeType(), exporter.getAttachmentName() );
   }
 
@@ -45,15 +45,15 @@ public abstract class ExportedQueryResult {
     return Util.toString( out.toByteArray() );
   }
 
-  private static void setResponseHeaders(HttpServletResponse response, String mimeType, String attachmentName) {
-    if (StringUtils.isEmpty( mimeType ) && !StringUtils.isEmpty( attachmentName )) {
+  private static void setResponseHeaders( HttpServletResponse response, String mimeType, String attachmentName ) {
+    if ( StringUtils.isEmpty( mimeType ) && !StringUtils.isEmpty( attachmentName ) ) {
       mimeType = MimeTypes.getMimeType( attachmentName );
     }
-    response.setHeader("Content-Type", mimeType);
 
-    if (attachmentName != null)
-    {
-      response.setHeader("content-disposition", "attachment; filename=" + attachmentName);
-    } 
+    response.setContentType( mimeType );
+
+    if ( attachmentName != null ) {
+      response.setHeader( "content-disposition", "attachment; filename=" + attachmentName );
+    }
   }
 }
