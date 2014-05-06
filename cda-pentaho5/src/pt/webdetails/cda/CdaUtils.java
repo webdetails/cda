@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
 *
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -15,7 +15,12 @@ package pt.webdetails.cda;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,35 +80,38 @@ import pt.webdetails.cpf.utils.CharsetHelper;
 import pt.webdetails.cpf.utils.JsonHelper;
 import pt.webdetails.cpf.utils.MimeTypes;
 
-@Path("/{plugin}/api")
+@Path( "/{plugin}/api" )
 public class CdaUtils {
-  private static final Log logger = LogFactory.getLog(CdaUtils.class);
+  private static final Log logger = LogFactory.getLog( CdaUtils.class );
 
   public static final String PLUGIN_NAME = "cda";
   private static final String PREFIX_PARAMETER = "param";
   private static final String PREFIX_SETTING = "setting";
 
-//  private static final String[] EXPORT_TYPES = {MimeTypes.JSON, MimeTypes.XML, MimeTypes.CSV};//TODO
-  
-  private static final Pattern CDA_PATH = Pattern.compile( "^[^:]*([^/]+)[^?]*" );//TODO: safer to get trom repos?
-  
+  //  private static final String[] EXPORT_TYPES = {MimeTypes.JSON, MimeTypes.XML, MimeTypes.CSV};//TODO
+
+  private static final Pattern CDA_PATH = Pattern.compile( "^[^:]*([^/]+)[^?]*" ); //TODO: safer to get trom repos?
+
   public CdaUtils() {
   }
 
-  protected static String getEncoding() { return CharsetHelper.getEncoding(); }
+  protected static String getEncoding() {
+    return CharsetHelper.getEncoding();
+  }
 
   //TODO: wildcard for exported types?
   @GET
   @Path( "/doQuery" )
-  @Produces( {MimeTypes.JSON, MimeTypes.XML, MimeTypes.CSV, MimeTypes.XLS, MimeTypes.PLAIN_TEXT, MimeTypes.HTML} )
-  public StreamingOutput doQueryGet( @Context UriInfo urii, @Context HttpServletResponse servletResponse ) throws WebApplicationException {
+  @Produces( { MimeTypes.JSON, MimeTypes.XML, MimeTypes.CSV, MimeTypes.XLS, MimeTypes.PLAIN_TEXT, MimeTypes.HTML } )
+  public StreamingOutput doQueryGet( @Context UriInfo urii, @Context HttpServletResponse servletResponse )
+    throws WebApplicationException {
     return doQuery( urii.getQueryParameters(), servletResponse );
   }
 
   @POST
   @Path( "/doQuery" )
-  @Consumes ( APPLICATION_FORM_URLENCODED )
-  @Produces( {MimeTypes.JSON, MimeTypes.XML, MimeTypes.CSV, MimeTypes.XLS, MimeTypes.PLAIN_TEXT, MimeTypes.HTML} )
+  @Consumes( APPLICATION_FORM_URLENCODED )
+  @Produces( { MimeTypes.JSON, MimeTypes.XML, MimeTypes.CSV, MimeTypes.XLS, MimeTypes.PLAIN_TEXT, MimeTypes.HTML } )
   public StreamingOutput doQueryPost( MultivaluedMap<String, String> formParams,
                                       @Context HttpServletRequest servletRequest,
                                       @Context HttpServletResponse servletResponse ) throws WebApplicationException {
@@ -112,7 +120,6 @@ public class CdaUtils {
       //CDA-72: CAS http filters will clear out formParams - try to get data from the request parameter Map
       params = getParameterMapFromRequest( servletRequest );
     }
-
 
 
     return doQuery( params, servletResponse );
@@ -128,19 +135,19 @@ public class CdaUtils {
                                   HttpServletResponse servletResponse ) throws WebApplicationException {
     try {
       DoQueryParameters parameters = getDoQueryParameters( params );
-      if( parameters.isWrapItUp() ) {
+      if ( parameters.isWrapItUp() ) {
         return wrapQuery( parameters );
       }
       ExportedQueryResult eqr = doQueryInternal( parameters );
       eqr.writeHeaders( servletResponse );
       return toStreamingOutput( eqr );
     } catch ( Exception e ) {
-      throw new WebApplicationException( e, 501 );// TODO:
+      throw new WebApplicationException( e, 501 ); // TODO:
     }
   }
 
   private StreamingOutput wrapQuery( DoQueryParameters parameters ) throws Exception {
-      final String uuid = getCdaCoreService().wrapQuery( parameters );
+    final String uuid = getCdaCoreService().wrapQuery( parameters );
     return new StreamingOutput() {
       public void write( OutputStream out ) throws IOException, WebApplicationException {
         IOUtils.write( uuid, out );
@@ -149,7 +156,7 @@ public class CdaUtils {
   }
 
   private DoQueryParameters getDoQueryParameters( MultivaluedMap<String, String> parameters ) throws Exception {
-    DoQueryParameters doQueryParams = new DoQueryParameters( );
+    DoQueryParameters doQueryParams = new DoQueryParameters();
 
     //should populate everything but prefixed parameters TODO: recheck defaults
     BeanUtils.populate( doQueryParams, parameters );
@@ -170,9 +177,15 @@ public class CdaUtils {
   }
 
   private Object getParam( List<String> paramValues ) {
-    if( paramValues == null ) return null;
-    if (paramValues.size() == 1) return paramValues.get( 0 );
-    if (paramValues instanceof List) return paramValues.toArray();
+    if ( paramValues == null ) {
+      return null;
+    }
+    if ( paramValues.size() == 1 ) {
+      return paramValues.get( 0 );
+    }
+    if ( paramValues instanceof List ) {
+      return paramValues.toArray();
+    }
     return paramValues;
   }
 
@@ -180,7 +193,7 @@ public class CdaUtils {
   @Path( "/unwrapQuery" )
   @Produces( { MediaType.WILDCARD } )
   public void unwrapQuery( @QueryParam( "path" ) String path, @QueryParam( "uuid" ) String uuid,
-      @Context HttpServletResponse servletResponse, @Context HttpServletRequest servletRequest )
+                           @Context HttpServletResponse servletResponse, @Context HttpServletRequest servletRequest )
     throws WebApplicationException {
     try {
       ExportedQueryResult eqr = getCdaCoreService().unwrapQuery( path, uuid );
@@ -193,31 +206,30 @@ public class CdaUtils {
   }
 
   @GET
-  @Path("/listQueries")
-  @Produces( {MimeTypes.JSON, MimeTypes.XML, MimeTypes.CSV, MimeTypes.XLS, MimeTypes.PLAIN_TEXT, MimeTypes.HTML} )
+  @Path( "/listQueries" )
+  @Produces( { MimeTypes.JSON, MimeTypes.XML, MimeTypes.CSV, MimeTypes.XLS, MimeTypes.PLAIN_TEXT, MimeTypes.HTML } )
   public StreamingOutput listQueries(
-      @QueryParam("path") String path, 
-      @DefaultValue("json") @QueryParam("outputType") String outputType, 
-      @Context HttpServletResponse servletResponse) throws WebApplicationException
-  {
-    if(StringUtils.isEmpty(path)){
-      throw new IllegalArgumentException("No path provided");
+    @QueryParam( "path" ) String path,
+    @DefaultValue( "json" ) @QueryParam( "outputType" ) String outputType,
+    @Context HttpServletResponse servletResponse ) throws WebApplicationException {
+    if ( StringUtils.isEmpty( path ) ) {
+      throw new IllegalArgumentException( "No path provided" );
     }
 
-    logger.debug("Do Query: getSolPath:" + PentahoSystem.getApplicationContext().getSolutionPath(path));
+    logger.debug( "Do Query: getSolPath:" + PentahoSystem.getApplicationContext().getSolutionPath( path ) );
     ExportedQueryResult result;
     try {
-      result = getCdaCoreService().listQueries( path, getSimpleExportOptions( outputType ));
+      result = getCdaCoreService().listQueries( path, getSimpleExportOptions( outputType ) );
     } catch ( Exception e ) {
-      logger.error(e);
+      logger.error( e );
       throw new WebApplicationException( e );
     }
     return toStreamingOutput( result );
   }
 
-  private StreamingOutput toStreamingOutput (final ExportedQueryResult result) {
+  private StreamingOutput toStreamingOutput( final ExportedQueryResult result ) {
     return new StreamingOutput() {
-      
+
       public void write( OutputStream out ) throws IOException, WebApplicationException {
         try {
           result.writeOut( out );
@@ -231,7 +243,7 @@ public class CdaUtils {
   private StreamingOutput toStreamingOutput( final JsonGeneratorSerializable json ) {
     return new StreamingOutput() {
       public void write( OutputStream out ) throws IOException, WebApplicationException {
-         JsonHelper.writeJson( json, out );
+        JsonHelper.writeJson( json, out );
       }
     };
   }
@@ -240,20 +252,20 @@ public class CdaUtils {
     logger.error( e.getLocalizedMessage(), e );
     return new StreamingOutput() {
       public void write( OutputStream out ) throws IOException, WebApplicationException {
-         JsonHelper.writeJson( new JsonResult( false, e.getLocalizedMessage() ), out );
+        JsonHelper.writeJson( new JsonResult( false, e.getLocalizedMessage() ), out );
       }
     };
   }
 
   private ExportOptions getSimpleExportOptions( final String outputType ) {
     return new ExportOptions() {
-      
+
       public String getOutputType() {
         return outputType;
       }
-      
+
       public Map<String, String> getExtraSettings() {
-        return Collections.<String,String>emptyMap();
+        return Collections.<String, String>emptyMap();
       }
     };
   }
@@ -262,19 +274,21 @@ public class CdaUtils {
   @Path( "/listParameters" )
   @Produces( { MimeTypes.JSON, MimeTypes.XML, MimeTypes.CSV, MimeTypes.XLS, MimeTypes.PLAIN_TEXT, MimeTypes.HTML } )
   public StreamingOutput listParameters( @QueryParam( "path" ) String path,
-      @QueryParam( "dataAccessId" ) String dataAccessId,
-      @DefaultValue( "json" ) @QueryParam( "outputType" ) String outputType ) throws WebApplicationException {
+                                         @QueryParam( "dataAccessId" ) String dataAccessId,
+                                         @DefaultValue( "json" ) @QueryParam( "outputType" ) String outputType )
+    throws WebApplicationException {
     logger.debug( "Do Query: getSolPath:" + path );
     try {
       return toStreamingOutput( getCdaCoreService().listParameters( path, dataAccessId,
-          getSimpleExportOptions( outputType ) ) );
+        getSimpleExportOptions( outputType ) ) );
     } catch ( Exception e ) {
       logger.error( e );
       throw new WebApplicationException( e );
     }
   }
 
-  private TableExporter useExporter( final CdaEngine engine, final String outputType, HttpServletResponse servletResponse )
+  private TableExporter useExporter( final CdaEngine engine, final String outputType,
+                                     HttpServletResponse servletResponse )
     throws UnsupportedExporterException {
     return useExporter( engine, new ExportOptions() {
 
@@ -289,50 +303,46 @@ public class CdaUtils {
   }
 
   private TableExporter useExporter( final CdaEngine engine, ExportOptions opts, HttpServletResponse servletResponse )
-      throws UnsupportedExporterException {
-      // Handle the query itself and its output format...
-      Exporter exporter = engine.getExporter( opts );
-      String mimeType = exporter.getMimeType();
-      if(mimeType != null)
-      {
-        servletResponse.setHeader("Content-Type", mimeType);
-      }
+    throws UnsupportedExporterException {
+    // Handle the query itself and its output format...
+    Exporter exporter = engine.getExporter( opts );
+    String mimeType = exporter.getMimeType();
+    if ( mimeType != null ) {
+      servletResponse.setHeader( "Content-Type", mimeType );
+    }
 
-      String attachmentName = exporter.getAttachmentName();
-      if ( attachmentName != null ) {
-        servletResponse.setHeader( "content-disposition", "attachment; filename=" + attachmentName );
-      }
-      return (TableExporter)exporter;
+    String attachmentName = exporter.getAttachmentName();
+    if ( attachmentName != null ) {
+      servletResponse.setHeader( "content-disposition", "attachment; filename=" + attachmentName );
+    }
+    return (TableExporter) exporter;
   }
 
   @GET
-  @Path("/getCdaFile")
+  @Path( "/getCdaFile" )
   @Produces( MimeTypes.JSON )
-  public StreamingOutput getCdaFile(@QueryParam("path") String path) throws WebApplicationException
-  {
-    String filePath = StringUtils.replace(path, "///", "/");
+  public StreamingOutput getCdaFile( @QueryParam( "path" ) String path ) throws WebApplicationException {
+    String filePath = StringUtils.replace( path, "///", "/" );
     JsonGeneratorSerializable json;
     try {
       String document = getEditor().getFile( filePath );
       if ( document != null ) {
         json = new JsonResult( true, document );
-      }
-      else {
+      } else {
         json = new JsonResult( false, "Unable to read file." );
       }
-    }
-    catch (Exception e) {
+    } catch ( Exception e ) {
       return toErrorResult( e );
     }
     return toStreamingOutput( json );
   }
 
   @GET
-  @Path("/canEdit")
+  @Path( "/canEdit" )
   @Produces( MimeTypes.JSON )
-  public StreamingOutput canEdit(@QueryParam("path") String path) {
+  public StreamingOutput canEdit( @QueryParam( "path" ) String path ) {
     boolean canEdit = getEditor().canEdit( path );
-    return toStreamingOutput(new JsonResult( true, JsonHelper.toJson( canEdit ) ) );
+    return toStreamingOutput( new JsonResult( true, JsonHelper.toJson( canEdit ) ) );
   }
 
   private Editor getEditor() {
@@ -340,11 +350,10 @@ public class CdaUtils {
   }
 
   @POST
-  @Path("/writeCdaFile")
+  @Path( "/writeCdaFile" )
   @Produces( MimeTypes.JSON )
-  public StreamingOutput writeCdaFile(@FormParam("path") String path, 
-                                      @FormParam("data") String data ) throws Exception
-  {  
+  public StreamingOutput writeCdaFile( @FormParam( "path" ) String path,
+                                       @FormParam( "data" ) String data ) throws Exception {
     //TODO: Validate the filename in some way, shape or form!
     if ( data == null ) {
       logger.error( "writeCdaFile: no data to save provided " + path );
@@ -353,20 +362,18 @@ public class CdaUtils {
 
     try {
       return toStreamingOutput( new JsonResult( getEditor().writeFile( path, data ), path ) );
-    }
-    catch (Exception e) {
+    } catch ( Exception e ) {
       return toErrorResult( e );
     }
   }
 
   @GET
-  @Path("/getCdaList")
-  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
-  public void getCdaList(@DefaultValue("json") @QueryParam("outputType") String outputType, 
-                            
-                         @Context HttpServletResponse servletResponse, 
-                         @Context HttpServletRequest servletRequest) throws Exception
-  {
+  @Path( "/getCdaList" )
+  @Consumes( { APPLICATION_XML, APPLICATION_JSON } )
+  public void getCdaList( @DefaultValue( "json" ) @QueryParam( "outputType" ) String outputType,
+
+                          @Context HttpServletResponse servletResponse,
+                          @Context HttpServletRequest servletRequest ) throws Exception {
     final CdaEngine engine = CdaEngine.getInstance();
     TableExporter exporter = useExporter( engine, outputType, servletResponse );
     exporter.export( servletResponse.getOutputStream(), engine.getCdaList() );
@@ -374,62 +381,60 @@ public class CdaUtils {
   }
 
   @GET
-  @Path("/clearCache")
-  @Produces("text/plain")
-  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
-  public void clearCache(@Context HttpServletResponse servletResponse, 
-                         @Context HttpServletRequest servletRequest) throws Exception
-  {
+  @Path( "/clearCache" )
+  @Produces( "text/plain" )
+  @Consumes( { APPLICATION_XML, APPLICATION_JSON } )
+  public void clearCache( @Context HttpServletResponse servletResponse,
+                          @Context HttpServletRequest servletRequest ) throws Exception {
     // Check if user is admin
-    Boolean accessible = SecurityHelper.getInstance().isPentahoAdministrator(getPentahoSession());
-    if(!accessible){
-      String msg = "Method clearCache not exposed or user does not have required permissions."; 
-      logger.error(msg);
-      servletResponse.sendError(HttpServletResponse.SC_FORBIDDEN, msg);
+    Boolean accessible = SecurityHelper.getInstance().isPentahoAdministrator( getPentahoSession() );
+    if ( !accessible ) {
+      String msg = "Method clearCache not exposed or user does not have required permissions.";
+      logger.error( msg );
+      servletResponse.sendError( HttpServletResponse.SC_FORBIDDEN, msg );
     }
-    
+
     CdaEngine.getInstance().getSettingsManager().clearCache();
     AbstractDataAccess.clearCache();
 
-    servletResponse.getOutputStream().write("Cache cleared".getBytes());
+    servletResponse.getOutputStream().write( "Cache cleared".getBytes() );
   }
 
   @GET
-  @Path("/editFile")
+  @Path( "/editFile" )
   @Produces( MimeTypes.HTML )
-  public String editFile( @QueryParam("path") String path ) throws WebApplicationException, IOException {
-    if (StringUtils.isEmpty( path )) {
+  public String editFile( @QueryParam( "path" ) String path ) throws WebApplicationException, IOException {
+    if ( StringUtils.isEmpty( path ) ) {
       throw new WebApplicationException( 400 );
     }
     return getExtEditor().getMainEditor();
   }
+
   @GET
-  @Path("/extEditor")
+  @Path( "/extEditor" )
   @Produces( MimeTypes.HTML )
-  public String getExtEditor( @QueryParam("path") String path ) throws WebApplicationException, IOException {
-    if (StringUtils.isEmpty( path )) {
+  public String getExtEditor( @QueryParam( "path" ) String path ) throws WebApplicationException, IOException {
+    if ( StringUtils.isEmpty( path ) ) {
       throw new WebApplicationException( 400 );
     }
     return getExtEditor().getExtEditor();
   }
 
-  public void editFile(@Context HttpServletResponse servletResponse, 
-                       @Context HttpServletRequest servletRequest) throws IOException
-  {
+  public void editFile( @Context HttpServletResponse servletResponse,
+                        @Context HttpServletRequest servletRequest ) throws IOException {
     String path = getPath( servletRequest );
     servletResponse.sendRedirect(
-        PluginEnvironment.env().getUrlProvider().getPluginBaseUrl() + "editFile?path=" + path );
+      PluginEnvironment.env().getUrlProvider().getPluginBaseUrl() + "editFile?path=" + path );
   }
 
   /**
    * called by content generator
    */
-  public void previewQuery(@Context HttpServletRequest servletRequest,
-                           @Context HttpServletResponse servletResponse) throws Exception
-  {
+  public void previewQuery( @Context HttpServletRequest servletRequest,
+                            @Context HttpServletResponse servletResponse ) throws Exception {
     String path = getPath( servletRequest );
     servletResponse.sendRedirect(
-        PluginEnvironment.env().getUrlProvider().getPluginBaseUrl() + "previewQuery?path=" + path );
+      PluginEnvironment.env().getUrlProvider().getPluginBaseUrl() + "previewQuery?path=" + path );
     //writeOut( servletResponse.getOutputStream(), previewQuery( servletRequest ) );
   }
 
@@ -438,29 +443,30 @@ public class CdaUtils {
   }
 
   @GET
-  @Path("/previewQuery")
+  @Path( "/previewQuery" )
   @Produces( MimeTypes.HTML )
-  public String previewQuery(@Context HttpServletRequest servletRequest) throws Exception
-  {
+  public String previewQuery( @Context HttpServletRequest servletRequest ) throws Exception {
     return getPreviewer().previewQuery( getPath( servletRequest ) );
   }
 
   private String getPath( HttpServletRequest servletRequest ) {
-      String path = servletRequest.getParameter( "path" );
-      if (!StringUtils.isEmpty( path ) ) {
-        return path;
-      }
-      String uri = servletRequest.getRequestURI();
-      Matcher pathFinder = CDA_PATH.matcher( uri );
-      if ( pathFinder.lookingAt() ) {
-        path = pathFinder.group( 1 );
-        return path.replaceAll( ":", "/" );
-      }
-      return null;
+    String path = servletRequest.getParameter( "path" );
+    if ( !StringUtils.isEmpty( path ) ) {
+      return path;
+    }
+    String uri = servletRequest.getRequestURI();
+    Matcher pathFinder = CDA_PATH.matcher( uri );
+    if ( pathFinder.lookingAt() ) {
+      path = pathFinder.group( 1 );
+      return path.replaceAll( ":", "/" );
+    }
+    return null;
   }
+
   private Previewer getPreviewer() {
     return new Previewer( PluginEnvironment.env().getUrlProvider(), CdaEngine.getEnvironment().getRepo() );
   }
+
   private ExtEditor getExtEditor() {
     return new ExtEditor( PluginEnvironment.env().getUrlProvider(), CdaEngine.getEnvironment().getRepo() );
   }
@@ -469,31 +475,30 @@ public class CdaUtils {
    * For CDE discovery
    */
   @GET
-  @Path("/listDataAccessTypes")
-  @Produces(APPLICATION_JSON)
-  @Consumes({ APPLICATION_XML, APPLICATION_JSON })
-  public String listDataAccessTypes(@DefaultValue("false") @QueryParam("refreshCache") Boolean refreshCache) throws Exception
-  {
-    DataAccessConnectionDescriptor[] data = CdaEngine.getInstance().getSettingsManager().getDataAccessDescriptors(refreshCache);
+  @Path( "/listDataAccessTypes" )
+  @Produces( APPLICATION_JSON )
+  @Consumes( { APPLICATION_XML, APPLICATION_JSON } )
+  public String listDataAccessTypes( @DefaultValue( "false" ) @QueryParam( "refreshCache" ) Boolean refreshCache )
+    throws Exception {
+    DataAccessConnectionDescriptor[] data =
+      CdaEngine.getInstance().getSettingsManager().getDataAccessDescriptors( refreshCache );
 
-    StringBuilder output = new StringBuilder("");
-    if (data != null)
-    {
-      output.append("{\n");
-      for (DataAccessConnectionDescriptor datum : data)
-      {
-        output.append(datum.toJSON() + ",\n");
+    StringBuilder output = new StringBuilder( "" );
+    if ( data != null ) {
+      output.append( "{\n" );
+      for ( DataAccessConnectionDescriptor datum : data ) {
+        output.append( datum.toJSON() + ",\n" );
       }
-      return output.toString().replaceAll(",\n\\z", "\n}");
+      return output.toString().replaceAll( ",\n\\z", "\n}" );
+    } else {
+      return ""; //XXX
     }
-    else return "";//XXX
   }
 
   @GET
-  @Path("/manageCache")
+  @Path( "/manageCache" )
   @Produces( MimeTypes.HTML )
-  public String manageCache() throws Exception
-  {
+  public String manageCache() throws Exception {
     return getCacheManager().manageCache();
   }
 
@@ -501,35 +506,33 @@ public class CdaUtils {
     return PentahoSessionHolder.getSession();
   }
 
-  protected void writeOut(OutputStream out, String contents) throws IOException {
-      IOUtils.write(contents, out, getEncoding());
-      out.flush();
-    }
+  protected void writeOut( OutputStream out, String contents ) throws IOException {
+    IOUtils.write( contents, out, getEncoding() );
+    out.flush();
+  }
 
   private CdaCoreService getCdaCoreService() {
     return new CdaCoreService( CdaEngine.getInstance() );
   }
 
 
-
   //Interplugin calls  - Should be moved to a dedicated bean and method signature should be changed
   @Deprecated
   //Compatibility with CDF 5-Trunk
   public void listQueriesInterPluginOld(
-          @QueryParam("path") String path,
-          @DefaultValue("json") @QueryParam("outputType") String outputType,
-          @Context HttpServletResponse servletResponse,
-          @Context HttpServletRequest servletRequest) throws WebApplicationException, IOException
-  {
+    @QueryParam( "path" ) String path,
+    @DefaultValue( "json" ) @QueryParam( "outputType" ) String outputType,
+    @Context HttpServletResponse servletResponse,
+    @Context HttpServletRequest servletRequest ) throws WebApplicationException, IOException {
     StreamingOutput so = listQueries( path, outputType, servletResponse );
     so.write( servletResponse.getOutputStream() );
   }
 
-    @Deprecated
-  public void doQueryInterPluginOld(@Context HttpServletResponse servletResponse,
-                                    @Context HttpServletRequest servletRequest ) throws Exception {
+  @Deprecated
+  public void doQueryInterPluginOld( @Context HttpServletResponse servletResponse,
+                                     @Context HttpServletRequest servletRequest ) throws Exception {
     MultivaluedMap<String, String> params = getParameterMapFromRequest( servletRequest );
-    ExportedQueryResult result = doQueryInternal( getDoQueryParameters( params) );
+    ExportedQueryResult result = doQueryInternal( getDoQueryParameters( params ) );
     result.writeResponse( servletResponse );
   }
 
@@ -572,7 +575,7 @@ public class CdaUtils {
                            @DefaultValue( "false" ) @FormParam( "wrapItUp" ) Boolean wrapItUp,
                            @FormParam( "sortBy" ) List<String> sortBy,
                            @Context HttpServletResponse servletResponse,
-                           @Context HttpServletRequest servletRequest) throws Exception {
+                           @Context HttpServletRequest servletRequest ) throws Exception {
 
     DoQueryParameters parameters = new DoQueryParameters( path, null, null );
     parameters.setOutputType( outputType );
