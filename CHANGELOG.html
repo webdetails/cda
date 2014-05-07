@@ -1,0 +1,183 @@
+
+<h1>
+        Release Notes - Community Data Access - Version 14.05.06
+</h1>
+
+<h2>        Bug
+</h2>
+<ul>
+<li>[<a href='http://jira.pentaho.com/browse/CDA-61'>CDA-61</a>] -         DataAccess type must be set in cache key
+</li>
+<li>[<a href='http://jira.pentaho.com/browse/CDA-63'>CDA-63</a>] -         StreamExporter not ending in Pentaho 5
+</li>
+<li>[<a href='http://jira.pentaho.com/browse/CDA-66'>CDA-66</a>] -         Different Mondrian roles share the same CDA cache
+</li>
+<li>[<a href='http://jira.pentaho.com/browse/CDA-68'>CDA-68</a>] -         Error redering repor (PRD) inside BA server (4.8.3)
+</li>
+<li>[<a href='http://jira.pentaho.com/browse/CDA-69'>CDA-69</a>] -         Error rendering PRD file inside pentaho BA server 4.8.3, using a CDA datasource and a path using subfolders
+</li>
+<li>[<a href='http://jira.pentaho.com/browse/CDA-70'>CDA-70</a>] -          prevent duplicate cron jobs from being created on the scheduler
+</li>
+<li>[<a href='http://jira.pentaho.com/browse/CDA-72'>CDA-72</a>] -         DoQuery  POST fails when ba server is configured for using CAS authentication
+</li>
+<li>[<a href='http://jira.pentaho.com/browse/CDA-73'>CDA-73</a>] -         Build 150 includes JARs in the lib folder that it should not
+</li>
+<li>[<a href='http://jira.pentaho.com/browse/CDA-75'>CDA-75</a>] -         unwrap query returns wrong content-type
+</li>
+</ul>
+
+<h2>        Improvement
+</h2>
+<ul>
+<li>[<a href='http://jira.pentaho.com/browse/CDA-57'>CDA-57</a>] -         As a user I&#39;d like the list of dataAcces in the Previewer to be sorted alphabetically
+</li>
+<li>[<a href='http://jira.pentaho.com/browse/CDA-76'>CDA-76</a>] -         A Kettle datasource produces results even if an abort step fires.
+</li>
+</ul>
+
+
+<h1>Previous Versions</h1>
+
+<code>
+
+14.03.07<br>
+    * Lots of changes. Support for Pentaho 5 being the biggest one.<br>
+<br>
+13.09.10<br>
+    * updates CDA settings to declare that this plugin offers datasources that can be listed by CDE<br>
+    * Bug fixing and general cleanup<br>
+<br>
+13.06.05<br>
+    * Whole new layout for CDA and samples<br>
+    * Internal refactoring - CDA broken in CDA-Core and CDA-Pentaho facilitating the use of CDA in a Standalone scenario<br>
+<br>
+13.03.25<br>
+    * Fixed [REDMINE-1851] - Added conditions that protect the TableComponent from empty metadata queries (eg. Select include mode with output options [1,0] and an empty query)<br>
+    * Fixed [REDMINE-1881] - IntegerArrays not working on sql queries<br>
+    * Reintroduced deprecated SQLReportDataFactory.setQuery for pentaho 3.9 support<br>
+<br>
+13.02.07<br>
+    * Implemented setMdxDataFactoryBaseConnectionProperties. Mdx quereies, when executed in 4.8, will pass the correct properties that are defined in olap/datasources.xml, namely UseContentChecksum=true;JdbcConnectionUuid=FOOBAR<br>
+    * Added JSONP support to CDA<br>
+    * Added binary exporter<br>
+    * Support for blobs encoded as java.sql.Blob<br>
+    * CacheActivator: only commit if no exception, rollback otherwise<br>
+    * Upgraded Hazelcast to version 2.4<br>
+<br>
+12.12.10<br>
+    * added dependency to jackson-mapper since it is no longer provided by pentaho<br>
+    * wrap/unwrap tentative workaround for exports in IE (what else?)<br>
+    * Got some errors related to oracle.sql.TIMESTAMP. Changed AbstractExporter so that we return String when we can't find the column type<br>
+<br>
+<br>
+12.10.17<br>
+    * Fixed [REDMINE 1159] - Cache Manager does not work when bi-server is in file based repository<br>
+    * Fixed [REDMINE 1087] - json output problem when number is "infinity"<br>
+    * Fixed [REDMINE 1217] - JSON infinity workaround<br>
+    * Fix some instantiation issues with standalone mode<br>
+    * Update build to include runtime-lib as a variable rather than a hardcoded value<br>
+    * Image update<br>
+    * add datatable filter on post-process; stateless TableModelUtils static instead of singleton<br>
+    * AbstractKettleExporter: inherit from AbstractExporter<br>
+    * NaturalOrderComparator: lic header, clean<br>
+    * sort table model: cast where reflection is used<br>
+    * CdaContentGenerator: bad outputIndexId not fatal, don't check null name for extension , bool parse<br>
+<br>
+
+12.09.05<br>
+Implemented [REDMINE 808] - Show URL feature in CDA previewer<br>
+Implemented [REDMINE 1092] - template support for xls export<br>
+Implemented [REDMINE 1128] - CSV exporter: extension, headers, escaping<br>
+Fixed [REDMINE 1019] - Clean unnecessary ERROR messages<br>
+expose csv exporter enclosure, normalize headers setting<br>
+infer column types in CalculatedTableModel<br>
+Fix: Ensured DataFactory is closed even when there is an exception on the query<br>
+update cache to avoid default hazelcast instance<br>
+QueryErrorEvent: give cause of queryException if possible<br>
+expose timeToLive for cache manager<br>
+using getWithTimeout for cacheStats, WILL FAIL unless patched hazelcast is used; puts are now fire and forget; using last update time in monitor instead of first insertion<br>
+QueryError: send string array for stack trace<br>
+robochef update missing from .classpath<br>
+Fixed bad error log on cache miss<br>
+refactor olap4j connections<br>
+Calling setSolutionRepositoryThreadVariable before getting any connection. Fix suggested by wgorman and pstoellberg<br>
+format tablemodel also on empty result<br>
+fix classpath for eclipse + ant for running the tests (runtime-lib)<br>
+change olap4j sample file name<br>
+refactor use of mondrian role mapper<br>
+<br>
+12.07.19<br>
+Fixed [REDMINE CDA797] - ClassLoader issue using CdaQueryComponent in FusionContentGenerator<br>
+Fixed [REDMINE CDA787] - use cde ext-editor for cda files<br>
+Introduced CPF As plugin base<br>
+New Robochef Version - Memory optimization<br>
+CDV Integration<br>
+print stack trace for hazelcast serialization errors, +MdxDataAccess.ExtraCacheKey.toString()<br>
+path issue in cda editor<br>
+-Util.isNullOrEmpty, using StringUtils; build was changed to use 4.5 2 commits ago<br>
+pathParams->requestParams<br>
+more cleaning, warning suppressions<br>
+cde-editor corrections<br>
+Use cde as editor if available; +RepositoryAccess and some cleaning<br>
+
+<br>
+12.05.15<br>
+Fixed [REDMINE CDA038] - 	CDA does not accurately determine metadata of variable column kettle output<br>
+Fixed [REDMINE CDA269] - cache lookups can return incorrect data with kettle data sources<br>
+Fixed [REDMINE CDA577] - ETL metadata injection results in no data<br>
+Fixed [REDMINE CDA612] - CDA hazelcast cache too prone to fatal failures<br>
+Fixed [REDMINE CDA613] - Parameter separator should be configured per-parameter instead of in cda.properties<br>
+Stopped using values in listeners to prevent memory problems (req hazelcast 2)<br>
+Prevent cache locks on hazelcast failure<br>
+Timeouts configurable; maps always fetched to prevent issues with original instance being shutdown; stats accessed synch due to unidentified issue<br>
+KettleDataAccess: extraCacheKey now String<br>
+Separator as a per-parameter attribute, serialization changed<br>
+Typos, imports, extraCacheInfo toString<br>
+Building against pho-3.8-SNAPSHOT, hazelcast 2.0.2<br>
+Cache bean: cast exception can happen only on return if used inside another plugin<br>
+
+<br>
+12.04.02<br>
+Implemented [REDMINE 515] - Added auditing support for cda doQuery<br>
+Fixed [REDMINE CDA100] previewer: survive null rows<br>
+Fixed [REDMINE CDA269] KettleDataAccess: use contextKey as extraCacheKey to avoid cache collisions<br>
+Added custom separator for arrays, defined on cda.properties<br>
+force string return type if defined for a formula parameter<br>
+Added TypeSearchMaxRows property<br>
+Solved NPE getting column type from data<br>
+Hazelcast dependency moved to ivy<br>
+<br>
+12.03.08<br>
+[REDMINE #346]Fix an issue where calculated columns always made joins break.<br>
+Build now outputs a marketplace xml to be merged into marketplace full plugin list<br>
+Added french language to Messages.properties for Previewer and Editor<br>
+Added branch info to version.xml<br>
+Added setCacheDuration method<br>
+bug with private formula parameters in new cache.<br>
+some refactoring to keep queryDataSource sane.<br>
+previewer issue with private params.<br>
+individual time to live on hazelcast.<br>
+transitive attributes on ivy<br>
+Added AbstractDataAccess.isCacheEnabled/setCacheEnabled.<br>
+Changed icons.<br>
+HazelcastQueryCache back to CDA.<br>
+
+<br>
+12.02.16<br>
+
+Changed samples to plugin-samples. Made plugin compliant with Pentaho Marketplace.<br>
+Cda cache entries print<br>
+Remove some exceptions that are never thrown<br>
+Added Boolean to AbstractExporter<br>
+
+12.01.26<br>
+
+Solved Redmine Bug #104: CDA Cache Manager -> UI didn't update after delete a query<br>
+Implemented Redmine Feature #105: CDA Cache Manager -> Delete all queries belonging to a cda file<br>
+Fix a bug where html output would duplicate output in some cases<br>
+cache refactor; cache monitor: +removeAll, require admin permissions<br>
+cachemanager: user feedback for server requests<br>
+Support for cache plugin bean. Serialization changed<br>
+Added version info to cachemanager and SelfTest Page. Sorted out some images on SelfTest Page<br>
+
+</code>
