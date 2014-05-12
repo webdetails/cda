@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -43,54 +43,55 @@ import pt.webdetails.cda.settings.CdaSettings;
 
 public class DefaultDataAccessUtils implements IDataAccessUtils {
 
-	@Override
-	public void setMdxDataFactoryBaseConnectionProperties(MondrianConnection connection, AbstractNamedMDXDataFactory mdxDataFactory) {    
-	}
+  @Override
+  public void setMdxDataFactoryBaseConnectionProperties( MondrianConnection connection,
+                                                         AbstractNamedMDXDataFactory mdxDataFactory ) {
+  }
 
-	@Override
-	public void setConnectionProvider(PmdDataFactory returnDataFactory) {
-		returnDataFactory.setConnectionProvider(new PmdConnectionProvider());
-	}
+  @Override
+  public void setConnectionProvider( PmdDataFactory returnDataFactory ) {
+    returnDataFactory.setConnectionProvider( new PmdConnectionProvider() );
+  }
 
-	@Override
-	public ReportEnvironmentDataRow createEnvironmentDataRow(Configuration configuration) {
-		return new ReportEnvironmentDataRow(new DefaultReportEnvironment(configuration));
-	}
+  @Override
+  public ReportEnvironmentDataRow createEnvironmentDataRow( Configuration configuration ) {
+    return new ReportEnvironmentDataRow( new DefaultReportEnvironment( configuration ) );
+  }
 
-	@Override
-	public KettleTransformationProducer createKettleTransformationProducer(TransFromFileConnectionInfo connectionInfo, String query, CdaSettings settings )
-	{
-		return new KettleTransFromFileProducer("",
-				connectionInfo.getTransformationFile(),
-				query, null, null, connectionInfo.getDefinedArgumentNames(),
-				connectionInfo.getDefinedVariableNames());
+  @Override
+  public KettleTransformationProducer createKettleTransformationProducer( TransFromFileConnectionInfo connectionInfo,
+                                                                          String query, CdaSettings settings ) {
+    return new KettleTransFromFileProducer( "",
+      connectionInfo.getTransformationFile(),
+      query, null, null, connectionInfo.getDefinedArgumentNames(),
+      connectionInfo.getDefinedVariableNames() );
 
-	}
+  }
 
-	@Override
-	public ConnectionProvider getJndiConnectionProvider(SqlJndiConnectionInfo connectionInfo) {
-		final JndiConnectionProvider provider = new JndiConnectionProvider();
-		provider.setConnectionPath(connectionInfo.getJndi());
-		provider.setUsername(connectionInfo.getUser());
-		provider.setPassword(connectionInfo.getPass());
-		return provider;
-	}
-	
-	@Override
-	public DataSourceProvider getMondrianJndiDatasourceProvider(MondrianJndiConnectionInfo connectionInfo)
-	{
-		return new JndiDataSourceProvider(connectionInfo.getJndi());
-	}
+  @Override
+  public ConnectionProvider getJndiConnectionProvider( SqlJndiConnectionInfo connectionInfo ) {
+    final JndiConnectionProvider provider = new JndiConnectionProvider();
+    provider.setConnectionPath( connectionInfo.getJndi() );
+    provider.setUsername( connectionInfo.getUser() );
+    provider.setPassword( connectionInfo.getPass() );
+    return provider;
+  }
 
-  public void initializeDataFactory( final DataFactory dataFactory, final Configuration configuration, ResourceKey contextKey )
-      throws ReportDataFactoryException {
-      final ResourceManager resourceManager = CdaEngine.getInstance().getSettingsManager().getResourceManager();
-      resourceManager.registerDefaults();
+  @Override
+  public DataSourceProvider getMondrianJndiDatasourceProvider( MondrianJndiConnectionInfo connectionInfo ) {
+    return new JndiDataSourceProvider( connectionInfo.getJndi() );
+  }
 
-      dataFactory.initialize(configuration, resourceManager, contextKey,
-              new LibLoaderResourceBundleFactory(resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault()));
+  public void initializeDataFactory( final DataFactory dataFactory, final Configuration configuration,
+                                     ResourceKey contextKey )
+    throws ReportDataFactoryException {
+    final ResourceManager resourceManager = CdaEngine.getInstance().getSettingsManager().getResourceManager();
+    resourceManager.registerDefaults();
 
-      dataFactory.open();
-    }
+    dataFactory.initialize( configuration, resourceManager, contextKey,
+      new LibLoaderResourceBundleFactory( resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault() ) );
+
+    dataFactory.open();
+  }
 
 }
