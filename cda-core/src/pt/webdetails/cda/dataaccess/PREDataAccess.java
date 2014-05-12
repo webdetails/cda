@@ -13,6 +13,7 @@
 
 package pt.webdetails.cda.dataaccess;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.swing.table.TableModel;
@@ -144,24 +145,34 @@ public abstract class PREDataAccess extends SimpleDataAccess {
       throw new QueryException( "Unknown connection", e );
     } catch ( ReportDataFactoryException e ) {
       // break this and pstoellberger will haunt you!
-      Throwable lastKnownParent = e.getParentThrowable();
+      Throwable lastKnownParent = null;
+      boolean oldPrd = false;
+      Method[] allMethods = ReportDataFactoryException.class.getMethods();
+
+      for ( Method m : allMethods ) {
+        if ( !m.getName().equals( "getParentThrowable" ) ) {
+          continue;
+        }
+
+        try {
+          lastKnownParent = (Throwable) m.invoke( e );
+          oldPrd = true;
+        } catch ( Exception e1 ) {
+          //Exception
+        } catch ( Error e1 ) {
+          //Error
+        }
+        break;
+      }
+
+      if ( !oldPrd || lastKnownParent == null ) {
+        lastKnownParent = e.getCause();
+      }
       if ( lastKnownParent != null ) {
         throw new QueryException( lastKnownParent.getMessage(), lastKnownParent );
       }
       throw new QueryException( e.getMessage(), e );
-
-      //              + ((e.getParentThrowable() == null) ? "" : ("; Parent exception: " + e.getParentThrowable()
-      // .getMessage())) + "\n" +
-      //              ((e.getParentThrowable() != null && e.getParentThrowable().getCause() != null)?e
-      // .getParentThrowable().getCause().getMessage() :"") + "\n"
-      //              , e);
     }
-    //    finally
-    //    {
-    //      //leave thread variable as it was
-    //      if(threadVarSet) SolutionReposHelper.setSolutionRepositoryThreadVariable(null);
-    //    }
-
   }
 
 
