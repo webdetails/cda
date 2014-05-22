@@ -120,4 +120,11 @@ public class CacheMonitorEndpoint {
   private CacheMonitor getMonitor() {
     return new CacheMonitor();
   }
+
+  //Interplugin calls  - Should be moved to a dedicated bean and method signature should be changed
+  public String removeAllInterPlugin( @QueryParam( "cdaSettingsId" ) String cdaSettingsId,
+      @QueryParam( "dataAccessId" ) String dataAccessId ) throws WebApplicationException, IOException {
+    return removeAll( cdaSettingsId, dataAccessId );
+  }
+
 }
