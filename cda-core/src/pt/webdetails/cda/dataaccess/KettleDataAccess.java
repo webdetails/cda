@@ -22,12 +22,14 @@ import org.pentaho.reporting.libraries.resourceloader.ResourceKeyCreationExcepti
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.cache.CacheKey;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.kettle.KettleConnection;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 
+import java.io.Serializable;
 /**
  * Todo: Document me!
  * <p/>
@@ -89,7 +91,12 @@ public class KettleDataAccess extends PREDataAccess
    * We only use solution paths, only the path needs to be stored.
    */
   @Override
-  public String getExtraCacheKey(){
-    return path;
+  public Serializable getExtraCacheKey(){
+
+    CacheKey cacheKey = getCacheKey() != null ? ( (CacheKey) getCacheKey() ).clone() : new CacheKey();
+
+    cacheKey.addKeyValuePair( "path", path );
+
+    return cacheKey;
   }
 }

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CDADescriptor>
+
+    <!-- DataSource definition. 
+	
+	Type controls what the datasource type is.
+	The connection and query controls how the data is fetched. These values
+	are specific to each access type
+
+	-->
+    <DataSources>
+        <Connection id="1" type="sql.jdbc">
+            <Driver>org.hsqldb.jdbcDriver</Driver>
+            <Url>jdbc:hsqldb:res:sampledata</Url>
+            <User>sa</User>
+            <Pass></Pass>
+        </Connection>
+    </DataSources>
+  <!-- DataAccess object controls the query itself
+
+      Access controls if the datasource can be seen from the outside or is to
+      be used from a Compound datasource only
+
+      -->
+
+    <DataAccess id="1" connection="1" type="sql" access="public" cache="true" cacheDuration="5">
+      <Cache enabled="true" duration="500">
+          <Key name="foo" value="bar" /> 
+          <Key name="another-cache-key" value="another-cache-value" /> 
+
+          <!-- the following are properly working examples of formula cache keys for session , security and system --> 
+          <!-- <Key name="data-access-roles" value="${[system:data-access/settings.xml{data-access-roles}]}" default="data-access-roles" /> -->
+          <!-- <Key name="user-in-session" value="${[security:principalName]}" default="user-in-session"/> -->
+          <!-- <Key name="tenantId" value="${[session:org.pentaho.tenantId]}" default="default-tenant"/> -->          
+      </Cache>
+      <Name>User Roles</Name>
+      <Query><![CDATA[select distinct ${param} as inputParam from orderfact]]></Query>
+      <Parameters>
+        <Parameter name="param" type="String" default="${[session:value]}" />
+      </Parameters>
+    </DataAccess>
+</CDADescriptor>

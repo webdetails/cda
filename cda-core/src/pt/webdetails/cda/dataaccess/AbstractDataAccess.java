@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.cache.DataAccessCacheElementParser;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
@@ -57,6 +58,7 @@ public abstract class AbstractDataAccess implements DataAccess {
   private DataAccessEnums.ACCESS_TYPE access = DataAccessEnums.ACCESS_TYPE.PUBLIC;
   private boolean cacheEnabled = false;
   private int cacheDuration = 3600;
+  private Serializable cacheKey;
   private ArrayList<Parameter> parameters;
   private HashMap<Integer, OutputMode> outputMode;
   private HashMap<Integer, ArrayList<Integer>> outputs;
@@ -191,6 +193,19 @@ public abstract class AbstractDataAccess implements DataAccess {
       columnDefinitionIndexMap.put( columnDefinition.getIndex(), columnDefinition );
     }
 
+    // parse cda cache key
+    @SuppressWarnings( "unchecked" )
+    final Element cdaCache = (Element) element.selectSingleNode( "Cache" );
+    if( cdaCache != null ){
+      DataAccessCacheElementParser parser = new DataAccessCacheElementParser( cdaCache );
+      if( parser.parse() ){
+        setCacheEnabled( parser.isCacheEnabled() ); // overrides the cacheEnabled declared at DataAccess node
+        if( parser.getCacheDuration() != null ){
+          setCacheDuration( parser.getCacheDuration() ); // overrides the cacheDuration declared at DataAccess node
+        }
+        setCacheKey( parser.getCacheKey() );
+      }
+    }
   }
 
   public static synchronized IQueryCache getCdaCache() {
@@ -655,4 +670,20 @@ public abstract class AbstractDataAccess implements DataAccess {
     return columnDefinitions;
   }
 
+  public Serializable getCacheKey() {
+    return cacheKey;
+  }
+
+  public void setCacheKey( Serializable cacheKey ) {
+    this.cacheKey = cacheKey;
+  }
+
+  /**
+   * Extra arguments to be used for the cache key. Classes that extend AbstractDataAccess may decide to implement it
+   *
+   * @return
+   */
+  protected Serializable getExtraCacheKey() {
+    return getCacheKey();
+  }
 }
