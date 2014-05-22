@@ -18,11 +18,14 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DenormalizedMDXDataFactory;
+import pt.webdetails.cda.cache.CacheKey;
 import pt.webdetails.cda.connections.mondrian.AbstractMondrianConnection;
 import pt.webdetails.cda.connections.mondrian.MondrianConnectionInfo;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Implementation of a DataAccess that will get data from a SQL database
@@ -58,7 +61,12 @@ public class DenormalizedMdxDataAccess extends GlobalMdxDataAccess {
       logger.error( "Failed to get a connection info for cache key" );
       mci = null;
     }
-    return new ExtraCacheKey( mci.getMondrianRole() );
+
+    CacheKey cacheKey = getCacheKey() != null ? ( (CacheKey) getCacheKey() ).clone() : new CacheKey();
+
+    cacheKey.addKeyValuePair( "roles" , mci.getMondrianRole() );
+
+    return cacheKey;
   }
 
   protected static class ExtraCacheKey implements Serializable {

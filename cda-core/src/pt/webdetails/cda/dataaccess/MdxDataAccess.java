@@ -20,6 +20,7 @@ import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.BandedMDXDataFactory;
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.cache.CacheKey;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.mondrian.AbstractMondrianConnection;
 import pt.webdetails.cda.connections.mondrian.MondrianConnection;
@@ -29,6 +30,8 @@ import pt.webdetails.cda.utils.mondrian.CompactBandedMDXDataFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -131,7 +134,13 @@ public class MdxDataAccess extends GlobalMdxDataAccess {
       logger.error( "Failed to get a connection info for cache key" );
       mci = null;
     }
-    return new ExtraCacheKey( bandedMode, mci.getMondrianRole() );
+
+    CacheKey cacheKey = getCacheKey() != null ? ( (CacheKey) getCacheKey() ).clone() : new CacheKey();
+
+    cacheKey.addKeyValuePair( "bandedMode" , bandedMode.toString() );
+    cacheKey.addKeyValuePair( "mondrianRole" ,  mci.getMondrianRole() );
+
+    return cacheKey;
   }
 
 
