@@ -13,6 +13,7 @@
 
 package pt.webdetails.cda.dataaccess;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
