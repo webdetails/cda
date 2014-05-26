@@ -269,17 +269,6 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     return tm;
   }
 
-
-  /**
-   * Extra arguments to be used for the cache key. Defaults to null but classes
-   * that extend SimpleDataAccess may decide to implement it
-   *
-   * @return
-   */
-  protected Serializable getExtraCacheKey() {
-    return null;
-  }
-
   //TODO:
 
   /**
