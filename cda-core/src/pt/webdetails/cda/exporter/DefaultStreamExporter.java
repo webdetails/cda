@@ -39,11 +39,11 @@ import org.pentaho.di.trans.steps.tableinput.TableInputMeta;
 import org.pentaho.reporting.engine.classic.core.DataRow;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 
-import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
-import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig;
-import plugins.org.pentaho.di.robochef.kettle.DynamicTransformation;
-import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
-import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
+import pt.webdetails.robochef.DynamicTransConfig;
+import pt.webdetails.robochef.DynamicTransMetaConfig;
+import pt.webdetails.robochef.DynamicTransformation;
+import pt.webdetails.robochef.RowProductionManager;
+import pt.webdetails.robochef.TableModelInput;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.dataaccess.kettle.DataAccessKettleAdapter;
 import pt.webdetails.cda.dataaccess.kettle.KettleAdapterException;

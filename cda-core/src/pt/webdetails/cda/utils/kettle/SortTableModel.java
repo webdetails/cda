@@ -29,13 +29,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import java.util.Comparator;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
-import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
-import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig.EntryType;
-import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig;
-import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig.Type;
-import plugins.org.pentaho.di.robochef.kettle.DynamicTransformation;
-import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
-import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
+import pt.webdetails.robochef.DynamicTransConfig;
+import pt.webdetails.robochef.DynamicTransConfig.EntryType;
+import pt.webdetails.robochef.DynamicTransMetaConfig;
+import pt.webdetails.robochef.DynamicTransMetaConfig.Type;
+import pt.webdetails.robochef.DynamicTransformation;
+import pt.webdetails.robochef.RowProductionManager;
+import pt.webdetails.robochef .TableModelInput;
 import pt.webdetails.cda.CdaEngine;
 
 /**

@@ -41,11 +41,11 @@ import org.pentaho.di.core.util.StringUtil;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.steps.injector.InjectorMeta;
 
-import plugins.org.pentaho.di.robochef.kettle.DynamicTransConfig;
-import plugins.org.pentaho.di.robochef.kettle.DynamicTransMetaConfig;
-import plugins.org.pentaho.di.robochef.kettle.DynamicTransformation;
-import plugins.org.pentaho.di.robochef.kettle.RowProductionManager;
-import plugins.org.pentaho.di.robochef.kettle.TableModelInput;
+import pt.webdetails.robochef.DynamicTransConfig;
+import pt.webdetails.robochef.DynamicTransMetaConfig;
+import pt.webdetails.robochef.DynamicTransformation;
+import pt.webdetails.robochef.RowProductionManager;
+import pt.webdetails.robochef.TableModelInput;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.utils.kettle.RowCountListener;
 
