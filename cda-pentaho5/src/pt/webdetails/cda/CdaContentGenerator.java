@@ -21,12 +21,13 @@ public class CdaContentGenerator extends SimpleContentGenerator
   @Override
   public void createContent() throws Exception {
     CdaUtils utils = new CdaUtils();
+    String path = getPathParameterAsString(MethodParams.PATH, "");
 
     if (edit) {
-      utils.editFile( getResponse(), getRequest() );
+      utils.editFile( path, getResponse() );
     }
     else {
-      utils.previewQuery( getRequest(), getResponse() );
+      utils.previewQuery( path, getResponse() );
     }
   }
 
@@ -59,4 +60,8 @@ public class CdaContentGenerator extends SimpleContentGenerator
     this.edit = edit;
   }
 
+
+  private class MethodParams {
+    public static final String PATH = "path";
+  }
 }
