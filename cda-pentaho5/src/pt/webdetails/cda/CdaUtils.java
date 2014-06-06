@@ -420,22 +420,17 @@ public class CdaUtils {
     return getExtEditor().getExtEditor();
   }
 
-  public void editFile( @Context HttpServletResponse servletResponse,
-                        @Context HttpServletRequest servletRequest ) throws IOException {
-    String path = getPath( servletRequest );
+  /**
+   * called by content generator
+   */
+  public void editFile( String path, @Context HttpServletResponse servletResponse ) throws IOException {
     servletResponse.sendRedirect(
       PluginEnvironment.env().getUrlProvider().getPluginBaseUrl() + "editFile?path=" + path );
   }
 
-  /**
-   * called by content generator
-   */
-  public void previewQuery( @Context HttpServletRequest servletRequest,
-                            @Context HttpServletResponse servletResponse ) throws Exception {
-    String path = getPath( servletRequest );
+  public void previewQuery( String path, @Context HttpServletResponse servletResponse ) throws IOException {
     servletResponse.sendRedirect(
       PluginEnvironment.env().getUrlProvider().getPluginBaseUrl() + "previewQuery?path=" + path );
-    //writeOut( servletResponse.getOutputStream(), previewQuery( servletRequest ) );
   }
 
   private CacheManager getCacheManager() {
