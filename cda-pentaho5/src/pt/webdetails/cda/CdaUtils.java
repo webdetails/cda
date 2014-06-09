@@ -556,8 +556,36 @@ public class CdaUtils {
   }
 
 
+
+
+
   //Adding this because of compatibility with the reporting plugin on 5.0.1. The cda datasource on the reporting plugin
   //is expecting this signature
+
+  @Deprecated
+  public void listParameters( @QueryParam( "path" ) String path,
+                             @QueryParam( "solution" ) String solution,
+                             @QueryParam( "file" ) String file,
+                             @DefaultValue( "json" ) @QueryParam( "outputType" ) String outputType,
+                             @DefaultValue( "<blank>" ) @QueryParam( "dataAccessId" ) String dataAccessId,
+
+                             @Context HttpServletResponse servletResponse,
+                             @Context HttpServletRequest servletRequest ) throws Exception
+  {
+
+
+    logger.debug( "Do Query: getSolPath:" + path );
+    try {
+      ExportedQueryResult eqr = getCdaCoreService().listParameters( path, dataAccessId,
+        getSimpleExportOptions( outputType ) );
+      eqr.writeOut( servletResponse.getOutputStream() );
+    } catch ( Exception e ) {
+      logger.error( e );
+      throw new WebApplicationException( e );
+    }
+  }
+
+
   @Deprecated
   public void doQueryPost( @FormParam( "path" ) String path,
                            @DefaultValue( "json" ) @FormParam( "outputType" ) String outputType,
