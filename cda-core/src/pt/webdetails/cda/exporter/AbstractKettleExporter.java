@@ -185,6 +185,7 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
       IOUtils.copy(is, os);
     } 
     finally {
+      os.flush();
       IOUtils.closeQuietly(is);
     }
 
