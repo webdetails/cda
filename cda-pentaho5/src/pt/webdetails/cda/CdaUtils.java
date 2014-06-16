@@ -21,6 +21,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,8 +53,12 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.api.engine.ILogger;
+import org.pentaho.platform.api.engine.IParameterProvider;
+import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.apache.commons.lang.StringUtils;
+import org.pentaho.platform.util.logging.SimpleLogger;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.exporter.ExportOptions;
@@ -74,6 +79,7 @@ import org.pentaho.platform.engine.security.SecurityHelper;
 
 import pt.webdetails.cda.utils.DoQueryParameters;
 import pt.webdetails.cpf.PluginEnvironment;
+import pt.webdetails.cpf.audit.CpfAuditHelper;
 import pt.webdetails.cpf.messaging.JsonGeneratorSerializable;
 import pt.webdetails.cpf.messaging.JsonResult;
 import pt.webdetails.cpf.utils.CharsetHelper;
@@ -134,16 +140,51 @@ public class CdaUtils {
   public StreamingOutput doQuery( MultivaluedMap<String, String> params,
                                   HttpServletResponse servletResponse ) throws WebApplicationException {
     try {
+      long start = System.currentTimeMillis();
+      long end;
+      String path = params.get( "path" ).get( 0 );
+
+      ILogger iLogger = getAuditLogger();
+      IParameterProvider requestParams = getParameterProvider( params );
+
+      UUID uuid = CpfAuditHelper.startAudit( getPluginName(), path, getObjectName(), this.getPentahoSession(),
+        iLogger, requestParams );
       DoQueryParameters parameters = getDoQueryParameters( params );
+
       if ( parameters.isWrapItUp() ) {
+        end = System.currentTimeMillis();
+        CpfAuditHelper.endAudit( getPluginName(), path, getObjectName(),
+          this.getPentahoSession(), iLogger, start, uuid, end );
+
         return wrapQuery( parameters );
       }
       ExportedQueryResult eqr = doQueryInternal( parameters );
       eqr.writeHeaders( servletResponse );
+
+      end = System.currentTimeMillis();
+      CpfAuditHelper.endAudit( getPluginName(), path, getObjectName(),
+        this.getPentahoSession(), iLogger, start, uuid, end );
+
       return toStreamingOutput( eqr );
     } catch ( Exception e ) {
       throw new WebApplicationException( e, 501 ); // TODO:
     }
+  }
+
+  private String getObjectName() {
+    return CdaUtils.class.getName();
+  }
+
+  private String getPluginName() {
+    return PLUGIN_NAME;
+  }
+
+  private ILogger getAuditLogger() {
+    return new SimpleLogger( CdaUtils.class.getName() );
+  }
+
+  private IParameterProvider getParameterProvider( MultivaluedMap<String, String> params ) {
+    return new SimpleParameterProvider( params );
   }
 
   private StreamingOutput wrapQuery( DoQueryParameters parameters ) throws Exception {
