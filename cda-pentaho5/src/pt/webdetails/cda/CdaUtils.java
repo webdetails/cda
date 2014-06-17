@@ -90,7 +90,6 @@ import pt.webdetails.cpf.utils.MimeTypes;
 public class CdaUtils {
   private static final Log logger = LogFactory.getLog( CdaUtils.class );
 
-  public static final String PLUGIN_NAME = "cda";
   private static final String PREFIX_PARAMETER = "param";
   private static final String PREFIX_SETTING = "setting";
 
@@ -176,7 +175,7 @@ public class CdaUtils {
   }
 
   private String getPluginName() {
-    return PLUGIN_NAME;
+    return CdaPluginEnvironment.getInstance().getPluginId();
   }
 
   private ILogger getAuditLogger() {
