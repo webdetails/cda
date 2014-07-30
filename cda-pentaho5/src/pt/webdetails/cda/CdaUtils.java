@@ -143,26 +143,45 @@ public class CdaUtils {
       long end;
       String path = params.get( "path" ).get( 0 );
 
-      ILogger iLogger = getAuditLogger();
-      IParameterProvider requestParams = getParameterProvider( params );
 
-      UUID uuid = CpfAuditHelper.startAudit( getPluginName(), path, getObjectName(), this.getPentahoSession(),
-        iLogger, requestParams );
+    ILogger iLogger = getAuditLogger();
+    IParameterProvider requestParams = getParameterProvider( params );
+    UUID uuid = null;
+
+    try {
+
+      try {
+        uuid = CpfAuditHelper.startAudit( getPluginName(), path, getObjectName(), this.getPentahoSession(),
+          iLogger, requestParams );
+      } catch ( Exception e ) {
+        //should continue operation when audit fails
+      }
+
       DoQueryParameters parameters = getDoQueryParameters( params );
 
       if ( parameters.isWrapItUp() ) {
-        end = System.currentTimeMillis();
-        CpfAuditHelper.endAudit( getPluginName(), path, getObjectName(),
-          this.getPentahoSession(), iLogger, start, uuid, end );
+        output = wrapQuery( parameters );
+
+        try {
+          end = System.currentTimeMillis();
+          CpfAuditHelper.endAudit( getPluginName(), path, getObjectName(),
+            this.getPentahoSession(), iLogger, start, uuid, end );
+        } catch ( Exception e ) {
+          //should continue operation when audit fails
+        }
 
         return wrapQuery( parameters );
       }
       ExportedQueryResult eqr = doQueryInternal( parameters );
       eqr.writeHeaders( servletResponse );
 
-      end = System.currentTimeMillis();
-      CpfAuditHelper.endAudit( getPluginName(), path, getObjectName(),
-        this.getPentahoSession(), iLogger, start, uuid, end );
+      try {
+        end = System.currentTimeMillis();
+        CpfAuditHelper.endAudit( getPluginName(), path, getObjectName(),
+          this.getPentahoSession(), iLogger, start, uuid, end );
+      } catch ( Exception e ) {
+        //should continue operation when audit fails
+      }
 
       return toStreamingOutput( eqr );
     } catch ( Exception e ) {
