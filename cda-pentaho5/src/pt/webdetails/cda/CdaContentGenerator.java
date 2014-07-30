@@ -46,7 +46,7 @@ public class CdaContentGenerator extends SimpleContentGenerator {
         this.userSession, this, requestParams );
 
     } catch ( Exception e ) {
-      //should continue operation when audit fails
+      logger.error( e );
     }
 
     if ( edit ) {
@@ -59,7 +59,7 @@ public class CdaContentGenerator extends SimpleContentGenerator {
       long end = System.currentTimeMillis();
       CpfAuditHelper.endAudit( getPluginName(), path, getObjectName(), this.userSession, this, start, uuid, end );
     } catch ( Exception e ) {
-      //should continue operation when audit fails
+      logger.error( e );
     }
   }
 

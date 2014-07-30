@@ -154,7 +154,7 @@ public class CdaUtils {
         uuid = CpfAuditHelper.startAudit( getPluginName(), path, getObjectName(), this.getPentahoSession(),
           iLogger, requestParams );
       } catch ( Exception e ) {
-        //should continue operation when audit fails
+        logger.error( e );
       }
 
       DoQueryParameters parameters = getDoQueryParameters( params );
@@ -167,7 +167,7 @@ public class CdaUtils {
           CpfAuditHelper.endAudit( getPluginName(), path, getObjectName(),
             this.getPentahoSession(), iLogger, start, uuid, end );
         } catch ( Exception e ) {
-          //should continue operation when audit fails
+          logger.error( e );
         }
 
         return output;
@@ -182,7 +182,7 @@ public class CdaUtils {
         CpfAuditHelper.endAudit( getPluginName(), path, getObjectName(),
           this.getPentahoSession(), iLogger, start, uuid, end );
       } catch ( Exception e ) {
-        //should continue operation when audit fails
+        logger.error( e );
       }
 
       return output;
