@@ -138,11 +138,11 @@ public class CdaUtils {
 
   public StreamingOutput doQuery( MultivaluedMap<String, String> params,
                                   HttpServletResponse servletResponse ) throws WebApplicationException {
-    try {
-      long start = System.currentTimeMillis();
-      long end;
-      String path = params.get( "path" ).get( 0 );
 
+    long start = System.currentTimeMillis();
+    long end;
+    StreamingOutput output;
+    String path = params.get( "path" ).get( 0 );
 
     ILogger iLogger = getAuditLogger();
     IParameterProvider requestParams = getParameterProvider( params );
@@ -170,10 +170,12 @@ public class CdaUtils {
           logger.error( e );
         }
 
-        return wrapQuery( parameters );
+        return output;
       }
+
       ExportedQueryResult eqr = doQueryInternal( parameters );
       eqr.writeHeaders( servletResponse );
+      output = toStreamingOutput( eqr );
 
       try {
         end = System.currentTimeMillis();
@@ -183,8 +185,12 @@ public class CdaUtils {
         logger.error( e );
       }
 
-      return toStreamingOutput( eqr );
+      return output;
     } catch ( Exception e ) {
+      end = System.currentTimeMillis();
+      CpfAuditHelper.endAudit( getPluginName(), path, getObjectName(),
+        this.getPentahoSession(), iLogger, start, uuid, end );
+
       throw new WebApplicationException( e, 501 ); // TODO:
     }
   }
@@ -615,22 +621,18 @@ public class CdaUtils {
   }
 
 
-
-
-
   //Adding this because of compatibility with the reporting plugin on 5.0.1. The cda datasource on the reporting plugin
   //is expecting this signature
 
   @Deprecated
   public void listParameters( @QueryParam( "path" ) String path,
-                             @QueryParam( "solution" ) String solution,
-                             @QueryParam( "file" ) String file,
-                             @DefaultValue( "json" ) @QueryParam( "outputType" ) String outputType,
-                             @DefaultValue( "<blank>" ) @QueryParam( "dataAccessId" ) String dataAccessId,
+                              @QueryParam( "solution" ) String solution,
+                              @QueryParam( "file" ) String file,
+                              @DefaultValue( "json" ) @QueryParam( "outputType" ) String outputType,
+                              @DefaultValue( "<blank>" ) @QueryParam( "dataAccessId" ) String dataAccessId,
 
-                             @Context HttpServletResponse servletResponse,
-                             @Context HttpServletRequest servletRequest ) throws Exception
-  {
+                              @Context HttpServletResponse servletResponse,
+                              @Context HttpServletRequest servletRequest ) throws Exception {
 
 
     logger.debug( "Do Query: getSolPath:" + path );
