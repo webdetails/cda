@@ -75,7 +75,14 @@ public class InterPluginUtils {
         for ( Object str : ( (LinkedList) value ) ) {
           arrayList.add( str.toString() );
         }
-        parameters.setParameter( key, arrayList.toArray(new String[0]) );
+        parameters.setParameter( key, arrayList.toArray( new String[ 0 ] ) );
+      } else if ( value instanceof Object[] ) {
+        List<String> arrayList = new ArrayList<String>();
+        for ( Object str : ( (Object[]) value ) ) {
+          arrayList.add( str.toString() );
+        }
+        parameters.setParameter( key, arrayList.toArray( new String[ 0 ] ) );
+
       } else {
         parameters.put( key, value.toString() );
       }
