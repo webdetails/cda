@@ -65,11 +65,6 @@ public interface ICdaEnvironment {
   public Configuration getBaseConfig();
   
   /**
-   * Returns Current Pentaho user name
-   */
-  public String getUserName();
-
-  /**
    * Differs between pentaho 4.x and 5.x
    */
   public void initializeDataFactory(
