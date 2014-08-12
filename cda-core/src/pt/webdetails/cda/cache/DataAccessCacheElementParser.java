@@ -32,7 +32,7 @@ public class DataAccessCacheElementParser {
   private static final String ATTR_KEY_VALUE = "value"; //$NON-NLS-1$
   private static final String ATTR_KEY_DEFAULT_VALUE = "default"; //$NON-NLS-1$
   private Integer cacheDuration;
-  private CacheKey cacheKey = new CacheKey(); // DataAccess/Cache/Key nodes
+  private CacheKey cacheKey; // DataAccess/Cache/Key nodes
   private Element element; // DataAccess/Cache node
 
 
@@ -40,10 +40,9 @@ public class DataAccessCacheElementParser {
     this.element = element;
     this.cacheEnabled = DEFAULT_CACHE_ENABLED;
   }
-
-  public boolean parse() {
-
-    boolean success = false;
+  
+  public boolean parseParameters() {
+	boolean success = false;
 
     try {
 
@@ -58,16 +57,29 @@ public class DataAccessCacheElementParser {
         setCacheDuration( Integer.parseInt( element.attributeValue( ATTR_DURATION ).toString() ) );
       }
 
+      success = true;
+
+    } catch ( Exception e ) {
+      logger.error( e.getMessage(), e );
+    }
+
+    return success;
+  }
+
+  public boolean parseKeys() {
+	boolean success = false;
+	
+    try {
+    	cacheKey = new CacheKey();
+    	
       @SuppressWarnings( "unchecked" )
       List<Element> keyNodes = element.selectNodes( "Key" ); //$NON-NLS-1$
 
       if ( keyNodes != null ) {
-
         for ( Element keyNode : keyNodes ) {
           buildKeyValuePair( keyNode );
         }
       }
-
       success = true;
 
     } catch ( Exception e ) {
@@ -92,7 +104,7 @@ public class DataAccessCacheElementParser {
         value = keyNode.attributeValue( ATTR_KEY_DEFAULT_VALUE ).toString();
       }
 
-      getCacheKey().addKeyValuePair( key, value );
+      cacheKey.addKeyValuePair( key, value );
     }
   }
 

@@ -29,8 +29,6 @@ public abstract class PentahoBaseCdaEnvironment extends BaseCdaEnvironment imple
     return CdaPluginEnvironment.repository();
   }
 
-  
-
   /**
    * @return {@link CdaSessionFormulaContext}
    */

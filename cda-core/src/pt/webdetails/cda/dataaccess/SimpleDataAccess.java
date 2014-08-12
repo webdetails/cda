@@ -13,7 +13,6 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;

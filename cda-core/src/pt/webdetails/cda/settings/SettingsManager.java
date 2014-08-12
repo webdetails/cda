@@ -191,7 +191,7 @@ public class SettingsManager {
    */
   private void addToCache(CdaSettings settings){
     String id = settings.getId();
-    settingsCache.put(id, settings);
+	settingsCache.put(id, settings);
     settingsTimestamps.put(id, System.currentTimeMillis());
   }
 
@@ -202,7 +202,6 @@ public class SettingsManager {
    * @param id
    */
   public synchronized void clearEntryFromCache(final String id) {
-
     if (settingsCache.containsKey(id)) {
       settingsCache.remove(id);
     }
