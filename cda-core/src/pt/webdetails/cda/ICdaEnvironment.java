@@ -63,6 +63,11 @@ public interface ICdaEnvironment {
   public IContentAccessFactory getRepo();
 
   public Configuration getBaseConfig();
+  
+  /**
+   * Returns Current Pentaho user name
+   */
+  public String getUserName();
 
   /**
    * Differs between pentaho 4.x and 5.x
