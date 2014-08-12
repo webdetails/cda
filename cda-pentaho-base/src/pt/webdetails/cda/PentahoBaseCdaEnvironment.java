@@ -1,6 +1,5 @@
 package pt.webdetails.cda;
 
-import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 
 import pt.webdetails.cda.cache.IQueryCache;
@@ -28,10 +27,6 @@ public abstract class PentahoBaseCdaEnvironment extends BaseCdaEnvironment imple
 
   public IContentAccessFactory getRepo() {
     return CdaPluginEnvironment.repository();
-  }
-
-  public String getUserName() {
-	  return PentahoSessionHolder.getSession().getName();
   }
 
   /**

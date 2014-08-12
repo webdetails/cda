@@ -59,12 +59,12 @@ public abstract class AbstractDataAccess implements DataAccess {
   private DataAccessEnums.ACCESS_TYPE access = DataAccessEnums.ACCESS_TYPE.PUBLIC;
   private boolean cacheEnabled = false;
   private int cacheDuration = 3600;
-  private Serializable cacheKey;
   private ArrayList<Parameter> parameters;
   private HashMap<Integer, OutputMode> outputMode;
   private HashMap<Integer, ArrayList<Integer>> outputs;
   private ArrayList<ColumnDefinition> columnDefinitions;
   protected HashMap<Integer, ColumnDefinition> columnDefinitionIndexMap;
+  private DataAccessCacheElementParser cdaCacheParser;
 
   private static final String PARAM_ITERATOR_BEGIN = "$FOREACH(";
   private static final String PARAM_ITERATOR_END = ")";
@@ -195,16 +195,14 @@ public abstract class AbstractDataAccess implements DataAccess {
     }
 
     // parse cda cache key
-    @SuppressWarnings( "unchecked" )
     final Element cdaCache = (Element) element.selectSingleNode( "Cache" );
     if( cdaCache != null ){
-      DataAccessCacheElementParser parser = new DataAccessCacheElementParser( cdaCache );
-      if( parser.parse() ){
-        setCacheEnabled( parser.isCacheEnabled() ); // overrides the cacheEnabled declared at DataAccess node
-        if( parser.getCacheDuration() != null ){
-          setCacheDuration( parser.getCacheDuration() ); // overrides the cacheDuration declared at DataAccess node
-        }
-        setCacheKey( parser.getCacheKey() );
+      cdaCacheParser = new DataAccessCacheElementParser( cdaCache );
+      if (cdaCacheParser.parseParameters()) {
+		  setCacheEnabled(cdaCacheParser.isCacheEnabled() ); // overrides the cacheEnabled declared at DataAccess node
+		  if (cdaCacheParser.getCacheDuration() != null ){
+			  setCacheDuration( cdaCacheParser.getCacheDuration() ); // overrides the cacheDuration declared at DataAccess node
+		  }
       }
     }
   }
@@ -672,11 +670,12 @@ public abstract class AbstractDataAccess implements DataAccess {
   }
 
   public Serializable getCacheKey() {
-    return cacheKey;
-  }
-
-  public void setCacheKey( Serializable cacheKey ) {
-    this.cacheKey = cacheKey;
+	  if (cdaCacheParser != null) {
+		  if (cdaCacheParser.parseKeys()) {
+			  return cdaCacheParser.getCacheKey();
+		  }
+	  }
+	  return null;
   }
 
   /**
