@@ -57,8 +57,8 @@ public class SettingsManager {
   private static final String SYSTEM_RESOURCE_LOADER_NAME = "system";
   private static final Log logger = LogFactory.getLog(SettingsManager.class);
 //  private static SettingsManager _instance;
-  private Map<String, CdaSettings> settingsCache;
-  private Map<String, Long> settingsTimestamps;
+  private Map<SettingsKey, CdaSettings> settingsCache;
+  private Map<SettingsKey, Long> settingsTimestamps;
   private ICdaResourceLoader defaultResourceLoader;
   private Map<String, ICdaResourceLoader> resourceLoaders;
 
@@ -75,7 +75,7 @@ public class SettingsManager {
     logger.debug("Initializing SettingsManager.");
 
     settingsCache = new LRUMap(MAX_SETTINGS_CACHE_SIZE);
-    settingsTimestamps = new HashMap<String, Long>();
+    settingsTimestamps = new HashMap<SettingsKey, Long>();
 
     this.defaultResourceLoader = new CdaRepositoryResourceLoader( DEFAULT_RESOURCE_LOADER_NAME );
     // order is important
@@ -105,16 +105,17 @@ public class SettingsManager {
   }
 
   private CdaSettings getFromCache(ICdaResourceLoader loader, String id ) {
-    if (settingsCache.containsKey(id)) {
-      CdaSettings cachedCda = settingsCache.get(id);
+	SettingsKey key = new SettingsKey(CdaEngine.getEnvironment().getUserName(), id);
+    if (settingsCache.containsKey(key)) {
+      CdaSettings cachedCda = settingsCache.get(key);
       
-      if(!settingsTimestamps.containsKey(id)){
+      if(!settingsTimestamps.containsKey(key)){
        //something went very wrong
         logger.error(MessageFormat.format("No cache timestamp found for item {0}, cache bypassed.", id));
       }
       else {
         // Is cache up to date?
-        long cachedTime = settingsTimestamps.get(id);
+        long cachedTime = settingsTimestamps.get(key);
         Long savedFileTime = loader.getLastModified( id );
         
         if (savedFileTime != null && //don't cache on-the-fly items 
@@ -191,8 +192,9 @@ public class SettingsManager {
    */
   private void addToCache(CdaSettings settings){
     String id = settings.getId();
-    settingsCache.put(id, settings);
-    settingsTimestamps.put(id, System.currentTimeMillis());
+    SettingsKey key = new SettingsKey(CdaEngine.getEnvironment().getUserName(), id);
+	settingsCache.put(key, settings);
+    settingsTimestamps.put(key, System.currentTimeMillis());
   }
 
   /**
@@ -203,11 +205,12 @@ public class SettingsManager {
    */
   public synchronized void clearEntryFromCache(final String id) {
 
-    if (settingsCache.containsKey(id)) {
-      settingsCache.remove(id);
+	SettingsKey key = new SettingsKey(CdaEngine.getEnvironment().getUserName(), id);
+    if (settingsCache.containsKey(key)) {
+      settingsCache.remove(key);
     }
-    if(settingsTimestamps.containsKey(id)){
-      settingsTimestamps.remove(id);
+    if(settingsTimestamps.containsKey(key)){
+      settingsTimestamps.remove(key);
     }
   }
 

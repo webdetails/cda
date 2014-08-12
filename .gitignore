@@ -4,6 +4,7 @@
 */runtime-lib/
 */test-lib/
 *~
+*.class
 .metadata
 .project
 nbbuild.xml
