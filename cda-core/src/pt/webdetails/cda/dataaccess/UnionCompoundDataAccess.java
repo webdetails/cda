@@ -72,8 +72,8 @@ public class UnionCompoundDataAccess extends CompoundDataAccess
       croppedOptions.setSortBy(new ArrayList<String>());
       croppedOptions.setPageSize(0);
       croppedOptions.setPageStart(0);
-      final TableModel tableModelA = this.getCdaSettings().getDataAccess(topId).doQuery(queryOptions);
-      final TableModel tableModelB = this.getCdaSettings().getDataAccess(bottomId).doQuery(queryOptions);
+      final TableModel tableModelA = this.getCdaSettings().getDataAccess(topId).doQuery(croppedOptions);
+      final TableModel tableModelB = this.getCdaSettings().getDataAccess(bottomId).doQuery(croppedOptions);
 
       return TableModelUtils.appendTableModel(tableModelA, tableModelB);
 
