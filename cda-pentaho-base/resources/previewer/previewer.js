@@ -11,6 +11,11 @@
 * the license for the specific language governing your rights and limitations.
 */
 
+
+
+
+
+
 var PreviewerBackend = {
   /* overridden by backend */
   PATH_doQuery: null,
@@ -39,6 +44,20 @@ var PreviewerBackend = {
     $.post(this.PATH_cacheController + '/change', params, callback, 'json');
   }
 };
+
+
+if($.blockUI){
+
+  $.blockUI.defaults.fadeIn = 0;
+  $.blockUI.defaults.message = '';
+  $.blockUI.defaults.css.left = '50%';
+  $.blockUI.defaults.css.top = '40%';
+  $.blockUI.defaults.css.marginLeft = '-16px';
+  $.blockUI.defaults.css.width = '32px';
+  $.blockUI.defaults.css.background = 'none';
+  $.blockUI.defaults.overlayCSS = { backgroundColor: "#FFFFFF", opacity: 0.8, cursor: "wait"};
+  $.blockUI.defaults.css.border = "none";
+}
 
 getFileName = function() {
   return PreviewerBackend.Path;
@@ -75,10 +94,15 @@ refreshTable = function(id){
     params.outputIndexId = $('#outputIndexId').val();
     //$.getJSON("doQuery",params , showTable);
   }
+  if ($.blockUI.defaults.message == "") {
+    $.blockUI.defaults.message = '<div style="padding: 0px;"><img src="' +  PreviewerBackend.PATH_page + '/img/processing_transparent.gif" />';
+  }  
+  $.blockUI(); 
   PreviewerBackend.doQuery(params, showTable);
 };
 
 showTable = function(data){
+  $.unblockUI(); 
   var tableContents = ignoreNullRows(data.resultset);
   var columnNames = [];
   for (column in data.metadata) {
