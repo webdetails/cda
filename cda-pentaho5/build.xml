@@ -64,6 +64,7 @@
 
   <property name="plugin.artifact.id" value="${plugin.name}"/>
   <property name="plugin.zipfile" value="${plugin.artifact.id}-${distribution.version}.zip"/>
+  <property name="plugin.disabled.zipfile" value="${plugin.artifact.id}-disabled-${distribution.version}.zip"/>  
   <property name="plugin.samples.zipfile" value="${plugin.artifact.id}-samples-${distribution.version}.zip"/>
   <property name="plugin.solution.zipfile" value="${plugin.artifact.id}-solution-${distribution.version}.zip"/>
 
@@ -171,6 +172,22 @@
          basedir="${stage.dir}"
          includes="cda/**/*"
          excludes="**/Thumbs.db"/>
+
+
+        <copy todir="${stage.dir}/${plugin.name}-disabled/${plugin.name}" overwrite="true">
+            <fileset dir="${stage.dir}/${plugin.name}"/>
+        </copy>
+
+        <copy file="${stage.dir}/${plugin.name}-disabled/${plugin.name}/plugin.xml.disabled" 
+              tofile="${stage.dir}/${plugin.name}-disabled/${plugin.name}/plugin.xml" overwrite="true"/>
+
+
+        <!-- create a zip file -->
+        <zip zipfile="${dist.dir}/${plugin.disabled.zipfile}"
+             basedir="${stage.dir}/${plugin.name}-disabled"
+             includes="${plugin.artifact.id}/**/*"
+             excludes="**/Thumbs.db"/>
+
 
 	<echo file="${dist.dir}/marketplace.xml">&lt;version>
         &lt;branch>${project.stage}&lt;/branch>
@@ -284,6 +301,7 @@
 
     <ivy:makepom ivyfile="package-ivy-plugin.xml" pomfile="plugin-pom.xml"/>
     <ivy:makepom ivyfile="package-ivy-plugin.xml" pomfile="samples-pom.xml"/>
+    <ivy:makepom ivyfile="package-ivy-plugin.xml" pomfile="disabled-pom.xml"/>    
 
     <replace file="plugin-pom.xml" token="jar" value="zip"/>
     <replace file="plugin-pom.xml" token="%artifact-name%" value="${plugin.artifact.id}"/>
@@ -298,6 +316,15 @@
       <param name="publish.pomFile" value="samples-pom.xml"/>
       <param name="publish.file" value="${dist.dir}/${plugin.samples.zipfile}"/>
     </antcall>
+    
+    <replace file="disabled-pom.xml" token="jar" value="zip"/>
+    <replace file="disabled-pom.xml" token="%artifact-name%" value="${plugin.artifact.id}-disabled"/>
+
+    <antcall target="maven-publish-artifact">
+        <param name="publish.pomFile" value="disabled-pom.xml" />
+        <param name="publish.file" value="${dist.dir}/${plugin.disabled.zipfile}" />
+    </antcall>       
+    
 
   </target>
 
