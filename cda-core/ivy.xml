@@ -34,6 +34,7 @@
          <!-- Other Compile dependencies -->
         <dependency org="org.springframework.security" name="spring-security-core" rev="2.0.5.RELEASE"/>
         <dependency org="org.springframework"          name="spring-support"       rev="2.0.8"/>
+        <dependency org="net.sf.ehcache" name="ehcache-core" rev="2.5.1" transitive="false" changing="false"/>
 <!--        <dependency org="org.springframework" name="spring-core" rev="2.5.6"/> -->
         <dependency org="com.hazelcast"                name="hazelcast"            rev="2.5"   conf="default->default;legacy->default" transitive="false"/>
         <dependency org="org.codehaus.jackson"         name="jackson-mapper-asl"   rev="1.8.2" conf='runtime->default' transitive="false"/>
@@ -54,8 +55,7 @@
         <dependency org="junit"         name="junit"         rev="4.10"  conf="test, default->default"/>
 
         <!-- Excludes -->
-        <exclude module="ehcache"  conf="default,runtime" />
-		<exclude module="nekohtml" conf="" matcher="exact"></exclude>
+	<exclude module="nekohtml" conf="" matcher="exact"></exclude>
 	</dependencies>
 
 </ivy-module>
