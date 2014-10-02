@@ -14,6 +14,8 @@
 package pt.webdetails.cda.dataaccess;
 
 
+import java.util.Arrays;
+
 public class DataAccessEnums {
 
 
@@ -72,7 +74,7 @@ public class DataAccessEnums {
     MONDRIAN_JDBC("mondrian.jdbc"),
     MONDRIAN_JNDI("mondrian.jndi"),
     
-    OLAP4J("olap4j"),
+    OLAP4J( new String[]{ "olap4j" , "olap4j.defaultolap4j" } ),
     
     SCRIPTING("scripting.scripting"),
     
@@ -80,16 +82,26 @@ public class DataAccessEnums {
     
     KETTLE_TRANS_FROM_FILE("kettle.TransFromFile");
     
-    private String type;
-    public String getType() { return this.type; }
-    ConnectionInstanceType(String type){
-      this.type = type;
+    private String[] types;
+    public String[] getTypes() { return this.types; }
+    ConnectionInstanceType( String type ){
+      this( new String[]{ type } );
     }
     
-    public static ConnectionInstanceType parseType(String type){
+    ConnectionInstanceType( String[] types ){
+      this.types = types;
+    }
+
+    public static ConnectionInstanceType parseType( String type ){
+      return parseType( new String[]{ type } );
+    }
+
+    public static ConnectionInstanceType parseType( String[] types ){
       for (ConnectionInstanceType connection : ConnectionInstanceType.values()) {
-        if (connection.getType().equals(type)) {
-          return connection;
+        for( String type : types ) {
+          if ( Arrays.asList( connection.getTypes() ).contains( type ) ) {
+            return connection;
+          }
         }
       }
       return null;
