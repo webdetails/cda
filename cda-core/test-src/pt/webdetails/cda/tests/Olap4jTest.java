@@ -77,4 +77,25 @@ public class Olap4jTest extends CdaTestCase
     logger.info("Found Query in Cache!");
 
   }
+
+  /**
+   * this test is the same as testOlap4jQuery(), but now calls for a new data-access id 3, which in its turn
+   * is set to use the new connection id 3, that has been defined to use new type 'olap4j.defaultolap4j'
+   * @throws Exception should something go wrong
+   */
+  public void testDefaultOlap4jQuery() throws Exception
+  {
+
+    final CdaSettings cdaSettings = parseSettingsFile("sample-olap4j.cda");
+    logger.debug("Doing query on Cda - Initializing CdaEngine");
+    final CdaEngine engine = CdaEngine.getInstance();
+
+    final QueryOptions queryOptions = new QueryOptions();
+    queryOptions.setDataAccessId("3"); // same as data-access id 2, but using new connection type 'olap4j.defaultolap4j'
+    queryOptions.setOutputType("json");
+    queryOptions.addParameter("status", "Shipped");
+
+    logger.info("Doing query");
+    engine.doQuery(cdaSettings, queryOptions);
+  }
 }

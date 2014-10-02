@@ -18,6 +18,17 @@
             <Property name="JdbcDrivers">org.hsqldb.jdbcDriver</Property>
             <Property name="Catalog">res:repository/steelwheels.mondrian.xml</Property>
         </Connection>
+
+        <!-- same as connection id 2, but using new connection type olap4j.defaultolap4j -->
+        <Connection id="3" type="olap4j.defaultolap4j">
+            <Driver>mondrian.olap4j.MondrianOlap4jDriver</Driver>
+            <Url>jdbc:mondrian:</Url>
+            <Property name="JdbcUser">pentaho_user</Property>
+            <Property name="JdbcPassword">password</Property>
+            <Property name="Jdbc">jdbc:hsqldb:res:sampledata</Property>
+            <Property name="JdbcDrivers">org.hsqldb.jdbcDriver</Property>
+            <Property name="Catalog">res:repository/steelwheels.mondrian.xml</Property>
+        </Connection>
     </DataSources>
     <!-- DataAccess object controls the query itself
 
@@ -49,4 +60,32 @@
 			</CalculatedColumn>
 		</Columns>
     </DataAccess>
+
+
+    <!-- same as data access id 2, but using new connection id 3, which has been defined using new type olap4j.defaultolap4j -->
+    <DataAccess id="3" connection="3" type="olap4j" access="public" cache="true" cacheDuration="3600" >
+		<Name>Sample query on SteelWheelsSales</Name>
+        <Query><![CDATA[
+			select {[Measures].[Sales]} ON COLUMNS,
+			NON EMPTY  [Time].Children ON ROWS
+			from [SteelWheelsSales]
+			where ([Order Status].[${status}])
+		]]></Query>
+        <Parameters>
+            <Parameter name="status" type="String" default="In Process"/>
+        </Parameters>
+		<Columns>
+			<Column idx="1">
+				<Name>Year</Name>
+			</Column>
+			<Column idx="2">
+				<Name>price</Name>
+			</Column>
+			<CalculatedColumn>
+				<Name>PriceInK</Name>
+				<Formula>=[price]/1000000</Formula>
+			</CalculatedColumn>
+		</Columns>
+    </DataAccess>
+
 </CDADescriptor>
