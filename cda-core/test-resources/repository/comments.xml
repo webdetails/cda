@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<Comments> 
+    <Comment theme="Exemplarité" level="1"> 
+       <text>Commentaire pour le theme Exemplarité et le niveau 1</text> 
+    </Comment> 
+    <Comment theme="Exemplarité" level="2"> 
+        <text>Commentaire pour le theme Exemplarité et le niveau 2</text> 
+    </Comment> 
+    <Comment theme="Responsabilité" level="1"> 
+        <text>Commentaire pour le theme Responsabilité et le niveau 1</text> 
+    </Comment> 
+    <Comment theme="Responsabilité" level="2"> 
+        <text>Commentaire pour le theme Responsabilité et le niveau 2</text> 
+    </Comment> 
+    <Comment theme="Engagement" level="1"> 
+        <text>Commentaire pour le theme Engagement et le niveau 1</text> 
+    </Comment> 
+    <Comment theme="Engagement" level="2"> 
+        <text>Commentaire pour le theme Engagement et le niveau 2</text> 
+    </Comment> 
+</Comments> 
