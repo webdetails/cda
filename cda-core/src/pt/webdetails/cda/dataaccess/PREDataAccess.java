@@ -111,6 +111,7 @@ public abstract class PREDataAccess extends SimpleDataAccess {
     //    boolean threadVarSet = false;
 
     try {
+
       final CachingDataFactory dataFactory = new CachingDataFactory( getDataFactory(), false );
 
       final Configuration configuration = ClassicEngineBoot.getInstance().getGlobalConfig();
@@ -122,6 +123,7 @@ public abstract class PREDataAccess extends SimpleDataAccess {
       IDataAccessUtils dataAccessUtils = CdaEngine.getEnvironment().getDataAccessUtils();
       final ReportEnvironmentDataRow environmentDataRow = dataAccessUtils.createEnvironmentDataRow( configuration );
 
+
       PREDataSourceQuery queryExecution = null;
       try {
         final TableModel tm = dataFactory.queryData( "query",
@@ -130,6 +132,7 @@ public abstract class PREDataAccess extends SimpleDataAccess {
         //  Store this variable so that we can close it later
         queryExecution = new PREDataSourceQuery( tm, dataFactory );
       } finally {
+
         //There was an exception while getting the dataset - need to make sure 
         //that the dataFactory is closed
         if ( queryExecution == null ) {

@@ -16,15 +16,18 @@ package pt.webdetails.cda.dataaccess;
 import java.lang.reflect.Method;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
+import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.extensions.datasources.xpath.XPathDataFactory;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.xpath.XPathConnection;
 import pt.webdetails.cda.settings.UnknownConnectionException;
+import pt.webdetails.cda.utils.CdaPropertyLookupParser;
 
 /**
  * Todo: Document me!
@@ -107,5 +110,17 @@ public class XPathDataAccess extends PREDataAccess
   public ConnectionType getConnectionType()
   {
     return ConnectionType.XPATH;
+  }
+
+  // this change allows xPath parameters parsing
+    @Override
+  protected IDataSourceQuery performRawQuery(ParameterDataRow parameterDataRow) throws QueryException {
+    String origQuery = query;
+
+    CdaPropertyLookupParser lookupParser = new  CdaPropertyLookupParser(parameterDataRow);
+    query = lookupParser.translateAndLookup(query, parameterDataRow);
+    IDataSourceQuery dataSourceQuery =  super.performRawQuery(parameterDataRow);
+    query = origQuery;
+    return(dataSourceQuery);
   }
 }
