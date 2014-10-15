@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CDADescriptor>
+   <DataSources>
+      <Connection id="xPath_CDA_15" type="xpath.xPath">
+         <DataFile>comments.xml</DataFile>
+      </Connection>
+   </DataSources>
+   <DataAccess access="public" cache="true" cacheDuration="3" connection="xPath_CDA_15"
+               id="xPath_CDA_15"
+               type="xPath">
+      <Columns/>
+      <Parameters>
+         <Parameter default="Engagement" name="theme" type="String"/>
+         <Parameter default="1" name="level" type="String"/> 
+      </Parameters>
+      <Query>//Comment[@theme="${theme}" and @level="${level}"]</Query>
+<!--      <Query>//Comment[@level="${level}"]</Query> -->
+<!--      <Query>//Comment[@level="1"]</Query> -->
+   </DataAccess>
+</CDADescriptor>
