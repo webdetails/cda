@@ -13,9 +13,12 @@
 
 package pt.webdetails.cda.dataaccess;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 
 import org.pentaho.reporting.engine.classic.core.DataFactory;
+import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleDataFactory;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKeyCreationException;
@@ -30,6 +33,8 @@ import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 
 import java.io.Serializable;
+import java.util.List;
+
 /**
  * Todo: Document me!
  * <p/>
@@ -38,18 +43,21 @@ import java.io.Serializable;
  *
  * @author Thomas Morgner.
  */
-public class KettleDataAccess extends PREDataAccess
-{
-  
+public class KettleDataAccess extends PREDataAccess {
+
   private String path;
 
-  public KettleDataAccess(final Element element)
-  {
-    super(element);
+
+  private static final String PARAMETER_SQL_SEPARATOR = "pt.webdetails.cda.dataaccess.parameterarray.kettle.Separator";
+  private static final String PARAMETER_SQL_QUOTE = "pt.webdetails.cda.dataaccess.parameterarray.kettle.Quote";
+
+  private static final Log logger = LogFactory.getLog( CdaEngine.class );
+
+  public KettleDataAccess( final Element element ) {
+    super( element );
   }
 
-  public KettleDataAccess()
-  {
+  public KettleDataAccess() {
     super();
   }
 
@@ -58,31 +66,29 @@ public class KettleDataAccess extends PREDataAccess
     final KettleConnection connection = (KettleConnection) getCdaSettings().getConnection( getConnectionId() );
 
     final KettleDataFactory dataFactory = new KettleDataFactory();
-    dataFactory.setQuery("query", connection.createTransformationProducer( getQuery(), getCdaSettings()) );
+    dataFactory.setQuery("query", connection.createTransformationProducer( getQuery(), getCdaSettings() ) );
     return dataFactory;
   }
 
-  public String getType()
-  {
+  public String getType() {
     return "kettle";
   }
 
   @Override
-  public ConnectionType getConnectionType()
-  {
+  public ConnectionType getConnectionType() {
     return ConnectionType.KETTLE;
   }
-  
-  @Override 
-  public void setCdaSettings(CdaSettings cdaSettings) {
-    super.setCdaSettings(cdaSettings);
+
+  @Override
+  public void setCdaSettings( CdaSettings cdaSettings ) {
+    super.setCdaSettings( cdaSettings );
     final ResourceManager resourceManager = CdaEngine.getInstance().getSettingsManager().getResourceManager();
     ResourceKey fileKey;
     try {
-      fileKey = resourceManager.deriveKey(getCdaSettings().getContextKey(), "");
+      fileKey = resourceManager.deriveKey( getCdaSettings().getContextKey(), "" );
       path = fileKey.getIdentifierAsString();
-    } catch (ResourceKeyCreationException e) {
-      path = null;//shouldn't happen and will blow down the road
+    } catch ( ResourceKeyCreationException e ) {
+      path = null; //shouldn't happen and will blow down the road
     }
   };
 
@@ -91,12 +97,40 @@ public class KettleDataAccess extends PREDataAccess
    * We only use solution paths, only the path needs to be stored.
    */
   @Override
-  public Serializable getExtraCacheKey(){
+  public Serializable getExtraCacheKey() {
 
     CacheKey cacheKey = getCacheKey() != null ? ( (CacheKey) getCacheKey() ).clone() : new CacheKey();
 
     cacheKey.addKeyValuePair( "path", path );
 
     return cacheKey;
+  }
+
+  @Override
+  protected IDataSourceQuery performRawQuery( ParameterDataRow parameterDataRow ) throws QueryException {
+    if ( getParameters().size() == 0 ) {
+      return super.performRawQuery( parameterDataRow );
+    }
+
+    Parameter parameter;
+    final List<Parameter> parameters = getParameters();
+    String[] columnNames = parameterDataRow.getColumnNames();
+
+    Object[] values = new Object[ columnNames.length ];
+    Object value = null;
+
+    for ( int i = 0; i < parameters.size(); i++ ) {
+      parameter = parameters.get( i );
+      if ( parameter.getType().getName().equals( "StringArray" ) || parameter.getType().getName().equals( "IntegerArray" ) ) {
+        parameter.setValue( parameterDataRow.get( columnNames[ i ] ) );
+        value = parameter.getStringValue();
+        parameter.setValue( null );
+      } else {
+        value = parameterDataRow.get( columnNames[i] );
+      }
+      values[ i ] = value;
+    }
+
+    return super.performRawQuery( new ParameterDataRow( columnNames, values ) );
   }
 }
