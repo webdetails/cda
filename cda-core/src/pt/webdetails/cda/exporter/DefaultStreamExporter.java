@@ -14,18 +14,6 @@
 
 package pt.webdetails.cda.exporter;
 
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.database.DatabaseMeta;
@@ -38,16 +26,18 @@ import org.pentaho.di.trans.steps.injector.InjectorMeta;
 import org.pentaho.di.trans.steps.tableinput.TableInputMeta;
 import org.pentaho.reporting.engine.classic.core.DataRow;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
-
-import pt.webdetails.robochef.DynamicTransConfig;
-import pt.webdetails.robochef.DynamicTransMetaConfig;
-import pt.webdetails.robochef.DynamicTransformation;
-import pt.webdetails.robochef.RowProductionManager;
-import pt.webdetails.robochef.TableModelInput;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.dataaccess.kettle.DataAccessKettleAdapter;
 import pt.webdetails.cda.dataaccess.kettle.KettleAdapterException;
 import pt.webdetails.cda.utils.kettle.RowCountListener;
+import pt.webdetails.robochef.*;
+
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * Direct exporter from data access to stream using Kettle

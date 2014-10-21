@@ -13,13 +13,12 @@
 
 package pt.webdetails.cda.tests;
 
+import junit.framework.Assert;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
-import junit.framework.Assert;
 
 /**
  * Created by IntelliJ IDEA.

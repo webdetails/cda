@@ -13,19 +13,7 @@
 
 package pt.webdetails.cda.utils.mondrian;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-
-import javax.swing.table.AbstractTableModel;
-
-import mondrian.olap.Axis;
-import mondrian.olap.Cell;
-import mondrian.olap.Dimension;
-import mondrian.olap.Member;
-import mondrian.olap.Position;
-import mondrian.olap.Result;
-
+import mondrian.olap.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.MetaAttributeNames;
@@ -37,6 +25,11 @@ import org.pentaho.reporting.engine.classic.core.wizard.DefaultDataAttributes;
 import org.pentaho.reporting.engine.classic.core.wizard.EmptyDataAttributes;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.MDXMetaDataCellAttributes;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.MDXMetaDataMemberAttributes;
+
+import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 /**
  * This tablemodel performs some preprocessing to get multi-dimensional resultset (with row and column headers) into a

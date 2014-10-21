@@ -13,30 +13,22 @@
 
 package pt.webdetails.cda.utils.kettle;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.swing.table.TableModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import java.util.Comparator;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
-import pt.webdetails.robochef.DynamicTransConfig;
-import pt.webdetails.robochef.DynamicTransConfig.EntryType;
-import pt.webdetails.robochef.DynamicTransMetaConfig;
-import pt.webdetails.robochef.DynamicTransMetaConfig.Type;
-import pt.webdetails.robochef.DynamicTransformation;
-import pt.webdetails.robochef.RowProductionManager;
-import pt.webdetails.robochef .TableModelInput;
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.robochef.*;
+import pt.webdetails.robochef.DynamicTransConfig.EntryType;
+import pt.webdetails.robochef.DynamicTransMetaConfig.Type;
+
+import javax.swing.table.TableModel;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *

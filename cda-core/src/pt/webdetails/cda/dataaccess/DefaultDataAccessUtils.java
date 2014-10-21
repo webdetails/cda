@@ -13,9 +13,6 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.util.Locale;
-import java.util.TimeZone;
-
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.DefaultReportEnvironment;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
@@ -33,13 +30,15 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.pmd.PmdDataFa
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.kettle.TransFromFileConnectionInfo;
 import pt.webdetails.cda.connections.mondrian.MondrianConnection;
 import pt.webdetails.cda.connections.mondrian.MondrianJndiConnectionInfo;
 import pt.webdetails.cda.connections.sql.SqlJndiConnectionInfo;
 import pt.webdetails.cda.settings.CdaSettings;
+
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class DefaultDataAccessUtils implements IDataAccessUtils {
 

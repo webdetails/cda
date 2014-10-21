@@ -13,10 +13,6 @@
 
 package pt.webdetails.cda;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,7 +21,6 @@ import org.pentaho.reporting.libraries.base.config.HierarchicalConfiguration;
 import org.pentaho.reporting.libraries.base.config.PropertyFileConfiguration;
 import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
-
 import pt.webdetails.cda.cache.EHCacheQueryCache;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.connections.mondrian.IMondrianRoleMapper;
@@ -33,16 +28,21 @@ import pt.webdetails.cda.dataaccess.DefaultCubeFileProviderSetter;
 import pt.webdetails.cda.dataaccess.DefaultDataAccessUtils;
 import pt.webdetails.cda.dataaccess.ICubeFileProviderSetter;
 import pt.webdetails.cda.dataaccess.IDataAccessUtils;
-//import pt.webdetails.cda.formula.DefaultSessionFormulaContext;
-//import pt.webdetails.cda.settings.DefaultResourceKeyGetter;
-//import pt.webdetails.cda.settings.IResourceKeyGetter;
 import pt.webdetails.cpf.PluginEnvironment;
-//import pt.webdetails.cpf.impl.SimpleSessionUtils;
-//import pt.webdetails.cpf.impl.SimpleUserSession;
 import pt.webdetails.cpf.messaging.IEventPublisher;
 import pt.webdetails.cpf.messaging.PluginEvent;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
 import pt.webdetails.cpf.repository.api.IReadAccess;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+//import pt.webdetails.cda.formula.DefaultSessionFormulaContext;
+//import pt.webdetails.cda.settings.DefaultResourceKeyGetter;
+//import pt.webdetails.cda.settings.IResourceKeyGetter;
+//import pt.webdetails.cpf.impl.SimpleSessionUtils;
+//import pt.webdetails.cpf.impl.SimpleUserSession;
 //import pt.webdetails.cpf.session.ISessionUtils;
 
 // TODO: change bean handling, make ready for sugar version

@@ -13,10 +13,10 @@
 
 package pt.webdetails.cda.exporter;
 
-import java.util.Map;
-
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.steps.exceloutput.ExcelOutputMeta;
+
+import java.util.Map;
 
 
 /**

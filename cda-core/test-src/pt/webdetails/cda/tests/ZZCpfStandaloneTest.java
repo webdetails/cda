@@ -13,22 +13,16 @@
 
 package pt.webdetails.cda.tests;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.net.URL;
-
-
-
 import org.apache.commons.io.FileUtils;
-
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import pt.webdetails.cda.CdaCoreService;
+import pt.webdetails.cda.BaseCdaEnvironment;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.CoreBeanFactory;
-import pt.webdetails.cda.BaseCdaEnvironment;
+
+import java.io.File;
+import java.net.URL;
 
 
 public class ZZCpfStandaloneTest {

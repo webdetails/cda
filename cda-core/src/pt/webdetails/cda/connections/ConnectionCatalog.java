@@ -13,23 +13,22 @@
 
 package pt.webdetails.cda.connections;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cpf.repository.api.IBasicFile;
 import pt.webdetails.cpf.repository.api.IReadAccess;
 import pt.webdetails.cpf.repository.util.RepositoryHelper;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 /**
  *
  * @author pdpi

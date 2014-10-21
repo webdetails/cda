@@ -14,7 +14,6 @@
 package pt.webdetails.cda.connections.olap4j;
 
 import org.pentaho.reporting.engine.classic.extensions.datasources.olap4j.connections.OlapConnectionProvider;
-
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 

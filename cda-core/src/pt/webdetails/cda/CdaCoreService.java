@@ -13,27 +13,20 @@
 
 package pt.webdetails.cda;
 
-import java.util.ArrayList;
-import java.util.Map;
-
-import javax.swing.table.TableModel;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
-import pt.webdetails.cda.exporter.ExportOptions;
-import pt.webdetails.cda.exporter.ExportedQueryResult;
-import pt.webdetails.cda.exporter.ExportedTableQueryResult;
-import pt.webdetails.cda.exporter.Exporter;
-import pt.webdetails.cda.exporter.TableExporter;
-import pt.webdetails.cda.exporter.UnsupportedExporterException;
+import pt.webdetails.cda.exporter.*;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.utils.DoQueryParameters;
+
+import javax.swing.table.TableModel;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Basic CDA functionality.<br> <ul> <li>doQuery</li> <li>listQueries</li> <li>listParameters</li>

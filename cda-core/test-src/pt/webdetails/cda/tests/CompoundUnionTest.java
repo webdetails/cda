@@ -13,13 +13,12 @@
 
 package pt.webdetails.cda.tests;
 
-import javax.swing.table.TableModel;
-
 import org.junit.Test;
-
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.tests.utils.CdaTestHelper;
+
+import javax.swing.table.TableModel;
 
 /**
  * Created by IntelliJ IDEA.

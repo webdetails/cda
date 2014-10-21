@@ -13,11 +13,10 @@
 
 package pt.webdetails.cda.cache;
 
-import javax.swing.table.TableModel;
-
-import pt.webdetails.cda.cache.TableCacheKey;
 import pt.webdetails.cda.cache.monitor.CacheElementInfo;
 import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
+
+import javax.swing.table.TableModel;
 
 /**
  * Caches query results and basic info about them

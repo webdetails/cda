@@ -1,11 +1,6 @@
 package pt.webdetails.cda.tests;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Locale;
-import java.util.TimeZone;
-
-import javax.swing.table.TableModel;
-
+import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
@@ -14,14 +9,7 @@ import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFac
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
-//import org.pentaho.reporting.libraries.base.config.Configuration;
-//import org.pentaho.reporting.libraries.base.config.HierarchicalConfiguration;
-
-import pt.webdetails.cda.BaseCdaEnvironment;
-import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cda.CoreBeanFactory;
-import pt.webdetails.cda.ICdaEnvironment;
-import pt.webdetails.cda.InitializationException;
+import pt.webdetails.cda.*;
 import pt.webdetails.cda.cache.EHCacheQueryCache;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.exporter.ExportOptions;
@@ -34,7 +22,14 @@ import pt.webdetails.cpf.Util;
 import pt.webdetails.cpf.context.api.IUrlProvider;
 import pt.webdetails.cpf.plugincall.api.IPluginCall;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
-import junit.framework.TestCase;
+
+import javax.swing.table.TableModel;
+import java.io.ByteArrayOutputStream;
+import java.util.Locale;
+import java.util.TimeZone;
+
+//import org.pentaho.reporting.libraries.base.config.Configuration;
+//import org.pentaho.reporting.libraries.base.config.HierarchicalConfiguration;
 
 
 public abstract class CdaTestCase extends TestCase {

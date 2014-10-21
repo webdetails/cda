@@ -13,11 +13,11 @@
 
 package pt.webdetails.cda.connections.sql;
 
+import org.apache.commons.lang.StringUtils;
+import org.dom4j.Element;
+
 import java.util.List;
 import java.util.Properties;
-
-import org.dom4j.Element;
-import org.apache.commons.lang.StringUtils;
 public class JdbcConnectionInfo
 {
 

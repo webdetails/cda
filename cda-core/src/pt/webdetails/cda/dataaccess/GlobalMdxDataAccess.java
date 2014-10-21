@@ -13,8 +13,6 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.util.Properties;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,13 +21,14 @@ import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.BandedMDXDataFactory;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.mondrian.MondrianConnection;
 import pt.webdetails.cda.connections.mondrian.MondrianConnectionInfo;
 import pt.webdetails.cda.settings.UnknownConnectionException;
+
+import java.util.Properties;
 
 /**
  * Implementation of a DataAccess that will get data from a SQL database

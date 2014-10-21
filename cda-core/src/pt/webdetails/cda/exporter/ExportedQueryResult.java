@@ -13,16 +13,14 @@
 
 package pt.webdetails.cda.exporter;
 
+import org.apache.commons.lang.StringUtils;
+import pt.webdetails.cpf.Util;
+import pt.webdetails.cpf.utils.MimeTypes;
+
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-
-import pt.webdetails.cpf.Util;
-import pt.webdetails.cpf.utils.MimeTypes;
 
 /**
  * Standard cda query result

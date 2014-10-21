@@ -13,14 +13,14 @@
 
 package pt.webdetails.cda;
 
-import java.net.URL;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.net.URL;
 
 // TODO: meld with std bean factory..
 public class CoreBeanFactory implements ICdaBeanFactory {

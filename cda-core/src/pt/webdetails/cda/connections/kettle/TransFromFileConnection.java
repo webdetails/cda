@@ -13,11 +13,8 @@
 
 package pt.webdetails.cda.connections.kettle;
 
-import java.util.ArrayList;
-
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleTransformationProducer;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.AbstractConnection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
@@ -25,6 +22,8 @@ import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.IDataAccessUtils;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.settings.CdaSettings;
+
+import java.util.ArrayList;
 
 /**
  * Todo: Document me!

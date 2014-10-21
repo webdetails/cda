@@ -1,10 +1,5 @@
 package pt.webdetails.robochef;
 
-import static org.pentaho.di.core.Const.isEmpty;
-import static org.pentaho.di.core.Const.trim;
-
-import java.io.File;
-
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.plugins.PluginRegistry;
 import org.pentaho.di.core.plugins.RepositoryPluginType;
@@ -15,6 +10,11 @@ import org.pentaho.di.repository.Repository;
 import org.pentaho.di.repository.RepositoryDirectoryInterface;
 import org.pentaho.di.repository.RepositoryMeta;
 import org.pentaho.di.trans.TransMeta;
+
+import java.io.File;
+
+import static org.pentaho.di.core.Const.isEmpty;
+import static org.pentaho.di.core.Const.trim;
 
 /**
  * Configuration parameters for constructing the TransMeta object that drives

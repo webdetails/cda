@@ -13,10 +13,10 @@
 
 package pt.webdetails.cda.formula;
 
+import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 
 
 public class DefaultSessionFormulaContext extends DefaultFormulaContext {

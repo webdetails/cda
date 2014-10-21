@@ -13,14 +13,13 @@
 
 package pt.webdetails.cda.tests;
 
-import java.util.Arrays;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
+
+import java.util.Arrays;
 
 /**
  * Created by IntelliJ IDEA.

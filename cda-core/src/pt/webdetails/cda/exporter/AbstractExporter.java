@@ -13,13 +13,14 @@
 
 package pt.webdetails.cda.exporter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.swing.table.TableModel;
 import java.io.OutputStream;
 import java.sql.Blob;
 import java.util.Date;
 import java.util.Map;
-import javax.swing.table.TableModel;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 5, 2010 Time: 5:06:31 PM

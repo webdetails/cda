@@ -13,12 +13,13 @@
 
 package pt.webdetails.cda.connections.scripting;
 
-import java.util.ArrayList;
 import org.dom4j.Element;
 import pt.webdetails.cda.connections.AbstractConnection;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
+
+import java.util.ArrayList;
 
 /**
  * Todo: Document me!

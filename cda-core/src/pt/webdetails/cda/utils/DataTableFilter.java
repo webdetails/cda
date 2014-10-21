@@ -13,9 +13,9 @@
 
 package pt.webdetails.cda.utils;
 
-import javax.swing.table.TableModel;
-
 import org.apache.commons.lang.StringUtils;
+
+import javax.swing.table.TableModel;
 
 
 /**

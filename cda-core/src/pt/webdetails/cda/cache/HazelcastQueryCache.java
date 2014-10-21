@@ -13,35 +13,21 @@
 
 package pt.webdetails.cda.cache;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeoutException;
-
-import javax.swing.table.TableModel;
-
+import com.hazelcast.core.*;
+import com.hazelcast.impl.base.DataRecordEntry;
+import com.hazelcast.query.SqlPredicate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import pt.webdetails.cda.CdaPropertiesHelper;
 import pt.webdetails.cda.cache.monitor.CacheElementInfo;
 import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
 
-import com.hazelcast.core.EntryEvent;
-import com.hazelcast.core.EntryListener;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-import com.hazelcast.core.LifecycleService;
-import com.hazelcast.core.MapEntry;
-import com.hazelcast.impl.base.DataRecordEntry;
-import com.hazelcast.query.SqlPredicate;
-
-import java.util.concurrent.TimeUnit;
+import javax.swing.table.TableModel;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.*;
 
 /**
  * 

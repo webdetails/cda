@@ -6,7 +6,6 @@ import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.steps.tableinput.TableInputMeta;
 import org.pentaho.reporting.engine.classic.core.DataRow;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.SQLParameterLookupParser;
-
 import pt.webdetails.cda.connections.sql.JdbcConnection;
 import pt.webdetails.cda.connections.sql.JdbcConnectionInfo;
 import pt.webdetails.cda.connections.sql.JndiConnection;

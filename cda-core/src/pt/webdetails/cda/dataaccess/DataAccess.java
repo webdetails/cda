@@ -13,13 +13,13 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.util.ArrayList;
-import javax.swing.table.TableModel;
-
+import org.dom4j.Element;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
-import org.dom4j.Element;
 import pt.webdetails.cda.xml.DomVisitor;
+
+import javax.swing.table.TableModel;
+import java.util.ArrayList;
 
 /**
  * DataAccess interface

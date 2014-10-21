@@ -13,37 +13,27 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import javax.swing.table.TableModel;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.di.core.util.StringUtil;
 import org.pentaho.metadata.model.concept.types.JoinType;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
-
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
-import pt.webdetails.robochef.DynamicTransConfig;
-import pt.webdetails.robochef.DynamicTransConfig.EntryType;
-import pt.webdetails.robochef.DynamicTransMetaConfig;
-import pt.webdetails.robochef.DynamicTransMetaConfig.Type;
-import pt.webdetails.robochef.DynamicTransformation;
-import pt.webdetails.cda.utils.kettle.RowMetaToTableModel;
-import pt.webdetails.robochef.RowProductionManager;
-import pt.webdetails.robochef.TableModelInput;
-import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.utils.MetadataTableModel;
+import pt.webdetails.cda.utils.kettle.RowMetaToTableModel;
+import pt.webdetails.robochef.*;
+import pt.webdetails.robochef.DynamicTransConfig.EntryType;
+import pt.webdetails.robochef.DynamicTransMetaConfig.Type;
+
+import javax.swing.table.TableModel;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.*;
 
 
 public class JoinCompoundDataAccess extends CompoundDataAccess implements RowProductionManager {

@@ -1,10 +1,7 @@
 package pt.webdetails.cda.services;
 
-import java.io.IOException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import pt.webdetails.cda.AccessDeniedException;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cpf.PluginEnvironment;
@@ -12,6 +9,8 @@ import pt.webdetails.cpf.Util;
 import pt.webdetails.cpf.repository.api.FileAccess;
 import pt.webdetails.cpf.repository.api.IReadAccess;
 import pt.webdetails.cpf.repository.api.IUserContentAccess;
+
+import java.io.IOException;
 
 // TODO just impl aid, to be changed
 public abstract class BaseService {

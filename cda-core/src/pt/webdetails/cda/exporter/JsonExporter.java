@@ -13,19 +13,17 @@
 
 package pt.webdetails.cda.exporter;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Map;
-
-import javax.swing.table.TableModel;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import pt.webdetails.cda.utils.MetadataTableModel;
+
+import javax.swing.table.TableModel;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Map;
 
 /**
  * JsonExporter
@@ -104,12 +102,17 @@ public class JsonExporter extends AbstractExporter {
       Class<?> columnClass = tableModel.getColumnClass( i );
       isColumnDouble[ i ] = ( columnClass.isAssignableFrom( Double.class ) );
       info.put( "colType", getColType( columnClass ) );
+        if ( tableModel instanceof MetadataTableModel ) {
+            info.put( "colCustomType", ((MetadataTableModel)tableModel).getCustomType(i) );
+        }
       metadataArray.put( info );
     }
     json.put( "metadata", metadataArray );
 
     if ( tableModel instanceof MetadataTableModel ) {
       json.put( "queryInfo", ( (MetadataTableModel) tableModel ).getAllMetadata() );
+
+
     }
     final JSONArray valuesArray = new JSONArray();
 

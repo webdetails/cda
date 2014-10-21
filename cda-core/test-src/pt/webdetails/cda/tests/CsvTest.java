@@ -13,18 +13,16 @@
 
 package pt.webdetails.cda.tests;
 
-import java.io.OutputStream;
-
-import javax.swing.table.TableModel;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.exporter.CsvExporter;
 import pt.webdetails.cda.exporter.TableExporter;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
+
+import javax.swing.table.TableModel;
+import java.io.OutputStream;
 
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 15, 2010 Time: 7:53:13 PM

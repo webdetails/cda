@@ -1,7 +1,8 @@
 package pt.webdetails.robochef;
 
-import static org.pentaho.di.core.Const.isEmpty;
-import static org.pentaho.di.core.Const.trim;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.pentaho.di.trans.step.RowListener;
 
 import java.util.Collections;
 import java.util.EnumMap;
@@ -10,9 +11,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.pentaho.di.trans.step.RowListener;
+import static org.pentaho.di.core.Const.isEmpty;
+import static org.pentaho.di.core.Const.trim;
 
 /**
  * A container for all the necessary configuration required to execute a

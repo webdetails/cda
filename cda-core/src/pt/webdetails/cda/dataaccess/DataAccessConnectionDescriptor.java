@@ -13,14 +13,14 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.settings.SettingsManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.

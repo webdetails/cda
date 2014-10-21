@@ -13,11 +13,9 @@
 
 package pt.webdetails.cda.tests;
 
-import org.junit.Test;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
+import org.junit.Test;
 import org.pentaho.di.core.util.Assert;
 import org.pentaho.metadata.model.concept.types.JoinType;
 import pt.webdetails.cda.dataaccess.JoinCompoundDataAccess;

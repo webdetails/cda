@@ -13,16 +13,6 @@
 
 package pt.webdetails.cda.settings;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -33,13 +23,17 @@ import org.pentaho.reporting.libraries.resourceloader.Resource;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
-
 import pt.webdetails.cda.AccessDeniedException;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.text.MessageFormat;
+import java.util.*;
 
 /**
  * This file is responsible to build / keep the different cda settings.

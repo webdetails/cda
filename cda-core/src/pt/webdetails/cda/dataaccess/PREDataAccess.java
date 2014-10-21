@@ -13,27 +13,21 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
-import javax.swing.table.TableModel;
-
 import org.dom4j.Element;
-import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
-import org.pentaho.reporting.engine.classic.core.DataFactory;
-import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
-import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
-import org.pentaho.reporting.engine.classic.core.ReportEnvironmentDataRow;
+import org.pentaho.reporting.engine.classic.core.*;
 import org.pentaho.reporting.engine.classic.core.cache.CachingDataFactory;
 import org.pentaho.reporting.engine.classic.core.parameters.CompoundDataRow;
 import org.pentaho.reporting.engine.classic.core.util.CloseableTableModel;
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.settings.UnknownConnectionException;
+
+import javax.swing.table.TableModel;
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * This is the DataAccess implementation for PentahoReportingEngine based queries.

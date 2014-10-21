@@ -13,12 +13,12 @@
 
 package pt.webdetails.cda.utils.mondrian;
 
-import javax.swing.table.TableModel;
-
 import mondrian.olap.Result;
 import org.pentaho.reporting.engine.classic.core.DataRow;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
+
+import javax.swing.table.TableModel;
 
 /**
  * This data-factory operates in Legacy-Mode providing a preprocessed view on the mondrian result.

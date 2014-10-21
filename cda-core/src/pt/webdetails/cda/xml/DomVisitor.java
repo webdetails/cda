@@ -16,7 +16,6 @@ package pt.webdetails.cda.xml;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterMapping;
-
 import pt.webdetails.cda.connections.AbstractConnection;
 import pt.webdetails.cda.connections.kettle.TransFromFileConnection;
 import pt.webdetails.cda.connections.kettle.TransFromFileConnectionInfo;
@@ -29,12 +28,7 @@ import pt.webdetails.cda.connections.sql.JdbcConnectionInfo;
 import pt.webdetails.cda.connections.sql.SqlJndiConnectionInfo;
 import pt.webdetails.cda.connections.xpath.XPathConnection;
 import pt.webdetails.cda.connections.xpath.XPathConnectionInfo;
-import pt.webdetails.cda.dataaccess.ColumnDefinition;
-import pt.webdetails.cda.dataaccess.CompoundDataAccess;
-import pt.webdetails.cda.dataaccess.JoinCompoundDataAccess;
-import pt.webdetails.cda.dataaccess.Parameter;
-import pt.webdetails.cda.dataaccess.SimpleDataAccess;
-import pt.webdetails.cda.dataaccess.UnionCompoundDataAccess;
+import pt.webdetails.cda.dataaccess.*;
 
 /**
  * This class implements the xml-generation for all cda elements

@@ -13,8 +13,8 @@
 
 package pt.webdetails.cda.tests;
 
-import pt.webdetails.cda.utils.NaturalOrderComparator;
 import junit.framework.Assert;
+import pt.webdetails.cda.utils.NaturalOrderComparator;
 
 public class NaturalOrderTest extends CdaTestCase {
 

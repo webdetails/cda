@@ -13,13 +13,13 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.util.ArrayList;
-
 import org.dom4j.Element;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor.Type;
 import pt.webdetails.cda.xml.DomVisitable;
 import pt.webdetails.cda.xml.DomVisitor;
+
+import java.util.ArrayList;
 
 /**
  * Created by IntelliJ IDEA.

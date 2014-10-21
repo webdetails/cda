@@ -13,10 +13,7 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.lang.reflect.Method;
-
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
@@ -28,6 +25,8 @@ import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.xpath.XPathConnection;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 import pt.webdetails.cda.utils.CdaPropertyLookupParser;
+
+import java.lang.reflect.Method;
 
 /**
  * Todo: Document me!

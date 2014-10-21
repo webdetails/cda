@@ -1,8 +1,8 @@
 package pt.webdetails.cda.query;
 
-import java.util.List;
-
 import pt.webdetails.cda.dataaccess.Parameter;
+
+import java.util.List;
 
 /**
  * Arguments passed to a data access to execute query

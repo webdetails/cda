@@ -13,14 +13,14 @@
 
 package pt.webdetails.cda.exporter;
 
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import pt.webdetails.cda.utils.Util;
+
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Main engine class that will answer to calls
@@ -41,6 +41,7 @@ public class ExporterEngine
   	XML("xml"),
   	CSV("csv"),
   	XLS("xls"),
+    CXLS("customxls"),
   	HTML("html"),
     BINARY("binary");
   	
@@ -119,6 +120,8 @@ public class ExporterEngine
         return new HtmlExporter(extraSettings);
       case JSON:
         return new JsonExporter(extraSettings);
+      case CXLS:
+        return new CXlsExporter(extraSettings);
       case XLS:
         return new XlsExporter(extraSettings);
       case XML:

@@ -13,29 +13,18 @@
 
 package pt.webdetails.cda.cache;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-
-import javax.swing.table.TableModel;
-
 import mondrian.olap.InvalidArgumentException;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheException;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.Status;
-
+import net.sf.ehcache.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.cache.monitor.CacheElementInfo;
 import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
+
+import javax.swing.table.TableModel;
+import java.io.*;
 
 public class EHCacheQueryCache implements IQueryCache {
 

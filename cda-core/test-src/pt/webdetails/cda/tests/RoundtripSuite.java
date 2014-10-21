@@ -13,13 +13,10 @@
 
 package pt.webdetails.cda.tests;
 
-import java.io.File;
-
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
@@ -28,6 +25,8 @@ import pt.webdetails.cda.tests.CdaTestCase.CdaTestEnvironment;
 import pt.webdetails.cda.xml.DomTraversalHelper;
 import pt.webdetails.cda.xml.XmlUtils;
 import pt.webdetails.cpf.PluginEnvironment;
+
+import java.io.File;
 
 public class RoundtripSuite extends XMLTestCase {
 	

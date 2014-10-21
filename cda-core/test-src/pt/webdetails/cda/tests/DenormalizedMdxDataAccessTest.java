@@ -15,9 +15,7 @@ package pt.webdetails.cda.tests;
 
 import junit.framework.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
 import pt.webdetails.cda.dataaccess.DenormalizedMdxDataAccess;
-import pt.webdetails.cda.dataaccess.MdxDataAccess;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 
 import java.util.List;

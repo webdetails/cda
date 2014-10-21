@@ -13,10 +13,6 @@
 
 package pt.webdetails.cda.tests.utils;
 
-import java.util.HashMap;
-
-import javax.swing.table.TableModel;
-
 import junit.framework.TestCase;
 //import pt.webdetails.cda.utils.InterPluginUtils;
 

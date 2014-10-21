@@ -13,15 +13,6 @@
 
 package pt.webdetails.cda.utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.swing.table.TableModel;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +24,9 @@ import pt.webdetails.cda.dataaccess.Parameter;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.utils.kettle.SortException;
 import pt.webdetails.cda.utils.kettle.SortTableModel;
+
+import javax.swing.table.TableModel;
+import java.util.*;
 
 /**
  * Utility class to handle TableModel operations
@@ -112,14 +106,19 @@ public class TableModelUtils {
 
     final Class<?>[] colTypes = new Class[ table.getColumnCount() ];
     final String[] colNames = new String[ table.getColumnCount() ];
+    final String[] colCustomTypes = new String[ table.getColumnCount() ];
 
     for ( int i = 0; i < table.getColumnCount(); i++ ) {
       colTypes[ i ] = table.getColumnClass( i );
       colNames[ i ] = table.getColumnName( i );
+      colCustomTypes[ i ] = "";
+    }
+    for(ColumnDefinition c : dataAccess.getColumnDefinitions()){
+        colCustomTypes[c.getIndex()] = c.getCustomType();
     }
 
     final int rowCount = table.getRowCount();
-    MetadataTableModel result = new MetadataTableModel( colNames, colTypes, rowCount );
+    MetadataTableModel result = new MetadataTableModel( colNames, colTypes,colCustomTypes, rowCount );
     result.setMetadata( "totalRows", rowCount );
     for ( int r = 0; r < rowCount; r++ ) {
       for ( int j = 0; j < table.getColumnCount(); j++ ) {
@@ -344,15 +343,16 @@ public class TableModelUtils {
     int rowCount = dataAccessMap.size();
 
     // Define names and types
-    final String[] colNames = {
-      "id", "name", "type"
-    };
+      final String[] colNames = {
+              "id", "name", "type", "customType"
+      };
 
-    final Class<?>[] colTypes = {
-      String.class, String.class, String.class
-    };
+      final Class<?>[] colTypes = {
+              String.class, String.class, String.class , String.class
+      };
 
     final TypedTableModel typedTableModel = new TypedTableModel( colNames, colTypes, rowCount );
+
 
     //Automatically sorts the given HashMap by key into a TreeMap
     Map<String, DataAccess> dataAccessSortedMap = new TreeMap<String, DataAccess>( dataAccessMap );
@@ -458,14 +458,16 @@ public class TableModelUtils {
 
     final Class<?>[] colTypes = new Class[ t.getColumnCount() ];
     final String[] colNames = new String[ t.getColumnCount() ];
+    final String[] colCustomTypes = new String[ t.getColumnCount() ];
 
     for ( int i = 0; i < t.getColumnCount(); i++ ) {
       colTypes[ i ] = t.getColumnClass( i );
       colNames[ i ] = t.getColumnName( i );
+        colCustomTypes[ i ] = t.getCustomType( i );
     }
 
     final MetadataTableModel resultTableModel =
-      new MetadataTableModel( colNames, colTypes, rowCount, t.getAllMetadata() );
+      new MetadataTableModel( colNames, colTypes,colCustomTypes, rowCount, t.getAllMetadata() );
     resultTableModel.setMetadata( "pageSize", queryOptions.getPageSize() );
     resultTableModel.setMetadata( "pageStart", queryOptions.getPageStart() );
 

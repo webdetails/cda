@@ -13,15 +13,14 @@
 
 package pt.webdetails.cda.exporter;
 
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.steps.textfileoutput.TextFileField;
 import org.pentaho.di.trans.steps.textfileoutput.TextFileOutputMeta;
-
 import pt.webdetails.cda.CdaEngine;
+
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM

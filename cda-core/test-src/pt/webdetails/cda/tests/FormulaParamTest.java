@@ -13,17 +13,16 @@
 
 package pt.webdetails.cda.tests;
 
-import javax.swing.table.TableModel;
-
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.InitializationException;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
+
+import javax.swing.table.TableModel;
 
 public class FormulaParamTest extends CdaTestCase {
 

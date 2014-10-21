@@ -13,9 +13,6 @@
 
 package pt.webdetails.cda.utils;
 
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
-
 import org.pentaho.reporting.engine.classic.core.MetaTableModel;
 import org.pentaho.reporting.engine.classic.core.wizard.DataAttributes;
 import org.pentaho.reporting.engine.classic.core.wizard.EmptyDataAttributes;
@@ -24,6 +21,9 @@ import org.pentaho.reporting.libraries.formula.EvaluationException;
 import org.pentaho.reporting.libraries.formula.Formula;
 import org.pentaho.reporting.libraries.formula.parser.ParseException;
 import pt.webdetails.cda.dataaccess.ColumnDefinition;
+
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
 
 /**
  * A {@link TableModel} extended with calculated columns.

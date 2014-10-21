@@ -1,9 +1,9 @@
 package pt.webdetails.robochef;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.trans.RowProducer;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class RowProducerBridge
 {

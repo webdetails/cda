@@ -15,7 +15,6 @@ package pt.webdetails.cda.connections;
 
 import org.dom4j.Element;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
-
 import pt.webdetails.cda.utils.FormulaEvaluator;
 
 /**

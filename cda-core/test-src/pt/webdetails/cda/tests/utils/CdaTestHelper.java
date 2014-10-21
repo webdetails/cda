@@ -1,16 +1,15 @@
 package pt.webdetails.cda.tests.utils;
 
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-
-import javax.swing.table.TableModel;
-
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+
+import javax.swing.table.TableModel;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 public class CdaTestHelper {
 

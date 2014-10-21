@@ -14,33 +14,8 @@
 package pt.webdetails.cda.endpoints;
 
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.IOException;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.MediaType.APPLICATION_XML;
-
-import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
-
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-
 import pt.webdetails.cda.CdaCoreService;
 import pt.webdetails.cda.exporter.ExportOptions;
 import pt.webdetails.cda.exporter.ExportedQueryResult;
@@ -50,6 +25,20 @@ import pt.webdetails.cpf.Util;
 import pt.webdetails.cpf.repository.api.IReadAccess;
 import pt.webdetails.cpf.utils.CharsetHelper;
 import pt.webdetails.cpf.utils.MimeTypes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static javax.ws.rs.core.MediaType.*;
 
 @Path("/cda/api/utils")
 /**

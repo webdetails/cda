@@ -13,10 +13,6 @@
 
 package pt.webdetails.cda.connections.mondrian;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Properties;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
@@ -24,6 +20,10 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.Data
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DriverDataSourceProvider;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Properties;
 
 /**
  * Created by IntelliJ IDEA.

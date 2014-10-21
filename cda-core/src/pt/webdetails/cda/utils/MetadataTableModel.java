@@ -13,9 +13,10 @@
 
 package pt.webdetails.cda.utils;
 
+import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 
 /**
  *
@@ -27,21 +28,27 @@ public class MetadataTableModel extends TypedTableModel
   private static final long serialVersionUID = 1L;
 
   private Map<String, String> metadata;
+  private String[] customTypes;
 
 
-  public MetadataTableModel(String[] colNames, Class<?>[] colTypes, int rowCount)
+  public MetadataTableModel(String[] colNames, Class<?>[] colTypes,String[] colCustomTypes, int rowCount)
   {
     super(colNames, colTypes, rowCount);
+    customTypes = colCustomTypes;
     metadata = new HashMap<String, String>();
   }
 
 
-  public MetadataTableModel(String[] colNames, Class<?>[] colTypes, int rowCount, Map<String, String> metadata)
+  public MetadataTableModel(String[] colNames, Class<?>[] colTypes,String[] colCustomTypes, int rowCount, Map<String, String> metadata)
   {
-    this(colNames, colTypes, rowCount);
+    this(colNames, colTypes,colCustomTypes, rowCount);
     this.metadata.putAll(metadata);
   }
 
+    public java.lang.String getCustomType(int i)
+    {
+        return customTypes[i];
+    }
 
   public void setMetadata(String key, String value)
   {

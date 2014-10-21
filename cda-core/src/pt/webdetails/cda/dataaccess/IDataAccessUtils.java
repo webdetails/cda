@@ -20,7 +20,6 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.Abst
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.DataSourceProvider;
 import org.pentaho.reporting.engine.classic.extensions.datasources.pmd.PmdDataFactory;
 import org.pentaho.reporting.libraries.base.config.Configuration;
-
 import pt.webdetails.cda.connections.kettle.TransFromFileConnectionInfo;
 import pt.webdetails.cda.connections.mondrian.MondrianConnection;
 import pt.webdetails.cda.connections.mondrian.MondrianJndiConnectionInfo;

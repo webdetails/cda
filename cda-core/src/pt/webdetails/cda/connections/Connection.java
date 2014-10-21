@@ -13,12 +13,12 @@
 
 package pt.webdetails.cda.connections;
 
-import java.util.List;
-
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.xml.DomVisitable;
+
+import java.util.List;
 
 /**
  * Holds the Connections Settings of a file

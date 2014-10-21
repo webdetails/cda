@@ -17,9 +17,9 @@
 
 package pt.webdetails.cda.tests.utils;
 
-import javax.swing.table.TableModel;
-
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
+
+import javax.swing.table.TableModel;
 
 /**
  * Todo: Document me

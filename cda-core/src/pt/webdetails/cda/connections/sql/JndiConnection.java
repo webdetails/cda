@@ -13,13 +13,8 @@
 
 package pt.webdetails.cda.connections.sql;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.EvaluableConnection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
@@ -27,6 +22,10 @@ import pt.webdetails.cda.dataaccess.IDataAccessUtils;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.utils.FormulaEvaluator;
 import pt.webdetails.cda.utils.Util;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
         
 /**
  * Todo: Document me!

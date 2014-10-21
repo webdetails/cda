@@ -13,27 +13,21 @@
 
 package pt.webdetails.cda.xml;
 
+import org.apache.commons.lang.StringUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentFactory;
+import org.dom4j.Element;
+import org.dom4j.io.XMLWriter;
+import pt.webdetails.cda.connections.Connection;
+import pt.webdetails.cda.dataaccess.*;
+import pt.webdetails.cda.settings.CdaSettings;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.apache.commons.lang.StringUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentFactory;
-import org.dom4j.Element;
-import org.dom4j.io.XMLWriter;
-
-import pt.webdetails.cda.connections.Connection;
-import pt.webdetails.cda.dataaccess.AbstractDataAccess;
-import pt.webdetails.cda.dataaccess.ColumnDefinition;
-import pt.webdetails.cda.dataaccess.CompoundDataAccess;
-import pt.webdetails.cda.dataaccess.DataAccess;
-import pt.webdetails.cda.dataaccess.MdxDataAccess;
-import pt.webdetails.cda.dataaccess.Parameter;
-import pt.webdetails.cda.settings.CdaSettings;
 
 /**
  * This class implements traversal of the CDA Domainmodel and visits all its

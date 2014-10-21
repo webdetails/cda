@@ -13,45 +13,29 @@
 
 package pt.webdetails.cda;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.swing.table.TableModel;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 import org.pentaho.reporting.libraries.base.config.Configuration;
-
 import pt.webdetails.cda.dataaccess.DataAccess;
 import pt.webdetails.cda.dataaccess.QueryException;
 import pt.webdetails.cda.dataaccess.kettle.DataAccessKettleAdapter;
 import pt.webdetails.cda.dataaccess.kettle.DataAccessKettleAdapterFactory;
-import pt.webdetails.cda.exporter.AbstractKettleExporter;
-import pt.webdetails.cda.exporter.DefaultStreamExporter;
-import pt.webdetails.cda.exporter.ExportOptions;
-import pt.webdetails.cda.exporter.ExportedQueryResult;
-import pt.webdetails.cda.exporter.ExportedStreamQueryResult;
-import pt.webdetails.cda.exporter.ExportedTableQueryResult;
-import pt.webdetails.cda.exporter.ExporterEngine;
-import pt.webdetails.cda.exporter.ExporterException;
-import pt.webdetails.cda.exporter.StreamExporter;
-import pt.webdetails.cda.exporter.TableExporter;
-import pt.webdetails.cda.exporter.UnsupportedExporterException;
+import pt.webdetails.cda.exporter.*;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 import pt.webdetails.cpf.PluginEnvironment;
-import pt.webdetails.cpf.repository.api.IBasicFile;
-import pt.webdetails.cpf.repository.api.IBasicFileFilter;
-import pt.webdetails.cpf.repository.api.IContentAccessFactory;
-import pt.webdetails.cpf.repository.api.IReadAccess;
-import pt.webdetails.cpf.repository.api.IUserContentAccess;
+import pt.webdetails.cpf.repository.api.*;
+
+import javax.swing.table.TableModel;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Main singleton, brokering access to most functionality.

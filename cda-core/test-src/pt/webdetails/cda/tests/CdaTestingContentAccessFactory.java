@@ -1,16 +1,11 @@
 package pt.webdetails.cda.tests;
 
-import java.io.File;
-
 import org.apache.commons.io.FilenameUtils;
-
 import pt.webdetails.cpf.Util;
-import pt.webdetails.cpf.repository.api.FileAccess;
-import pt.webdetails.cpf.repository.api.IContentAccessFactory;
-import pt.webdetails.cpf.repository.api.IRWAccess;
-import pt.webdetails.cpf.repository.api.IReadAccess;
-import pt.webdetails.cpf.repository.api.IUserContentAccess;
+import pt.webdetails.cpf.repository.api.*;
 import pt.webdetails.cpf.repository.impl.FileBasedResourceAccess;
+
+import java.io.File;
 
 /**
  * Content access factory used in test cases.

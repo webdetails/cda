@@ -13,22 +13,10 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import javax.swing.table.TableModel;
-
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.cache.DataAccessCacheElementParser;
 import pt.webdetails.cda.cache.IQueryCache;
@@ -42,6 +30,10 @@ import pt.webdetails.cda.utils.InvalidOutputIndexException;
 import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.Util;
 import pt.webdetails.cda.utils.kettle.SortException;
+
+import javax.swing.table.TableModel;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * This is the top level implementation of a DataAccess. Only the common methods are used here
@@ -65,6 +57,7 @@ public abstract class AbstractDataAccess implements DataAccess {
   private ArrayList<ColumnDefinition> columnDefinitions;
   protected HashMap<Integer, ColumnDefinition> columnDefinitionIndexMap;
   private DataAccessCacheElementParser cdaCacheParser;
+//    private HashMap<Integer, String> customColumnType;
 
   private static final String PARAM_ITERATOR_BEGIN = "$FOREACH(";
   private static final String PARAM_ITERATOR_END = ")";
@@ -83,6 +76,7 @@ public abstract class AbstractDataAccess implements DataAccess {
     outputs.put( 1, new ArrayList<Integer>() );
     outputMode = new HashMap<Integer, OutputMode>();
     outputMode.put( 1, OutputMode.INCLUDE );
+//      customColumnType = new HashMap<Integer, String>();
 
     parseOptions( element );
 
@@ -104,6 +98,7 @@ public abstract class AbstractDataAccess implements DataAccess {
     outputs.put( 1, new ArrayList<Integer>() );
     outputMode = new HashMap<Integer, OutputMode>();
     outputMode.put( 1, OutputMode.INCLUDE );
+//      customColumnType = new HashMap<Integer, String>();
   }
 
 

@@ -1,26 +1,12 @@
 package pt.webdetails.cda.settings;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Map;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.reporting.libraries.resourceloader.ResourceData;
-import org.pentaho.reporting.libraries.resourceloader.ResourceException;
-import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
-import org.pentaho.reporting.libraries.resourceloader.ResourceKeyCreationException;
-import org.pentaho.reporting.libraries.resourceloader.ResourceKeyData;
-import org.pentaho.reporting.libraries.resourceloader.ResourceKeyUtils;
-import org.pentaho.reporting.libraries.resourceloader.ResourceLoadingException;
-import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
+import org.pentaho.reporting.libraries.resourceloader.*;
 import org.pentaho.reporting.libraries.resourceloader.loader.AbstractResourceData;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cpf.Util;
 import pt.webdetails.cpf.repository.api.FileAccess;
@@ -28,6 +14,12 @@ import pt.webdetails.cpf.repository.api.IACAccess;
 import pt.webdetails.cpf.repository.api.IBasicFile;
 import pt.webdetails.cpf.repository.api.IReadAccess;
 import pt.webdetails.cpf.utils.MimeTypes;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Map;
 
 /**
  * CDA Resource Loader. TBC

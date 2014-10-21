@@ -13,12 +13,8 @@
 
 package pt.webdetails.cda;
 
-import java.io.File;
-import java.io.OutputStream;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import pt.webdetails.cda.dataaccess.QueryException;
 import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.exporter.UnsupportedExporterException;
@@ -28,6 +24,9 @@ import pt.webdetails.cda.settings.CdaSettingsReadException;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 import pt.webdetails.cda.utils.Util;
+
+import java.io.File;
+import java.io.OutputStream;
 
 /**
  * TODO: get tests outta here

@@ -13,17 +13,6 @@
 
 package pt.webdetails.cda.settings;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.naming.OperationNotSupportedException;
-import javax.swing.table.TableModel;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -38,26 +27,23 @@ import pt.webdetails.cda.connections.kettle.TransFromFileConnection;
 import pt.webdetails.cda.connections.metadata.MetadataConnection;
 import pt.webdetails.cda.connections.scripting.ScriptingConnection;
 import pt.webdetails.cda.connections.xpath.XPathConnection;
-import pt.webdetails.cda.dataaccess.DataAccess;
+import pt.webdetails.cda.dataaccess.*;
 import pt.webdetails.cda.dataaccess.DataAccessEnums.ConnectionInstanceType;
 import pt.webdetails.cda.dataaccess.DataAccessEnums.DataAccessInstanceType;
-import pt.webdetails.cda.dataaccess.DenormalizedMdxDataAccess;
-import pt.webdetails.cda.dataaccess.DenormalizedOlap4JDataAccess;
-import pt.webdetails.cda.dataaccess.JoinCompoundDataAccess;
-import pt.webdetails.cda.dataaccess.KettleDataAccess;
-import pt.webdetails.cda.dataaccess.MdxDataAccess;
-import pt.webdetails.cda.dataaccess.MqlDataAccess;
-import pt.webdetails.cda.dataaccess.Olap4JDataAccess;
-import pt.webdetails.cda.dataaccess.ReflectionDataAccess;
-import pt.webdetails.cda.dataaccess.ScriptableDataAccess;
-import pt.webdetails.cda.dataaccess.SqlDataAccess;
-import pt.webdetails.cda.dataaccess.UnionCompoundDataAccess;
-import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
-import pt.webdetails.cda.dataaccess.XPathDataAccess;
 import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.Util;
 import pt.webdetails.cda.xml.DomTraversalHelper;
 import pt.webdetails.cda.xml.XmlUtils;
+
+import javax.naming.OperationNotSupportedException;
+import javax.swing.table.TableModel;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * CdaSettings class

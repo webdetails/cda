@@ -13,8 +13,8 @@
 
 package pt.webdetails.cda.connections.mondrian;
 
-import org.dom4j.Element;
 import org.apache.commons.lang.StringUtils;
+import org.dom4j.Element;
 
 /**
  * Todo: Document me!

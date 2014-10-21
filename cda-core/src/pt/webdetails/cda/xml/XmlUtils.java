@@ -13,10 +13,11 @@
 
 package pt.webdetails.cda.xml;
 
-import java.io.StringWriter;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+
+import java.io.StringWriter;
 
 /**
  * XML utils, including formatting.

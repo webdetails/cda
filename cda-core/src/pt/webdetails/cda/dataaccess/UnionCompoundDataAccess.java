@@ -13,14 +13,14 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.util.ArrayList;
-import javax.swing.table.TableModel;
-
 import org.dom4j.Element;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 import pt.webdetails.cda.utils.TableModelUtils;
+
+import javax.swing.table.TableModel;
+import java.util.ArrayList;
 
 /**
  * Class to join 2 datatables

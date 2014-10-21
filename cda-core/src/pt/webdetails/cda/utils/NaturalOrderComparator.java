@@ -13,15 +13,14 @@
 
 package pt.webdetails.cda.utils;
 
+import org.apache.commons.lang.StringUtils;
+
+import javax.swing.table.TableModel;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.swing.table.TableModel;
-
-import org.apache.commons.lang.StringUtils;
 
 
 /**

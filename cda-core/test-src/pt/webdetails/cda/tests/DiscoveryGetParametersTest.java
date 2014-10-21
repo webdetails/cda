@@ -13,13 +13,12 @@
 
 package pt.webdetails.cda.tests;
 
-import java.io.OutputStream;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.settings.CdaSettings;
+
+import java.io.OutputStream;
 
 /**
  * Created by IntelliJ IDEA.

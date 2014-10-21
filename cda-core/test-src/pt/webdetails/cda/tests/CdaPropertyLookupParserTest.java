@@ -16,11 +16,9 @@ package pt.webdetails.cda.tests;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.di.core.util.Assert;
-import org.junit.Test;
-
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
+
 import javax.swing.table.TableModel;
 
 public class CdaPropertyLookupParserTest extends CdaTestCase {

@@ -13,14 +13,13 @@
 
 package pt.webdetails.cda.tests;
 
-import javax.swing.table.TableModel;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
+
+import javax.swing.table.TableModel;
 
 
 /**

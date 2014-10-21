@@ -24,8 +24,6 @@ import pt.webdetails.cda.connections.mondrian.MondrianConnectionInfo;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Implementation of a DataAccess that will get data from a SQL database

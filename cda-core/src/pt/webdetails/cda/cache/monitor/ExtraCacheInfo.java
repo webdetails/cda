@@ -13,18 +13,16 @@
 
 package pt.webdetails.cda.cache.monitor;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
+import pt.webdetails.cda.exporter.JsonExporter;
+
+import javax.swing.table.TableModel;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-
-import javax.swing.table.TableModel;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.json.JSONObject;
-
-import pt.webdetails.cda.exporter.JsonExporter;
 
 /**
  * Info about cached item that shouldn't be factored in key comparison

@@ -13,14 +13,14 @@
 
 package pt.webdetails.cda.query;
 
+import pt.webdetails.cda.dataaccess.Parameter;
+import pt.webdetails.cda.exporter.ExportOptions;
+import pt.webdetails.cda.exporter.ExporterEngine;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import pt.webdetails.cda.dataaccess.Parameter;
-import pt.webdetails.cda.exporter.ExportOptions;
-import pt.webdetails.cda.exporter.ExporterEngine;
 
 /**
  * 

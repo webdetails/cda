@@ -14,7 +14,6 @@
 package pt.webdetails.cda.dataaccess;
 
 import org.dom4j.Element;
-
 import pt.webdetails.cda.xml.DomVisitor;
 
 /**
@@ -36,6 +35,7 @@ public class ColumnDefinition
   private Integer index;
   private String name;
   private String formula;
+    private String customType;
 
   public ColumnDefinition()
   {
@@ -47,6 +47,7 @@ public class ColumnDefinition
     this();
 
     setName(p.selectSingleNode("Name").getText());
+      setCustomType(p.selectSingleNode("CustomType").getText());
 
     if (p.getName().equals("CalculatedColumn"))
     {
@@ -60,6 +61,16 @@ public class ColumnDefinition
     }
 
   }
+
+    public String getCustomType()
+    {
+        return customType;
+    }
+
+    public void setCustomType(final String type)
+    {
+        this.customType = type;
+    }
 
   public TYPE getType()
   {

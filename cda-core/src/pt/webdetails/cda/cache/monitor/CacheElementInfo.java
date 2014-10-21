@@ -13,13 +13,12 @@
 
 package pt.webdetails.cda.cache.monitor;
 
-import java.io.IOException;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import pt.webdetails.cda.cache.TableCacheKey;
 import pt.webdetails.cda.dataaccess.Parameter;
+
+import java.io.IOException;
 
 public class CacheElementInfo {
   

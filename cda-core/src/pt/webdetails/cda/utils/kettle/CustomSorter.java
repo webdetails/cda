@@ -13,9 +13,8 @@
 
 package pt.webdetails.cda.utils.kettle;
 
-import java.util.List;
-
 import javax.swing.table.TableModel;
+import java.util.List;
 
 /**
  *

@@ -13,14 +13,13 @@
 
 package pt.webdetails.cda.utils;
 
-import java.util.ArrayList;
-
 import org.apache.commons.lang.StringUtils;
 import org.pentaho.reporting.libraries.formula.Formula;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.dataaccess.InvalidParameterException;
+
+import java.util.ArrayList;
 
 
 public class FormulaEvaluator {

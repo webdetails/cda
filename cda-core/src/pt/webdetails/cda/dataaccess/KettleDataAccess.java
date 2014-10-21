@@ -14,13 +14,11 @@
 package pt.webdetails.cda.dataaccess;
 
 import org.dom4j.Element;
-
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleDataFactory;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKeyCreationException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.cache.CacheKey;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;

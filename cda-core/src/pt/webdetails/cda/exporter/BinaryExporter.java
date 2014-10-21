@@ -13,13 +13,12 @@
 
 package pt.webdetails.cda.exporter;
 
+import javax.swing.table.TableModel;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.Map;
-
-import javax.swing.table.TableModel;
 
 /**
  * JsonExporter

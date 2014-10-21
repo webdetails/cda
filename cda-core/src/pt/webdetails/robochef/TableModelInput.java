@@ -1,12 +1,12 @@
 package pt.webdetails.robochef;
 
-import java.util.concurrent.Callable;
-import javax.swing.table.TableModel;
-
 import org.pentaho.di.core.row.RowMeta;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMeta;
 import org.pentaho.di.core.row.ValueMetaInterface;
+
+import javax.swing.table.TableModel;
+import java.util.concurrent.Callable;
 
 public class TableModelInput extends RowProducerBridge
 {

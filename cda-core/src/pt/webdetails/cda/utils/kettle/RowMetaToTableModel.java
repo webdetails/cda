@@ -13,15 +13,15 @@
 
 package pt.webdetails.cda.utils.kettle;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicMarkableReference;
-
-import javax.swing.table.TableModel;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.di.trans.step.RowListener;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
+
+import javax.swing.table.TableModel;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicMarkableReference;
 
 /**
  * Bridge class between Kettle's RowMeta and CDA's TableModel

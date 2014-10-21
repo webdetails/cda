@@ -13,12 +13,6 @@
 
 package pt.webdetails.cda.connections.sql;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Properties;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
@@ -27,6 +21,12 @@ import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.Dr
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.utils.Util;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Properties;
 
 /**
  * Created by IntelliJ IDEA.

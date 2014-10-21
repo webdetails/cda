@@ -1,19 +1,10 @@
 package pt.webdetails.robochef;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.Result;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleXMLException;
-
 import org.pentaho.di.core.logging.CentralLogStore;
-
-
 import org.pentaho.di.core.logging.LogLevel;
 import org.pentaho.di.core.logging.LoggingRegistry;
 import org.pentaho.di.core.variables.VariableSpace;
@@ -22,11 +13,13 @@ import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransHopMeta;
 import org.pentaho.di.trans.TransMeta;
-import org.pentaho.di.trans.step.RowListener;
-import org.pentaho.di.trans.step.StepErrorMeta;
-import org.pentaho.di.trans.step.StepInterface;
-import org.pentaho.di.trans.step.StepMeta;
-import org.pentaho.di.trans.step.StepMetaInterface;
+import org.pentaho.di.trans.step.*;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * A dynamically generated Kettle transformation. The transformation is composed

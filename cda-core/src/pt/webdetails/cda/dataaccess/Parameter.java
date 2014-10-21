@@ -13,6 +13,16 @@
 
 package pt.webdetails.cda.dataaccess;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.dom4j.Element;
+import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
+import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
+import pt.webdetails.cda.utils.FormulaEvaluator;
+import pt.webdetails.cda.utils.Util;
+import pt.webdetails.cda.xml.DomVisitor;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -21,19 +31,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
-import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.dom4j.Element;
-
-import pt.webdetails.cda.utils.FormulaEvaluator;
-import pt.webdetails.cda.utils.Util;
-
-import pt.webdetails.cda.xml.DomVisitor;
 
 /**
  * Created by IntelliJ IDEA.

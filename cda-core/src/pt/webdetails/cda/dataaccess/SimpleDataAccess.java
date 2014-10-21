@@ -13,18 +13,11 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.table.TableModel;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.cache.TableCacheKey;
@@ -41,6 +34,11 @@ import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.xml.DomVisitable;
 import pt.webdetails.cda.xml.DomVisitor;
 import pt.webdetails.cpf.messaging.IEventPublisher;
+
+import javax.swing.table.TableModel;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implementation of the SimpleDataAccess User: pedro Date: Feb 3, 2010 Time:

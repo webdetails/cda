@@ -1,8 +1,7 @@
 package pt.webdetails.cda.exporter;
 
-import java.io.OutputStream;
-
 import javax.swing.table.TableModel;
+import java.io.OutputStream;
 
 public class ExportedTableQueryResult extends ExportedQueryResult {
 

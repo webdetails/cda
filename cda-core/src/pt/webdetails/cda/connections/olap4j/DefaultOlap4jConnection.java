@@ -13,12 +13,6 @@
 
 package pt.webdetails.cda.connections.olap4j;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Properties;
-
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.extensions.datasources.olap4j.connections.DriverConnectionProvider;
 import org.pentaho.reporting.engine.classic.extensions.datasources.olap4j.connections.OlapConnectionProvider;
@@ -27,6 +21,12 @@ import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.utils.Util;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Properties;
 
 /**
  * Todo: Document me!

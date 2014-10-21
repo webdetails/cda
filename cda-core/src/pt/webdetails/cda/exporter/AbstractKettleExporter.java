@@ -13,26 +13,6 @@
 
 package pt.webdetails.cda.exporter;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
-import javax.swing.table.TableModel;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,14 +20,18 @@ import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.util.StringUtil;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.steps.injector.InjectorMeta;
-
-import pt.webdetails.robochef.DynamicTransConfig;
-import pt.webdetails.robochef.DynamicTransMetaConfig;
-import pt.webdetails.robochef.DynamicTransformation;
-import pt.webdetails.robochef.RowProductionManager;
-import pt.webdetails.robochef.TableModelInput;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.utils.kettle.RowCountListener;
+import pt.webdetails.robochef.*;
+
+import javax.swing.table.TableModel;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Generic Kettle class to handle exports
