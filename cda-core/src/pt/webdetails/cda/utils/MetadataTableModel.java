@@ -31,6 +31,19 @@ public class MetadataTableModel extends TypedTableModel
   private String[] customTypes;
 
 
+    public MetadataTableModel(String[] colNames, Class<?>[] colTypes, int rowCount)
+    {
+        this(colNames, colTypes, new String[ 0 ], rowCount);
+        metadata = new HashMap<String, String>();
+    }
+
+
+    public MetadataTableModel(String[] colNames, Class<?>[] colTypes, int rowCount, Map<String, String> metadata)
+    {
+        this(colNames, colTypes, new String[ 0 ], rowCount);
+        this.metadata.putAll(metadata);
+    }
+
   public MetadataTableModel(String[] colNames, Class<?>[] colTypes,String[] colCustomTypes, int rowCount)
   {
     super(colNames, colTypes, rowCount);
