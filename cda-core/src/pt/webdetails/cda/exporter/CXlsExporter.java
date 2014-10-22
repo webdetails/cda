@@ -15,13 +15,10 @@ package pt.webdetails.cda.exporter;
 
 //import org.apache.poi.hssf.model.*;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
-import org.pentaho.reporting.engine.classic.core.MetaTableModel;
 import pt.webdetails.cda.utils.MetadataTableModel;
 
 import javax.swing.table.TableModel;
@@ -40,7 +37,14 @@ public class CXlsExporter extends AbstractExporter
     private static final String MIME_TYPE = "application/vnd.ms-excel";
     private static final Log logger = LogFactory.getLog( CXlsExporter.class );
     private String attachmentName;
-    private CellStyle currencyCellStyle;
+    private CellStyle euroCellStyle;
+    private CellStyle doubleCellStyle;
+    private CellStyle integerCellStyle;
+    private CellStyle percentCellStyle;
+    private CellStyle dateCellStyle;
+    private CellStyle datemonthCellStyle;
+    private CellStyle dateyearCellStyle;
+    private CellStyle dateAndTimeCellStyle;
 
 
   public CXlsExporter(Map<String, String> extraSettings)
@@ -59,8 +63,22 @@ public class CXlsExporter extends AbstractExporter
         Sheet sheet = wb.createSheet("Sheet1");
 
         DataFormat cf = wb.createDataFormat();
-        currencyCellStyle = wb.createCellStyle();
-        currencyCellStyle.setDataFormat(cf.getFormat("#,##0.00\\ _€"));
+        euroCellStyle = wb.createCellStyle();
+        euroCellStyle.setDataFormat(cf.getFormat("#,##0.00 \"€\""));
+        doubleCellStyle = wb.createCellStyle();
+        doubleCellStyle.setDataFormat(cf.getFormat("0.00"));
+        integerCellStyle = wb.createCellStyle();
+        integerCellStyle.setDataFormat(cf.getFormat("0"));
+        percentCellStyle = wb.createCellStyle();
+        percentCellStyle.setDataFormat(cf.getFormat("0.00%"));
+        dateCellStyle = wb.createCellStyle();
+        dateCellStyle.setDataFormat(cf.getFormat("dd.MM.yyyy"));
+        datemonthCellStyle = wb.createCellStyle();
+        datemonthCellStyle.setDataFormat(cf.getFormat("MM.yyyy"));
+        dateyearCellStyle = wb.createCellStyle();
+        dateyearCellStyle.setDataFormat(cf.getFormat("yyyy"));
+        dateAndTimeCellStyle = wb.createCellStyle();
+        dateAndTimeCellStyle.setDataFormat(cf.getFormat("hh:mm:ss dd.MM.yyyy"));
 
         Row header = sheet.createRow(0);
         for(int col=0;col<table.getColumnCount();col++){
@@ -100,11 +118,55 @@ public class CXlsExporter extends AbstractExporter
         }else{
             String clazz = table.getCustomType(col).toUpperCase();
             if(clazz.equals("EURO")){
-                cell.setCellStyle(currencyCellStyle);
+                cell.setCellStyle(euroCellStyle);
                 cell.setCellValue(Double.parseDouble(table.getValueAt(row, col).toString()));
+            }else if(clazz.equals("DOUBLE")){
+                cell.setCellStyle(doubleCellStyle);
+                cell.setCellValue(Double.parseDouble(table.getValueAt(row, col).toString()));
+            }else if(clazz.equals("INTEGER")){
+                cell.setCellStyle(integerCellStyle);
+                cell.setCellValue(Double.parseDouble(table.getValueAt(row, col).toString()));
+            }else if(clazz.equals("STRING")){
+                cell.setCellValue(table.getValueAt(row, col).toString());
             }else if(clazz.equals("PERCENT")){
-                cell.setCellStyle(currencyCellStyle);
+                cell.setCellStyle(percentCellStyle);
                 cell.setCellValue(Double.parseDouble(table.getValueAt(row, col).toString()));
+            }else if(clazz.equals("DATE")){
+                cell.setCellStyle(dateCellStyle);
+                if(table.getValueAt(row, col) instanceof Date){
+                    cell.setCellValue((Date)table.getValueAt(row, col));
+                }else if(table.getValueAt(row, col) instanceof Calendar){
+                    cell.setCellValue((Calendar)table.getValueAt(row, col));
+                }else{
+                    cell.setCellValue(table.getValueAt(row, col).toString());
+                }
+            } else if(clazz.equals("DATEMONTH")){
+                cell.setCellStyle(datemonthCellStyle);
+                if(table.getValueAt(row, col) instanceof Date){
+                    cell.setCellValue((Date)table.getValueAt(row, col));
+                }else if(table.getValueAt(row, col) instanceof Calendar){
+                    cell.setCellValue((Calendar)table.getValueAt(row, col));
+                }else{
+                    cell.setCellValue(table.getValueAt(row, col).toString());
+                }
+            }else if(clazz.equals("DATEYEAR")){
+                cell.setCellStyle(dateyearCellStyle);
+                if(table.getValueAt(row, col) instanceof Date){
+                    cell.setCellValue((Date)table.getValueAt(row, col));
+                }else if(table.getValueAt(row, col) instanceof Calendar){
+                    cell.setCellValue((Calendar)table.getValueAt(row, col));
+                }else{
+                    cell.setCellValue(table.getValueAt(row, col).toString());
+                }
+            }else if(clazz.equals("DATEANDTIME")){
+                cell.setCellStyle(dateAndTimeCellStyle);
+                if(table.getValueAt(row, col) instanceof Date){
+                    cell.setCellValue((Date)table.getValueAt(row, col));
+                }else if(table.getValueAt(row, col) instanceof Calendar){
+                    cell.setCellValue((Calendar)table.getValueAt(row, col));
+                }else{
+                    cell.setCellValue(table.getValueAt(row, col).toString());
+                }
             }
         }
     }catch(Exception e){
