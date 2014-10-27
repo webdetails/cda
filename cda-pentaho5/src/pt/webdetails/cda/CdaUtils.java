@@ -150,25 +150,17 @@ public class CdaUtils {
 
     try {
 
-      try {
-        uuid = CpfAuditHelper.startAudit( getPluginName(), path, getObjectName(), this.getPentahoSession(),
-          iLogger, requestParams );
-      } catch ( Exception e ) {
-        logger.error( e );
-      }
+      uuid = CpfAuditHelper.startAudit( getPluginName(), path, getObjectName(), this.getPentahoSession(),
+        iLogger, requestParams );
 
       DoQueryParameters parameters = getDoQueryParameters( params );
 
       if ( parameters.isWrapItUp() ) {
         output = wrapQuery( parameters );
 
-        try {
-          end = System.currentTimeMillis();
-          CpfAuditHelper.endAudit( getPluginName(), path, getObjectName(),
-            this.getPentahoSession(), iLogger, start, uuid, end );
-        } catch ( Exception e ) {
-          logger.error( e );
-        }
+        end = System.currentTimeMillis();
+        CpfAuditHelper.endAudit( getPluginName(), path, getObjectName(),
+          this.getPentahoSession(), iLogger, start, uuid, end );
 
         return output;
       }
@@ -177,13 +169,9 @@ public class CdaUtils {
       eqr.writeHeaders( servletResponse );
       output = toStreamingOutput( eqr );
 
-      try {
-        end = System.currentTimeMillis();
-        CpfAuditHelper.endAudit( getPluginName(), path, getObjectName(),
-          this.getPentahoSession(), iLogger, start, uuid, end );
-      } catch ( Exception e ) {
-        logger.error( e );
-      }
+      end = System.currentTimeMillis();
+      CpfAuditHelper.endAudit( getPluginName(), path, getObjectName(),
+        this.getPentahoSession(), iLogger, start, uuid, end );
 
       return output;
     } catch ( Exception e ) {

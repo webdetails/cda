@@ -39,15 +39,11 @@ public class CdaContentGenerator extends SimpleContentGenerator {
     String path = pathParams.getStringParameter( MethodParams.PATH, "" );
 
     long start = System.currentTimeMillis();
-    UUID uuid = null;
 
-    try {
-      uuid = CpfAuditHelper.startAudit( getPluginName(), path, getObjectName(),
-        this.userSession, this, requestParams );
 
-    } catch ( Exception e ) {
-      logger.error( e );
-    }
+    UUID uuid = CpfAuditHelper.startAudit( getPluginName(), path, getObjectName(),
+      this.userSession, this, requestParams );
+
 
     if ( edit ) {
       utils.editFile( path, getResponse() );
@@ -55,12 +51,9 @@ public class CdaContentGenerator extends SimpleContentGenerator {
       utils.previewQuery( path, getResponse() );
     }
 
-    try {
-      long end = System.currentTimeMillis();
-      CpfAuditHelper.endAudit( getPluginName(), path, getObjectName(), this.userSession, this, start, uuid, end );
-    } catch ( Exception e ) {
-      logger.error( e );
-    }
+
+    long end = System.currentTimeMillis();
+    CpfAuditHelper.endAudit( getPluginName(), path, getObjectName(), this.userSession, this, start, uuid, end );
   }
 
   @Override
