@@ -37,9 +37,7 @@ public class ColumnDefinition
   private String formula;
     private String customType;
 
-  public ColumnDefinition()
-  {
-  }
+  public ColumnDefinition() { }
 
   public ColumnDefinition(final Element p)
   {
@@ -47,6 +45,7 @@ public class ColumnDefinition
     this();
 
     setName(p.selectSingleNode("Name").getText());
+    if(p.selectSingleNode("CustomType") != null)
       setCustomType(p.selectSingleNode("CustomType").getText());
 
     if (p.getName().equals("CalculatedColumn"))
@@ -62,12 +61,12 @@ public class ColumnDefinition
 
   }
 
-    public String getCustomType()
+  public String getCustomType()
     {
         return customType;
     }
 
-    public void setCustomType(final String type)
+  public void setCustomType(final String type)
     {
         this.customType = type;
     }
