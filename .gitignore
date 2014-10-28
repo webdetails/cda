@@ -12,3 +12,6 @@ nbproject/
 nbproject/private/
 .DS_Store
 /override.properties
+.idea/
+dist/
+*.iml
