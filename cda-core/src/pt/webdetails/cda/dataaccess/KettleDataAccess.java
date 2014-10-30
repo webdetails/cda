@@ -121,7 +121,10 @@ public class KettleDataAccess extends PREDataAccess {
 
     for ( int i = 0; i < parameters.size(); i++ ) {
       parameter = parameters.get( i );
-      if ( parameter.getType().getName().equals( "StringArray" ) || parameter.getType().getName().equals( "IntegerArray" ) ) {
+
+/*      Parameter.getType() == Parameter.STRING_ARRAY ou Type.STRING_ARRAY ou Parameter.Type.STRING_ARRAY (não sei bem qual deles é) */
+/*      if ( parameter.getType().getName().equals( "StringArray" ) || parameter.getType().getName().equals( "IntegerArray" ) ) {*/
+      if ( parameter.getType() == Parameter.Type.STRING_ARRAY || parameter.getType() == Parameter.Type.INTEGER_ARRAY ) {
         parameter.setValue( parameterDataRow.get( columnNames[ i ] ) );
         value = parameter.getStringValue();
         parameter.setValue( null );
