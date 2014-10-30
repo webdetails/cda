@@ -525,7 +525,7 @@ public class Parameter implements java.io.Serializable {
     hashCode = 31 * hashCode + ( getType() == null ? 0 : getType().hashCode() );
     hashCode = 31 * hashCode + ( getStringValue() == null ? 0 : getStringValue().hashCode() );
     return hashCode;
-  };
+  }
 
   public void readObject( ObjectInputStream in ) throws IOException {
     try {

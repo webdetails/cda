@@ -10,6 +10,11 @@
     <directory>&#x2f;</directory>
     <parameters>
         <parameter>
+            <name>Costumers</name>
+            <default_value>103,112</default_value>
+            <description/>
+        </parameter>
+        <parameter>
             <name>countries</name>
             <default_value>&#x27;France&#x27;,&#x27;USA&#x27;</default_value>
             <description/>
@@ -126,44 +131,9 @@
     </attributes>
   </connection>
   <order>
-  <hop> <from>Get Variables</from><to>Table input</to><enabled>Y</enabled> </hop>
   <hop> <from>Table input</from><to>Report Columns</to><enabled>Y</enabled> </hop>
+  <hop> <from>Get Variables</from><to>Table input</to><enabled>N</enabled> </hop>
   </order>
-  <step>
-    <name>Data Grid</name>
-    <type>DataGrid</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <fields>
-      <field>
-        <name>countries</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-      </field>
-    </fields>
-    <data>
-      <line> <item>&#x27;France&#x27;,&#x27;USA&#x27;</item> </line>
-    </data>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>189</xloc>
-      <yloc>264</yloc>
-      <draw>N</draw>
-      </GUI>
-    </step>
-
   <step>
     <name>Get Variables</name>
     <type>GetVariable</type>
@@ -188,11 +158,23 @@
         <precision>-1</precision>
         <trim_type>none</trim_type>
       </field>
+      <field>
+        <name>Costumers</name>
+        <variable>&#x24;&#x7b;Costumers&#x7d;</variable>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>215</xloc>
-      <yloc>162</yloc>
+      <xloc>246</xloc>
+      <yloc>161</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -228,7 +210,7 @@
            <schema_name/>
            </partitioning>
     <connection>SampleData</connection>
-    <sql>select c.CUSTOMERNAME, c.CREDITLIMIT &#xa;from customers c&#xa;where c.COUNTRY in &#x28;&#x24;&#x7b;countries&#x7d;&#x29;&#xa;order by c.CREDITLIMIT</sql>
+    <sql>select c.CUSTOMERNUMBER, c.CUSTOMERNAME, c.CREDITLIMIT &#xa;from customers c&#xa;where c.COUNTRY in &#x28;&#x24;&#x7b;countries&#x7d;&#x29; and&#xa;c.CUSTOMERNUMBER in &#x28;&#x24;&#x7b;Costumers&#x7d;&#x29;&#xa;order by c.CREDITLIMIT</sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>
@@ -236,8 +218,8 @@
     <lazy_conversion_active>N</lazy_conversion_active>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>410</xloc>
-      <yloc>164</yloc>
+      <xloc>409</xloc>
+      <yloc>166</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
