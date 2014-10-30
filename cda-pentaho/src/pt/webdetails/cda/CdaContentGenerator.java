@@ -175,8 +175,18 @@ public class CdaContentGenerator extends SimpleContentGenerator {
 
   @Exposed( accessLevel = AccessLevel.ADMIN, outputType = MimeType.PLAIN_TEXT )
   public void clearCache( final OutputStream out ) throws Exception {
-    CdaCoreService service = getCoreService();
-    service.clearCache();
+    String msg = "Cache Cleared Successfully";
+
+    try {
+      CdaCoreService service = getCoreService();
+      service.clearCache();
+    } catch ( Exception cce ) {
+      msg = "Method clearCache failed while trying to execute.";
+      writeErrorResult( cce, out, msg );
+      return;
+    }
+
+    writeSuccessResult( out, msg );
   }
 
   @Exposed( accessLevel = AccessLevel.ADMIN )
@@ -358,8 +368,16 @@ public class CdaContentGenerator extends SimpleContentGenerator {
   }
 
   private void writeErrorResult( Exception e, OutputStream out ) throws IOException {
-    logger.error( e );
+    writeErrorResult( e, out, "" );
+  }
+
+  private void writeErrorResult( Exception e, OutputStream out, String message ) throws IOException {
+    logger.error( message, e );
     JsonHelper.writeJson( new JsonResult( false, e.getLocalizedMessage() ), out );
+  }
+
+  private void writeSuccessResult( OutputStream out, String message) throws IOException {
+    JsonHelper.writeJson( new JsonResult( true, message ), out );
   }
 
   private void getSystemResource( final OutputStream out, String resource ) throws Exception {
