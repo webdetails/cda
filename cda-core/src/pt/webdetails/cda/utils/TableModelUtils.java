@@ -114,7 +114,8 @@ public class TableModelUtils {
       colCustomTypes[ i ] = "";
     }
     for(ColumnDefinition c : dataAccess.getColumnDefinitions()){
-        colCustomTypes[c.getIndex()] = c.getCustomType();
+        if(c.getIndex() < colCustomTypes.length)
+            colCustomTypes[c.getIndex()] = c.getCustomType();
     }
 
     final int rowCount = table.getRowCount();
