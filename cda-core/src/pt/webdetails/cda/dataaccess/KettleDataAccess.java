@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,8 +13,7 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 
 import org.pentaho.reporting.engine.classic.core.DataFactory;
@@ -31,27 +30,20 @@ import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.kettle.KettleConnection;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.UnknownConnectionException;
+import pt.webdetails.cda.utils.ParameterArrayToStringEncoder;
 
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * Todo: Document me!
- * <p/>
- * Date: 16.02.2010
- * Time: 13:20:39
- *
- * @author Thomas Morgner.
- */
 public class KettleDataAccess extends PREDataAccess {
 
   private String path;
 
 
-  private static final String PARAMETER_SQL_SEPARATOR = "pt.webdetails.cda.dataaccess.parameterarray.kettle.Separator";
-  private static final String PARAMETER_SQL_QUOTE = "pt.webdetails.cda.dataaccess.parameterarray.kettle.Quote";
+  private static final String PARAMETER_KETTLE_SEPARATOR =
+    "pt.webdetails.cda.dataaccess.parameterarray.kettle.Separator";
+  private static final String PARAMETER_KETTLE_QUOTE = "pt.webdetails.cda.dataaccess.parameterarray.kettle.Quote";
 
-  private static final Log logger = LogFactory.getLog( CdaEngine.class );
 
   public KettleDataAccess( final Element element ) {
     super( element );
@@ -90,7 +82,7 @@ public class KettleDataAccess extends PREDataAccess {
     } catch ( ResourceKeyCreationException e ) {
       path = null; //shouldn't happen and will blow down the road
     }
-  };
+  }
 
   /**
    * ContextKey is used to resolve the transformation file, and so must be stored in the cache key.
@@ -106,6 +98,23 @@ public class KettleDataAccess extends PREDataAccess {
     return cacheKey;
   }
 
+  private String getSeparator() {
+    String stringSeparator = CdaEngine.getInstance().getConfigProperty( PARAMETER_KETTLE_SEPARATOR );
+    if ( StringUtils.isEmpty( stringSeparator ) ) {
+      stringSeparator = ";";
+    }
+    return stringSeparator;
+  }
+
+
+  private String getQuoteCharacter() {
+    String stringQuote = CdaEngine.getInstance().getConfigProperty( PARAMETER_KETTLE_QUOTE );
+    if ( StringUtils.isEmpty( stringQuote ) ) {
+      stringQuote = "\"";
+    }
+    return stringQuote;
+  }
+
   @Override
   protected IDataSourceQuery performRawQuery( ParameterDataRow parameterDataRow ) throws QueryException {
     if ( getParameters().size() == 0 ) {
@@ -117,17 +126,19 @@ public class KettleDataAccess extends PREDataAccess {
     String[] columnNames = parameterDataRow.getColumnNames();
 
     Object[] values = new Object[ columnNames.length ];
-    Object value = null;
+    Object value;
 
     for ( int i = 0; i < parameters.size(); i++ ) {
       parameter = parameters.get( i );
 
-/*      Parameter.getType() == Parameter.STRING_ARRAY ou Type.STRING_ARRAY ou Parameter.Type.STRING_ARRAY (não sei bem qual deles é) */
-/*      if ( parameter.getType().getName().equals( "StringArray" ) || parameter.getType().getName().equals( "IntegerArray" ) ) {*/
-      if ( parameter.getType() == Parameter.Type.STRING_ARRAY || parameter.getType() == Parameter.Type.INTEGER_ARRAY ) {
-        parameter.setValue( parameterDataRow.get( columnNames[ i ] ) );
-        value = parameter.getStringValue();
-        parameter.setValue( null );
+      //CDA-55: We explicitly encode array parameters as strings so that they can be used in transformations
+      if ( parameter.getType() == Parameter.Type.STRING_ARRAY
+        || parameter.getType() == Parameter.Type.INTEGER_ARRAY
+        || parameter.getType() == Parameter.Type.NUMERIC_ARRAY
+        || parameter.getType() == Parameter.Type.DATE_ARRAY ) {
+        ParameterArrayToStringEncoder encoder =
+          new ParameterArrayToStringEncoder( getSeparator(), getQuoteCharacter() );
+        value = encoder.encodeParameterArray( parameterDataRow.get( columnNames[ i ] ), parameter.getType() );
       } else {
         value = parameterDataRow.get( columnNames[i] );
       }
