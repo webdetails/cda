@@ -16,6 +16,7 @@ package pt.webdetails.cda.tests;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Ignore;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 
@@ -25,7 +26,8 @@ public class KettleStringArrayParamTest extends CdaTestCase {
 
   private static final Log logger = LogFactory.getLog(KettleStringArrayParamTest.class);
 
-  public void testKettleStingArray() throws Exception
+
+  public void testKettleStringArray() throws Exception
   {
     final CdaSettings cdaSettings = parseSettingsFile( "sample-kettle-ParamArray.cda" );
 

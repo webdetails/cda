@@ -11,7 +11,7 @@
 * the license for the specific language governing your rights and limitations.
 */
 
-package pt.webdetails.cda.tests;
+package pt.webdetails.cda.tests.unit;
 
 import junit.framework.Assert;
 import org.junit.Test;
