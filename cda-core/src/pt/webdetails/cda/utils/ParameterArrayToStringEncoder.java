@@ -1,6 +1,17 @@
+/*!
+* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
+*
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 package pt.webdetails.cda.utils;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import pt.webdetails.cda.dataaccess.Parameter;
@@ -15,7 +26,7 @@ public class ParameterArrayToStringEncoder {
   private String fieldSeparator;
   private String quoteCharacter;
 
-  public ParameterArrayToStringEncoder( String fieldSeparator, String quoteCharacter) {
+  public ParameterArrayToStringEncoder( String fieldSeparator, String quoteCharacter ) {
     this.fieldSeparator = fieldSeparator;
     this.quoteCharacter = quoteCharacter == null ? "" : quoteCharacter;
   }
@@ -47,16 +58,8 @@ public class ParameterArrayToStringEncoder {
           }
 
           strBuild.append( quoteCharacter );
-          int lastWritten = 0;
-          for ( int sepIdx = StringUtils.indexOf( s, "'" ); sepIdx >= 0;
-                sepIdx = StringUtils.indexOf( s, "'", sepIdx ) ) { //quote separator
-            strBuild.append( s.substring( lastWritten, sepIdx ) );
-            strBuild.append( quoteCharacter );
-            strBuild.append( fieldSeparator );
-            strBuild.append( quoteCharacter );
-            lastWritten = ++sepIdx;
-          }
-          strBuild.append( StringUtils.substring( s, lastWritten, s.length() ) );
+          //Encode occurrences of the quote character - CSVTokenizer compatible
+          strBuild.append( s.replace( quoteCharacter, quoteCharacter + quoteCharacter ) );
           strBuild.append( quoteCharacter );
         }
         return strBuild.toString();

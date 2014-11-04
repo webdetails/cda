@@ -30,19 +30,23 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.utils.FormulaEvaluator;
 import pt.webdetails.cda.utils.ParameterArrayToStringEncoder;
 import pt.webdetails.cda.utils.Util;
 
 import pt.webdetails.cda.xml.DomVisitor;
 
-/**
- * Created by IntelliJ IDEA. User: pedro Date: Feb 4, 2010 Time: 4:09:48 PM
- */
+
 public class Parameter implements java.io.Serializable {
 
-  static final String DEFAULT_ARRAY_SEPERATOR = ";";
-  private String separator = DEFAULT_ARRAY_SEPERATOR;
+
+  private static final String PARAMETER_ARRAY_SEPARATOR =
+    "pt.webdetails.cda.dataaccess.parameterarray.Separator";
+  private static final String PARAMETER_ARRAY_QUOTE = "pt.webdetails.cda.dataaccess.parameterarray.Quote";
+
+  private String separator;
+  private String quoteCharacter;
   private static final long serialVersionUID = 3L;
   private static final String FORMULA_BEGIN = "${";
   private static final String FORMULA_END = "}";
@@ -80,6 +84,7 @@ public class Parameter implements java.io.Serializable {
     this( param.getName(), param.getTypeAsString(), param.getStringValue(), param.getPattern(),
       param.getAccess().toString() );
     this.setSeparator( param.getSeparator() );
+    this.setQuoteCharacter( param.getQuoteCharacter() );
   }
 
   public Parameter( final Element p ) {
@@ -91,6 +96,7 @@ public class Parameter implements java.io.Serializable {
       p.attributeValue( "access" )
     );
     this.setSeparator( p.attributeValue( "separator" ) );
+    this.setQuoteCharacter( p.attributeValue( "quoteCharacter" ) );
   }
 
   public Parameter( final String name, final Object value ) {
@@ -137,18 +143,23 @@ public class Parameter implements java.io.Serializable {
     Object objValue = value == null ? getDefaultValue() : value;
 
 
-    //This code is just bad. We're getting an Object[], turning it into a String[],
-    //getting a string from that using a weird method and then later calling getValueFromString
-    //to get an array from that string
-    //This is used to make sure that if we set an integer array as a string array, getValue returns
-    // an integer array and not the original string array
-    if ( objValue instanceof Object[] &&  ( ( Type.INTEGER_ARRAY.equals( getType() ) )
-      || Type.NUMERIC_ARRAY.equals( getType() ) ) ) {
+    //This is used to make sure that if we set an array as a string array, getValue returns
+    // a properly typed array and not the original string array
+    if ( objValue.getClass().isAssignableFrom( String[].class )
+      && ( ( Type.INTEGER_ARRAY.equals( getType() ) )
+        || Type.NUMERIC_ARRAY.equals( getType() )
+        || Type.DATE_ARRAY.equals( getType() ) ) ) {
+
+      ParameterArrayToStringEncoder encoder = new ParameterArrayToStringEncoder( getSeparator(), getQuoteCharacter() );
+      objValue = encoder.encodeParameterArray( objValue, getType() );
+
+      /*
       ArrayList<String> parsed = new ArrayList<String>();
       for ( Object obj : (Object[]) objValue ) {
         parsed.add( obj.toString() );
       }
       objValue = stringArrayToString( parsed.toArray( new String[ parsed.size() ] ), getSeparator() );
+      */
     }
 
     if ( objValue instanceof String ) { //may be a string or a parsed value
@@ -276,7 +287,7 @@ public class Parameter implements java.io.Serializable {
   private String getValueAsString( Object value ) {
     String separator = getSeparator();
 
-    ParameterArrayToStringEncoder encoder = new ParameterArrayToStringEncoder( separator, "\"" );
+    ParameterArrayToStringEncoder encoder = new ParameterArrayToStringEncoder( separator, getQuoteCharacter() );
     if ( value == null ) {
       if ( getDefaultValue() != null ) {
         return getDefaultValue().toString();
@@ -324,17 +335,38 @@ public class Parameter implements java.io.Serializable {
     return this.access;
   }
 
+
   public String getSeparator() {
     if ( this.separator == null ) {
-      return DEFAULT_ARRAY_SEPERATOR;
-    } else {
-      return this.separator;
+      this.separator = CdaEngine.getInstance().getConfigProperty( PARAMETER_ARRAY_SEPARATOR );
+      if ( StringUtils.isEmpty( this.separator ) ) {
+        this.separator = ";";
+      }
     }
+    return this.separator;
   }
 
   protected void setSeparator( String separator ) {
     this.separator = separator;
   }
+
+
+  public String getQuoteCharacter() {
+    if ( this.quoteCharacter == null ) {
+      this.quoteCharacter = CdaEngine.getInstance().getConfigProperty( PARAMETER_ARRAY_QUOTE );
+      if ( StringUtils.isEmpty( this.quoteCharacter ) ) {
+        this.quoteCharacter = "\"";
+      }
+    }
+    return this.quoteCharacter;
+  }
+
+
+  protected void setQuoteCharacter( String quoteCharacter ) {
+    this.quoteCharacter = quoteCharacter;
+  }
+
+
 
   /**
    * For debugging purposes
@@ -379,6 +411,7 @@ public class Parameter implements java.io.Serializable {
       //if(isDateType()) this.setPattern((String) in.readObject());
       this.setStringValue( (String) in.readObject(), this.getType() );
       this.setSeparator( (String) in.readObject() );
+      this.setQuoteCharacter( (String) in.readObject() );
     } catch ( ClassNotFoundException e ) {
       throw new IOException( "Error casting read object.", e );
     }
@@ -393,47 +426,12 @@ public class Parameter implements java.io.Serializable {
     //if(isDateType()) out.writeObject(this.pattern);
     out.writeObject( this.getStringValue() );
     out.writeObject( this.getSeparator() );
+    out.writeObject( this.getQuoteCharacter() );
   }
 
 
   public void accept( DomVisitor xmlVisitor, Element daEle ) {
     xmlVisitor.visit( this, daEle );
-  }
-
-  /**
-   * Helper method to convert a String[] into a string, with a user defined separator char
-   * see http://docs.oracle.com/javase/1.5.0/docs/api/java/util/Arrays.html#toString(java.lang.Object[])
-   * @param stringArray
-   * @param separator   - a user defined separator char
-   * @return string
-   */
-  private String stringArrayToString( String[] stringArray, String separator ) {
-
-    final String START_CHAR = "[";
-    final String END_CHAR = "]";
-    final String SEPARATOR = ", ";
-
-    if ( stringArray != null ) {
-
-      String s = java.util.Arrays.toString( stringArray );
-
-      if ( s != null && s.trim().length() > 0 ) {
-
-        //remove java.util.Arrays.toString() START_CHAR and END_CHAR
-        if ( s.startsWith( START_CHAR ) && s.endsWith( END_CHAR ) ) {
-          s = s.substring( 1, s.length() - 1 );
-        }
-
-        if ( separator != null ) {
-          //replace java.util.Arrays.toString() SEPARATOR with user-defined separator
-          s = s.replaceAll( SEPARATOR, separator );
-        }
-
-        return s;
-
-      }
-    }
-    return null;
   }
 
   public enum Access {
