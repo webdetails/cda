@@ -274,9 +274,9 @@ var inputBlur = function(event){
             $(myself).removeClass("cdaButtonSelected");
             $(myself).parent().find("div.helpButton").hide();
         },
-        100);
+        125);
 };
 helpPopup = function(){
-$("#help").jqmShow();
+    $("#help").jqmShow();
 }
 
