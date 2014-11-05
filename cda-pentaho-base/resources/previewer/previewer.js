@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -261,7 +261,7 @@ simpleCron = function() {
 };
 
 var inputFocus = function(event){
-    $(this).attr("style","width:190px"); 
+    $(this).addClass("cdaButtonSelected");
     $(this).parent().find("div.helpButton").show();
 };
 
@@ -271,7 +271,7 @@ var inputBlur = function(event){
     var myself = this;
     setTimeout(
         function(){
-            $(myself).attr("style","");
+            $(myself).removeClass("cdaButtonSelected");
             $(myself).parent().find("div.helpButton").hide();
         },
         100);
