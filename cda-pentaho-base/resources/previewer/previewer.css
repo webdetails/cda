@@ -203,6 +203,10 @@ input[readonly]{
 			box-sizing: border-box;
 }
 
+#parameterHolder .cdaButtonSelected {
+  padding-right: 30px;
+}
+
 #parameterDimension {
 	float: left;
 	height: 30px;
