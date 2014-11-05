@@ -12,7 +12,7 @@
 		<script type="text/javascript" src="../static/jquery.jqModal.js"></script>
 		<script type="text/javascript" src="../static/jquery-ui-1.8rc3.custom.min.js"></script>
 		<script type="text/javascript" src="js/jquery.i18n.properties.js"></script>
-        <script type="text/javascript" src="js/jquery.blockUI.js"></script> 		
+    <script type="text/javascript" src="js/jquery.blockUI.js"></script>
 		<script type="text/javascript" src="previewer.js"></script>
 
 		<script type="text/javascript" src="dataTables/js/jquery.dataTables.js"></script>
@@ -75,7 +75,7 @@
                               lastQuery = undefined;
                               $('#exportButton').hide();
                       }
-              })
+              });
               $("#dialog").jqm({
                       modal : true
               });
@@ -85,7 +85,12 @@
               $('#queryUrlDialog').jqm({
                       modal : true
               });
+              $('#outputIndexHelp').jqm({
+                      modal : true
+              });
               toggleAdvanced(false);
+
+              $("#outputIndexId").focus(inputFocus).blur(inputBlur);
 
               // get initial list of queries
               PreviewerBackend.listQueries({
@@ -126,16 +131,17 @@
 			</div>
 			<div class="span-23 clearfix cdalogo">
 
-				<div class="span-8 center">
+				<div class="span-9 center">
 					<select id="dataAccessSelector" class="cdaButton">
 						<option selected="selected" value="undefined">Data Access</option>
 					</select>
-					<div class="cdaInputWrapper span-1 last">
+					<div class="cdaInputWrapper span-2 last">
 						<input class="cdaButton cdaButtonShort" id="outputIndexId" value="1" style="">
+            <div class="helpButton helpButtonShort" onclick='$("#outputIndexHelp").jqmShow()' style="display:none">?</div>
 					</div>
 				</div>
 
-				<div class="span-15 last">
+				<div class="span-14 last">
 					<button class="cdaButton" id="button" onclick="refreshTable(lastQuery)"></button>
 					<div>
 						<button class="cdaButton" id="cachethis" onclick='$("#dialog").jqmShow()'>
@@ -232,5 +238,14 @@
 				<a href='javascript:;' class='jqmClose'>Close</a>
 			</div>
 		</div>
+    <div id='outputIndexHelp' class='jqmWindow'>
+      <p class='dialogTitle'>Output Index Id</p>
+      <p>
+        This Id is used to select the desired set of Output Options for the current Data Access.
+      </p>
+      <div class='dialogAction'>
+        <a href='#' class='jqmClose'>Close</a>
+      </div>
+    </div>
 	</body>
 </html>
