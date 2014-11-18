@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CDADescriptor>
+   <DataSources>
+      <Connection id="Ds1" type="sql.jdbc">
+         <Driver>org.hsqldb.jdbcDriver</Driver>
+         <Pass></Pass>
+         <Url>jdbc:hsqldb:mem:SampleData</Url>
+         <User>sa</User>
+      </Connection>
+   </DataSources>
+   <DataAccess access="public" cache="false" cacheDuration="3" connection="Ds1" id="Ds1"
+               type="sql">
+      <Columns/>
+     <Output indexes="2,4" mode="include"/>
+      <Parameters/>
+      <Query>select top (10) * from orderfact o</Query>
+   </DataAccess>
+</CDADescriptor>

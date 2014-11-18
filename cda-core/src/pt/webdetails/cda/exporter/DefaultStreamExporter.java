@@ -14,6 +14,30 @@
 
 package pt.webdetails.cda.exporter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.exception.KettleException;
+import org.pentaho.di.core.util.StringUtil;
+import org.pentaho.di.core.variables.VariableSpace;
+import org.pentaho.di.core.variables.Variables;
+import org.pentaho.di.trans.TransMeta;
+import org.pentaho.di.trans.step.StepMeta;
+import org.pentaho.di.trans.steps.injector.InjectorMeta;
+import org.pentaho.di.trans.steps.tableinput.TableInputMeta;
+import org.pentaho.reporting.engine.classic.core.DataRow;
+import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
+import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.dataaccess.SqlDataAccess;
+import pt.webdetails.cda.dataaccess.kettle.DataAccessKettleAdapter;
+import pt.webdetails.cda.dataaccess.kettle.KettleAdapterException;
+import pt.webdetails.cda.utils.kettle.RowCountListener;
+import pt.webdetails.robochef.DynamicTransConfig;
+import pt.webdetails.robochef.DynamicTransMetaConfig;
+import pt.webdetails.robochef.DynamicTransformation;
+import pt.webdetails.robochef.RowProductionManager;
+import pt.webdetails.robochef.TableModelInput;
+
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,28 +50,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.pentaho.di.core.database.DatabaseMeta;
-import org.pentaho.di.core.exception.KettleException;
-import org.pentaho.di.core.util.StringUtil;
-import org.pentaho.di.core.variables.VariableSpace;
-import org.pentaho.di.trans.TransMeta;
-import org.pentaho.di.trans.step.StepMeta;
-import org.pentaho.di.trans.steps.injector.InjectorMeta;
-import org.pentaho.di.trans.steps.tableinput.TableInputMeta;
-import org.pentaho.reporting.engine.classic.core.DataRow;
-import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
-
-import pt.webdetails.robochef.DynamicTransConfig;
-import pt.webdetails.robochef.DynamicTransMetaConfig;
-import pt.webdetails.robochef.DynamicTransformation;
-import pt.webdetails.robochef.RowProductionManager;
-import pt.webdetails.robochef.TableModelInput;
-import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cda.dataaccess.kettle.DataAccessKettleAdapter;
-import pt.webdetails.cda.dataaccess.kettle.KettleAdapterException;
-import pt.webdetails.cda.utils.kettle.RowCountListener;
 
 /**
  * Direct exporter from data access to stream using Kettle
@@ -66,7 +68,7 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
   private Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
 
   public DefaultStreamExporter( AbstractKettleExporter exporter,
-                               DataAccessKettleAdapter dataAccess ) {
+                                DataAccessKettleAdapter dataAccess ) {
     this.exporter = exporter;
     this.dataAccess = dataAccess;
   }
@@ -75,10 +77,13 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
     inputCallables.clear();
 
     try {
+
+      boolean hasFilter = false;
+      StepMeta filterStepMeta = null;
+
       DynamicTransConfig transConfig = new DynamicTransConfig();
 
-      StepMeta dataAccessStepMeta = dataAccess
-              .getKettleStepMeta( "DataAccess" );
+      StepMeta dataAccessStepMeta = dataAccess.getKettleStepMeta( "DataAccess" );
 
       StepMeta injectorStepMeta = null;
 
@@ -87,27 +92,51 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
       if ( parameterNames.length > 0 ) {
         injectorStepMeta = new StepMeta( "Input", new InjectorMeta() );
         injectorStepMeta.setCopies( 1 );
-        transConfig.addConfigEntry( DynamicTransConfig.EntryType.STEP,
-                injectorStepMeta.getName(),
-                injectorStepMeta.getXML() );
+        transConfig.addConfigEntry( DynamicTransConfig.EntryType.STEP, injectorStepMeta.getName(),
+          injectorStepMeta.getXML() );
         if ( dataAccessStepMeta.getStepMetaInterface() instanceof TableInputMeta ) {
           ( (TableInputMeta) dataAccessStepMeta.getStepMetaInterface() ).setLookupFromStep( injectorStepMeta );
         }
       }
 
       transConfig.addConfigEntry( DynamicTransConfig.EntryType.STEP,
-              dataAccessStepMeta.getName(), dataAccessStepMeta.getXML() );
+        dataAccessStepMeta.getName(), dataAccessStepMeta.getXML() );
+
+      ExtendedDynamicTransMetaConfig transMetaConfig = new ExtendedDynamicTransMetaConfig(
+        DynamicTransMetaConfig.Type.EMPTY, "Streaming Exporter",
+        null, null, dataAccess.getDatabases() );
+
+      String[] s = transMetaConfig.getTransMeta( Variables.getADefaultVariableSpace() ).
+        getStepFields( dataAccessStepMeta ).getFieldNames();
+
+      dataAccess.getParameterNames();
+
+      if ( dataAccess.getDataAccessOutputs().size() > 0 ) {
+        hasFilter = true;
+        filterStepMeta = dataAccess.getFilterStepMeta( "Filter", s /*, sqlDataAccess */);
+        transConfig.addConfigEntry( DynamicTransConfig.EntryType.STEP,
+          filterStepMeta.getName(), filterStepMeta.getXML() );
+      }
 
       StepMeta exportStepMeta = exporter.getExportStepMeta( "Export" );
       transConfig.addConfigEntry( DynamicTransConfig.EntryType.STEP,
-              exportStepMeta.getName(), exportStepMeta.getXML() );
+        exportStepMeta.getName(), exportStepMeta.getXML() );
 
       if ( parameterNames.length > 0 ) {
         transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
-                injectorStepMeta.getName(), dataAccessStepMeta.getName() );
+          injectorStepMeta.getName(), dataAccessStepMeta.getName() );
       }
-      transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
-              dataAccessStepMeta.getName(), exportStepMeta.getName() );
+
+      if ( hasFilter == true ) {
+        transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
+          dataAccessStepMeta.getName(), filterStepMeta.getName() );
+
+        transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
+          filterStepMeta.getName(), exportStepMeta.getName() );
+      } else {
+        transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
+          dataAccessStepMeta.getName(), exportStepMeta.getName() );
+      }
 
       // Prepare parameters as data of the injector step:
       if ( parameterNames.length > 0 ) {
@@ -120,8 +149,8 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
             Object[] array = (Object[]) value;
             for ( int c = 0; c < array.length; ++c ) {
               columnNames.add( parameterName + "_" + c );
-              columnClasses.add( array[c].getClass() );
-              values.add( array[c] );
+              columnClasses.add( array[ c ].getClass() );
+              values.add( array[ c ] );
             }
           } else {
             columnNames.add( parameterName );
@@ -131,8 +160,8 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
         }
 
         TypedTableModel model = new TypedTableModel(
-                columnNames.toArray( new String[columnNames.size()] ),
-                columnClasses.toArray( new Class[columnClasses.size()] ) );
+          columnNames.toArray( new String[ columnNames.size() ] ),
+          columnClasses.toArray( new Class[ columnClasses.size() ] ) );
         model.addRow( values.toArray() );
 
         TableModelInput input = new TableModelInput();
@@ -143,10 +172,13 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
       RowCountListener countListener = new RowCountListener();
       transConfig.addOutput( exportStepMeta.getName(), countListener );
 
-      ExtendedDynamicTransMetaConfig transMetaConfig = new ExtendedDynamicTransMetaConfig(
-              DynamicTransMetaConfig.Type.EMPTY, "Streaming Exporter",
-              null, null, dataAccess.getDatabases() );
+      transMetaConfig = new ExtendedDynamicTransMetaConfig(
+        DynamicTransMetaConfig.Type.EMPTY, "Streaming Exporter",
+        null, null, dataAccess.getDatabases() );
+
+      //     DynamicTransformation
       DynamicTransformation trans = new DynamicTransformation( transConfig, transMetaConfig );
+
       trans.executeCheckedSuccess( null, null, this );
       logger.info( trans.getReadWriteThroughput() );
 
@@ -169,7 +201,7 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
     String timeoutStr = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeout" );
     long timeout = StringUtil.isEmpty( timeoutStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong( timeoutStr );
     String unitStr =
-            CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
+      CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
     TimeUnit unit = StringUtil.isEmpty( unitStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf( unitStr );
     startRowProduction( timeout, unit );
   }
@@ -200,8 +232,8 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
     private DatabaseMeta[] databases;
 
     public ExtendedDynamicTransMetaConfig( Type type, String name,
-                                          String configDataSource, RepositoryConfig repoConfig,
-                                          DatabaseMeta[] databases ) throws KettleException {
+                                           String configDataSource, RepositoryConfig repoConfig,
+                                           DatabaseMeta[] databases ) throws KettleException {
       super( type, name, configDataSource, repoConfig );
       this.databases = databases;
     }
