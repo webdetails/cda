@@ -108,8 +108,9 @@ public class CdaUtils {
   @GET
   @Path( "/doQuery" )
   @Produces( { MimeTypes.JSON, MimeTypes.XML, MimeTypes.CSV, MimeTypes.XLS, MimeTypes.PLAIN_TEXT, MimeTypes.HTML } )
-  public StreamingOutput doQueryGet( @Context UriInfo urii, @Context HttpServletResponse servletResponse )
-    throws WebApplicationException {
+  public StreamingOutput doQueryGet( @Context UriInfo urii, @Context HttpServletRequest servletRequest,
+                                     @Context HttpServletResponse servletResponse ) throws WebApplicationException {
+    setCorsHeaders( servletRequest, servletResponse );
     return doQuery( urii.getQueryParameters(), servletResponse );
   }
 
@@ -126,7 +127,7 @@ public class CdaUtils {
       params = getParameterMapFromRequest( servletRequest );
     }
 
-
+    setCorsHeaders( servletRequest, servletResponse );
     return doQuery( params, servletResponse );
   }
 
@@ -250,6 +251,7 @@ public class CdaUtils {
     throws WebApplicationException {
     try {
       ExportedQueryResult eqr = getCdaCoreService().unwrapQuery( path, uuid );
+      setCorsHeaders( servletRequest, servletResponse );
       eqr.writeResponse( servletResponse );
 
     } catch ( Exception e ) {
@@ -619,6 +621,13 @@ public class CdaUtils {
     return params;
   }
 
+  private void setCorsHeaders( HttpServletRequest request, HttpServletResponse response ) {
+    String origin = request.getHeader( "ORIGIN" );
+    if ( origin != null ) {
+      response.setHeader( "Access-Control-Allow-Origin", origin );
+      response.setHeader( "Access-Control-Allow-Credentials", "true" );
+    }
+  }
 
   //Adding this because of compatibility with the reporting plugin on 5.0.1. The cda datasource on the reporting plugin
   //is expecting this signature
