@@ -258,6 +258,13 @@ expectedRows: 1
       expectedRows: 4
     },
     {
+      type : "xpath",
+      desc : "Xpath data access over XML file",
+      url : webAppPath + "/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/xpath.cda",
+      expectedCols : 2,
+      expectedRows : 1
+    },
+    {
       type: "Compound join",
       desc: "Joining 2 different datasets",
       url: webAppPath + "/plugin/cda/api/doQuery?dataAccessId=3&path=/public/plugin-samples/cda/cdafiles/compoundJoin.cda",
