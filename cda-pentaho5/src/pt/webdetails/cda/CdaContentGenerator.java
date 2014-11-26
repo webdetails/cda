@@ -35,8 +35,7 @@ public class CdaContentGenerator extends SimpleContentGenerator {
     CdaUtils utils = new CdaUtils();
 
     IParameterProvider requestParams = parameterProviders.get( MethodParams.REQUEST );
-    IParameterProvider pathParams = getPathParameters(); //parameterProviders.get( MethodParams.PATH );
-    String path = pathParams.getStringParameter( MethodParams.PATH, "" );
+    String path = getPathParameterAsString( MethodParams.PATH, "" );
 
     long start = System.currentTimeMillis();
 
