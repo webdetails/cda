@@ -52,6 +52,6 @@
 			</CalculatedColumn>
 		</Columns>
         <!-- Output controls what is outputed and by what order. Defaults to everything -->
-        <Output indexes="1,0,2,3"/>
+        <Output indexes="1,0,2"/>
     </DataAccess>
 </CDADescriptor>
