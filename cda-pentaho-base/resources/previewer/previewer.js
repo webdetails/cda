@@ -11,14 +11,10 @@
 * the license for the specific language governing your rights and limitations.
 */
 
-
-
-
-
-
 var PreviewerBackend = {
   /* overridden by backend */
   PATH_doQuery: null,
+  PATH_unwrapQuery: null,
   PATH_listParameters: null,
   PATH_listQueries: null,
   PATH_cacheController: null,
@@ -139,20 +135,59 @@ showQueryUrl = function(dataAccessId){
 	$('#queryUrlDialog input').select();
 };
 
-exportFunc = function(id){
-	window.open(getFullQueryUrl(id, {outputType: 'xls'}), 'CDA Export');
+exportFunc = function(dataAccessId) {
+  updateLastQuery(dataAccessId);
+
+  var params = getParams();
+  var queryDefinition = $.extend({
+    dataAccessId: dataAccessId,
+    path: getFileName(),
+    outputType: 'xls',
+    wrapItUp: true
+  }, params);
+
+  $.ajax({
+    type:'POST',
+    dataType: 'text',
+    async: true,
+    data: queryDefinition,
+    url: PreviewerBackend.PATH_doQuery,
+    xhrFields: {
+      withCredentials: true
+    },
+    success: function(uuid) {
+      var _exportIframe = $('#cdaExportIframe');
+      if(!_exportIframe.length) {
+        _exportIframe = $('<iframe id="cdaExportIframe" style="display:none">');
+      }
+      _exportIframe.attr('src', getUnwrapQueryUrl({path: queryDefinition.path, uuid: uuid}));
+      _exportIframe.appendTo($('body'));
+    },
+    error: function(jqXHR, status, error) {
+      console.log("Request failed: " + jqXHR.responseText + " :: " + status + " ::: " + error);
+    }
+  });
+};
+
+getUnwrapQueryUrl = function(parameters) {
+  return PreviewerBackend.PATH_unwrapQuery + "?" + $.param(parameters)
 };
 
 getFullQueryUrl = function(dataAccessId, extraParams) {
-	if(dataAccessId != lastQuery){
-		lastQuery = id;
-		refreshParams(id);
-	}
+	updateLastQuery(dataAccessId);
+
 	var params = getParams();
 	return 	window.location.protocol + '//' + window.location.host + 
 	  PreviewerBackend.PATH_doQuery
 	  + '?path=' + getFileName()
 	  + '&' + $.param( $.extend({dataAccessId : dataAccessId}, params, extraParams) );
+};
+
+updateLastQuery = function(dataAccessId) {
+  if(dataAccessId != lastQuery){
+    lastQuery = dataAccessId;
+    refreshParams(dataAccessId);
+  }
 };
 
 refreshParams = function(id) {
