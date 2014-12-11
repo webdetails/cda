@@ -1,9 +1,17 @@
+/*!
+* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
+*
+* This software was developed by Webdetails and is provided under the terms
+* of the Mozilla Public License, Version 2.0, or any later version. You may not use
+* this file except in compliance with the license. If you need a copy of the license,
+* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+*
+* Software distributed under the Mozilla Public License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+* the license for the specific language governing your rights and limitations.
+*/
 package pt.webdetails.cda.services;
 
-//import org.apache.commons.logging.Log;
-//import org.apache.commons.logging.LogFactory;
-
-//import pt.webdetails.cpf.Util;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -27,7 +35,7 @@ import pt.webdetails.cpf.utils.Pair;
 public class Previewer extends ProcessedHtmlPage {
 
 
-  private static Log logger = LogFactory.getLog(BaseService.class);
+  private static Log logger = LogFactory.getLog( BaseService.class );
 
   private static final String SYS_PATH = "previewer";
   private static final String PAGE = "previewer.html";
@@ -45,17 +53,22 @@ public class Previewer extends ProcessedHtmlPage {
    * exposed to page
    */
   protected Iterable<Pair<String, String>> getBackendAssignments( IUrlProvider urlProvider ) {
-    String baseApi =  urlProvider.getPluginBaseUrl();
-    ArrayList<Pair<String,String>> pairs = new ArrayList<Pair<String,String>>();
-    pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "PATH_doQuery", quote(baseApi, "doQuery" ) ) );
-    pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "PATH_listParameters", quote(baseApi, "listParameters") ) );
-    pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "PATH_listQueries", quote(baseApi, "listQueries" )) );
-    pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "PATH_cacheController", quote(baseApi, "cacheController" )) );
-    pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "PATH_about", quote(urlProvider.getPluginStaticBaseUrl(), SYS_ABOUT_PATH )) );
+    String baseApi = urlProvider.getPluginBaseUrl();
+    ArrayList<Pair<String, String>> pairs = new ArrayList<Pair<String, String>>();
+    pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "PATH_doQuery", quote( baseApi, "doQuery" ) ) );
+    pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "PATH_unwrapQuery", quote( baseApi, "unwrapQuery" ) ) );
+    pairs
+      .add( new Pair<String, String>( UI_BACKEND_PREFIX + "PATH_listParameters", quote( baseApi, "listParameters" ) ) );
+    pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "PATH_listQueries", quote( baseApi, "listQueries" ) ) );
+    pairs.add(
+      new Pair<String, String>( UI_BACKEND_PREFIX + "PATH_cacheController", quote( baseApi, "cacheController" ) ) );
+    pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "PATH_about",
+      quote( urlProvider.getPluginStaticBaseUrl(), SYS_ABOUT_PATH ) ) );
     Locale locale = LocaleHelper.getLocale();
-    pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "PATH_page", quote(urlProvider.getPluginStaticBaseUrl(), SYS_PATH ) ) );
+    pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "PATH_page",
+      quote( urlProvider.getPluginStaticBaseUrl(), SYS_PATH ) ) );
     pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "Path", quote( cdaPath ) ) );
-    pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "LOCALE_locale", quote(locale.toString() ) ) );
+    pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "LOCALE_locale", quote( locale.toString() ) ) );
     addDataTablesLocalization( pairs, UI_BACKEND_PREFIX + "LOCALE_dataTables", locale );
     return pairs;
   }
@@ -73,27 +86,25 @@ public class Previewer extends ProcessedHtmlPage {
 
       } else if ( reader.fileExists( defaultDataTablesMessages ) ) {
         localization = Util.toString( reader.getFileInputStream( defaultDataTablesMessages ) );
-      }
-      else {
-        logger.error("previewer: localization not found: " + defaultDataTablesMessages);
+      } else {
+        logger.error( "previewer: localization not found: " + defaultDataTablesMessages );
       }
     } catch ( IOException e ) {
       logger.error( e );
     }
-    pairs.add( new Pair<String, String> ( name, localization) );
+    pairs.add( new Pair<String, String>( name, localization ) );
   }
 
-  private String quote(String...text) {
-    return '"' + StringUtils.join(text) + '"';
+  private String quote( String... text ) {
+    return '"' + StringUtils.join( text ) + '"';
   }
 
-  private String getDataTablesMessagesPath(Locale locale) {
-    String localeRep = ( locale == null ) ? "" : "_" + locale.toString(); 
+  private String getDataTablesMessagesPath( Locale locale ) {
+    String localeRep = ( locale == null ) ? "" : "_" + locale.toString();
     return String.format( "dataTables/languages/Messages%s.json", localeRep );
   }
 
-  public String previewQuery(String cdaPath) throws Exception
-  {
+  public String previewQuery( String cdaPath ) throws Exception {
     //TODO: add cache
     this.cdaPath = cdaPath;
     return processPage( new StaticSystemOrigin( SYS_PATH ), PAGE );
