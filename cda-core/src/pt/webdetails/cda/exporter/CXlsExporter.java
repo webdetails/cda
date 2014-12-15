@@ -21,14 +21,12 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import pt.webdetails.cda.utils.MetadataTableModel;
 
-import javax.swing.*;
 import javax.swing.table.TableModel;
 import java.io.*;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import org.springframework.core.io.ClassPathResource;
 
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM
@@ -36,6 +34,7 @@ import org.springframework.core.io.ClassPathResource;
 public class CXlsExporter extends AbstractExporter
 {
     public static final String TEMPLATE_NAME_SETTING = "templateName";
+    private final String templatesDir = "/opt/pentaho/xls-templates/";
     private static final String MIME_TYPE = "application/vnd.ms-excel";
     private static final Log logger = LogFactory.getLog( CXlsExporter.class );
     private String attachmentName;
@@ -53,7 +52,7 @@ public class CXlsExporter extends AbstractExporter
   public CXlsExporter(Map<String, String> extraSettings)
   {
       super( extraSettings );
-      this.attachmentName = getSetting(ATTACHMENT_NAME_SETTING, "cda-export." + getType());
+      this.attachmentName = getSetting(ATTACHMENT_NAME_SETTING, "analytics-report." + getType());
       logger.debug( "Initialized CXmlExporter with attachement filename '" + attachmentName + "'" );
   }
     public void export( final OutputStream out, final TableModel tableModel ) throws ExporterException {
@@ -75,7 +74,8 @@ public class CXlsExporter extends AbstractExporter
 
         if(templateSettings.keySet().size() > 0){
             try {
-                inputStream = new ClassPathResource(templateSettings.get("filename")).getInputStream();
+                //inputStream = new ClassPathResource(templateSettings.get("filename")).getInputStream();
+                inputStream = new FileInputStream(templatesDir + templateSettings.get("filename"));
                 wb = new HSSFWorkbook(inputStream);
                 sheet = wb.getSheetAt(0);
                 if(templateSettings.containsKey("RowOffset")){
@@ -84,8 +84,8 @@ public class CXlsExporter extends AbstractExporter
                 if(templateSettings.containsKey("ColumnOffset")){
                     columnOffset = Integer.parseInt(templateSettings.get("ColumnOffset"));
                 }
-                if(templateSettings.containsKey("WriteColumns")){
-                    writeColumns = Boolean.parseBoolean(templateSettings.get("WriteColumns"));
+                if(templateSettings.containsKey("WriteColumnNames")){
+                    writeColumns = Boolean.parseBoolean(templateSettings.get("WriteColumnNames"));
                 }
             } catch ( Exception e ) {
                 throw new ExporterException( "Error at loading TemplateFile", e );
