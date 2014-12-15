@@ -20,6 +20,7 @@ import pt.webdetails.cda.xml.DomVisitor;
 
 import javax.swing.table.TableModel;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * DataAccess interface
@@ -71,6 +72,8 @@ public interface DataAccess
   OutputMode getOutputMode(int id);
 
   TableModel listParameters();
+
+  public HashMap<String, String> getTemplateSettings();
   
   boolean hasIterableParameterValues(final QueryOptions queryOptions) throws QueryException;
 

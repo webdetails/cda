@@ -124,6 +124,12 @@ public class CdaEngine {
       .getDataAccessId() );
     TableExporter exporter = getExporter( queryOptions );
 
+      if(exporter instanceof CXlsExporter){
+          ((CXlsExporter)exporter).templateSettings = dataAccess.getTemplateSettings();
+      }
+
+
+
     StreamExporter streamingExporter = null;
     if ( !dataAccess.hasIterableParameterValues( queryOptions )
       && exporter instanceof AbstractKettleExporter ) {

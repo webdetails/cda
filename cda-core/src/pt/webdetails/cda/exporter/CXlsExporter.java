@@ -21,12 +21,14 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import pt.webdetails.cda.utils.MetadataTableModel;
 
+import javax.swing.*;
 import javax.swing.table.TableModel;
 import java.io.*;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
-
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM
@@ -45,6 +47,7 @@ public class CXlsExporter extends AbstractExporter
     private CellStyle datemonthCellStyle;
     private CellStyle dateyearCellStyle;
     private CellStyle dateAndTimeCellStyle;
+    public HashMap<String, String> templateSettings = new HashMap<String, String>();
 
 
   public CXlsExporter(Map<String, String> extraSettings)
@@ -55,12 +58,42 @@ public class CXlsExporter extends AbstractExporter
   }
     public void export( final OutputStream out, final TableModel tableModel ) throws ExporterException {
 
+//        <Template file="testTemplate.xls">
+    //        <RowOffset>3</RowOffset>
+    //        <ColumnOffset>2</ColumnOffset>
+    //        <WriteColumnNames>true</WriteColumnNames>
+//        </Template>
 
-
-
+        Workbook wb;
+        InputStream inputStream = null;
         MetadataTableModel table = (MetadataTableModel) tableModel;
-        Workbook wb = new HSSFWorkbook();
-        Sheet sheet = wb.createSheet("Sheet1");
+        Sheet sheet;
+
+        int rowOffset = 0;
+        int columnOffset = 0;
+        boolean writeColumns = true;
+
+        if(templateSettings.keySet().size() > 0){
+            try {
+                inputStream = new ClassPathResource(templateSettings.get("filename")).getInputStream();
+                wb = new HSSFWorkbook(inputStream);
+                sheet = wb.getSheetAt(0);
+                if(templateSettings.containsKey("RowOffset")){
+                    rowOffset = Integer.parseInt(templateSettings.get("RowOffset"));
+                }
+                if(templateSettings.containsKey("ColumnOffset")){
+                    columnOffset = Integer.parseInt(templateSettings.get("ColumnOffset"));
+                }
+                if(templateSettings.containsKey("WriteColumns")){
+                    writeColumns = Boolean.parseBoolean(templateSettings.get("WriteColumns"));
+                }
+            } catch ( Exception e ) {
+                throw new ExporterException( "Error at loading TemplateFile", e );
+            }
+        }else{
+            wb = new HSSFWorkbook();
+            sheet = wb.createSheet("Sheet1");
+        }
 
         DataFormat cf = wb.createDataFormat();
         euroCellStyle = wb.createCellStyle();
@@ -72,25 +105,28 @@ public class CXlsExporter extends AbstractExporter
         percentCellStyle = wb.createCellStyle();
         percentCellStyle.setDataFormat(cf.getFormat("0.00%"));
         dateCellStyle = wb.createCellStyle();
-        dateCellStyle.setDataFormat(cf.getFormat("dd.MM.yyyy"));
+        dateCellStyle.setDataFormat(cf.getFormat("dd.mm.yyyy"));
         datemonthCellStyle = wb.createCellStyle();
-        datemonthCellStyle.setDataFormat(cf.getFormat("MM.yyyy"));
+        datemonthCellStyle.setDataFormat(cf.getFormat("mm.yyyy"));
         dateyearCellStyle = wb.createCellStyle();
         dateyearCellStyle.setDataFormat(cf.getFormat("yyyy"));
         dateAndTimeCellStyle = wb.createCellStyle();
-        dateAndTimeCellStyle.setDataFormat(cf.getFormat("hh:mm:ss dd.MM.yyyy"));
+        dateAndTimeCellStyle.setDataFormat(cf.getFormat("dd.mm.yyyy hh:mm:ss"));
 
-        Row header = sheet.createRow(0);
-        for(int col=0;col<table.getColumnCount();col++){
-            Cell cell = header.createCell(col);
-            cell.setCellValue(table.getColumnName(col));
+        if(writeColumns){
+            Row header = sheet.createRow(0+rowOffset);
+            for(int col=0;col<table.getColumnCount();col++){
+                Cell cell = header.createCell(col+columnOffset);
+                cell.setCellValue(table.getColumnName(col));
+            }
+            rowOffset++;
         }
 
 
         for(int r=0;r<table.getRowCount();r++){
-            Row row = sheet.createRow(r+1);
+            Row row = sheet.createRow(r+rowOffset);
             for(int col=0;col<table.getColumnCount();col++){
-                Cell cell = row.createCell(col);
+                Cell cell = row.createCell(col+columnOffset);
                 setConvertedValue(cell,r,col,table);
             }
         }
@@ -98,6 +134,14 @@ public class CXlsExporter extends AbstractExporter
             wb.write(out);
         } catch ( IOException e ) {
             throw new ExporterException( "IO Exception converting to utf-8", e );
+        } finally{
+            if(templateSettings.keySet().size() > 0){
+                try {
+                    inputStream.close();
+                } catch ( Exception e ) {
+                    throw new ExporterException( "Error at closing TemplateFile", e );
+                }
+            }
         }
     }
   private void setConvertedValue(Cell cell,int row,int col,MetadataTableModel table){
@@ -106,14 +150,16 @@ public class CXlsExporter extends AbstractExporter
             Object o = table.getValueAt(row, col);
             if(o instanceof Number){
                 cell.setCellValue(Double.parseDouble(o.toString()));
-            }else if(o instanceof String){
-                cell.setCellValue((String) o);
+//            }else if(o instanceof String){
+//                cell.setCellValue((String) o);
             }else if(o instanceof Boolean){
                 cell.setCellValue((Boolean) o);
             }else if(o instanceof Date){
                 cell.setCellValue((Date)o);
             }else if(o instanceof Calendar){
                 cell.setCellValue((Calendar)o);
+            }else{
+                cell.setCellValue((String) o);
             }
         }else{
             String clazz = table.getCustomType(col).toUpperCase();
@@ -167,10 +213,22 @@ public class CXlsExporter extends AbstractExporter
                 }else{
                     cell.setCellValue(table.getValueAt(row, col).toString());
                 }
+            }else{
+                if(table.getValueAt(row, col) != null)
+                    cell.setCellValue(table.getValueAt(row, col).toString());
+                else
+                    cell.setCellValue("");
             }
         }
     }catch(Exception e){
-        cell.setCellType(Cell.CELL_TYPE_ERROR);
+        try{
+            if(table.getValueAt(row, col) != null)
+                cell.setCellValue(table.getValueAt(row, col).toString());
+            else
+                cell.setCellValue("");
+        }catch(Exception e2){
+            cell.setCellType(Cell.CELL_TYPE_ERROR);
+        }
     }
   }
 

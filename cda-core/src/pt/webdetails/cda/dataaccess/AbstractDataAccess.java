@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.dom4j.Node;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.cache.DataAccessCacheElementParser;
 import pt.webdetails.cda.cache.IQueryCache;
@@ -57,7 +58,7 @@ public abstract class AbstractDataAccess implements DataAccess {
   private ArrayList<ColumnDefinition> columnDefinitions;
   protected HashMap<Integer, ColumnDefinition> columnDefinitionIndexMap;
   private DataAccessCacheElementParser cdaCacheParser;
-//    private HashMap<Integer, String> customColumnType;
+  public HashMap<String, String> templateSettings;
 
   private static final String PARAM_ITERATOR_BEGIN = "$FOREACH(";
   private static final String PARAM_ITERATOR_END = ")";
@@ -76,6 +77,7 @@ public abstract class AbstractDataAccess implements DataAccess {
     outputs.put( 1, new ArrayList<Integer>() );
     outputMode = new HashMap<Integer, OutputMode>();
     outputMode.put( 1, OutputMode.INCLUDE );
+    templateSettings = new HashMap<String, String>();
 //      customColumnType = new HashMap<Integer, String>();
 
     parseOptions( element );
@@ -98,6 +100,7 @@ public abstract class AbstractDataAccess implements DataAccess {
     outputs.put( 1, new ArrayList<Integer>() );
     outputMode = new HashMap<Integer, OutputMode>();
     outputMode.put( 1, OutputMode.INCLUDE );
+      templateSettings = new HashMap<String, String>();
 //      customColumnType = new HashMap<Integer, String>();
   }
 
@@ -110,6 +113,9 @@ public abstract class AbstractDataAccess implements DataAccess {
     this.parameters.addAll( params );
   }
 
+    public HashMap<String, String> getTemplateSettings(){
+        return templateSettings;
+    }
 
   public abstract String getType();
 
@@ -143,6 +149,30 @@ public abstract class AbstractDataAccess implements DataAccess {
     for ( final Element p : parameterNodes ) {
       parameters.add( new Parameter( p ) );
     }
+
+//        <Template file="testTemplate.xls">
+//        <RowOffset>3</RowOffset>
+//        <ColumnOffset>2</ColumnOffset>
+//        <WriteColumnNames>true</WriteColumnNames>
+//        </Template>
+
+      // Parse Template
+//      @SuppressWarnings( "unchecked" )
+      if(element.selectNodes("Template").size() >0){
+          templateSettings.put("filename", ((Element) element.selectNodes("Template").get(0)).attributeValue("file"));
+
+
+          for ( final Object p : ((Element) element.selectNodes( "Template" ).get(0)).elements()) {
+              templateSettings.put(((Element)p).getName(), ((Element)p).getText());
+          }
+      }
+
+
+//      final Node templateNode = element.selectSingleNode( "Template" );
+//
+//      for ( final Element p : parameterNodes ) {
+//          parameters.add( new Parameter( p ) );
+//      }
 
     // Parse outputs
     @SuppressWarnings( "unchecked" )
