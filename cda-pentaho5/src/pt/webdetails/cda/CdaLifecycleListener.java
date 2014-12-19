@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPluginLifecycleListener;
 import org.pentaho.platform.api.engine.PluginLifecycleException;
 
-import org.pentaho.reporting.engine.classic.core.metadata.MaturityLevel;
 import pt.webdetails.cda.utils.mondrian.CompactBandedMDXDataFactory;
 import pt.webdetails.cpf.PentahoPluginEnvironment;
 import pt.webdetails.cpf.PluginEnvironment;
@@ -41,7 +40,7 @@ public class CdaLifecycleListener extends SimpleLifeCycleListener implements IPl
 
       Class<CompactBandedMDXDataFactory> factoryClass = CompactBandedMDXDataFactory.class; // CHANGE ME!
       DefaultDataFactoryMetaData dmd = new DefaultDataFactoryMetaData(
-          factoryClass.getName(), "", "", true, false, true, false, false, false, false, MaturityLevel.Production,
+          factoryClass.getName(), "", "", true, false, true, false, false, false, false, false,
           new DefaultDataFactoryCore(), 0 );
       DataFactoryRegistry.getInstance().register( dmd );
     } catch ( Exception e ) {
