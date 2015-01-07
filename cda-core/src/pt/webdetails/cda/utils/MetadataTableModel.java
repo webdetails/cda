@@ -31,20 +31,20 @@ public class MetadataTableModel extends TypedTableModel
   private String[] customTypes;
 
 
-    public MetadataTableModel(String[] colNames, Class<?>[] colTypes, int rowCount)
-    {
-        this(colNames, colTypes, new String[ 0 ], rowCount);
-        metadata = new HashMap<String, String>();
-    }
+  public MetadataTableModel(String[] colNames, Class<?>[] colTypes, int rowCount)
+  {
+    this(colNames, colTypes, new String[ 0 ], rowCount);
+    metadata = new HashMap<String, String>();
+  }
 
 
-    public MetadataTableModel(String[] colNames, Class<?>[] colTypes, int rowCount, Map<String, String> metadata)
-    {
-        this(colNames, colTypes, new String[ 0 ], rowCount);
-        this.metadata.putAll(metadata);
-    }
+  public MetadataTableModel(String[] colNames, Class<?>[] colTypes, int rowCount, Map<String, String> metadata)
+  {
+    this(colNames, colTypes, new String[ 0 ], rowCount);
+    this.metadata.putAll(metadata);
+  }
 
-  public MetadataTableModel(String[] colNames, Class<?>[] colTypes,String[] colCustomTypes, int rowCount)
+  public MetadataTableModel(String[] colNames, Class<?>[] colTypes, String[] colCustomTypes, int rowCount)
   {
     super(colNames, colTypes, rowCount);
     customTypes = colCustomTypes;
@@ -52,13 +52,13 @@ public class MetadataTableModel extends TypedTableModel
   }
 
 
-  public MetadataTableModel(String[] colNames, Class<?>[] colTypes,String[] colCustomTypes, int rowCount, Map<String, String> metadata)
+  public MetadataTableModel(String[] colNames, Class<?>[] colTypes, String[] colCustomTypes, int rowCount, Map<String, String> metadata)
   {
     this(colNames, colTypes,colCustomTypes, rowCount);
     this.metadata.putAll(metadata);
   }
 
-    public java.lang.String getCustomType(int i)
+  public java.lang.String getCustomType(int i)
     {
         return customTypes[i];
     }
@@ -68,18 +68,15 @@ public class MetadataTableModel extends TypedTableModel
     metadata.put(key, value);
   }
 
-
   public void setMetadata(String key, Object value)
   {
     metadata.put(key, value.toString());
   }
 
-
   public String getMetadata(String key)
   {
     return metadata.get(key);
   }
-
 
   public Map<String, String> getAllMetadata()
   {

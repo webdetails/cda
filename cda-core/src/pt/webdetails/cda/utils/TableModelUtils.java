@@ -114,12 +114,13 @@ public class TableModelUtils {
       colCustomTypes[ i ] = "";
     }
     for(ColumnDefinition c : dataAccess.getColumnDefinitions()){
+      //System.out.println("DEBUG-CWO: colCustomTypes: " + c.getCustomType() + "; index: " + c.getIndex() + " / " + colCustomTypes.length);
         if(c.getIndex() < colCustomTypes.length)
             colCustomTypes[c.getIndex()] = c.getCustomType();
     }
 
     final int rowCount = table.getRowCount();
-    MetadataTableModel result = new MetadataTableModel( colNames, colTypes,colCustomTypes, rowCount );
+    MetadataTableModel result = new MetadataTableModel( colNames, colTypes, colCustomTypes, rowCount );
     result.setMetadata( "totalRows", rowCount );
     for ( int r = 0; r < rowCount; r++ ) {
       for ( int j = 0; j < table.getColumnCount(); j++ ) {
@@ -408,7 +409,7 @@ public class TableModelUtils {
     // We will believe the data is correct - no type checking
 
     int colCountA = tableModelA.getColumnCount(),
-      colCountB = tableModelB.getColumnCount();
+    colCountB = tableModelB.getColumnCount();
     boolean usingA = colCountA > colCountB;
     int colCount = usingA ? colCountA : colCountB;
     TableModel referenceTable = ( usingA ? tableModelA : tableModelB );
@@ -464,11 +465,11 @@ public class TableModelUtils {
     for ( int i = 0; i < t.getColumnCount(); i++ ) {
       colTypes[ i ] = t.getColumnClass( i );
       colNames[ i ] = t.getColumnName( i );
-        colCustomTypes[ i ] = t.getCustomType( i );
+      colCustomTypes[ i ] = t.getCustomType( i );
     }
 
     final MetadataTableModel resultTableModel =
-      new MetadataTableModel( colNames, colTypes,colCustomTypes, rowCount, t.getAllMetadata() );
+      new MetadataTableModel( colNames, colTypes, colCustomTypes, rowCount, t.getAllMetadata() );
     resultTableModel.setMetadata( "pageSize", queryOptions.getPageSize() );
     resultTableModel.setMetadata( "pageStart", queryOptions.getPageStart() );
 
