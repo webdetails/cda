@@ -69,11 +69,17 @@ public class CXlsExporter extends AbstractExporter
         MetadataTableModel table = (MetadataTableModel) tableModel;
         Sheet sheet;
 
+        int ignoreFirstXRows = 0;
         int rowOffset = 0;
         int columnOffset = 0;
         boolean writeColumns = true;
+        boolean templateFound = false;
+
+        String csvSeperator = "";
+        int numberOfHeaderRows = 0;
 
         if(templateSettings.keySet().size() > 0){
+            templateFound = true;
             try {
                 inputStream = new ClassPathResource(templateSettings.get("filename")).getInputStream();
                 wb = new HSSFWorkbook(inputStream);
@@ -84,8 +90,14 @@ public class CXlsExporter extends AbstractExporter
                 if(templateSettings.containsKey("ColumnOffset")){
                     columnOffset = Integer.parseInt(templateSettings.get("ColumnOffset"));
                 }
-                if(templateSettings.containsKey("WriteColumns")){
-                    writeColumns = Boolean.parseBoolean(templateSettings.get("WriteColumns"));
+                if(templateSettings.containsKey("WriteColumnNames")){
+                    writeColumns = Boolean.parseBoolean(templateSettings.get("WriteColumnNames"));
+                }
+                if(templateSettings.containsKey("CsvSeperator")){
+                    csvSeperator = "\\" + templateSettings.get("CsvSeperator").toString();
+                }
+                if(templateSettings.containsKey("WriteFirstXRowsAsHeader")){
+                    numberOfHeaderRows = Integer.parseInt(templateSettings.get("WriteFirstXRowsAsHeader"));
                 }
             } catch ( Exception e ) {
                 throw new ExporterException( "Error at loading TemplateFile", e );
@@ -113,21 +125,84 @@ public class CXlsExporter extends AbstractExporter
         dateAndTimeCellStyle = wb.createCellStyle();
         dateAndTimeCellStyle.setDataFormat(cf.getFormat("dd.mm.yyyy hh:mm:ss"));
 
+
+        boolean interpretCsv = !csvSeperator.equals("");
+
+
         if(writeColumns){
-            Row header = sheet.createRow(0+rowOffset);
-            for(int col=0;col<table.getColumnCount();col++){
-                Cell cell = header.createCell(col+columnOffset);
-                cell.setCellValue(table.getColumnName(col));
+            CellStyle headerCellStyle = null;
+            if(templateFound)
+                headerCellStyle = sheet.getRow(rowOffset).getCell(columnOffset).getCellStyle();
+            if(numberOfHeaderRows > 0){
+                ignoreFirstXRows = numberOfHeaderRows;
+                for(int i=0;i<numberOfHeaderRows;i++){
+
+                    String[] seperatedRow = new String[0];
+                    int colCount=table.getColumnCount();
+                    if(interpretCsv){
+                        seperatedRow = table.getValueAt(i, 0).toString().split(csvSeperator,-1);
+                        colCount = seperatedRow.length;
+                    }
+                    Row header = sheet.createRow(rowOffset);
+                    for(int col=0;col<colCount;col++){
+                        Cell cell = header.createCell(col+columnOffset);
+                        if(templateFound)
+                            cell.setCellStyle(headerCellStyle);
+                        if(interpretCsv){
+                            cell.setCellValue(seperatedRow[col]);
+                        }else{
+                            cell.setCellValue(table.getColumnName(col));
+                        }
+                    }
+                    rowOffset++;
+                }
+            }else{
+                Row header = sheet.createRow(rowOffset);
+                for(int col=0;col<table.getColumnCount();col++){
+                    Cell cell = header.createCell(col+columnOffset);
+                    if(templateFound)
+                        cell.setCellStyle(headerCellStyle);
+                    cell.setCellValue(table.getColumnName(col));
+                }
+                rowOffset++;
             }
-            rowOffset++;
+            sheet.createFreezePane(0, rowOffset);
+
         }
 
 
-        for(int r=0;r<table.getRowCount();r++){
-            Row row = sheet.createRow(r+rowOffset);
-            for(int col=0;col<table.getColumnCount();col++){
+        for(int r=ignoreFirstXRows;r<table.getRowCount();r++){
+
+            CellStyle rowCellStyle = null;
+
+            if(templateFound)
+                rowCellStyle = sheet.getRow(rowOffset).getCell(columnOffset).getCellStyle();
+
+            Row row = sheet.createRow(r+rowOffset-ignoreFirstXRows);
+
+            int colCount;
+
+            String[] seperatedRow = new String[0];
+            if(interpretCsv){
+                seperatedRow = table.getValueAt(r, 0).toString().split(csvSeperator);
+                colCount = seperatedRow.length;
+            }else{
+                colCount = table.getColumnCount();
+            }
+
+            for(int col=0;col<colCount;col++){
                 Cell cell = row.createCell(col+columnOffset);
-                setConvertedValue(cell,r,col,table);
+                if(templateFound)
+                    cell.setCellStyle(rowCellStyle);
+                if(!interpretCsv){
+                    try{
+                        setConvertedValue(cell, table.getValueAt(r, col),col,table);
+                    }catch(Exception e){
+                        setConvertedValue(cell, Cell.CELL_TYPE_ERROR,col,table);
+                    }
+                }else{
+                    setConvertedValue(cell,seperatedRow[col],col,table);
+                }
             }
         }
         try {
@@ -144,86 +219,89 @@ public class CXlsExporter extends AbstractExporter
             }
         }
     }
-  private void setConvertedValue(Cell cell,int row,int col,MetadataTableModel table){
+
+
+
+
+
+
+  private void setConvertedValue(Cell cell,Object obj,int col,MetadataTableModel table){
     try{
         if(table.getCustomType(col).equals("")){
-            Object o = table.getValueAt(row, col);
-            if(o instanceof Number){
-                cell.setCellValue(Double.parseDouble(o.toString()));
-//            }else if(o instanceof String){
-//                cell.setCellValue((String) o);
-            }else if(o instanceof Boolean){
-                cell.setCellValue((Boolean) o);
-            }else if(o instanceof Date){
-                cell.setCellValue((Date)o);
-            }else if(o instanceof Calendar){
-                cell.setCellValue((Calendar)o);
+            if(obj instanceof Number){
+                cell.setCellValue(Double.parseDouble(obj.toString()));
+            }else if(obj instanceof Boolean){
+                cell.setCellValue((Boolean) obj);
+            }else if(obj instanceof Date){
+                cell.setCellValue((Date)obj);
+            }else if(obj instanceof Calendar){
+                cell.setCellValue((Calendar)obj);
             }else{
-                cell.setCellValue((String) o);
+                cell.setCellValue((String) obj);
             }
         }else{
             String clazz = table.getCustomType(col).toUpperCase();
             if(clazz.equals("EURO")){
                 cell.setCellStyle(euroCellStyle);
-                cell.setCellValue(Double.parseDouble(table.getValueAt(row, col).toString()));
+                cell.setCellValue(Double.parseDouble(obj.toString()));
             }else if(clazz.equals("DOUBLE")){
                 cell.setCellStyle(doubleCellStyle);
-                cell.setCellValue(Double.parseDouble(table.getValueAt(row, col).toString()));
+                cell.setCellValue(Double.parseDouble(obj.toString()));
             }else if(clazz.equals("INTEGER")){
                 cell.setCellStyle(integerCellStyle);
-                cell.setCellValue(Double.parseDouble(table.getValueAt(row, col).toString()));
+                cell.setCellValue(Double.parseDouble(obj.toString()));
             }else if(clazz.equals("STRING")){
-                cell.setCellValue(table.getValueAt(row, col).toString());
+                cell.setCellValue(obj.toString());
             }else if(clazz.equals("PERCENT")){
                 cell.setCellStyle(percentCellStyle);
-                cell.setCellValue(Double.parseDouble(table.getValueAt(row, col).toString()));
+                cell.setCellValue(Double.parseDouble(obj.toString()));
             }else if(clazz.equals("DATE")){
                 cell.setCellStyle(dateCellStyle);
-                if(table.getValueAt(row, col) instanceof Date){
-                    cell.setCellValue((Date)table.getValueAt(row, col));
-                }else if(table.getValueAt(row, col) instanceof Calendar){
-                    cell.setCellValue((Calendar)table.getValueAt(row, col));
+                if(obj instanceof Date){
+                    cell.setCellValue((Date)obj);
+                }else if(obj instanceof Calendar){
+                    cell.setCellValue((Calendar)obj);
                 }else{
-                    cell.setCellValue(table.getValueAt(row, col).toString());
+                    cell.setCellValue(obj.toString());
                 }
             } else if(clazz.equals("DATEMONTH")){
                 cell.setCellStyle(datemonthCellStyle);
-                if(table.getValueAt(row, col) instanceof Date){
-                    cell.setCellValue((Date)table.getValueAt(row, col));
-                }else if(table.getValueAt(row, col) instanceof Calendar){
-                    cell.setCellValue((Calendar)table.getValueAt(row, col));
+                if(obj instanceof Date){
+                    cell.setCellValue((Date)obj);
+                }else if(obj instanceof Calendar){
+                    cell.setCellValue((Calendar)obj);
                 }else{
-                    cell.setCellValue(table.getValueAt(row, col).toString());
+                    cell.setCellValue(obj.toString());
                 }
             }else if(clazz.equals("DATEYEAR")){
                 cell.setCellStyle(dateyearCellStyle);
-                if(table.getValueAt(row, col) instanceof Date){
-                    cell.setCellValue((Date)table.getValueAt(row, col));
-                }else if(table.getValueAt(row, col) instanceof Calendar){
-                    cell.setCellValue((Calendar)table.getValueAt(row, col));
+                if(obj instanceof Date){
+                    cell.setCellValue((Date)obj);
+                }else if(obj instanceof Calendar){
+                    cell.setCellValue((Calendar)obj);
                 }else{
-                    cell.setCellValue(table.getValueAt(row, col).toString());
+                    cell.setCellValue(obj.toString());
                 }
             }else if(clazz.equals("DATEANDTIME")){
                 cell.setCellStyle(dateAndTimeCellStyle);
-                if(table.getValueAt(row, col) instanceof Date){
-                    cell.setCellValue((Date)table.getValueAt(row, col));
-                }else if(table.getValueAt(row, col) instanceof Calendar){
-                    cell.setCellValue((Calendar)table.getValueAt(row, col));
+                if(obj instanceof Date){
+                    cell.setCellValue((Date)obj);
+                }else if(obj instanceof Calendar){
+                    cell.setCellValue((Calendar)obj);
                 }else{
-                    cell.setCellValue(table.getValueAt(row, col).toString());
+                    cell.setCellValue(obj.toString());
                 }
             }else{
-                if(table.getValueAt(row, col) != null)
-                    cell.setCellValue(table.getValueAt(row, col).toString());
+                if(obj != null)
+                    cell.setCellValue(obj.toString());
                 else
                     cell.setCellValue("");
             }
         }
     }catch(Exception e){
         try{
-            if(table.getValueAt(row, col) != null)
-                cell.setCellValue(table.getValueAt(row, col).toString());
+            if(obj != null)
+                cell.setCellValue(obj.toString());
             else
                 cell.setCellValue("");
         }catch(Exception e2){
