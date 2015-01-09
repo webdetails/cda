@@ -64,6 +64,38 @@ public class CsvXslFromSQLTest extends CdaTestCase {
     assertEquals( countXLSColumns( fileName ), 2 );
   }
 
+  public void testCsvXlsFromSQLExportWithElevenParameters() throws Exception {
+    //[CDA-112] - This test makes sure that it is possible to export with more than 10 parameters
+    final CdaSettings cdaSettings = parseSettingsFile( "sample-CsvXslFromSQLWithElevenParametersTest.cda" );
+    logger.debug( "Doing query on Cda - Initializing CdaEngine" );
+    final CdaEngine engine = CdaEngine.getInstance();
+    final int numberOfParameters = 11;
+
+    QueryOptions queryOptions = new QueryOptions();
+    queryOptions.setDataAccessId( "Ds2" );
+    for ( int i = 1; i < numberOfParameters; i++ ) {
+      queryOptions.setParameter( "parameter" + i, "1" );
+    }
+
+    String fileName = System.getProperty( "java.io.tmpdir" ) + File.separator + "TestCSV.csv";
+    OutputStream out = new FileOutputStream( fileName );
+    logger.info( "Doing streaming csv export" );
+    queryOptions.setOutputType( "csv" );
+    queryOptions.addSetting( CsvExporter.CSV_SEPARATOR_SETTING, "," );
+    // (ExportedTableQueryResult)
+    engine.doExportQuery( cdaSettings, queryOptions ).writeOut( out );
+
+    assertEquals( countCSVColumns( fileName ), 2 );
+
+    fileName = System.getProperty( "java.io.tmpdir" ) + File.separator + "TestXLS.xls";
+    out = new FileOutputStream( fileName );
+    logger.info( "Doing streaming xls export" );
+    queryOptions.setOutputType( "xls" );
+    engine.doExportQuery( cdaSettings, queryOptions ).writeOut( out );
+
+    assertEquals( countXLSColumns( fileName ), 2 );
+  }
+
   public int countXLSColumns( String filename ) throws IOException {
 
     File f = new File( filename );

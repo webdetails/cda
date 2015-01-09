@@ -28,7 +28,6 @@ import org.pentaho.di.trans.steps.tableinput.TableInputMeta;
 import org.pentaho.reporting.engine.classic.core.DataRow;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cda.dataaccess.SqlDataAccess;
 import pt.webdetails.cda.dataaccess.kettle.DataAccessKettleAdapter;
 import pt.webdetails.cda.dataaccess.kettle.KettleAdapterException;
 import pt.webdetails.cda.utils.kettle.RowCountListener;
@@ -102,12 +101,7 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
       transConfig.addConfigEntry( DynamicTransConfig.EntryType.STEP,
         dataAccessStepMeta.getName(), dataAccessStepMeta.getXML() );
 
-      ExtendedDynamicTransMetaConfig transMetaConfig = new ExtendedDynamicTransMetaConfig(
-        DynamicTransMetaConfig.Type.EMPTY, "Streaming Exporter",
-        null, null, dataAccess.getDatabases() );
-
-      String[] s = transMetaConfig.getTransMeta( Variables.getADefaultVariableSpace() ).
-        getStepFields( dataAccessStepMeta ).getFieldNames();
+      String[] s =  getStepFields(dataAccess, dataAccessStepMeta, parameterNames);
 
       dataAccess.getParameterNames();
 
@@ -172,7 +166,7 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
       RowCountListener countListener = new RowCountListener();
       transConfig.addOutput( exportStepMeta.getName(), countListener );
 
-      transMetaConfig = new ExtendedDynamicTransMetaConfig(
+      ExtendedDynamicTransMetaConfig transMetaConfig = new ExtendedDynamicTransMetaConfig(
         DynamicTransMetaConfig.Type.EMPTY, "Streaming Exporter",
         null, null, dataAccess.getDatabases() );
 
@@ -195,6 +189,39 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
     } catch ( Exception e ) {
       throw new ExporterException( "Unknown exception during " + exporter.getType() + " query ", e );
     }
+  }
+
+  private String[] getStepFields(DataAccessKettleAdapter dataAccess, StepMeta dataAccessStepMeta,
+                                 String[] parameterNames) throws KettleAdapterException, KettleException{
+    ExtendedDynamicTransMetaConfig transMetaConfig = new ExtendedDynamicTransMetaConfig(
+        DynamicTransMetaConfig.Type.EMPTY, "Streaming Exporter",
+        null, null, dataAccess.getDatabases() );
+    InjectorMeta injectorMeta = new InjectorMeta();
+    //In order to correctly fetch the fields, we need to make sure we insert the parameters on to this InjectorMeta
+    insertValuesIntoInjectorMeta( injectorMeta, parameterNames);
+
+    StepMeta injectorStepMeta = new StepMeta( "Input", injectorMeta);
+
+    TransMeta extTransMeta = transMetaConfig.getTransMeta( Variables.getADefaultVariableSpace() );
+    extTransMeta.addStep(injectorStepMeta);
+
+    return extTransMeta.
+        getStepFields( dataAccessStepMeta ).getFieldNames();
+  }
+
+  private void insertValuesIntoInjectorMeta(InjectorMeta injectorMeta, String[] parameterNames) {
+    int size = parameterNames.length;
+    //[CDA-112] - Making sure we can handle more than ten columns means we need to specify arrays for
+    //type, length and precision, the content of the arrays won't actually matter at this point, we just need them to be
+    //filled, so enough space can be allocated to the paramData Object array
+    int[] tlp = new int[size];
+    for (int i = 0; i < size; i++){
+      tlp[i] = 0;
+    }
+    injectorMeta.setFieldname(parameterNames);
+    injectorMeta.setType(tlp);
+    injectorMeta.setLength(tlp);
+    injectorMeta.setPrecision(tlp);
   }
 
   public void startRowProduction() {
