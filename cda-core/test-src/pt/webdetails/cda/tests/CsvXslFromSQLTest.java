@@ -19,7 +19,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.exporter.CsvExporter;
-import pt.webdetails.cda.exporter.ExportedQueryResult;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 
