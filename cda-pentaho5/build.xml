@@ -54,7 +54,7 @@
             value="../cda-pentaho-base/src"
             description="shared source for both pentaho layers"/>
   <!-- Build the project.revision property -->
-  <property name="distribution.version" value="${project.stage}-${project.version}"/>
+  <property name="distribution.version" value="${project.version}"/>
 
 
   <echo>I'm here: distribution.version = ${distribution.version}</echo>
