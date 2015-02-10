@@ -30,8 +30,8 @@ public class PathRelativizer {
    * @return targetPath relative to basePath
    */
   public static String relativizePath( String basePath, String targetPath ) {
-    basePath = FilenameUtils.normalizeNoEndSeparator( basePath );
-    targetPath = FilenameUtils.normalizeNoEndSeparator( targetPath );
+    basePath = FilenameUtils.separatorsToUnix( FilenameUtils.normalizeNoEndSeparator( basePath ) );
+    targetPath = FilenameUtils.separatorsToUnix( FilenameUtils.normalizeNoEndSeparator( targetPath ) );
 
     String[] basePathArray = basePath.length() > 1 ? basePath.split( "/" ) : new String[] { "/" };
     String[] targetPathArray = targetPath.length() > 1 ? targetPath.split( "/" ) : new String[] { "/" };
