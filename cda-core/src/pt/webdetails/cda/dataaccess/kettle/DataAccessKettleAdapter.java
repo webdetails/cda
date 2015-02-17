@@ -64,4 +64,8 @@ public interface DataAccessKettleAdapter {
 
   public ArrayList<Integer> getDataAccessOutputs() throws KettleAdapterException;
 
+  public boolean hasCalculatedColumns();
+
+  public StepMeta getFormulaStepMeta(String name);
+
 }
