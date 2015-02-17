@@ -78,6 +78,7 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
     try {
 
       boolean hasFilter = false;
+      boolean hasCalculatedColumns = dataAccess.hasCalculatedColumns();
       StepMeta filterStepMeta = null;
 
       DynamicTransConfig transConfig = new DynamicTransConfig();
@@ -85,6 +86,8 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
       StepMeta dataAccessStepMeta = dataAccess.getKettleStepMeta( "DataAccess" );
 
       StepMeta injectorStepMeta = null;
+
+      StepMeta formulaStepMeta = null;
 
       String[] parameterNames = dataAccess.getParameterNames();
       DataRow parameters = dataAccess.getParameters();
@@ -103,8 +106,6 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
 
       String[] s = getStepFields( dataAccess, dataAccessStepMeta, parameterNames );
 
-      dataAccess.getParameterNames();
-
       if ( dataAccess.getDataAccessOutputs().size() > 0 ) {
         hasFilter = true;
         filterStepMeta = dataAccess.getFilterStepMeta( "Filter", s /*, sqlDataAccess */ );
@@ -116,20 +117,39 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
       transConfig.addConfigEntry( DynamicTransConfig.EntryType.STEP,
           exportStepMeta.getName(), exportStepMeta.getXML() );
 
+      if ( hasCalculatedColumns ) {
+        formulaStepMeta = dataAccess.getFormulaStepMeta( "Formula" );
+        transConfig.addConfigEntry( DynamicTransConfig.EntryType.STEP, formulaStepMeta.getName(),
+          formulaStepMeta.getXML() );
+      }
+
       if ( parameterNames.length > 0 ) {
         transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
             injectorStepMeta.getName(), dataAccessStepMeta.getName() );
       }
 
       if ( hasFilter == true ) {
-        transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
+        if ( hasCalculatedColumns ) {
+          transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
+            dataAccessStepMeta.getName(), formulaStepMeta.getName() );
+          transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
+            formulaStepMeta.getName(), filterStepMeta.getName() );
+        } else {
+          transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
             dataAccessStepMeta.getName(), filterStepMeta.getName() );
-
+        }
         transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
             filterStepMeta.getName(), exportStepMeta.getName() );
       } else {
-        transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
+        if ( hasCalculatedColumns ) {
+          transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
+            dataAccessStepMeta.getName(), formulaStepMeta.getName() );
+          transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
+            formulaStepMeta.getName(), exportStepMeta.getName() );
+        } else {
+          transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
             dataAccessStepMeta.getName(), exportStepMeta.getName() );
+        }
       }
 
       // Prepare parameters as data of the injector step:

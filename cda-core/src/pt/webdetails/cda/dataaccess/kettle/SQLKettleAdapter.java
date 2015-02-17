@@ -16,6 +16,8 @@ package pt.webdetails.cda.dataaccess.kettle;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.database.GenericDatabaseMeta;
 import org.pentaho.di.trans.step.StepMeta;
+import org.pentaho.di.trans.steps.formula.FormulaMeta;
+import org.pentaho.di.trans.steps.formula.FormulaMetaFunction;
 import org.pentaho.di.trans.steps.selectvalues.SelectValuesMeta;
 import org.pentaho.di.trans.steps.tableinput.TableInputMeta;
 import org.pentaho.reporting.engine.classic.core.DataRow;
@@ -24,12 +26,14 @@ import pt.webdetails.cda.connections.sql.JdbcConnection;
 import pt.webdetails.cda.connections.sql.JdbcConnectionInfo;
 import pt.webdetails.cda.connections.sql.JndiConnection;
 import pt.webdetails.cda.connections.sql.SqlConnection;
+import pt.webdetails.cda.dataaccess.ColumnDefinition;
 import pt.webdetails.cda.dataaccess.Parameter;
 import pt.webdetails.cda.dataaccess.SqlDataAccess;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Adapts from SQL data access to Kettle "Table Input" step
@@ -56,7 +60,17 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
       SelectValuesMeta selectValuesMeta = new SelectValuesMeta();
       selectValuesMeta.setDefault();
       ArrayList<String> fields = new ArrayList<String>();
-      dataAccess.getOutputs();
+      List<ColumnDefinition> calculatedColumns = dataAccess.getCalculatedColumns();
+      if ( calculatedColumns.size() > 0) {
+        List<String> extendedColumns = new ArrayList<String>();
+        for (String s : columns) {
+          extendedColumns.add( s );
+        }
+        for (ColumnDefinition col : calculatedColumns) {
+          extendedColumns.add( col.getName() );
+        }
+        columns = extendedColumns.toArray(new String[extendedColumns.size()]);
+      }
       ArrayList<Integer> outputs = dataAccess.getOutputs();
       for ( int n = 0; n < outputs.size(); n++ ) {
         if ( outputs.get( n ) > columns.length - 1 ) {
@@ -163,5 +177,29 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
   public ArrayList<Integer> getDataAccessOutputs() throws KettleAdapterException {
     return dataAccess.getOutputs();
   }
+
+  public boolean hasCalculatedColumns(){
+    return dataAccess.getCalculatedColumns().size() > 0;
+  }
+
+  public StepMeta getFormulaStepMeta (String name) {
+    FormulaMeta formulaMeta = new FormulaMeta();
+
+    formulaMeta.setDefault();
+    List<FormulaMetaFunction> calcTypes = new ArrayList<FormulaMetaFunction>();
+    String formula;
+    for( ColumnDefinition col : dataAccess.getCalculatedColumns() ){
+      formula = col.getFormula();
+      if ( formula.indexOf( "=" ) == 0) {
+        formula = formula.substring( 1 );
+      }
+      calcTypes.add( new FormulaMetaFunction( col.getName(), formula, col.getType().ordinal(), -1, -1, "" ) );
+    }
+    formulaMeta.setFormula( calcTypes.toArray(new FormulaMetaFunction[calcTypes.size()]) );
+    StepMeta stepMeta = new StepMeta(name, formulaMeta);
+    stepMeta.setCopies( 1 );
+    return stepMeta;
+  }
+
 
 }
