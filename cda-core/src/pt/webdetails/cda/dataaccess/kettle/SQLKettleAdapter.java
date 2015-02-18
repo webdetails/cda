@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 *
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -54,6 +54,7 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
     this.queryOptions = queryOptions;
   }
 
+  @Override
   public StepMeta getFilterStepMeta( String name, String[] columns )
     throws KettleAdapterException {
     try {
@@ -61,15 +62,15 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
       selectValuesMeta.setDefault();
       ArrayList<String> fields = new ArrayList<String>();
       List<ColumnDefinition> calculatedColumns = dataAccess.getCalculatedColumns();
-      if ( calculatedColumns.size() > 0) {
+      if ( calculatedColumns.size() > 0 ) {
         List<String> extendedColumns = new ArrayList<String>();
-        for (String s : columns) {
+        for ( String s : columns ) {
           extendedColumns.add( s );
         }
-        for (ColumnDefinition col : calculatedColumns) {
+        for ( ColumnDefinition col : calculatedColumns ) {
           extendedColumns.add( col.getName() );
         }
-        columns = extendedColumns.toArray(new String[extendedColumns.size()]);
+        columns = extendedColumns.toArray( new String[ extendedColumns.size() ] );
       }
       ArrayList<Integer> outputs = dataAccess.getOutputs();
       for ( int n = 0; n < outputs.size(); n++ ) {
@@ -102,6 +103,7 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
     }
   }
 
+  @Override
   public StepMeta getKettleStepMeta( String name ) throws KettleAdapterException {
     try {
       TableInputMeta tableInputMeta = new TableInputMeta();
@@ -132,11 +134,13 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
     }
   }
 
+  @Override
   public DataRow getParameters() throws KettleAdapterException {
     prepareQuery();
     return parameters;
   }
 
+  @Override
   public String[] getParameterNames() throws KettleAdapterException {
     prepareQuery();
     return parameterNames;
@@ -156,7 +160,7 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
           connectionInfo.getUser(), connectionInfo.getPass() );
         databaseMeta.getAttributes().put( GenericDatabaseMeta.ATRRIBUTE_CUSTOM_URL, connectionInfo.getUrl() );
         databaseMeta.getAttributes().put( GenericDatabaseMeta.ATRRIBUTE_CUSTOM_DRIVER_CLASS,
-          connectionInfo.getDriver() );
+            connectionInfo.getDriver() );
       } else {
         if ( connection instanceof JndiConnection ) {
           JndiConnection jndiConnection = (JndiConnection) connection;
@@ -170,36 +174,39 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
     return databaseMeta;
   }
 
+  @Override
   public DatabaseMeta[] getDatabases() throws KettleAdapterException {
     return new DatabaseMeta[] { getDatabaseMeta() };
   }
 
+  @Override
   public ArrayList<Integer> getDataAccessOutputs() throws KettleAdapterException {
     return dataAccess.getOutputs();
   }
 
-  public boolean hasCalculatedColumns(){
+  @Override
+  public boolean hasCalculatedColumns() {
     return dataAccess.getCalculatedColumns().size() > 0;
   }
 
-  public StepMeta getFormulaStepMeta (String name) {
+  @Override
+  public StepMeta getFormulaStepMeta( String name ) {
     FormulaMeta formulaMeta = new FormulaMeta();
 
     formulaMeta.setDefault();
     List<FormulaMetaFunction> calcTypes = new ArrayList<FormulaMetaFunction>();
     String formula;
-    for( ColumnDefinition col : dataAccess.getCalculatedColumns() ){
+    for ( ColumnDefinition col : dataAccess.getCalculatedColumns() ) {
       formula = col.getFormula();
-      if ( formula.indexOf( "=" ) == 0) {
+      if ( formula.indexOf( "=" ) == 0 ) {
         formula = formula.substring( 1 );
       }
       calcTypes.add( new FormulaMetaFunction( col.getName(), formula, col.getType().ordinal(), -1, -1, "" ) );
     }
-    formulaMeta.setFormula( calcTypes.toArray(new FormulaMetaFunction[calcTypes.size()]) );
-    StepMeta stepMeta = new StepMeta(name, formulaMeta);
+    formulaMeta.setFormula( calcTypes.toArray( new FormulaMetaFunction[ calcTypes.size() ] ) );
+    StepMeta stepMeta = new StepMeta( name, formulaMeta );
     stepMeta.setCopies( 1 );
     return stepMeta;
   }
-
 
 }
