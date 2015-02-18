@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 *
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -27,8 +27,8 @@ import java.util.ArrayList;
 public interface DataAccessKettleAdapter {
 
   /**
-   * @param name          Step name
-   * @param columns       Named columns form Table Input
+   * @param name    Step name
+   * @param columns Named columns form Table Input
    * @return Kettle step definition
    * @throws KettleAdapterException
    */
@@ -61,11 +61,10 @@ public interface DataAccessKettleAdapter {
   /**
    * @return data access outputs indexes
    */
-
   public ArrayList<Integer> getDataAccessOutputs() throws KettleAdapterException;
 
   public boolean hasCalculatedColumns();
 
-  public StepMeta getFormulaStepMeta(String name);
+  public StepMeta getFormulaStepMeta( String name );
 
 }

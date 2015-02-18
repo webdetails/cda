@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 *
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -10,7 +10,6 @@
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
 * the license for the specific language governing your rights and limitations.
 */
-
 
 package pt.webdetails.cda.exporter;
 
@@ -72,6 +71,7 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
     this.dataAccess = dataAccess;
   }
 
+  @Override
   public void export( OutputStream out ) throws ExporterException {
     inputCallables.clear();
 
@@ -120,7 +120,7 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
       if ( hasCalculatedColumns ) {
         formulaStepMeta = dataAccess.getFormulaStepMeta( "Formula" );
         transConfig.addConfigEntry( DynamicTransConfig.EntryType.STEP, formulaStepMeta.getName(),
-          formulaStepMeta.getXML() );
+            formulaStepMeta.getXML() );
       }
 
       if ( parameterNames.length > 0 ) {
@@ -131,24 +131,24 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
       if ( hasFilter == true ) {
         if ( hasCalculatedColumns ) {
           transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
-            dataAccessStepMeta.getName(), formulaStepMeta.getName() );
+              dataAccessStepMeta.getName(), formulaStepMeta.getName() );
           transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
-            formulaStepMeta.getName(), filterStepMeta.getName() );
+              formulaStepMeta.getName(), filterStepMeta.getName() );
         } else {
           transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
-            dataAccessStepMeta.getName(), filterStepMeta.getName() );
+              dataAccessStepMeta.getName(), filterStepMeta.getName() );
         }
         transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
             filterStepMeta.getName(), exportStepMeta.getName() );
       } else {
         if ( hasCalculatedColumns ) {
           transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
-            dataAccessStepMeta.getName(), formulaStepMeta.getName() );
+              dataAccessStepMeta.getName(), formulaStepMeta.getName() );
           transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
-            formulaStepMeta.getName(), exportStepMeta.getName() );
+              formulaStepMeta.getName(), exportStepMeta.getName() );
         } else {
           transConfig.addConfigEntry( DynamicTransConfig.EntryType.HOP,
-            dataAccessStepMeta.getName(), exportStepMeta.getName() );
+              dataAccessStepMeta.getName(), exportStepMeta.getName() );
         }
       }
 
@@ -244,6 +244,7 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
     injectorMeta.setPrecision( tlp );
   }
 
+  @Override
   public void startRowProduction() {
     String timeoutStr = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeout" );
     long timeout = StringUtil.isEmpty( timeoutStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong( timeoutStr );
@@ -253,6 +254,7 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
     startRowProduction( timeout, unit );
   }
 
+  @Override
   public void startRowProduction( long timeout, TimeUnit unit ) {
     try {
       List<Future<Boolean>> results = executorService.invokeAll( inputCallables, timeout, unit );
@@ -266,10 +268,12 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
     }
   }
 
+  @Override
   public String getMimeType() {
     return exporter.getMimeType();
   }
 
+  @Override
   public String getAttachmentName() {
     return exporter.getAttachmentName();
   }
@@ -285,6 +289,7 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
       this.databases = databases;
     }
 
+    @Override
     protected TransMeta getTransMeta( VariableSpace variableSpace ) throws KettleException {
       TransMeta transMeta = super.getTransMeta( variableSpace );
       if ( databases != null ) {
