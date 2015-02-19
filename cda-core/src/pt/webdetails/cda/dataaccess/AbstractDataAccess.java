@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -141,7 +141,7 @@ public abstract class AbstractDataAccess implements DataAccess {
     }
 
     if ( element.attribute( "cacheDuration" ) != null && !element.attribute( "cacheDuration" ).toString()
-      .equals( "" ) ) {
+        .equals( "" ) ) {
       cacheDuration = Integer.parseInt( element.attributeValue( "cacheDuration" ) );
     }
 
@@ -201,13 +201,14 @@ public abstract class AbstractDataAccess implements DataAccess {
 
     // parse cda cache key
     final Element cdaCache = (Element) element.selectSingleNode( "Cache" );
-    if( cdaCache != null ){
+    if ( cdaCache != null ) {
       cdaCacheParser = new DataAccessCacheElementParser( cdaCache );
-      if (cdaCacheParser.parseParameters()) {
-		  setCacheEnabled(cdaCacheParser.isCacheEnabled() ); // overrides the cacheEnabled declared at DataAccess node
-		  if (cdaCacheParser.getCacheDuration() != null ){
-			  setCacheDuration( cdaCacheParser.getCacheDuration() ); // overrides the cacheDuration declared at DataAccess node
-		  }
+      if ( cdaCacheParser.parseParameters() ) {
+        setCacheEnabled( cdaCacheParser.isCacheEnabled() ); // overrides the cacheEnabled declared at DataAccess node
+        if ( cdaCacheParser.getCacheDuration() != null ) {
+          setCacheDuration(
+              cdaCacheParser.getCacheDuration() ); // overrides the cacheDuration declared at DataAccess node
+        }
       }
     }
   }
@@ -465,12 +466,12 @@ public abstract class AbstractDataAccess implements DataAccess {
    * Identify $FOREACH directives and get their iterators
    */
   private Map<String, Iterable<String>> getIterableParametersValues(
-    final QueryOptions queryOptions ) throws QueryException {
+      final QueryOptions queryOptions ) throws QueryException {
 
     //name, values
     Map<String, Iterable<String>> iterableParameters = new HashMap<String, Iterable<String>>();
     final String splitRegex =
-      PARAM_ITERATOR_ARG_SEPARATOR + "(?=([^\"]*\"[^\"]*\")*[^\"]*$)"; //ignore separator inside dquotes
+        PARAM_ITERATOR_ARG_SEPARATOR + "(?=([^\"]*\"[^\"]*\")*[^\"]*$)"; //ignore separator inside dquotes
 
     for ( Parameter param : queryOptions.getParameters() ) {
       String value = param.getStringValue();
@@ -547,7 +548,7 @@ public abstract class AbstractDataAccess implements DataAccess {
 
     //do query and get selected columns
     logger.debug( "expandParameterIteration: Doing inner query on CdaSettings [ " + cdaSettings.getId()
-      + " (" + queryOptions.getDataAccessId() + ")]" );
+        + " (" + queryOptions.getDataAccessId() + ")]" );
     try {
 
       DataAccess dataAccess = getCdaSettings().getDataAccess( queryOptions.getDataAccessId() );
@@ -675,13 +676,14 @@ public abstract class AbstractDataAccess implements DataAccess {
   }
 
   public Serializable getCacheKey() {
-	  if (cdaCacheParser != null) {
-		  if (cdaCacheParser.parseKeys()) {
-			  return mergeCacheKeys( cdaCacheParser.getCacheKey(), getSystemCacheKeys() );
-		  }
-	  }
+    if ( cdaCacheParser != null ) {
+      if ( cdaCacheParser.parseKeys() ) {
+        return mergeCacheKeys( cdaCacheParser.getCacheKey(), getSystemCacheKeys() );
+      }
+    }
     return getSystemCacheKeys();
   }
+
   public CacheKey getSystemCacheKeys() {
     Configuration config = CdaEngine.getEnvironment().getBaseConfig();
     Iterator extraCacheKeys = config.findPropertyKeys( EXTRA_CACHE_KEYS_PROPERTY );
@@ -690,7 +692,7 @@ public abstract class AbstractDataAccess implements DataAccess {
     while ( extraCacheKeys.hasNext() ) {
       key = (String) extraCacheKeys.next();
       cacheKey.addKeyValuePair( key.replace( EXTRA_CACHE_KEYS_PROPERTY + ".", "" ),
-        FormulaEvaluator.replaceFormula( config.getConfigProperty( key  ) )  );
+          FormulaEvaluator.replaceFormula( config.getConfigProperty( key ) ) );
     }
     return cacheKey;
   }
@@ -702,9 +704,9 @@ public abstract class AbstractDataAccess implements DataAccess {
    * @param cacheKey2
    * @return
    */
-  private Serializable mergeCacheKeys(CacheKey cacheKey1, CacheKey cacheKey2) {
+  private Serializable mergeCacheKeys( CacheKey cacheKey1, CacheKey cacheKey2 ) {
     ArrayList<KeyValuePair> pairs = cacheKey2.getKeyValuePairs();
-    for( KeyValuePair pair : pairs ){
+    for ( KeyValuePair pair : pairs ) {
       cacheKey1.addKeyValuePair( pair.getKey(), pair.getValue() );
     }
     return cacheKey1;

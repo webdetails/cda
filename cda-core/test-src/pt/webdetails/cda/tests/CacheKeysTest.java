@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -59,7 +59,7 @@ public class CacheKeysTest extends CdaTestCase {
     QueryOptions queryOptions = new QueryOptions();
     queryOptions.setDataAccessId( "1" );
     logger.info(
-      "Performing query with id=1 @ " + cdaSettings.getDataAccess( queryOptions.getDataAccessId() )
+        "Performing query with id=1 @ " + cdaSettings.getDataAccess( queryOptions.getDataAccessId() )
         .toString()
     );
     TableModel tableModel = cdaSettings.getDataAccess( queryOptions.getDataAccessId() ).doQuery( queryOptions );
@@ -74,23 +74,25 @@ public class CacheKeysTest extends CdaTestCase {
       logger.info( "key: " + key.toString() );
       assertNotNull( key.getExtraCacheKey() );
       Assert.assertTrue( key.getExtraCacheKey() != null && key.getExtraCacheKey() instanceof CacheKey );
-      Assert.assertTrue( ( ( CacheKey ) key.getExtraCacheKey() ).getKeyValuePairs() != null
-        && ( ( CacheKey ) key.getExtraCacheKey() ).getKeyValuePairs().size() > 0  );
+      Assert.assertTrue( ( (CacheKey) key.getExtraCacheKey() ).getKeyValuePairs() != null
+          && ( (CacheKey) key.getExtraCacheKey() ).getKeyValuePairs().size() > 0 );
 
       boolean hasValueAsCacheExtraKey = false;
       boolean hasSystemWideExtraCacheKey = false;
       boolean systemCantOverrideUser = false;
 
       logger.info( "Iterating extra cache keys.." );
-      for ( CacheKey.KeyValuePair pair : ( ( CacheKey ) key.getExtraCacheKey() ).getKeyValuePairs() ) {
+      for ( CacheKey.KeyValuePair pair : ( (CacheKey) key.getExtraCacheKey() ).getKeyValuePairs() ) {
         logger.info( "key: " + pair.toString() );
-        if( pair.getKey().equals( USER_DEFINED_CACHE_KEY ) && pair.getValue().equals( USER_DEFINED_CACHE_VALUE ) ){
+        if ( pair.getKey().equals( USER_DEFINED_CACHE_KEY ) && pair.getValue().equals( USER_DEFINED_CACHE_VALUE ) ) {
           hasValueAsCacheExtraKey = true;
         }
-        if( pair.getKey().equals( SYSTEM_DEFINED_CACHE_KEY ) && pair.getValue().equals( SYSTEM_DEFINED_CACHE_VALUE ) ){
+        if ( pair.getKey().equals( SYSTEM_DEFINED_CACHE_KEY ) && pair.getValue()
+            .equals( SYSTEM_DEFINED_CACHE_VALUE ) ) {
           hasSystemWideExtraCacheKey = true;
         }
-        if( pair.getKey().equals( SYSTEM_AND_USER_DEFINED_CACHE_KEY ) && pair.getValue().equals( USER_DEFINED_CACHE_VALUE ) ){
+        if ( pair.getKey().equals( SYSTEM_AND_USER_DEFINED_CACHE_KEY ) && pair.getValue()
+            .equals( USER_DEFINED_CACHE_VALUE ) ) {
           systemCantOverrideUser = true;
         }
       }
