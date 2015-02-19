@@ -29,14 +29,17 @@ import pt.webdetails.cda.settings.CdaSettings;
 
 import javax.swing.table.TableModel;
 
-public class UserDefinedCacheKeysTest extends CdaTestCase {
+public class CacheKeysTest extends CdaTestCase {
 
   private static final String CDA_SAMPLE_FILE = "sample-user-defined-cacheKeys.cda";
 
-  private static final String CACHE_KEY = "foo";
-  private static final String CACHE_VALUE = "bar";
+  private static final String USER_DEFINED_CACHE_KEY = "foo";
+  private static final String USER_DEFINED_CACHE_VALUE = "bar";
+  private static final String SYSTEM_DEFINED_CACHE_KEY = "quux";
+  private static final String SYSTEM_DEFINED_CACHE_VALUE = "baz";
+  private static final String SYSTEM_AND_USER_DEFINED_CACHE_KEY = "norf";
 
-  private static final Log logger = LogFactory.getLog( UserDefinedCacheKeysTest.class );
+  private static final Log logger = LogFactory.getLog( CacheKeysTest.class );
 
   @Override
   protected void setUp() throws Exception {
@@ -45,7 +48,7 @@ public class UserDefinedCacheKeysTest extends CdaTestCase {
   }
 
   @Test
-  public void testUserDefinedCacheKeys() throws Exception {
+  public void testUserAndSystemDefinedCacheKeys() throws Exception {
 
     final CdaSettings cdaSettings = parseSettingsFile( CDA_SAMPLE_FILE );
 
@@ -75,16 +78,30 @@ public class UserDefinedCacheKeysTest extends CdaTestCase {
         && ( ( CacheKey ) key.getExtraCacheKey() ).getKeyValuePairs().size() > 0  );
 
       boolean hasValueAsCacheExtraKey = false;
+      boolean hasSystemWideExtraCacheKey = false;
+      boolean systemCantOverrideUser = false;
 
       logger.info( "Iterating extra cache keys.." );
       for ( CacheKey.KeyValuePair pair : ( ( CacheKey ) key.getExtraCacheKey() ).getKeyValuePairs() ) {
         logger.info( "key: " + pair.toString() );
-        if( pair.getKey().equals( CACHE_KEY ) && pair.getValue().equals( CACHE_VALUE ) ){
+        if( pair.getKey().equals( USER_DEFINED_CACHE_KEY ) && pair.getValue().equals( USER_DEFINED_CACHE_VALUE ) ){
           hasValueAsCacheExtraKey = true;
         }
+        if( pair.getKey().equals( SYSTEM_DEFINED_CACHE_KEY ) && pair.getValue().equals( SYSTEM_DEFINED_CACHE_VALUE ) ){
+          hasSystemWideExtraCacheKey = true;
+        }
+        if( pair.getKey().equals( SYSTEM_AND_USER_DEFINED_CACHE_KEY ) && pair.getValue().equals( USER_DEFINED_CACHE_VALUE ) ){
+          systemCantOverrideUser = true;
+        }
       }
-
+      // user defined cache keys
       Assert.assertTrue( hasValueAsCacheExtraKey );
+
+      // system wide cache keys
+      Assert.assertTrue( hasSystemWideExtraCacheKey );
+
+      // system wide cache keys do not override user defined cache keys
+      Assert.assertTrue( systemCantOverrideUser );
 
     }
   }

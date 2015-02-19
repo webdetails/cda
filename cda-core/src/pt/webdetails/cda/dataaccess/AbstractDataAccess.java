@@ -29,7 +29,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 
+import org.pentaho.reporting.libraries.base.config.Configuration;
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.cache.CacheKey;
+import pt.webdetails.cda.cache.CacheKey.KeyValuePair;
 import pt.webdetails.cda.cache.DataAccessCacheElementParser;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.connections.Connection;
@@ -38,6 +41,7 @@ import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
+import pt.webdetails.cda.utils.FormulaEvaluator;
 import pt.webdetails.cda.utils.InvalidOutputIndexException;
 import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.Util;
@@ -69,6 +73,7 @@ public abstract class AbstractDataAccess implements DataAccess {
   private static final String PARAM_ITERATOR_BEGIN = "$FOREACH(";
   private static final String PARAM_ITERATOR_END = ")";
   private static final String PARAM_ITERATOR_ARG_SEPARATOR = ",";
+  private static final String EXTRA_CACHE_KEYS_PROPERTY = "pt.webdetails.cda.cache.extraCacheKeys";
 
   protected AbstractDataAccess() {
   }
@@ -672,10 +677,37 @@ public abstract class AbstractDataAccess implements DataAccess {
   public Serializable getCacheKey() {
 	  if (cdaCacheParser != null) {
 		  if (cdaCacheParser.parseKeys()) {
-			  return cdaCacheParser.getCacheKey();
+			  return mergeCacheKeys( cdaCacheParser.getCacheKey(), getSystemCacheKeys() );
 		  }
 	  }
-	  return null;
+    return getSystemCacheKeys();
+  }
+  public CacheKey getSystemCacheKeys() {
+    Configuration config = CdaEngine.getEnvironment().getBaseConfig();
+    Iterator extraCacheKeys = config.findPropertyKeys( EXTRA_CACHE_KEYS_PROPERTY );
+    String key;
+    CacheKey cacheKey = new CacheKey();
+    while ( extraCacheKeys.hasNext() ) {
+      key = (String) extraCacheKeys.next();
+      cacheKey.addKeyValuePair( key.replace( EXTRA_CACHE_KEYS_PROPERTY + ".", "" ),
+        FormulaEvaluator.replaceFormula( config.getConfigProperty( key  ) )  );
+    }
+    return cacheKey;
+  }
+
+  /**
+   * Adds the pairs key/value from cacheKey2 to cacheKey1 and returns it.
+   *
+   * @param cacheKey1
+   * @param cacheKey2
+   * @return
+   */
+  private Serializable mergeCacheKeys(CacheKey cacheKey1, CacheKey cacheKey2) {
+    ArrayList<KeyValuePair> pairs = cacheKey2.getKeyValuePairs();
+    for( KeyValuePair pair : pairs ){
+      cacheKey1.addKeyValuePair( pair.getKey(), pair.getValue() );
+    }
+    return cacheKey1;
   }
 
   /**

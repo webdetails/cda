@@ -25,7 +25,8 @@
 
     <DataAccess id="1" connection="1" type="sql" access="public" cache="true" cacheDuration="5">
       <Cache enabled="true" duration="500">
-          <Key name="foo" value="bar" /> 
+          <Key name="foo" value="bar" />
+          <Key name="norf" value="bar" />
           <Key name="another-cache-key" value="another-cache-value" /> 
 
           <!-- the following are properly working examples of formula cache keys for session , security and system --> 
