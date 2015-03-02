@@ -676,12 +676,24 @@ public abstract class AbstractDataAccess implements DataAccess {
   }
 
   public Serializable getCacheKey() {
+    String cacheKeyInfo =
+        "Getting Cache Key for file: " + this.getCdaSettings().getId() + ", DataAccessID: " + this.getId() + "\n";
+    CacheKey systemWideCacheKey = getSystemCacheKeys();
     if ( cdaCacheParser != null ) {
       if ( cdaCacheParser.parseKeys() ) {
-        return mergeCacheKeys( cdaCacheParser.getCacheKey(), getSystemCacheKeys() );
+        CacheKey mergedCacheKey = mergeCacheKeys( cdaCacheParser.getCacheKey(), systemWideCacheKey );
+        if ( mergedCacheKey.getKeyValuePairs().size() > 0 ) {
+          cacheKeyInfo += mergedCacheKey.toString();
+        }
+        logger.info( cacheKeyInfo );
+        return mergedCacheKey;
       }
     }
-    return getSystemCacheKeys();
+    if ( systemWideCacheKey.getKeyValuePairs().size() > 0 ) {
+      cacheKeyInfo += systemWideCacheKey.toString();
+    }
+    logger.info( cacheKeyInfo );
+    return systemWideCacheKey;
   }
 
   public CacheKey getSystemCacheKeys() {
@@ -704,7 +716,7 @@ public abstract class AbstractDataAccess implements DataAccess {
    * @param cacheKey2
    * @return
    */
-  private Serializable mergeCacheKeys( CacheKey cacheKey1, CacheKey cacheKey2 ) {
+  private CacheKey mergeCacheKeys( CacheKey cacheKey1, CacheKey cacheKey2 ) {
     ArrayList<KeyValuePair> pairs = cacheKey2.getKeyValuePairs();
     for ( KeyValuePair pair : pairs ) {
       cacheKey1.addKeyValuePair( pair.getKey(), pair.getValue() );
