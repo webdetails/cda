@@ -27,19 +27,58 @@ var PreviewerBackend = {
   Path: null,
   /**/
   listQueries: function(params, callback) {
-    $.getJSON(this.PATH_listQueries, params, callback);
+    $.ajax({
+      type: "GET",
+      dataType: "json",
+      url: this.PATH_listQueries,
+      data: params,
+      success: callback,
+      error: function(xhr, status, error) {
+        showErrorMessage("Error Listing Queries");
+      }
+    });
   },
 
   listParameters: function(params, callback) {
-    $.getJSON(this.PATH_listParameters, params, callback);
+    $.ajax({
+      type: "GET",
+      dataType: "json",
+      url: this.PATH_listParameters,
+      data: params,
+      success: callback,
+      error: function(xhr, status, error) {
+        showErrorMessage("Error Listing Parameters");
+      }
+    });
   },
 
   doQuery: function(params, callback) {
-    $.getJSON(this.PATH_doQuery, params, callback);
+    $.ajax({
+      type: "GET",
+      dataType: "json",
+      url: this.PATH_doQuery,
+      data: params,
+      success: callback,
+      error: function(xhr, status, error) {
+        hideButtons();
+        clearParameters();
+        showErrorMessage("Error Executing Query");
+      }
+    });
   },
 
   scheduleQuery: function(params, callback) {
-    $.post(this.PATH_cacheController + '/change', params, callback, 'json');
+    $.ajax({
+      type: "POST",
+      dataType: "json",
+      url: this.PATH_cacheController + '/change',
+      data: params,
+      success: callback,
+      error: function(xhr, status, error) {
+        $("#dialog").jqmHide();
+        showErrorMessage("Error Scheduling Query");
+      }
+    });
   }
 };
 
@@ -55,6 +94,28 @@ if($.blockUI) {
   $.blockUI.defaults.overlayCSS = {backgroundColor: "#FFFFFF", opacity: 0.8, cursor: "wait"};
   $.blockUI.defaults.css.border = "none";
 }
+
+showErrorMessage = function(message) {
+  $('#previewerTable')
+      .empty()
+      .html('<span class="error-status">' + message + '</span>');
+  $.unblockUI();
+};
+
+hideButtons = function() {
+  $('#exportButton').hide();
+  $('#queryUrl').hide();
+  $('#cachethis').hide();
+  $('#button').hide();
+
+};
+
+showButtons = function() {
+  $('#exportButton').show();
+  $('#queryUrl').show();
+  $('#cachethis').show();
+  $('#button').show();
+};
 
 getFileName = function() {
   return PreviewerBackend.Path;
@@ -111,6 +172,7 @@ showTable = function(data) {
   $('#previewerTable')
       .empty()
       .html('<table cellpadding="0" cellspacing="0" border="0" class="display" id="contents"></table>');
+  showButtons();
   if(oLanguage == null) {
     tableController = $('#contents').dataTable({"aaData": tableContents, "aoColumns": columnNames});
   } else {
@@ -128,8 +190,7 @@ ignoreNullRows = function(table) {
     for(var i = 0; i < table.length; i++) {
       if(table[i] != null) {
         cleanTable.push(table[i]);
-      }
-      else if(console && console.error) {
+      } else if(console && console.error) {
         console.error("row #" + i + " is null");
       }
     }
@@ -203,7 +264,7 @@ refreshParams = function(id) {
   //$.getJSON("listParameters",{path:filename, dataAccessId: id},function(data){
   PreviewerBackend.listParameters({path: getFileName(), dataAccessId: id}, function(data) {
     var placeholder = $('#parameterHolder');
-    placeholder.empty();
+    clearParameters();
     for(var param in data.resultset) {
       if (data.resultset.hasOwnProperty(param)) {
         placeholder.append('<div class="param span-5 last"><div class="span-5" id="parameterDimension">' + data.resultset[param][0] +
@@ -223,6 +284,10 @@ getParams = function() {
     params['param' + $(param).attr('id')] = $(param).val()
   });
   return params;
+};
+
+clearParameters = function() {
+  $('#parameterHolder').empty();
 };
 
 // var filename = function(){
