@@ -42,6 +42,7 @@ public class ExporterEngine
   	CSV("csv"),
   	XLS("xls"),
     CXLS("customxls"),
+    PXLS("pivotxls"),
   	HTML("html"),
     BINARY("binary");
   	
@@ -122,6 +123,8 @@ public class ExporterEngine
         return new JsonExporter(extraSettings);
       case CXLS:
         return new CXlsExporter(extraSettings);
+      case PXLS:
+        return new PivotXlsExporter(extraSettings);
       case XLS:
         return new XlsExporter(extraSettings);
       case XML:
