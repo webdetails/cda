@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,17 +13,11 @@
 
 package pt.webdetails.cda.exporter;
 
-/**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 2, 2010
- * Time: 5:39:10 PM
- */
 public class ExporterException extends Exception {
 
   private static final long serialVersionUID = 1L;
 
-  public ExporterException(final String s, final Exception cause) {
-    super(s,cause);
+  public ExporterException( final String s, final Exception cause ) {
+    super( s, cause );
   }
 }
