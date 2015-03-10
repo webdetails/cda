@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -55,8 +55,6 @@ import pt.webdetails.cpf.repository.api.IUserContentAccess;
 
 /**
  * Main singleton, brokering access to most functionality.
- * <p/>
- * Created by IntelliJ IDEA. User: pedro Date: Feb 2, 2010 Time: 2:24:16 PM
  */
 public class CdaEngine {
 
@@ -141,8 +139,10 @@ public class CdaEngine {
     TableExporter exporter = getExporter( queryOptions );
 
     StreamExporter streamingExporter = null;
-    if ( !dataAccess.hasIterableParameterValues( queryOptions )
-      && exporter instanceof AbstractKettleExporter ) {
+    //[CDA-124] - Exporting queries with parameters and output indexes was failing when done with a
+    //streaming Kettle Transformation. In this case CDA 'doQuery' method should be used instead.
+    if ( !dataAccess.hasIterableParameterValues( queryOptions ) && exporter instanceof AbstractKettleExporter
+      && ( queryOptions.getParameters().isEmpty() || dataAccess.getOutputs().isEmpty() ) ) {
       // Try to initiate a streaming Kettle transformation:
       DataAccessKettleAdapter dataAccessKettleAdapter = DataAccessKettleAdapterFactory
         .create( dataAccess, queryOptions );

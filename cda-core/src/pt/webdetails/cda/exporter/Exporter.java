@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,16 +13,9 @@
 
 package pt.webdetails.cda.exporter;
 
-
-/**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 5, 2010
- * Time: 5:02:17 PM
- */
-public interface Exporter
-{
+public interface Exporter {
 
   public String getMimeType();
+
   public String getAttachmentName();
 }

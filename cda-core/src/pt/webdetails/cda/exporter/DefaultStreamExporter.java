@@ -104,10 +104,9 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
       transConfig.addConfigEntry( DynamicTransConfig.EntryType.STEP,
           dataAccessStepMeta.getName(), dataAccessStepMeta.getXML() );
 
-      String[] s = getStepFields( dataAccess, dataAccessStepMeta, parameterNames );
-
       if ( dataAccess.getDataAccessOutputs().size() > 0 ) {
         hasFilter = true;
+        String[] s = getStepFields( dataAccess, dataAccessStepMeta, parameterNames );
         filterStepMeta = dataAccess.getFilterStepMeta( "Filter", s /*, sqlDataAccess */ );
         transConfig.addConfigEntry( DynamicTransConfig.EntryType.STEP,
             filterStepMeta.getName(), filterStepMeta.getXML() );
