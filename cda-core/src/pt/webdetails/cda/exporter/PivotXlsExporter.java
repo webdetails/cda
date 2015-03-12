@@ -34,6 +34,7 @@ import java.util.*;
  * (inspired by felix CXlsExporter)
  *
  * performs pivot operation on tableModel data and accordingly builds sheet for export
+ * requires an *.xlsx template
  */
 public class PivotXlsExporter extends AbstractExporter
 {
@@ -217,6 +218,7 @@ public class PivotXlsExporter extends AbstractExporter
                 }
             } else {
                 // create one column group for each columnGroupTitle
+
                 for( String groupTitle : pivotTableData.groupTitleSet) {
                     boolean writeTitle = true;
                     for( String columnTitle : pivotGroupColumns ) {
