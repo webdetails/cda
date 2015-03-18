@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -122,7 +122,7 @@ public class Parameter implements java.io.Serializable {
       }
     }
 
-    final ParameterDataRow parameterDataRow = new ParameterDataRow( names.toArray( new String[] {} ),
+    final ParameterDataRow parameterDataRow = new ParameterDataRow( names.toArray( new String[] { } ),
       values.toArray() );
 
     return parameterDataRow;
@@ -147,8 +147,8 @@ public class Parameter implements java.io.Serializable {
     // a properly typed array and not the original string array
     if ( objValue.getClass().isAssignableFrom( String[].class )
       && ( ( Type.INTEGER_ARRAY.equals( getType() ) )
-        || Type.NUMERIC_ARRAY.equals( getType() )
-        || Type.DATE_ARRAY.equals( getType() ) ) ) {
+      || Type.NUMERIC_ARRAY.equals( getType() )
+      || Type.DATE_ARRAY.equals( getType() ) ) ) {
 
       ParameterArrayToStringEncoder encoder = new ParameterArrayToStringEncoder( getSeparator(), getQuoteCharacter() );
       objValue = encoder.encodeParameterArray( objValue, getType() );
@@ -367,7 +367,6 @@ public class Parameter implements java.io.Serializable {
   }
 
 
-
   /**
    * For debugging purposes
    */
@@ -389,7 +388,7 @@ public class Parameter implements java.io.Serializable {
       Parameter param = (Parameter) other;
       return StringUtils.equals( getName(), param.getName() )
         && ( ( getType() == null && param.getType() == null )
-          || getType().equals( param.getType() ) )
+        || getType().equals( param.getType() ) )
         && StringUtils.equals( getStringValue(), param.getStringValue() );
     } else {
       return false;

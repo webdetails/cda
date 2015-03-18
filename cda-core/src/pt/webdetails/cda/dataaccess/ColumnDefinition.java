@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -17,17 +17,9 @@ import org.dom4j.Element;
 
 import pt.webdetails.cda.xml.DomVisitor;
 
-/**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 4, 2010
- * Time: 4:49:25 PM
- */
-public class ColumnDefinition
-{
+public class ColumnDefinition {
 
-  public enum TYPE
-  {
+  public enum TYPE {
     COLUMN, CALCULATED_COLUMN
   }
 
@@ -37,72 +29,59 @@ public class ColumnDefinition
   private String name;
   private String formula;
 
-  public ColumnDefinition()
-  {
+  public ColumnDefinition() {
   }
 
-  public ColumnDefinition(final Element p)
-  {
+  public ColumnDefinition( final Element p ) {
 
     this();
 
-    setName(p.selectSingleNode("Name").getText());
+    setName( p.selectSingleNode( "Name" ).getText() );
 
-    if (p.getName().equals("CalculatedColumn"))
-    {
-      setType(TYPE.CALCULATED_COLUMN);
-      setFormula(p.selectSingleNode("Formula").getText());
-    }
-    else
-    {
-      setType(TYPE.COLUMN);
-      setIndex(Integer.parseInt(p.attributeValue("idx")));
+    if ( p.getName().equals( "CalculatedColumn" ) ) {
+      setType( TYPE.CALCULATED_COLUMN );
+      setFormula( p.selectSingleNode( "Formula" ).getText() );
+    } else {
+      setType( TYPE.COLUMN );
+      setIndex( Integer.parseInt( p.attributeValue( "idx" ) ) );
     }
 
   }
 
-  public TYPE getType()
-  {
+  public TYPE getType() {
     return type;
   }
 
-  public void setType(final TYPE type)
-  {
+  public void setType( final TYPE type ) {
     this.type = type;
   }
 
-  public Integer getIndex()
-  {
+  public Integer getIndex() {
     return index;
   }
 
-  public void setIndex(final Integer index)
-  {
+  public void setIndex( final Integer index ) {
     this.index = index;
   }
 
-  public String getName()
-  {
+  public String getName() {
     return name;
   }
 
-  public void setName(final String name)
-  {
+  public void setName( final String name ) {
     this.name = name;
   }
 
-  public String getFormula()
-  {
+  public String getFormula() {
     return formula;
   }
 
-  public void setFormula(final String formula)
-  {
+  public void setFormula( final String formula ) {
     this.formula = formula;
   }
 
-  public void accept(DomVisitor xmlVisitor, Element daEle) {
-	  xmlVisitor.visit(this, daEle);
+  public void accept( DomVisitor xmlVisitor, Element daEle ) {
+    xmlVisitor.visit( this, daEle );
   }
-  
+
 }

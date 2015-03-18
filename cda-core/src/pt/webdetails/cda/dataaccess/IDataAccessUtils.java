@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -29,16 +29,18 @@ import pt.webdetails.cda.settings.CdaSettings;
 
 public interface IDataAccessUtils {
 
-  public void setMdxDataFactoryBaseConnectionProperties(MondrianConnection connection, AbstractNamedMDXDataFactory mdxDataFactory);
+  public void setMdxDataFactoryBaseConnectionProperties( MondrianConnection connection,
+                                                         AbstractNamedMDXDataFactory mdxDataFactory );
 
-  public void setConnectionProvider(PmdDataFactory returnDataFactory);
+  public void setConnectionProvider( PmdDataFactory returnDataFactory );
 
-  public ReportEnvironmentDataRow createEnvironmentDataRow(Configuration configuration);
+  public ReportEnvironmentDataRow createEnvironmentDataRow( Configuration configuration );
 
-  public KettleTransformationProducer createKettleTransformationProducer(TransFromFileConnectionInfo connectionInfo, String query, CdaSettings cdaSettings);
+  public KettleTransformationProducer createKettleTransformationProducer( TransFromFileConnectionInfo connectionInfo,
+                                                                          String query, CdaSettings cdaSettings );
 
-  public ConnectionProvider getJndiConnectionProvider(SqlJndiConnectionInfo connectionInfo);
-  
-  public DataSourceProvider getMondrianJndiDatasourceProvider(MondrianJndiConnectionInfo connectionInfo);
+  public ConnectionProvider getJndiConnectionProvider( SqlJndiConnectionInfo connectionInfo );
+
+  public DataSourceProvider getMondrianJndiDatasourceProvider( MondrianJndiConnectionInfo connectionInfo );
 
 }
