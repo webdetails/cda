@@ -258,6 +258,13 @@ expectedRows: 1
       expectedRows: 4
     },
     {
+      type: "scripting (json object)",
+      desc: "Scripting data access using a json object",
+      url: webAppPath + "/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/json-scripting.cda",
+      expectedCols: 5,
+      expectedRows: 4
+    },
+    {
       type : "xpath",
       desc : "Xpath data access over XML file",
       url : webAppPath + "/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/xpath.cda",

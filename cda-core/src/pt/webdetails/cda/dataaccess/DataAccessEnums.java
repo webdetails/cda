@@ -43,6 +43,7 @@ public class DataAccessEnums {
     MQL("mql"),
     OLAP4J("olap4j"),
     REFLECTION("reflection"),
+    JSON_SCRIPTABLE("jsonScriptable"),
     SCRIPTABLE("scriptable"),
     SQL("sql"),
     UNION("union"),

@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -23,29 +23,24 @@ import pt.webdetails.cda.settings.UnknownConnectionException;
 
 /**
  * Todo: Document me!
- * <p/>
- * Date: 16.02.2010
- * Time: 13:20:39
- *
- * @author Thomas Morgner.
  */
 public class ScriptableDataAccess extends PREDataAccess {
 
-  public ScriptableDataAccess(final Element element) {
-    super(element);
+  public ScriptableDataAccess( final Element element ) {
+    super( element );
   }
 
   public ScriptableDataAccess() {
   }
 
   public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException {
-    final ScriptingConnection connection = (ScriptingConnection) getCdaSettings().getConnection(getConnectionId());
+    final ScriptingConnection connection = (ScriptingConnection) getCdaSettings().getConnection( getConnectionId() );
 
     final ScriptableDataFactory dataFactory = new ScriptableDataFactory();
-    dataFactory.setLanguage(connection.getConnectionInfo().getLanguage());
-    dataFactory.setScript(connection.getConnectionInfo().getInitScript());
+    dataFactory.setLanguage( connection.getConnectionInfo().getLanguage() );
+    dataFactory.setScript( connection.getConnectionInfo().getInitScript() );
 
-    dataFactory.setQuery("query", getQuery());
+    dataFactory.setQuery( "query", getQuery() );
     return dataFactory;
   }
 
