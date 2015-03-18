@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<Connection>
-  <Implementation>pt.webdetails.cda.connections.kettle.TransFromFileConnection</Implementation>
-  <Type>KETTLE</Type>
-</Connection>
-

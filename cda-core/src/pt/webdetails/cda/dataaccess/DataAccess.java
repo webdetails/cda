@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -23,20 +23,12 @@ import pt.webdetails.cda.xml.DomVisitor;
 
 /**
  * DataAccess interface
- * <p/>
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 2, 2010
- * Time: 2:44:01 PM
  */
-public interface DataAccess
-{
+public interface DataAccess {
 
-  enum OutputMode
-  {
-	  
+  enum OutputMode {
     INCLUDE, EXCLUDE
-  };
+  }
 
   String getId();
 
@@ -47,37 +39,39 @@ public interface DataAccess
   DataAccessEnums.ACCESS_TYPE getAccess();
 
   boolean isCacheEnabled();
-  
+
   int getCacheDuration();
 
   CdaSettings getCdaSettings();
 
-  void setCdaSettings(CdaSettings cdaSettings);
+  void setCdaSettings( CdaSettings cdaSettings );
 
-  TableModel doQuery(QueryOptions queryOptions) throws QueryException;
+  TableModel doQuery( QueryOptions queryOptions ) throws QueryException;
 
-  ColumnDefinition getColumnDefinition(int idx);
+  ColumnDefinition getColumnDefinition( int idx );
 
   ArrayList<ColumnDefinition> getCalculatedColumns();
-  
-  ArrayList<ColumnDefinition> getColumnDefinitions();;
+
+  ArrayList<ColumnDefinition> getColumnDefinitions();
+
+  ;
 
   ArrayList<Integer> getOutputs();
-  
-  ArrayList<Integer> getOutputs(int id);
+
+  ArrayList<Integer> getOutputs( int id );
 
   OutputMode getOutputMode();
-  
-  OutputMode getOutputMode(int id);
+
+  OutputMode getOutputMode( int id );
 
   TableModel listParameters();
-  
-  boolean hasIterableParameterValues(final QueryOptions queryOptions) throws QueryException;
 
-  void storeDescriptor(DataAccessConnectionDescriptor descriptor);
-  
-  void setQuery(String query);
-  
-  void accept(DomVisitor v, Element ele);
+  boolean hasIterableParameterValues( final QueryOptions queryOptions ) throws QueryException;
+
+  void storeDescriptor( DataAccessConnectionDescriptor descriptor );
+
+  void setQuery( String query );
+
+  void accept( DomVisitor v, Element ele );
 
 }

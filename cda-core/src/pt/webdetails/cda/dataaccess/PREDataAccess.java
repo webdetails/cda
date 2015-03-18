@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -37,8 +37,6 @@ import pt.webdetails.cda.settings.UnknownConnectionException;
 
 /**
  * This is the DataAccess implementation for PentahoReportingEngine based queries.
- * <p/>
- * User: pedro Date: Feb 3, 2010 Time: 2:18:19 PM
  */
 public abstract class PREDataAccess extends SimpleDataAccess {
 

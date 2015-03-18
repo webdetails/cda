@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -43,8 +43,7 @@ import pt.webdetails.cda.xml.DomVisitor;
 import pt.webdetails.cpf.messaging.IEventPublisher;
 
 /**
- * Implementation of the SimpleDataAccess User: pedro Date: Feb 3, 2010 Time:
- * 11:04:10 AM
+ * Implementation of the SimpleDataAccess
  */
 public abstract class SimpleDataAccess extends AbstractDataAccess implements DomVisitable {
 
@@ -146,7 +145,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
       try {
         CdaEvent.QueryInfo info = new CdaEvent.QueryInfo( getCdaSettings().getId(), getId(),
-            getQuery(), parameterDataRow );
+          getQuery(), parameterDataRow );
 
         if ( e instanceof QueryException && e.getCause() != null ) {
           eventPublisher.publish( new QueryErrorEvent( info, e.getCause() ) );
@@ -169,10 +168,10 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     // put the copy into the cache ...
     if ( isCacheEnabled() ) {
       ExtraCacheInfo cInfo =
-          new ExtraCacheInfo( this.getCdaSettings().getId(), getId(), queryTime, tableModelCopy );
+        new ExtraCacheInfo( this.getCdaSettings().getId(), getId(), queryTime, tableModelCopy );
       IQueryCache cache = getCdaCache();
       if ( cache != null ) {
-        cache.putTableModel(key, tableModelCopy, getCacheDuration(), cInfo );
+        cache.putTableModel( key, tableModelCopy, getCacheDuration(), cInfo );
       } else {
         logger.error( "Cache enabled but no cache available." );
       }
@@ -241,8 +240,8 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
       //publish
       try {
         eventPublisher.publish( new QueryTooLongEvent(
-            new QueryTooLongEvent.QueryInfo( this.getCdaSettings().getId(), queryId, query,
-                Parameter.createParameterDataRowFromParameters( parameters ) ), duration ) );
+          new QueryTooLongEvent.QueryInfo( this.getCdaSettings().getId(), queryId, query,
+            Parameter.createParameterDataRowFromParameters( parameters ) ), duration ) );
       } catch ( Exception e ) {
         //TODO
         logger.error( "Error pushing event", e );
@@ -303,13 +302,13 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
   public List<PropertyDescriptor> getInterface() {
     List<PropertyDescriptor> properties = super.getInterface();
     properties.add( new PropertyDescriptor( "query", PropertyDescriptor.Type.STRING,
-        PropertyDescriptor.Placement.CHILD ) );
+      PropertyDescriptor.Placement.CHILD ) );
     properties.add( new PropertyDescriptor( "connection", PropertyDescriptor.Type.STRING,
-        PropertyDescriptor.Placement.ATTRIB ) );
+      PropertyDescriptor.Placement.ATTRIB ) );
     properties.add( new PropertyDescriptor( "cache", PropertyDescriptor.Type.BOOLEAN,
-        PropertyDescriptor.Placement.ATTRIB ) );
+      PropertyDescriptor.Placement.ATTRIB ) );
     properties.add( new PropertyDescriptor( "cacheDuration", PropertyDescriptor.Type.NUMERIC,
-        PropertyDescriptor.Placement.ATTRIB ) );
+      PropertyDescriptor.Placement.ATTRIB ) );
     return properties;
   }
 
@@ -321,7 +320,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
         return Integer.parseInt( strVal );
       } catch ( NumberFormatException nfe ) {
         logger.warn( MessageFormat.format( "Could not parse {0} in property {1}, using default {2}.", strVal,
-            QUERY_TIME_THRESHOLD_PROPERTY, defaultValue ) );
+          QUERY_TIME_THRESHOLD_PROPERTY, defaultValue ) );
       }
     }
     return defaultValue;

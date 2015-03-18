@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,12 +13,6 @@
 
 package pt.webdetails.cda.dataaccess;
 
-/**
- * Created by Pedro Alves
- * User: pedro
- * Date: Mar 25, 2010
- * Time: 5:13:33 PM
- */
 public class PropertyDescriptor {
 
   public static enum Type {
@@ -40,13 +34,14 @@ public class PropertyDescriptor {
 
     INLINE, CHILDREN
   }
+
   private String name;
   private Type type;
   private Source source;
   private Placement placement;
   private String value;
 
-  public PropertyDescriptor(final String name, final Type type, final Placement placement) {
+  public PropertyDescriptor( final String name, final Type type, final Placement placement ) {
     this.name = name;
     this.type = type;
     this.placement = placement;
@@ -56,7 +51,7 @@ public class PropertyDescriptor {
     return name;
   }
 
-  public void setName(final String name) {
+  public void setName( final String name ) {
     this.name = name;
   }
 
@@ -64,7 +59,7 @@ public class PropertyDescriptor {
     return type;
   }
 
-  public void setType(final Type type) {
+  public void setType( final Type type ) {
     this.type = type;
   }
 
@@ -72,7 +67,7 @@ public class PropertyDescriptor {
     return source;
   }
 
-  public void setSource(final Source source) {
+  public void setSource( final Source source ) {
     this.source = source;
   }
 
@@ -80,7 +75,7 @@ public class PropertyDescriptor {
     return value;
   }
 
-  public void setValue(final String value) {
+  public void setValue( final String value ) {
     this.value = value;
   }
 
@@ -88,7 +83,7 @@ public class PropertyDescriptor {
     return this.placement;
   }
 
-  public void setPlacement(Placement placement) {
+  public void setPlacement( Placement placement ) {
     this.placement = placement;
   }
 }

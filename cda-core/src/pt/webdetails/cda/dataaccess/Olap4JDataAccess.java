@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -26,40 +26,37 @@ import pt.webdetails.cda.settings.UnknownConnectionException;
 
 /**
  * Implementation of a DataAccess that will get data from a SQL database
- * <p/>
- * User: pedro
- * Date: Feb 3, 2010
- * Time: 12:18:05 PM
  */
 public class Olap4JDataAccess extends PREDataAccess {
 
-  private static final Log logger = LogFactory.getLog(Olap4JDataAccess.class);
+  private static final Log logger = LogFactory.getLog( Olap4JDataAccess.class );
 
-  public Olap4JDataAccess(final Element element) {
-    super(element);
+  public Olap4JDataAccess( final Element element ) {
+    super( element );
   }
 
   public Olap4JDataAccess() {
   }
 
-  protected AbstractNamedMDXDataFactory createDataFactory() throws UnknownConnectionException, InvalidConnectionException {
-    final Olap4JConnection connection = (Olap4JConnection) getCdaSettings().getConnection(getConnectionId());
-    return new BandedMDXDataFactory(connection.getInitializedConnectionProvider());
+  protected AbstractNamedMDXDataFactory createDataFactory()
+    throws UnknownConnectionException, InvalidConnectionException {
+    final Olap4JConnection connection = (Olap4JConnection) getCdaSettings().getConnection( getConnectionId() );
+    return new BandedMDXDataFactory( connection.getInitializedConnectionProvider() );
   }
 
   @Override
   public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException {
 
-    logger.debug("Creating BandedMDXDataFactory");
+    logger.debug( "Creating BandedMDXDataFactory" );
 
-    final Olap4JConnection connection = (Olap4JConnection) getCdaSettings().getConnection(getConnectionId());
+    final Olap4JConnection connection = (Olap4JConnection) getCdaSettings().getConnection( getConnectionId() );
 
     final AbstractNamedMDXDataFactory mdxDataFactory = createDataFactory();
     // using deprecated method for 3.10 support
-    mdxDataFactory.setQuery("query", getQuery());
-    mdxDataFactory.setJdbcPasswordField(connection.getPasswordField());
-    mdxDataFactory.setJdbcUserField(connection.getUserField());
-    mdxDataFactory.setRoleField(connection.getRoleField());
+    mdxDataFactory.setQuery( "query", getQuery() );
+    mdxDataFactory.setJdbcPasswordField( connection.getPasswordField() );
+    mdxDataFactory.setJdbcUserField( connection.getUserField() );
+    mdxDataFactory.setRoleField( connection.getRoleField() );
     return mdxDataFactory;
   }
 

@@ -70,7 +70,7 @@ public class JsonScriptableDataAccess extends ScriptableDataAccess {
         }
 
         //build TypedTableModel instance
-        builder.append( addTypedModelObject( colNames, colTypes ));
+        builder.append( addTypedModelObject( colNames, colTypes ) );
 
         //build TypedTableModel rows
         for ( int i = 0, L = resultSet.length(); i < L; i++ ) { //row
@@ -96,7 +96,7 @@ public class JsonScriptableDataAccess extends ScriptableDataAccess {
     return query;
   }
 
-  private String addTypedModelObject(String columnNames, String columnTypes) {
+  private String addTypedModelObject( String columnNames, String columnTypes ) {
     String typedModel = "import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;\n\n" +
       "String[] columnNames = new String[]{\n" + columnNames + "\n};\n\n" +
       "Class[] columnTypes = new Class[]{\n" + columnTypes + "\n};\n\n" +
@@ -106,7 +106,7 @@ public class JsonScriptableDataAccess extends ScriptableDataAccess {
   }
 
   private String addParameter( String value, String type ) {
-    if(type.equals("String")) {
+    if ( type.equals( "String" ) ) {
       value = "\"" + value + "\"";
     }
 
