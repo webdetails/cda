@@ -306,9 +306,11 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     properties.add( new PropertyDescriptor( "connection", PropertyDescriptor.Type.STRING,
       PropertyDescriptor.Placement.ATTRIB ) );
     properties.add( new PropertyDescriptor( "cache", PropertyDescriptor.Type.BOOLEAN,
-      PropertyDescriptor.Placement.ATTRIB ) );
+      PropertyDescriptor.Placement.CHILD ) );
     properties.add( new PropertyDescriptor( "cacheDuration", PropertyDescriptor.Type.NUMERIC,
       PropertyDescriptor.Placement.ATTRIB ) );
+    properties.add( new PropertyDescriptor( "cacheKeys", PropertyDescriptor.Type.ARRAY,
+      PropertyDescriptor.Placement.CHILD ) );
     return properties;
   }
 
