@@ -53,20 +53,17 @@
   <property name="basesrc.dir"
             value="../cda-pentaho-base/src"
             description="shared source for both pentaho layers"/>
-  <!-- Build the project.revision property -->
-  <property name="distribution.version" value="${project.stage}-${project.version}"/>
 
-
-  <echo>I'm here: distribution.version = ${distribution.version}</echo>
+  <echo> project.revision = ${project.revision}</echo>
 
   <target name="dist" depends="clean,resolve,jar,test,dist-plugin,dist-samples"/>
   <target name="dist-compile" depends="jar,dist-plugin"/>
 
   <property name="plugin.artifact.id" value="${plugin.name}"/>
-  <property name="plugin.zipfile" value="${plugin.artifact.id}-${distribution.version}.zip"/>
-  <property name="plugin.disabled.zipfile" value="${plugin.artifact.id}-disabled-${distribution.version}.zip"/>  
-  <property name="plugin.samples.zipfile" value="${plugin.artifact.id}-samples-${distribution.version}.zip"/>
-  <property name="plugin.solution.zipfile" value="${plugin.artifact.id}-solution-${distribution.version}.zip"/>
+  <property name="plugin.zipfile" value="${plugin.artifact.id}-${project.revision}.zip"/>
+  <property name="plugin.disabled.zipfile" value="${plugin.artifact.id}-disabled-${project.revision}.zip"/>  
+  <property name="plugin.samples.zipfile" value="${plugin.artifact.id}-samples-${project.revision}.zip"/>
+  <property name="plugin.solution.zipfile" value="${plugin.artifact.id}-solution-${project.revision}.zip"/>
 
 
 
@@ -162,10 +159,10 @@
     <!-- create the version file -->
     <property name="sequential.build.id" value="manual-${DSTAMP}"/>
 
-    <echo file="${stage.dir}/${plugin.name}/version.xml" message="&lt;version branch='${project.stage}'  buildId='${sequential.build.id}'>${distribution.version}&lt;/version>"/>
+    <echo file="${stage.dir}/${plugin.name}/version.xml" message="&lt;version branch='${project.stage}'  buildId='${sequential.build.id}'>${project.revision}&lt;/version>"/>
 
-    <replace file="${stage.dir}/${plugin.name}/cachemanager/cache.html" token="@@VERSION@@" value="${distribution.version}"/>
-    <replace file="${stage.dir}/${plugin.name}/static/about.html" token="@@VERSION@@" value="${distribution.version}"/>
+    <replace file="${stage.dir}/${plugin.name}/cachemanager/cache.html" token="@@VERSION@@" value="${project.revision}"/>
+    <replace file="${stage.dir}/${plugin.name}/static/about.html" token="@@VERSION@@" value="${project.revision}"/>
 
     <!-- create a zip file -->
     <zip zipfile="${dist.dir}/${plugin.zipfile}"
@@ -191,7 +188,7 @@
 
     <echo file="${dist.dir}/marketplace.xml">      &lt;version&gt;
         &lt;branch&gt;${project.stage}&lt;/branch&gt;
-        &lt;version&gt;${distribution.version}&lt;/version&gt;
+        &lt;version&gt;${project.revision}&lt;/version&gt;
         &lt;name&gt;${marketplace.metadata.name}&lt;/name&gt;
         &lt;package_url&gt;
           ${marketplace.metadata.package_url}
@@ -237,7 +234,7 @@
       <fileset dir="solution/bi-developers"></fileset>
     </copy>
 
-    <replace file="${samples.stage.dir}/bi-developers/${plugin.name}/template.html" token="@@VERSION@@" value="${distribution.version}"/>
+    <replace file="${samples.stage.dir}/bi-developers/${plugin.name}/template.html" token="@@VERSION@@" value="${project.revision}"/>
 
     <zip zipfile="${dist.dir}/${plugin.samples.zipfile}"
          basedir="${samples.stage.dir}/bi-developers"
@@ -334,26 +331,5 @@
 
   </target>
 
-  <!-- SONAR (CDA) -->
 
-   <!-- Add the target -->
-  <target name="check-sonar-props">
-      <available file="/home/tomcat/sonar.properties" property="sonar.props"/>
-      <echo level="info">${sonar.props}</echo>
-  </target>
-
-  <target name="read-sonar-props" depends="check-sonar-props" if="sonar.props">
-    <echo>Prop file exists</echo>
-    <loadproperties srcFile="/home/tomcat/sonar.properties"/>
-  </target>
-
-  <target name="sonar" depends='read-sonar-props'>
-    <!-- list of mandatories Sonar properties -->
-    <property name="sonar.sources" value="${src.dir}" />
-
-    <!-- list of optional Sonar properties -->
-    <property name="sonar.binaries" value="${classes.dir}" />
-
-    <sonar:sonar key="pt.webdetails:CDA" version="${distribution.version}" xmlns:sonar="antlib:org.sonar.ant"/>
-  </target>
 </project>
