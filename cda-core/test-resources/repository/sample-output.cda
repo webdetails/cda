@@ -24,7 +24,17 @@
   be used from a Compound datasource only
 
   -->
- 
+
+  <DataAccess id="1" connection="1" type="mdx" access="public">
+    <Name>Mdx invalid value</Name>
+    <Query>with set [Markets] as '{[Markets].[All Markets]}'
+      member [Measures].[Invalid] as '(0 / 0)'
+      select {[Measures].[Invalid]} ON COLUMNS,
+      {[Markets]} ON ROWS
+      from [SteelWheelsSales]
+    </Query>
+  </DataAccess>
+
   <DataAccess id="2" connection="1" type="mdx" access="public">
     <Name>Sample query on SteelWheelsSales</Name>
     <Query><![CDATA[

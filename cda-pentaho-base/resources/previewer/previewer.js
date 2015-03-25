@@ -187,9 +187,16 @@ showTable = function(data) {
 ignoreNullRows = function(table) {
   var cleanTable = [];
   if(table != null) {
-    for(var i = 0; i < table.length; i++) {
-      if(table[i] != null) {
-        cleanTable.push(table[i]);
+    for(var i = 0, R = table.length; i < R; i++) {
+      var row = table[i];
+      if(row != null) {
+        for(var j = 0, C = row.length; j < C; j++) {
+          //Replacing null value for a string with null, so that it is displayed in the preview table
+          if(row[j] == null) {
+            row[j] = "null";
+          }
+        }
+        cleanTable.push(row);
       } else if(console && console.error) {
         console.error("row #" + i + " is null");
       }
@@ -234,7 +241,7 @@ exportFunc = function(dataAccessId) {
       _exportIframe.appendTo($('body'));
     },
     error: function(jqXHR, status, error) {
-      console.log("Request failed: " + jqXHR.responseText + " :: " + status + " ::: " + error);
+      console && console.error("Request failed: " + jqXHR.responseText + " :: " + status + " ::: " + error);
     }
   });
 };
@@ -261,7 +268,6 @@ updateLastQuery = function(dataAccessId) {
 };
 
 refreshParams = function(id) {
-  //$.getJSON("listParameters",{path:filename, dataAccessId: id},function(data){
   PreviewerBackend.listParameters({path: getFileName(), dataAccessId: id}, function(data) {
     var placeholder = $('#parameterHolder');
     clearParameters();
@@ -290,12 +296,6 @@ clearParameters = function() {
   $('#parameterHolder').empty();
 };
 
-// var filename = function(){
-//   var params = pageParams();
-//   return params.solution != undefined?
-//     (params.solution + '/' +params.path + '/' + params.file).replace(/\+/g," ").replace(/\/\//g,"/")
-//   : params.path}();
-
 cacheThis = function() {
 
   var queryDefinition = {};
@@ -312,7 +312,7 @@ cacheThis = function() {
   if(!notification.length) {
     notification = $("<span class='notification'></span>").appendTo('.dialogAction');
   }
-  //$.getJSON("cacheController",{method: "change", "object": json}, function(response){
+
   PreviewerBackend.scheduleQuery({"object": json}, function(response) {
     if(response.status == 'ok') {
       notification.text('');
