@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -19,36 +19,77 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.junit.Test;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 
+public class OutputTest extends CdaTestCase {
 
-/**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 15, 2010
- * Time: 7:53:13 PM
- */
-public class OutputTest extends CdaTestCase
-{
+  private static final Log logger = LogFactory.getLog( OutputTest.class );
 
-  private static final Log logger = LogFactory.getLog(OutputTest.class);
+  @Test
+  public void testCsvExport() throws Exception {
+    String expectedOutput = "\"[Measures].[MeasuresLevel]\";Year;price\n\"Sales\";445094.69;564842.02\n";
 
-  public void testCsvExport() throws Exception
-  {
-    final CdaSettings cdaSettings = parseSettingsFile("sample-output.cda");
-    logger.debug("Doing query on Cda - Initializing CdaEngine");
+    final CdaSettings cdaSettings = parseSettingsFile( "sample-output.cda" );
+    logger.debug( "Doing query on Cda - Initializing CdaEngine" );
 
     QueryOptions queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("2");
-    queryOptions.addParameter("status", "Shipped");
+    queryOptions.setDataAccessId( "2" );
+    queryOptions.addParameter( "status", "Shipped" );
 
-    logger.info("Doing query");
-    TableModel table = doQuery(cdaSettings, queryOptions);
+    logger.info( "Doing query" );
+    TableModel table = doQuery( cdaSettings, queryOptions );
 
-    queryOptions.setOutputType("csv");
+    queryOptions.setOutputType( "csv" );
     String csv = exportTableModel( table, queryOptions );
     assertFalse( StringUtils.isEmpty( csv ) );
-    //TODO check result!
+    assertEquals( expectedOutput, csv );
+  }
+
+  @Test
+  public void testJsonExport() throws Exception {
+    String expectedOutput = "{\"queryInfo\":{\"totalRows\":\"1\"},"
+      + "\"resultset\":[[\"Sales\",445094.69,564842.02]],\""
+      + "metadata\":[{\"colIndex\":0,\"colType\":\"String\",\"colName\":\"[Measures].[MeasuresLevel]\"},"
+      + "{\"colIndex\":1,\"colType\":\"Numeric\",\"colName\":\"Year\"},"
+      + "{\"colIndex\":2,\"colType\":\"Numeric\",\"colName\":\"price\"}]}";
+
+    final CdaSettings cdaSettings = parseSettingsFile( "sample-output.cda" );
+    logger.debug( "Doing query on Cda - Initializing CdaEngine" );
+
+    QueryOptions queryOptions = new QueryOptions();
+    queryOptions.setDataAccessId( "2" );
+    queryOptions.addParameter( "status", "Shipped" );
+
+    logger.info( "Doing query" );
+    TableModel table = doQuery( cdaSettings, queryOptions );
+
+    queryOptions.setOutputType( "json" );
+    String json = exportTableModel( table, queryOptions );
+    assertFalse( StringUtils.isEmpty( json ) );
+    assertEquals( expectedOutput, json );
+  }
+
+  @Test
+  public void testJsonExportNaNValues() throws Exception {
+    String expectedOutput = "{\"queryInfo\":{\"totalRows\":\"1\"},"
+      + "\"resultset\":[[\"All Markets\",null]],"
+      + "\"metadata\":[{\"colIndex\":0,\"colType\":\"String\",\"colName\":\"[Markets].[(All)]\"},"
+      + "{\"colIndex\":1,\"colType\":\"Numeric\",\"colName\":\"[Measures].[Invalid]\"}]}";
+
+    final CdaSettings cdaSettings = parseSettingsFile( "sample-output.cda" );
+    logger.debug( "Doing query on Cda - Initializing CdaEngine" );
+
+    QueryOptions queryOptions = new QueryOptions();
+    queryOptions.setDataAccessId( "1" );
+
+    logger.info( "Doing query" );
+    TableModel table = doQuery( cdaSettings, queryOptions );
+
+    queryOptions.setOutputType( "json" );
+    String json = exportTableModel( table, queryOptions );
+    assertFalse( StringUtils.isEmpty( json ) );
+    assertEquals( expectedOutput, json );
   }
 }
