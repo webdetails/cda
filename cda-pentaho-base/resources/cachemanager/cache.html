@@ -2,17 +2,19 @@
 <html>
 	<head>
 		<title>CDA Cache Manager</title>
+
 		<link href="../static/blueprint/screen.css" type="text/css" rel="stylesheet"/>
 		<link href="../static/cda.css" type="text/css" rel="stylesheet"/>
 		<link href="cache.css" type="text/css" rel="stylesheet"/>
-		<link href="../static/jquery-ui-1.8rc3.custom.css" type="text/css" rel="stylesheet"/>
+		<link href="../static/theme/cupertino/jquery-ui-1.10.4.custom.css" type="text/css" rel="stylesheet"/>
+
 		<script type="text/javascript" src="../static/jquery.js"></script>
-		<script type="text/javascript" src="../static/cda.js"></script>
 		<script type="text/javascript" src="cache.js"></script>
 		<script type="text/javascript" src="cacheScheduler.js"></script>
 		<script type="text/javascript" src="../static/jquery.i18n.properties.js"></script>
-		<script type="text/javascript" src="../static/jquery-ui-1.8rc3.custom.min.js"></script>
+		<script type="text/javascript" src="../static/jquery.ui.js"></script>
 		<script type="text/javascript" src="../previewer/dataTables/js/jquery.dataTables.js"></script>
+
 	</head>
 	<body>
 		<div class="webdetailsHead">
@@ -82,7 +84,7 @@
 				Queries in cache
 			</div>
 			<div class='section span-1'>
-				<img id="loading" style="display:none;" src="loading.gif"/>
+				<img id="loading" style="display:none;" src="img/loading.gif"/>
 			</div>
 			<div class='button' style='text-align:right;'>
 				<span id="clearCacheButton" class="button"> Clear all</span>
@@ -150,10 +152,10 @@
 		</div>
 		<!-- ROW ICONS -->
 		<div id="icons" style="display:none;">
-                  <img src="delete-24x24.png" class="deleteIcon" alt="remove" title="Remove Query">
-                  <img src="table.png" class="tableIcon" alt="view results" title="View Results">
-                  <img src="loading.gif" class="loadingIcon" alt="loading..." title="Loading">
-                  <img src="refresh-24x24.png" class="refreshIcon" alt='refresh' title="Execute Query">
+                  <img src="img/delete-24x24.png" class="deleteIcon" alt="remove" title="Remove Query">
+                  <img src="img/table.png" class="tableIcon" alt="view results" title="View Results">
+                  <img src="img/loading.gif" class="loadingIcon" alt="loading..." title="Loading">
+                  <img src="img/refresh-24x24.png" class="refreshIcon" alt='refresh' title="Execute Query">
 		</div>
 	</body>
 	<script>

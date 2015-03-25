@@ -36,17 +36,12 @@
     </style>
     <meta charset="UTF-8"/>
     <title>Editor</title>
-    <!--jquery -->
-<!--    <script language="javascript" type="text/javascript" src="@CDE_RESOURCES_BASE_URL@/js/jquery.js"></script>
 
-    <script language="javascript" type="text/javascript" src="@CDF_RESOURCES_BASE_URL@/js/captify/captify.js"></script>
-    <script language="javascript" type="text/javascript" src="@CDF_RESOURCES_BASE_URL@/js/daterangepicker/daterangepicker.jQuery.js"></script>-->
-<!--    <script language="javascript" type="text/javascript" src="@CDF_RESOURCES_BASE_URL@/js/Dashboards.js"></script>--> <!-- This line must really be included after DateRangePicker -->
-<!--    <script language="javascript" type="text/javascript" src="@CDF_RESOURCES_BASE_URL@/js/fancybox/jquery.fancybox-1.3.4.js"></script>-->
-<!--    <link rel="stylesheet" href="@CDF_RESOURCES_BASE_URL@/js/captify/captify.css" type="text/css"/>-->
+    <!--jquery -->
+    <!-- Using jquery v1.4.4 because of IE8. When using newer versions like v1.7.1 IE8 forces compability mode and breaks CDE -->
+    <script language="javascript" type="text/javascript" src="ace/jquery.js"></script>
+
     <!-- ACE -->
-<!--    <script language="javascript" type="text/javascript" src="cdf-dd-base.js"></script>-->
-    <script language="javascript" type="text/javascript" src="../static/jquery.js"></script>
     <script language="javascript" type="text/javascript" src="aceWrapper.js"></script>
     <script language="javascript" type="text/javascript" src="ace/src/ace.js"></script>
     <script language="javascript" type="text/javascript" src="ace/src/mode-javascript.js"></script>
@@ -55,6 +50,7 @@
     <script language="javascript" type="text/javascript" src="ace/src/mode-html.js"></script>
     <script language="javascript" type="text/javascript" src="ace/src/theme-twilight.js"></script>
     <script language="javascript" type="text/javascript" src="ace/src/theme-eclipse.js"></script>
+
     <script language="javascript">
         var editor = new CodeEditor();
         var params = {};

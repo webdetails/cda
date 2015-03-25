@@ -28,7 +28,7 @@ h1 {
   }
 
 .header {
-    background-image: url('../static/headerbg.png');
+    background-image: url('../static/img/headerbg.png');
     height:112px;
     border-bottom: 1px solid #ddd;
     color: white;
