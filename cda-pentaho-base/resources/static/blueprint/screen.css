@@ -870,7 +870,7 @@ hr.space {
 	height: 39px;
 	margin: 10px 0px 20px 0px;
 	display: inline-block;
-	background: url('../logo.png') no-repeat left;
+	background: url('../img/logo.png') no-repeat left;
 	float: left;
 }
 
@@ -899,7 +899,7 @@ hr.space {
 	background-color: #F6F7F8;
 	border: 1px #dadada solid;
 	background-color: #fff;
-	background-image: url(../button-contact.png);
+	background-image: url(../img/button-contact.png);
 	background-position: bottom left;
 	text-shadow: 1px 1px 0px #ffffff;
 	filter: dropshadow(color=#ffffff, offx=1, offy=1);
@@ -1009,11 +1009,11 @@ table#testTable th {
 }
 
 .webdetailsFooter > .webdetailsFooterWebdetails {
-	background: url('../logobottomWebdetails.png') center no-repeat;
+	background: url('../img/logobottomWebdetails.png') center no-repeat;
 	width: 292px;
 }
 
 .webdetailsFooter > .webdetailsFooterCtools {
-	background: url('../logobottomCtools.png') center no-repeat;
+	background: url('../img/logobottomCtools.png') center no-repeat;
 	width: 379px;
 }
