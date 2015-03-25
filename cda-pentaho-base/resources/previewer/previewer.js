@@ -334,17 +334,19 @@ periodicity = [
 
 toggleAdvanced = function(advanced) {
   if(advanced == false) {
-    var selector = "<select id='periodType'>";
+    var selector = '<select id="periodType">';
     for(var option in periodicity) {
       if(periodicity.hasOwnProperty(option)) {
-        selector += "<option value='" + option + "'>" + periodicity[option].name + "</option>";
+        selector += '<option value="' + option + '">' + periodicity[option].name + '</option>';
       }
     }
     selector += '</select>';
-    var contents = $('<span>' + selector + '<span>on the</span><input id="startAt" style="width: 40px; text-align: center;"><span id="granularity">th ' + periodicity[0].granularity + '</span></span>');
+    var contents = $('<span>' + selector + '<span>on the</span><input id="startAt" style="width: 40px; text-align: center;">' +
+    '<span id="granularity">th ' + periodicity[0].granularity + '</span></span>');
+
     contents.find('select#periodType').change(function() {
       $(this).parent().find('#granularity')
-          .text(periodicity[$(this).attr('value')].granularity);
+          .text(periodicity[$(this).val()].granularity);
     });
   } else {
     contents = '<span>Cron Expression: <input id="cron" placeholder="0 */10 * * * ? "></span>';
@@ -362,10 +364,10 @@ toggleAdvanced = function(advanced) {
 };
 
 simpleCron = function() {
-  var selector = document.getElementById('periodType');
-  if(selector !== null) {
-    var val = $(selector).attr("value"),
-        startAt = $("#startAt").attr("value"),
+  var $selector = $('#periodType');
+  if($selector.length) {
+    var val = $selector.val(),
+        startAt = $("#startAt").val(),
         period = periodicity[val],
         cronExpression;
 
