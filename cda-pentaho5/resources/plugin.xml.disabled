@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin title="Pentaho Community Data Access" name="cda"> <!--loader="OVERRIDING"-->
 
-
 	<lifecycle-listener class="pt.webdetails.cda.CdaLifecycleListener"/>
 	
 	<content-types>
@@ -24,7 +23,7 @@
 		          	<id>EDIT</id>
                 	<perspective>cda.edit</perspective>
 		        </operation>
-		        -->
+-->
 		        <operation>
 		          	<id>RUN</id>
 		        </operation>
@@ -36,5 +35,18 @@
 	</content-types>
  
 
+<!--
+	<overlays>
+		<overlay id="startup.cda" resourcebundle="api/repos/data-access/resources/messages/messages.properties">
+			<menubar id="toolsmenu">
+	        	<menubarseparator id="openSeparator" insertafter="refreshmenu"/>
+	        	<menuitem id="cdaCacheManager" label="CDA Cache Manager" command="mantleXulHandler.openUrl('CDA Cache Manager','CDA Cache Manager','plugin/cda/api/manageCache')"/>
+	      	</menubar>
+	      	<menubar id="refreshmenu">
+	        	<menuitem id="cdaClearCache" insertafter="purgeReportingDataCacheMenuItem" label="CDA Cache" command="mantleXulHandler.openUrl('CDA Cache','CDA Cache','plugin/cda/api/clearCache')"/>
+	      	</menubar>
+	    </overlay>
+  	</overlays>
+-->
 
 </plugin>
