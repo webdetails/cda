@@ -115,7 +115,7 @@ public class TableModelUtils {
 
     for ( int i = 0; i < table.getColumnCount(); i++ ) {
       colTypes[ i ] = table.getColumnClass( i );
-      colNames[ i ] = table.getColumnName( i );
+      colNames[ i ] = getColumnName(dataAccess, table, i);
     }
 
     final int rowCount = table.getRowCount();
@@ -286,6 +286,20 @@ public class TableModelUtils {
     return outputIndexes;
   }
 
+
+  private static String getColumnName( final DataAccess dataAccess, TableModel table, int index) {
+    List<ColumnDefinition> columnDefinitions = dataAccess.getColumnDefinitions();
+
+    if ( columnDefinitions != null ) {
+      for ( ColumnDefinition colDef : columnDefinitions ) {
+        if( colDef.getIndex() == index ) {
+          return colDef.getName();
+        }
+      }
+    }
+
+    return table.getColumnName( index );
+  }
 
   public static TableModel copyTableModel( final DataAccess dataAccess, final TableModel t ) {
 
