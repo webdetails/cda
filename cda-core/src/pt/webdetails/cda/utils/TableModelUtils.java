@@ -292,7 +292,8 @@ public class TableModelUtils {
 
     if ( columnDefinitions != null ) {
       for ( ColumnDefinition colDef : columnDefinitions ) {
-        if( colDef.getIndex() == index ) {
+        Integer colIndex = colDef.getIndex();
+        if( colIndex != null && colIndex == index ) {
           return colDef.getName();
         }
       }
