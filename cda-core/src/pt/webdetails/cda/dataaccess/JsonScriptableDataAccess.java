@@ -106,6 +106,10 @@ public class JsonScriptableDataAccess extends ScriptableDataAccess {
   }
 
   private String addParameter( String value, String type ) {
+    if ( value.equals( "null" ) ) {
+      return value;
+    }
+
     if ( type.equals( "String" ) ) {
       value = "\"" + value + "\"";
     }
