@@ -28,7 +28,8 @@ be used from a Compound datasource only
     ["2006 Q1", 242],
     ["2006 Q2", 410],
     ["2006 Q3", 340],
-    ["2006 Q4", 353]
+    ["2006 Q4", 353],
+    ["2007 Q1", null]
   ],
   "metadata": [
     { "colIndex": 0, "colType": "String", "colName": "Year-Quarter" },
