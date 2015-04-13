@@ -2,9 +2,12 @@ package pt.webdetails.robochef;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
 
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.Result;
@@ -66,6 +69,7 @@ public class DynamicTransformation {
 	private final DynamicTransConfig	transConfig;
 	private int							secondsDuration;
 	private Result						result;
+	private Collection<Callable<Boolean>> inputCallables;
 
 
   private static boolean hasCheckedForMethod = false;
@@ -95,11 +99,13 @@ public class DynamicTransformation {
 	 *            construction of the DynamicTransformation
 	 * @param transMetaConfig
 	 *            describes the source and settings of the transMeta
+	 * @param inputCallables
+	 *						Collection of callables RowProducers
 	 * @throws KettleXMLException
 	 *             if one of the XML snippits in the config is invalid according
 	 *             to Kettle
 	 */
-	public DynamicTransformation(final DynamicTransConfig transConfig, final DynamicTransMetaConfig transMetaConfig)
+	public DynamicTransformation(final DynamicTransConfig transConfig, final DynamicTransMetaConfig transMetaConfig, Collection<Callable<Boolean>> inputCallables )
 					throws KettleException {
 		DynamicTransformation.init(false);
 		if (transConfig == null) throw new IllegalArgumentException("config is null");
@@ -112,6 +118,9 @@ public class DynamicTransformation {
 		parentVariableSpace.injectVariables(transConfig.getFrozenVariableConfigEntries());
 
 		transMeta = transMetaConfig.getTransMeta(parentVariableSpace);
+
+		if ( inputCallables == null ) throw new IllegalArgumentException("inputCallables is null");
+		this.inputCallables = inputCallables;
 
 		for (final Entry<String, String> entry : transConfig.getFrozenStepConfigEntries().entrySet()) {
 			final StepMeta stepMeta = new StepMeta(XMLHandler.getSubNode(XMLHandler.loadXMLString(entry.getValue()),
@@ -187,7 +196,7 @@ public class DynamicTransformation {
 		trans.startThreads();
 		state = State.RUNNING;
 
-		rowProductionManager.startRowProduction();
+		rowProductionManager.startRowProduction( inputCallables );
 
 		trans.waitUntilFinished();
 		secondsDuration = (int) (System.currentTimeMillis() - startMillis);
