@@ -63,7 +63,6 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
   private DataAccessKettleAdapter dataAccess;
   private AbstractKettleExporter exporter;
   private ExecutorService executorService = Executors.newCachedThreadPool();
-  private Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
 
   public DefaultStreamExporter( AbstractKettleExporter exporter,
                                 DataAccessKettleAdapter dataAccess ) {
@@ -73,7 +72,7 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
 
   @Override
   public void export( OutputStream out ) throws ExporterException {
-    inputCallables.clear();
+    Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
 
     try {
 
@@ -190,7 +189,7 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
           null, null, dataAccess.getDatabases() );
 
       //     DynamicTransformation
-      DynamicTransformation trans = new DynamicTransformation( transConfig, transMetaConfig );
+      DynamicTransformation trans = new DynamicTransformation( transConfig, transMetaConfig, inputCallables );
 
       trans.executeCheckedSuccess( null, null, this );
       logger.info( trans.getReadWriteThroughput() );
@@ -244,17 +243,17 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
   }
 
   @Override
-  public void startRowProduction() {
+  public void startRowProduction( Collection<Callable<Boolean>> inputCallables ) {
     String timeoutStr = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeout" );
     long timeout = StringUtil.isEmpty( timeoutStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong( timeoutStr );
     String unitStr =
         CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
     TimeUnit unit = StringUtil.isEmpty( unitStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf( unitStr );
-    startRowProduction( timeout, unit );
+    startRowProduction( timeout, unit, inputCallables );
   }
 
   @Override
-  public void startRowProduction( long timeout, TimeUnit unit ) {
+  public void startRowProduction( long timeout, TimeUnit unit, Collection<Callable<Boolean>> inputCallables ) {
     try {
       List<Future<Boolean>> results = executorService.invokeAll( inputCallables, timeout, unit );
       for ( Future<Boolean> result : results ) {
