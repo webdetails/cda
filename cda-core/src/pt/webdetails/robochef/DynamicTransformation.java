@@ -69,175 +69,169 @@ public class DynamicTransformation {
     return state;
   }
 
-  private final TransMeta transMeta;
-  private final Trans trans;
-  private final DynamicTransConfig transConfig;
-  private int secondsDuration;
-  private Result result;
-  private Collection<Callable<Boolean>> inputCallables;
+	private final TransMeta				transMeta;
+	private final Trans					trans;
+	private final DynamicTransConfig	transConfig;
+	private int							secondsDuration;
+	private Result						result;
+	private Collection<Callable<Boolean>> inputCallables;
 
 
   private static boolean hasCheckedForMethod = false;
   private static Method logCleaningMethod = null;
   private static boolean isInitialized = false;
-  private static boolean isInitializedWithJDNI = false;
+	private static boolean isInitializedWithJDNI = false;
+	public static synchronized void init(boolean initializeJNDI) {
+		if (!isInitialized) {
+			try {
+				KettleEnvironment.init(initializeJNDI);
+				isInitialized = true;
+				isInitializedWithJDNI = initializeJNDI;
+			} catch (final KettleException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+		if (initializeJNDI && !isInitializedWithJDNI) {
+			throw new IllegalStateException("DynamicTransformation was already initialized without JNDI. Call init(true) before new DynamicTransformation()");
+		}
+	}
 
-  public static synchronized void init( boolean initializeJNDI ) {
-    if ( !isInitialized ) {
-      try {
-        KettleEnvironment.init( initializeJNDI );
-        isInitialized = true;
-        isInitializedWithJDNI = initializeJNDI;
-      } catch ( final KettleException e ) {
-        throw new IllegalStateException( e );
-      }
-    }
-    if ( initializeJNDI && !isInitializedWithJDNI ) {
-      throw new IllegalStateException(
-        "DynamicTransformation was already initialized without JNDI. Call init(true) before new DynamicTransformation"
-					+ "()" );
-    }
-  }
+	/**
+	 * Construct a Kettle Transformation based on the given config
+	 * 
+	 * @param transConfig
+	 *            a DynamicTransConfig that will be permanently frozen during
+	 *            construction of the DynamicTransformation
+	 * @param transMetaConfig
+	 *            describes the source and settings of the transMeta
+	 * @param inputCallables
+	 *						Collection of callables RowProducers
+	 * @throws KettleXMLException
+	 *             if one of the XML snippits in the config is invalid according
+	 *             to Kettle
+	 */
+	public DynamicTransformation(final DynamicTransConfig transConfig, final DynamicTransMetaConfig transMetaConfig, Collection<Callable<Boolean>> inputCallables )
+					throws KettleException {
+		DynamicTransformation.init(false);
+		if (transConfig == null) throw new IllegalArgumentException("config is null");
+		transConfig.freeze();
+		this.transConfig = transConfig;
 
-  /**
-   * Construct a Kettle Transformation based on the given config
-   *
-   * @param transConfig     a DynamicTransConfig that will be permanently frozen during construction of the
-   *                        DynamicTransformation
-   * @param transMetaConfig describes the source and settings of the transMeta
-   * @param inputCallables  Collection of callables RowProducers
-   * @throws KettleXMLException if one of the XML snippits in the config is invalid according to Kettle
-   */
-  public DynamicTransformation( final DynamicTransConfig transConfig, final DynamicTransMetaConfig transMetaConfig,
-                                Collection<Callable<Boolean>> inputCallables )
-    throws KettleException {
-    DynamicTransformation.init( false );
-    if ( transConfig == null ) {
-      throw new IllegalArgumentException( "config is null" );
-    }
-    transConfig.freeze();
-    this.transConfig = transConfig;
+		if (transMetaConfig == null) throw new IllegalArgumentException("config is null");
 
-    if ( transMetaConfig == null ) {
-      throw new IllegalArgumentException( "config is null" );
-    }
+		final VariableSpace parentVariableSpace = Variables.getADefaultVariableSpace();
+		parentVariableSpace.injectVariables(transConfig.getFrozenVariableConfigEntries());
 
-    final VariableSpace parentVariableSpace = Variables.getADefaultVariableSpace();
-    parentVariableSpace.injectVariables( transConfig.getFrozenVariableConfigEntries() );
+		transMeta = transMetaConfig.getTransMeta(parentVariableSpace);
 
-    transMeta = transMetaConfig.getTransMeta( parentVariableSpace );
+		if ( inputCallables == null ) throw new IllegalArgumentException("inputCallables is null");
+		this.inputCallables = inputCallables;
 
-    if ( inputCallables == null ) {
-      throw new IllegalArgumentException( "inputCallables is null" );
-    }
-    this.inputCallables = inputCallables;
+		for (final Entry<String, String> entry : transConfig.getFrozenStepConfigEntries().entrySet()) {
+			final StepMeta stepMeta = new StepMeta(XMLHandler.getSubNode(XMLHandler.loadXMLString(entry.getValue()),
+							StepMeta.XML_TAG), transMeta.getDatabases(), transMeta.getCounters());
+			transMeta.addOrReplaceStep(stepMeta);
+		}
 
-    for ( final Entry<String, String> entry : transConfig.getFrozenStepConfigEntries().entrySet() ) {
-      final StepMeta stepMeta = new StepMeta( XMLHandler.getSubNode( XMLHandler.loadXMLString( entry.getValue() ),
-        StepMeta.XML_TAG ), transMeta.getDatabases(), transMeta.getCounters() );
-      transMeta.addOrReplaceStep( stepMeta );
-    }
+		final List<StepMeta> steps = transMeta.getSteps();
+		for (final Entry<String, String> entry : transConfig.getFrozenStepErrorHandlingConfigEntries().entrySet()) {
+			final StepErrorMeta stepErrorMeta = new StepErrorMeta(transMeta, XMLHandler.getSubNode(XMLHandler
+							.loadXMLString(entry.getValue()), StepErrorMeta.XML_TAG), steps);
+			stepErrorMeta.getSourceStep().setStepErrorMeta(stepErrorMeta);
+		}
 
-    final List<StepMeta> steps = transMeta.getSteps();
-    for ( final Entry<String, String> entry : transConfig.getFrozenStepErrorHandlingConfigEntries().entrySet() ) {
-      final StepErrorMeta stepErrorMeta = new StepErrorMeta( transMeta, XMLHandler.getSubNode( XMLHandler
-        .loadXMLString( entry.getValue() ), StepErrorMeta.XML_TAG ), steps );
-      stepErrorMeta.getSourceStep().setStepErrorMeta( stepErrorMeta );
-    }
+		for (final StepMeta stepMeta : steps) {
+			final StepMetaInterface sii = stepMeta.getStepMetaInterface();
+			if (sii != null) {
+				sii.searchInfoAndTargetSteps(steps);
+			}
 
-    for ( final StepMeta stepMeta : steps ) {
-      final StepMetaInterface sii = stepMeta.getStepMetaInterface();
-      if ( sii != null ) {
-        sii.searchInfoAndTargetSteps( steps );
-      }
+		}
 
-    }
+		for (final Entry<String, String> entry : transConfig.getFrozenHopConfigEntries().entrySet()) {
+			final TransHopMeta hop = new TransHopMeta(transMeta.findStep(entry.getKey()), transMeta.findStep(entry
+							.getValue()));
+			transMeta.addTransHop(hop);
+		}
 
-    for ( final Entry<String, String> entry : transConfig.getFrozenHopConfigEntries().entrySet() ) {
-      final TransHopMeta hop = new TransHopMeta( transMeta.findStep( entry.getKey() ), transMeta.findStep( entry
-        .getValue() ) );
-      transMeta.addTransHop( hop );
-    }
+		trans = new Trans(transMeta);
+    trans.setLogLevel(LogLevel.NOTHING);
+		state = State.CREATED;
+	}
 
-    trans = new Trans( transMeta );
-    trans.setLogLevel( LogLevel.NOTHING );
-    state = State.CREATED;
-  }
+	/**
+	 * @return current status of the Transformation as reported by Kettle
+	 */
+	public String getStatus() {
+		return trans.getStatus();
+	}
 
-  /**
-   * @return current status of the Transformation as reported by Kettle
-   */
-  public String getStatus() {
-    return trans.getStatus();
-  }
+	public void executeCheckedSuccess(final String[] arguments, final Map<String, String> parameters,
+					final RowProductionManager rowProductionManager) throws KettleException {
+		if (!execute(arguments, parameters, rowProductionManager)) {
+			throw new KettleException(String.format("The transformation execution ended with state %s (%d errors)",
+							state, result.getNrErrors()));
+		}
+	}
 
-  public void executeCheckedSuccess( final String[] arguments, final Map<String, String> parameters,
-                                     final RowProductionManager rowProductionManager ) throws KettleException {
-    if ( !execute( arguments, parameters, rowProductionManager ) ) {
-      throw new KettleException( String.format( "The transformation execution ended with state %s (%d errors)",
-        state, result.getNrErrors() ) );
-    }
-  }
+	public boolean execute(final String[] arguments, final Map<String, String> parameters,
+					final RowProductionManager rowProductionManager) throws KettleException {
+		if (rowProductionManager == null) throw new IllegalArgumentException("rowProductionManager is null");
 
-  public boolean execute( final String[] arguments, final Map<String, String> parameters,
-                          final RowProductionManager rowProductionManager ) throws KettleException {
-    if ( rowProductionManager == null ) {
-      throw new IllegalArgumentException( "rowProductionManager is null" );
-    }
+		final long startMillis = System.currentTimeMillis();
 
-    final long startMillis = System.currentTimeMillis();
+		if (parameters != null) {
+			for (final Entry<String, String> entry : parameters.entrySet()) {
+				trans.setParameterValue(entry.getKey(), entry.getValue());
+			}
+		}
 
-    if ( parameters != null ) {
-      for ( final Entry<String, String> entry : parameters.entrySet() ) {
-        trans.setParameterValue( entry.getKey(), entry.getValue() );
-      }
-    }
+		trans.prepareExecution(arguments);
 
-    trans.prepareExecution( arguments );
+		for (final Entry<String, RowListener> entry : transConfig.getFrozenOutputs().entrySet()) {
+			final StepInterface si = trans.getStepInterface(entry.getKey(), 0);
+			si.addRowListener(entry.getValue());
+		}
 
-    for ( final Entry<String, RowListener> entry : transConfig.getFrozenOutputs().entrySet() ) {
-      final StepInterface si = trans.getStepInterface( entry.getKey(), 0 );
-      si.addRowListener( entry.getValue() );
-    }
+		for (final Entry<String, RowProducerBridge> entry : transConfig.getFrozenInputs().entrySet()) {
+			final RowProducerBridge bridge = entry.getValue();
+			bridge.setRowProducer(trans.addRowProducer(entry.getKey(), 0));
+		}
 
-    for ( final Entry<String, RowProducerBridge> entry : transConfig.getFrozenInputs().entrySet() ) {
-      final RowProducerBridge bridge = entry.getValue();
-      bridge.setRowProducer( trans.addRowProducer( entry.getKey(), 0 ) );
-    }
+		trans.startThreads();
+		state = State.RUNNING;
 
-    trans.startThreads();
-    state = State.RUNNING;
+		rowProductionManager.startRowProduction( inputCallables );
 
-    rowProductionManager.startRowProduction( inputCallables );
+		trans.waitUntilFinished();
+		secondsDuration = (int) (System.currentTimeMillis() - startMillis);
 
-    trans.waitUntilFinished();
-    secondsDuration = (int) ( System.currentTimeMillis() - startMillis );
+		result = trans.getResult();
 
-    result = trans.getResult();
+		if (result.getNrErrors() == 0) {
+			state = State.FINISHED_SUCCESS;
+		} else {
+			state = State.FINISHED_ERROR;
+		}
 
-    if ( result.getNrErrors() == 0 ) {
-      state = State.FINISHED_SUCCESS;
-    } else {
-      state = State.FINISHED_ERROR;
-    }
+      		//Log cleaning
+        trans.cleanup();
+    		cleanLogs(trans.getLogChannelId()); 
+    		cleanLogs(transMeta.getLogChannelId());
+        
 
-    //Log cleaning
-    trans.cleanup();
-    cleanLogs( trans.getLogChannelId() );
-    cleanLogs( transMeta.getLogChannelId() );
+      
+		return state == State.FINISHED_SUCCESS;
+	}
 
-
-    return state == State.FINISHED_SUCCESS;
-  }
-
-
-  private void cleanLogs( String logChannelId ) {
-    CentralLogStore.init();
-    CentralLogStore.discardLines( logChannelId, true );
-    // Remove the entries from the registry
-
-    synchronized( this.getClass() ) {
-      if ( !hasCheckedForMethod ) {
+  
+  	private void cleanLogs(String logChannelId) {
+                  CentralLogStore.init();
+		CentralLogStore.discardLines(logChannelId, true);
+		// Remove the entries from the registry
+    
+    synchronized (this.getClass()) {
+      if (!hasCheckedForMethod) {    
         hasCheckedForMethod = true;
         Class c = LoggingRegistry.class;
         Class parTypes[] = new Class[ 1 ];
