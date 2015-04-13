@@ -83,6 +83,9 @@ public class SortTableModel implements RowProductionManager {
       TableModel output = null;
       Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
 
+      try {
+        String sort = getSortXmlStep( unsorted, sortBy );
+
         DynamicTransMetaConfig transMetaConfig =
           new DynamicTransMetaConfig( Type.EMPTY, "JoinCompoundData", null, null );
         DynamicTransConfig transConfig = new DynamicTransConfig();
@@ -100,9 +103,9 @@ public class SortTableModel implements RowProductionManager {
         RowMetaToTableModel outputListener = new RowMetaToTableModel( false, true, false );
         transConfig.addOutput( "sort", outputListener );
 
-        DynamicTransformation trans = new DynamicTransformation(transConfig, transMetaConfig, inputCallables);
-        trans.executeCheckedSuccess(null, null, this);
-        logger.info(trans.getReadWriteThroughput());
+        DynamicTransformation trans = new DynamicTransformation( transConfig, transMetaConfig, inputCallables );
+        trans.executeCheckedSuccess( null, null, this );
+        logger.info( trans.getReadWriteThroughput() );
         output = outputListener.getRowsWritten();
 
         return output;
@@ -117,28 +120,20 @@ public class SortTableModel implements RowProductionManager {
     String timeoutStr = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeout" );
     long timeout = StringUtils.isEmpty( timeoutStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong( timeoutStr );
     String unitStr =
-        CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
-    TimeUnit unit = StringUtils.isEmpty(unitStr) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
-    startRowProduction(timeout, unit, inputCallables);
+      CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
+    TimeUnit unit = StringUtils.isEmpty( unitStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf( unitStr );
+    startRowProduction( timeout, unit, inputCallables );
   }
 
-
-  public void startRowProduction( long timeout, TimeUnit unit, Collection<Callable<Boolean>> inputCallables )
-  {
-    try
-    {
-      List<Future<Boolean>> results = executorService.invokeAll(inputCallables, timeout, unit);
-      for (Future<Boolean> result : results)
-      {
+  public void startRowProduction( long timeout, TimeUnit unit, Collection<Callable<Boolean>> inputCallables ) {
+    try {
+      List<Future<Boolean>> results = executorService.invokeAll( inputCallables, timeout, unit );
+      for ( Future<Boolean> result : results ) {
         result.get();
       }
-    }
-    catch (InterruptedException e)
-    {
+    } catch ( InterruptedException e ) {
       logger.error( e );
-    }
-    catch (ExecutionException e)
-    {
+    } catch ( ExecutionException e ) {
       logger.error( e );
     }
   }
