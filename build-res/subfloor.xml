@@ -306,19 +306,24 @@ TYPICAL TARGET SEQUENCE
 
   <property name="sonar-ant-task-version" value="2.2" />
   <property name="sonar.classname" value="org.sonar.ant.SonarTask"/>
-  <property name="sonar.hostname" value="10.177.176.23" />
-  <property name="sonar.port" value="9000" />
-  <property name="sonar.host.url" value="http://${sonar.hostname}:${sonar.port}" />
-  <property name="sonar.jdbc.username" value="sonar" />
-  <property name="sonar.jdbc.password" value="" />
-  <property name="sonar.jdbc.dbname" value="sonar" />
-  <property name="sonar.jdbc.url" value="jdbc:postgresql://${sonar.hostname}/${sonar.jdbc.dbname}" />
-  <property name="sonar.jdbc.driverClassName" value="org.postgresql.Driver" />
-  <property name="sonar.sourceEncoding" value="UTF-8" />
-  <property name="sonar.java.coveragePlugin" value="jacoco" />
+  <property name="sonar.hostname" value="10.177.176.23"/>
+  <property name="sonar.port" value="9000"/>
+  <property name="sonar.host.url" value="http://${sonar.hostname}:${sonar.port}"/>
+  <property name="sonar.jdbc.username" value="sonar"/>
+  <property name="sonar.jdbc.password" value=""/>
+  <property name="sonar.jdbc.dbname" value="sonar"/>
+  <property name="sonar.jdbc.url" value="jdbc:postgresql://${sonar.hostname}/${sonar.jdbc.dbname}"/>
+  <property name="sonar.jdbc.driverClassName" value="org.postgresql.Driver"/>
+  <property name="sonar.sourceEncoding" value="UTF-8"/>
+  <property name="sonar.java.coveragePlugin" value="jacoco"/>
 
-   <!-- Maven properties -->
-   <property name="maven.options" value="-q" />
+  <!-- Jacoco properties -->
+  <property name="jacoco.report.dir" location="${bin.dir}/reports/jacoco" />
+  <property name="jacoco.execfile.path" location="${jacoco.report.dir}/jacoco.exec"/>
+  <property name="jacoco.it.execfile.path" location="${jacoco.report.dir}/jacoco-it.exec"/>
+
+  <!-- Maven properties -->
+  <property name="maven.options" value="-q"/>
 
   <!-- Load the manifest file (if any) as a properties file -->
   <property name="dist.manifest.file"
@@ -456,7 +461,6 @@ TYPICAL TARGET SEQUENCE
       Runs a typical build process (cobertura+sonar)
       ====================================================================-->
   <target name="build-sonar" depends="clean-all,resolve,sonar,dist-source,dist" />
-
 
   <!--=======================================================================
       build-testless
@@ -1704,7 +1708,22 @@ TYPICAL TARGET SEQUENCE
 
       Compiles and runs all the tests for the project
       ====================================================================-->
-  <target name="jacoco" depends="install-jacoco,compile,compile-tests, init-test-reports" description="Compiles and runs unit tests with Jacoco code coverage.">
+  <target name="jacoco" depends="install-jacoco,compile,compile-tests, init-test-reports"
+          description="Compiles and runs unit tests with Jacoco code coverage.">
+
+    <mkdir dir = "${jacoco.report.dir}" />
+
+    <taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+      <classpath>
+        <path refid="classpath"/>
+        <path refid="test.classpath"/>
+      </classpath>
+    </taskdef>
+
+    <path id="tests.path" cache="true">
+      <path refid="base.path"/>
+      <pathelement location="testclasses"/>
+    </path>
 
 		<taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
 				<classpath>
@@ -1725,38 +1744,41 @@ TYPICAL TARGET SEQUENCE
 				</classpath>
 		</taskdef>
 
-    <property name="jacoco.report.dir" location="${bin.dir}/reports/jacoco"/>
-    <property name="jacoco.execfile.path" location="${jacoco.report.dir}/jacoco.exec"/>
+    <if>
+    <equals arg1="${junit.available}" arg2="true"/>
+    <then>
+    <!-- Run unit tests, adding the JaCoCo agent -->
+    <jacoco:coverage destfile="${jacoco.execfile.path}" xmlns:jacoco="antlib:org.jacoco.ant" >
 
-		<!-- Run unit tests, adding the JaCoCo agent -->
-		<jacoco:coverage destfile="${jacoco.execfile.path}" xmlns:jacoco="antlib:org.jacoco.ant">
+      <junit maxmemory="${junit.maxmemory}"
+             dir="${junit.base.dir}"
+             fork="yes"
+             forkmode="${junit.forkmode}"
+             failureProperty="test.failed"
+             haltonfailure="${junit.haltonfailure}"
+             haltonerror="${junit.haltonerror}"
+             printsummary="yes">
+        <sysproperty key="java.awt.headless" value="${headless.unittest}"/>
 
-			<junit maxmemory="${junit.maxmemory}"
-						 dir="${junit.base.dir}"
-						 fork="yes"
-						 forkmode="${junit.forkmode}"
-						 failureProperty="test.failed"
-						 haltonfailure="${junit.haltonfailure}"
-						 haltonerror="${junit.haltonerror}"
-						 printsummary="yes">
-				<sysproperty key="java.awt.headless" value="${headless.unittest}" />
+        <syspropertyset>
+          <propertyref prefix="junit.sysprop."/>
+          <mapper type="glob" from="junit.sysprop.*" to="*"/>
+        </syspropertyset>
 
-				<syspropertyset>
-					<propertyref prefix="junit.sysprop." />
-					<mapper type="glob" from="junit.sysprop.*" to="*"/>
-				</syspropertyset>
+        <classpath refid="test.classpath"/>
+        <classpath refid="jacoco.classpath"/>
 
-				<classpath refid="test.classpath" />
-				<classpath refid="jacoco.classpath" />
-				<formatter type="xml" />
-				<test name="${testcase}" todir="${testreports.xml.dir}" if="testcase" />
-				<batchtest fork="yes" todir="${testreports.xml.dir}" unless="testcase">
-					<fileset dir="${testsrc.dir}" casesensitive="yes">
-						<include name="**/*Test.java" />
-					</fileset>
-				</batchtest>
-			</junit>
-		</jacoco:coverage>
+        <formatter type="xml"/>
+        <test name="${testcase}" todir="${testreports.xml.dir}" if="testcase"/>
+        <batchtest fork="yes" todir="${testreports.xml.dir}" unless="testcase">
+          <fileset dir="${testsrc.dir}" casesensitive="yes">
+            <include name="**/*Test.java"/>
+          </fileset>
+        </batchtest>
+      </junit>
+    </jacoco:coverage>
+    </then>
+    </if>
 
     <if>
 			<available file="${jacoco.execfile.path}" property="jacoco.exec.file.found"/>
@@ -2206,32 +2228,33 @@ TYPICAL TARGET SEQUENCE
     <property name="sonar.jdbc.url" value="${sonar.jdbc.url}" />
     <property name="sonar.jdbc.driverClassName" value="${sonar.jdbc.driverClassName}" />
     <!-- the username and password of your database -->
-    <property name="sonar.jdbc.username" value="${sonar.jdbc.username}" />
-    <property name="sonar.jdbc.password" value="${sonar.jdbc.password}" />
+    <property name="sonar.jdbc.username" value="${sonar.jdbc.username}"/>
+    <property name="sonar.jdbc.password" value="${sonar.jdbc.password}"/>
 
-    <property name="sonar.branch" value="${SCM_BRANCH}" />
-		<property name="sonar.projectKey" value="${ivy.artifact.group}:${ivy.artifact.id}" />
-		<property name="sonar.projectName" value="${ivy.artifact.id}" />
-		<property name="sonar.projectVersion" value="${project.revision}" />
-		<property name="sonar.language" value="java" />
-		<property name="sonar.sources" value="${src.dir}" />
-		<property name="sonar.java.binaries" value="${classes.dir}" />
-		<property name="sonar.java.libraries" value="${lib.dir}" />
-		<property name="sonar.sourceEncoding" value="${sonar.sourceEncoding}" />
-    <property name="sonar.tests" value="${testsrc.dir}" />
-    <property name="sonar.java.coveragePlugin" value="${sonar.java.coveragePlugin}" />
-		<if>
-			<equals arg1="${sonar.java.coveragePlugin}" arg2="cobertura" />
-			<then>
-				<property name="sonar.cobertura.reportPath" value="${coberturareports.xml.dir}/coverage.xml" />
-			</then>
-			<else>
-				<property name="sonar.jacoco.reportPath" value="${jacoco.execfile.path}" />
-			</else>
-		</if>
-    <property name="sonar.junit.reportsPath"  value="${testreports.xml.dir}" />
+    <property name="sonar.branch" value="${SCM_BRANCH}"/>
+    <property name="sonar.projectKey" value="${ivy.artifact.group}:${ivy.artifact.id}"/>
+    <property name="sonar.projectName" value="${ivy.artifact.id}"/>
+    <property name="sonar.projectVersion" value="${project.revision}"/>
+    <property name="sonar.language" value="java"/>
+    <property name="sonar.sources" value="${src.dir}"/>
+    <property name="sonar.java.binaries" value="${classes.dir}"/>
+    <property name="sonar.java.libraries" value="${lib.dir}"/>
+    <property name="sonar.sourceEncoding" value="${sonar.sourceEncoding}"/>
+    <property name="sonar.tests" value="${testsrc.dir}"/>
+    <property name="sonar.java.coveragePlugin" value="${sonar.java.coveragePlugin}"/>
+    <if>
+      <equals arg1="${sonar.java.coveragePlugin}" arg2="cobertura"/>
+      <then>
+        <property name="sonar.cobertura.reportPath" value="${coberturareports.xml.dir}/coverage.xml"/>
+      </then>
+      <else>
+        <property name="sonar.jacoco.reportPath" value="${jacoco.execfile.path}"/>
+        <property name="sonar.jacoco.itReportPath" value="${jacoco.it.execfile.path}"/>
+      </else>
+    </if>
+    <property name="sonar.junit.reportsPath" value="${testreports.xml.dir}"/>
 
-  	<sonar:sonar xmlns:sonar="antlib:org.sonar.ant"/>
+    <sonar:sonar xmlns:sonar="antlib:org.sonar.ant"/>
 
   </target>
 
