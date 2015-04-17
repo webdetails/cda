@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 *
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -16,6 +16,8 @@ package pt.webdetails.cda.dataaccess.kettle;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.database.GenericDatabaseMeta;
 import org.pentaho.di.trans.step.StepMeta;
+import org.pentaho.di.trans.steps.formula.FormulaMeta;
+import org.pentaho.di.trans.steps.formula.FormulaMetaFunction;
 import org.pentaho.di.trans.steps.selectvalues.SelectValuesMeta;
 import org.pentaho.di.trans.steps.tableinput.TableInputMeta;
 import org.pentaho.reporting.engine.classic.core.DataRow;
@@ -24,12 +26,14 @@ import pt.webdetails.cda.connections.sql.JdbcConnection;
 import pt.webdetails.cda.connections.sql.JdbcConnectionInfo;
 import pt.webdetails.cda.connections.sql.JndiConnection;
 import pt.webdetails.cda.connections.sql.SqlConnection;
+import pt.webdetails.cda.dataaccess.ColumnDefinition;
 import pt.webdetails.cda.dataaccess.Parameter;
 import pt.webdetails.cda.dataaccess.SqlDataAccess;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Adapts from SQL data access to Kettle "Table Input" step
@@ -50,13 +54,24 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
     this.queryOptions = queryOptions;
   }
 
+  @Override
   public StepMeta getFilterStepMeta( String name, String[] columns )
     throws KettleAdapterException {
     try {
       SelectValuesMeta selectValuesMeta = new SelectValuesMeta();
       selectValuesMeta.setDefault();
       ArrayList<String> fields = new ArrayList<String>();
-      dataAccess.getOutputs();
+      List<ColumnDefinition> calculatedColumns = dataAccess.getCalculatedColumns();
+      if ( calculatedColumns.size() > 0 ) {
+        List<String> extendedColumns = new ArrayList<String>();
+        for ( String s : columns ) {
+          extendedColumns.add( s );
+        }
+        for ( ColumnDefinition col : calculatedColumns ) {
+          extendedColumns.add( col.getName() );
+        }
+        columns = extendedColumns.toArray( new String[ extendedColumns.size() ] );
+      }
       ArrayList<Integer> outputs = dataAccess.getOutputs();
       for ( int n = 0; n < outputs.size(); n++ ) {
         if ( outputs.get( n ) > columns.length - 1 ) {
@@ -88,6 +103,7 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
     }
   }
 
+  @Override
   public StepMeta getKettleStepMeta( String name ) throws KettleAdapterException {
     try {
       TableInputMeta tableInputMeta = new TableInputMeta();
@@ -118,11 +134,13 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
     }
   }
 
+  @Override
   public DataRow getParameters() throws KettleAdapterException {
     prepareQuery();
     return parameters;
   }
 
+  @Override
   public String[] getParameterNames() throws KettleAdapterException {
     prepareQuery();
     return parameterNames;
@@ -142,7 +160,7 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
           connectionInfo.getUser(), connectionInfo.getPass() );
         databaseMeta.getAttributes().put( GenericDatabaseMeta.ATRRIBUTE_CUSTOM_URL, connectionInfo.getUrl() );
         databaseMeta.getAttributes().put( GenericDatabaseMeta.ATRRIBUTE_CUSTOM_DRIVER_CLASS,
-          connectionInfo.getDriver() );
+            connectionInfo.getDriver() );
       } else {
         if ( connection instanceof JndiConnection ) {
           JndiConnection jndiConnection = (JndiConnection) connection;
@@ -156,12 +174,39 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
     return databaseMeta;
   }
 
+  @Override
   public DatabaseMeta[] getDatabases() throws KettleAdapterException {
     return new DatabaseMeta[] { getDatabaseMeta() };
   }
 
+  @Override
   public ArrayList<Integer> getDataAccessOutputs() throws KettleAdapterException {
     return dataAccess.getOutputs();
+  }
+
+  @Override
+  public boolean hasCalculatedColumns() {
+    return dataAccess.getCalculatedColumns().size() > 0;
+  }
+
+  @Override
+  public StepMeta getFormulaStepMeta( String name ) {
+    FormulaMeta formulaMeta = new FormulaMeta();
+
+    formulaMeta.setDefault();
+    List<FormulaMetaFunction> calcTypes = new ArrayList<FormulaMetaFunction>();
+    String formula;
+    for ( ColumnDefinition col : dataAccess.getCalculatedColumns() ) {
+      formula = col.getFormula();
+      if ( formula.indexOf( "=" ) == 0 ) {
+        formula = formula.substring( 1 );
+      }
+      calcTypes.add( new FormulaMetaFunction( col.getName(), formula, col.getType().ordinal(), -1, -1, "" ) );
+    }
+    formulaMeta.setFormula( calcTypes.toArray( new FormulaMetaFunction[ calcTypes.size() ] ) );
+    StepMeta stepMeta = new StepMeta( name, formulaMeta );
+    stepMeta.setCopies( 1 );
+    return stepMeta;
   }
 
 }

@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -27,11 +27,6 @@ import org.json.JSONObject;
 
 import pt.webdetails.cda.utils.MetadataTableModel;
 
-/**
- * JsonExporter
- * <p/>
- * User: pedro Date: Feb 5, 2010 Time: 5:07:12 PM
- */
 public class JsonExporter extends AbstractExporter {
   private static final String MIME_TYPE = "application/json";
   private static final Log logger = LogFactory.getLog( XmlExporter.class );
@@ -118,7 +113,7 @@ public class JsonExporter extends AbstractExporter {
       for ( int colIdx = 0; colIdx < columnCount; colIdx++ ) {
         Object value = tableModel.getValueAt( rowIdx, colIdx );
         try {
-          if ( value != null && isColumnDouble[ colIdx ] && ( (Double) value ).isInfinite() ) {
+          if ( value != null && isColumnDouble[ colIdx ] && ( ( (Double) value ).isInfinite() || ( (Double) value ).isNaN() ) ) {
             value = null;
             //value = Double.POSITIVE_INFINITY == (Double) value ? "Infinity" : "-Infinity";//workaround for JSON
             // issue with Infinity

@@ -72,11 +72,9 @@
 
   <property name="test.resources.dir" value="${basedir}/test-resources" description="Directory that hosts the test resources files" />
 
-  <!-- Build the project.revision property -->
-  <property name="distribution.version" value="${project.stage}-${project.version}"/>
 
 
-  <echo>Core: distribution.version = ${distribution.version}</echo>
+  <echo>Core: project.revision = ${project.revision}</echo>
   <!--
       DON'T OVERRIDE SUBFLOOR UNLESS YOU HAVE TO
     -->

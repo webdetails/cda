@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -25,43 +25,37 @@ import pt.webdetails.cda.CdaEngine;
 
 /**
  * Todo: Document me!
- * <p/>
- * Date: 16.02.2010
- * Time: 13:17:20
- *
- * @author Thomas Morgner.
  */
 public class MqlDataAccess extends PREDataAccess {
-  public MqlDataAccess(final Element element) {
-    super(element);
+  public MqlDataAccess( final Element element ) {
+    super( element );
   }
 
   public MqlDataAccess() {
   }
-  
+
   /**
-   * 
    * @param id
    * @param name
    * @param connectionId
    * @param query
    */
-  public MqlDataAccess(String id, String name, String connectionId, String query){
-  	super(id,name, connectionId, query);
+  public MqlDataAccess( String id, String name, String connectionId, String query ) {
+    super( id, name, connectionId, query );
   }
 
   @Override
   public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException {
-    final MetadataConnection connection = (MetadataConnection) getCdaSettings().getConnection(getConnectionId());
+    final MetadataConnection connection = (MetadataConnection) getCdaSettings().getConnection( getConnectionId() );
 
     final PmdDataFactory returnDataFactory = new PmdDataFactory();
-    returnDataFactory.setXmiFile(connection.getConnectionInfo().getXmiFile());
-    returnDataFactory.setDomainId(connection.getConnectionInfo().getDomainId());
+    returnDataFactory.setXmiFile( connection.getConnectionInfo().getXmiFile() );
+    returnDataFactory.setDomainId( connection.getConnectionInfo().getDomainId() );
     IDataAccessUtils dataAccessUtils = CdaEngine.getEnvironment().getDataAccessUtils();
-    dataAccessUtils.setConnectionProvider(returnDataFactory);
+    dataAccessUtils.setConnectionProvider( returnDataFactory );
 
     // using deprecated method for 3.10 support
-    returnDataFactory.setQuery("query", getQuery());
+    returnDataFactory.setQuery( "query", getQuery() );
 
     return returnDataFactory;
   }

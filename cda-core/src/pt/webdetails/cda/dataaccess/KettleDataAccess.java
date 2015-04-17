@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -53,12 +53,11 @@ public class KettleDataAccess extends PREDataAccess {
     super();
   }
 
-  public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException
-  {
+  public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException {
     final KettleConnection connection = (KettleConnection) getCdaSettings().getConnection( getConnectionId() );
 
     final KettleDataFactory dataFactory = new KettleDataFactory();
-    dataFactory.setQuery("query", connection.createTransformationProducer( getQuery(), getCdaSettings() ) );
+    dataFactory.setQuery( "query", connection.createTransformationProducer( getQuery(), getCdaSettings() ) );
     return dataFactory;
   }
 
@@ -85,8 +84,8 @@ public class KettleDataAccess extends PREDataAccess {
   }
 
   /**
-   * ContextKey is used to resolve the transformation file, and so must be stored in the cache key.
-   * We only use solution paths, only the path needs to be stored.
+   * ContextKey is used to resolve the transformation file, and so must be stored in the cache key. We only use solution
+   * paths, only the path needs to be stored.
    */
   @Override
   public Serializable getExtraCacheKey() {
@@ -140,7 +139,7 @@ public class KettleDataAccess extends PREDataAccess {
           new ParameterArrayToStringEncoder( getSeparator(), getQuoteCharacter() );
         value = encoder.encodeParameterArray( parameterDataRow.get( columnNames[ i ] ), parameter.getType() );
       } else {
-        value = parameterDataRow.get( columnNames[i] );
+        value = parameterDataRow.get( columnNames[ i ] );
       }
       values[ i ] = value;
     }

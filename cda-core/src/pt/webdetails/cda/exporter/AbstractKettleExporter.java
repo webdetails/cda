@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -49,149 +49,128 @@ import pt.webdetails.robochef.TableModelInput;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.utils.kettle.RowCountListener;
 
-/**
- * Generic Kettle class to handle exports
- * User: pedro
- * Date: Mar 12, 2010
- * Time: 3:01:27 PM
- */
-public abstract class AbstractKettleExporter extends AbstractExporter implements Exporter, RowProductionManager
-{
+public abstract class AbstractKettleExporter extends AbstractExporter implements Exporter, RowProductionManager {
 
-  private static final Log logger = LogFactory.getLog(AbstractKettleExporter.class);
-  
+  private static final Log logger = LogFactory.getLog( AbstractKettleExporter.class );
+
   public static final String COLUMN_HEADERS_SETTING = "columnHeaders";
   public static final String FILE_EXTENSION_SETTING = "fileExtension";
 
   protected ExecutorService executorService = Executors.newCachedThreadPool();
-  protected Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
-  
-  
-  private SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmssZ");
+
+
+  private SimpleDateFormat dateFormat = new SimpleDateFormat( "yyMMddHHmmssZ" );
   private String filename;
-  
+
   private static long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
   private static TimeUnit DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT = TimeUnit.SECONDS;
 
-  
-  protected AbstractKettleExporter(Map<String, String> extraSettings)
-  {
-    super(extraSettings);
+
+  protected AbstractKettleExporter( Map<String, String> extraSettings ) {
+    super( extraSettings );
   }
-  
-  
+
+
   /**
    * @param name Step name
    * @return Kettle export step meta
    */
-  protected abstract StepMeta getExportStepMeta(String name);
+  protected abstract StepMeta getExportStepMeta( String name );
 
-  
+
   protected abstract String getType();
-  
 
-  public void startRowProduction()
-  {
+
+  public void startRowProduction( Collection<Callable<Boolean>> inputCallables ) {
     String timeoutStr = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeout" );
-    long timeout = StringUtil.isEmpty(timeoutStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong(timeoutStr);
+    long timeout = StringUtil.isEmpty( timeoutStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong( timeoutStr );
     String unitStr =
-        CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
-    TimeUnit unit = StringUtil.isEmpty(unitStr)? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf(unitStr);
-    startRowProduction(timeout, unit);
+      CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
+    TimeUnit unit = StringUtil.isEmpty( unitStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf( unitStr );
+    startRowProduction( timeout, unit, inputCallables );
   }
 
 
-  public void startRowProduction(long timeout, TimeUnit unit)
-  {
-    try
-    {
-      List<Future<Boolean>> results = executorService.invokeAll(inputCallables, timeout, unit);
-      for (Future<Boolean> result : results)
-      {
+  public void startRowProduction( long timeout, TimeUnit unit, Collection<Callable<Boolean>> inputCallables ) {
+    try {
+      List<Future<Boolean>> results = executorService.invokeAll( inputCallables, timeout, unit );
+      for ( Future<Boolean> result : results ) {
         result.get();
       }
-    }
-    catch (InterruptedException e)
-    {
-      logger.error(e);
-    }
-    catch (ExecutionException e)
-    {
-      logger.error(e);
+    } catch ( InterruptedException e ) {
+      logger.error( e );
+    } catch ( ExecutionException e ) {
+      logger.error( e );
     }
   }
 
 
-  public void export(final OutputStream out, final TableModel tableModel) throws ExporterException
-  {
-    inputCallables.clear();
+  public void export( final OutputStream out, final TableModel tableModel ) throws ExporterException {
+    Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
 
-    try
-    {
-      final DynamicTransMetaConfig transMetaConfig = new DynamicTransMetaConfig(DynamicTransMetaConfig.Type.EMPTY, "Exporter", null, null);
+    try {
+      final DynamicTransMetaConfig transMetaConfig =
+        new DynamicTransMetaConfig( DynamicTransMetaConfig.Type.EMPTY, "Exporter", null, null );
       final DynamicTransConfig transConfig = new DynamicTransConfig();
 
-      StepMeta injectorStepMeta = new StepMeta("input", new InjectorMeta());
-      injectorStepMeta.setCopies(1);
-      transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP, injectorStepMeta.getName(), injectorStepMeta.getXML());
-      
-      StepMeta exportStepMeta = getExportStepMeta("export");
-      transConfig.addConfigEntry(DynamicTransConfig.EntryType.STEP, exportStepMeta.getName(), exportStepMeta.getXML());
+      StepMeta injectorStepMeta = new StepMeta( "input", new InjectorMeta() );
+      injectorStepMeta.setCopies( 1 );
+      transConfig
+        .addConfigEntry( DynamicTransConfig.EntryType.STEP, injectorStepMeta.getName(), injectorStepMeta.getXML() );
 
-      transConfig.addConfigEntry(DynamicTransConfig.EntryType.HOP, injectorStepMeta.getName(), exportStepMeta.getName());
+      StepMeta exportStepMeta = getExportStepMeta( "export" );
+      transConfig
+        .addConfigEntry( DynamicTransConfig.EntryType.STEP, exportStepMeta.getName(), exportStepMeta.getXML() );
+
+      transConfig
+        .addConfigEntry( DynamicTransConfig.EntryType.HOP, injectorStepMeta.getName(), exportStepMeta.getName() );
 
       TableModelInput input = new TableModelInput();
-      transConfig.addInput(injectorStepMeta.getName(), input);
-      inputCallables.add(input.getCallableRowProducer(tableModel, true));
+      transConfig.addInput( injectorStepMeta.getName(), input );
+      inputCallables.add( input.getCallableRowProducer( tableModel, true ) );
 
 
       RowCountListener countListener = new RowCountListener();
-      transConfig.addOutput(exportStepMeta.getName(), countListener);
+      transConfig.addOutput( exportStepMeta.getName(), countListener );
 
-      DynamicTransformation trans = new DynamicTransformation(transConfig, transMetaConfig);
-      trans.executeCheckedSuccess(null, null, this);
-      logger.info(trans.getReadWriteThroughput());
+      DynamicTransformation trans = new DynamicTransformation( transConfig, transMetaConfig, inputCallables );
+      trans.executeCheckedSuccess( null, null, this );
+      logger.info( trans.getReadWriteThroughput() );
 
       // Transformation executed ok, let's return the file
-      copyFileToOutputStream(out);
+      copyFileToOutputStream( out );
 
-      logger.debug(countListener.getRowsWritten() + " rows written.");
-    }
-    catch (KettleException e)
-    {
-      throw new ExporterException("Kettle exception during " + getType() + " query ", e);
-    }
-    catch (Exception e)
-    {
-      throw new ExporterException("Unknown exception during " + getType() + " query ", e);
+      logger.debug( countListener.getRowsWritten() + " rows written." );
+    } catch ( KettleException e ) {
+      throw new ExporterException( "Kettle exception during " + getType() + " query ", e );
+    } catch ( Exception e ) {
+      throw new ExporterException( "Unknown exception during " + getType() + " query ", e );
     }
   }
 
 
-  protected String getFileName()
-  {
-    filename = "pentaho-cda-" + getType() + "-" + dateFormat.format(Calendar.getInstance().getTime()) + "-" + UUID.randomUUID().toString();
+  protected String getFileName() {
+    filename =
+      "pentaho-cda-" + getType() + "-" + dateFormat.format( Calendar.getInstance().getTime() ) + "-" + UUID.randomUUID()
+        .toString();
     return filename;
   }
 
-  
-  protected void copyFileToOutputStream(OutputStream os) throws IOException
-  {
-    
-    File file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename + "." + getType());
-    FileInputStream is = new FileInputStream(file);
 
-    try{
-      IOUtils.copy(is, os);
-    } 
-    finally {
+  protected void copyFileToOutputStream( OutputStream os ) throws IOException {
+
+    File file = new File( System.getProperty( "java.io.tmpdir" ) + File.separator + filename + "." + getType() );
+    FileInputStream is = new FileInputStream( file );
+
+    try {
+      IOUtils.copy( is, os );
+    } finally {
       os.flush();
-      IOUtils.closeQuietly(is);
+      IOUtils.closeQuietly( is );
     }
 
     // temp file not needed anymore - delete it
     file.delete();
-
   }
 
 }

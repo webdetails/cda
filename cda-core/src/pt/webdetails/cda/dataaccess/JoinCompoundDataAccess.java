@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -60,7 +60,6 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   private String[] leftKeys;
   private String[] rightKeys;
   private ExecutorService executorService = Executors.newCachedThreadPool();
-  private Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
 
   public JoinCompoundDataAccess() {
   }
@@ -109,7 +108,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
 
   protected TableModel queryDataSource( final QueryOptions queryOptions ) throws QueryException {
     TableModel output;
-    inputCallables.clear();
+    Collection<Callable<Boolean>> inputCallables = new ArrayList<Callable<Boolean>>();
 
     try {
       QueryOptions croppedOptions = (QueryOptions) queryOptions.clone();
@@ -166,7 +165,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       RowMetaToTableModel outputListener = new RowMetaToTableModel( false, true, false );
       transConfig.addOutput( "mergeJoin", outputListener );
 
-      DynamicTransformation trans = new DynamicTransformation( transConfig, transMetaConfig );
+      DynamicTransformation trans = new DynamicTransformation( transConfig, transMetaConfig, inputCallables );
       trans.executeCheckedSuccess( null, null, this );
       logger.info( trans.getReadWriteThroughput() );
       output = outputListener.getRowsWritten();
@@ -330,17 +329,17 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     throw new IllegalArgumentException( "Unexpected class " + clazz + ", can't convert to kettle type" );
   }
 
-  public void startRowProduction() {
+  public void startRowProduction( Collection<Callable<Boolean>> inputCallables ) {
 
     String timeoutStr = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeout" );
     long timeout = StringUtil.isEmpty( timeoutStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong( timeoutStr );
     String unitStr =
       CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
     TimeUnit unit = StringUtil.isEmpty( unitStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf( unitStr );
-    startRowProduction( timeout, unit );
+    startRowProduction( timeout, unit, inputCallables );
   }
 
-  public void startRowProduction( long timeout, TimeUnit unit ) {
+  public void startRowProduction( long timeout, TimeUnit unit, Collection<Callable<Boolean>> inputCallables ) {
     try {
       List<Future<Boolean>> results = executorService.invokeAll( inputCallables, timeout, unit );
       for ( Future<Boolean> result : results ) {

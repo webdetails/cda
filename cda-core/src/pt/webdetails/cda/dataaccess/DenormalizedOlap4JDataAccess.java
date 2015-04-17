@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -23,25 +23,21 @@ import pt.webdetails.cda.settings.UnknownConnectionException;
 
 /**
  * Todo: Document me!
- * <p/>
- * Date: 16.02.2010
- * Time: 13:07:29
- *
- * @author Thomas Morgner.
  */
 public class DenormalizedOlap4JDataAccess extends Olap4JDataAccess {
 
   public DenormalizedOlap4JDataAccess() {
   }
 
-  public DenormalizedOlap4JDataAccess(final Element element) {
-    super(element);
+  public DenormalizedOlap4JDataAccess( final Element element ) {
+    super( element );
   }
 
   @Override
-  protected AbstractNamedMDXDataFactory createDataFactory() throws UnknownConnectionException, InvalidConnectionException {
-    final Olap4JConnection connection = (Olap4JConnection) getCdaSettings().getConnection(getConnectionId());
-    return new DenormalizedMDXDataFactory(connection.getInitializedConnectionProvider());
+  protected AbstractNamedMDXDataFactory createDataFactory()
+    throws UnknownConnectionException, InvalidConnectionException {
+    final Olap4JConnection connection = (Olap4JConnection) getCdaSettings().getConnection( getConnectionId() );
+    return new DenormalizedMDXDataFactory( connection.getInitializedConnectionProvider() );
   }
 
   @Override

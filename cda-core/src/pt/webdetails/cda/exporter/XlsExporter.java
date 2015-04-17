@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -19,59 +19,51 @@ import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.steps.exceloutput.ExcelOutputMeta;
 
 
-/**
- * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM
- */
-public class XlsExporter extends AbstractKettleExporter
-{
+public class XlsExporter extends AbstractKettleExporter {
   public static final String TEMPLATE_NAME_SETTING = "templateName";
-  
+
   private String attachmentName;
   private String templateName;
   private boolean includeHeader;
 
-  public XlsExporter(Map <String,String> extraSettings)
-  {
-    super(extraSettings);
-    this.attachmentName = getSetting(ATTACHMENT_NAME_SETTING, "cda-export." + getType());
-    this.templateName = getSetting(TEMPLATE_NAME_SETTING, null);
+  public XlsExporter( Map<String, String> extraSettings ) {
+    super( extraSettings );
+    this.attachmentName = getSetting( ATTACHMENT_NAME_SETTING, "cda-export." + getType() );
+    this.templateName = getSetting( TEMPLATE_NAME_SETTING, null );
     //IReadAccess repository = CdaEngine.getRepo().getUserContentAccess("/");
     // TODO: test this
     // paths should already be provided in relation to the 'solution base'
-//    if(templateName != null){
-//      templateName = repository.getSolutionPath(templateName);
-//    }
-    includeHeader = Boolean.parseBoolean(getSetting( COLUMN_HEADERS_SETTING, "true"));
+    //    if(templateName != null){
+    //      templateName = repository.getSolutionPath(templateName);
+    //    }
+    includeHeader = Boolean.parseBoolean( getSetting( COLUMN_HEADERS_SETTING, "true" ) );
   }
-  
-  protected StepMeta getExportStepMeta(String name) {
+
+  protected StepMeta getExportStepMeta( String name ) {
     ExcelOutputMeta excelOutput = new ExcelOutputMeta();
     excelOutput.setDefault();
-    excelOutput.setFileName("${java.io.tmpdir}/" + getFileName());
-    excelOutput.setHeaderEnabled(includeHeader);
-    if(templateName != null){
-      excelOutput.setTemplateEnabled(true);
-      excelOutput.setTemplateFileName(templateName);
-      excelOutput.setTemplateAppend(true);
+    excelOutput.setFileName( "${java.io.tmpdir}/" + getFileName() );
+    excelOutput.setHeaderEnabled( includeHeader );
+    if ( templateName != null ) {
+      excelOutput.setTemplateEnabled( true );
+      excelOutput.setTemplateFileName( templateName );
+      excelOutput.setTemplateAppend( true );
     }
-    StepMeta stepMeta = new StepMeta(name, excelOutput);
-    stepMeta.setCopies(1);
+    StepMeta stepMeta = new StepMeta( name, excelOutput );
+    stepMeta.setCopies( 1 );
     return stepMeta;
   }
 
-  public String getMimeType()
-  {
+  public String getMimeType() {
     return "application/vnd.ms-excel";
   }
 
-  public String getType()
-  {
+  public String getType() {
     return "xls";
   }
 
-    public String getAttachmentName()
-  {
-      return this.attachmentName;
+  public String getAttachmentName() {
+    return this.attachmentName;
   }
 
 

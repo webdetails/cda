@@ -90,6 +90,7 @@ public class TableModelUtils {
 
     //  2. Show only the output columns we want, filter rows
     List<Integer> outputIndexes = getOutputIndexes( dataAccess, queryOptions, table );
+    List<String> columnNames = getColumnNames( dataAccess, table );
     DataTableFilter rowFilter = getRowFilter( queryOptions, outputIndexes );
     //mdx and denormalizedMdx queries with an empty result set can return different metadata (less columns),
     //in this cases, the output indexes will be ignored
@@ -99,8 +100,8 @@ public class TableModelUtils {
       useOutputIndexes = false;
       logger.warn( "Mdx query returned empty result set, output indexes will be ignored." );
     }
-    table = useOutputIndexes ? filterTable( table, outputIndexes, rowFilter )
-      : filterTable( table, new ArrayList<Integer>(), rowFilter );
+    table = useOutputIndexes ? filterTable( table, outputIndexes, columnNames, rowFilter )
+      : filterTable( table, new ArrayList<Integer>(), columnNames, rowFilter );
 
     //  3. Sort
     if ( !queryOptions.getSortBy().isEmpty() ) {
@@ -159,7 +160,8 @@ public class TableModelUtils {
    * @throws InvalidOutputIndexException
    */
   private static TableModel filterTable( final TableModel table, List<Integer> outputIndexes,
-                                         final DataTableFilter rowFilter ) throws InvalidOutputIndexException {
+                                         final List<String> columnNames, final DataTableFilter rowFilter )
+    throws InvalidOutputIndexException {
     int columnCount = outputIndexes.size();
 
     if ( columnCount == 0 && rowFilter != null ) { //still have to go through the motions if we need to filter rows
@@ -209,7 +211,7 @@ public class TableModelUtils {
       //since we set the calculated table model to infer types, they will be available after rows are evaluated
       for ( int i = 0; i < outputIndexes.size(); i++ ) {
         final int outputIndex = outputIndexes.get( i );
-        typedTableModel.setColumnName( i, table.getColumnName( outputIndex ) );
+        typedTableModel.setColumnName( i, columnNames.get( outputIndex ) );
         typedTableModel.setColumnType( i, table.getColumnClass( outputIndex ) );
       }
       return typedTableModel;
@@ -286,6 +288,31 @@ public class TableModelUtils {
     return outputIndexes;
   }
 
+
+  private static List<String> getColumnNames( final DataAccess dataAccess, TableModel table ) {
+    List<String> columnNames = new ArrayList<String>();
+    List<ColumnDefinition> columnDefinitions = dataAccess.getColumnDefinitions();
+
+    for( int index = 0; index < table.getColumnCount(); index++ ) {
+      String name = "";
+      if( columnDefinitions != null ) {
+        for ( ColumnDefinition colDef : columnDefinitions ) {
+          Integer colIndex = colDef.getIndex();
+          if ( colIndex != null && colIndex == index ) {
+            name = colDef.getName();
+          }
+        }
+      }
+
+      if ( name.isEmpty() ) {
+        columnNames.add( table.getColumnName( index ) );
+      } else {
+        columnNames.add( name );
+      }
+    }
+
+    return columnNames;
+  }
 
   public static TableModel copyTableModel( final DataAccess dataAccess, final TableModel t ) {
 

@@ -44,6 +44,7 @@ import pt.webdetails.cda.dataaccess.DataAccessEnums.DataAccessInstanceType;
 import pt.webdetails.cda.dataaccess.DenormalizedMdxDataAccess;
 import pt.webdetails.cda.dataaccess.DenormalizedOlap4JDataAccess;
 import pt.webdetails.cda.dataaccess.JoinCompoundDataAccess;
+import pt.webdetails.cda.dataaccess.JsonScriptableDataAccess;
 import pt.webdetails.cda.dataaccess.KettleDataAccess;
 import pt.webdetails.cda.dataaccess.MdxDataAccess;
 import pt.webdetails.cda.dataaccess.MqlDataAccess;
@@ -176,6 +177,8 @@ public class CdaSettings {
           return new ReflectionDataAccess( element );
         case SCRIPTABLE:
           return new ScriptableDataAccess( element );
+        case JSON_SCRIPTABLE:
+          return new JsonScriptableDataAccess( element );
         case SQL:
           return new SqlDataAccess( element );
         case UNION:

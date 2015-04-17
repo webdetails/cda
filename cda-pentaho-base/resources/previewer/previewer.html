@@ -1,251 +1,253 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<link href="previewer.css" type="text/css" rel="stylesheet"/>
-		<link href="dataTables/css/demo_table_jui.css" type="text/css" rel="stylesheet"/>
-		<link type="text/css" href="fg-menu/fg.menu.css" rel="stylesheet" />
-		<link type="text/css" href="../static/blueprint/screen.css" rel="stylesheet" />
-		<link type="text/css" href="../static/cda.css" rel="stylesheet" />
-		<link type="text/css" href="../static/jquery.jqModal.css" rel="stylesheet" />
+  <head>
+    <link href="previewer.css" type="text/css" rel="stylesheet"/>
+    <link href="dataTables/css/demo_table_jui.css" type="text/css" rel="stylesheet"/>
+    <link type="text/css" href="fg-menu/fg.menu.css" rel="stylesheet"/>
+    <link type="text/css" href="../static/blueprint/screen.css" rel="stylesheet"/>
+    <link type="text/css" href="../static/cda.css" rel="stylesheet"/>
+    <link type="text/css" href="../static/jquery.jqModal.css" rel="stylesheet"/>
 
-		<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
-		<script type="text/javascript" src="../static/jquery.jqModal.js"></script>
-		<script type="text/javascript" src="../static/jquery-ui-1.8rc3.custom.min.js"></script>
-		<script type="text/javascript" src="js/jquery.i18n.properties.js"></script>
-    <script type="text/javascript" src="js/jquery.blockUI.js"></script>
-		<script type="text/javascript" src="previewer.js"></script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/jquery.jqModal.js"></script>
+    <script type="text/javascript" src="../static/jquery.ui.js"></script>
+    <script type="text/javascript" src="../static/jquery.i18n.properties.js"></script>
+    <script type="text/javascript" src="../static/jquery.blockUI.js"></script>
+    <script type="text/javascript" src="previewer.js"></script>
 
-		<script type="text/javascript" src="dataTables/js/jquery.dataTables.js"></script>
-		<script type="text/javascript" src="fg-menu/fg.menu.js"></script>
-		<style type="text/css">
-			body {
-				font-size: 62.5%;
-				margin: 0;
-				padding: 0;
-				min-height: 500px
-			}
+    <script type="text/javascript" src="dataTables/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="fg-menu/fg.menu.js"></script>
+    <style type="text/css">
+      body {
+        font-size: 62.5%;
+        margin: 0;
+        padding: 0;
+        min-height: 500px
+      }
 
-		</style>
+    </style>
 
-		<script language="javascript">
+    <script language="javascript">
       var lastQuery;
       var tableController;
       var oLanguage;
       // Init jQuery i18n plugin
       loadMessageBundles = function(lang) {
 
-              jQuery.i18n.properties({
-                      name : 'Messages',
-                      path : PreviewerBackend.PATH_page + '/languages/',
-                      mode : 'both',
-                      language : (lang == 'browser' ? jQuery.i18n.browserLang() : lang),
-                      callback : function() {
-                              //$('#button').html(jQuery.i18n.prop('label.refresh'));
-                              $('#export').html(jQuery.i18n.prop('label.export'));
-                              $('#cachethis').html(jQuery.i18n.prop('label.cachethis'));
-                              $('#pleaseselect').html(jQuery.i18n.prop('label.selectDataAccessID'));
-                      }
-              });
-      }
+        jQuery.i18n.properties({
+          name: 'Messages',
+          path: PreviewerBackend.PATH_page + '/languages/',
+          mode: 'both',
+          language: (lang == 'browser' ? jQuery.i18n.browserLang() : lang),
+          callback: function() {
+
+            $('#export').html(jQuery.i18n.prop('label.doExport'));
+            $('#cachethis').html(jQuery.i18n.prop('label.cachethis'));
+            $('#pleaseselect').html(jQuery.i18n.prop('label.selectDataAccessID'));
+          }
+        });
+      };
 
       $(document).ready(function() {
-//               function getURLParameter(name) {
-//                       return decodeURI((RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]);
-//               }
 
-//               $solutionParameter = getURLParameter('solution');
-//               $pathParameter = getURLParameter('path');
-//               $fileParameter = getURLParameter('file');
-              $('#about').attr('href', PreviewerBackend.PATH_about);
-              oLanguage = PreviewerBackend.LOCALE_dataTables;
-              loadMessageBundles(PreviewerBackend.LOCALE_locale);
-//               var params = pageParams();
-              $('#notifications').hide();
-              $('#exportButton').hide();
+        $.jqm.focusFunc = function(activeModal, event) {
+          return true;
+        };
 
-              var sel = $("#dataAccessSelector");
-              sel.bind("change", function() {
-                      var val = $(this).val();
-                      if (val != "undefined") {
-                              refreshTable($(this).val())
-                              $('#exportButton').show();
-                      } else {
-                              $('#previewerTable').empty().append($("<span id=\"pleaseselect\"></span>").text("Please select a Data Access ID"));
-                              $("#parameterHolder").empty();
-                              lastQuery = undefined;
-                              $('#exportButton').hide();
-                      }
-              });
-              $("#dialog").jqm({
-                      modal : true
-              });
-              $('#help').jqm({
-                      modal : true
-              });
-              $('#queryUrlDialog').jqm({
-                      modal : true
-              });
-              $('#outputIndexHelp').jqm({
-                      modal : true
-              });
-              toggleAdvanced(false);
+        $('#about').attr('href', PreviewerBackend.PATH_about);
+        oLanguage = PreviewerBackend.LOCALE_dataTables;
+        loadMessageBundles(PreviewerBackend.LOCALE_locale);
 
-              $("#outputIndexId").focus(inputFocus).blur(inputBlur);
+        $('#notifications').hide();
+        hideButtons();
 
-              // get initial list of queries
-              PreviewerBackend.listQueries({
-                      path : PreviewerBackend.Path
-              }, function(queries) {
-                      var defaultQuery;
-                      var defaultDescription;
-                      for (query in queries.resultset) {
-                              var name = queries.resultset[query][1] != null && queries.resultset[query][1] != "" ? queries.resultset[query][1] : "DataAccess ID: " + queries.resultset[query][0];
-                              var value = queries.resultset[query][0];
+        var sel = $("#dataAccessSelector");
+        sel.bind("change", function() {
+          var val = $(this).val();
+          if(val !== "undefined") {
+            refreshTable(val);
+          } else {
+            $('#previewerTable').empty().append($("<span id=\"pleaseselect\"></span>").text("Please select a Data Access ID"));
+            $("#parameterHolder").empty();
+            lastQuery = undefined;
+            hideButtons();
+          }
+        });
 
-                              sel.append($("<option></option>").attr("value", value).text(name));
-                      };
+        $("#dialog").jqm({modal: true});
+        $('#help').jqm({modal: true});
+        $('#queryUrlDialog').jqm({modal: true});
+        $('#outputIndexHelp').jqm({ modal: true});
 
-                      $('#fileid').text(PreviewerBackend.Path);
-              });
-    });
-            </script>
-	</head>
+        toggleAdvanced(false);
 
-	<body >
-		<input type="hidden" id="staticfile" value="">
+        $("#outputIndexId").focus(inputFocus).blur(inputBlur);
 
-		<div class="webdetailsHead">
-			<div class="webdetailsLogo">
-				<a href="http://www.webdetails.pt/ctools/cda.html" target="_blank"></a>
-			</div>
-			<div class="buttoncontact ">
-				<a href="mailto:lead@webdetails.pt" title="Contact Webdetails directly here.">Get in Touch</a>
-			</div>
-		</div>
+        // get initial list of queries
+        PreviewerBackend.listQueries({
+          path: PreviewerBackend.Path
+        }, function(queries) {
+          for(var query in queries.resultset) {
+            if(queries.resultset.hasOwnProperty(query)) {
+              var name = queries.resultset[query][1] != null && queries.resultset[query][1] != "" ? queries.resultset[query][1] : "DataAccess ID: " + queries.resultset[query][0];
+              var value = queries.resultset[query][0];
+              sel.append($("<option></option>").attr("value", value).text(name));
+            }
+          }
 
-		<div class="container">
-			<div class="span-23 last filename">
-				<span style="color: #216dbf;">Filename: </span>
-				<span id="fileid">&nbsp;</span>
-				<a id="about" href="static/about.html">About</a>
-			</div>
-			<div class="span-23 clearfix cdalogo">
+          $('#fileid').text(PreviewerBackend.Path);
+        });
+      });
+    </script>
+  </head>
 
-				<div class="span-9 center">
-					<select id="dataAccessSelector" class="cdaButton">
-						<option selected="selected" value="undefined">Data Access</option>
-					</select>
-					<div class="cdaInputWrapper span-2 last">
-						<input class="cdaButton cdaButtonShort" id="outputIndexId" value="1" style="">
+  <body>
+    <input type="hidden" id="staticfile" value="">
+
+    <div class="webdetailsHead">
+      <div class="webdetailsLogo">
+        <a href="http://www.webdetails.pt/ctools/cda.html" target="_blank"></a>
+      </div>
+      <div class="buttoncontact ">
+        <a href="mailto:lead@webdetails.pt" title="Contact Webdetails directly here.">Get in Touch</a>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="span-23 last filename">
+        <span style="color: #216dbf;">Filename: </span>
+        <span id="fileid">&nbsp;</span>
+        <a id="about" href="static/about.html">About</a>
+      </div>
+      <div class="span-23 clearfix cdalogo">
+
+        <div class="span-9 center">
+          <select id="dataAccessSelector" class="cdaButton">
+            <option selected="selected" value="undefined">Data Access</option>
+          </select>
+
+          <div class="cdaInputWrapper span-2 last">
+            <input class="cdaButton cdaButtonShort" id="outputIndexId" value="1" style="">
+
             <div class="helpButton helpButtonShort" onclick='$("#outputIndexHelp").jqmShow()' style="display:none">?</div>
-					</div>
-				</div>
+          </div>
+        </div>
 
-				<div class="span-14 last">
-					<button class="cdaButton" id="button" onclick="refreshTable(lastQuery)"></button>
-					<div>
-						<button class="cdaButton" id="cachethis" onclick='$("#dialog").jqmShow()'>
-							Cache this
-						</button>
-					</div>
-					<div>
-						<button class="cdaButton" id="queryUrl" onclick="showQueryUrl(lastQuery)">
-							Query URL
-						</button>
-					</div>
-					<div style="display: none;" id="exportButton">
-						<button class="cdaButton" id="export" onclick="exportFunc(lastQuery)">
-							Export as .xls
-						</button>
-					</div>
-				</div>
+        <div class="span-14 last">
+          <button class="cdaButton" id="button" onclick="refreshTable(lastQuery)"></button>
+          <div>
+            <button class="cdaButton" id="cachethis" onclick='$("#dialog").jqmShow()'>
+              Cache this
+            </button>
+          </div>
+          <div>
+            <button class="cdaButton" id="queryUrl" onclick="showQueryUrl(lastQuery)">
+              Query URL
+            </button>
+          </div>
+          <div style="display: none;" id="exportButton">
+            <button class="cdaButton" id="export" onclick="exportFunc(lastQuery)">
+              Export as .xls
+            </button>
+          </div>
+        </div>
 
-			</div>
+      </div>
 
-			<div id="parameterHolder" class="span-23"></div>
-		</div>
+      <div id="parameterHolder" class="span-23"></div>
+    </div>
 
-		<div id='previewerTable' style="padding:10px">
-			<span id='pleaseselect'>Please select a Data Access ID</span>
-		</div>
+    <div id='previewerTable' style="padding:10px">
+      <span id='pleaseselect'>Please select a Data Access ID</span>
+    </div>
 
-		<div class="webdetailsFooter">
-			<div class="webdetailsFooterWebdetails">
-				<a href="http://www.webdetails.pt"></a>
-			</div>
-			<div class="webdetailsFooterCtools">
-				<a href="http://www.webdetails.pt/ctools.html"></a>
-			</div>
-		</div>
+    <div class="webdetailsFooter">
+      <div class="webdetailsFooterWebdetails">
+        <a href="http://www.webdetails.pt"></a>
+      </div>
+      <div class="webdetailsFooterCtools">
+        <a href="http://www.webdetails.pt/ctools.html"></a>
+      </div>
+    </div>
 
-		<div id='help' class='jqmWindow helpWindow'>
-			<h2 class='dialogTitle'>Parameter formulas</h2>
-			<p>You can use formulas instead of fixed values for CDA parameters. Here are some useful examples:
-				<dl>
-					<dt>
-						<code>
-							${TODAY()}
-						</code>
-					</dt>
-					<dd>
-						Today's date
-					</dd>
-					<dt>
-						<code>
-							${YESTERDAY()}
-						</code>
-					</dt>
-					<dd>
-						Yesterday's date
-					</dd>
-					<dt>
-						<code>
-							$FOREACH(dataAccess,colIdx,param1=val1,...,paramn=valn)
-						</code>
-					</dt>
-					<dd>
-						Iterate over the values for
-						<code>
-							colIdx
-						</code>
-						in query
-						<code>
-							dataAccess
-						</code>
-						with the given parameters. Queries using this construct return no values, and its main purpose is to provide parameter ranges for cache warming.
-					</dd>
-				</dl><p>Please refer to the Pentaho Reporting Engine <a href='http://wiki.pentaho.com/display/Reporting/9.+Report+Designer+Formula+Expressions' target='_blank'>documentation</a> for a full description of the syntax.</p>
-			<div class='dialogAction'>
-				<a href='#' class='jqmClose'>Close</a>
-			</div>
-		</div>
-		<div id='dialog' class='jqmWindow'>
-			<p class='dialogTitle'>What schedule should this query run on? <a href='javascript:toggleAdvanced()' class='dialogToggle'>(advanced)</a></p>
-			<div id='dialogInput'>
-				<input id='cron'>
-			</div>
-			<div class='dialogAction'>
-				<a href='javascript:cacheThis()'  class="jqmConfirm">Ok</a><a href='javascript:;' class='jqmClose'>Cancel</a>
-			</div>
-		</div>
+    <div id='help' class='jqmWindow helpWindow'>
+      <h2 class='dialogTitle'>Parameter formulas</h2>
 
-		<div id='queryUrlDialog' class='jqmWindow'>
-			<p class='dialogTitle'>Query Execution URL:</p>
-			<div class='dialogInput'>
-				<input id='doQueryUrl' readonly>
-			</div>
-			<div class='dialogAction'>
-				<a href='javascript:;' class='jqmClose'>Close</a>
-			</div>
-		</div>
-    <div id='outputIndexHelp' class='jqmWindow'>
-      <p class='dialogTitle'>Output Index Id</p>
-      <p>
-        This Id is used to select the desired set of Output Options for the current Data Access.
+      <p>You can use formulas instead of fixed values for CDA parameters. Here are some useful examples:
+      <dl>
+        <dt>
+          <code>
+            ${TODAY()}
+          </code>
+        </dt>
+        <dd>
+          Today's date
+        </dd>
+        <dt>
+          <code>
+            ${YESTERDAY()}
+          </code>
+        </dt>
+        <dd>
+          Yesterday's date
+        </dd>
+        <dt>
+          <code>
+            $FOREACH(dataAccess,colIdx,param1=val1,...,paramn=valn)
+          </code>
+        </dt>
+        <dd>
+          Iterate over the values for
+          <code>
+            colIdx
+          </code>
+          in query
+          <code>
+            dataAccess
+          </code>
+          with the given parameters. Queries using this construct return no values, and its main purpose is to provide parameter ranges for cache warming.
+        </dd>
+      </dl>
+      <p>Please refer to the Pentaho Reporting Engine
+        <a href='http://wiki.pentaho.com/display/Reporting/9.+Report+Designer+Formula+Expressions' target='_blank'>documentation</a> for a full description of the syntax.
       </p>
+
       <div class='dialogAction'>
         <a href='#' class='jqmClose'>Close</a>
       </div>
     </div>
-	</body>
+    <div id='dialog' class='jqmWindow'>
+      <p class='dialogTitle'>What schedule should this query run on?
+        <a href='javascript:toggleAdvanced()' class='dialogToggle'>(advanced)</a></p>
+
+      <div id='dialogInput'>
+        <input id='cron'>
+      </div>
+      <div class='dialogAction'>
+        <a href='javascript:cacheThis()' class="jqmConfirm">Ok</a><a href='javascript:' class='jqmClose'>Cancel</a>
+      </div>
+    </div>
+
+    <div id='queryUrlDialog' class='jqmWindow'>
+      <p class='dialogTitle'>Query Execution URL:</p>
+
+      <div class='dialogInput'>
+        <input id='doQueryUrl' readonly>
+      </div>
+      <div class='dialogAction'>
+        <a href='javascript:' class='jqmClose'>Close</a>
+      </div>
+    </div>
+    <div id='outputIndexHelp' class='jqmWindow'>
+      <p class='dialogTitle'>Output Index Id</p>
+
+      <p>
+        This Id is used to select the desired set of Output Options for the current Data Access.
+      </p>
+
+      <div class='dialogAction'>
+        <a href='#' class='jqmClose'>Close</a>
+      </div>
+    </div>
+  </body>
 </html>

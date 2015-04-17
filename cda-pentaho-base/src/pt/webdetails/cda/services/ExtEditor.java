@@ -17,7 +17,7 @@ public class ExtEditor extends ProcessedHtmlPage {
   private static String EXT_EDITOR = "ext-editor.html";
   private static String MAIN_EDITOR = "editor.html";
   private static String UI_BACKEND_PREFIX = "ExternalEditor.";
-  private static String EDITOR_SYS_DIR = "editor";
+  private static String EDITOR_SYS_DIR = "fileEditor";
 
   public ExtEditor( IUrlProvider urlProvider, IContentAccessFactory access ) {
     super( urlProvider, access );

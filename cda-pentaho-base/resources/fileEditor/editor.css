@@ -1,0 +1,151 @@
+@font-face {
+	font-family: 'Open Sans';
+	font-style: normal;
+	font-weight: 400;
+	src: local('Open Sans'), local('OpenSans'), url('http://themes.googleusercontent.com/static/fonts/opensans/v4/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff') format('woff');
+}
+
+@font-face {
+	font-family: 'Open Sans';
+	font-style: normal;
+	font-weight: 300;
+	src: local('Open Sans Light'), local('OpenSans-Light'), url('http://themes.googleusercontent.com/static/fonts/opensans/v4/DXI1ORHCpsQm3Vp6mXoaTXhCUOGz7vYGh680lGh-uXM.woff') format('woff');
+}
+
+body {
+    padding: 0px;
+    font-family: 'Open Sans', Arial, sans-serif;
+    background-color: #fff
+}
+
+h1 {
+    font-size:120%
+}
+
+.cdalogo{
+    height: 50px !important;
+    background: none !important;
+  }
+
+.header {
+    background-image: url('../static/img/headerbg.png');
+    height:112px;
+    border-bottom: 1px solid #ddd;
+    color: white;
+    margin-bottom: 10px;
+    position:relative
+}
+
+.bespin{
+    margin: 0px;
+    padding: 0px;
+    border: 0;
+    height: 380px;
+}
+
+.textinputfix {
+    border: 0px;
+    height: 20px;
+    position: relative;
+    margin: 0px;
+}
+.button {
+    background-color: #eee;
+    color:#333;
+    text-decoration:none;
+    vertical-align: middle;
+    text-align: center;
+    margin-left: 10px;
+    border: 0px;
+    font-size: 11px;
+    float: right;
+	-webkit-border-radius: 3px;
+	   -moz-border-radius: 3px;
+			border-radius: 3px;
+			padding: 5px 0px;
+}
+
+.button:disabled {
+  color:#888
+}
+
+.button:enabled:hover {
+    color: white;
+    background-color: #005ca4;
+    cursor: pointer;
+}
+a.button {
+    font-size: 110%;
+    color:#000 text-decoration:none
+}
+
+a.button:link {
+    color:#000;
+    text-decoration:none
+}
+
+a.button:visited {
+    color:#ddd;
+    text-decoration:none
+}
+
+a.button:hover {
+    color: #efe;
+    text-decoration:bold;
+    border-color: white
+}
+
+a.input {
+    color:#ddd text-decoration:none
+}
+
+a.input:link {
+    color:#ddd;
+    text-decoration:none
+}
+
+a.input:visited {
+    color:#ddd;
+    text-decoration:none
+}
+
+a.input:hover {
+    color:#222;
+    text-decoration:bold;
+    border-color: white
+}
+
+
+.notification {
+    height:20px;
+    background-color: #28211c;
+    color:#ddd;
+    text-align: center;
+    font-size: 110%;
+     text-decoration:none
+}
+
+.fileinput {
+    border:1px solid;
+    font-size:12px;
+    position:relative;
+    top:-1px;
+}
+
+.inputlabel {
+    height: 20px;
+    position: relative;
+    text-align: right;
+    font-size: 110%;
+    top: 1px;
+    vertical-align: middle;
+
+}
+
+#externalEditor {
+	width: 910px;
+}
+
+#controller {
+	width: 910px;
+}

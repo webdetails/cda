@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CDADescriptor>
+   <DataSources>
+      <Connection id="Ds2" type="sql.jdbc">
+         <Driver>org.hsqldb.jdbcDriver</Driver>
+         <Pass></Pass>
+         <Url>jdbc:hsqldb:mem:SampleData</Url>
+         <User>sa</User>
+      </Connection>
+   </DataSources>
+   <DataAccess access="public" cache="false" cacheDuration="3" connection="Ds2" id="Ds2"
+               type="sql">
+      <Columns/>
+      <Output indexes="2,4" mode="include"/>
+      <Parameters>
+         <Parameter default="1" name="parameter0" type="Numeric"/>
+         <Parameter default="1" name="parameter1" type="Numeric"/>
+         <Parameter default="1" name="parameter2" type="Numeric"/>
+         <Parameter default="1" name="parameter3" type="Numeric"/>
+         <Parameter default="1" name="parameter4" type="Numeric"/>
+         <Parameter default="1" name="parameter5" type="Numeric"/>
+         <Parameter default="1" name="parameter6" type="Numeric"/>
+         <Parameter default="1" name="parameter7" type="Numeric"/>
+         <Parameter default="1" name="parameter8" type="Numeric"/>
+         <Parameter default="1" name="parameter9" type="Numeric"/>
+         <Parameter default="1" name="parameter10" type="Numeric"/>
+      </Parameters>
+      <Query>select top (10) * from orderfact o
+        where QTR_ID=${parameter0}
+        and QTR_ID=${parameter1}
+        and QTR_ID=${parameter2}
+        and QTR_ID=${parameter3}
+        and QTR_ID=${parameter4}
+        and QTR_ID=${parameter5}
+        and QTR_ID=${parameter6}
+        and QTR_ID=${parameter7}
+        and QTR_ID=${parameter8}
+        and QTR_ID=${parameter9}
+        and QTR_ID=${parameter10}
+</Query>
+   </DataAccess>
+</CDADescriptor>

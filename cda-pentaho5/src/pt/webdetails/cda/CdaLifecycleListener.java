@@ -2,7 +2,7 @@ package pt.webdetails.cda;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.engine.IPluginLifecycleListener;
+import org.pentaho.platform.api.engine.IPlatformReadyListener;
 import org.pentaho.platform.api.engine.PluginLifecycleException;
 
 import pt.webdetails.cda.utils.mondrian.CompactBandedMDXDataFactory;
@@ -20,7 +20,7 @@ import org.pentaho.reporting.engine.classic.core.metadata.DefaultDataFactoryCore
  *
  * @author gorman
  */
-public class CdaLifecycleListener extends SimpleLifeCycleListener implements IPluginLifecycleListener {
+public class CdaLifecycleListener extends SimpleLifeCycleListener implements IPlatformReadyListener {
 
   static Log logger = LogFactory.getLog( CdaLifecycleListener.class );
 
@@ -57,5 +57,9 @@ public class CdaLifecycleListener extends SimpleLifeCycleListener implements IPl
   @Override
   public PluginEnvironment getEnvironment() {
     return PentahoPluginEnvironment.getInstance();
+  }
+
+  @Override public void ready() throws PluginLifecycleException {
+
   }
 }

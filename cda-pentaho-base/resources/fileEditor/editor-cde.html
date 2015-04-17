@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- random comment -->
+		<link href="editor.css" type="text/css" rel="stylesheet"/>
+		<link href="editor-webdetails.css" type="text/css" rel="stylesheet"/>
+		<link href="../static/blueprint/screen.css" type="text/css" rel="stylesheet"/>
+		<link href="../static/theme/cupertino/jquery-ui-1.10.4.custom.css" type="text/css" rel="stylesheet"/>
+
+		<script type="text/javascript" src="../static/jquery.js"></script>
+		<script type="text/javascript" src="../static/jquery.i18n.properties.js"></script>
+		<script type="text/javascript" src="../static/jquery.ui.js"></script>
+		<script language="javascript">
+			// Init jQuery i18n plugin
+			loadMessageBundles = function(lang) {
+
+				jQuery.i18n.properties({
+					name : 'Messages',
+					path : 'editor/languages/',
+					mode : 'both',
+					language : (lang == 'browser' ? jQuery.i18n.browserLang() : lang)
+				});
+			}
+			saveFile = function() {
+				getEditorWindow().save();
+			}
+			previewFile = function() {
+				var fileName = $("#staticfile").text();
+				window.open('previewQuery?path=' + fileName);
+			}
+			loadFile = function() {
+				var params = pageParams();
+
+				//build full path
+				var path = getFullPath(params);
+				$("#staticfile").text(path);
+
+				var externalEditor = $('#externalEditor');
+				var header = $('.cdalogo');
+
+				externalEditor.height($(window).height() - header.height() - 5);
+
+				externalEditor.load(function() {
+					var editorEnv = getEditorWindow();
+					editorEnv.listeners.onStatusUpdate = setDirty;
+					editorEnv.listeners.notify = function(msg, type) {
+						$('#notifications').text(msg);
+						$('#notifications').fadeIn().delay(2000).fadeOut('slow');
+					}
+
+					$('#notifications').hide();
+				});
+				// try to fit height and width to window size
+				var mainContainer = $('.container');
+				var height = window.innerHeight - $('.webdetailsHead').outerHeight(true) - $('.webdetailsFooter').outerHeight(true);
+				height -= mainContainer.outerHeight(true) - externalEditor.height();
+				externalEditor.height(height);
+				// try to fit width if too big
+				var width = Math.min( window.innerWidth - (mainContainer.outerWidth(true) - externalEditor.width()), externalEditor.width());// = externalEditor.width() - 10;
+				//externalEditor.width(width);
+				// some hcoded margin
+				width -= 10;
+				height -= 10;
+				// load the editor
+				externalEditor.attr('src', ExternalEditor.EDITOR_PAGE + '?path=' + path + '&theme=ace/theme/eclipse&editorOnly=true&width=' + width + '&height=' + height);
+			}
+			/*
+			 *  pageParams: get the request variables passed in the url
+			 */
+			pageParams = function() {
+				var url = document.location.href;
+				var output = {};
+				var index = url.indexOf('?');
+				if (index < 0) {
+					return null;
+				} else {
+					// First we get the part of the url with the parameters in it (i.e. after the '?'), and partition
+					// it into individual 'var=value' pieces. Then we split those pieces and add them to the output object
+					args = url.slice(index + 1).split('&');
+					for ( i = 0; i < args.length; i++) {
+						pair = args[i].split('=');
+						output[pair[0]] = unescape(pair[1]);
+					}
+					return output;
+				}
+			}
+			getFullPath = function(params) {
+				var path;
+				if (params != null && params.solution != undefined) {
+					// If we have fully qualified path, concatenate the pieces together.
+					// We mustn't forget to account for double slashes
+					path = params.solution + '/' + params.path + '/' + params.file;
+					path = path.replace(/(\/)+/g, "/");
+				} else if (params != null) {
+					path = params.path;
+				}
+				return path;
+			}
+			setDirty = function(isDirty) {
+				$('#save').attr('disabled', !isDirty);
+			}
+			getEditorWindow = function() {
+				return $('#externalEditor')[0].contentWindow;
+			}
+
+		</script>
+
+	</head>
+	<body>
+		<div class="webdetailsHead">
+			<div class="webdetailsLogo">
+				<a href="http://www.webdetails.pt/ctools/cda.html" target="_blank"></a>
+			</div>
+			<div class="buttoncontact ">
+				<a href="mailto:lead@webdetails.pt" title="Contact Webdetails directly here.">Get in Touch</a>
+			</div>
+		</div>
+		<div class="container">
+
+			<div class="span-23 clearfix cdalogo">
+				<div>
+					<div style="text-align: right;" class="span-16 filename">
+						<span style="font-size: 12px; line-height:25px; font-weight: 600; letter-spacing: .5px;">File: </span><span style="font-size: 12px; line-height:25px;" id="staticfile"></span>
+					</div>
+					<div id="controller">
+
+						<button class="span-2 button" onclick="saveFile()" id="save" disabled="">
+							Save
+						</button>
+						<button class="span-2 button" onclick="loadFile()" id="reload">
+							Reload
+						</button>
+						<button class="span-2 button" onclick="previewFile()" id="preview">
+							Preview
+						</button>
+					</div>
+				</div>
+				<div class="span-24 last" style="margin-top: 10px;text-align:center;">
+					<span style="display: none;" id="notifications" class="notification"></span>
+				</div>
+			</div>
+
+			<iframe id="externalEditor" style="overflow:hidden;" marginheight="0" seamless="true" class=" last" ></iframe>
+
+		</div>
+		<div class="webdetailsFooter">
+			<div class="webdetailsFooterWebdetails">
+				<a href="http://www.webdetails.pt"></a>
+			</div>
+			<div class="webdetailsFooterCtools">
+				<a href="http://www.webdetails.pt/ctools.html"></a>
+			</div>
+		</div>
+		<script language="javascript">
+			$(document).ready(function() {
+				// Initialize jquery.i18n plugin - load message files
+				var userLocale = '#{LANGUAGE_CODE}';
+				if (userLocale.indexOf('#') == 0) {
+					userLocale = 'en';
+					//fallback
+				}
+				loadMessageBundles(userLocale);
+				$('#save').text(jQuery.i18n.prop('label.save'));
+				$('#reload').text(jQuery.i18n.prop('label.reload'));
+				$('#preview').text(jQuery.i18n.prop('label.preview'));
+
+				loadFile();
+			});
+
+		</script>
+	</body>
+</html>

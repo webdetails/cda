@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -37,8 +37,6 @@ import java.util.Properties;
 
 /**
  * Implementation of a DataAccess that will get data from a SQL database
- * <p/>
- * User: pedro Date: Feb 3, 2010 Time: 12:18:05 PM
  */
 public class MdxDataAccess extends GlobalMdxDataAccess {
 
@@ -137,8 +135,8 @@ public class MdxDataAccess extends GlobalMdxDataAccess {
 
     CacheKey cacheKey = getCacheKey() != null ? ( (CacheKey) getCacheKey() ).clone() : new CacheKey();
 
-    cacheKey.addKeyValuePair( "bandedMode" , bandedMode.toString() );
-    cacheKey.addKeyValuePair( "mondrianRole" ,  mci.getMondrianRole() );
+    cacheKey.addKeyValuePair( "bandedMode", bandedMode.toString() );
+    cacheKey.addKeyValuePair( "mondrianRole", mci.getMondrianRole() );
 
     return cacheKey;
   }
