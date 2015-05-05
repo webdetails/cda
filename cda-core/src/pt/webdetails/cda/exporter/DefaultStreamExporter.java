@@ -159,10 +159,17 @@ public class DefaultStreamExporter implements RowProductionManager, StreamExport
           Object value = parameters.get( parameterName );
           if ( value instanceof Object[] ) {
             Object[] array = (Object[]) value;
-            for ( int c = 0; c < array.length; ++c ) {
-              columnNames.add( parameterName + "_" + c );
-              columnClasses.add( array[ c ].getClass() );
-              values.add( array[ c ] );
+            int arrayLength = array.length;
+            if ( arrayLength > 0 ) {
+              for ( int c = 0; c < arrayLength; ++c ) {
+                columnNames.add( parameterName + "_" + c );
+                columnClasses.add( array[ c ].getClass() );
+                values.add( array[ c ] );
+              }
+            } else {
+              columnNames.add( parameterName );
+              columnClasses.add( Object.class );
+              values.add( null );
             }
           } else {
             columnNames.add( parameterName );
