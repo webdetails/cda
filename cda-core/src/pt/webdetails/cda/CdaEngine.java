@@ -13,6 +13,7 @@
 
 package pt.webdetails.cda;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -142,7 +143,8 @@ public class CdaEngine {
     //[CDA-124] - Exporting queries with parameters and output indexes was failing when done with a
     //streaming Kettle Transformation. In this case CDA 'doQuery' method should be used instead.
     if ( !dataAccess.hasIterableParameterValues( queryOptions ) && exporter instanceof AbstractKettleExporter
-      && ( queryOptions.getParameters().isEmpty() || dataAccess.getOutputs().isEmpty() ) ) {
+      && ( queryOptions.getParameters().isEmpty() || dataAccess.getOutputs().isEmpty() )
+      && queryOptions.getOutputColumnName().isEmpty() ) {
       // Try to initiate a streaming Kettle transformation:
       DataAccessKettleAdapter dataAccessKettleAdapter = DataAccessKettleAdapterFactory
         .create( dataAccess, queryOptions );
