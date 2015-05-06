@@ -259,6 +259,23 @@ public class TableModelUtils {
 
   private static List<Integer> getOutputIndexes( final DataAccess dataAccess, final QueryOptions queryOptions,
                                                  TableModel table ) throws InvalidOutputIndexException {
+
+    // override outputIndexes if outputColumnName is provided
+    List<String> outputColumnNames = queryOptions.getOutputColumnName();
+    if ( !outputColumnNames.isEmpty() ) {
+      ArrayList<Integer> outputIndexes = new ArrayList<Integer>();
+      ArrayList<String> originalColumnNames = new ArrayList<String>();
+      for ( int i = 0; i < table.getColumnCount(); i++ ) {
+        originalColumnNames.add( table.getColumnName( i ) );
+      }
+      for ( String outputColumnName : outputColumnNames ) {
+        if ( originalColumnNames.contains( outputColumnName ) ) {
+          outputIndexes.add( originalColumnNames.indexOf( outputColumnName ) );
+        }
+      }
+      return outputIndexes;
+    }
+
     // First we need to check if there's nothing to do.
     ArrayList<Integer> outputIndexes = dataAccess.getOutputs( queryOptions.getOutputIndexId() );
     if ( outputIndexes == null ) {

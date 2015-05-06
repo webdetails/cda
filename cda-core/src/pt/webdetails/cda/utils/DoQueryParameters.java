@@ -40,6 +40,7 @@ public class DoQueryParameters {
   private boolean wrapItUp;
   private String jsonCallback;
   private List<String> sortBy;
+  private List<String> outputColumnName;
   private Map<String, Object> parameters;
   private Map<String, Object> extraSettings;
 
@@ -53,6 +54,7 @@ public class DoQueryParameters {
     this.dataAccessId = "<blank>";
     this.jsonCallback = "<blank>";
     this.sortBy = new ArrayList<String>();
+    this.outputColumnName = new ArrayList<String>();
     parameters = new HashMap<String, Object>();
     extraSettings = new HashMap<String, Object>();
   }
@@ -270,5 +272,18 @@ public class DoQueryParameters {
   public void setJsonCallback( String jsonCallback ) {
     this.jsonCallback = jsonCallback;
   }
-}
 
+  /**
+   * @return the outputColumnName
+   */
+  public List<String> getOutputColumnName() {
+    return this.outputColumnName;
+  }
+
+  /**
+   * @param outputColumnName the outputColumnName to set
+   */
+  public void setOutputColumnName( List<String> outputColumnName ) {
+    this.outputColumnName = outputColumnName;
+  }
+}
