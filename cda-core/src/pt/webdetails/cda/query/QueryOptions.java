@@ -34,6 +34,7 @@ public class QueryOptions implements ExportOptions, IQueryArguments, Cloneable {
   private Map<String, String> extraSettings;
   private String outputType;
   private boolean cacheBypass;
+  private List<String> outputColumnName;
 
 
   public QueryOptions() {
@@ -46,6 +47,7 @@ public class QueryOptions implements ExportOptions, IQueryArguments, Cloneable {
     outputType = "json";
     extraSettings = new HashMap<String, String>();
     cacheBypass = false;
+    outputColumnName = new ArrayList<String>();
   }
 
 
@@ -184,11 +186,16 @@ public class QueryOptions implements ExportOptions, IQueryArguments, Cloneable {
     this.cacheBypass = cacheBypass;
   }
 
+  public List<String> getOutputColumnName() {
+    return this.outputColumnName;
+  }
+
+  public void setOutputColumnName( List<String> outputColumnName ) {
+    this.outputColumnName = outputColumnName;
+  }
 
   @Override
   public Object clone() throws CloneNotSupportedException {
     return super.clone();
   }
-
-
 }
