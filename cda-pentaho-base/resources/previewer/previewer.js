@@ -61,7 +61,6 @@ var PreviewerBackend = {
       success: callback,
       error: function(xhr, status, error) {
         hideButtons();
-        clearParameters();
         showErrorMessage("Error Executing Query");
       }
     });
@@ -102,11 +101,15 @@ showErrorMessage = function(message) {
   $.unblockUI();
 };
 
-hideButtons = function() {
+hideButtons = function(forceHide) {
   $('#exportButton').hide();
   $('#queryUrl').hide();
   $('#cachethis').hide();
-  $('#button').hide();
+  if(forceHide || $('#parameterHolder').is(':empty')) {
+    $('#button').hide();
+  } else {
+    $('#button').show();
+  }
 
 };
 
@@ -114,7 +117,6 @@ showButtons = function() {
   $('#exportButton').show();
   $('#queryUrl').show();
   $('#cachethis').show();
-  $('#button').show();
 };
 
 getFileName = function() {
@@ -136,6 +138,20 @@ pageParams = function() {
     }
   }
   return output;
+};
+
+resetPreview = function() {
+  $('#notifications').hide();
+  hideButtons(true);
+
+  clearParameters();
+  lastQuery = undefined;
+
+  $('#previewerTable')
+      .empty()
+      .append($("<span id=\"pleaseselect\"></span>")
+          .text("Please select a Data Access ID"));
+
 };
 
 refreshTable = function(id) {
