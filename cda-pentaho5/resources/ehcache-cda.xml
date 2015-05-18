@@ -54,7 +54,7 @@
         maxElementsInMemory="100"
         maxElementsOnDisk="10000"
         eternal="false"
-        overflowToDisk="false"
+        overflowToDisk="true"
         timeToIdleSeconds="0"
         timeToLiveSeconds="0"
         diskPersistent="false"
