@@ -4,7 +4,7 @@
   <lifecycle-listener class="pt.webdetails.cda.CdaLifecycleListener"/>
   <static-paths>
     <static-path url="/cda/cachemanager" localFolder="cachemanager"/>
-    <static-path url="/cda/editor" localFolder="editor"/>
+    <static-path url="/cda/fileEditor" localFolder="fileEditor"/>
     <static-path url="/cda/previewer" localFolder="previewer"/>
     <static-path url="/cda/resources" localFolder="resources"/>
     <static-path url="/cda/static" localFolder="static"/>
