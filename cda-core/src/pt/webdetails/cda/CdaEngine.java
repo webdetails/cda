@@ -28,8 +28,11 @@ import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 import org.pentaho.reporting.libraries.base.config.Configuration;
 
+import pt.webdetails.cda.connections.Connection;
+import pt.webdetails.cda.connections.sql.JndiConnection;
 import pt.webdetails.cda.dataaccess.DataAccess;
 import pt.webdetails.cda.dataaccess.QueryException;
+import pt.webdetails.cda.dataaccess.SimpleDataAccess;
 import pt.webdetails.cda.dataaccess.kettle.DataAccessKettleAdapter;
 import pt.webdetails.cda.dataaccess.kettle.DataAccessKettleAdapterFactory;
 import pt.webdetails.cda.exporter.AbstractKettleExporter;
@@ -46,6 +49,7 @@ import pt.webdetails.cda.exporter.UnsupportedExporterException;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
+import pt.webdetails.cda.settings.UnknownConnectionException;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 import pt.webdetails.cpf.PluginEnvironment;
 import pt.webdetails.cpf.repository.api.IBasicFile;
@@ -135,16 +139,16 @@ public class CdaEngine {
 
   public ExportedQueryResult doExportQuery( CdaSettings cdaSettings, QueryOptions queryOptions )
     throws QueryException, UnknownDataAccessException, UnsupportedExporterException {
-    DataAccess dataAccess = cdaSettings.getDataAccess( queryOptions
-      .getDataAccessId() );
+    DataAccess dataAccess = cdaSettings.getDataAccess( queryOptions.getDataAccessId() );
     TableExporter exporter = getExporter( queryOptions );
 
     StreamExporter streamingExporter = null;
     //[CDA-124] - Exporting queries with parameters and output indexes was failing when done with a
     //streaming Kettle Transformation. In this case CDA 'doQuery' method should be used instead.
+    //Also disabling the use of Streaming Kettle Transformation for queries with a JNDI connection because of [PDI-13633]
     if ( !dataAccess.hasIterableParameterValues( queryOptions ) && exporter instanceof AbstractKettleExporter
       && ( queryOptions.getParameters().isEmpty() || dataAccess.getOutputs().isEmpty() )
-      && queryOptions.getOutputColumnName().isEmpty() ) {
+      && queryOptions.getOutputColumnName().isEmpty() && !isJNDIConnection( dataAccess ) ) {
       // Try to initiate a streaming Kettle transformation:
       DataAccessKettleAdapter dataAccessKettleAdapter = DataAccessKettleAdapterFactory
         .create( dataAccess, queryOptions );
@@ -162,6 +166,20 @@ public class CdaEngine {
       TableModel table = doQuery( cdaSettings, queryOptions );
       return new ExportedTableQueryResult( exporter, table );
     }
+  }
+
+  private boolean isJNDIConnection( DataAccess dataAccess ) {
+    String connectionId = ( (SimpleDataAccess) dataAccess ).getConnectionId();
+    Connection connection;
+
+    try {
+      connection = dataAccess.getCdaSettings().getConnection( connectionId );
+    } catch ( UnknownConnectionException e ) {
+      logger.error( "Connection Unknown " + e.getMessage() );
+      return false;
+    }
+
+    return connection instanceof JndiConnection;
   }
 
   /**
