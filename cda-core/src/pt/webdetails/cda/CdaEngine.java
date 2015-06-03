@@ -119,16 +119,16 @@ public class CdaEngine {
   }
 
   public ExportedQueryResult doExportQuery( CdaSettings cdaSettings, QueryOptions queryOptions )
-    throws QueryException, UnknownDataAccessException, UnsupportedExporterException {
-    DataAccess dataAccess = cdaSettings.getDataAccess( queryOptions
-      .getDataAccessId() );
+    throws QueryException, UnknownDataAccessException, UnsupportedExporterException
+  {
+    DataAccess dataAccess = cdaSettings.getDataAccess( queryOptions.getDataAccessId() );
     TableExporter exporter = getExporter( queryOptions );
 
-      if(exporter instanceof CXlsExporter){
-          ((CXlsExporter)exporter).templateSettings = dataAccess.getTemplateSettings();
-      }
-
-
+    if(exporter instanceof CXlsExporter){
+        ((CXlsExporter)exporter).templateSettings = dataAccess.getTemplateSettings();
+    } else if(exporter instanceof PivotXlsExporter){
+        ((PivotXlsExporter)exporter).templateSettings = dataAccess.getTemplateSettings();
+    }
 
     StreamExporter streamingExporter = null;
     if ( !dataAccess.hasIterableParameterValues( queryOptions )
