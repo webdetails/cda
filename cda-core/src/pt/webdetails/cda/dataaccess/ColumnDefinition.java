@@ -35,7 +35,7 @@ public class ColumnDefinition
   private Integer index;
   private String name;
   private String formula;
-  private String customType;
+  private String customType = "";
 
   public ColumnDefinition() { }
 

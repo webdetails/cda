@@ -111,13 +111,14 @@ public class TableModelUtils {
     for ( int i = 0; i < table.getColumnCount(); i++ ) {
       colTypes[ i ] = table.getColumnClass( i );
       colNames[ i ] = table.getColumnName( i );
-      colCustomTypes[ i ] = "";
+
+        try{
+            colCustomTypes[ i ] = dataAccess.getColumnDefinitions().get(i).getCustomType();
+        }catch (Exception e){
+            colCustomTypes[ i ] = "";
+        }
     }
-    for(ColumnDefinition c : dataAccess.getColumnDefinitions()){
-      //System.out.println("DEBUG-CWO: colCustomTypes: " + c.getCustomType() + "; index: " + c.getIndex() + " / " + colCustomTypes.length);
-        if(c.getIndex() < colCustomTypes.length)
-            colCustomTypes[c.getIndex()] = c.getCustomType();
-    }
+
 
     final int rowCount = table.getRowCount();
     MetadataTableModel result = new MetadataTableModel( colNames, colTypes, colCustomTypes, rowCount );

@@ -34,6 +34,7 @@ import java.util.Map;
 public class CXlsExporter extends AbstractExporter
 {
     public static final String TEMPLATE_NAME_SETTING = "templateName";
+//    private final String templatesDir = "/Users/fschmidt/";
     private final String templatesDir = "/opt/pentaho/xls-templates/";
     private static final String MIME_TYPE = "application/vnd.ms-excel";
     private static final Log logger = LogFactory.getLog( CXlsExporter.class );
@@ -50,11 +51,11 @@ public class CXlsExporter extends AbstractExporter
 
 
   public CXlsExporter(Map<String, String> extraSettings)
-  {
-      super( extraSettings );
-      this.attachmentName = getSetting(ATTACHMENT_NAME_SETTING, "analytics-report." + getType());
-      logger.debug( "Initialized CXmlExporter with attachement filename '" + attachmentName + "'" );
-  }
+{
+    super( extraSettings );
+    this.attachmentName = getSetting(ATTACHMENT_NAME_SETTING, "analytics-report." + getType());
+    logger.debug( "Initialized CXmlExporter with attachement filename '" + attachmentName + "'" );
+}
     public void export( final OutputStream out, final TableModel tableModel ) throws ExporterException {
 
 //        <Template file="testTemplate.xls">
@@ -175,10 +176,23 @@ public class CXlsExporter extends AbstractExporter
 
             CellStyle rowCellStyle = null;
 
-            if(templateFound)
-                rowCellStyle = sheet.getRow(rowOffset).getCell(columnOffset).getCellStyle();
+//            if(templateFound)
+//                try{
+//                    rowCellStyle = sheet.getRow(rowOffset).getCell(columnOffset).getCellStyle();
+//                }catch (Exception e){}
+//
+//            int rows = table.getRowCount();
+//
+//            Row r1 = sheet.getRow(rowOffset);
+//
+//            int cols = r1.getLastCellNum();
+//
+//            Cell c1 = r1.getCell(columnOffset);
 
-            Row row = sheet.createRow(r+rowOffset-ignoreFirstXRows);
+            Row row = sheet.getRow(r+rowOffset-ignoreFirstXRows);
+            if(row == null){
+                row = sheet.createRow(r+rowOffset-ignoreFirstXRows);
+            }
 
             int colCount;
 
@@ -191,9 +205,20 @@ public class CXlsExporter extends AbstractExporter
             }
 
             for(int col=0;col<colCount;col++){
-                Cell cell = row.createCell(col+columnOffset);
-                if(templateFound)
-                    cell.setCellStyle(rowCellStyle);
+                Cell cell = null;
+                if(templateFound){
+                    cell = row.getCell(col+columnOffset);
+                    if(cell == null){
+                        cell = row.createCell(col+columnOffset);
+                    }
+                    try{
+                        rowCellStyle = sheet.getRow(rowOffset).getCell(col+columnOffset).getCellStyle();
+                        cell.setCellStyle(rowCellStyle);
+                    }catch (Exception e){}
+                }else{
+                    cell = row.createCell(col+columnOffset);
+                }
+
                 if(!interpretCsv){
                     try{
                         setConvertedValue(cell, table.getValueAt(r, col),col,table);
@@ -254,7 +279,11 @@ public class CXlsExporter extends AbstractExporter
                 cell.setCellValue(obj.toString());
             }else if(clazz.equals("PERCENT")){
                 cell.setCellStyle(percentCellStyle);
-                cell.setCellValue(Double.parseDouble(obj.toString()));
+                if(Double.parseDouble(obj.toString()) == 0.0){
+                    cell.setCellValue(Double.parseDouble(obj.toString()));
+                }else{
+                    cell.setCellValue(Double.parseDouble(obj.toString())/100);
+                }
             }else if(clazz.equals("DATE")){
                 cell.setCellStyle(dateCellStyle);
                 if(obj instanceof Date){
