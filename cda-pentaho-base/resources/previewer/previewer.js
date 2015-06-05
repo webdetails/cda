@@ -60,7 +60,7 @@ var PreviewerBackend = {
       data: params,
       success: callback,
       error: function(xhr, status, error) {
-        hideButtons();
+        hideButtons(false);
         showErrorMessage("Error Executing Query");
       }
     });
@@ -101,11 +101,11 @@ showErrorMessage = function(message) {
   $.unblockUI();
 };
 
-hideButtons = function(forceHide) {
+hideButtons = function(hideRefresh) {
   $('#exportButton').hide();
   $('#queryUrl').hide();
   $('#cachethis').hide();
-  if(forceHide || $('#parameterHolder').is(':empty')) {
+  if(hideRefresh) {
     $('#button').hide();
   } else {
     $('#button').show();
@@ -117,6 +117,7 @@ showButtons = function() {
   $('#exportButton').show();
   $('#queryUrl').show();
   $('#cachethis').show();
+  $('#button').show();
 };
 
 getFileName = function() {
