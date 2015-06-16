@@ -52,15 +52,15 @@
         
 	<cache name="pentaho-cda-dataaccess"
         maxElementsInMemory="100"
-				maxElementsOnDisk="10000"
+        maxElementsOnDisk="10000"
         eternal="false"
         overflowToDisk="true"
         timeToIdleSeconds="0"
         timeToLiveSeconds="0"
-        diskPersistent="true"
+        diskPersistent="false"
         diskExpiryThreadIntervalSeconds="360"
         memoryStoreEvictionPolicy="LFU"
-				diskSpoolBufferSizeMB="50"
+        diskSpoolBufferSizeMB="50"
 		/>
 
     <!--

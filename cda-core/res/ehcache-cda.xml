@@ -54,15 +54,15 @@
         
 	<cache name="pentaho-cda-dataaccess"
         maxElementsInMemory="50"
-				maxElementsOnDisk="500"
+        maxElementsOnDisk="500"
         eternal="false"
         overflowToDisk="true"
         timeToIdleSeconds="0"
         timeToLiveSeconds="0"
-        diskPersistent="true"
+        diskPersistent="false"
         diskExpiryThreadIntervalSeconds="360"
         memoryStoreEvictionPolicy="LFU"
-				diskSpoolBufferSizeMB="50">	
+        diskSpoolBufferSizeMB="50">
 		<!--terracotta /-->
 	</cache>
     <!--

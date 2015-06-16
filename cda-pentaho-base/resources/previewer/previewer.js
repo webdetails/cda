@@ -60,8 +60,7 @@ var PreviewerBackend = {
       data: params,
       success: callback,
       error: function(xhr, status, error) {
-        hideButtons();
-        clearParameters();
+        hideButtons(false);
         showErrorMessage("Error Executing Query");
       }
     });
@@ -102,11 +101,15 @@ showErrorMessage = function(message) {
   $.unblockUI();
 };
 
-hideButtons = function() {
+hideButtons = function(hideRefresh) {
   $('#exportButton').hide();
   $('#queryUrl').hide();
   $('#cachethis').hide();
-  $('#button').hide();
+  if(hideRefresh) {
+    $('#button').hide();
+  } else {
+    $('#button').show();
+  }
 
 };
 
@@ -136,6 +139,20 @@ pageParams = function() {
     }
   }
   return output;
+};
+
+resetPreview = function() {
+  $('#notifications').hide();
+  hideButtons(true);
+
+  clearParameters();
+  lastQuery = undefined;
+
+  $('#previewerTable')
+      .empty()
+      .append($("<span id=\"pleaseselect\"></span>")
+          .text("Please select a Data Access ID"));
+
 };
 
 refreshTable = function(id) {
