@@ -57,9 +57,7 @@
         $('#about').attr('href', PreviewerBackend.PATH_about);
         oLanguage = PreviewerBackend.LOCALE_dataTables;
         loadMessageBundles(PreviewerBackend.LOCALE_locale);
-
-        $('#notifications').hide();
-        hideButtons();
+        resetPreview();
 
         var sel = $("#dataAccessSelector");
         sel.bind("change", function() {
@@ -67,10 +65,7 @@
           if(val !== "undefined") {
             refreshTable(val);
           } else {
-            $('#previewerTable').empty().append($("<span id=\"pleaseselect\"></span>").text("Please select a Data Access ID"));
-            $("#parameterHolder").empty();
-            lastQuery = undefined;
-            hideButtons();
+            resetPreview();
           }
         });
 
@@ -157,9 +152,7 @@
       <div id="parameterHolder" class="span-23"></div>
     </div>
 
-    <div id='previewerTable' style="padding:10px">
-      <span id='pleaseselect'>Please select a Data Access ID</span>
-    </div>
+    <div id='previewerTable' style="padding:10px"></div>
 
     <div class="webdetailsFooter">
       <div class="webdetailsFooterWebdetails">
