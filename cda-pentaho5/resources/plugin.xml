@@ -2,7 +2,7 @@
 <plugin title="Pentaho Community Data Access" name="cda"> <!--loader="OVERRIDING"-->
 
 	<lifecycle-listener class="pt.webdetails.cda.CdaLifecycleListener"/>
-	
+
 	<content-types>
 		<static-paths>
 			<static-path url="/cda/cachemanager" localFolder="cachemanager"/>
@@ -31,7 +31,7 @@
 		      </operations>
     	</content-type>
 	</content-types>
- 
+
 
 
 	<overlays>
