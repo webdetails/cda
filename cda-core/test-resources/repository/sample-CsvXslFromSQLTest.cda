@@ -13,6 +13,6 @@
       <Columns/>
      <Output indexes="2,4" mode="include"/>
       <Parameters/>
-      <Query>select top (10) * from orderfact o</Query>
+      <Query>select top 10 * from orderfact o</Query>
    </DataAccess>
 </CDADescriptor>
