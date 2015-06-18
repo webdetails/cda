@@ -25,7 +25,7 @@
          <Parameter default="1" name="parameter9" type="Numeric"/>
          <Parameter default="1" name="parameter10" type="Numeric"/>
       </Parameters>
-      <Query>select top (10) * from orderfact o
+      <Query>select top 10 * from orderfact o
         where QTR_ID=${parameter0}
         and QTR_ID=${parameter1}
         and QTR_ID=${parameter2}
