@@ -4,7 +4,7 @@
       <Connection id="C1" type="sql.jdbc">
          <Driver>org.hsqldb.jdbcDriver</Driver>
          <Pass></Pass>
-         <Url>jdbc:hsqldb:mem:SampleData</Url>
+         <Url>jdbc:hsqldb:res:sampledata</Url>
          <User>sa</User>
       </Connection>
    </DataSources>
@@ -16,7 +16,7 @@
             <Formula>=[TOTALPRICE]/1000</Formula>
          </CalculatedColumn>
       </Columns>
-      <Query>select top (10) * from orderfact o
+      <Query>select top 10 * from orderfact o
 </Query>
    </DataAccess>
    <DataAccess access="public" cache="false" cacheDuration="3" connection="C1" id="Ds2"
@@ -28,7 +28,7 @@
          </CalculatedColumn>
       </Columns>
       <Output indexes="0,9,2,3,4,16,5" mode="include"/>
-      <Query>select top (10) * from orderfact o
+      <Query>select top 10 * from orderfact o
 </Query>
    </DataAccess>
 </CDADescriptor>
