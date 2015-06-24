@@ -4,7 +4,7 @@
       <Connection id="Ds1" type="sql.jdbc">
          <Driver>org.hsqldb.jdbcDriver</Driver>
          <Pass></Pass>
-         <Url>jdbc:hsqldb:mem:SampleData</Url>
+         <Url>jdbc:hsqldb:res:sampledata</Url>
          <User>sa</User>
       </Connection>
    </DataSources>
