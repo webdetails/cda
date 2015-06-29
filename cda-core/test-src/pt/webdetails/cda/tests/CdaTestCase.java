@@ -19,7 +19,6 @@ import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 
 import pt.webdetails.cda.BaseCdaEnvironment;
 import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cda.CoreBeanFactory;
 import pt.webdetails.cda.ICdaEnvironment;
 import pt.webdetails.cda.InitializationException;
 import pt.webdetails.cda.cache.EHCacheQueryCache;
@@ -31,6 +30,8 @@ import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cpf.PluginEnvironment;
 import pt.webdetails.cpf.PluginSettings;
 import pt.webdetails.cpf.Util;
+import pt.webdetails.cpf.bean.IBeanFactory;
+import pt.webdetails.cpf.bean.AbstractBeanFactory;
 import pt.webdetails.cpf.context.api.IUrlProvider;
 import pt.webdetails.cpf.plugincall.api.IPluginCall;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
@@ -104,7 +105,10 @@ public abstract class CdaTestCase extends TestCase {
     private CdaTestingContentAccessFactory factory;
 
     public CdaTestEnvironment( CdaTestingContentAccessFactory factory ) throws InitializationException {
-      super( new CoreBeanFactory() );
+      super( new AbstractBeanFactory(){
+        @Override
+        public String getSpringXMLFilename(){ return "cda.spring.xml"; }
+      });
       this.factory = factory;
     }
 
