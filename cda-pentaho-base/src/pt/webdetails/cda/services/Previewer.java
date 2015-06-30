@@ -19,8 +19,8 @@ import java.util.Locale;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.util.messages.LocaleHelper;
 
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cpf.Util;
 import pt.webdetails.cpf.context.api.IUrlProvider;
 import pt.webdetails.cpf.packager.origin.StaticSystemOrigin;
@@ -64,7 +64,7 @@ public class Previewer extends ProcessedHtmlPage {
       new Pair<String, String>( UI_BACKEND_PREFIX + "PATH_cacheController", quote( baseApi, "cacheController" ) ) );
     pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "PATH_about",
       quote( urlProvider.getPluginStaticBaseUrl(), SYS_ABOUT_PATH ) ) );
-    Locale locale = LocaleHelper.getLocale();
+    Locale locale = CdaEngine.getEnvironment().getLocale();
     pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "PATH_page",
       quote( urlProvider.getPluginStaticBaseUrl(), SYS_PATH ) ) );
     pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "Path", quote( cdaPath ) ) );

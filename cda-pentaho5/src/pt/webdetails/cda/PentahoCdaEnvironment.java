@@ -15,6 +15,8 @@ package pt.webdetails.cda;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import org.pentaho.platform.util.messages.LocaleHelper;
+
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.DataFactoryContext;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
@@ -38,31 +40,34 @@ public class PentahoCdaEnvironment extends PentahoBaseCdaEnvironment implements 
       final ResourceManager resourceManager )
       throws ReportDataFactoryException {
 
-      dataFactory.initialize( new DataFactoryContext() {
-        public Configuration getConfiguration() {
-            return configuration;
-        }
-  
-        public ResourceManager getResourceManager() {
-            return resourceManager;
-        }
-  
-        public ResourceKey getContextKey() {
-            return contextKey;
-        }
-  
-        public ResourceBundleFactory getResourceBundleFactory() {
+    dataFactory.initialize( new DataFactoryContext() {
+      public Configuration getConfiguration() {
+        return configuration;
+      }
+
+      public ResourceManager getResourceManager() {
+        return resourceManager;
+      }
+
+      public ResourceKey getContextKey() {
+        return contextKey;
+      }
+
+      public ResourceBundleFactory getResourceBundleFactory() {
             return new LibLoaderResourceBundleFactory( resourceManager, contextKey,
                     Locale.getDefault(), TimeZone.getDefault() );
-        }
-  
-        public DataFactory getContextDataFactory() {
-            return dataFactory;
-        }
+      }
+
+      public DataFactory getContextDataFactory() {
+        return dataFactory;
+      }
 
         public FormulaContext getFormulaContext() {
-          return null;
+        return null;
         }
       } );
     }
+
+  @Override
+  public Locale getLocale(){ return LocaleHelper.getLocale(); }
 }
