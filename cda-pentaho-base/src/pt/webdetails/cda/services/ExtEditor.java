@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.pentaho.util.messages.LocaleHelper;
 
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cpf.context.api.IUrlProvider;
 import pt.webdetails.cpf.packager.origin.PathOrigin;
 import pt.webdetails.cpf.packager.origin.StaticSystemOrigin;
@@ -45,7 +45,7 @@ public class ExtEditor extends ProcessedHtmlPage {
         new Pair<String, String>(
             UI_BACKEND_PREFIX + "LANG_PATH",
             quote( urlProvider.getPluginStaticBaseUrl(), EDITOR_SYS_DIR, "/languages/" ) ) );
-    pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "LOCALE", quote( LocaleHelper.getLocale().toString() )) );
+    pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "LOCALE", quote( CdaEngine.getEnvironment().getLocale().toString() )) );
     
     pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "STATUS.OK", "true" ) );
     //pairs.add( new Pair<String, String>( UI_BACKEND_PREFIX + "STATUS.ERROR", quote(baseApi, "error" )) );
