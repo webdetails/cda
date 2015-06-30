@@ -13,6 +13,7 @@
 
 package pt.webdetails.cda;
 
+import java.util.Locale;
 import java.util.Properties;
 
 import org.pentaho.reporting.engine.classic.core.DataFactory;
@@ -72,4 +73,6 @@ public interface ICdaEnvironment {
       final Configuration configuration,
       final ResourceKey contextKey,
       final ResourceManager resourceManager ) throws ReportDataFactoryException;
+
+  public Locale getLocale();
 }

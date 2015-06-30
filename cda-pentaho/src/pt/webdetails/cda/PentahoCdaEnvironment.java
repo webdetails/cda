@@ -16,6 +16,8 @@ package pt.webdetails.cda;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import org.pentaho.util.messages.LocaleHelper;
+
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFactory;
@@ -39,4 +41,6 @@ public class PentahoCdaEnvironment extends PentahoBaseCdaEnvironment implements 
     dataFactory.open();
   }
 
+  @Override
+  public Locale getLocale(){ return LocaleHelper.getLocale(); }
 }

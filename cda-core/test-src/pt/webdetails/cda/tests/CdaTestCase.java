@@ -1,6 +1,7 @@
 package pt.webdetails.cda.tests;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.Override;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -139,6 +140,9 @@ public abstract class CdaTestCase extends TestCase {
 //    public void resetProperties() {
 //      testConfig = new HierarchicalConfiguration( CdaBoot.getInstance().getGlobalConfig() );
 //    }
+
+    @Override
+    public Locale getLocale() { return Locale.getDefault(); }
   }
 
   protected static class CdaPluginTestEnvironment extends PluginEnvironment {
