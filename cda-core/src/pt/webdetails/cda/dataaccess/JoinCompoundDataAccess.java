@@ -309,24 +309,23 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   private String getKettleTypeFromColumnClass( Class<?> clazz ) {
     if ( clazz == String.class ) {
       return "String";
-    }
-    if ( clazz == Double.class || clazz == Float.class ) {
+    } else if ( clazz == Double.class || clazz == Float.class ) {
       return "Number";
-    }
-    if ( java.util.Date.class.isAssignableFrom( clazz ) ) {
+    } else if ( java.util.Date.class.isAssignableFrom( clazz ) ) {
       return "Date";
-    }
-    if ( clazz == Long.class || clazz == Integer.class ) {
+    } else if ( clazz == Long.class || clazz == Integer.class ) {
       return "Integer";
-    }
-    if ( clazz == java.math.BigDecimal.class ) {
+    } else if ( clazz == java.math.BigDecimal.class ) {
       return "BigNumber";
-    }
-    if ( clazz == Boolean.class ) {
+    } else if ( clazz == Boolean.class ) {
       return "Boolean";
+    } else if ( clazz == Object.class ) {
+      // TODO: hack, map column class Object to kettle type String, e.g. when all values in the column are null
+      logger.warn( "Mapping column class Object to kettle type String" );
+      return "String";
+    } else {
+      throw new IllegalArgumentException( "Unexpected class " + clazz + ", can't convert to kettle type" );
     }
-
-    throw new IllegalArgumentException( "Unexpected class " + clazz + ", can't convert to kettle type" );
   }
 
   public void startRowProduction( Collection<Callable<Boolean>> inputCallables ) {
