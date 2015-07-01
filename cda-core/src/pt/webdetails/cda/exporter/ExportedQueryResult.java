@@ -67,6 +67,29 @@ public abstract class ExportedQueryResult {
 
     if ( attachmentName != null ) {
       response.setHeader( "content-disposition", "attachment; filename=" + attachmentName );
+    } else {
+      final String extension;
+      switch ( mimeType ) {
+        case MimeTypes.CSV:
+          extension = "." + ExporterEngine.OutputType.CSV.toString();
+          break;
+        case MimeTypes.JSON:
+          extension = "." + ExporterEngine.OutputType.JSON.toString();
+          break;
+        case MimeTypes.XLS:
+          extension = "." + ExporterEngine.OutputType.XLS.toString();
+          break;
+        case MimeTypes.XML:
+          extension = "." + ExporterEngine.OutputType.XML.toString();
+          break;
+        case MimeTypes.HTML:
+          extension = "." + ExporterEngine.OutputType.HTML.toString();
+          break;
+        default: // e.g. BINARY
+          extension = "";
+          break;
+      }
+      response.setHeader( "content-disposition", "inline; filename=doQuery" + extension );
     }
   }
 }
