@@ -13,6 +13,7 @@
 
 package pt.webdetails.cda.dataaccess.kettle;
 
+import org.apache.commons.lang.StringUtils;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.database.GenericDatabaseMeta;
 import org.pentaho.di.trans.step.StepMeta;
@@ -48,6 +49,8 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
   private String translatedQuery;
   private String[] parameterNames;
   private DataRow parameters;
+
+  private final String DUMMY_DATABASE_NAME = "cda_dummy_datasource_name_for_export";
 
   public SQLKettleAdapter( SqlDataAccess dataAccess, QueryOptions queryOptions ) {
     this.dataAccess = dataAccess;
@@ -170,6 +173,11 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
           throw new KettleAdapterException( "Unsupported connection type: " + connection.getClass().getName() );
         }
       }
+    }
+    // as of 5.4, databaseMeta must have a database name - http://jira.pentaho.com/browse/PDI-14063
+    // this can be removed when PDI-14063 is fixed
+    if ( StringUtils.isEmpty( databaseMeta.getDatabaseName() ) ) {
+      databaseMeta.setDBName( DUMMY_DATABASE_NAME );
     }
     return databaseMeta;
   }
