@@ -69,25 +69,18 @@ public abstract class ExportedQueryResult {
       response.setHeader( "content-disposition", "attachment; filename=" + attachmentName );
     } else {
       final String extension;
-      switch ( mimeType ) {
-        case MimeTypes.CSV:
-          extension = "." + ExporterEngine.OutputType.CSV.toString();
-          break;
-        case MimeTypes.JSON:
-          extension = "." + ExporterEngine.OutputType.JSON.toString();
-          break;
-        case MimeTypes.XLS:
-          extension = "." + ExporterEngine.OutputType.XLS.toString();
-          break;
-        case MimeTypes.XML:
-          extension = "." + ExporterEngine.OutputType.XML.toString();
-          break;
-        case MimeTypes.HTML:
-          extension = "." + ExporterEngine.OutputType.HTML.toString();
-          break;
-        default: // e.g. BINARY
-          extension = "";
-          break;
+      if ( MimeTypes.CSV.equals( mimeType ) ) {
+        extension = "." + ExporterEngine.OutputType.CSV.toString();
+      } else if ( MimeTypes.JSON.equals( mimeType ) ) {
+        extension = "." + ExporterEngine.OutputType.JSON.toString();
+      } else if ( MimeTypes.XLS.equals( mimeType ) ) {
+        extension = "." + ExporterEngine.OutputType.XLS.toString();
+      } else if ( MimeTypes.XML.equals( mimeType ) ) {
+        extension = "." + ExporterEngine.OutputType.XML.toString();
+      } else if ( MimeTypes.HTML.equals( mimeType ) ) {
+        extension = "." + ExporterEngine.OutputType.HTML.toString();
+      } else { // e.g. BINARY
+        extension = "";
       }
       response.setHeader( "content-disposition", "inline; filename=doQuery" + extension );
     }
