@@ -252,9 +252,8 @@ public class CompactBandedMDXTableModel extends AbstractTableModel
           {
             positionName.append('/');
           }
-          final Member member = position.get(j);
-          //positionName.append(MondrianUtil.getUniqueMemberName(member));
-          positionName.append(member.getName());
+          final Member member = position.get( j );
+          positionName.append( MDXTableModelUtils.getProperMemberName(member, member.getName()) );
 
         }
         columnNames[columnIndex] = positionName.toString();
@@ -543,4 +542,5 @@ public class CompactBandedMDXTableModel extends AbstractTableModel
     return dataAttributes;
 
   }
+
 }

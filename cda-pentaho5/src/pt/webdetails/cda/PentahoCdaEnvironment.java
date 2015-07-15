@@ -55,7 +55,7 @@ public class PentahoCdaEnvironment extends PentahoBaseCdaEnvironment implements 
 
       public ResourceBundleFactory getResourceBundleFactory() {
             return new LibLoaderResourceBundleFactory( resourceManager, contextKey,
-                    Locale.getDefault(), TimeZone.getDefault() );
+                    getLocale() , TimeZone.getDefault() );
       }
 
       public DataFactory getContextDataFactory() {

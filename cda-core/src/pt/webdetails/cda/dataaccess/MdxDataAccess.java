@@ -27,6 +27,7 @@ import pt.webdetails.cda.connections.mondrian.MondrianConnection;
 import pt.webdetails.cda.connections.mondrian.MondrianConnectionInfo;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 import pt.webdetails.cda.utils.mondrian.CompactBandedMDXDataFactory;
+import pt.webdetails.cda.utils.mondrian.ExtBandedMDXDataFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -95,7 +96,7 @@ public class MdxDataAccess extends GlobalMdxDataAccess {
   @Override
   protected AbstractNamedMDXDataFactory createDataFactory() {
     if ( getBandedMode() == BANDED_MODE.CLASSIC ) {
-      return new BandedMDXDataFactory();
+      return new ExtBandedMDXDataFactory();
 
     } else {
       return new CompactBandedMDXDataFactory();

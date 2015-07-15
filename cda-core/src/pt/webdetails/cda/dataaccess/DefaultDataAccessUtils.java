@@ -16,10 +16,12 @@ package pt.webdetails.cda.dataaccess;
 import java.util.Locale;
 import java.util.TimeZone;
 
+
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.DefaultReportEnvironment;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.engine.classic.core.ReportEnvironmentDataRow;
+import org.pentaho.reporting.engine.classic.core.designtime.datafactory.DesignTimeDataFactoryContext;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.JndiConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFactory;
@@ -88,10 +90,9 @@ public class DefaultDataAccessUtils implements IDataAccessUtils {
     final ResourceManager resourceManager = CdaEngine.getInstance().getSettingsManager().getResourceManager();
     resourceManager.registerDefaults();
 
-    dataFactory.initialize( configuration, resourceManager, contextKey,
-      new LibLoaderResourceBundleFactory( resourceManager, contextKey, Locale.getDefault(), TimeZone.getDefault() ) );
-
-    dataFactory.open();
+    dataFactory.initialize( new DesignTimeDataFactoryContext( configuration, resourceManager, contextKey,
+            new LibLoaderResourceBundleFactory( resourceManager, contextKey, Locale.getDefault(),
+                    TimeZone.getDefault() ), dataFactory ) );
   }
 
 }
