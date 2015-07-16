@@ -1,9 +1,20 @@
+/*!
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
+
 package pt.webdetails.cda.tests;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.lang.Override;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -21,8 +32,6 @@ import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFac
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
-//import org.pentaho.reporting.libraries.base.config.Configuration;
-//import org.pentaho.reporting.libraries.base.config.HierarchicalConfiguration;
 
 import pt.webdetails.cda.BaseCdaEnvironment;
 import pt.webdetails.cda.CdaEngine;
@@ -40,7 +49,6 @@ import pt.webdetails.cda.utils.mondrian.ExtDenormalizedMDXDataFactory;
 import pt.webdetails.cpf.PluginEnvironment;
 import pt.webdetails.cpf.PluginSettings;
 import pt.webdetails.cpf.Util;
-import pt.webdetails.cpf.bean.IBeanFactory;
 import pt.webdetails.cpf.bean.AbstractBeanFactory;
 import pt.webdetails.cpf.context.api.IUrlProvider;
 import pt.webdetails.cpf.plugincall.api.IPluginCall;
@@ -53,34 +61,35 @@ public abstract class CdaTestCase extends TestCase {
   private CdaTestEnvironment testEnvironment;
   private static final String USER_DIR = System.getProperty( "user.dir" );
   private static final Class[] customDataFactories = {
-    CompactBandedMDXDataFactory.class, ExtBandedMDXDataFactory.class, ExtDenormalizedMDXDataFactory.class };
-  public CdaTestCase ( String name ) {
+      CompactBandedMDXDataFactory.class, ExtBandedMDXDataFactory.class, ExtDenormalizedMDXDataFactory.class };
+
+  public CdaTestCase( String name ) {
     super( name );
   }
 
-  public CdaTestCase () {
+  public CdaTestCase() {
   }
 
   protected void setUp() throws Exception {
     super.setUp();
     CdaTestingContentAccessFactory factory = new CdaTestingContentAccessFactory();
-    log().info("factory:" + factory);
+    log().info( "factory:" + factory );
     // always need to make sure there is a plugin environment initialized
-    PluginEnvironment.init( new CdaPluginTestEnvironment(factory) );
+    PluginEnvironment.init( new CdaPluginTestEnvironment( factory ) );
 
     // cda-specific environment
-    testEnvironment = new CdaTestEnvironment(factory);
+    testEnvironment = new CdaTestEnvironment( factory );
     // cda init
     CdaEngine.init( testEnvironment );
     // making sure the custom data factories are registered
     registerCustomDataFactories();
     // due to http://jira.pentaho.com/browse/PDI-2975
-    System.setProperty("org.osjava.sj.root", getSimpleJndiPath() );
+    System.setProperty( "org.osjava.sj.root", getSimpleJndiPath() );
   }
 
   protected String getSimpleJndiPath() {
 
-    if ( USER_DIR.endsWith("bin/test/classes") ) {
+    if ( USER_DIR.endsWith( "bin/test/classes" ) ) {
       // command-line run
       return USER_DIR + File.separator + "simplejndi";
     } else {
@@ -110,72 +119,76 @@ public abstract class CdaTestCase extends TestCase {
     return CdaEngine.getEnvironment();
   }
 
-  protected TableModel doQuery(CdaSettings cdaSettings, QueryOptions queryOptions) throws Exception {
+  protected TableModel doQuery( CdaSettings cdaSettings, QueryOptions queryOptions ) throws Exception {
     return getEngine().doQuery( cdaSettings, queryOptions );
   }
 
-  protected String exportTableModel(TableModel table, ExportOptions opts) throws Exception {
+  protected String exportTableModel( TableModel table, ExportOptions opts ) throws Exception {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     getEngine().getExporter( opts ).export( baos, table );
     return Util.toString( baos.toByteArray() );
   }
 
-//  protected void setConfigProperty( String property, String value ) {
-//    testEnvironment.setProperty( property, value );
-//  }
-//  protected void resetProperties() {
-//    testEnvironment.resetProperties();
-//  }
+  //  protected void setConfigProperty( String property, String value ) {
+  //    testEnvironment.setProperty( property, value );
+  //  }
+  //  protected void resetProperties() {
+  //    testEnvironment.resetProperties();
+  //  }
 
   protected static class CdaTestEnvironment extends BaseCdaEnvironment implements ICdaEnvironment {
 
-//    private HierarchicalConfiguration testConfig;
+    //    private HierarchicalConfiguration testConfig;
     private CdaTestingContentAccessFactory factory;
 
     public CdaTestEnvironment( CdaTestingContentAccessFactory factory ) throws InitializationException {
-      super( new AbstractBeanFactory(){
+      super( new AbstractBeanFactory() {
         @Override
-        public String getSpringXMLFilename(){ return "cda.spring.xml"; }
-      });
+        public String getSpringXMLFilename() {
+          return "cda.spring.xml";
+        }
+      } );
       this.factory = factory;
     }
 
     public void initializeDataFactory( DataFactory dataFactory, Configuration configuration, ResourceKey contextKey,
-        ResourceManager resourceManager ) throws ReportDataFactoryException {
+                                       ResourceManager resourceManager ) throws ReportDataFactoryException {
       dataFactory.initialize( new DesignTimeDataFactoryContext( configuration, resourceManager, contextKey,
-              new LibLoaderResourceBundleFactory( resourceManager, contextKey, Locale.getDefault(),
-                      TimeZone.getDefault() ), dataFactory ) );
+          new LibLoaderResourceBundleFactory( resourceManager, contextKey, Locale.getDefault(),
+          TimeZone.getDefault() ), dataFactory ) );
     }
 
     @Override
     public IQueryCache getQueryCache() {
-      return new EHCacheQueryCache(false);
+      return new EHCacheQueryCache( false );
     }
 
     public IContentAccessFactory getRepo() {
       return factory;
     }
-//    public Configuration getBaseConfig() {
-//      return testConfig;
-//    }
-//
-//    public void setProperty(String property, String value) {
-//      testConfig.setConfigProperty( property, value );
-//    }
-//
-//    public void resetProperties() {
-//      testConfig = new HierarchicalConfiguration( CdaBoot.getInstance().getGlobalConfig() );
-//    }
+    //    public Configuration getBaseConfig() {
+    //      return testConfig;
+    //    }
+    //
+    //    public void setProperty(String property, String value) {
+    //      testConfig.setConfigProperty( property, value );
+    //    }
+    //
+    //    public void resetProperties() {
+    //      testConfig = new HierarchicalConfiguration( CdaBoot.getInstance().getGlobalConfig() );
+    //    }
 
     @Override
-    public Locale getLocale() { return Locale.getDefault(); }
+    public Locale getLocale() {
+      return Locale.getDefault();
+    }
   }
 
   protected static void registerCustomDataFactories() {
     for ( Class clazz : customDataFactories ) {
       DefaultDataFactoryMetaData dmd = new DefaultDataFactoryMetaData(
-        clazz.getName(), "", "", true, false, true, false, false, false, false, false,
-        new DefaultDataFactoryCore(), 0 );
+          clazz.getName(), "", "", true, false, true, false, false, false, false, false,
+          new DefaultDataFactoryCore(), 0 );
       DataFactoryRegistry.getInstance().register( dmd );
     }
   }
