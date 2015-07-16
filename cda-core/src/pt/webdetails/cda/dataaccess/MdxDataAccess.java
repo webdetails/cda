@@ -1,39 +1,32 @@
 /*!
-* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.dataaccess;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.AbstractNamedMDXDataFactory;
-import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.BandedMDXDataFactory;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.cache.CacheKey;
-import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.mondrian.AbstractMondrianConnection;
-import pt.webdetails.cda.connections.mondrian.MondrianConnection;
 import pt.webdetails.cda.connections.mondrian.MondrianConnectionInfo;
-import pt.webdetails.cda.settings.UnknownConnectionException;
 import pt.webdetails.cda.utils.mondrian.CompactBandedMDXDataFactory;
+import pt.webdetails.cda.utils.mondrian.ExtBandedMDXDataFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Implementation of a DataAccess that will get data from a SQL database
@@ -95,7 +88,7 @@ public class MdxDataAccess extends GlobalMdxDataAccess {
   @Override
   protected AbstractNamedMDXDataFactory createDataFactory() {
     if ( getBandedMode() == BANDED_MODE.CLASSIC ) {
-      return new BandedMDXDataFactory();
+      return new ExtBandedMDXDataFactory();
 
     } else {
       return new CompactBandedMDXDataFactory();
@@ -117,7 +110,7 @@ public class MdxDataAccess extends GlobalMdxDataAccess {
   public List<PropertyDescriptor> getInterface() {
     List<PropertyDescriptor> properties = super.getInterface();
     properties.add(
-      new PropertyDescriptor( "bandedMode", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+        new PropertyDescriptor( "bandedMode", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
     return properties;
   }
 
@@ -165,7 +158,7 @@ public class MdxDataAccess extends GlobalMdxDataAccess {
       }
       final ExtraCacheKey other = (ExtraCacheKey) obj;
       if ( this.bandedMode != other.bandedMode && ( this.bandedMode == null || !this.bandedMode
-        .equals( other.bandedMode ) ) ) {
+          .equals( other.bandedMode ) ) ) {
         return false;
       } else if ( this.roles == null ? other.roles != null : !this.roles.equals( other.roles ) ) {
         return false;
