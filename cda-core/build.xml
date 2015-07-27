@@ -137,4 +137,8 @@
     </copy>
   </target>
 
+  <target name="clean-all" depends="subfloor.clean-all">
+    <delete dir="${runtimelib.dir}" />
+  </target>
+
 </project>
