@@ -52,7 +52,7 @@
 
 					<constraint>
 						<operator>AND</operator>
-						<condition>[CAT_ORDERS.BC_ORDERS_ORDERDATE] &gt; DATE(2003;12;31)</condition>
+						<condition>[CAT_ORDERS.BC_ORDERS_ORDERDATE] &gt; "2003-12-31 00:00:00.0"</condition>
 					</constraint>
 				</constraints>
 				<orders/>
