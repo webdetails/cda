@@ -50,7 +50,7 @@
         <dependency org="jaxen"         name="jaxen"         rev="1.1.1" conf="test->default"/>
         <dependency org="org.mockito"   name="mockito-all"   rev="1.8.4" conf="test, default->default"/>
         <dependency org="junit"         name="junit"         rev="4.10"  conf="test, default->default"/>
-        <dependency org="org.springframework" name="spring-expression" rev="3.0.3.RELEASE" conf="test->default" transitive="false"/>
+        <dependency org="org.springframework" name="spring-expression" rev="${dependency.spring.framework.revision}" conf="test->default" transitive="false"/>
 
         <!-- Excludes -->
 	<exclude module="nekohtml" conf="" matcher="exact"></exclude>
