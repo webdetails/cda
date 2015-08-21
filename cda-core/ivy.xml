@@ -16,7 +16,7 @@
 	    <dependency org="pentaho" name="cpf-core"  rev="${dependency.pentaho-cpf-plugin.revision}" conf='default->default' transitive="true" changing="true"/>
 
 		<!--  Pentaho Reporting Library -->
-	    <dependency org="pentaho-library"          name="libloader"                                                         rev="${dependency.pentaho-library.revision}"/>
+	    <dependency org="pentaho-library"          name="libloader"                                                         rev="${dependency.reporting-library.revision}"/>
         <dependency org="pentaho"                  name="mondrian"                                                          rev="${dependency.mondrian.revision}"          transitive="true"/>
         <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core"                             rev="${dependency.pentaho-reporting.revision}" changing="true"/>
         <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions"                       rev="${dependency.pentaho-reporting.revision}" changing="true" />
