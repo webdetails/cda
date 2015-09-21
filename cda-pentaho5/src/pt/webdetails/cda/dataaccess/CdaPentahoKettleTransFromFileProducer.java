@@ -104,9 +104,9 @@ public class CdaPentahoKettleTransFromFileProducer extends KettleTransFromFilePr
     }
 
     final Repository repository =
-      PluginRegistry.getInstance().loadClass( RepositoryPluginType.class,
-        repositoryMeta.getId(),
-        Repository.class );
+        PluginRegistry.getInstance().loadClass( RepositoryPluginType.class,
+          repositoryMeta.getId(),
+          Repository.class );
     repository.init( repositoryMeta );
     repository.connect( getUsername(), getPassword() );
     return repository;
@@ -191,7 +191,7 @@ public class CdaPentahoKettleTransFromFileProducer extends KettleTransFromFilePr
     while ( key != null ) {
       final Object schema = key.getSchema();
       if ( !RepositoryResourceLoader.SOLUTION_SCHEMA_NAME.equals( schema )
-        && !"pt.webdetails.cda.settings.CdaRepositoryResourceLoader:".equals( schema ) ) {
+          && !"pt.webdetails.cda.settings.CdaRepositoryResourceLoader:".equals( schema ) ) {
         // these are not the droids you are looking for ..
         key = key.getParent();
         continue;
@@ -256,7 +256,7 @@ public class CdaPentahoKettleTransFromFileProducer extends KettleTransFromFilePr
         for ( int columnNo = 0; columnNo < count; columnNo++ ) {
           final ValueMetaInterface valueMeta = rowMeta.getValueMeta( columnNo );
 
-          switch( valueMeta.getType() ) {
+          switch ( valueMeta.getType() ) {
             case ValueMetaInterface.TYPE_BIGNUMBER:
               dataRow[ columnNo ] = rowMeta.getBigNumber( row, columnNo );
               break;
@@ -301,7 +301,7 @@ public class CdaPentahoKettleTransFromFileProducer extends KettleTransFromFilePr
         final ValueMetaInterface valueMeta = rowMeta.getValueMeta( columnNo );
         fieldNames[ columnNo ] = valueMeta.getName();
 
-        switch( valueMeta.getType() ) {
+        switch ( valueMeta.getType() ) {
           case ValueMetaInterface.TYPE_BIGNUMBER:
             fieldTypes[ columnNo ] = BigDecimal.class;
             break;

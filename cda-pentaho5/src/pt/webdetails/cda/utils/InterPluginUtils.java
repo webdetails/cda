@@ -18,14 +18,20 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 import pt.webdetails.cpf.PluginEnvironment;
-import pt.webdetails.cpf.WrapperUtils;
 import pt.webdetails.cpf.plugin.CorePlugin;
 import pt.webdetails.cpf.plugincall.api.IPluginCall;
 import pt.webdetails.cpf.plugincall.base.CallParameters;
 
 import javax.swing.table.TableModel;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * @author pedro WARN: This is used from BeanShell CDA datasources. There are no references to this class from within
