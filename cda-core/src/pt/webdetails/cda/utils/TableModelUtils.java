@@ -100,8 +100,9 @@ public class TableModelUtils {
       useOutputIndexes = false;
       logger.warn( "Mdx query returned empty result set, output indexes will be ignored." );
     }
-    table = useOutputIndexes ? filterTable( table, outputIndexes, columnNames, rowFilter )
-      : filterTable( table, new ArrayList<Integer>(), columnNames, rowFilter );
+    table = useOutputIndexes ?
+      filterTable( table, outputIndexes, columnNames, rowFilter, dataAccess.getColumnDefinitions().size() > 0 )
+      : filterTable( table, new ArrayList<Integer>(), columnNames, rowFilter, false );
 
     //  3. Sort
     if ( !queryOptions.getSortBy().isEmpty() ) {
@@ -156,16 +157,17 @@ public class TableModelUtils {
    * @param table
    * @param outputIndexes
    * @param rowFilter     (optional)
+   * @param hasColumnDefinitions
    * @return
    * @throws InvalidOutputIndexException
    */
   private static TableModel filterTable( final TableModel table, List<Integer> outputIndexes,
-                                         final List<String> columnNames, final DataTableFilter rowFilter )
-    throws InvalidOutputIndexException {
+                                         final List<String> columnNames, final DataTableFilter rowFilter,
+                                         boolean hasColumnDefinitions ) throws InvalidOutputIndexException {
     int columnCount = outputIndexes.size();
 
-    if ( columnCount == 0 && rowFilter != null ) { //still have to go through the motions if we need to filter rows
-
+    if ( columnCount == 0 && ( rowFilter != null || hasColumnDefinitions ) ) {
+      // still have to go through the motions if we need to filter rows, or if we have columnDefinitions
       for ( int i = 0; i < table.getColumnCount(); i++ ) {
         outputIndexes.add( i );
       }
