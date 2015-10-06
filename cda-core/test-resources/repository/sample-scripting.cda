@@ -46,7 +46,7 @@ model.addRow(new Object[]{ dataRow.get("status"), new Integer(10), new Integer(1
 return model;
         ]]></Query>
         <Parameters>
-            <Parameter name="status" type="String" default="In Process"/>
+            <Parameter name="status" type="String" default="In Process" separator=";"/>
         </Parameters>
     </DataAccess>
 </CDADescriptor>

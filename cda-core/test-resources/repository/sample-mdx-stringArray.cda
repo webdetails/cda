@@ -8,8 +8,8 @@
 			<Cube>SteelWheelsSales</Cube>
         </Connection>
     </DataSources>
-    
-    
+
+
     <DataAccess id="1" connection="1" type="mdx" access="public">
       <Name>Mdx Query on Steelwheels</Name>
       <Query><![CDATA[
@@ -19,7 +19,7 @@
         where { ${status} }
       ]]></Query>
       <Parameters>
-        <Parameter name="status" type="StringArray" default="[Order Status].[Shipped];[Order Status].[Cancelled]"/>
+        <Parameter name="status" type="StringArray" default="[Order Status].[Shipped];[Order Status].[Cancelled]" separator=";"/>
       </Parameters>
     </DataAccess>
 

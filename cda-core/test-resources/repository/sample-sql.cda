@@ -35,8 +35,8 @@
 		Supported types: String, Date, Integer, Numeric
 		-->
         <Parameters>
-            <Parameter name="status" type="String" default="Shipped"/>
-            <Parameter name="orderDate" type="Date" pattern="yyyy-MM-dd" default="2003-03-01"/>
+            <Parameter name="status" type="String" default="Shipped" separator=";"/>
+            <Parameter name="orderDate" type="Date" pattern="yyyy-MM-dd" default="2003-03-01" separator=";"/>
         </Parameters>
         <!-- 
 		Columns block allow specifying name and CalculatedColumn the creation of new

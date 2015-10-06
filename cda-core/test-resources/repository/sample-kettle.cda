@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CDADescriptor>
 
-    <!-- DataSource definition. 
-	
+    <!-- DataSource definition.
+
 	Type controls what the datasource type is.
 	The connection and query controls how the data is fetched. These values
 	are specific to each access type
@@ -25,8 +25,8 @@
 		<Name>Sample query on SteelWheelsSales</Name>
         <Query><![CDATA[Report Columns]]></Query>
         <Parameters>
-          <Parameter name="myRadius" type="Integer" default="30"/>
-          <Parameter name="ZipCode" type="Integer" default="32771"/>
+          <Parameter name="myRadius" type="Integer" default="30" separator=";"/>
+          <Parameter name="ZipCode" type="Integer" default="32771" separator=";"/>
         </Parameters>
     </DataAccess>
 </CDADescriptor>

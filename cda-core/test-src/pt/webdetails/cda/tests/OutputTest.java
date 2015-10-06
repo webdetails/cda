@@ -19,6 +19,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
@@ -68,7 +70,7 @@ public class OutputTest extends CdaTestCase {
     queryOptions.setOutputType( "json" );
     String json = exportTableModel( table, queryOptions );
     assertFalse( StringUtils.isEmpty( json ) );
-    assertEquals( expectedOutput, json );
+    jsonEquals( expectedOutput, json );
   }
 
   @Test
@@ -90,6 +92,13 @@ public class OutputTest extends CdaTestCase {
     queryOptions.setOutputType( "json" );
     String json = exportTableModel( table, queryOptions );
     assertFalse( StringUtils.isEmpty( json ) );
-    assertEquals( expectedOutput, json );
+    jsonEquals( expectedOutput, json );
+  }
+
+  protected boolean jsonEquals( String json1, String json2 ) throws Exception {
+    ObjectMapper om = new ObjectMapper();
+    JsonNode parsedJson1 = om.readTree( json1 );
+    JsonNode parsedJson2 = om.readTree( json2 );
+    return parsedJson1.equals( parsedJson2 );
   }
 }

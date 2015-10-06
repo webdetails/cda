@@ -13,17 +13,17 @@
       <Columns/>
       <Output indexes="2,4" mode="include"/>
       <Parameters>
-         <Parameter default="1" name="parameter0" type="Numeric"/>
-         <Parameter default="1" name="parameter1" type="Numeric"/>
-         <Parameter default="1" name="parameter2" type="Numeric"/>
-         <Parameter default="1" name="parameter3" type="Numeric"/>
-         <Parameter default="1" name="parameter4" type="Numeric"/>
-         <Parameter default="1" name="parameter5" type="Numeric"/>
-         <Parameter default="1" name="parameter6" type="Numeric"/>
-         <Parameter default="1" name="parameter7" type="Numeric"/>
-         <Parameter default="1" name="parameter8" type="Numeric"/>
-         <Parameter default="1" name="parameter9" type="Numeric"/>
-         <Parameter default="1" name="parameter10" type="Numeric"/>
+         <Parameter default="1" name="parameter0" type="Numeric" separator=";"/>
+         <Parameter default="1" name="parameter1" type="Numeric" separator=";"/>
+         <Parameter default="1" name="parameter2" type="Numeric" separator=";"/>
+         <Parameter default="1" name="parameter3" type="Numeric" separator=";"/>
+         <Parameter default="1" name="parameter4" type="Numeric" separator=";"/>
+         <Parameter default="1" name="parameter5" type="Numeric" separator=";"/>
+         <Parameter default="1" name="parameter6" type="Numeric" separator=";"/>
+         <Parameter default="1" name="parameter7" type="Numeric" separator=";"/>
+         <Parameter default="1" name="parameter8" type="Numeric" separator=";"/>
+         <Parameter default="1" name="parameter9" type="Numeric" separator=";"/>
+         <Parameter default="1" name="parameter10" type="Numeric" separator=";"/>
       </Parameters>
       <Query>select top 10 * from orderfact o
         where QTR_ID=${parameter0}

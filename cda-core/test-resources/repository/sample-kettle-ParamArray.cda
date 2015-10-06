@@ -25,8 +25,8 @@
 		<Name>Sample query on SteelWheelsSales</Name>
         <Query>Report Columns</Query>
         <Parameters>
-        <Parameter name="countries" type="StringArray" default="France;USA"/>
-        <Parameter name="Costumers" type="IntegerArray" default="103;112"/>
+        <Parameter name="countries" type="StringArray" default="France;USA" separator=";"/>
+        <Parameter name="Costumers" type="IntegerArray" default="103;112" separator=";"/>
         </Parameters>
     </DataAccess>
 </CDADescriptor>

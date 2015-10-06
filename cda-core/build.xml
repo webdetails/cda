@@ -82,44 +82,11 @@
     <target name="dist-all" depends="dist, test" description="Creates a distribution" />
 
   <!-- override: add test resources dir and sample data -->
-  <target name="init-tests" depends="clean-tests">
-      <mkdir dir="${testclasses.dir}" />
-      <mkdir dir="${testsrc.dir}" />
+  <target name="init-tests" depends="subfloor.init-tests">
       <copy todir="${testclasses.dir}" overwrite='true'>
         <fileset dir='${test.resources.dir}' />
       </copy>
       <unzip src="${testclasses.dir}/sampledata.zip" dest="${testclasses.dir}/sampledata" />
-  </target>
-
-  <condition property="is.roundtrip">
-    <istrue value="${test.roundtrip}"/>
-  </condition>
-  <condition property="is.not.roundtrip">
-    <isfalse value="${test.roundtrip}"/>
-  </condition>
-
-  <target name="test" depends="compile,compile-tests, init-test-reports" description="Compiles and runs unit tests">
-    <junit printsummary="yes" haltonfailure="${junit.haltonfailure}" fork="yes" dir="${testclasses.dir}" >
-      <sysproperty key="java.awt.headless" value="${headless.unittest}"/>
-      <classpath refid="test.classpath" />
-      <formatter type="plain" />
-      <batchtest todir="${testreports.xml.dir}">
-          <fileset dir="${testsrc.dir}" casesensitive="yes">
-              <include name="**/RoundtripSuite.java" if="is.roundtrip" />
-              <include name="**/Test*.java" if="is.not.roundtrip" />
-              <include name="**/*Test.java" if="is.not.roundtrip"/>
-          </fileset>
-        <formatter type="xml"/>
-      </batchtest>
-    </junit>
-
-    <junitreport todir="${testreports.html.dir}">
-      <fileset dir="${testreports.xml.dir}">
-        <include name="TEST-*.xml" />
-      </fileset>
-      <report format="frames" todir="${testreports.html.dir}" />
-    </junitreport>
-
   </target>
 
   <!-- Overriding resolve target so we can add resolve-runtime -->

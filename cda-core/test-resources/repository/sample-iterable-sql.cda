@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CDADescriptor>
 
-    <!-- DataSource definition. 
-	
+    <!-- DataSource definition.
+
 	Type controls what the datasource type is.
 	The connection and query controls how the data is fetched. These values
 	are specific to each access type
@@ -38,7 +38,7 @@
 				order by o.YEAR_ID desc
 			]]></Query>
       <Parameters>
-          <Parameter name="minYear" type="Integer" default="2003"/>
+          <Parameter name="minYear" type="Integer" default="2003" separator=";"/>
       </Parameters>
 			<Columns>
 				<Column idx="0">
@@ -74,10 +74,10 @@
 		Supported types: String, Date, Integer, Numeric
 		-->
         <Parameters>
-            <Parameter name="status" type="String" default="Shipped"/>
-            <Parameter name="year" type="Integer" default="2003"/>
+            <Parameter name="status" type="String" default="Shipped" separator=";"/>
+            <Parameter name="year" type="Integer" default="2003" separator=";"/>
         </Parameters>
-        <!-- 
+        <!--
 		Columns block allow specifying name and CalculatedColumn the creation of new
 		columns based on formulas
 		-->

@@ -28,7 +28,7 @@
       <!--for other security params:
           http://wiki.pentaho.com/display/ServerDoc1x/04.+Using+Security+from+Action+Sequences-->
       <Parameters>
-        <Parameter name="param" type="String" default="${[security:principalName]}" access="private"/>
+        <Parameter name="param" type="String" default="${[security:principalName]}" access="private" separator=";"/>
       </Parameters>
     </DataAccess>
 
@@ -37,7 +37,7 @@
       <Name>User Roles</Name>
       <Query><![CDATA[select distinct ${param} as inputParam from orderfact]]></Query>
       <Parameters>
-        <Parameter name="param" type="String" default="${[session:test]}" />
+        <Parameter name="param" type="String" default="${[session:test]}" separator=";"/>
       </Parameters>
     </DataAccess>
 </CDADescriptor>
