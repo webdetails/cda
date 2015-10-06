@@ -22,11 +22,12 @@ public class CdaTestingContentAccessFactory implements IContentAccessFactory {
   File baseSystem;
   File baseRepository;
 
-  public CdaTestingContentAccessFactory (  ) {
+  public CdaTestingContentAccessFactory() {
     // assumes test resources were copied to classpath
-    File base = new File( CdaTestingContentAccessFactory.class.getProtectionDomain().getCodeSource().getLocation().getPath() );
+    File base =
+      new File( CdaTestingContentAccessFactory.class.getProtectionDomain().getCodeSource().getLocation().getPath() );
     baseSystem = base;
-    baseRepository = new File(base, DEFAULT_REPOSITORY);
+    baseRepository = new File( base, DEFAULT_REPOSITORY );
   }
 
   public IUserContentAccess getUserContentAccess( String basePath ) {
@@ -65,22 +66,22 @@ public class CdaTestingContentAccessFactory implements IContentAccessFactory {
 
     private final File baseDir;
 
-    public TestRepositoryAccess(File baseDir) {
+    public TestRepositoryAccess( File baseDir ) {
       this.baseDir = baseDir;
     }
 
-    public TestRepositoryAccess(String path) {
-      this.baseDir = new File(FilenameUtils.separatorsToUnix( path ));
+    public TestRepositoryAccess( String path ) {
+      this.baseDir = new File( FilenameUtils.separatorsToUnix( path ) );
     }
 
     protected File getFile( String path ) {
-      return new File( Util.joinPath( FilenameUtils.separatorsToUnix( baseDir.getPath()),  path ) );
+      return new File( Util.joinPath( FilenameUtils.separatorsToUnix( baseDir.getPath() ), path ) );
     }
 
     public boolean hasAccess( String filePath, FileAccess access ) {
       return true;
     }
-    
+
   }
 
 }

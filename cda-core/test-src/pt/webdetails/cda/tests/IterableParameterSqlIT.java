@@ -22,59 +22,38 @@ import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.tests.utils.CdaTestCase;
 
 public class IterableParameterSqlIT extends CdaTestCase {
-  private static final Log logger = LogFactory.getLog(IterableParameterSqlIT.class);
+  private static final Log logger = LogFactory.getLog( IterableParameterSqlIT.class );
 
-  public void testIterateStatus() throws Exception
-  { //TODO what is going on here??
-  	//Configuration configuration = new Configuration();
-    // Define an outputStream
-//    OutputStream out = System.out;
+  public void testIterateStatus() throws Exception { //TODO what is going on here??
+    logger.info( "Building CDA settings from sample file" );
 
-    logger.info("Building CDA settings from sample file");
-
-    final CdaSettings cdaSettings = parseSettingsFile("sample-iterable-sql.cda");
-    logger.debug("Doing query on Cda - Initializing CdaEngine");
+    final CdaSettings cdaSettings = parseSettingsFile( "sample-iterable-sql.cda" );
+    logger.debug( "Doing query on Cda - Initializing CdaEngine" );
     final CdaEngine engine = CdaEngine.getInstance();
     QueryOptions queryOptions;
 
     //TODO: why?
-//    for(int i=0; i<2;i++){
-    	queryOptions = new QueryOptions();
-	    queryOptions.setDataAccessId("1");
-	    queryOptions.addParameter("status", "$FOREACH(2,0)");
-	    queryOptions.addParameter("year", "$FOREACH(3,0,minYear=2003)");
-	    queryOptions.getParameter("year").setDefaultValue("2004");
-	    queryOptions.setOutputType("csv");
-	     queryOptions.addParameter("status","In Process");
-	
-	    logger.info("Doing first query");
-      engine.doQuery( cdaSettings, queryOptions );
-//    }
-    
     queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("4");
-    queryOptions.addParameter("status", "$FOREACH(2,0)");
-    queryOptions.addParameter("year", "$FOREACH(3,0,minYear=2525)");//no results
-    queryOptions.getParameter("year").setDefaultValue("2004");//this time should fallback to default
-    queryOptions.setOutputType("csv");
+    queryOptions.setDataAccessId( "1" );
+    queryOptions.addParameter( "status", "$FOREACH(2,0)" );
+    queryOptions.addParameter( "year", "$FOREACH(3,0,minYear=2003)" );
+    queryOptions.getParameter( "year" ).setDefaultValue( "2004" );
+    queryOptions.setOutputType( "csv" );
+    queryOptions.addParameter( "status", "In Process" );
 
-    logger.info("Doing second query");
+    logger.info( "Doing first query" );
     engine.doQuery( cdaSettings, queryOptions );
-    
-//    queryOptions = new QueryOptions();
-//    queryOptions.setDataAccessId("1");
-//    queryOptions.addParameter("status", "$FOREACH(2,0)");
-//    queryOptions.addParameter("year", "$FOREACH(3,0,minYear=2525)");
-//    queryOptions.getParameter("year").setDefaultValue("2004");//this time will fallback to default
-//    queryOptions.setOutputType("csv");
-//    // queryOptions.addParameter("status","In Process");
-//
-//    logger.info("Doing third query");
-//    try {
-//    engine.doQuery(out, cdaSettings, queryOptions);
-//    } catch(Exception e){
-//    	throw e;
-//    }
-    logger.info("FIN");
+
+    queryOptions = new QueryOptions();
+    queryOptions.setDataAccessId( "4" );
+    queryOptions.addParameter( "status", "$FOREACH(2,0)" );
+    queryOptions.addParameter( "year", "$FOREACH(3,0,minYear=2525)" );//no results
+    queryOptions.getParameter( "year" ).setDefaultValue( "2004" );//this time should fallback to default
+    queryOptions.setOutputType( "csv" );
+
+    logger.info( "Doing second query" );
+    engine.doQuery( cdaSettings, queryOptions );
+
+    logger.info( "FIN" );
   }
 }

@@ -23,35 +23,30 @@ import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.tests.utils.CdaTestCase;
 
 /**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 15, 2010
- * Time: 7:53:13 PM
+ * Created by IntelliJ IDEA. User: pedro Date: Feb 15, 2010 Time: 7:53:13 PM
  */
-public class DiscoveryGetParametersIT extends CdaTestCase
-{//TODO: what's the point of this?
+public class DiscoveryGetParametersIT extends CdaTestCase {//TODO: what's the point of this?
 
-  private static final Log logger = LogFactory.getLog(DiscoveryGetParametersIT.class);
+  private static final Log logger = LogFactory.getLog( DiscoveryGetParametersIT.class );
 
-  public void testGetParameters() throws Exception
-  {
+  public void testGetParameters() throws Exception {
     // XXX checks nothing but lack of exceptions
 
     // XXX outputs to stdout
     // Define an outputStream
     OutputStream out = System.out;
 
-    final CdaSettings cdaSettings = parseSettingsFile("sample-discovery.cda");
-    logger.debug("Doing discovery on the file");
+    final CdaSettings cdaSettings = parseSettingsFile( "sample-discovery.cda" );
+    logger.debug( "Doing discovery on the file" );
     final CdaEngine engine = CdaEngine.getInstance();
 
     // JSON
-    logger.info("Doing discovery, return xml");
-    engine.getExporter( "xml" ).export( out, engine.listParameters(cdaSettings, "2") );
+    logger.info( "Doing discovery, return xml" );
+    engine.getExporter( "xml" ).export( out, engine.listParameters( cdaSettings, "2" ) );
 
     // XML
-    logger.info("Doing discovery, return json");
-    engine.getExporter( "json" ).export( out, engine.listParameters(cdaSettings, "2") );
+    logger.info( "Doing discovery, return json" );
+    engine.getExporter( "json" ).export( out, engine.listParameters( cdaSettings, "2" ) );
 
 
   }

@@ -22,48 +22,40 @@ import pt.webdetails.cda.tests.utils.CdaTestCase;
 
 
 /**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 15, 2010
- * Time: 7:53:13 PM
+ * Created by IntelliJ IDEA. User: pedro Date: Feb 15, 2010 Time: 7:53:13 PM
  */
-public class XPathIT extends CdaTestCase
-{
+public class XPathIT extends CdaTestCase {
 
-	private static final Log logger = LogFactory.getLog(SqlIT.class);
+  private static final Log logger = LogFactory.getLog( SqlIT.class );
 
-  public XPathIT()
-  {
+  public XPathIT() {
     super();
   }
 
-  public XPathIT( final String name )
-  {
-    super(name);
+  public XPathIT( final String name ) {
+    super( name );
   }
 
 
-  protected void setUp() throws Exception
-  {
+  protected void setUp() throws Exception {
     super.setUp();
   }
 
 
-  public void testSqlQuery() throws Exception
-  {
+  public void testSqlQuery() throws Exception {
 
     //TODO test result
 
-    final CdaSettings cdaSettings = parseSettingsFile("sample-xpath.cda");
-    logger.debug("Doing query on Cda - Initializing CdaEngine");
+    final CdaSettings cdaSettings = parseSettingsFile( "sample-xpath.cda" );
+    logger.debug( "Doing query on Cda - Initializing CdaEngine" );
 
     final QueryOptions queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("2");
-//    queryOptions.setOutputType("json");
-    queryOptions.addParameter("status", "0");
+    queryOptions.setDataAccessId( "2" );
+    //    queryOptions.setOutputType("json");
+    queryOptions.addParameter( "status", "0" );
 
-    logger.info("Doing query");
-    doQuery( cdaSettings, queryOptions);
+    logger.info( "Doing query" );
+    doQuery( cdaSettings, queryOptions );
 
 
   }

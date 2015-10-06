@@ -25,31 +25,26 @@ import pt.webdetails.cda.tests.utils.CdaTestCase;
 
 
 /**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 15, 2010
- * Time: 7:53:13 PM
+ * Created by IntelliJ IDEA. User: pedro Date: Feb 15, 2010 Time: 7:53:13 PM
  */
-public class ReflectionIT extends CdaTestCase
-{
+public class ReflectionIT extends CdaTestCase {
 
-  private static final Log logger = LogFactory.getLog(ReflectionIT.class);
+  private static final Log logger = LogFactory.getLog( ReflectionIT.class );
 
-  public void testSqlQuery() throws Exception
-  {
+  public void testSqlQuery() throws Exception {
 
-    final CdaSettings cdaSettings = parseSettingsFile("sample-reflection.cda");
+    final CdaSettings cdaSettings = parseSettingsFile( "sample-reflection.cda" );
 
-    logger.debug("Doing query on Cda - Initializing CdaEngine");
+    logger.debug( "Doing query on Cda - Initializing CdaEngine" );
     final CdaEngine engine = getEngine();
 
     final QueryOptions queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("2");
-    queryOptions.setOutputType("json");
-    queryOptions.addParameter("status", "0");
+    queryOptions.setDataAccessId( "2" );
+    queryOptions.setOutputType( "json" );
+    queryOptions.addParameter( "status", "0" );
 
-    logger.info("Doing query");
-    TableModel table = engine.doQuery(cdaSettings, queryOptions); //TODO compare result
+    logger.info( "Doing query" );
+    TableModel table = engine.doQuery( cdaSettings, queryOptions ); //TODO compare result
 
 
   }

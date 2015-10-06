@@ -47,7 +47,7 @@ public abstract class CdaTestCase extends TestCase {
   private CdaTestEnvironment testEnvironment;
   private static final String USER_DIR = System.getProperty( "user.dir" );
   private static final Class[] customDataFactories = {
-      CompactBandedMDXDataFactory.class, ExtBandedMDXDataFactory.class, ExtDenormalizedMDXDataFactory.class };
+    CompactBandedMDXDataFactory.class, ExtBandedMDXDataFactory.class, ExtDenormalizedMDXDataFactory.class };
 
   public CdaTestCase( String name ) {
     super( name );
@@ -118,39 +118,9 @@ public abstract class CdaTestCase extends TestCase {
   protected static void registerCustomDataFactories() {
     for ( Class clazz : customDataFactories ) {
       DefaultDataFactoryMetaData dmd = new DefaultDataFactoryMetaData(
-          clazz.getName(), "", "", true, false, true, false, false, false, false, false,
-          new DefaultDataFactoryCore(), 0 );
+        clazz.getName(), "", "", true, false, true, false, false, false, false, false,
+        new DefaultDataFactoryCore(), 0 );
       DataFactoryRegistry.getInstance().register( dmd );
     }
-  }
-
-  protected static class CdaPluginTestEnvironment extends PluginEnvironment {
-
-    private CdaTestingContentAccessFactory factory;
-
-    public CdaPluginTestEnvironment( CdaTestingContentAccessFactory factory ) {
-      this.factory = factory;
-    }
-
-    public IContentAccessFactory getContentAccessFactory() {
-      return factory;
-    }
-
-    public IUrlProvider getUrlProvider() {
-      throw new UnsupportedOperationException();
-    }
-
-    public PluginSettings getPluginSettings() {
-      throw new UnsupportedOperationException();
-    }
-
-    public String getPluginId() {
-      return "cda";
-    }
-
-    public IPluginCall getPluginCall( String pluginId, String service, String method ) {
-      throw new UnsupportedOperationException();
-    }
-
   }
 }

@@ -23,57 +23,50 @@ import pt.webdetails.cda.tests.utils.CdaTestCase;
 
 
 /**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 15, 2010
- * Time: 7:53:13 PM
+ * Created by IntelliJ IDEA. User: pedro Date: Feb 15, 2010 Time: 7:53:13 PM
  */
-public class SqlIT extends CdaTestCase
-{
+public class SqlIT extends CdaTestCase {
 
-	private static final Log logger = LogFactory.getLog(SqlIT.class);
+  private static final Log logger = LogFactory.getLog( SqlIT.class );
 
-  public SqlIT()
-  {
+  public SqlIT() {
     super();
   }
 
-  public SqlIT( final String name )
-  {
-    super(name);
+  public SqlIT( final String name ) {
+    super( name );
   }
 
 
-  public void testSqlQueryCache() throws Exception
-  {
-    final CdaSettings cdaSettings = getSettingsManager().parseSettingsFile("sample-sql.cda");
-    logger.debug("Doing query on Cda - Initializing CdaEngine");
+  public void testSqlQueryCache() throws Exception {
+    final CdaSettings cdaSettings = getSettingsManager().parseSettingsFile( "sample-sql.cda" );
+    logger.debug( "Doing query on Cda - Initializing CdaEngine" );
     final CdaEngine engine = getEngine();
 
     QueryOptions queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("1");
-    queryOptions.addParameter("orderDate", "2003-04-01");
+    queryOptions.setDataAccessId( "1" );
+    queryOptions.addParameter( "orderDate", "2003-04-01" );
 
-    logger.info("Doing first query");
+    logger.info( "Doing first query" );
     engine.doQuery( cdaSettings, queryOptions );
 
-    logger.info("Doing query with different parameters");
+    logger.info( "Doing query with different parameters" );
     queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("1");
-    queryOptions.addParameter("orderDate", "2004-01-01");
+    queryOptions.setDataAccessId( "1" );
+    queryOptions.addParameter( "orderDate", "2004-01-01" );
     engine.doQuery( cdaSettings, queryOptions );
 
     // Querying 2nd time to test cache
-    logger.info("Doing query using the initial parameters - Cache should be used");
+    logger.info( "Doing query using the initial parameters - Cache should be used" );
     queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("1");
-    queryOptions.addParameter("orderDate", "2003-04-01");
+    queryOptions.setDataAccessId( "1" );
+    queryOptions.addParameter( "orderDate", "2003-04-01" );
     engine.doQuery( cdaSettings, queryOptions );
 
-//    // Querying 2nd time to test cache
-//    logger.info("Doing query again to see if cache expires"); //TODO: and how are we checking if it does?
-//    Thread.sleep(6000);
-//    engine.doQuery( cdaSettings, queryOptions );
+    //    // Querying 2nd time to test cache
+    //    logger.info("Doing query again to see if cache expires"); //TODO: and how are we checking if it does?
+    //    Thread.sleep(6000);
+    //    engine.doQuery( cdaSettings, queryOptions );
 
   }
 

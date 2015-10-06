@@ -23,19 +23,14 @@ import pt.webdetails.cda.tests.utils.CdaTestCase;
 import pt.webdetails.cda.tests.utils.CdaTestHelper;
 
 /**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 15, 2010
- * Time: 7:53:13 PM
+ * Created by IntelliJ IDEA. User: pedro Date: Feb 15, 2010 Time: 7:53:13 PM
  */
-public class CompoundUnionIT extends CdaTestCase
-{
+public class CompoundUnionIT extends CdaTestCase {
 
   @Test
-  public void testCompoundQuery() throws Exception
-  {
+  public void testCompoundQuery() throws Exception {
 
-    final CdaSettings cdaSettings = getSettingsManager().parseSettingsFile("sample-union.cda");
+    final CdaSettings cdaSettings = getSettingsManager().parseSettingsFile( "sample-union.cda" );
 
     QueryOptions queryOptions = new QueryOptions();
     //queryOptions.addParameter("year","2005");
@@ -46,23 +41,23 @@ public class CompoundUnionIT extends CdaTestCase
     queryOptions.setDataAccessId( "2" );
     final TableModel bottom = getEngine().doQuery( cdaSettings, queryOptions );
 
-    queryOptions.setDataAccessId("3");
-    queryOptions.setOutputType("json");
+    queryOptions.setDataAccessId( "3" );
+    queryOptions.setOutputType( "json" );
     // queryOptions.addParameter("status","In Process");
 
 
-    final TableModel union = getEngine().doQuery(cdaSettings, queryOptions);
+    final TableModel union = getEngine().doQuery( cdaSettings, queryOptions );
 
-    assertEquals(union.getColumnCount(), Math.max( top.getColumnCount(), bottom.getColumnCount() )  );
-    assertEquals(union.getRowCount(), top.getRowCount() + bottom.getRowCount()  );
+    assertEquals( union.getColumnCount(), Math.max( top.getColumnCount(), bottom.getColumnCount() ) );
+    assertEquals( union.getRowCount(), top.getRowCount() + bottom.getRowCount() );
 
-    assertEquals(union.getValueAt( 0, 0 ), top.getValueAt( 0, 0 ) );
-    assertEquals(union.getValueAt( 0, 1 ), top.getValueAt( 0, 1 ) );
+    assertEquals( union.getValueAt( 0, 0 ), top.getValueAt( 0, 0 ) );
+    assertEquals( union.getValueAt( 0, 1 ), top.getValueAt( 0, 1 ) );
     final int lastRowUnion = union.getRowCount() - 1;
     final int lastRowBottom = bottom.getRowCount() - 1;
     assertTrue( CdaTestHelper.numericEquals(
-        union.getValueAt( lastRowUnion, 1 ).toString(), 
-        bottom.getValueAt( lastRowBottom, 1 ).toString(), 0.000001 ) );
+      union.getValueAt( lastRowUnion, 1 ).toString(),
+      bottom.getValueAt( lastRowBottom, 1 ).toString(), 0.000001 ) );
   }
 
 }

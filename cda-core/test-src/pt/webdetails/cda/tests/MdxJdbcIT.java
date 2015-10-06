@@ -21,60 +21,25 @@ import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.tests.utils.CdaTestCase;
 
 /**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 15, 2010
- * Time: 7:53:13 PM
+ * Created by IntelliJ IDEA. User: pedro Date: Feb 15, 2010 Time: 7:53:13 PM
  */
-public class MdxJdbcIT extends CdaTestCase
-{
+public class MdxJdbcIT extends CdaTestCase {
 
-  private static final Log logger = LogFactory.getLog(MdxJdbcIT.class);
+  private static final Log logger = LogFactory.getLog( MdxJdbcIT.class );
 
-  public void testSqlQuery() throws Exception
-  {
+  public void testSqlQuery() throws Exception {
 
-    logger.info("Building CDA settings from sample file");
+    logger.info( "Building CDA settings from sample file" );
 
-    final CdaSettings cdaSettings = parseSettingsFile("sample-mondrian.cda");
+    final CdaSettings cdaSettings = parseSettingsFile( "sample-mondrian.cda" );
 
     QueryOptions queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("2");
-    queryOptions.setOutputType("json");
-    queryOptions.addParameter("status", "Shipped");
+    queryOptions.setDataAccessId( "2" );
+    queryOptions.setOutputType( "json" );
+    queryOptions.addParameter( "status", "Shipped" );
 
-    logger.info("Doing query");
-    doQuery(cdaSettings, queryOptions);
-
+    logger.info( "Doing query" );
+    doQuery( cdaSettings, queryOptions );
 
   }
-/*
-
-  public void testJndiQuery() throws ExporterException, UnknownDataAccessException, UnsupportedExporterException, QueryException, UnsupportedConnectionException, DocumentException, UnsupportedDataAccessException
-  {
-
-
-    // Define an outputStream
-    OutputStream out = System.out;
-
-    logger.info("Building CDA settings from sample file");
-
-    final SettingsManager settingsManager = SettingsManager.getInstance();
-
-    final File settingsFile = new File("test/pt/webdetails/cda/tests/sample-mondrian-jndi.cda");
-    final CdaSettings cdaSettings = settingsManager.parseSettingsFile(settingsFile.getAbsolutePath());
-    logger.debug("Doing query on Cda - Initializing CdaEngine");
-    final CdaEngine engine = CdaEngine.getInstance();
-
-    QueryOptions queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("2");
-    queryOptions.setOutputType("json");
-    queryOptions.addParameter("status", "Shipped");
-
-    logger.info("Doing query");
-    engine.doQuery(out, cdaSettings, queryOptions);
-  }
-   * 
-   * 
-   */
 }

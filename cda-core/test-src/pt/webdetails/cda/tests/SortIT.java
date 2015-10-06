@@ -24,49 +24,45 @@ import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.tests.utils.CdaTestCase;
 
 /**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 15, 2010
- * Time: 7:53:13 PM
+ * Created by IntelliJ IDEA. User: pedro Date: Feb 15, 2010 Time: 7:53:13 PM
  */
-public class SortIT extends CdaTestCase
-{
+public class SortIT extends CdaTestCase {
 
-  private static final Log logger = LogFactory.getLog(SortIT.class);
+  private static final Log logger = LogFactory.getLog( SortIT.class );
 
-  public void testSqlQuery() throws Exception
-  {
+  public void testSqlQuery() throws Exception {
 
     // XXX more stdout tests..compare results!
 
-    final CdaSettings cdaSettings = parseSettingsFile("sample-mondrian-compact.cda");
+    final CdaSettings cdaSettings = parseSettingsFile( "sample-mondrian-compact.cda" );
     CdaEngine engine = getEngine();
 
     QueryOptions queryOptions = new QueryOptions();
-    queryOptions.setOutputType("json");
-    queryOptions.addParameter("status", "Shipped");
+    queryOptions.setOutputType( "json" );
+    queryOptions.addParameter( "status", "Shipped" );
 
-    logger.info("Doing query with 2 column sort");
-    queryOptions.setDataAccessId("1");
+    logger.info( "Doing query with 2 column sort" );
+    queryOptions.setDataAccessId( "1" );
     queryOptions.setSortBy( Arrays.asList( new String[] { "0D", "1A" } ) );
-    engine.doQuery(cdaSettings, queryOptions);
+    engine.doQuery( cdaSettings, queryOptions );
 
-    logger.info("\nDoing query with no sort");
+    logger.info( "\nDoing query with no sort" );
     queryOptions.setSortBy( Arrays.asList( new String[] {} ) );
-    engine.doQuery(cdaSettings, queryOptions);
+    engine.doQuery( cdaSettings, queryOptions );
 
-    logger.info("\nDoing query with all combinations");
+    logger.info( "\nDoing query with all combinations" );
     queryOptions.setSortBy( Arrays.asList( new String[] { "0D", "2", "1A" } ) );
-    engine.doQuery(cdaSettings, queryOptions);
+    engine.doQuery( cdaSettings, queryOptions );
 
-    logger.info("\nDoing query with only one sort");
+    logger.info( "\nDoing query with only one sort" );
     queryOptions.setSortBy( Arrays.asList( new String[] { "1A" } ) );
-    engine.doQuery(cdaSettings, queryOptions);
+    engine.doQuery( cdaSettings, queryOptions );
 
   }
 
   /*
-  public void testJndiQuery() throws ExporterException, UnknownDataAccessException, UnsupportedExporterException, QueryException, UnsupportedConnectionException, DocumentException, UnsupportedDataAccessException
+  public void testJndiQuery() throws ExporterException, UnknownDataAccessException, UnsupportedExporterException,
+  QueryException, UnsupportedConnectionException, DocumentException, UnsupportedDataAccessException
   {
 
 

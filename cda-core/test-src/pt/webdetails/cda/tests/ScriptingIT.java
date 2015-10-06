@@ -24,18 +24,18 @@ import pt.webdetails.cda.tests.utils.CdaTestCase;
 
 public class ScriptingIT extends CdaTestCase {
 
-  private static final Log logger = LogFactory.getLog(ScriptingIT.class);
+  private static final Log logger = LogFactory.getLog( ScriptingIT.class );
 
   @Test
   public void testSqlQuery() throws Exception {
 
     // Define an outputStream
-    final CdaSettings cdaSettings = parseSettingsFile("sample-scripting.cda");
+    final CdaSettings cdaSettings = parseSettingsFile( "sample-scripting.cda" );
 
     final QueryOptions queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("2");
-    queryOptions.setOutputType("json");
-    queryOptions.addParameter("status", "Shipped");
+    queryOptions.setDataAccessId( "2" );
+    queryOptions.setOutputType( "json" );
+    queryOptions.addParameter( "status", "Shipped" );
 
     logger.info( "Doing query" );
     doQuery( cdaSettings, queryOptions );
@@ -45,14 +45,14 @@ public class ScriptingIT extends CdaTestCase {
   public void testJsonQuery() throws Exception {
 
     // Define an outputStream
-    final CdaSettings cdaSettings = parseSettingsFile("sample-json-scripting.cda");
+    final CdaSettings cdaSettings = parseSettingsFile( "sample-json-scripting.cda" );
 
     final QueryOptions queryOptions = new QueryOptions();
-    queryOptions.setDataAccessId("2");
-    queryOptions.setOutputType("json");
+    queryOptions.setDataAccessId( "2" );
+    queryOptions.setOutputType( "json" );
 
-    logger.info("Doing query");
-    doQuery(cdaSettings, queryOptions);
+    logger.info( "Doing query" );
+    doQuery( cdaSettings, queryOptions );
   }
 
 }

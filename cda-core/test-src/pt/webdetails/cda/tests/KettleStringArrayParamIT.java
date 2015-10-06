@@ -24,11 +24,10 @@ import javax.swing.table.TableModel;
 
 public class KettleStringArrayParamIT extends CdaTestCase {
 
-  private static final Log logger = LogFactory.getLog(KettleStringArrayParamIT.class);
+  private static final Log logger = LogFactory.getLog( KettleStringArrayParamIT.class );
 
 
-  public void testKettleStringArray() throws Exception
-  {
+  public void testKettleStringArray() throws Exception {
     final CdaSettings cdaSettings = parseSettingsFile( "sample-kettle-ParamArray.cda" );
 
     final QueryOptions queryOptions = new QueryOptions();
@@ -38,7 +37,7 @@ public class KettleStringArrayParamIT extends CdaTestCase {
     queryOptions.setParameter( "Costumers", "307;369" );
 
     logger.info( "Doing query" );
-    TableModel tm  = doQuery( cdaSettings, queryOptions );
+    TableModel tm = doQuery( cdaSettings, queryOptions );
     assertEquals( 2, tm.getRowCount() );
     assertEquals( "307", tm.getValueAt( 0, 0 ).toString() );
     assertEquals( "Der Hund Imports", tm.getValueAt( 0, 1 ) );

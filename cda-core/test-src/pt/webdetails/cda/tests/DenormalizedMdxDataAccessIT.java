@@ -28,8 +28,8 @@ public class DenormalizedMdxDataAccessIT extends CdaTestCase {
     boolean bandedFound = false;
     DenormalizedMdxDataAccess dmda = new DenormalizedMdxDataAccess();
     List<PropertyDescriptor> properties = dmda.getInterface();
-    for( PropertyDescriptor pd : properties ) {
-      if( pd.getName() == "bandedMode" ) {
+    for ( PropertyDescriptor pd : properties ) {
+      if ( pd.getName() == "bandedMode" ) {
         bandedFound = true;
       }
     }

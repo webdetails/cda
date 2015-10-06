@@ -62,7 +62,7 @@ public class CacheKeysIT extends CdaTestCase {
     QueryOptions queryOptions = new QueryOptions();
     queryOptions.setDataAccessId( "1" );
     logger.info(
-        "Performing query with id=1 @ " + cdaSettings.getDataAccess( queryOptions.getDataAccessId() )
+      "Performing query with id=1 @ " + cdaSettings.getDataAccess( queryOptions.getDataAccessId() )
         .toString()
     );
     TableModel tableModel = cdaSettings.getDataAccess( queryOptions.getDataAccessId() ).doQuery( queryOptions );
@@ -78,7 +78,7 @@ public class CacheKeysIT extends CdaTestCase {
       assertNotNull( key.getExtraCacheKey() );
       Assert.assertTrue( key.getExtraCacheKey() != null && key.getExtraCacheKey() instanceof CacheKey );
       Assert.assertTrue( ( (CacheKey) key.getExtraCacheKey() ).getKeyValuePairs() != null
-          && ( (CacheKey) key.getExtraCacheKey() ).getKeyValuePairs().size() > 0 );
+        && ( (CacheKey) key.getExtraCacheKey() ).getKeyValuePairs().size() > 0 );
 
       boolean hasValueAsCacheExtraKey = false;
       boolean hasSystemWideExtraCacheKey = false;
@@ -91,11 +91,11 @@ public class CacheKeysIT extends CdaTestCase {
           hasValueAsCacheExtraKey = true;
         }
         if ( pair.getKey().equals( SYSTEM_DEFINED_CACHE_KEY ) && pair.getValue()
-            .equals( SYSTEM_DEFINED_CACHE_VALUE ) ) {
+          .equals( SYSTEM_DEFINED_CACHE_VALUE ) ) {
           hasSystemWideExtraCacheKey = true;
         }
         if ( pair.getKey().equals( SYSTEM_AND_USER_DEFINED_CACHE_KEY ) && pair.getValue()
-            .equals( USER_DEFINED_CACHE_VALUE ) ) {
+          .equals( USER_DEFINED_CACHE_VALUE ) ) {
           systemCantOverrideUser = true;
         }
       }

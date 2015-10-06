@@ -39,8 +39,9 @@ public class FormulaParamIT extends CdaTestCase {
   public static class FormulaTestEnvironment extends CdaTestEnvironment {
 
     public FormulaTestEnvironment() throws InitializationException {
-      super(new CdaTestingContentAccessFactory());
+      super( new CdaTestingContentAccessFactory() );
     }
+
     public FormulaContext getFormulaContext() {
       return new TestFormulaContext();
     }
@@ -56,19 +57,18 @@ public class FormulaParamIT extends CdaTestCase {
   }
 
   @Test
-  public void testParam()throws Exception
-  {
+  public void testParam() throws Exception {
 
     final CdaSettings cdaSettings = parseSettingsFile( "sample-securityParam.cda" );
 
     QueryOptions queryOptions = new QueryOptions();
 
-    queryOptions.setDataAccessId("junitDataAccess");
-    TableModel tableModel = cdaSettings.getDataAccess(queryOptions.getDataAccessId()).doQuery(queryOptions);
-    assertEquals(1, tableModel.getRowCount());
-    assertEquals(1, tableModel.getColumnCount());
-    String result = (String) tableModel.getValueAt(0, 0);
-    assertEquals("thisIsAGoodValue", result);
+    queryOptions.setDataAccessId( "junitDataAccess" );
+    TableModel tableModel = cdaSettings.getDataAccess( queryOptions.getDataAccessId() ).doQuery( queryOptions );
+    assertEquals( 1, tableModel.getRowCount() );
+    assertEquals( 1, tableModel.getColumnCount() );
+    String result = (String) tableModel.getValueAt( 0, 0 );
+    assertEquals( "thisIsAGoodValue", result );
   }
-  
+
 }

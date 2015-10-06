@@ -32,7 +32,7 @@ import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.ICdaEnvironment;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
-import pt.webdetails.cda.tests.utils.CdaTestCase;
+import pt.webdetails.cda.tests.utils.CdaPluginTestEnvironment;
 import pt.webdetails.cda.tests.utils.CdaTestEnvironment;
 import pt.webdetails.cda.tests.utils.CdaTestingContentAccessFactory;
 import pt.webdetails.cda.utils.mondrian.CompactBandedMDXDataFactory;
@@ -46,7 +46,7 @@ public class RoundtripSuiteIT extends XMLTestCase {
   private DomTraversalHelper tHelper;
   private CdaTestEnvironment testEnvironment;
   private static final Class[] customDataFactories = {
-      CompactBandedMDXDataFactory.class, ExtBandedMDXDataFactory.class, ExtDenormalizedMDXDataFactory.class };
+    CompactBandedMDXDataFactory.class, ExtBandedMDXDataFactory.class, ExtDenormalizedMDXDataFactory.class };
   private static final String USER_DIR = System.getProperty( "user.dir" );
 
   private static final String OLAP4J_STRING = "olap4j";
@@ -55,14 +55,14 @@ public class RoundtripSuiteIT extends XMLTestCase {
   public void setUp() {
     CdaTestingContentAccessFactory factory = new CdaTestingContentAccessFactory();
     // always need to make sure there is a plugin environment initialized
-    PluginEnvironment.init( new CdaTestCase.CdaPluginTestEnvironment( factory ) );
+    PluginEnvironment.init( new CdaPluginTestEnvironment( factory ) );
     // cda-specific environment
     // cda init
     CdaEngine.init( new CdaTestEnvironment( factory ) );
     tHelper = new DomTraversalHelper();
 
     // always need to make sure there is a plugin environment initialized
-    PluginEnvironment.init( new CdaTestCase.CdaPluginTestEnvironment( factory ) );
+    PluginEnvironment.init( new CdaPluginTestEnvironment( factory ) );
 
     // cda-specific environment
     testEnvironment = new CdaTestEnvironment( factory );
@@ -248,8 +248,8 @@ public class RoundtripSuiteIT extends XMLTestCase {
   protected static void registerCustomDataFactories() {
     for ( Class clazz : customDataFactories ) {
       DefaultDataFactoryMetaData dmd = new DefaultDataFactoryMetaData(
-          clazz.getName(), "", "", true, false, true, false, false, false, false, false,
-          new DefaultDataFactoryCore(), 0 );
+        clazz.getName(), "", "", true, false, true, false, false, false, false, false,
+        new DefaultDataFactoryCore(), 0 );
       DataFactoryRegistry.getInstance().register( dmd );
     }
   }

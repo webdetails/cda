@@ -25,22 +25,21 @@ import javax.swing.table.TableModel;
 
 public class CdaPropertyLookupParserIT extends CdaTestCase {
 
-    private static final Log logger = LogFactory.getLog(CdaPropertyLookupParserIT.class);
+  private static final Log logger = LogFactory.getLog( CdaPropertyLookupParserIT.class );
 
-    public void testxPathQuery() throws Exception
-    {
+  public void testxPathQuery() throws Exception {
 
-        final CdaSettings cdaSettings = parseSettingsFile( "xPath_CDA_15.cda" );
+    final CdaSettings cdaSettings = parseSettingsFile( "xPath_CDA_15.cda" );
 
-        final QueryOptions queryOptions = new QueryOptions();
-        queryOptions.setDataAccessId("xPath_CDA_15");
+    final QueryOptions queryOptions = new QueryOptions();
+    queryOptions.setDataAccessId( "xPath_CDA_15" );
 
-        queryOptions.setParameter("theme", "Engagement");
-        queryOptions.setParameter("level", "2");
+    queryOptions.setParameter( "theme", "Engagement" );
+    queryOptions.setParameter( "level", "2" );
 
-        logger.info("Doing query");
-        TableModel tm  = doQuery( cdaSettings, queryOptions );
+    logger.info( "Doing query" );
+    TableModel tm = doQuery( cdaSettings, queryOptions );
 
-        assertEquals("Commentaire pour le theme Engagement et le niveau 2", tm.getValueAt(0, 0));
-    }
+    assertEquals( "Commentaire pour le theme Engagement et le niveau 2", tm.getValueAt( 0, 0 ) );
+  }
 }

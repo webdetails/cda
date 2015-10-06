@@ -22,26 +22,21 @@ import pt.webdetails.cda.tests.utils.CdaTestCase;
 
 
 /**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 15, 2010
- * Time: 7:53:13 PM
+ * Created by IntelliJ IDEA. User: pedro Date: Feb 15, 2010 Time: 7:53:13 PM
  */
-public class DiscoveryGetQueriesIT extends CdaTestCase
-{
+public class DiscoveryGetQueriesIT extends CdaTestCase {
 
-  private static final Log logger = LogFactory.getLog(DiscoveryGetQueriesIT.class);
+  private static final Log logger = LogFactory.getLog( DiscoveryGetQueriesIT.class );
 
   // XXX only tests for lack of exceptions
-  public void testGetQueries() throws Exception
-  {
+  public void testGetQueries() throws Exception {
 
-    final CdaSettings cdaSettings = parseSettingsFile("sample-discovery.cda");
+    final CdaSettings cdaSettings = parseSettingsFile( "sample-discovery.cda" );
 
-    logger.debug("Getting parameters info on CDA file");
+    logger.debug( "Getting parameters info on CDA file" );
     final CdaEngine engine = CdaEngine.getInstance();
 
-    logger.info("Listing queries");
+    logger.info( "Listing queries" );
     System.out.print( engine.listQueries( cdaSettings ) );//...
 
 
