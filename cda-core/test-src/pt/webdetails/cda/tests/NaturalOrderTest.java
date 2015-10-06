@@ -13,20 +13,16 @@
 
 package pt.webdetails.cda.tests;
 
+import junit.framework.TestCase;
 import pt.webdetails.cda.utils.NaturalOrderComparator;
 import junit.framework.Assert;
 
-public class NaturalOrderTest extends CdaTestCase {
+public class NaturalOrderTest extends TestCase {
 
 
   public NaturalOrderTest()
   {
     super();
-  }
-
-  public NaturalOrderTest(final String name)
-  {
-    super(name);
   }
 
 

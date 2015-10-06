@@ -141,4 +141,11 @@
     </antcall>
   </target>
 
+  <target name="build-sonar">
+    <antcall target="call">
+      <param name="target" value="build-sonar"/>
+      <param name="projects" value="${all.projects}"/>
+    </antcall>
+  </target>
+
 </project>
