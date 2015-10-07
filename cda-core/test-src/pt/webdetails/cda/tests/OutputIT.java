@@ -71,7 +71,7 @@ public class OutputIT extends CdaTestCase {
     queryOptions.setOutputType( "json" );
     String json = exportTableModel( table, queryOptions );
     assertFalse( StringUtils.isEmpty( json ) );
-    jsonEquals( expectedOutput, json );
+    assertTrue( jsonEquals( expectedOutput, json ) );
   }
 
   @Test
@@ -93,7 +93,7 @@ public class OutputIT extends CdaTestCase {
     queryOptions.setOutputType( "json" );
     String json = exportTableModel( table, queryOptions );
     assertFalse( StringUtils.isEmpty( json ) );
-    jsonEquals( expectedOutput, json );
+    assertTrue( jsonEquals( expectedOutput, json ) );
   }
 
   protected boolean jsonEquals( String json1, String json2 ) throws Exception {
