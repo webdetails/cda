@@ -11,7 +11,7 @@
 * the license for the specific language governing your rights and limitations.
 */
 
-package pt.webdetails.cda.tests;
+package pt.webdetails.cda.utils;
 
 import junit.framework.TestCase;
 import pt.webdetails.cda.utils.NaturalOrderComparator;

@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -26,11 +26,6 @@ public class DefaultSessionFormulaContext extends DefaultFormulaContext {
   public DefaultSessionFormulaContext( Map<String, ICdaParameterProvider> ps ) {
     super();
     if ( ps == null || ps.size() == 0 ) {
-//      ISessionUtils utils = CdaEngine.getEnvironment().getSessionUtils();
-//      if ( utils != null ) {
-//        this.providers.put( "security:", new CdaSecurityParameterProvider( utils ) );
-//        this.providers.put( "session:", new CdaSessionParameterProvider( utils ) );
-//      }
       this.providers.put( "system:", new CdaSystemParameterProvider() );
     } else {
       this.providers = ps;
@@ -43,23 +38,22 @@ public class DefaultSessionFormulaContext extends DefaultFormulaContext {
     }
   }
 
+  public Map<String, ICdaParameterProvider> getProviders() {
+    return providers;
+  }
+
   @Override
-  public Object resolveReference(final Object name)
-  {
-    if (name instanceof String)
-    {
-      String paramName = ((String) name).trim();
-      for (String prefix : providers.keySet())
-      {
-        if (paramName.startsWith(prefix))
-        {
-      	//logger.debug("Found provider for prefix: " + prefix + " Provider: " + providers.get(prefix));
-          paramName = paramName.substring(prefix.length());
-          Object value = providers.get(prefix).getParameter(paramName);
+  public Object resolveReference( final Object name ) {
+    if ( name instanceof String ) {
+      String paramName = ( (String) name ).trim();
+      for ( String prefix : providers.keySet() ) {
+        if ( paramName.startsWith( prefix ) ) {
+          paramName = paramName.substring( prefix.length() );
+          Object value = providers.get( prefix ).getParameter( paramName );
           return value;
         }
       }
     }
-    return super.resolveReference(name);
+    return super.resolveReference( name );
   }
 }
