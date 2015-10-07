@@ -13,8 +13,18 @@
 
 package pt.webdetails.cda.formula;
 
-public interface ICdaParameterProvider {
+import junit.framework.TestCase;
 
-  Object getParameter( String name );
+public class CdaSystemParameterProviderTest extends TestCase {
+  CdaSystemParameterProvider cdaSystemParameterProvider;
 
+  public void setUp() throws Exception {
+    super.setUp();
+    cdaSystemParameterProvider = new CdaSystemParameterProvider();
+  }
+
+  public void testGetParameter() throws Exception {
+    assertNull( cdaSystemParameterProvider.getParameter( "test" ) );
+    assertNotNull( cdaSystemParameterProvider.getParameter( "java.vendor" ) );
+  }
 }

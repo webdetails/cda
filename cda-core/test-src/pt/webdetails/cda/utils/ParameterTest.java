@@ -10,7 +10,7 @@
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
 * the license for the specific language governing your rights and limitations.
 */
-package pt.webdetails.cda.tests;
+package pt.webdetails.cda.utils;
 
 import org.junit.Test;
 import junit.framework.Assert;

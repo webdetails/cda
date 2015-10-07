@@ -1,6 +1,6 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
-* 
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
+*
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
 * this file except in compliance with the license. If you need a copy of the license,
@@ -17,13 +17,13 @@ import java.util.Properties;
 
 public class CdaSystemParameterProvider implements ICdaParameterProvider {
 
-	Properties props = System.getProperties();
+  Properties props = System.getProperties();
 
-	@Override
-	public Object getParameter(String name) {
-		if (props.contains(name)) {
-			return props.get(name);
-		}
-		return null;
-	}
+  @Override
+  public Object getParameter( String name ) {
+    if ( props.containsKey( name ) ) {
+      return props.get( name );
+    }
+    return null;
+  }
 }

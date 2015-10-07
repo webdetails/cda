@@ -10,12 +10,11 @@
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
 * the license for the specific language governing your rights and limitations.
 */
-package pt.webdetails.cda.tests;
+package pt.webdetails.cda.utils;
 
 import junit.framework.Assert;
 import org.junit.Test;
 import pt.webdetails.cda.dataaccess.Parameter;
-import pt.webdetails.cda.utils.ParameterArrayToStringEncoder;
 
 import java.util.Calendar;
 import java.util.Date;

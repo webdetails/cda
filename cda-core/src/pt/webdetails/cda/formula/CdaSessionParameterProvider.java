@@ -1,6 +1,6 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
-* 
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
+*
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
 * this file except in compliance with the license. If you need a copy of the license,
@@ -18,18 +18,18 @@ import pt.webdetails.cpf.session.IUserSession;
 
 public class CdaSessionParameterProvider implements ICdaParameterProvider {
 
-	private ISessionUtils sessionUtils;
-	
-	public CdaSessionParameterProvider(ISessionUtils sessionUtils) {
-		this.sessionUtils = sessionUtils;
-	}
+  private ISessionUtils sessionUtils;
 
-	@Override
-	public Object getParameter(String name) {
-		IUserSession session = sessionUtils.getCurrentSession();
-		if (session != null) {
-			return session.getParameter(name);
-		}
-		return null;
-	}
+  public CdaSessionParameterProvider( ISessionUtils sessionUtils ) {
+    this.sessionUtils = sessionUtils;
+  }
+
+  @Override
+  public Object getParameter( String name ) {
+    IUserSession session = sessionUtils.getCurrentSession();
+    if ( session != null ) {
+      return session.getParameter( name );
+    }
+    return null;
+  }
 }
