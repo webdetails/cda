@@ -33,7 +33,7 @@
       where ([Order Status].[${status}])
     ]]></Query>
     <Parameters>
-      <Parameter name="status" type="String" default="In Process"/>
+      <Parameter name="status" type="String" default="In Process" separator=";"/>
     </Parameters>
     <Columns>
       <Column idx="1">

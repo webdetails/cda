@@ -10,8 +10,8 @@
                type="xPath">
       <Columns/>
       <Parameters>
-         <Parameter default="Engagement" name="theme" type="String"/>
-         <Parameter default="1" name="level" type="String"/> 
+         <Parameter default="Engagement" name="theme" type="String" separator=";"/>
+         <Parameter default="1" name="level" type="String" separator=";"/>
       </Parameters>
       <Query>//Comment[@theme="${theme}" and @level="${level}"]</Query>
 <!--      <Query>//Comment[@level="${level}"]</Query> -->

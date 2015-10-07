@@ -37,7 +37,7 @@
       <Name>User Roles</Name>
       <Query><![CDATA[select distinct ${param} as inputParam from orderfact]]></Query>
       <Parameters>
-        <Parameter name="param" type="String" default="${[session:value]}" />
+        <Parameter name="param" type="String" default="${[session:value]}" separator=";"/>
       </Parameters>
     </DataAccess>
 </CDADescriptor>

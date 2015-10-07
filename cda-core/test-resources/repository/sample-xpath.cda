@@ -23,7 +23,7 @@
 		<Name>Sample query on SteelWheelsSales</Name>
         <Query><![CDATA[/*/*]]></Query>
         <Parameters>
-            <Parameter name="status" type="Integer" default="In Process"/>
+            <Parameter name="status" type="Integer" default="In Process" separator=";"/>
         </Parameters>
     </DataAccess>
 </CDADescriptor>

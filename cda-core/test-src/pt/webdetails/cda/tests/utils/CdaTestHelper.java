@@ -14,10 +14,10 @@ import org.dom4j.io.SAXReader;
 
 public class CdaTestHelper {
 
-  public static <T> boolean columnContains(TableModel table, int colIdx, T...values ) {
+  public static <T> boolean columnContains( TableModel table, int colIdx, T... values ) {
     HashSet<T> set = new HashSet<T>();
     set.addAll( Arrays.asList( values ) );
-    for ( int i = 0; i < table.getRowCount(); i++) {
+    for ( int i = 0; i < table.getRowCount(); i++ ) {
       set.remove( table.getValueAt( i, colIdx ) );
       if ( set.isEmpty() ) {
         return true;
@@ -26,9 +26,9 @@ public class CdaTestHelper {
     return false;
   }
 
-  public static <T> boolean columnContains(TableModel table, int colIdx, T value) {
-    for ( int i = 0; i < table.getRowCount(); i++) {
-      if (value.equals( table.getValueAt( i, colIdx ) )) {
+  public static <T> boolean columnContains( TableModel table, int colIdx, T value ) {
+    for ( int i = 0; i < table.getRowCount(); i++ ) {
+      if ( value.equals( table.getValueAt( i, colIdx ) ) ) {
         return true;
       }
     }
@@ -38,6 +38,7 @@ public class CdaTestHelper {
   public static boolean numericEquals( double actual, double expected, double delta ) {
     return Math.abs( actual - expected ) < delta;
   }
+
   public static boolean numericEquals( String actual, String expected, double delta ) {
     return numericEquals( Double.parseDouble( actual ), Double.parseDouble( expected ), delta );
   }
@@ -53,12 +54,12 @@ public class CdaTestHelper {
       SAXReader reader = new SAXReader( false );
       doc = reader.read( input );
       root = doc.getRootElement();
-      rowSet = doc.selectNodes("/CdaExport/ResultSet/Row");
-      columnsMetadata = doc.selectNodes("/CdaExport/MetaData/ColumnMetaData");
+      rowSet = doc.selectNodes( "/CdaExport/ResultSet/Row" );
+      columnsMetadata = doc.selectNodes( "/CdaExport/MetaData/ColumnMetaData" );
     }
 
     public String getValueAt( int rowIndex, int columnIndex ) {
-      return ((Element) rowSet.get( rowIndex ).selectNodes( "Col" ).get( columnIndex )).getText();
+      return ( (Element) rowSet.get( rowIndex ).selectNodes( "Col" ).get( columnIndex ) ).getText();
     }
 
     public int getRowCount() {

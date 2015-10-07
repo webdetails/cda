@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CDADescriptor>
 
-    <!-- DataSource definition. 
-	
+    <!-- DataSource definition.
+
 	Type controls what the datasource type is.
 	The connection and query controls how the data is fetched. These values
 	are specific to each access type
@@ -43,10 +43,10 @@
 		Supported types: String, Date, Integer, Numeric
 		-->
         <Parameters>
-            <Parameter name="status" type="String" default="Shipped"/>
-            <Parameter name="orderDate" type="Date" pattern="yyyy-MM-dd" default="2003-03-01"/>
+            <Parameter name="status" type="String" default="Shipped" separator=";"/>
+            <Parameter name="orderDate" type="Date" pattern="yyyy-MM-dd" default="2003-03-01" separator=";"/>
         </Parameters>
-        <!-- 
+        <!--
 		Columns block allow specifying name and CalculatedColumn the creation of new
 		columns based on formulas
 		-->
@@ -71,7 +71,7 @@
 			where ([Order Status].[${status}])
 		]]></Query>
         <Parameters>
-            <Parameter name="status" type="String" default="In Process"/>
+            <Parameter name="status" type="String" default="In Process" separator=";"/>
         </Parameters>
 		<Columns>
 			<Column idx="1">
@@ -95,7 +95,7 @@
 			where ([Order Status].[${status}])
 		]]></Query>
         <Parameters>
-            <Parameter name="status" type="String" default="In Process"/>
+            <Parameter name="status" type="String" default="In Process" separator=";"/>
         </Parameters>
     </DataAccess>
 </CDADescriptor>

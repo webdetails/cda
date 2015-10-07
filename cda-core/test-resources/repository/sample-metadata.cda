@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CDADescriptor>
 
-    <!-- DataSource definition. 
-	
-	Type controls what the datasource type is.
-	The connection and query controls how the data is fetched. These values
-	are specific to each access type
+  <!-- DataSource definition.
 
-	-->
-    <DataSources>
-        <Connection id="1" type="metadata.metadata">
-			<DomainId>steel-wheels</DomainId>
-			<XmiFile>metadata.xml</XmiFile>
-        </Connection>
-    </DataSources>
+Type controls what the datasource type is.
+The connection and query controls how the data is fetched. These values
+are specific to each access type
 
-	<DataAccess id="1" connection="1" type="mql" access="public">
-		<Name>Metadata query on Steel Wheels</Name>
-		<Query><![CDATA[
+-->
+  <DataSources>
+    <Connection id="1" type="metadata.metadata">
+      <DomainId>steel-wheels</DomainId>
+      <XmiFile>metadata.xml</XmiFile>
+    </Connection>
+  </DataSources>
+
+  <DataAccess id="1" connection="1" type="mql" access="public">
+    <Name>Metadata query on Steel Wheels</Name>
+    <Query><![CDATA[
 			<mql>
 				<domain_id>steel-wheels/metadata.xmi</domain_id>
 				<model_id>BV_ORDERS</model_id>
@@ -56,9 +56,9 @@
 					</order>
 				</orders>
 			</mql>
-		]]></Query> 
-		<Parameters>
-			<Parameter name="status" type="StringArray" default="Shipped;Cancelled"/>
-		</Parameters>
-	</DataAccess>
+		]]></Query>
+    <Parameters>
+      <Parameter name="status" type="StringArray" default="Shipped;Cancelled" separator=";"/>
+    </Parameters>
+  </DataAccess>
 </CDADescriptor>

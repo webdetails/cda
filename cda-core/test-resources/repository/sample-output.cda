@@ -27,10 +27,10 @@
 
   <DataAccess id="1" connection="1" type="mdx" access="public">
     <Name>Mdx invalid value</Name>
-    <Query>with set [Markets] as '{[Markets].[All Markets]}'
+    <Query>with set [MyMarkets] as '{[Markets].[All Markets]}'
       member [Measures].[Invalid] as '(0 / 0)'
       select {[Measures].[Invalid]} ON COLUMNS,
-      {[Markets]} ON ROWS
+      {[MyMarkets]} ON ROWS
       from [SteelWheelsSales]
     </Query>
   </DataAccess>
@@ -44,7 +44,7 @@
       where ([Order Status].[${status}])
     ]]></Query>
     <Parameters>
-      <Parameter name="status" type="String" default="In Process"/>
+      <Parameter name="status" type="String" default="In Process" separator=";"/>
     </Parameters>
     <Columns>
       <Column idx="1">
