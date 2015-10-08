@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -21,12 +21,6 @@ import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.xml.DomVisitor;
 
-/**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 2, 2010
- * Time: 5:09:59 PM
- */
 public abstract class AbstractConnection implements Connection {
 
   private String id;
@@ -35,22 +29,22 @@ public abstract class AbstractConnection implements Connection {
 
   public AbstractConnection() {
   }
-  
-  public AbstractConnection(String id){
-  	this.id = id;
+
+  public AbstractConnection( String id ) {
+    this.id = id;
   }
 
-  public AbstractConnection(final Element connection) throws InvalidConnectionException {
+  public AbstractConnection( final Element connection ) throws InvalidConnectionException {
 
-    id = connection.attributeValue("id");
+    id = connection.attributeValue( "id" );
 
-    initializeConnection(connection);
+    initializeConnection( connection );
 
   }
 
   public abstract ConnectionType getGenericType();
 
-  protected abstract void initializeConnection(Element connection) throws InvalidConnectionException;
+  protected abstract void initializeConnection( Element connection ) throws InvalidConnectionException;
 
   public String getId() {
     return id;
@@ -62,7 +56,7 @@ public abstract class AbstractConnection implements Connection {
     return cdaSettings;
   }
 
-  public void setCdaSettings(final CdaSettings cdaSettings) {
+  public void setCdaSettings( final CdaSettings cdaSettings ) {
     this.cdaSettings = cdaSettings;
   }
 
@@ -70,20 +64,21 @@ public abstract class AbstractConnection implements Connection {
   public abstract int hashCode();
 
   @Override
-  public abstract boolean equals(final Object obj);
+  public abstract boolean equals( final Object obj );
 
   public List<PropertyDescriptor> getProperties() {
     // Let implementors know they're missing something important
-    throw new UnsupportedOperationException("Not implemented yet!");
+    throw new UnsupportedOperationException( "Not implemented yet!" );
   }
 
-  public String getTypeForFile(){
-    return this.getClass().toString().toLowerCase().replaceAll("class pt.webdetails.cda.connections.(.*)connection", "$1");
+  public String getTypeForFile() {
+    return this.getClass().toString().toLowerCase()
+      .replaceAll( "class pt.webdetails.cda.connections.(.*)connection", "$1" );
   }
-  
+
   @Override
-  public void accept(DomVisitor v, Element ele) {
-	  v.visit((AbstractConnection)this, ele);		
+  public void accept( DomVisitor v, Element ele ) {
+    v.visit( (AbstractConnection) this, ele );
   }
 
 }
