@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -14,15 +14,24 @@
 package pt.webdetails.cda.connections;
 
 import java.util.ArrayList;
+
 import org.dom4j.Element;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 
-/**
- *
- * @author pdpi
- */
 public class DummyConnection extends AbstractConnection {
+
+  public DummyConnection() {
+    super();
+  }
+
+  public DummyConnection( String id ) {
+    super( id );
+  }
+
+  public DummyConnection( final Element connection ) throws InvalidConnectionException {
+    super( connection );
+  }
 
   @Override
   public ConnectionType getGenericType() {
@@ -30,7 +39,7 @@ public class DummyConnection extends AbstractConnection {
   }
 
   @Override
-  protected void initializeConnection(Element connection) throws InvalidConnectionException {
+  protected void initializeConnection( Element connection ) throws InvalidConnectionException {
   }
 
   @Override
@@ -44,7 +53,7 @@ public class DummyConnection extends AbstractConnection {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals( Object obj ) {
     return false;
   }
 
