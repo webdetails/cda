@@ -50,6 +50,26 @@
     </fileset>
   </path>
 
+  <!-- Setup the classpath used for integration testing -->
+  <path id="inttest.classpath">
+    <fileset dir="${lib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${devlib.dir}">
+      <include name="*" />
+    </fileset>
+    <fileset dir="${testlib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${runtimelib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <dirset dir="${testclasses.dir}" />
+    <dirset dir="${classes.dir}" />
+    <fileset dir="${runtimelib.dir}">
+      <include name="*.jar" />
+    </fileset>
+  </path>
 
   <property name="plugin.name"
             value="cda"
