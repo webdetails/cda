@@ -13,17 +13,6 @@
 
 package pt.webdetails.cda.settings;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.naming.OperationNotSupportedException;
-import javax.swing.table.TableModel;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -60,6 +49,16 @@ import pt.webdetails.cda.utils.Util;
 import pt.webdetails.cda.xml.DomTraversalHelper;
 import pt.webdetails.cda.xml.XmlUtils;
 
+import javax.naming.OperationNotSupportedException;
+import javax.swing.table.TableModel;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * CdaSettings class
  * <p/>
@@ -71,8 +70,8 @@ public class CdaSettings {
   private String id;
   private ResourceKey contextKey;
   private Element root;
-  private HashMap<String, Connection> connectionsMap;
-  private HashMap<String, DataAccess> dataAccessMap;
+  private LinkedHashMap<String, Connection> connectionsMap;
+  private LinkedHashMap<String, DataAccess> dataAccessMap;
   private Document genDoc;
 
 
@@ -93,8 +92,8 @@ public class CdaSettings {
     this.id = id;
     this.root = doc.getRootElement();
 
-    connectionsMap = new HashMap<String, Connection>();
-    dataAccessMap = new HashMap<String, DataAccess>();
+    connectionsMap = new LinkedHashMap<String, Connection>();
+    dataAccessMap = new LinkedHashMap<String, DataAccess>();
 
     parseDocument();
 
@@ -119,8 +118,8 @@ public class CdaSettings {
     genDoc.addElement( "CDADescriptor" );
     this.root = genDoc.getRootElement();
 
-    connectionsMap = new HashMap<String, Connection>();
-    dataAccessMap = new HashMap<String, DataAccess>();
+    connectionsMap = new LinkedHashMap<String, Connection>();
+    dataAccessMap = new LinkedHashMap<String, DataAccess>();
 
   }
 
@@ -128,8 +127,8 @@ public class CdaSettings {
     this.contextKey = key;
     this.id = id;
 
-    connectionsMap = new HashMap<String, Connection>();
-    dataAccessMap = new HashMap<String, DataAccess>();
+    connectionsMap = new LinkedHashMap<String, Connection>();
+    dataAccessMap = new LinkedHashMap<String, DataAccess>();
   }
 
   public TableModel listQueries() {
