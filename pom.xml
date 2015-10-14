@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.pentaho</groupId>
+    <artifactId>pentaho-ce-jar-parent-pom</artifactId>
+    <version>1.0.14</version>
+  </parent>
+
+  <groupId>pentaho</groupId>
+  <artifactId>cda</artifactId>
+  <packaging>pom</packaging>
+  <version>6.1-SNAPSHOT</version>
+
+  <licenses>
+    <license>
+      <name>Mozilla Public License, Version 2.0</name>
+      <url>http://www.mozilla.org/MPL/2.0/index.txt</url>
+    </license>
+  </licenses>
+
+  <modules>
+    <module>cda-core</module>
+    <module>cda-pentaho</module>
+    <module>assembly</module>
+  </modules>
+
+  <scm>
+    <connection>scm:git:git@github.com:${github.user}/${project.artifactId}.git</connection>
+    <developerConnection>scm:git:git@github.com:${github.user}/${project.artifactId}.git</developerConnection>
+    <url>scm:git:git@github.com:${github.user}/${project.artifactId}.git</url>
+  </scm>
+
+  <properties>
+    <project.stage>master</project.stage>
+    <project.revision>6.1-SNAPSHOT</project.revision>
+    <dependency.pentaho-cpf-plugin.revision>6.1-SNAPSHOT</dependency.pentaho-cpf-plugin.revision>
+    <dependency.mondrian.revision>3.12-SNAPSHOT</dependency.mondrian.revision>
+    <dependency.pentaho-reporting.revision>6.1-SNAPSHOT</dependency.pentaho-reporting.revision>
+    <plugin.org.apache.maven.plugins.maven-failsafe-plugin.version>2.17</plugin.org.apache.maven.plugins.maven-failsafe-plugin.version>
+
+    <sequential.build.id>manual-${maven.build.timestamp}</sequential.build.id>
+    <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
+
+    <dependency.maven-resources-plugin.revision>2.7</dependency.maven-resources-plugin.revision>
+    <dependency.maven-clean-plugin.revision>2.5</dependency.maven-clean-plugin.revision>
+    <dependency.maven-assembly-plugin.revision>2.4</dependency.maven-assembly-plugin.revision>
+
+    <!-- marketplace.xml properties -->
+    <marketplace.metadata.development_stage.lane>Customer</marketplace.metadata.development_stage.lane>
+    <marketplace.metadata.development_stage.phase>2</marketplace.metadata.development_stage.phase>
+    <marketplace.metadata.name></marketplace.metadata.name>
+    <marketplace.metadata.min_parent_version></marketplace.metadata.min_parent_version>
+    <marketplace.metadata.samples_url></marketplace.metadata.samples_url>
+    <marketplace.metadata.description></marketplace.metadata.description>
+    <marketplace.metadata.package_url></marketplace.metadata.package_url>
+
+    <!-- version.xml properties -->
+    <sequential.build.id></sequential.build.id>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>cpf-core</artifactId>
+      <version>${project.revision}</version>
+      <scope>provided</scope>
+    </dependency>
+
+
+    <dependency>
+      <groupId>net.htmlparser.jericho</groupId>
+      <artifactId>jericho-html</artifactId>
+      <version>3.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>3.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>pentaho-kettle</groupId>
+      <artifactId>kettle5-log4j-plugin</artifactId>
+      <version>6.1-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+
+  </dependencies>
+
+
+</project>
+
