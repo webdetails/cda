@@ -11,7 +11,7 @@
   <description>
     ${marketplace.metadata.description}
   </description>
-  <build_id>${sequential.build.id}</build_id>
+  <build_id>${marketplace.metadata.sequential.build.id}</build_id>
   <min_parent_version>${marketplace.metadata.min_parent_version}</min_parent_version>
   <development_stage>
     <lane>${marketplace.metadata.development_stage.lane}</lane>

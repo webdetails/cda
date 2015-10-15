@@ -9,21 +9,98 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>cda-assembly</artifactId>
+  <artifactId>assembly</artifactId>
   <packaging>pom</packaging>
 
+  <properties>
+    <dependency.json.revision>3.1</dependency.json.revision>
+  </properties>
+
   <dependencies>
+    <!-- cda dependencies -->
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>cda-core</artifactId>
       <version>${project.revision}</version>
-      <scope>provided</scope>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>cda-pentaho</artifactId>
       <version>${project.revision}</version>
-      <scope>provided</scope>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- cpf dependencies -->
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>cpf-core</artifactId>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>cpf-pentaho5</artifactId>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- other dependencies -->
+    <dependency>
+      <groupId>pentaho-kettle</groupId>
+      <artifactId>kettle5-log4j-plugin</artifactId>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>net.htmlparser.jericho</groupId>
+      <artifactId>jericho-html</artifactId>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>${dependency.json.revision}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 
@@ -44,11 +121,11 @@
               <outputDirectory>${basedir}/target/processed</outputDirectory>
               <resources>
                 <resource>
-                  <directory>../cda-core/src/main/resources</directory>
+                  <directory>../core/src/main/resources</directory>
                   <filtering>true</filtering>
                 </resource>
                 <resource>
-                  <directory>../cda-pentaho/src/main/resources</directory>
+                  <directory>../pentaho/src/main/resources</directory>
                   <filtering>true</filtering>
                 </resource>
               </resources>
@@ -134,17 +211,6 @@
               <appendAssemblyId>false</appendAssemblyId>
             </configuration>
           </execution>
-          <!--<execution>
-            <id>cda-marketplace-xml</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptor>src/assembly/assembly.marketplace.xml</descriptor>
-              <finalName>marketplace.xml</finalName>
-            </configuration>
-          </execution> -->
         </executions>
       </plugin>
     </plugins>

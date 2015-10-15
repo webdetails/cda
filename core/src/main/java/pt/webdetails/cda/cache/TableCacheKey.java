@@ -13,6 +13,12 @@
 
 package pt.webdetails.cda.cache;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
+import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
+import pt.webdetails.cda.connections.Connection;
+import pt.webdetails.cda.dataaccess.Parameter;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,13 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringUtils;
-import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
-
-import pt.webdetails.cda.connections.Connection;
-import pt.webdetails.cda.dataaccess.Parameter;
 
 public class TableCacheKey implements Serializable {
 

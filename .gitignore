@@ -1,14 +1,2 @@
-*/dist/
-*/bin/
-*/lib/
-*/runtime-lib/
-*/test-lib/
-*~
-*.class
-.metadata
-.project
-nbbuild.xml
-nbproject/
-nbproject/private/
 .DS_Store
-/override.properties
+*/target

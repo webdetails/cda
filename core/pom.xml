@@ -20,13 +20,25 @@
   </licenses>
 
   <properties>
-    <dependency.json.revision>6.1-SNAPSHOT</dependency.json.revision>
-    <dependency.reporting-library.revision>6.1-SNAPSHOT</dependency.reporting-library.revision>
+    <dependency.commons-io.revision>2.1</dependency.commons-io.revision>
+    <dependency.commons-codec.revision>1.9</dependency.commons-codec.revision>
     <dependency.spring.framework.revision>3.2.14.RELEASE</dependency.spring.framework.revision>
+    <dependency.ehcache-core.revision>2.5.1</dependency.ehcache-core.revision>
+    <dependency.jsr311-api.revision>1.1-ea</dependency.jsr311-api.revision>
+    <dependency.jaxen.revision>1.1.1</dependency.jaxen.revision>
+    <dependency.xmlunit.revision>1.3</dependency.xmlunit.revision>
+    <dependency.hsqldb.revision>2.3.2</dependency.hsqldb.revision>
+    <dependency.slf4j-log4j12.revision>1.5.8</dependency.slf4j-log4j12.revision>
     <skipITs>true</skipITs>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>cpf-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>mondrian</artifactId>
@@ -37,166 +49,145 @@
     <dependency>
       <groupId>pentaho-reporting-engine</groupId>
       <artifactId>pentaho-reporting-engine-classic-core</artifactId>
-      <version>${dependency.pentaho-reporting.revision}</version>
     </dependency>
     <dependency>
       <groupId>pentaho-reporting-engine</groupId>
       <artifactId>pentaho-reporting-engine-classic-extensions</artifactId>
-      <version>${dependency.pentaho-reporting.revision}</version>
     </dependency>
     <dependency>
       <groupId>pentaho-reporting-engine</groupId>
       <artifactId>pentaho-reporting-engine-classic-extensions-kettle</artifactId>
-      <version>${dependency.pentaho-reporting.revision}</version>
     </dependency>
     <dependency>
       <groupId>pentaho-reporting-engine</groupId>
       <artifactId>pentaho-reporting-engine-classic-extensions-mondrian</artifactId>
-      <version>${dependency.pentaho-reporting.revision}</version>
     </dependency>
     <dependency>
       <groupId>pentaho-reporting-engine</groupId>
       <artifactId>pentaho-reporting-engine-classic-extensions-olap4j</artifactId>
-      <version>${dependency.pentaho-reporting.revision}</version>
     </dependency>
     <dependency>
       <groupId>pentaho-reporting-engine</groupId>
       <artifactId>pentaho-reporting-engine-classic-extensions-pmd</artifactId>
-      <version>${dependency.pentaho-reporting.revision}</version>
     </dependency>
     <dependency>
       <groupId>pentaho-reporting-engine</groupId>
       <artifactId>pentaho-reporting-engine-classic-extensions-reportdesigner-parser</artifactId>
-      <version>${dependency.pentaho-reporting.revision}</version>
     </dependency>
     <dependency>
       <groupId>pentaho-reporting-engine</groupId>
       <artifactId>pentaho-reporting-engine-classic-extensions-sampledata</artifactId>
-      <version>${dependency.pentaho-reporting.revision}</version>
     </dependency>
     <dependency>
       <groupId>pentaho-reporting-engine</groupId>
       <artifactId>pentaho-reporting-engine-classic-extensions-scripting</artifactId>
-      <version>${dependency.pentaho-reporting.revision}</version>
     </dependency>
     <dependency>
       <groupId>pentaho-reporting-engine</groupId>
       <artifactId>pentaho-reporting-engine-classic-extensions-xpath</artifactId>
-      <version>${dependency.pentaho-reporting.revision}</version>
     </dependency>
     <dependency>
       <groupId>pentaho-reporting-engine</groupId>
       <artifactId>pentaho-reporting-engine-legacy-functions</artifactId>
-      <version>${dependency.pentaho-reporting.revision}</version>
+    </dependency>
+    <dependency>
+      <groupId>pentaho-reporting-engine</groupId>
+      <artifactId>pentaho-reporting-engine-wizard-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>pentaho-library</groupId>
+      <artifactId>libloader</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>pentaho-library</groupId>
+      <artifactId>libbase</artifactId>
+      <version>${dependency.pentaho-library.revision}</version>
+    </dependency>
+    <dependency>
+      <groupId>pentaho-library</groupId>
+      <artifactId>libformula</artifactId>
+      <version>${dependency.pentaho-library.revision}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>pentaho-kettle</groupId>
+      <artifactId>kettle-core</artifactId>
+      <version>${dependency.pentaho-kettle.revision}</version>
+    </dependency>
+    <dependency>
+      <groupId>pentaho-kettle</groupId>
+      <artifactId>kettle-engine</artifactId>
+      <version>${dependency.pentaho-kettle.revision}</version>
+    </dependency>
+    <dependency>
+      <groupId>pentaho-kettle</groupId>
+      <artifactId>kettle5-log4j-plugin</artifactId>
+      <version>${dependency.pentaho-kettle.revision}</version>
+    </dependency>
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>pentaho-metadata</artifactId>
+      <version>${dependency.pentaho-metadata.revision}</version>
     </dependency>
 
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>1.4</version>
-    </dependency>
-    <dependency>
-      <groupId>pentaho-library</groupId>
-      <artifactId>libloader</artifactId>
-      <version>${dependency.reporting-library.revision}</version>
-    </dependency>
-    <dependency>
-      <groupId>pentaho-library</groupId>
-      <artifactId>libbase</artifactId>
-      <version>${dependency.reporting-library.revision}</version>
-    </dependency>
-    <dependency>
-      <groupId>pentaho-library</groupId>
-      <artifactId>libformula</artifactId>
-      <version>${dependency.reporting-library.revision}</version>
-    </dependency>
-    <dependency>
-      <groupId>pentaho-kettle</groupId>
-      <artifactId>kettle-core</artifactId>
-      <version>6.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>pentaho-kettle</groupId>
-      <artifactId>kettle-engine</artifactId>
-      <version>6.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>pentaho-kettle</groupId>
-      <artifactId>kettle5-log4j-plugin</artifactId>
-      <version>6.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>pentaho</groupId>
-      <artifactId>pentaho-metadata</artifactId>
-      <version>6.1-SNAPSHOT</version>
-    </dependency>
-
-
-    <dependency>
-      <groupId>pentaho-reporting-engine</groupId>
-      <artifactId>pentaho-reporting-engine-wizard-core</artifactId>
-      <version>${dependency.pentaho-reporting.revision}</version>
+      <version>${dependency.commons-io.revision}</version>
     </dependency>
 
     <dependency>
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache-core</artifactId>
-      <version>2.5.1</version>
+      <version>${dependency.ehcache-core.revision}</version>
     </dependency>
     <dependency>
       <groupId>com.hazelcast</groupId>
       <artifactId>hazelcast</artifactId>
-      <version>2.5</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-asl</artifactId>
-      <version>1.8.2</version>
     </dependency>
-
-
     <dependency>
       <groupId>javax.ws.rs</groupId>
       <artifactId>jsr311-api</artifactId>
-      <version>1.1-ea</version>
-      <scope>provided</scope>
+      <version>${dependency.jsr311-api.revision}</version>
     </dependency>
 
+    <!-- test -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.5.8</version>
+      <version>${dependency.slf4j-log4j12.revision}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
-      <version>2.3.2</version>
+      <version>${dependency.hsqldb.revision}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>
-      <version>1.3</version>
+      <version>${dependency.xmlunit.revision}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
-      <version>1.1.1</version>
+      <version>${dependency.jaxen.revision}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
-      <version>1.8.4</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.10</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -204,38 +195,13 @@
       <version>${dependency.spring.framework.revision}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.poi</groupId>
-      <artifactId>poi</artifactId>
-      <version>3.13</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>${dependency.maven-assembly-plugin.revision}</version>
-        <executions>
-          <execution>
-            <id>assembly-sources</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>${project.basedir}/src/assembly/assembly.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>${plugin.org.apache.maven.plugins.maven-failsafe-plugin.version}</version>
+        <version>${dependency.maven-failsafe-plugin.revision}</version>
         <executions>
           <execution>
             <id>integration-test</id>

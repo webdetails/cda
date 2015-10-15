@@ -23,8 +23,8 @@
   </licenses>
 
   <modules>
-    <module>cda-core</module>
-    <module>cda-pentaho</module>
+    <module>core</module>
+    <module>pentaho</module>
     <module>assembly</module>
   </modules>
 
@@ -37,17 +37,24 @@
   <properties>
     <project.stage>master</project.stage>
     <project.revision>6.1-SNAPSHOT</project.revision>
-    <dependency.pentaho-cpf-plugin.revision>6.1-SNAPSHOT</dependency.pentaho-cpf-plugin.revision>
+    <dependency.pentaho-cpf-plugin.revision>${project.revision}</dependency.pentaho-cpf-plugin.revision>
     <dependency.mondrian.revision>3.12-SNAPSHOT</dependency.mondrian.revision>
-    <dependency.pentaho-reporting.revision>6.1-SNAPSHOT</dependency.pentaho-reporting.revision>
-    <plugin.org.apache.maven.plugins.maven-failsafe-plugin.version>2.17</plugin.org.apache.maven.plugins.maven-failsafe-plugin.version>
+    <dependency.pentaho-reporting.revision>${project.revision}</dependency.pentaho-reporting.revision>
+    <dependency.pentaho-kettle.revision>${project.revision}</dependency.pentaho-kettle.revision>
+    <dependency.pentaho-library.revision>${project.revision}</dependency.pentaho-library.revision>
+    <dependency.pentaho-metadata.revision>${project.revision}</dependency.pentaho-metadata.revision>
 
-    <sequential.build.id>manual-${maven.build.timestamp}</sequential.build.id>
-    <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
+    <dependency.jericho-html.revision>3.1</dependency.jericho-html.revision>
+    <dependency.hazelcast.revision>2.5</dependency.hazelcast.revision>
+    <dependency.jackson-mapper-asl.revision>1.9.3</dependency.jackson-mapper-asl.revision>
+    <dependency.junit.revision>4.10</dependency.junit.revision>
+    <dependency.mockito-all.revision>1.8.4</dependency.mockito-all.revision>
 
+    <!-- maven properties -->
     <dependency.maven-resources-plugin.revision>2.7</dependency.maven-resources-plugin.revision>
     <dependency.maven-clean-plugin.revision>2.5</dependency.maven-clean-plugin.revision>
     <dependency.maven-assembly-plugin.revision>2.4</dependency.maven-assembly-plugin.revision>
+    <dependency.maven-failsafe-plugin.revision>2.17</dependency.maven-failsafe-plugin.revision>
 
     <!-- marketplace.xml properties -->
     <marketplace.metadata.development_stage.lane>Customer</marketplace.metadata.development_stage.lane>
@@ -57,41 +64,140 @@
     <marketplace.metadata.samples_url></marketplace.metadata.samples_url>
     <marketplace.metadata.description></marketplace.metadata.description>
     <marketplace.metadata.package_url></marketplace.metadata.package_url>
+    <marketplace.metadata.sequential.build.id>${sequential.build.id}</marketplace.metadata.sequential.build.id>
 
     <!-- version.xml properties -->
-    <sequential.build.id></sequential.build.id>
+    <sequential.build.id>manual-${maven.build.timestamp}</sequential.build.id>
+    <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>pentaho</groupId>
-      <artifactId>cpf-core</artifactId>
-      <version>${project.revision}</version>
-      <scope>provided</scope>
-    </dependency>
+  <dependencyManagement>
+    <dependencies>
+      <!-- cpf libs -->
+      <dependency>
+        <groupId>pentaho</groupId>
+        <artifactId>cpf-core</artifactId>
+        <version>${project.revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>pentaho</groupId>
+        <artifactId>cpf-pentaho5</artifactId>
+        <version>${project.revision}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
+      <!-- reporting libs -->
+      <dependency>
+        <groupId>pentaho-reporting-engine</groupId>
+        <artifactId>pentaho-reporting-engine-classic-core</artifactId>
+        <version>${dependency.pentaho-reporting.revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>pentaho-reporting-engine</groupId>
+        <artifactId>pentaho-reporting-engine-classic-extensions</artifactId>
+        <version>${dependency.pentaho-reporting.revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>pentaho-reporting-engine</groupId>
+        <artifactId>pentaho-reporting-engine-classic-extensions-kettle</artifactId>
+        <version>${dependency.pentaho-reporting.revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>pentaho-reporting-engine</groupId>
+        <artifactId>pentaho-reporting-engine-classic-extensions-mondrian</artifactId>
+        <version>${dependency.pentaho-reporting.revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>pentaho-reporting-engine</groupId>
+        <artifactId>pentaho-reporting-engine-classic-extensions-olap4j</artifactId>
+        <version>${dependency.pentaho-reporting.revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>pentaho-reporting-engine</groupId>
+        <artifactId>pentaho-reporting-engine-classic-extensions-pmd</artifactId>
+        <version>${dependency.pentaho-reporting.revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>pentaho-reporting-engine</groupId>
+        <artifactId>pentaho-reporting-engine-classic-extensions-reportdesigner-parser</artifactId>
+        <version>${dependency.pentaho-reporting.revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>pentaho-reporting-engine</groupId>
+        <artifactId>pentaho-reporting-engine-classic-extensions-sampledata</artifactId>
+        <version>${dependency.pentaho-reporting.revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>pentaho-reporting-engine</groupId>
+        <artifactId>pentaho-reporting-engine-classic-extensions-scripting</artifactId>
+        <version>${dependency.pentaho-reporting.revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>pentaho-reporting-engine</groupId>
+        <artifactId>pentaho-reporting-engine-classic-extensions-xpath</artifactId>
+        <version>${dependency.pentaho-reporting.revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>pentaho-reporting-engine</groupId>
+        <artifactId>pentaho-reporting-engine-legacy-functions</artifactId>
+        <version>${dependency.pentaho-reporting.revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>pentaho-reporting-engine</groupId>
+        <artifactId>pentaho-reporting-engine-wizard-core</artifactId>
+        <version>${dependency.pentaho-reporting.revision}</version>
+      </dependency>
 
-    <dependency>
-      <groupId>net.htmlparser.jericho</groupId>
-      <artifactId>jericho-html</artifactId>
-      <version>3.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>3.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>pentaho-kettle</groupId>
-      <artifactId>kettle5-log4j-plugin</artifactId>
-      <version>6.1-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
+      <!-- other libs -->
+      <dependency>
+        <groupId>com.hazelcast</groupId>
+        <artifactId>hazelcast</artifactId>
+        <version>${dependency.hazelcast.revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.jackson</groupId>
+        <artifactId>jackson-mapper-asl</artifactId>
+        <version>${dependency.jackson-mapper-asl.revision}</version>
+      </dependency>
 
-  </dependencies>
+      <dependency>
+        <groupId>pentaho-library</groupId>
+        <artifactId>libloader</artifactId>
+        <version>${dependency.pentaho-library.revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.htmlparser.jericho</groupId>
+        <artifactId>jericho-html</artifactId>
+        <version>${dependency.jericho-html.revision}</version>
+      </dependency>
 
+      <!-- other runtime libs -->
+      <dependency>
+        <groupId>pentaho-kettle</groupId>
+        <artifactId>kettle5-log4j-plugin</artifactId>
+        <version>${dependency.pentaho-kettle.revision}</version>
+      </dependency>
+
+      <!-- test libs -->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${dependency.junit.revision}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-all</artifactId>
+        <version>${dependency.mockito-all.revision}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
 </project>
 
