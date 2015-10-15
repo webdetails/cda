@@ -9,7 +9,7 @@
   <fileSets>
     <fileSet>
       <outputDirectory>/</outputDirectory>
-      <directory>${basedir}/target/processed/solution/bi-developers/cda</directory>
+      <directory>${basedir}/../target/processed/solution/bi-developers/cda</directory>
     </fileSet>
   </fileSets>
 </assembly>

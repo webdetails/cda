@@ -5,12 +5,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>cda</artifactId>
+    <artifactId>cda-plugin</artifactId>
     <groupId>pentaho</groupId>
     <version>6.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>cda-core</artifactId>
+  <packaging>jar</packaging>
 
   <licenses>
     <license>
@@ -29,7 +30,6 @@
     <dependency.xmlunit.revision>1.3</dependency.xmlunit.revision>
     <dependency.hsqldb.revision>2.3.2</dependency.hsqldb.revision>
     <dependency.slf4j-log4j12.revision>1.5.8</dependency.slf4j-log4j12.revision>
-    <skipITs>true</skipITs>
   </properties>
 
   <dependencies>
@@ -196,30 +196,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>${dependency.maven-failsafe-plugin.revision}</version>
-        <executions>
-          <execution>
-            <id>integration-test</id>
-            <goals>
-              <goal>integration-test</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>verify</id>
-            <goals>
-              <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <skipITs>${skipITs}</skipITs>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>

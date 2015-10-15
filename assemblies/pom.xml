@@ -3,16 +3,24 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>cda</artifactId>
+    <artifactId>cda-plugin</artifactId>
     <groupId>pentaho</groupId>
     <version>6.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>assembly</artifactId>
+  <artifactId>cda-plugin-assemblies</artifactId>
   <packaging>pom</packaging>
 
+  <modules>
+    <module>cda</module>
+    <module>cda-disabled</module>
+    <module>cda-samples</module>
+  </modules>
+
   <properties>
+    <cda.root.dir>/cda</cda.root.dir>
+
     <dependency.json.revision>3.1</dependency.json.revision>
   </properties>
 
@@ -23,24 +31,12 @@
       <artifactId>cda-core</artifactId>
       <version>${project.revision}</version>
       <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>cda-pentaho</artifactId>
       <version>${project.revision}</version>
       <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!-- cpf dependencies -->
@@ -48,23 +44,11 @@
       <groupId>pentaho</groupId>
       <artifactId>cpf-core</artifactId>
       <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>cpf-pentaho5</artifactId>
       <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!-- other dependencies -->
@@ -72,35 +56,17 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle5-log4j-plugin</artifactId>
       <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>net.htmlparser.jericho</groupId>
       <artifactId>jericho-html</artifactId>
       <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
       <version>${dependency.json.revision}</version>
       <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
   </dependencies>
 
@@ -151,64 +117,6 @@
                   <filtering>true</filtering>
                 </resource>
               </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>${dependency.maven-clean-plugin.revision}</version>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>${basedir}/target/processed</directory>
-              <followSymlinks>false</followSymlinks>
-            </fileset>
-          </filesets>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>${dependency.maven-assembly-plugin.revision}</version>
-        <executions>
-          <execution>
-            <id>cda</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>src/assembly/assembly.xml</descriptor>
-              </descriptors>
-              <finalName>${parent.artifactId}-${project.revision}</finalName>
-              <appendAssemblyId>false</appendAssemblyId>
-            </configuration>
-          </execution>
-          <execution>
-            <id>cda-disabled</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>src/assembly/assembly.disabled.xml</descriptor>
-              </descriptors>
-              <finalName>${parent.artifactId}-disabled-${project.revision}</finalName>
-              <appendAssemblyId>false</appendAssemblyId>
-            </configuration>
-          </execution>
-          <execution>
-            <id>cda-samples</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptor>src/assembly/assembly.samples.xml</descriptor>
-              <finalName>cda-samples-${project.revision}</finalName>
-              <appendAssemblyId>false</appendAssemblyId>
             </configuration>
           </execution>
         </executions>
