@@ -14,10 +14,10 @@
 package pt.webdetails.cda.connections;
 
 import junit.framework.TestCase;
+
 import org.dom4j.Element;
 
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
+import pt.webdetails.cda.tests.utils.CdaTestHelper;
 
 public class JndiConnectionInfoTest extends TestCase {
   private static final String JNDI = "testJndi";
@@ -40,14 +40,18 @@ public class JndiConnectionInfoTest extends TestCase {
     assertEquals( jndiConnectionInfo.getPass(), PASS );
     assertEquals( jndiConnectionInfo.getUserField(), USER_FIELD );
     assertEquals( jndiConnectionInfo.getPasswordField(), PASSWORD_FIELD );
+  }
 
-    Element element = mock( Element.class );
-    doReturn( JNDI ).when( element ).selectObject( "string(./Jndi)" );
-    doReturn( USER ).when( element ).selectObject( "string(./User)" );
-    doReturn( PASS ).when( element ).selectObject( "string(./Pass)" );
-    doReturn( USER_FIELD ).when( element ).selectObject( "string(./UserField)" );
-    doReturn( PASSWORD_FIELD ).when( element ).selectObject( "string(./PassField)" );
-
+  public void testElementConstructor() throws Exception {
+    Element element = CdaTestHelper.getElementFromSnippet(
+        "<Connection id=\"id\" type=\"some.jndi\">" + 
+        "  <Jndi>" + JNDI + "</Jndi>" + 
+        "  <User>" + USER + "</User>" + 
+        "  <Pass>" + PASS + "</Pass>" +
+        "  <UserField>" + USER_FIELD + "</UserField>" +
+        "  <PassField>" + PASSWORD_FIELD + "</PassField>" +
+        "</Connection>"
+    );
     jndiConnectionInfo = new JndiConnectionInfo( element );
     assertEquals( jndiConnectionInfo.getJndi(), JNDI );
     assertEquals( jndiConnectionInfo.getUser(), USER );

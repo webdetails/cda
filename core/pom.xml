@@ -195,5 +195,42 @@
       <version>${dependency.spring.framework.revision}</version>
       <scope>test</scope>
     </dependency>
+    <!-- needed for reporting engine boot (test) -->
+    <dependency>
+      <groupId>pentaho-library</groupId>
+      <artifactId>libserializer</artifactId>
+      <version>${dependency.pentaho-library.revision}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>pentaho-library</groupId>
+      <artifactId>libfonts</artifactId>
+      <version>${dependency.pentaho-library.revision}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>pentaho-library</groupId>
+      <artifactId>libformat</artifactId>
+      <version>${dependency.pentaho-library.revision}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>pentaho-library</groupId>
+      <artifactId>libdocbundle</artifactId>
+      <version>${dependency.pentaho-library.revision}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>pentaho-library</groupId>
+      <artifactId>libxml</artifactId>
+      <version>${dependency.pentaho-library.revision}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>pentaho-library</groupId>
+      <artifactId>librepository</artifactId>
+      <version>${dependency.pentaho-library.revision}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

@@ -13,25 +13,15 @@
 */
 package pt.webdetails.cda.utils;
 
-
-import java.io.Serializable;
-
-import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.DataRow;
-import org.pentaho.reporting.engine.classic.core.StaticDataRow;
-import org.pentaho.reporting.libraries.base.config.Configuration;
-import org.pentaho.reporting.libraries.base.util.FastStack;
 import org.pentaho.reporting.engine.classic.core.util.PropertyLookupParser;
-
-
 
 /**
  * this class extends org.pentaho.reporting.engine.classic.core.util.PropertyLookupParser
  */
-
-
 public class CdaPropertyLookupParser extends PropertyLookupParser {
 
+  private static final long serialVersionUID = 1L;
 
         private DataRow parameters = null;
 

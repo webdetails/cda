@@ -13,7 +13,6 @@
 
 package pt.webdetails.cda;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -88,6 +87,14 @@ public class CdaEngine {
 
     // Start ClassicEngineBoot
     ClassicEngineBoot.getInstance().start();
+  }
+
+  /**
+   * Init without reporting engine, TEST ONLY
+   */
+  protected synchronized static void initTestBare( CdaEngine engine ) throws InitializationException {
+    assert engine != null;
+    _instance = engine;
   }
 
   protected CdaEngine( ICdaEnvironment env ) throws InitializationException {
