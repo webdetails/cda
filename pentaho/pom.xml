@@ -23,8 +23,8 @@
   </licenses>
 
   <properties>
-    <dependency.bi-platform.revision>${project.revision}</dependency.bi-platform.revision>
-    <dependency.pentaho-report-wizard-core.revision>${project.revision}</dependency.pentaho-report-wizard-core.revision>
+    <dependency.bi-platform.revision>${project.version}</dependency.bi-platform.revision>
+    <dependency.pentaho-report-wizard-core.revision>${project.version}</dependency.pentaho-report-wizard-core.revision>
   </properties>
 
   <dependencies>
@@ -40,7 +40,7 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>cda-core</artifactId>
-      <version>${project.revision}</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>

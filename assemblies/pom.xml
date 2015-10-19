@@ -29,13 +29,13 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>cda-core</artifactId>
-      <version>${project.revision}</version>
+      <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>cda-pentaho</artifactId>
-      <version>${project.revision}</version>
+      <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
 

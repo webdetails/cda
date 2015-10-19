@@ -22,7 +22,6 @@
       <outputDirectory>${cda.root.dir}/lib</outputDirectory>
       <scope>runtime</scope>
       <useTransitiveDependencies>false</useTransitiveDependencies>
-      <useProjectArtifact>true</useProjectArtifact>
     </dependencySet>
   </dependencySets>
 </assembly>

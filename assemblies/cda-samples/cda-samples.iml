@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5" inherit-compiler-output="false">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
@@ -11,7 +11,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="core" scope="RUNTIME" />
+    <orderEntry type="module" module-name="cda-core" scope="RUNTIME" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: pentaho:mondrian:3.12-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: commons-collections:commons-collections:3.2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: commons-dbcp:commons-dbcp:1.2.1" level="project" />
@@ -32,7 +32,6 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.olap4j:olap4j:1.2.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: xalan:xalan:2.6.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: xerces:xercesImpl:2.9.1" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: pentaho-reporting-engine:pentaho-reporting-engine-classic-core:6.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: pentaho-reporting-engine:pentaho-reporting-engine-classic-extensions:6.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: pentaho-reporting-engine:pentaho-reporting-engine-classic-extensions-kettle:6.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: pentaho-reporting-engine:pentaho-reporting-engine-classic-extensions-mondrian:6.1-SNAPSHOT" level="project" />
@@ -151,7 +150,7 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.hazelcast:hazelcast:2.5" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.3" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: javax.ws.rs:jsr311-api:1.1-ea" level="project" />
-    <orderEntry type="module" module-name="pentaho" scope="RUNTIME" />
+    <orderEntry type="module" module-name="cda-pentaho" scope="RUNTIME" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: pentaho:pentaho-platform-api:6.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.springframework.security:spring-security-core:2.0.8.RELEASE" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.springframework:spring-support:2.0.8" level="project" />
@@ -192,6 +191,7 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: pentaho:pentaho-platform-scheduler:6.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: pentaho:pentaho-platform-extensions:6.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: pentaho:pentaho-report-wizard-core:6.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: pentaho-reporting-engine:pentaho-reporting-engine-classic-core:6.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: pentaho-reporting-engine:pentaho-reporting-engine-classic-extensions-drill-down:6.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: pentaho-reporting-engine:pentaho-reporting-engine-classic-extensions-toc:6.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: pentaho-reporting-engine:pentaho-reporting-engine-legacy-charts:6.1-SNAPSHOT" level="project" />
@@ -212,5 +212,7 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: pentaho-kettle:kettle5-log4j-plugin:6.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: net.htmlparser.jericho:jericho-html:3.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.json:json:3.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.11" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
   </component>
 </module>
