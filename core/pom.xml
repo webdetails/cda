@@ -267,4 +267,15 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>ehcache*.xml</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
 </project>

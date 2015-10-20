@@ -209,6 +209,16 @@
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
     </dependency>
-
   </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>cda.spring.xml</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
 </project>
