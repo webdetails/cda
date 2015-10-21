@@ -19,6 +19,7 @@
   </modules>
 
   <properties>
+    <publish-sonar-phase/>
     <cda.root.dir>/cda</cda.root.dir>
 
     <dependency.json.revision>3.1</dependency.json.revision>

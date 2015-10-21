@@ -11,6 +11,10 @@
 
   <artifactId>cda-samples</artifactId>
   <packaging>pom</packaging>
+  
+  <properties>
+    <publish-sonar-phase>verify</publish-sonar-phase>
+  </properties>
 
   <build>
     <plugins>

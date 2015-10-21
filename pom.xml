@@ -35,6 +35,7 @@
   </scm>
 
   <properties>
+    <publish-sonar-phase/>
     <project.stage>master</project.stage>
     <dependency.pentaho-cpf-plugin.revision>${project.version}</dependency.pentaho-cpf-plugin.revision>
     <dependency.mondrian.revision>3.12-SNAPSHOT</dependency.mondrian.revision>
@@ -57,9 +58,9 @@
     <!-- marketplace.xml properties -->
     <marketplace.metadata.development_stage.lane>Customer</marketplace.metadata.development_stage.lane>
     <marketplace.metadata.development_stage.phase>2</marketplace.metadata.development_stage.phase>
-    <marketplace.metadata.name></marketplace.metadata.name>
-    <marketplace.metadata.min_parent_version></marketplace.metadata.min_parent_version>
-    <marketplace.metadata.samples_url></marketplace.metadata.samples_url>
+    <marketplace.metadata.name>${project.artifactId}</marketplace.metadata.name>
+    <marketplace.metadata.min_parent_version>1.0</marketplace.metadata.min_parent_version>
+    <marketplace.metadata.samples_url>http://nexus.pentaho.org/content/groups/omni/pentaho/cda-samples/6.0.0.0-353/cda-samples-6.0.0.0-353.zip</marketplace.metadata.samples_url>
     <marketplace.metadata.description></marketplace.metadata.description>
     <marketplace.metadata.package_url></marketplace.metadata.package_url>
     <marketplace.metadata.sequential.build.id>${sequential.build.id}</marketplace.metadata.sequential.build.id>

@@ -20,6 +20,7 @@
   </licenses>
 
   <properties>
+    <publish-sonar-phase>verify</publish-sonar-phase>
     <dependency.commons-io.revision>2.1</dependency.commons-io.revision>
     <dependency.commons-codec.revision>1.9</dependency.commons-codec.revision>
     <dependency.spring.framework.revision>3.2.14.RELEASE</dependency.spring.framework.revision>
