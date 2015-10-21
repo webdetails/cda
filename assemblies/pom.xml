@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>cda-plugin</artifactId>
+    <groupId>pentaho</groupId>
+    <version>6.1-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>cda-plugin-assemblies</artifactId>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>cda</module>
+    <module>cda-disabled</module>
+    <module>cda-samples</module>
+  </modules>
+
+  <properties>
+    <cda.root.dir>/cda</cda.root.dir>
+
+    <dependency.json.revision>3.1</dependency.json.revision>
+  </properties>
+
+  <dependencies>
+    <!-- cda dependencies -->
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>cda-core</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>cda-pentaho</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- cpf dependencies -->
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>cpf-core</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>cpf-pentaho5</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- other dependencies -->
+    <dependency>
+      <groupId>pentaho-kettle</groupId>
+      <artifactId>kettle5-log4j-plugin</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.htmlparser.jericho</groupId>
+      <artifactId>jericho-html</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>${dependency.json.revision}</version>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${dependency.maven-resources-plugin.revision}</version>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <overwrite>true</overwrite>
+              <outputDirectory>${basedir}/target/processed</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>../core/src/main/resources</directory>
+                  <filtering>true</filtering>
+                </resource>
+                <resource>
+                  <directory>../pentaho/src/main/resources</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+              <nonFilteredFileExtensions>
+                <nonFilteredFileExtension>js</nonFilteredFileExtension>
+                <nonFilteredFileExtension>css</nonFilteredFileExtension>
+              </nonFilteredFileExtensions>
+              <supportMultiLineFiltering>false</supportMultiLineFiltering>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-assembly-resources</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <overwrite>true</overwrite>
+              <outputDirectory>${basedir}/target/</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/src/main/resources</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
