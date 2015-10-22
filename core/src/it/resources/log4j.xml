@@ -17,8 +17,8 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
 
    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
-      <param name="Target" value="System.out"/>
-      <param name="Threshold" value="DEBUG"/>
+      <param name="Target" value="System.err"/>
+      <param name="Threshold" value="ERROR"/>
 
       <layout class="org.apache.log4j.PatternLayout">
          <!-- The default pattern: Date Priority [Category] Messagen -->
@@ -36,48 +36,12 @@
       </layout>
    </appender>
 
-    <category name="pt.webdetails">
-       <priority value="DEBUG"/>
-    </category>
-
-   <category name="org.pentaho">
+   <category name="pt.webdetails.cda">
       <priority value="ERROR"/>
-   </category>
-
-   <category name="org.pentaho.reporting">
-      <priority value="WARN"/>
-   </category>
-
-   <category name="com.healthmarketscience.jackcess">
-      <priority value="WARN"/>
-   </category>
-
-   <category name="org.apache.commons.httpclient">
-       <priority value="WARN"/>
-   </category>
-
-   <category name="org.mortbay">
-      <priority value="ERR"/>
-   </category>
-
-   <category name="mondrian">
-      <priority value="ERROR"/>
-   </category>
-
-   <category name="java.net">
-      <priority value="NONE"/>
-   </category>
-
-   <category name="org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient">
-      <priority value="WARN"/>
-   </category>
-
-   <category name="org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient.auth">
-      <priority value="WARN"/>
    </category>
 
    <root>
-      <priority value="INFO"/>
+      <priority value="ERROR"/>
       <appender-ref ref="CONSOLE"/>
    </root>
 

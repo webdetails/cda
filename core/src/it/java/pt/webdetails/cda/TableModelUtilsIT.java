@@ -12,21 +12,29 @@
 */
 package pt.webdetails.cda;
 
-import junit.framework.Assert;
+import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
+
 import pt.webdetails.cda.dataaccess.DataAccess;
 import pt.webdetails.cda.dataaccess.MdxDataAccess;
-import pt.webdetails.cda.utils.test.CdaTestCase;
 import pt.webdetails.cda.utils.TableModelUtils;
+import static pt.webdetails.cda.utils.test.CdaTestHelper.*;
 
 import javax.swing.table.TableModel;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-public class TableModelUtilsIT extends CdaTestCase {
+public class TableModelUtilsIT {
 
-  private class TableModelUtilsForTest extends TableModelUtils {
+  @BeforeClass
+  public static void init() {
+    initBareEngine( getMockEnvironment() );
+  }
+
+  private class TableModelUtilsForTest {
 
     private TypedTableModel typedTableModel;
 
@@ -35,11 +43,11 @@ public class TableModelUtilsIT extends CdaTestCase {
 
       // Define names and types
       final String[] colNames = {
-        "id", "name", "type"
+          "id", "name", "type"
       };
 
       final Class<?>[] colTypes = {
-        String.class, String.class, String.class
+          String.class, String.class, String.class
       };
 
       typedTableModel = new TypedTableModel( colNames, colTypes, rowCount );
@@ -55,7 +63,7 @@ public class TableModelUtilsIT extends CdaTestCase {
 
       for ( DataAccess dataAccess : dam.values() ) {
         model.addRow( new Object[] {
-          dataAccess.getId(), dataAccess.getName(), dataAccess.getType() } );
+            dataAccess.getId(), dataAccess.getName(), dataAccess.getType() } );
       }
 
       return model;
@@ -65,8 +73,6 @@ public class TableModelUtilsIT extends CdaTestCase {
 
   @Test
   public void testDataAccessMapToTableModel() {
-
-    boolean testFlag = true;
 
     HashMap<String, DataAccess> dams = new LinkedHashMap<String, DataAccess>( 4 );
     dams.put( "air", new MdxDataAccess( "air", "", "", "" ) );
@@ -82,15 +88,11 @@ public class TableModelUtilsIT extends CdaTestCase {
 
     TableModelUtilsForTest tmuForTest = new TableModelUtilsForTest( 4 );
     TableModel testControl = tmuForTest.createSorted( dams );
-    TableModel result = tmuForTest.dataAccessMapToTableModel( damns );
+    TableModel result = TableModelUtils.dataAccessMapToTableModel( damns );
 
     for ( int i = 0; i < 2; i++ ) {
-      if ( !result.getValueAt( i, 0 ).equals( testControl.getValueAt( i, 0 ) ) ) {
-        testFlag = false;
-      }
+      Assert.assertEquals( testControl.getValueAt( i, 0 ), result.getValueAt( i, 0 ) );
     }
-
-    Assert.assertTrue( testFlag );
   }
 
 }

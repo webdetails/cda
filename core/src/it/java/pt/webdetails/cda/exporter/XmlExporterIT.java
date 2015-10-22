@@ -15,7 +15,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,49 +26,51 @@ public class XmlExporterIT {
   public void testXmlExport1() throws Exception {
     TableModel table = BasicExportExamples.getTestTable1();
 
-    Map<String, String> settings = new HashMap<>(0);
-    final XmlStringTable exported = exportToXmlStringTable( table, settings );
-    assertEquals( "Numeric", exported.getColumnType(0) );
-    assertEquals( "String", exported.getColumnType(1) );
-    assertEquals( "Numeric", exported.getColumnType(2) );
-    assertEquals( "Date", exported.getColumnType(3) );
-    assertEquals( "Numeric", exported.getColumnType(4) );
+    final XmlStringTable exported = exportToXmlStringTable( table );
+    assertEquals( "Numeric", exported.getColumnType( 0 ) );
+    assertEquals( "String", exported.getColumnType( 1 ) );
+    assertEquals( "Numeric", exported.getColumnType( 2 ) );
+    assertEquals( "Date", exported.getColumnType( 3 ) );
+    assertEquals( "Numeric", exported.getColumnType( 4 ) );
     TableModelChecker checker = new TableModelChecker();
     checker.assertColumnNames( exported, "The Integer", "The String", "The Numeric", "The Date", "The Calculation" );
     final TableModel expected = new SimpleTableModel(
         new Object[] { "1", "One", "1.05", "2012-01-01T00:01:01.000+0000", "-12.34567890123456789" },
         new Object[] { "-2", "Two > One", "-1.05", "", "987654321.12345678900" },
-        new Object[] { "9223372036854775807", "Many", "1.7976931348623157E308", 
-          "1970-01-01T01:00:00.000+0100", "4.9E-325" } );
+        new Object[] { "9223372036854775807", "Many", "1.7976931348623157E308",
+                       "1970-01-01T01:00:00.000+0100", "4.9E-325" } );
     checker.assertEquals( expected, exported );
   }
 
   @Test
   public void testXmlExportFunkyStrings() throws Exception {
-      MetadataTableModel table = new MetadataTableModel(
-          new String[] { "string A", "string B" },
-          new Class<?>[] { String.class, String.class },
-          3);
-      table.addRow( "<hi xml/>  </bye>", ">>>>>>>>" );
-      table.addRow( "& = &amp;", "<!CDATA[ muahaha! ]>" );
-      table.addRow( "wow\n\twoooow\n\n\t...", "\\o/" );
+    MetadataTableModel table =
+        new MetadataTableModel( new String[] { "string A", "string B" }, new Class<?>[] { String.class, String.class },
+            3 );
+    table.addRow( "<hi xml/>  </bye>", ">>>>>>>>" );
+    table.addRow( "& = &amp;", "<!CDATA[ muahaha! ]>" );
+    table.addRow( "wow\n\twoooow\n\n\t...", "\\o/" );
 
-      XmlStringTable result = exportToXmlStringTable( table, Collections.<String,String>emptyMap() );
-      TableModelChecker checker = new TableModelChecker();
-      checker.assertEquals( table, result );
+    XmlStringTable result = exportToXmlStringTable( table );
+    TableModelChecker checker = new TableModelChecker();
+    checker.assertEquals( table, result );
   }
 
   @Test
   public void testNulls() throws Exception {
     TableModel table = BasicExportExamples.getNullOneLiner();
-    XmlStringTable result = exportToXmlStringTable( table, Collections.<String,String>emptyMap() );
+    XmlStringTable result = exportToXmlStringTable( table );
     TableModelChecker checker = new TableModelChecker();
-    assertEquals( "Numeric", result.getColumnType(0) );
-    assertEquals( "String", result.getColumnType(1) );
-    assertEquals( "Numeric", result.getColumnType(2) );
-    assertEquals( "Date", result.getColumnType(3) );
-    assertEquals( "Numeric", result.getColumnType(4) );
+    assertEquals( "Numeric", result.getColumnType( 0 ) );
+    assertEquals( "String", result.getColumnType( 1 ) );
+    assertEquals( "Numeric", result.getColumnType( 2 ) );
+    assertEquals( "Date", result.getColumnType( 3 ) );
+    assertEquals( "Numeric", result.getColumnType( 4 ) );
     checker.assertEquals( new SimpleTableModel( new Object[] {"", "", "", "", ""} ), result );
+  }
+
+  private XmlStringTable exportToXmlStringTable( TableModel table ) throws Exception {
+    return exportToXmlStringTable( table, Collections.<String, String>emptyMap() );
   }
 
   private XmlStringTable exportToXmlStringTable( TableModel table, Map<String, String> settings )

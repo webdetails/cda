@@ -13,26 +13,19 @@
 
 package pt.webdetails.cda;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.utils.test.CdaTestCase;
 
 public class IterableParameterSqlIT extends CdaTestCase {
-  private static final Log logger = LogFactory.getLog( IterableParameterSqlIT.class );
 
-  public void testIterateStatus() throws Exception { //TODO what is going on here??
-    logger.info( "Building CDA settings from sample file" );
+  public void testIterateStatus() throws Exception {
 
     final CdaSettings cdaSettings = parseSettingsFile( "sample-iterable-sql.cda" );
-    logger.debug( "Doing query on Cda - Initializing CdaEngine" );
-    final CdaEngine engine = CdaEngine.getInstance();
-    QueryOptions queryOptions;
 
-    //TODO: why?
-    queryOptions = new QueryOptions();
+    final CdaEngine engine = CdaEngine.getInstance();
+
+    QueryOptions queryOptions = new QueryOptions();
     queryOptions.setDataAccessId( "1" );
     queryOptions.addParameter( "status", "$FOREACH(2,0)" );
     queryOptions.addParameter( "year", "$FOREACH(3,0,minYear=2003)" );
@@ -40,19 +33,16 @@ public class IterableParameterSqlIT extends CdaTestCase {
     queryOptions.setOutputType( "csv" );
     queryOptions.addParameter( "status", "In Process" );
 
-    logger.info( "Doing first query" );
     engine.doQuery( cdaSettings, queryOptions );
 
     queryOptions = new QueryOptions();
     queryOptions.setDataAccessId( "4" );
     queryOptions.addParameter( "status", "$FOREACH(2,0)" );
-    queryOptions.addParameter( "year", "$FOREACH(3,0,minYear=2525)" );//no results
-    queryOptions.getParameter( "year" ).setDefaultValue( "2004" );//this time should fallback to default
+    queryOptions.addParameter( "year", "$FOREACH(3,0,minYear=2525)" ); //no results
+    queryOptions.getParameter( "year" ).setDefaultValue( "2004" ); //this time should fallback to default
     queryOptions.setOutputType( "csv" );
 
-    logger.info( "Doing second query" );
     engine.doQuery( cdaSettings, queryOptions );
 
-    logger.info( "FIN" );
   }
 }

@@ -14,24 +14,21 @@
 package pt.webdetails.cda.utils.test;
 
 import junit.framework.TestCase;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.reporting.engine.classic.core.metadata.DataFactoryRegistry;
-import org.pentaho.reporting.engine.classic.core.metadata.DefaultDataFactoryCore;
-import org.pentaho.reporting.engine.classic.core.metadata.DefaultDataFactoryMetaData;
+
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.ICdaEnvironment;
 import pt.webdetails.cda.exporter.ExportOptions;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
-import pt.webdetails.cda.utils.mondrian.CompactBandedMDXDataFactory;
-import pt.webdetails.cda.utils.mondrian.ExtBandedMDXDataFactory;
-import pt.webdetails.cda.utils.mondrian.ExtDenormalizedMDXDataFactory;
 import pt.webdetails.cpf.PluginEnvironment;
 import pt.webdetails.cpf.Util;
 
 import javax.swing.table.TableModel;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
@@ -40,8 +37,7 @@ public abstract class CdaTestCase extends TestCase {
 
   private CdaTestEnvironment testEnvironment;
   private static final String USER_DIR = System.getProperty( "user.dir" );
-  private static final Class[] customDataFactories = {
-    CompactBandedMDXDataFactory.class, ExtBandedMDXDataFactory.class, ExtDenormalizedMDXDataFactory.class };
+
 
   public CdaTestCase( String name ) {
     super( name );
@@ -53,7 +49,6 @@ public abstract class CdaTestCase extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
     CdaTestingContentAccessFactory factory = new CdaTestingContentAccessFactory();
-    log().info( "factory:" + factory );
     // always need to make sure there is a plugin environment initialized
     PluginEnvironment.init( new CdaPluginTestEnvironment( factory ) );
 
@@ -62,12 +57,12 @@ public abstract class CdaTestCase extends TestCase {
     // cda init
     CdaEngine.init( testEnvironment );
     // making sure the custom data factories are registered
-    registerCustomDataFactories();
+//    registerCustomDataFactories();
     // due to http://jira.pentaho.com/browse/PDI-2975
     System.setProperty( "org.osjava.sj.root", getSimpleJndiPath() );
   }
 
-  protected String getSimpleJndiPath() {
+  protected static String getSimpleJndiPath() {
 
     if ( USER_DIR.endsWith( "bin/test/classes" ) ) {
       // command-line run
@@ -109,12 +104,4 @@ public abstract class CdaTestCase extends TestCase {
     return Util.toString( baos.toByteArray() );
   }
 
-  protected static void registerCustomDataFactories() {
-    for ( Class clazz : customDataFactories ) {
-      DefaultDataFactoryMetaData dmd = new DefaultDataFactoryMetaData(
-        clazz.getName(), "", "", true, false, true, false, false, false, false, false,
-        new DefaultDataFactoryCore(), 0 );
-      DataFactoryRegistry.getInstance().register( dmd );
-    }
-  }
 }

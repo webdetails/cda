@@ -14,7 +14,6 @@
 package pt.webdetails.cda.utils;
 
 import junit.framework.TestCase;
-import pt.webdetails.cda.utils.NaturalOrderComparator;
 import junit.framework.Assert;
 
 public class NaturalOrderTest extends TestCase {

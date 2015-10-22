@@ -13,9 +13,6 @@
 
 package pt.webdetails.cda;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.utils.test.CdaTestCase;
@@ -26,7 +23,7 @@ import pt.webdetails.cda.utils.test.CdaTestCase;
  */
 public class SqlIT extends CdaTestCase {
 
-  private static final Log logger = LogFactory.getLog( SqlIT.class );
+//  private static final Log logger = LogFactory.getLog( SqlIT.class );
 
   public SqlIT() {
     super();
@@ -39,24 +36,23 @@ public class SqlIT extends CdaTestCase {
 
   public void testSqlQueryCache() throws Exception {
     final CdaSettings cdaSettings = getSettingsManager().parseSettingsFile( "sample-sql.cda" );
-    logger.debug( "Doing query on Cda - Initializing CdaEngine" );
+    // logger.debug( "Doing query on Cda - Initializing CdaEngine" );
     final CdaEngine engine = getEngine();
 
     QueryOptions queryOptions = new QueryOptions();
     queryOptions.setDataAccessId( "1" );
     queryOptions.addParameter( "orderDate", "2003-04-01" );
 
-    logger.info( "Doing first query" );
+    // logger.info( "Doing first query" );
     engine.doQuery( cdaSettings, queryOptions );
 
-    logger.info( "Doing query with different parameters" );
+    // logger.info( "Doing query with different parameters" );
     queryOptions = new QueryOptions();
     queryOptions.setDataAccessId( "1" );
     queryOptions.addParameter( "orderDate", "2004-01-01" );
     engine.doQuery( cdaSettings, queryOptions );
 
     // Querying 2nd time to test cache
-    logger.info( "Doing query using the initial parameters - Cache should be used" );
     queryOptions = new QueryOptions();
     queryOptions.setDataAccessId( "1" );
     queryOptions.addParameter( "orderDate", "2003-04-01" );

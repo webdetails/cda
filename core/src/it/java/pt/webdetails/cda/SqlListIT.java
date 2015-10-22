@@ -15,13 +15,14 @@ package pt.webdetails.cda;
 
 import javax.swing.table.TableModel;
 
-import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cda.exporter.ExporterEngine;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.utils.test.CdaTestCase;
 import pt.webdetails.cda.utils.test.CdaTestHelper;
+import pt.webdetails.cda.utils.test.TableModelChecker;
+import pt.webdetails.cda.utils.test.CdaTestHelper.SimpleTableModel;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 
 public class SqlListIT extends CdaTestCase {
@@ -39,26 +40,35 @@ public class SqlListIT extends CdaTestCase {
     final CdaSettings cdaSettings = parseSettingsFile( "sample-sql-list.cda" );
     final CdaEngine engine = CdaEngine.getInstance();
 
+    TableModelChecker checker = new TableModelChecker();
+    checker.setDoubleComparison( 2, "1e-8" );
+    checker.setBigDecimalComparison( 3, "1e-14" );
+    final SimpleTableModel expected =  new SimpleTableModel(
+        new Object[] { "Shipped", 2003L, 3303111.46, new BigDecimal( 3.30311146 ) },
+        new Object[] { "Cancelled", 2003L, 75132.16, new BigDecimal( 0.07513216 ) },
+        new Object[] { "Shipped", 2004L, 4750205.89, new BigDecimal( 4.75020589 ) },
+        new Object[] { "Cancelled", 2004L, 187195.13, new BigDecimal( 0.18719513 ) },
+        new Object[] { "Shipped", 2005L, 1513074.46, new BigDecimal( 1.51307446 ) } );
+
     QueryOptions queryOptions = new QueryOptions();
     queryOptions.setDataAccessId( "1" );
     queryOptions.addParameter( "status", new String[] { "Shipped", "Cancelled" } );
-    queryOptions.setOutputType( ExporterEngine.OutputType.XML );
 
     TableModel table = engine.doQuery( cdaSettings, queryOptions );
+    checker.assertEquals( expected, table );
+
     assertTrue( CdaTestHelper.columnContains( table, 0, "Shipped", "Cancelled" ) );
     assertFalse( CdaTestHelper.columnContains( table, 0, "Disputed" ) );
 
     queryOptions = new QueryOptions();
     queryOptions.setDataAccessId( "1" );
-    LinkedList l = new LinkedList<String>();
+    LinkedList<String> l = new LinkedList<String>();
     l.add( "Shipped" );
     l.add( "Cancelled" );
     queryOptions.addParameter( "status", l );
-    queryOptions.setOutputType( ExporterEngine.OutputType.XML );
 
     table = engine.doQuery( cdaSettings, queryOptions );
-    assertTrue( CdaTestHelper.columnContains( table, 0, "Shipped", "Cancelled" ) );
-    assertFalse( CdaTestHelper.columnContains( table, 0, "Disputed" ) );
+    checker.assertEquals( expected, table );
 
   }
 }

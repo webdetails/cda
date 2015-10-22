@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.pentaho.reporting.libraries.base.config.Configuration;
+
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.ICdaEnvironment;
 import pt.webdetails.cda.InitializationException;
@@ -23,6 +24,7 @@ import pt.webdetails.cpf.Util;
 
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,7 +43,7 @@ public class CdaTestHelper {
    * @param
    */
   public static void assertJsonEquals( String message, String expectedJson, String actualJson ) throws Exception {
-    ObjectMapper om = new ObjectMapper( );
+    ObjectMapper om = new ObjectMapper();
     JsonNode parsedResult = om.readTree( actualJson );
     // expected ONLY
     om.configure( JsonParser.Feature.ALLOW_SINGLE_QUOTES, true );
@@ -113,10 +115,6 @@ public class CdaTestHelper {
     return first.subtract( second ).abs().compareTo( delta ) < 0;
   }
 
-  public static boolean numericEquals( String actual, String expected, double delta ) {
-    return numericEquals( Double.parseDouble( actual ), Double.parseDouble( expected ), delta );
-  }
-
   public static ICdaEnvironment getMockEnvironment() {
     return getMockEnvironment( Collections.<String, String>emptyMap() );
   }
@@ -125,17 +123,21 @@ public class CdaTestHelper {
     ICdaEnvironment env = Mockito.mock( ICdaEnvironment.class );
     Configuration conf = Mockito.mock( Configuration.class );
     Mockito.when( conf.getConfigProperty( Matchers.any( String.class ), Matchers.any( String.class ) ) ).thenAnswer(
-      new Answer<String>(  ) {
-        @Override
-        public String answer( InvocationOnMock invocation ) throws Throwable {
-          String defaultValue = (String) invocation.getArguments()[1];
-          String result = configurationProperties.get( invocation.getArguments()[0] );
-          return result != null ? result : defaultValue;
+        new Answer<String>() {
+          @Override
+          public String answer( InvocationOnMock invocation ) throws Throwable {
+            String defaultValue = (String) invocation.getArguments()[1];
+            String result = configurationProperties.get( invocation.getArguments()[0] );
+            return result != null ? result : defaultValue;
+          }
         }
-      }
     );
     Mockito.when( env.getBaseConfig() ).thenReturn( conf );
     return env;
+  }
+
+  public static ICdaEnvironment createTestEnvironment() {
+    return new CdaTestEnvironment( new CdaTestingContentAccessFactory() );
   }
 
   public static Element getElementFromSnippet( String xml ) throws DocumentException {
@@ -177,7 +179,8 @@ public class CdaTestHelper {
 
     Object[][] rows;
 
-    public SimpleTableModel() {}
+    public SimpleTableModel() {
+    }
 
     public SimpleTableModel( Object[]... rows ) {
       this.rows = rows;
@@ -212,12 +215,16 @@ public class CdaTestHelper {
 
     @Override
     public String getColumnName( int column ) {
-      if ( columnNames == null ) { return super.getColumnName( 0 ); };
+      if ( columnNames == null ) {
+        return super.getColumnName( 0 );
+      }
       return columnNames[column];
     }
     @Override
     public Class<?> getColumnClass( int column ) {
-      if ( columnClasses == null ) { return super.getColumnClass( 0 ); };
+      if ( columnClasses == null ) {
+        return super.getColumnClass( 0 );
+      }
       return columnClasses[column];
     }
 

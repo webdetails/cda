@@ -13,12 +13,11 @@
 
 package pt.webdetails.cda;
 
-import junit.framework.Assert;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.junit.Assert;
 import org.junit.Test;
 import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
+
 import pt.webdetails.cda.cache.CacheKey;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.cache.TableCacheKey;
@@ -27,8 +26,6 @@ import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.utils.test.CdaTestCase;
 import pt.webdetails.cda.utils.test.CdaTestEnvironment;
 import pt.webdetails.cda.utils.test.CdaTestingContentAccessFactory;
-
-import javax.swing.table.TableModel;
 
 public class CacheKeysIT extends CdaTestCase {
 
@@ -39,8 +36,6 @@ public class CacheKeysIT extends CdaTestCase {
   private static final String SYSTEM_DEFINED_CACHE_KEY = "quux";
   private static final String SYSTEM_DEFINED_CACHE_VALUE = "baz";
   private static final String SYSTEM_AND_USER_DEFINED_CACHE_KEY = "norf";
-
-  private static final Log logger = LogFactory.getLog( CacheKeysIT.class );
 
   @Override
   protected void setUp() throws Exception {
@@ -54,46 +49,36 @@ public class CacheKeysIT extends CdaTestCase {
     final CdaSettings cdaSettings = parseSettingsFile( CDA_SAMPLE_FILE );
 
     IQueryCache cache = getEnvironment().getQueryCache();
-    logger.info( "Cache cleared." );
     cache.clearCache();
 
     QueryOptions queryOptions = new QueryOptions();
     queryOptions.setDataAccessId( "1" );
-    logger.info(
-      "Performing query with id=1 @ " + cdaSettings.getDataAccess( queryOptions.getDataAccessId() )
-        .toString()
-    );
-    TableModel tableModel = cdaSettings.getDataAccess( queryOptions.getDataAccessId() ).doQuery( queryOptions );
-    logger.info( "query done" );
+    cdaSettings.getDataAccess( queryOptions.getDataAccessId() ).doQuery( queryOptions );
 
     assertNotNull( cache.getKeys() );
-    logger.info( "Query was cached" );
 
     for ( TableCacheKey key : cache.getKeys() ) {
 
       assertNotNull( key );
-      logger.info( "key: " + key.toString() );
       assertNotNull( key.getExtraCacheKey() );
       Assert.assertTrue( key.getExtraCacheKey() != null && key.getExtraCacheKey() instanceof CacheKey );
       Assert.assertTrue( ( (CacheKey) key.getExtraCacheKey() ).getKeyValuePairs() != null
-        && ( (CacheKey) key.getExtraCacheKey() ).getKeyValuePairs().size() > 0 );
+          && ( (CacheKey) key.getExtraCacheKey() ).getKeyValuePairs().size() > 0 );
 
       boolean hasValueAsCacheExtraKey = false;
       boolean hasSystemWideExtraCacheKey = false;
       boolean systemCantOverrideUser = false;
 
-      logger.info( "Iterating extra cache keys.." );
       for ( CacheKey.KeyValuePair pair : ( (CacheKey) key.getExtraCacheKey() ).getKeyValuePairs() ) {
-        logger.info( "key: " + pair.toString() );
         if ( pair.getKey().equals( USER_DEFINED_CACHE_KEY ) && pair.getValue().equals( USER_DEFINED_CACHE_VALUE ) ) {
           hasValueAsCacheExtraKey = true;
         }
-        if ( pair.getKey().equals( SYSTEM_DEFINED_CACHE_KEY ) && pair.getValue()
-          .equals( SYSTEM_DEFINED_CACHE_VALUE ) ) {
+        if ( pair.getKey().equals( SYSTEM_DEFINED_CACHE_KEY )
+            && pair.getValue().equals( SYSTEM_DEFINED_CACHE_VALUE ) ) {
           hasSystemWideExtraCacheKey = true;
         }
-        if ( pair.getKey().equals( SYSTEM_AND_USER_DEFINED_CACHE_KEY ) && pair.getValue()
-          .equals( USER_DEFINED_CACHE_VALUE ) ) {
+        if ( pair.getKey().equals( SYSTEM_AND_USER_DEFINED_CACHE_KEY )
+            && pair.getValue().equals( USER_DEFINED_CACHE_VALUE ) ) {
           systemCantOverrideUser = true;
         }
       }

@@ -13,8 +13,6 @@
 
 package pt.webdetails.cda;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
@@ -25,8 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class OutputColumnsIT extends CdaTestCase {
-
-  private static final Log logger = LogFactory.getLog( OutputColumnsIT.class );
 
   public OutputColumnsIT() {
     super();

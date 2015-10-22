@@ -13,18 +13,19 @@
 
 package pt.webdetails.cda;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import javax.swing.table.TableModel;
+
+import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.utils.test.CdaTestCase;
+import pt.webdetails.cda.utils.test.TableModelChecker;
 
 public class SqlFormulaIT extends CdaTestCase {
-
-  private static final Log logger = LogFactory.getLog( SqlIT.class );
 
   public SqlFormulaIT() {
     super();
@@ -45,25 +46,32 @@ public class SqlFormulaIT extends CdaTestCase {
     queryOptions.addParameter( "orderDate", "${TODAY()}" );
     queryOptions.setOutputType( "csv" );
 
-    logger.info( "Doing first query --> TODAY()" );
     engine.doQuery( cdaSettings, queryOptions );
 
-    logger.info( "Doing query with different parameters" );
     queryOptions = new QueryOptions();
     queryOptions.setDataAccessId( "1" );
     queryOptions.addParameter( "orderDate", "${DATE(2004;1;1)}" );
     engine.doQuery( cdaSettings, queryOptions );
 
     // Querying 2nd time to test cache (formula translated before cache check)
-    logger.info( "Doing query using manual TODAY - Cache should be used" );
+    // Doing query using manual TODAY - Cache should be used
+    // TODO check for cache access
     queryOptions = new QueryOptions();
     queryOptions.setDataAccessId( "1" );
     Calendar cal = Calendar.getInstance();
-    queryOptions.addParameter( "orderDate",
-      "${DATE(" + cal.get( Calendar.YEAR ) + ";" + ( cal.get( Calendar.MONTH ) + 1 ) + ";" + cal
-        .get( Calendar.DAY_OF_MONTH ) + ")}" );
-    engine.doQuery( cdaSettings, queryOptions );
+    queryOptions.addParameter( "orderDate", "${DATE(" + cal.get( Calendar.YEAR ) + ";"
+        + ( cal.get( Calendar.MONTH ) + 1 ) + ";" + cal.get( Calendar.DAY_OF_MONTH ) + ")}" );
+    TableModel result = engine.doQuery( cdaSettings, queryOptions );
 
+    final TypedTableModel expected = new TypedTableModel(
+        new String[] { "STATUS", "Year", "PRICE", "PriceInK" } );
+    expected.addRow( "Shipped", 2003L, 3573701.2500000014, new BigDecimal( "3.5737012500000014" ) );
+    expected.addRow( "Shipped", 2004L, 4750205.889999998,  new BigDecimal( "4.750205889999998" ) );
+    expected.addRow( "Shipped", 2005L, 1513074.4600000002, new BigDecimal( "1.51307446" ) );
+    TableModelChecker checker = new TableModelChecker( true, true );
+    checker.setDoubleComparison( 2, 1e-8 );
+    checker.setBigDecimalComparison( 3, "1e-14" );
+    checker.assertEquals( expected, result );
   }
 
 }

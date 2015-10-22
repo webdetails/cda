@@ -7,6 +7,7 @@ import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFac
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
+
 import pt.webdetails.cda.BaseCdaEnvironment;
 import pt.webdetails.cda.ICdaEnvironment;
 import pt.webdetails.cda.InitializationException;
@@ -35,7 +36,7 @@ public class CdaTestEnvironment extends BaseCdaEnvironment implements ICdaEnviro
   public void initializeDataFactory( DataFactory dataFactory, Configuration configuration, ResourceKey contextKey,
                                      ResourceManager resourceManager ) throws ReportDataFactoryException {
     dataFactory.initialize( new DesignTimeDataFactoryContext( configuration, resourceManager, contextKey,
-      new LibLoaderResourceBundleFactory( resourceManager, contextKey, Locale.getDefault(),
+        new LibLoaderResourceBundleFactory( resourceManager, contextKey, Locale.getDefault(),
         TimeZone.getDefault() ), dataFactory ) );
   }
 

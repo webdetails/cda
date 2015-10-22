@@ -19,6 +19,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import pt.webdetails.cda.exporter.CsvExporter;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
@@ -53,7 +54,7 @@ public class CsvXslFromSQLIT extends CdaTestCase {
     logger.info( "Doing streaming csv export" );
     queryOptions.setOutputType( "csv" );
     queryOptions.addSetting( CsvExporter.CSV_SEPARATOR_SETTING, "," );
-    // (ExportedTableQueryResult)
+
     engine.doExportQuery( cdaSettings, queryOptions ).writeOut( out );
 
     assertEquals( countCSVColumns( fileName ), 2 );
@@ -129,54 +130,56 @@ public class CsvXslFromSQLIT extends CdaTestCase {
   public String[] extractColumnNames( String fileName ) throws IOException {
     ArrayList<String> columnNames = new ArrayList<String>();
     File f = new File( fileName );
-    HSSFWorkbook workbook = new HSSFWorkbook( new FileInputStream( f ) );
-    HSSFSheet sheet = workbook.getSheetAt( 0 );
-    HSSFRow row = sheet.getRow( 0 );
-    int i = 0;
-    HSSFCell cell = row.getCell( i );
-    while ( cell != null ) {
-      columnNames.add( cell.getStringCellValue() );
-      cell = row.getCell( ++i );
+    try ( HSSFWorkbook workbook = new HSSFWorkbook( new FileInputStream( f ) ) ) {
+      HSSFSheet sheet = workbook.getSheetAt( 0 );
+      HSSFRow row = sheet.getRow( 0 );
+      int i = 0;
+      HSSFCell cell = row.getCell( i );
+      while ( cell != null ) {
+        columnNames.add( cell.getStringCellValue() );
+        cell = row.getCell( ++i );
+      }
+      return columnNames.toArray( new String[ columnNames.size() ] );
     }
-    return columnNames.toArray( new String[ columnNames.size() ] );
   }
 
   public boolean matchColumnNames( String fileName, String[] names, List<Integer> outputIndexes ) throws IOException {
     File f = new File( fileName );
-    HSSFWorkbook workbook = new HSSFWorkbook( new FileInputStream( f ) );
-    HSSFSheet sheet = workbook.getSheetAt( 0 );
-    HSSFRow row = sheet.getRow( 0 );
-    for ( int i = 0; i < outputIndexes.size(); i++ ) {
-      if ( !names[ outputIndexes.get( i ) ].equals( row.getCell( i ).getStringCellValue() ) ) {
-        return false;
+    try ( HSSFWorkbook workbook = new HSSFWorkbook( new FileInputStream( f ) ) ) {
+      HSSFSheet sheet = workbook.getSheetAt( 0 );
+      HSSFRow row = sheet.getRow( 0 );
+      for ( int i = 0; i < outputIndexes.size(); i++ ) {
+        if ( !names[ outputIndexes.get( i ) ].equals( row.getCell( i ).getStringCellValue() ) ) {
+          return false;
+        }
       }
+      return true;
     }
-    return true;
   }
 
   public int countXLSColumns( String filename ) throws IOException {
 
     File f = new File( filename );
-
-    HSSFWorkbook workbook = new HSSFWorkbook( new FileInputStream( f ) );
-    HSSFSheet sheet = workbook.getSheetAt( 0 );
-    int noOfColumns = sheet.getRow( 0 ).getPhysicalNumberOfCells();
-    f.delete();
-    return noOfColumns;
+    try ( HSSFWorkbook workbook = new HSSFWorkbook( new FileInputStream( f ) ) ) {
+      HSSFSheet sheet = workbook.getSheetAt( 0 );
+      int noOfColumns = sheet.getRow( 0 ).getPhysicalNumberOfCells();
+      return noOfColumns;
+    } finally {
+      f.delete();
+    }
   }
 
   public int countCSVColumns( String filename ) throws IOException {
-
     int count = 0;
-    String line;
     File f = new File( filename );
-
-    BufferedReader br = new BufferedReader( new InputStreamReader( new FileInputStream( f ) ) );
-    if ( ( line = br.readLine() ) != null ) {
-      count = line.split( "," ).length;
+    try ( BufferedReader br = new BufferedReader( new InputStreamReader( new FileInputStream( f ) ) ) ) {
+      String line;
+      if ( ( line = br.readLine() ) != null ) {
+        count = line.split( "," ).length;
+      }
+      return count;
+    } finally {
+      f.delete();
     }
-    br.close();
-    f.delete();
-    return count;
   }
 }

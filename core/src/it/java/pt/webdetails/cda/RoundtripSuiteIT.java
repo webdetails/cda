@@ -119,7 +119,7 @@ public class RoundtripSuiteIT extends XMLTestCase {
     String controlXml = readCdaFile( file );
     String testXml = generateXml( file );
 
-    System.out.println( testXml );
+    //    System.out.println( testXml );
 
     DetailedDiff myDiff = new DetailedDiff( compareXML( controlXml, testXml ) );
     myDiff.overrideElementQualifier( new ElementNameAndAttributeQualifier() );

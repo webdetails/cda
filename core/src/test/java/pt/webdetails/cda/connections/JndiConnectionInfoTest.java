@@ -13,6 +13,11 @@
 
 package pt.webdetails.cda.connections;
 
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+
+import pt.webdetails.cpf.Util;
 import junit.framework.TestCase;
 
 public class JndiConnectionInfoTest extends TestCase {
@@ -38,16 +43,16 @@ public class JndiConnectionInfoTest extends TestCase {
     assertEquals( jndiConnectionInfo.getPasswordField(), PASSWORD_FIELD );
   }
 
-  /*
+
   public void testElementConstructor() throws Exception {
-    Element element = CdaTestHelper.getElementFromSnippet(
-        "<Connection id=\"id\" type=\"some.jndi\">" + 
-        "  <Jndi>" + JNDI + "</Jndi>" + 
-        "  <User>" + USER + "</User>" + 
-        "  <Pass>" + PASS + "</Pass>" +
-        "  <UserField>" + USER_FIELD + "</UserField>" +
-        "  <PassField>" + PASSWORD_FIELD + "</PassField>" +
-        "</Connection>"
+    Element element = getElementFromSnippet(
+        "<Connection id=\"id\" type=\"some.jndi\">"
+        + "  <Jndi>" + JNDI + "</Jndi>"
+        + "  <User>" + USER + "</User>"
+        + "  <Pass>" + PASS + "</Pass>"
+        + "  <UserField>" + USER_FIELD + "</UserField>"
+        + "  <PassField>" + PASSWORD_FIELD + "</PassField>"
+        + "</Connection>"
     );
     jndiConnectionInfo = new JndiConnectionInfo( element );
     assertEquals( jndiConnectionInfo.getJndi(), JNDI );
@@ -55,7 +60,7 @@ public class JndiConnectionInfoTest extends TestCase {
     assertEquals( jndiConnectionInfo.getPass(), PASS );
     assertEquals( jndiConnectionInfo.getUserField(), USER_FIELD );
     assertEquals( jndiConnectionInfo.getPasswordField(), PASSWORD_FIELD );
-  }   */
+  }
 
   public void testGetSetUser() throws Exception {
     assertEquals( jndiConnectionInfo.getUser(), USER );
@@ -103,5 +108,11 @@ public class JndiConnectionInfoTest extends TestCase {
 
   public void testHashCode() throws Exception {
     assertEquals( jndiConnectionInfo.hashCode(), JNDI.hashCode() );
+  }
+
+  private Element getElementFromSnippet( String xml ) throws Exception {
+    SAXReader reader = new SAXReader( false );
+    Document doc = reader.read( Util.toInputStream( xml ) );
+    return doc.getRootElement();
   }
 }

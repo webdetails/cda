@@ -1,12 +1,14 @@
 package pt.webdetails.cda.exporter;
 
 import org.junit.Test;
+
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.ICdaEnvironment;
 import pt.webdetails.cda.utils.test.CdaTestHelper.SimpleTableModel;
 import pt.webdetails.cpf.Util;
 
 import javax.swing.table.TableModel;
+
 import java.io.ByteArrayOutputStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,17 +24,17 @@ public class CsvExporterIT extends AbstractKettleExporterTestBase {
   @Test
   public void testCsvExport1() throws Exception {
     TableModel table = BasicExportExamples.getTestTable1();
-    final String expected = "The Integer;\"The String\";The Numeric;The Date;The Calculation\n" + 
-        "1;\"One\";1.05;Sun Jan 01 00:01:01 GMT 2012;-12.34567890123456789\n" + 
-        "-2;\"Two > One\";-1.05;;987654321.12345678900\n" + 
-        "9223372036854775807;\"Many\";1.7976931348623157E308;Thu Jan 01 00:00:00 GMT 1970;4.9E-325\n";
+    final String expected =
+        "The Integer;\"The String\";The Numeric;The Date;The Calculation\n"
+            + "1;\"One\";1.05;Sun Jan 01 00:01:01 GMT 2012;-12.34567890123456789\n"
+            + "-2;\"Two > One\";-1.05;;987654321.12345678900\n"
+            + "9223372036854775807;\"Many\";1.7976931348623157E308;Thu Jan 01 00:00:00 GMT 1970;4.9E-325\n";
     final String result = getCsvResult( table );
     assertEquals( expected, result );
   }
 
   @Test
   public void testCsvCustomQuotesFromProperties() throws Exception {
-    
     HashMap<String, String> properties = new HashMap<>();
     properties.put( "pt.webdetails.cda.exporter.csv.Separator", "|" );
     properties.put( "pt.webdetails.cda.exporter.csv.Enclosure", "'" );
@@ -62,10 +64,10 @@ public class CsvExporterIT extends AbstractKettleExporterTestBase {
   }
 
   private static final String getCustomExpect1() {
-    return "The Integer|'The String'|The Numeric|The Date|The Calculation\n" + 
-        "1|'One'|1.05|Sun Jan 01 00:01:01 GMT 2012|-12.34567890123456789\n" + 
-        "-2|'Two > One'|-1.05||987654321.12345678900\n" + 
-        "9223372036854775807|'Many'|1.7976931348623157E308|Thu Jan 01 00:00:00 GMT 1970|4.9E-325\n";
+    return "The Integer|'The String'|The Numeric|The Date|The Calculation\n"
+        + "1|'One'|1.05|Sun Jan 01 00:01:01 GMT 2012|-12.34567890123456789\n"
+        + "-2|'Two > One'|-1.05||987654321.12345678900\n"
+        + "9223372036854775807|'Many'|1.7976931348623157E308|Thu Jan 01 00:00:00 GMT 1970|4.9E-325\n";
   }
 
   @Test
@@ -102,7 +104,7 @@ public class CsvExporterIT extends AbstractKettleExporterTestBase {
 
   private String getCsvResult( TableModel table, Map<String, String> settings )
     throws ExporterException {
-    final TimeZone tz = TimeZone.getDefault() ;
+    final TimeZone tz = TimeZone.getDefault();
     try {
       TimeZone.setDefault( TimeZone.getTimeZone( "GMT" ) );
       TableExporter exporter = new CsvExporter( settings );
