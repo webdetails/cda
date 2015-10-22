@@ -13,6 +13,7 @@
 
 package pt.webdetails.cda.exporter;
 
+// TODO exporter should export, all uses rely on downcasts
 public interface Exporter {
 
   public String getMimeType();

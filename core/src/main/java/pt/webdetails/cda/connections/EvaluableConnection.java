@@ -23,5 +23,5 @@ public interface EvaluableConnection {
    * @return Clone of this connection with all evaluable fields evaluated.
    */
   public Connection evaluate();
-  
+
 }

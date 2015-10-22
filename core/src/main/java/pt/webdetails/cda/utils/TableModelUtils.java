@@ -95,14 +95,14 @@ public class TableModelUtils {
     //mdx and denormalizedMdx queries with an empty result set can return different metadata (less columns),
     //in this cases, the output indexes will be ignored
     boolean useOutputIndexes = true;
-    if ( table.getRowCount() == 0 && ( dataAccess.getType().equals( "mdx" ) || dataAccess.getType()
-      .equals( "denormalizedMdx" ) ) ) {
+    if ( table.getRowCount() == 0
+        && ( dataAccess.getType().equals( "mdx" ) || dataAccess.getType().equals( "denormalizedMdx" ) ) ) {
       useOutputIndexes = false;
       logger.warn( "Mdx query returned empty result set, output indexes will be ignored." );
     }
-    table = useOutputIndexes ?
-      filterTable( table, outputIndexes, columnNames, rowFilter, dataAccess.getColumnDefinitions().size() > 0 )
-      : filterTable( table, new ArrayList<Integer>(), columnNames, rowFilter, false );
+    table = useOutputIndexes
+        ? filterTable( table, outputIndexes, columnNames, rowFilter, dataAccess.getColumnDefinitions().size() > 0 )
+        : filterTable( table, new ArrayList<Integer>(), columnNames, rowFilter, false );
 
     //  3. Sort
     if ( !queryOptions.getSortBy().isEmpty() ) {
@@ -178,7 +178,7 @@ public class TableModelUtils {
       //logger.info(Collections.max(outputIndexes)+" "+table.getColumnCount());
       if ( ( Collections.max( outputIndexes ) > table.getColumnCount() - 1 ) ) {
         String errorMessage = String.format( "Output index higher than number of columns in tableModel. %s > %s",
-          Collections.max( outputIndexes ), table.getColumnCount() );
+            Collections.max( outputIndexes ), table.getColumnCount() );
         logger.error( errorMessage );
 
         if ( table.getColumnCount() > 0 ) {
@@ -240,8 +240,8 @@ public class TableModelUtils {
           logger.error( DT_SEARCHABLE + " is out of bounds." );
           searchableIndexes = null;
         } catch ( NumberFormatException e ) {
-          logger.error( DT_SEARCHABLE + " not a comma-separated list of integers: " + queryOptions.getExtraSettings()
-            .get( DT_SEARCHABLE ) );
+          logger.error( DT_SEARCHABLE + " not a comma-separated list of integers: "
+              + queryOptions.getExtraSettings().get( DT_SEARCHABLE ) );
           searchableIndexes = null;
         }
       }
@@ -294,7 +294,7 @@ public class TableModelUtils {
     // If output mode == exclude, we need to translate the excluded outputColuns
     // into included ones
     if ( dataAccess.getOutputMode( queryOptions.getOutputIndexId() ) == DataAccess.OutputMode.EXCLUDE
-      && outputIndexes.size() > 0 ) {
+        && outputIndexes.size() > 0 ) {
 
       ArrayList<Integer> newOutputIndexes = new ArrayList<Integer>();
       for ( int i = 0; i < table.getColumnCount(); i++ ) {
@@ -312,9 +312,9 @@ public class TableModelUtils {
     List<String> columnNames = new ArrayList<String>();
     List<ColumnDefinition> columnDefinitions = dataAccess.getColumnDefinitions();
 
-    for( int index = 0; index < table.getColumnCount(); index++ ) {
+    for ( int index = 0; index < table.getColumnCount(); index++ ) {
       String name = "";
-      if( columnDefinitions != null ) {
+      if ( columnDefinitions != null ) {
         for ( ColumnDefinition colDef : columnDefinitions ) {
           Integer colIndex = colDef.getIndex();
           if ( colIndex != null && colIndex == index ) {
@@ -344,7 +344,7 @@ public class TableModelUtils {
     for ( int i = 0; i < t.getColumnCount(); i++ ) {
       String colName = t.getColumnName( i );
       if ( !colName.startsWith( "::table-by-index::" )
-        && !colName.startsWith( "::column::" ) ) {
+          && !colName.startsWith( "::column::" ) ) {
         namedColumns.add( colName );
         namedColumnsClasses.add( t.getColumnClass( i ) );
       }
@@ -391,11 +391,11 @@ public class TableModelUtils {
 
     // Define names and types
     final String[] colNames = {
-      "id", "name", "type"
+        "id", "name", "type"
     };
 
     final Class<?>[] colTypes = {
-      String.class, String.class, String.class
+        String.class, String.class, String.class
     };
 
     final TypedTableModel typedTableModel = new TypedTableModel( colNames, colTypes, rowCount );
@@ -406,7 +406,7 @@ public class TableModelUtils {
     for ( DataAccess dataAccess : dataAccessSortedMap.values() ) {
       if ( dataAccess.getAccess() == DataAccessEnums.ACCESS_TYPE.PUBLIC ) {
         typedTableModel.addRow( new Object[] {
-          dataAccess.getId(), dataAccess.getName(), dataAccess.getType()
+            dataAccess.getId(), dataAccess.getName(), dataAccess.getType()
         } );
       }
     }
@@ -422,18 +422,18 @@ public class TableModelUtils {
 
     // Define names and types
     final String[] colNames = {
-      "name", "type", "defaultValue", "pattern", "access"
+        "name", "type", "defaultValue", "pattern", "access"
     };
 
     final Class<?>[] colTypes = {
-      String.class, String.class, String.class, String.class, String.class
+        String.class, String.class, String.class, String.class, String.class
     };
 
     final TypedTableModel typedTableModel = new TypedTableModel( colNames, colTypes, rowCount );
 
     for ( Parameter p : parameters ) {
       typedTableModel.addRow( new Object[] {
-        p.getName(), p.getTypeAsString(), p.getDefaultValue(), p.getPattern(), p.getAccess().toString()
+          p.getName(), p.getTypeAsString(), p.getDefaultValue(), p.getPattern(), p.getAccess().toString()
       } );
     }
 
@@ -453,7 +453,7 @@ public class TableModelUtils {
     // We will believe the data is correct - no type checking
 
     int colCountA = tableModelA.getColumnCount(),
-      colCountB = tableModelB.getColumnCount();
+        colCountB = tableModelB.getColumnCount();
     boolean usingA = colCountA > colCountB;
     int colCount = usingA ? colCountA : colCountB;
     TableModel referenceTable = ( usingA ? tableModelA : tableModelB );
@@ -511,7 +511,7 @@ public class TableModelUtils {
     }
 
     final MetadataTableModel resultTableModel =
-      new MetadataTableModel( colNames, colTypes, rowCount, t.getAllMetadata() );
+        new MetadataTableModel( colNames, colTypes, rowCount, t.getAllMetadata() );
     resultTableModel.setMetadata( "pageSize", queryOptions.getPageSize() );
     resultTableModel.setMetadata( "pageStart", queryOptions.getPageStart() );
 

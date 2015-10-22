@@ -173,7 +173,7 @@ public abstract class AbstractDataAccess implements DataAccess {
         try {
           outputMode.put( localId, OutputMode.valueOf( outputNode.attributeValue( "mode" ).toUpperCase() ) );
         } catch ( Exception e ) {
-          // if there are any errors, go back to the default					
+          // if there are any errors, go back to the default
           outputMode.put( localId, OutputMode.INCLUDE );
         }
 
@@ -601,8 +601,8 @@ public abstract class AbstractDataAccess implements DataAccess {
         //1.2) execute query
         TableModel tableModel = doQuery( queryOptions );
         //1.3) cache only, just keep last result //join results x
-        //				if (result == null) { result = tableModel; }
-        //				else { result = TableModelUtils.getInstance().appendTableModel(result,tableModel); }
+        // if (result == null) { result = tableModel; }
+        // else { result = TableModelUtils.getInstance().appendTableModel(result,tableModel); }
         result = tableModel;
         //2) get next set of values
         for ( int i = 0; i < paramCount; i++ ) { // traverse until we can get a next() or bottom of stack reached
@@ -698,11 +698,11 @@ public abstract class AbstractDataAccess implements DataAccess {
 
   public CacheKey getSystemCacheKeys() {
     Configuration config = CdaEngine.getEnvironment().getBaseConfig();
-    Iterator extraCacheKeys = config.findPropertyKeys( EXTRA_CACHE_KEYS_PROPERTY );
+    Iterator<String> extraCacheKeys = config.findPropertyKeys( EXTRA_CACHE_KEYS_PROPERTY );
     String key;
     CacheKey cacheKey = new CacheKey();
     while ( extraCacheKeys.hasNext() ) {
-      key = (String) extraCacheKeys.next();
+      key = extraCacheKeys.next();
       cacheKey.addKeyValuePair( key.replace( EXTRA_CACHE_KEYS_PROPERTY + ".", "" ),
           FormulaEvaluator.replaceFormula( config.getConfigProperty( key ) ) );
     }

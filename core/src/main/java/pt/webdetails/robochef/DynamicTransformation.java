@@ -15,7 +15,6 @@ package pt.webdetails.robochef;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +24,6 @@ import java.util.concurrent.Callable;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.Result;
 import org.pentaho.di.core.exception.KettleException;
-import org.pentaho.di.core.exception.KettleXMLException;
 
 import org.pentaho.di.core.logging.CentralLogStore;
 
@@ -236,7 +234,7 @@ public class DynamicTransformation {
     CentralLogStore.discardLines( logChannelId, true );
     // Remove the entries from the registry
 
-    synchronized( this.getClass() ) {
+    synchronized ( this.getClass() ) {
       if ( !hasCheckedForMethod ) {
         hasCheckedForMethod = true;
         Class c = LoggingRegistry.class;

@@ -109,7 +109,7 @@ public class CacheKey implements Serializable {
   @Override
   public CacheKey clone() {
     CacheKey clone = new CacheKey();
-    for( KeyValuePair pair : getKeyValuePairs() ){
+    for ( KeyValuePair pair : getKeyValuePairs() ) {
       clone.addKeyValuePair( pair.getKey() , pair.getValue() );
     }
     return clone;

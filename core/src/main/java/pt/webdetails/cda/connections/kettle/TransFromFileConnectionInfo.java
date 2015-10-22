@@ -27,105 +27,97 @@ import org.pentaho.reporting.engine.classic.core.ParameterMapping;
  *
  * @author Thomas Morgner.
  */
-public class TransFromFileConnectionInfo
-{
+public class TransFromFileConnectionInfo {
   private String transformationFile;
   private String[] definedArgumentNames;
   private ParameterMapping[] definedVariableNames;
-  
-  public TransFromFileConnectionInfo(final Element connection)
-  {
-    transformationFile = ((String) connection.selectObject("string(./KtrFile)"));
-    @SuppressWarnings("unchecked")
-    final List<Element> argsList = connection.elements("arguments");
+
+  public TransFromFileConnectionInfo( final Element connection ) {
+    transformationFile = ( (String) connection.selectObject( "string(./KtrFile)" ) );
+    @SuppressWarnings( "unchecked" )
+    final List<Element> argsList = connection.elements( "arguments" );
     final String[] args = new String[argsList.size()];
-    for (int i = 0; i < argsList.size(); i++)
-    {
-      final Element element = (Element) argsList.get(i);
+    for ( int i = 0; i < argsList.size(); i++ ) {
+      final Element element = (Element) argsList.get( i );
       args[i] = element.getText();
     }
     definedArgumentNames = args;
 
-    @SuppressWarnings("unchecked")
-    final List<Element> varsList = connection.elements("variables");
+    @SuppressWarnings( "unchecked" )
+    final List<Element> varsList = connection.elements( "variables" );
     final ParameterMapping[] vars = new ParameterMapping[varsList.size()];
-    for ( int i = 0; i < varsList.size(); i++)
-    {
-      final Element element = varsList.get(i);
-      final String dataRowName = element.attributeValue("datarow-name");
-      final String variableName = element.attributeValue("variable-name");
-      if (variableName == null)
-      {
-        vars[i] = new ParameterMapping(dataRowName, dataRowName);
-      }
-      else
-      {
-        vars[i] = new ParameterMapping(dataRowName, variableName);
+    for ( int i = 0; i < varsList.size(); i++ ) {
+      final Element element = varsList.get( i );
+      final String dataRowName = element.attributeValue( "datarow-name" );
+      final String variableName = element.attributeValue( "variable-name" );
+      if ( variableName == null ) {
+        vars[i] = new ParameterMapping( dataRowName, dataRowName );
+      } else {
+        vars[i] = new ParameterMapping( dataRowName, variableName );
       }
     }
     definedVariableNames = vars;
   }
 
-  public String getTransformationFile()
-  {
+  public String getTransformationFile() {
     return transformationFile;
   }
 
-  public String[] getDefinedArgumentNames()
-  {
+  public String[] getDefinedArgumentNames() {
     return definedArgumentNames;
   }
 
-  public ParameterMapping[] getDefinedVariableNames()
-  {
+  public ParameterMapping[] getDefinedVariableNames() {
     return definedVariableNames;
   }
 
-  public boolean equals(final Object o)
-  {
-    if (this == o)
-    {
+  public boolean equals( final Object o ) {
+    if ( this == o ) {
       return true;
     }
-    if (o == null || getClass() != o.getClass())
-    {
+    if ( o == null || getClass() != o.getClass() ) {
       return false;
     }
 
     final TransFromFileConnectionInfo that = (TransFromFileConnectionInfo) o;
 
-    if (!Arrays.equals(definedArgumentNames, that.definedArgumentNames))
-    {
+    if ( !Arrays.equals( definedArgumentNames, that.definedArgumentNames ) ) {
       return false;
     }
-    if (!Arrays.deepEquals( parameterMappingToStringArray(definedVariableNames), parameterMappingToStringArray(that.definedVariableNames)))
-    {
+    if ( !Arrays.deepEquals( parameterMappingToStringArray( definedVariableNames ),
+                             parameterMappingToStringArray( that.definedVariableNames ) ) ) {
       return false;
     }
-    if (transformationFile != null ? !transformationFile.equals(that.transformationFile) : that.transformationFile != null)
-    {
+
+    if ( transformationFile != null
+          ? !transformationFile.equals( that.transformationFile )
+          : that.transformationFile != null ) {
       return false;
     }
 
     return true;
   }
 
-  public int hashCode()
-  {
+  public int hashCode() {
     int result = transformationFile != null ? transformationFile.hashCode() : 0;
-    result = 31 * result + (definedArgumentNames != null ? Arrays.hashCode(definedArgumentNames) : 0);
-    result = 31 * result + (definedVariableNames != null ? Arrays.deepHashCode( parameterMappingToStringArray(definedVariableNames)) : 0);
+    result = 31 * result
+        + ( definedArgumentNames != null ? Arrays.hashCode( definedArgumentNames ) : 0 );
+    result = 31 * result
+        + ( definedVariableNames != null
+              ? Arrays.deepHashCode( parameterMappingToStringArray( definedVariableNames ) )
+              : 0 );
     return result;
   }
-  
-  private String[][] parameterMappingToStringArray(ParameterMapping[] paramMaps)
-  {
-   if(paramMaps == null) return null;
-   String[][] result = new String[paramMaps.length][];
-   for(int i = 0; i< paramMaps.length; i++){
-     String[] item = new String[] {paramMaps[i].getName(), paramMaps[i].getAlias()};
-     result[i] = item;
-   }
-   return result;
+
+  private String[][] parameterMappingToStringArray( ParameterMapping[] paramMaps ) {
+    if ( paramMaps == null ) {
+      return null;
+    }
+    String[][] result = new String[paramMaps.length][];
+    for ( int i = 0; i < paramMaps.length; i++ ) {
+      String[] item = new String[] { paramMaps[i].getName(), paramMaps[i].getAlias() };
+      result[i] = item;
+    }
+    return result;
   }
 }

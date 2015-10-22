@@ -125,7 +125,7 @@ public abstract class PREDataAccess extends SimpleDataAccess {
       PREDataSourceQuery queryExecution = null;
       try {
         final TableModel tm = dataFactory.queryData( "query",
-          new CompoundDataRow( environmentDataRow, parameterDataRow ) );
+            new CompoundDataRow( environmentDataRow, parameterDataRow ) );
 
         //  Store this variable so that we can close it later
         queryExecution = new PREDataSourceQuery( tm, dataFactory );

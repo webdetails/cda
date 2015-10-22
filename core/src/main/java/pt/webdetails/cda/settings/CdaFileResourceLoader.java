@@ -39,14 +39,15 @@ public abstract class CdaFileResourceLoader implements ICdaResourceLoader {
   private final String schema;
 
 
-  public CdaFileResourceLoader ( String name ) {
+  public CdaFileResourceLoader( String name ) {
     assert name != null;
     this.name = name;
     this.schema = getClass().getName() + ":" + name;
   }
 
-  abstract protected IReadAccess getReader();
-  abstract protected IACAccess getAccessControl();
+  protected abstract IReadAccess getReader();
+
+  protected abstract IACAccess getAccessControl();
 
   public boolean hasReadAccess( String id ) {
     return getAccessControl().hasAccess( id, FileAccess.READ );
@@ -103,7 +104,7 @@ public abstract class CdaFileResourceLoader implements ICdaResourceLoader {
   }
 
   public boolean isSupportedDeserializer( String data ) {
-    return schema.equals(ResourceKeyUtils.readSchemaFromString(data));
+    return schema.equals( ResourceKeyUtils.readSchemaFromString( data ) );
   }
 
   public String serialize( ResourceKey bundleKey, ResourceKey key ) throws ResourceException {
@@ -114,7 +115,7 @@ public abstract class CdaFileResourceLoader implements ICdaResourceLoader {
   }
 
   public ResourceKey deserialize( ResourceKey bundleKey, String stringKey ) throws ResourceKeyCreationException {
-    ResourceKeyData keyData = ResourceKeyUtils.parse(stringKey);
+    ResourceKeyData keyData = ResourceKeyUtils.parse( stringKey );
     if ( !schema.equals( keyData.getSchema() ) ) {
       throw new ResourceKeyCreationException( "Wrong schema" );
     }
@@ -135,7 +136,8 @@ public abstract class CdaFileResourceLoader implements ICdaResourceLoader {
     private String path;
     private String resourceLoaderName;
 
-    public CdaResourceData (String resourceLoader, ResourceKey key, IReadAccess reader, String path ) throws ResourceLoadingException {
+    public CdaResourceData( String resourceLoader, ResourceKey key, IReadAccess reader, String path )
+        throws ResourceLoadingException {
       this.key = key;
       this.path = path;
       IBasicFile file = reader.fetchFile( path );

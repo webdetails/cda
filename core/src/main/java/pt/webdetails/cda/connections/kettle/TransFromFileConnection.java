@@ -39,15 +39,12 @@ public class TransFromFileConnection extends AbstractConnection implements Kettl
 
   private TransFromFileConnectionInfo connectionInfo;
 
-  public TransFromFileConnection()
-  {
+  public TransFromFileConnection() {
   }
 
 
-  public TransFromFileConnection(final Element connection)
-          throws InvalidConnectionException
-  {
-    super(connection);
+  public TransFromFileConnection( final Element connection ) throws InvalidConnectionException {
+    super( connection );
   }
 
 
@@ -55,46 +52,37 @@ public class TransFromFileConnection extends AbstractConnection implements Kettl
    * @param query the name of the transformation step that should be polled.
    * @return the initialized transformation producer.
    */
-  public KettleTransformationProducer createTransformationProducer(final String query, CdaSettings cdaSettings)
-  {
-	IDataAccessUtils dataAccessUtils = CdaEngine.getEnvironment().getDataAccessUtils();
-	return dataAccessUtils.createKettleTransformationProducer(connectionInfo, query, cdaSettings);
+  public KettleTransformationProducer createTransformationProducer( final String query, CdaSettings cdaSettings ) {
+    IDataAccessUtils dataAccessUtils = CdaEngine.getEnvironment().getDataAccessUtils();
+    return dataAccessUtils.createKettleTransformationProducer( connectionInfo, query, cdaSettings );
   }
 
 
-  public ConnectionCatalog.ConnectionType getGenericType()
-  {
+  public ConnectionCatalog.ConnectionType getGenericType() {
     return ConnectionCatalog.ConnectionType.KETTLE;
   }
 
-
-  protected void initializeConnection(final Element connection) throws InvalidConnectionException
-  {
-    connectionInfo = new TransFromFileConnectionInfo(connection);
+  protected void initializeConnection( final Element connection ) throws InvalidConnectionException {
+    connectionInfo = new TransFromFileConnectionInfo( connection );
   }
 
 
-  public String getType()
-  {
+  public String getType() {
     return "kettleTransFromFile";
   }
 
 
-  public boolean equals(final Object o)
-  {
-    if (this == o)
-    {
+  public boolean equals( final Object o ) {
+    if ( this == o ) {
       return true;
     }
-    if (o == null || getClass() != o.getClass())
-    {
+    if ( o == null || getClass() != o.getClass() ) {
       return false;
     }
 
     final TransFromFileConnection that = (TransFromFileConnection) o;
 
-    if (connectionInfo != null ? !connectionInfo.equals(that.connectionInfo) : that.connectionInfo != null)
-    {
+    if ( connectionInfo != null ? !connectionInfo.equals( that.connectionInfo ) : that.connectionInfo != null ) {
       return false;
     }
 
@@ -102,29 +90,28 @@ public class TransFromFileConnection extends AbstractConnection implements Kettl
   }
 
 
-  public int hashCode()
-  {
+  public int hashCode() {
     return connectionInfo != null ? connectionInfo.hashCode() : 0;
   }
 
 
   @Override
-  public ArrayList<PropertyDescriptor> getProperties()
-  {
+  public ArrayList<PropertyDescriptor> getProperties() {
     final ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
-    properties.add(new PropertyDescriptor("ktrFile", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
-    properties.add(new PropertyDescriptor("variables", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD));
+    properties.add(
+        new PropertyDescriptor( "ktrFile", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+    properties.add(
+        new PropertyDescriptor( "variables", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD ) );
     return properties;
   }
 
 
   @Override
-  public String getTypeForFile()
-  {
+  public String getTypeForFile() {
     return "kettle.TransFromFile";
   }
 
   public TransFromFileConnectionInfo getConnectionInfo() {
-	  return connectionInfo;
+    return connectionInfo;
   }
 }

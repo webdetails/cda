@@ -23,16 +23,12 @@ import org.pentaho.reporting.libraries.formula.FormulaContext;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 
-//import pt.webdetails.cda.cache.ICacheScheduleManager;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.connections.mondrian.IMondrianRoleMapper;
 import pt.webdetails.cda.dataaccess.ICubeFileProviderSetter;
 import pt.webdetails.cda.dataaccess.IDataAccessUtils;
-//import pt.webdetails.cda.settings.IResourceKeyGetter;
-//import pt.webdetails.cpf.IPluginCall;
 import pt.webdetails.cpf.messaging.IEventPublisher;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
-//import pt.webdetails.cpf.session.ISessionUtils;
 
 
 public interface ICdaEnvironment {
@@ -55,16 +51,12 @@ public interface ICdaEnvironment {
 
   public IEventPublisher getEventPublisher();
 
-//  public ISessionUtils getSessionUtils();
-
   public IDataAccessUtils getDataAccessUtils();
-
-  // public IPluginCall createPluginCall(String plugin, String method, Map<String, Object> params);
 
   public IContentAccessFactory getRepo();
 
   public Configuration getBaseConfig();
-  
+
   /**
    * Differs between pentaho 4.x and 5.x
    */
