@@ -48,7 +48,7 @@
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
-      <artifactId>cpf-pentaho5</artifactId>
+      <artifactId>cpf-pentaho</artifactId>
       <scope>runtime</scope>
     </dependency>
 
