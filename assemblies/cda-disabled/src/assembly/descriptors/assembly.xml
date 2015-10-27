@@ -6,6 +6,8 @@
     <format>zip</format>
   </formats>
 
+  <includeBaseDirectory>false</includeBaseDirectory>
+
   <files>
     <file>
       <source>${basedir}/../target/processed/plugin.xml.disabled</source>

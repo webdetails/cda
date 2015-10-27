@@ -6,9 +6,11 @@
     <format>zip</format>
   </formats>
 
+  <includeBaseDirectory>false</includeBaseDirectory>
+
   <fileSets>
     <fileSet>
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory>${cda.root.dir}</outputDirectory>
       <directory>${basedir}/../target/processed/solution/bi-developers/cda</directory>
     </fileSet>
   </fileSets>
