@@ -13,17 +13,12 @@
 
 package pt.webdetails.cda.utils;
 
-import junit.framework.TestCase;
-import junit.framework.Assert;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class NaturalOrderTest extends TestCase {
+public class NaturalOrderTest {
 
-
-  public NaturalOrderTest() {
-    super();
-  }
-
-
+  @Test
   public void testCompareString() {
 
     NaturalOrderComparator noc = new NaturalOrderComparator( null, null );
