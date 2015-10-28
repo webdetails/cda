@@ -24,33 +24,28 @@ import org.pentaho.reporting.libraries.base.versioning.ProjectInformation;
  *
  * @author Thomas Morgner.
  */
-public class CdaInfo extends ProjectInformation
-{
+public class CdaInfo extends ProjectInformation {
   private static CdaInfo instance;
 
-  public static synchronized CdaInfo getInstance()
-  {
-    if (instance == null)
-    {
+  public static synchronized CdaInfo getInstance() {
+    if ( instance == null ) {
       instance = new CdaInfo();
       instance.initialize();
     }
     return instance;
   }
 
-  public CdaInfo()
-  {
-    super("cda", "CDA - Community Data Access");
+  public CdaInfo() {
+    super( "cda", "CDA - Community Data Access" );
   }
 
-  private void initialize()
-  {
-    setLicenseName("MPL");
-    setInfo("http://cda.webdetails.org");
-    setCopyright("Copyright 2009 - 2013 Webdetails, a Pentaho company");
+  private void initialize() {
+    setLicenseName( "MPL" );
+    setInfo( "http://cda.webdetails.org" );
+    setCopyright( "Copyright 2009 - 2013 Webdetails, a Pentaho company" );
 
-    setBootClass("pt.webdetails.cda.CdaBoot");
+    setBootClass( "pt.webdetails.cda.CdaBoot" );
 
-    addLibrary(ClassicEngineInfo.getInstance());
+    addLibrary( ClassicEngineInfo.getInstance() );
   }
 }

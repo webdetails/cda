@@ -81,6 +81,6 @@ public class DummyConnectionTest extends TestCase {
     DomVisitor domVisitorMock = mock( DomVisitor.class );
     Element elementMock = mock( Element.class );
     dummyConnection.accept( domVisitorMock, elementMock );
-    verify( domVisitorMock, times ( 1 ) ).visit( any( AbstractConnection.class ), eq( elementMock ) );
+    verify( domVisitorMock, times( 1 ) ).visit( any( AbstractConnection.class ), eq( elementMock ) );
   }
 }

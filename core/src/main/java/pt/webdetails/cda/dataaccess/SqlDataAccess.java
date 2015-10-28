@@ -59,7 +59,7 @@ public class SqlDataAccess extends PREDataAccess {
 
     final SqlConnection connection = (SqlConnection) getCdaSettings().getConnection( getConnectionId() );
     final SQLReportDataFactory reportDataFactory =
-      new SQLReportDataFactory( connection.getInitializedConnectionProvider() );
+        new SQLReportDataFactory( connection.getInitializedConnectionProvider() );
 
     reportDataFactory.setUserField( connection.getUserField() );
     reportDataFactory.setPasswordField( connection.getPasswordField() );

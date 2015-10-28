@@ -18,7 +18,7 @@ public class CdaSystemResourceLoader extends CdaFileResourceLoader {
   protected IACAccess getAccessControl() {
     return new IACAccess() {
       public boolean hasAccess( String file, FileAccess access ) {
-        switch( access ) {
+        switch ( access ) {
           case EXECUTE:
           case READ:
             return true;

@@ -12,7 +12,7 @@
 */
 package pt.webdetails.cda.utils;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import pt.webdetails.cda.dataaccess.Parameter;
 
@@ -72,7 +72,7 @@ public class ParameterArrayToStringEncoderTest {
   public void testNumericParameterArrayEncoderStringArray() {
     ParameterArrayToStringEncoder encoder = new ParameterArrayToStringEncoder( ";", "'" );
     String result =
-      encoder.encodeParameterArray( new String[] { "23.4", "75.8", "89.8" }, Parameter.Type.NUMERIC_ARRAY );
+        encoder.encodeParameterArray( new String[] { "23.4", "75.8", "89.8" }, Parameter.Type.NUMERIC_ARRAY );
 
     Assert.assertEquals( "23.4;75.8;89.8", result );
 
@@ -103,8 +103,8 @@ public class ParameterArrayToStringEncoderTest {
     cld.set( 2014, Calendar.OCTOBER, 31 );
     Date d2 = cld.getTime();
 
-    String result = encoder.encodeParameterArray( new String[] { "" + d1.getTime(), "" + d2.getTime() },
-      Parameter.Type.DATE_ARRAY );
+    String result =
+        encoder.encodeParameterArray( new String[] { "" + d1.getTime(), "" + d2.getTime() }, Parameter.Type.DATE_ARRAY );
     Assert.assertEquals( "" + d1.getTime() + ";" + d2.getTime(), result );
 
   }

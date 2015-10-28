@@ -40,11 +40,11 @@ public class ConnectionCatalog {
 
     SQL, MQL, MDX, OLAP4J, SCRIPTING, NONE, XPATH, KETTLE
   };
-  
+
   private static final String CONN_PATH = "resources/components/connections";
-  
+
   private static ConnectionCatalog _instance;
-  private static Log logger = LogFactory.getLog(ConnectionCatalog.class);
+  private static Log logger = LogFactory.getLog( ConnectionCatalog.class );
   private HashMap<String, ConnectionInfo> connectionPool;
 
   public ConnectionCatalog() {
@@ -54,30 +54,30 @@ public class ConnectionCatalog {
   private void getConnections() {
     connectionPool = new HashMap<String, ConnectionInfo>();
 
-    IReadAccess connectionsReader = CdaEngine.getRepo().getPluginSystemReader(CONN_PATH);
-    List<IBasicFile> files = connectionsReader.listFiles("", RepositoryHelper.getSimpleExtensionFilter("xml"));
-    if (files != null && files.size() > 0) {
-      for (IBasicFile file : files) {
+    IReadAccess connectionsReader = CdaEngine.getRepo().getPluginSystemReader( CONN_PATH );
+    List<IBasicFile> files = connectionsReader.listFiles( "", RepositoryHelper.getSimpleExtensionFilter( "xml" ) );
+    if ( files != null && files.size() > 0 ) {
+      for ( IBasicFile file : files ) {
         InputStream in = null;
         try {
           in = file.getContents();
           SAXReader reader = new SAXReader();
-          Document doc = reader.read(in);
+          Document doc = reader.read( in );
           // To figure out whether the component is generic or has a special implementation,
           // we directly look for the class override in the definition
-          Node implementation = doc.selectSingleNode("/Connection/Implementation");
-          Node type = doc.selectSingleNode("/Connection/Type");
+          Node implementation = doc.selectSingleNode( "/Connection/Implementation" );
+          Node type = doc.selectSingleNode( "/Connection/Type" );
           String className = implementation.getText();
-          if (className != null) {
-            Connection connection = connectionFromClass(className);
-            if (connection != null) {
+          if ( className != null ) {
+            Connection connection = connectionFromClass( className );
+            if ( connection != null ) {
               String connectionType = type.getText();
-              ConnectionType ct = ConnectionType.valueOf(connectionType);
-              connectionPool.put(connection.getClass().toString(), new ConnectionInfo(ct, connection.getClass()));
+              ConnectionType ct = ConnectionType.valueOf( connectionType );
+              connectionPool.put( connection.getClass().toString(), new ConnectionInfo( ct, connection.getClass() ) );
             }
           }
-        } catch (Exception e) {
-          logger.error(e);
+        } catch ( Exception e ) {
+          logger.error( e );
         } finally {
           IOUtils.closeQuietly( in );
         }
@@ -85,36 +85,36 @@ public class ConnectionCatalog {
     }
   }
 
-  public Connection[] getConnectionsByType(ConnectionType type) {
+  public Connection[] getConnectionsByType( ConnectionType type ) {
     ArrayList<Connection> conns = new ArrayList<Connection>();
-    for (String key : connectionPool.keySet()) {
-      ConnectionInfo conn = connectionPool.get(key);
-      if (conn.getType() == type) {
+    for ( String key : connectionPool.keySet() ) {
+      ConnectionInfo conn = connectionPool.get( key );
+      if ( conn.getType() == type ) {
         try {
-          conns.add(conn.getImplementation().getConstructor().newInstance());
-        } catch (Exception ex) {
-          logger.error("Couldn't instantiate " + conn.toString());
+          conns.add( conn.getImplementation().getConstructor().newInstance() );
+        } catch ( Exception ex ) {
+          logger.error( "Couldn't instantiate " + conn.toString() );
         }
       }
     }
-    return conns.toArray(new Connection[conns.size()]);
+    return conns.toArray( new Connection[conns.size()] );
   }
 
-  private Connection connectionFromClass(String className) {
+  private Connection connectionFromClass( String className ) {
     Connection connection = null;
     try {
-      Class<?> cClass = Class.forName(className);
-      if (!cClass.isInterface() && Connection.class.isAssignableFrom(cClass)) {
+      Class<?> cClass = Class.forName( className );
+      if ( !cClass.isInterface() && Connection.class.isAssignableFrom( cClass ) ) {
         connection = (Connection) cClass.newInstance();
       }
-    } catch (Exception ex) {
-      logger.error(ex);
+    } catch ( Exception ex ) {
+      logger.error( ex );
     }
     return connection;
   }
 
-  public synchronized static ConnectionCatalog getInstance(boolean refreshCache) {
-    if (_instance == null || refreshCache) {
+  public static synchronized ConnectionCatalog getInstance( boolean refreshCache ) {
+    if ( _instance == null || refreshCache ) {
       _instance = new ConnectionCatalog();
     }
     return _instance;
@@ -133,7 +133,7 @@ class ConnectionInfo {
   private ConnectionType type;
   private Class<? extends Connection> implementation;
 
-  public ConnectionInfo(ConnectionType type, Class<? extends Connection> implementation) {
+  public ConnectionInfo( ConnectionType type, Class<? extends Connection> implementation ) {
     this.type = type;
     this.implementation = implementation;
   }

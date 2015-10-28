@@ -50,8 +50,8 @@ public abstract class AbstractExporter implements TableExporter {
       return "String";
     } else if ( columnClass.equals( Boolean.class ) ) {
       return "Boolean";
-    } else if ( columnClass.equals( Integer.class ) || columnClass.equals( Short.class ) || columnClass
-      .equals( Byte.class ) ) {
+    } else if ( columnClass.equals( Integer.class ) || columnClass.equals( Short.class )
+        || columnClass.equals( Byte.class ) ) {
       return "Integer";
     } else if ( Number.class.isAssignableFrom( columnClass ) ) {
       return "Numeric";
@@ -66,7 +66,7 @@ public abstract class AbstractExporter implements TableExporter {
       // Unsupported. However, instead of bombing out, we'll try to cast to toString
       //throw new ExporterException("CDA exporter doesn't know how to handle: " + columnClass.toString(), null);
       logger.warn( "CDA exporter doesn't know how to handle:" + columnClass.toString()
-        + "; Returning String to allow it to continue" );
+          + "; Returning String to allow it to continue" );
       return "String";
     }
 

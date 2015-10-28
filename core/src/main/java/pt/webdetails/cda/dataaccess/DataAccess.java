@@ -54,8 +54,6 @@ public interface DataAccess {
 
   ArrayList<ColumnDefinition> getColumnDefinitions();
 
-  ;
-
   ArrayList<Integer> getOutputs();
 
   ArrayList<Integer> getOutputs( int id );

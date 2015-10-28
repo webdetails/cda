@@ -38,7 +38,7 @@ public interface Connection extends DomVisitable {
 
   public CdaSettings getCdaSettings();
 
-  public void setCdaSettings(CdaSettings cdaSettings);
+  public void setCdaSettings( CdaSettings cdaSettings );
 
   public List<PropertyDescriptor> getProperties();
 

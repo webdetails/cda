@@ -11,13 +11,13 @@ import pt.webdetails.cda.query.QueryOptions;
  */
 public class DataAccessKettleAdapterFactory {
 
-	/**
-	 * @return adapter or <code>null</code> if not defined for the given type
-	 */
-	public static DataAccessKettleAdapter create(DataAccess dataAccess, QueryOptions queryOptions) {
-		if ("sql".equals(dataAccess.getType())) {
-			return new SQLKettleAdapter((SqlDataAccess) dataAccess, queryOptions);
-		}
-		return null;
-	}
+  /**
+   * @return adapter or <code>null</code> if not defined for the given type
+   */
+  public static DataAccessKettleAdapter create( DataAccess dataAccess, QueryOptions queryOptions ) {
+    if ( "sql".equals( dataAccess.getType() ) ) {
+      return new SQLKettleAdapter( (SqlDataAccess) dataAccess, queryOptions );
+    }
+    return null;
+  }
 }

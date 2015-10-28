@@ -19,5 +19,5 @@ import java.io.OutputStream;
  * @deprecated to be serviced
  */
 public interface ICacheScheduleManager {
-    public void handleCall(String method,String obj, OutputStream out);
+  public void handleCall( String method, String obj, OutputStream out );
 }

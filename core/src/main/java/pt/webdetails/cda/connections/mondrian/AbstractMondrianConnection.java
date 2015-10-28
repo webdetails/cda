@@ -24,17 +24,10 @@ import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 
-
-/**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 2, 2010
- * Time: 5:09:59 PM
- */
 public abstract class AbstractMondrianConnection extends AbstractConnection implements MondrianConnection {
 
   private static final Log logger = LogFactory.getLog( AbstractMondrianConnection.class );
-	
+
   public AbstractMondrianConnection() {
   }
 
@@ -42,7 +35,7 @@ public abstract class AbstractMondrianConnection extends AbstractConnection impl
     super( id );
   }
 
-  public AbstractMondrianConnection(final Element connection) throws InvalidConnectionException {
+  public AbstractMondrianConnection( final Element connection ) throws InvalidConnectionException {
     super( connection );
   }
 
@@ -55,22 +48,23 @@ public abstract class AbstractMondrianConnection extends AbstractConnection impl
   @Override
   public ArrayList<PropertyDescriptor> getProperties()  {
     final ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
-    properties.add(new PropertyDescriptor( "id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB ) );
-    properties.add(new PropertyDescriptor( "catalog", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+    properties.add(
+        new PropertyDescriptor( "id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB ) );
+    properties.add(
+        new PropertyDescriptor( "catalog", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
     return properties;
   }
 
 
   protected String assembleRole( String catalog ) {
-    
     IMondrianRoleMapper roleMapper = CdaEngine.getEnvironment().getMondrianRoleMapper();
-	  try {
-      if ( roleMapper != null )
-        return roleMapper.getRoles(catalog);
-
-	  } catch ( Exception e ) {
-		  logger.error( "Error assembling role for mondrian connection", e );
-	  }
-	  return "";
+    try {
+      if ( roleMapper != null ) {
+        return roleMapper.getRoles( catalog );
+      }
+    } catch ( Exception e ) {
+      logger.error( "Error assembling role for mondrian connection", e );
+    }
+    return "";
   }
 }

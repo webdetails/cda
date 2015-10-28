@@ -85,7 +85,7 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
     String timeoutStr = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeout" );
     long timeout = StringUtil.isEmpty( timeoutStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong( timeoutStr );
     String unitStr =
-      CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
+        CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
     TimeUnit unit = StringUtil.isEmpty( unitStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf( unitStr );
     startRowProduction( timeout, unit, inputCallables );
   }
@@ -110,7 +110,7 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
 
     try {
       final DynamicTransMetaConfig transMetaConfig =
-        new DynamicTransMetaConfig( DynamicTransMetaConfig.Type.EMPTY, "Exporter", null, null );
+          new DynamicTransMetaConfig( DynamicTransMetaConfig.Type.EMPTY, "Exporter", null, null );
       final DynamicTransConfig transConfig = new DynamicTransConfig();
 
       StepMeta injectorStepMeta = new StepMeta( "input", new InjectorMeta() );

@@ -66,7 +66,7 @@ public class SortTableModel implements RowProductionManager {
     try {
       @SuppressWarnings( "unchecked" )
       Class<? extends Comparator<Integer>> comp =
-        (Class<? extends Comparator<Integer>>) Class.forName( comparatorClass );
+          (Class<? extends Comparator<Integer>>) Class.forName( comparatorClass );
       SortableTableModel sortable = new SortableTableModel( unsorted );
       sortable.sort( comp, sortBy );
       return sortable;
@@ -87,11 +87,11 @@ public class SortTableModel implements RowProductionManager {
         String sort = getSortXmlStep( unsorted, sortBy );
 
         DynamicTransMetaConfig transMetaConfig =
-          new DynamicTransMetaConfig( Type.EMPTY, "JoinCompoundData", null, null );
+            new DynamicTransMetaConfig( Type.EMPTY, "JoinCompoundData", null, null );
         DynamicTransConfig transConfig = new DynamicTransConfig();
 
         transConfig.addConfigEntry( EntryType.STEP, "input",
-          "<step><name>input</name><type>Injector</type><copies>1</copies></step>" );
+            "<step><name>input</name><type>Injector</type><copies>1</copies></step>" );
         transConfig.addConfigEntry( EntryType.STEP, "sort", sort );
         transConfig.addConfigEntry( EntryType.HOP, "input", "sort" );
 
@@ -120,7 +120,7 @@ public class SortTableModel implements RowProductionManager {
     String timeoutStr = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeout" );
     long timeout = StringUtils.isEmpty( timeoutStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong( timeoutStr );
     String unitStr =
-      CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
+        CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
     TimeUnit unit = StringUtils.isEmpty( unitStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf( unitStr );
     startRowProduction( timeout, unit, inputCallables );
   }
@@ -140,7 +140,7 @@ public class SortTableModel implements RowProductionManager {
 
   private String getSortXmlStep( TableModel unsorted, List<String> sortBy ) throws SortException {
     StringBuilder sortXML = new StringBuilder(
-      "  <step>\n"
+        "  <step>\n"
         + "    <name>sort</name>\n"
         + "    <type>SortRows</type>\n"
         + "    <description/>\n"
@@ -163,20 +163,20 @@ public class SortTableModel implements RowProductionManager {
       SortDescriptor sort = new SortDescriptor( ( s ) );
 
       sortXML.append( "      <field>\n"
-        + "        <name>" + unsorted.getColumnName( sort.getIndex() ) + "</name>\n"
-        + "        <ascending>" + sort.getIsAscendingString() + "</ascending>\n"
-        + "        <case_sensitive>N</case_sensitive>\n"
-        + "      </field>\n" );
+          + "        <name>" + unsorted.getColumnName( sort.getIndex() ) + "</name>\n"
+          + "        <ascending>" + sort.getIsAscendingString() + "</ascending>\n"
+          + "        <case_sensitive>N</case_sensitive>\n"
+          + "      </field>\n" );
     }
 
     sortXML.append( "    </fields>\n"
-      + "     <cluster_schema/>\n"
-      + " <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>\n"
-      + "      <xloc>615</xloc>\n"
-      + "      <yloc>188</yloc>\n"
-      + "      <draw>Y</draw>\n"
-      + "      </GUI>\n"
-      + "    </step>\n" );
+        + "     <cluster_schema/>\n"
+        + " <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>\n"
+        + "      <xloc>615</xloc>\n"
+        + "      <yloc>188</yloc>\n"
+        + "      <draw>Y</draw>\n"
+        + "      </GUI>\n"
+        + "    </step>\n" );
 
     return sortXML.toString();
   }

@@ -81,7 +81,7 @@ public class CdaEngine {
     return _instance;
   }
 
-  public synchronized static void init( ICdaEnvironment env ) throws InitializationException {
+  public static synchronized void init( ICdaEnvironment env ) throws InitializationException {
     assert env != null;
     _instance = new CdaEngine( env );
 
@@ -92,7 +92,7 @@ public class CdaEngine {
   /**
    * Init without reporting engine, TEST ONLY
    */
-  protected synchronized static void initTestBare( CdaEngine engine ) throws InitializationException {
+  protected static synchronized void initTestBare( CdaEngine engine ) throws InitializationException {
     assert engine != null;
     _instance = engine;
   }
@@ -142,23 +142,20 @@ public class CdaEngine {
 
   public ExportedQueryResult doExportQuery( CdaSettings cdaSettings, QueryOptions queryOptions )
     throws QueryException, UnknownDataAccessException, UnsupportedExporterException {
-    DataAccess dataAccess = cdaSettings.getDataAccess( queryOptions
-      .getDataAccessId() );
+    DataAccess dataAccess = cdaSettings.getDataAccess( queryOptions.getDataAccessId() );
     TableExporter exporter = getExporter( queryOptions );
 
     StreamExporter streamingExporter = null;
     //[CDA-124] - Exporting queries with parameters and output indexes was failing when done with a
     //streaming Kettle Transformation. In this case CDA 'doQuery' method should be used instead.
     if ( !dataAccess.hasIterableParameterValues( queryOptions ) && exporter instanceof AbstractKettleExporter
-      && ( queryOptions.getParameters().isEmpty() || dataAccess.getOutputs().isEmpty() )
-      && queryOptions.getOutputColumnName().isEmpty() ) {
+          && ( queryOptions.getParameters().isEmpty() || dataAccess.getOutputs().isEmpty() )
+          && queryOptions.getOutputColumnName().isEmpty() ) {
       // Try to initiate a streaming Kettle transformation:
-      DataAccessKettleAdapter dataAccessKettleAdapter = DataAccessKettleAdapterFactory
-        .create( dataAccess, queryOptions );
+      DataAccessKettleAdapter dataAccessKettleAdapter =
+          DataAccessKettleAdapterFactory.create( dataAccess, queryOptions );
       if ( dataAccessKettleAdapter != null ) {
-        streamingExporter = new DefaultStreamExporter(
-          (AbstractKettleExporter) exporter,
-          dataAccessKettleAdapter );
+        streamingExporter = new DefaultStreamExporter( (AbstractKettleExporter) exporter, dataAccessKettleAdapter );
       }
     }
 
@@ -194,9 +191,7 @@ public class CdaEngine {
     return wrappedQueries.remove( UUID.fromString( uuid ) );
   }
 
-  public synchronized String wrapQuery(
-    final CdaSettings cdaSettings,
-    final QueryOptions queryOptions ) {
+  public synchronized String wrapQuery( final CdaSettings cdaSettings, final QueryOptions queryOptions ) {
     UUID uuid = UUID.randomUUID();
     wrappedQueries.put( uuid, queryOptions );
     return uuid.toString();

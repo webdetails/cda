@@ -25,8 +25,7 @@ import org.pentaho.reporting.libraries.base.versioning.ProjectInformation;
  *
  * @author Thomas Morgner.
  */
-public class CdaBoot extends AbstractBoot
-{
+public class CdaBoot extends AbstractBoot {
 
   /**
    * The singleton instance of the Boot class.
@@ -38,21 +37,17 @@ public class CdaBoot extends AbstractBoot
   private ProjectInformation projectInfo;
 
 
-  protected CdaBoot()
-  {
+  protected CdaBoot() {
     projectInfo = CdaInfo.getInstance();
   }
-
 
   /**
    * Returns the singleton instance of the boot utility class.
    *
    * @return the boot instance.
    */
-  public static synchronized CdaBoot getInstance()
-  {
-    if (instance == null)
-    {
+  public static synchronized CdaBoot getInstance() {
+    if ( instance == null ) {
       instance = new CdaBoot();
     }
     return instance;
@@ -65,19 +60,17 @@ public class CdaBoot extends AbstractBoot
    * @return The configuration.
    */
   @Override
-  protected Configuration loadConfiguration()
-  {
-    return createDefaultHierarchicalConfiguration("/pt/webdetails/cda/cda.properties",
-            "/cda.properties", true, CdaBoot.class);
+  protected Configuration loadConfiguration() {
+    return createDefaultHierarchicalConfiguration( "/pt/webdetails/cda/cda.properties", "/cda.properties", true,
+        CdaBoot.class );
   }
 
 
   /**
    * Performs the boot.
    */
-    @Override
-  protected void performBoot()
-  {
+  @Override
+  protected void performBoot() {
     // any manual init work goes in here ...
   }
 
@@ -88,8 +81,7 @@ public class CdaBoot extends AbstractBoot
    * @return The project info.
    */
   @Override
-  protected ProjectInformation getProjectInfo()
-  {
+  protected ProjectInformation getProjectInfo() {
     return projectInfo;
   }
 }

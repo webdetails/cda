@@ -23,22 +23,17 @@ public class CdaPropertyLookupParser extends PropertyLookupParser {
 
   private static final long serialVersionUID = 1L;
 
-        private DataRow parameters = null;
+  private DataRow parameters = null;
 
-        public CdaPropertyLookupParser(final DataRow parameters)
-        {
-            this.parameters = parameters;
-        }
+  public CdaPropertyLookupParser( final DataRow parameters ) {
+    this.parameters = parameters;
+  }
 
+  public CdaPropertyLookupParser() {
 
+  }
 
-        public CdaPropertyLookupParser()
-        {
-
-        }
-
-        protected String lookupVariable(final String property)
-        {
-            return parameters.get(property).toString();
-        }
+  protected String lookupVariable( final String property ) {
+    return parameters.get( property ).toString();
+  }
 }

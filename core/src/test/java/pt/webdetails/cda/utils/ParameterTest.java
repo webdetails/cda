@@ -13,10 +13,16 @@
 package pt.webdetails.cda.utils;
 
 import org.junit.Test;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
+
 import pt.webdetails.cda.dataaccess.Parameter;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -24,6 +30,8 @@ import java.util.Date;
 public class ParameterTest {
 
   public class ParameterForTest extends Parameter {
+
+    private static final long serialVersionUID = 1L;
 
     public ParameterForTest( final String name, final String type, final String defaultValue, final String pattern,
                              final String access ) {
@@ -178,9 +186,8 @@ public class ParameterTest {
   @Test
   public void testNumericArrayParameterCreation() throws Exception {
     Parameter p = new ParameterForTest( "TestParam", "NumericArray", "12.5;35.1", null, null );
-    Object value = p.getValue();
-    Assert.assertTrue( value.getClass().isAssignableFrom( Double[].class ) );
-    Assert.assertEquals( 12.5, ( (Double[]) value )[ 0 ] );
+    Double[] value = (Double[]) p.getValue();
+    Assert.assertEquals( 12.5d , value[0].doubleValue() , 1e-5 );
   }
 
   @Test
@@ -195,18 +202,16 @@ public class ParameterTest {
   public void testNumericArrayParameterSetStringValueGetValue() throws Exception {
     Parameter p = new ParameterForTest( "TestParam", "NumericArray", "12;35", null, null );
     p.setStringValue( "45.5;89.2" );
-    Object value = p.getValue();
-    Assert.assertTrue( value.getClass().isAssignableFrom( Double[].class ) );
-    Assert.assertEquals( 45.5, ( (Double[]) value )[ 0 ] );
+    Double[] value = (Double[]) p.getValue();
+    Assert.assertEquals( 45.5, value[0].doubleValue() , 1e-5 );
   }
 
   @Test
   public void testNumericArrayParameterSetValueAsStringArrayGetValue() throws Exception {
     Parameter p = new ParameterForTest( "TestParam", "NumericArray", "12;35", null, null );
     p.setValue( new String[] { "45.5", "89.2" } );
-    Object value = p.getValue();
-    Assert.assertTrue( value.getClass().isAssignableFrom( Double[].class ) );
-    Assert.assertEquals( 89.2, ( (Double[]) value )[ 1 ] );
+    Double[] value = (Double[]) p.getValue();
+    Assert.assertEquals( 89.2, value[1].doubleValue() , 1e-5 );
   }
 
 
@@ -263,6 +268,24 @@ public class ParameterTest {
     Assert.assertEquals( 9, cld.get( Calendar.MONTH ) );
     Assert.assertEquals( 31, cld.get( Calendar.DAY_OF_MONTH ) );
 
+  }
+
+  @Test
+  public void testParamNumericArraySerialization() throws Exception {
+    Parameter param = new ParameterForTest( "p1", null, null, null, null );
+    param.setValue( new Double[] { 1d, 2d, 3d } );
+    param.setType( Parameter.Type.inferTypeFromObject( param.getValue() ) );
+    Assert.assertEquals( Parameter.Type.NUMERIC_ARRAY, param.getType() );
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    ObjectOutputStream objOut = new ObjectOutputStream( out );
+    param.writeObject( objOut );
+    objOut.flush();
+
+    Parameter paramBack = new ParameterForTest( null, null, null, null, null );
+    paramBack.readObject( new ObjectInputStream( new ByteArrayInputStream( out.toByteArray() ) ) );
+    Assert.assertEquals( param.getName(), paramBack.getName() );
+    Assert.assertTrue( Arrays.equals( (Double[]) param.getValue(), (Double[]) paramBack.getValue() ) );
+    Assert.assertEquals( param.getType(), paramBack.getType() );
   }
 
 

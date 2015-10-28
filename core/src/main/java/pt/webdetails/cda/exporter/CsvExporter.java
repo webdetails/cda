@@ -23,12 +23,8 @@ import org.pentaho.di.trans.steps.textfileoutput.TextFileOutputMeta;
 
 import pt.webdetails.cda.CdaEngine;
 
-/**
- * Created by IntelliJ IDEA. User: pedro Date: Feb 16, 2010 Time: 11:38:19 PM
- */
-public class CsvExporter extends AbstractKettleExporter
-{
-  
+public class CsvExporter extends AbstractKettleExporter {
+
   public static final String CSV_SEPARATOR_SETTING = "csvSeparator";
   public static final String CSV_QUOTE_SETTING = "csvQuote";
 
@@ -40,11 +36,11 @@ public class CsvExporter extends AbstractKettleExporter
   private String enclosure;
   private String attachmentName;
   private boolean showColumnHeaders;
-  
+
   public CsvExporter( Map<String, String> extraSettings ) {
     super( extraSettings );
-    
-    this.separator = getSetting( 
+
+    this.separator = getSetting(
         CSV_SEPARATOR_SETTING,
         CdaEngine.getInstance().getConfigProperty(
             "pt.webdetails.cda.exporter.csv.Separator", DEFAULT_CSV_SEPARATOR_SETTING ) );
@@ -53,7 +49,7 @@ public class CsvExporter extends AbstractKettleExporter
         CSV_QUOTE_SETTING,
         CdaEngine.getInstance().getConfigProperty(
             "pt.webdetails.cda.exporter.csv.Enclosure", DEFAULT_CSV_ENCLOSURE_SETTING ) );
-    
+
     this.attachmentName = getSetting( ATTACHMENT_NAME_SETTING, "cda-export.csv" );
 
     this.showColumnHeaders = Boolean.parseBoolean( getSetting( COLUMN_HEADERS_SETTING, "true" ) );
@@ -67,35 +63,31 @@ public class CsvExporter extends AbstractKettleExporter
   }
 
   protected StepMeta getExportStepMeta( String name ) {
-	  TextFileOutputMeta csvOutputStepMeta = new TextFileOutputMeta();
-	  csvOutputStepMeta.setOutputFields( new TextFileField[0] );
-	  csvOutputStepMeta.setSeparator( this.separator );
-	  csvOutputStepMeta.setEnclosure( this.enclosure );
-	  csvOutputStepMeta.setEnclosureForced( true );
-	  csvOutputStepMeta.setHeaderEnabled( this.showColumnHeaders );
-	  csvOutputStepMeta.setFooterEnabled( false );
-	  csvOutputStepMeta.setFilename( "${java.io.tmpdir}/" + getFileName() );
-	  csvOutputStepMeta.setExtension( "csv" );
-	  csvOutputStepMeta.setFastDump( true );
-	  
-	  StepMeta stepMeta = new StepMeta( name, csvOutputStepMeta );
-	  stepMeta.setCopies( 1 );
-	  return stepMeta;
+    TextFileOutputMeta csvOutputStepMeta = new TextFileOutputMeta();
+    csvOutputStepMeta.setOutputFields( new TextFileField[0] );
+    csvOutputStepMeta.setSeparator( this.separator );
+    csvOutputStepMeta.setEnclosure( this.enclosure );
+    csvOutputStepMeta.setEnclosureForced( true );
+    csvOutputStepMeta.setHeaderEnabled( this.showColumnHeaders );
+    csvOutputStepMeta.setFooterEnabled( false );
+    csvOutputStepMeta.setFilename( "${java.io.tmpdir}/" + getFileName() );
+    csvOutputStepMeta.setExtension( "csv" );
+    csvOutputStepMeta.setFastDump( true );
+
+    StepMeta stepMeta = new StepMeta( name, csvOutputStepMeta );
+    stepMeta.setCopies( 1 );
+    return stepMeta;
   }
 
-  public String getMimeType()
-  {
-
+  public String getMimeType() {
     return "text/csv";
   }
 
-  public String getAttachmentName()
-  {
+  public String getAttachmentName() {
     return this.attachmentName;
   }
 
-  public String getType()
-  {
+  public String getType() {
     return "csv";
   }
 

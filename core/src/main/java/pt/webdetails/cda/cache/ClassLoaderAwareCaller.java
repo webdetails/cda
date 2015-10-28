@@ -22,45 +22,38 @@ public class ClassLoaderAwareCaller {
   private ClassLoader classLoader;
 
   public ClassLoaderAwareCaller() {
-    this(Thread.currentThread().getContextClassLoader());
+    this( Thread.currentThread().getContextClassLoader() );
   }
 
-  public ClassLoaderAwareCaller(ClassLoader classLoader) {
-   this.classLoader = classLoader; 
+  public ClassLoaderAwareCaller( ClassLoader classLoader ) {
+    this.classLoader = classLoader;
   }
 
-  protected <T> T callInClassLoader(Callable<T> callable) throws Exception{
+  protected <T> T callInClassLoader( Callable<T> callable ) throws Exception {
     ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-    try
-    {
-      if(this.classLoader != null)
-      {
-        Thread.currentThread().setContextClassLoader(this.classLoader);
+    try {
+      if ( this.classLoader != null ) {
+        Thread.currentThread().setContextClassLoader( this.classLoader );
       }
-      
+
       return callable.call();
-      
-    }
-    finally{
-      Thread.currentThread().setContextClassLoader(contextClassLoader);
+
+    } finally {
+      Thread.currentThread().setContextClassLoader( contextClassLoader );
     }
   }
 
-  protected void runInClassLoader(Runnable runnable)
-  {
+  protected void runInClassLoader( Runnable runnable ) {
     ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-    try
-    {
-      if(this.classLoader != null)
-      {
-        Thread.currentThread().setContextClassLoader(this.classLoader);
+    try {
+      if ( this.classLoader != null ) {
+        Thread.currentThread().setContextClassLoader( this.classLoader );
       }
-      
+
       runnable.run();
-      
-    }
-    finally{
-      Thread.currentThread().setContextClassLoader(contextClassLoader);
+
+    } finally {
+      Thread.currentThread().setContextClassLoader( contextClassLoader );
     }
   }
 }

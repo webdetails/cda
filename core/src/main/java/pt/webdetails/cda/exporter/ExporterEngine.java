@@ -77,18 +77,12 @@ public class ExporterEngine {
     try {
 
       final String className = "pt.webdetails.cda.exporter."
-        + outputType.substring( 0, 1 ).toUpperCase() + outputType.substring( 1, outputType.length() ) + "Exporter";
+          + outputType.substring( 0, 1 ).toUpperCase() + outputType.substring( 1, outputType.length() ) + "Exporter";
 
       final Class<?> clazz = Class.forName( className );
-      final Class<?>[] params =
-        {
-          HashMap.class
-        };
+      final Class<?>[] params = { HashMap.class };
 
-      exporter = (TableExporter) clazz.getConstructor( params ).newInstance( new Object[]
-        {
-          extraSettings
-        } );
+      exporter = (TableExporter) clazz.getConstructor( params ).newInstance( new Object[] { extraSettings } );
       return exporter;
 
     } catch ( ClassNotFoundException e ) {
@@ -105,7 +99,7 @@ public class ExporterEngine {
       return null;
     }
 
-    switch( type ) {
+    switch ( type ) {
       case CSV:
         return new CsvExporter( extraSettings );
       case HTML:

@@ -41,7 +41,7 @@ public class KettleDataAccess extends PREDataAccess {
 
 
   private static final String PARAMETER_KETTLE_SEPARATOR =
-    "pt.webdetails.cda.dataaccess.parameterarray.kettle.Separator";
+      "pt.webdetails.cda.dataaccess.parameterarray.kettle.Separator";
   private static final String PARAMETER_KETTLE_QUOTE = "pt.webdetails.cda.dataaccess.parameterarray.kettle.Quote";
 
 
@@ -132,11 +132,11 @@ public class KettleDataAccess extends PREDataAccess {
 
       //CDA-55: We explicitly encode array parameters as strings so that they can be used in transformations
       if ( parameter.getType() == Parameter.Type.STRING_ARRAY
-        || parameter.getType() == Parameter.Type.INTEGER_ARRAY
-        || parameter.getType() == Parameter.Type.NUMERIC_ARRAY
-        || parameter.getType() == Parameter.Type.DATE_ARRAY ) {
+          || parameter.getType() == Parameter.Type.INTEGER_ARRAY
+          || parameter.getType() == Parameter.Type.NUMERIC_ARRAY
+          || parameter.getType() == Parameter.Type.DATE_ARRAY ) {
         ParameterArrayToStringEncoder encoder =
-          new ParameterArrayToStringEncoder( getSeparator(), getQuoteCharacter() );
+            new ParameterArrayToStringEncoder( getSeparator(), getQuoteCharacter() );
         value = encoder.encodeParameterArray( parameterDataRow.get( columnNames[ i ] ), parameter.getType() );
       } else {
         value = parameterDataRow.get( columnNames[ i ] );

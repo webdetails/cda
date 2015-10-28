@@ -40,20 +40,20 @@ public class DataAccessCacheElementParser {
     this.element = element;
     this.cacheEnabled = DEFAULT_CACHE_ENABLED;
   }
-  
+
   public boolean parseParameters() {
-	boolean success = false;
+    boolean success = false;
 
     try {
 
       // default is true; we change it *only* if it has been explicitly set to false
       if ( contains( element, ATTR_CACHE_ENABLED )
-        && element.attributeValue( ATTR_CACHE_ENABLED ).toString().equalsIgnoreCase( "false" ) ) {
+          && element.attributeValue( ATTR_CACHE_ENABLED ).toString().equalsIgnoreCase( "false" ) ) {
         setCacheEnabled( false );
       }
 
-      if ( contains( element, ATTR_DURATION ) && isValidPositiveInteger(
-        element.attributeValue( ATTR_DURATION ).toString() ) ) {
+      if ( contains( element, ATTR_DURATION )
+          && isValidPositiveInteger( element.attributeValue( ATTR_DURATION ).toString() ) ) {
         setCacheDuration( Integer.parseInt( element.attributeValue( ATTR_DURATION ).toString() ) );
       }
 
@@ -67,11 +67,11 @@ public class DataAccessCacheElementParser {
   }
 
   public boolean parseKeys() {
-	boolean success = false;
-	
+    boolean success = false;
+
     try {
-    	cacheKey = new CacheKey();
-    	
+      cacheKey = new CacheKey();
+
       @SuppressWarnings( "unchecked" )
       List<Element> keyNodes = element.selectNodes( "Key" ); //$NON-NLS-1$
 
@@ -100,7 +100,7 @@ public class DataAccessCacheElementParser {
 
       // if no value was fetched from formula AND user defined a default-value, we apply it
       if ( StringUtils.isEmpty( value ) || value.trim().equals( "null" )
-        && keyNode.attributeValue( ATTR_KEY_DEFAULT_VALUE ) != null ) {
+          && keyNode.attributeValue( ATTR_KEY_DEFAULT_VALUE ) != null ) {
         value = keyNode.attributeValue( ATTR_KEY_DEFAULT_VALUE ).toString();
       }
 

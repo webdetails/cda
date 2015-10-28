@@ -39,7 +39,7 @@ import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
 
 public class EHCacheQueryCache implements IQueryCache {
 
-  private static final Log logger = LogFactory.getLog(EHCacheQueryCache.class);
+  private static final Log logger = LogFactory.getLog( EHCacheQueryCache.class );
   private static final String CACHE_NAME = "pentaho-cda-dataaccess";
   private static final String CACHE_CFG_FILE = "ehcache-cda.xml";
   private static final String CACHE_CFG_FILE_DIST = "ehcache-dist.xml";
@@ -53,8 +53,7 @@ public class EHCacheQueryCache implements IQueryCache {
     private TableModel table;
     private ExtraCacheInfo info;
 
-
-    public CacheElement(TableModel table, ExtraCacheInfo info){
+    public CacheElement( TableModel table, ExtraCacheInfo info ) {
       this.table = table;
       this.info = info;
     }
@@ -66,148 +65,130 @@ public class EHCacheQueryCache implements IQueryCache {
     public ExtraCacheInfo getInfo() {
       return info;
     }
-    
-    private void writeObject(ObjectOutputStream out) throws IOException {
-      out.writeObject(table);
-      out.writeObject(info);
+
+    private void writeObject( ObjectOutputStream out ) throws IOException {
+      out.writeObject( table );
+      out.writeObject( info );
     }
-    
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+
+    private void readObject( ObjectInputStream in ) throws IOException, ClassNotFoundException {
       table = (TableModel) in.readObject();
       info = (ExtraCacheInfo) in.readObject();
     }
-    
+
   }
-  
-  protected static synchronized Cache getCacheFromManager(final boolean switchClassLoader) throws CacheException
-  {
-    if (cacheManager == null)
-    {// 'new CacheManager' used instead of 'CacheManager.create' to avoid overriding default cache
+
+  protected static synchronized Cache getCacheFromManager( final boolean switchClassLoader ) throws CacheException {
+    if ( cacheManager == null ) {
+      // 'new CacheManager' used instead of 'CacheManager.create' to avoid overriding default cache
       final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
       try {
-        if (switchClassLoader) {
+        if ( switchClassLoader ) {
           Thread.currentThread().setContextClassLoader( EHCacheQueryCache.class.getClassLoader() );
         }
-        boolean useTerracotta = Boolean.parseBoolean(CdaEngine.getInstance().getConfigProperty(USE_TERRACOTTA_PROPERTY));
+        boolean useTerracotta =
+            Boolean.parseBoolean( CdaEngine.getInstance().getConfigProperty( USE_TERRACOTTA_PROPERTY ) );
         String configFilePath = useTerracotta ? CACHE_CFG_FILE_DIST : CACHE_CFG_FILE;
-  
+
         InputStream configFile = null;
         try {
           configFile = CdaEngine.getRepo().getPluginSystemReader( "" ).getFileInputStream( configFilePath );
-          cacheManager = new CacheManager(configFile);
-          logger.debug("Cache started using " + configFilePath);
-        }
-        catch (IOException ioe) {
+          cacheManager = new CacheManager( configFile );
+          logger.debug( "Cache started using " + configFilePath );
+        } catch ( IOException ioe ) {
           logger.error( "Error reading " + configFilePath );
-        }
-        finally {
+        } finally {
           IOUtils.closeQuietly( configFile );
         }
-  
+
         // enable clean shutdown so ehcache's diskPersistent attribute can work
-        if (!useTerracotta)
-        {
-          enableCacheProperShutdown(true);
+        if ( !useTerracotta ) {
+          enableCacheProperShutdown( true );
         }
-      }
-      finally {
-        if (switchClassLoader) {
+      } finally {
+        if ( switchClassLoader ) {
           Thread.currentThread().setContextClassLoader( contextClassLoader );
         }
       }
     }
 
-    if (cacheManager.cacheExists(CACHE_NAME) == false)
-    {
-      cacheManager.addCache(CACHE_NAME);
+    if ( cacheManager.cacheExists( CACHE_NAME ) == false ) {
+      cacheManager.addCache( CACHE_NAME );
     }
 
-    return cacheManager.getCache(CACHE_NAME);
+    return cacheManager.getCache( CACHE_NAME );
   }
-  
-  
-  
-  private static void enableCacheProperShutdown(final boolean force)
-  {
-    if (!force)
-    {
-      try
-      {
-        System.getProperty(CacheManager.ENABLE_SHUTDOWN_HOOK_PROPERTY);
-        return;//unless force, ignore if already set
-      }
-      catch (NullPointerException npe)
-      {
-      } // key null, continue
-      catch (InvalidArgumentException iae)
-      {
-      }// key not there, continue
-      catch (SecurityException se)
-      {
-        return;//no permissions to set
+
+  private static void enableCacheProperShutdown( final boolean force ) {
+    if ( !force ) {
+      try {
+        System.getProperty( CacheManager.ENABLE_SHUTDOWN_HOOK_PROPERTY );
+        return; // unless force, ignore if already set
+      } catch ( NullPointerException npe ) {
+        // key null, continue
+      } catch ( InvalidArgumentException iae ) {
+        // key not there, continue
+      } catch ( SecurityException se ) {
+        // no permissions to set
+        return;
       }
     }
-    System.setProperty(CacheManager.ENABLE_SHUTDOWN_HOOK_PROPERTY, "true");
+    System.setProperty( CacheManager.ENABLE_SHUTDOWN_HOOK_PROPERTY, "true" );
   }
-  
+
   Cache cache = null;
-  
-  public EHCacheQueryCache(final Cache cache){
+
+  public EHCacheQueryCache( final Cache cache ) {
     this.cache = cache;
   }
-  
-  public EHCacheQueryCache(){
-    this(getCacheFromManager(true));
+
+  public EHCacheQueryCache() {
+    this( getCacheFromManager( true ) );
   }
 
   public EHCacheQueryCache( boolean switchClassLoader ) {
     this( getCacheFromManager( switchClassLoader ) );
   }
 
-  public void putTableModel(TableCacheKey key, TableModel table, int ttlSec, ExtraCacheInfo info) 
-  {
-    final CacheElement cacheElement = new CacheElement(table, info);
-    final Element storeElement = new Element(key, cacheElement);
-    storeElement.setTimeToLive(ttlSec);
-    cache.put(storeElement);
+  public void putTableModel( TableCacheKey key, TableModel table, int ttlSec, ExtraCacheInfo info ) {
+    final CacheElement cacheElement = new CacheElement( table, info );
+    final Element storeElement = new Element( key, cacheElement );
+    storeElement.setTimeToLive( ttlSec );
+    cache.put( storeElement );
     cache.flush();
-    
+
     // Print cache status size
-    logger.debug("Cache status: " + cache.getMemoryStoreSize() + " in memory, " + 
-            cache.getDiskStoreSize() + " in disk");
+    logger.debug( "Cache status: " + cache.getMemoryStoreSize() + " in memory, "
+            + cache.getDiskStoreSize() + " in disk" );
   }
 
   @Override
-  public TableModel getTableModel(TableCacheKey key) {
+  public TableModel getTableModel( TableCacheKey key ) {
     ClassLoader contextCL = Thread.currentThread().getContextClassLoader();
-    try{
+    try {
       //make sure we have the right class loader in thread to instantiate cda classes in case DiskStore is used
       //TODO: ehcache 2.5 has ClassLoaderAwareCache
-      Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-      final Element element = cache.get(key);
-      if (element != null)
-      {
-        final TableModel cachedTableModel = (TableModel) ((CacheElement) element.getObjectValue()).getTable();
-        if (cachedTableModel != null)
-        {
-          if (logger.isDebugEnabled()) {
+      Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
+      final Element element = cache.get( key );
+      if ( element != null ) {
+        final TableModel cachedTableModel = (TableModel) ( (CacheElement) element.getObjectValue() ).getTable();
+        if ( cachedTableModel != null ) {
+          if ( logger.isDebugEnabled() ) {
             // we have a entry in the cache ... great!
-            logger.debug("Found tableModel in cache. Returning");
+            logger.debug( "Found tableModel in cache. Returning" );
             // Print cache status size
-            logger.debug("Cache status: " + cache.getMemoryStoreSize() + " in memory, " + 
-                    cache.getDiskStoreSize() + " in disk");
+            logger.debug( "Cache status: " + cache.getMemoryStoreSize() + " in memory, "
+                    + cache.getDiskStoreSize() + " in disk" );
           }
           return cachedTableModel;
         }
       }
       return null;
-    }
-    catch(Exception e){
-      logger.error("Error while attempting to load from cache, bypassing cache (cause: " + e.getClass() + ")", e);
+    } catch ( Exception e ) {
+      logger.error( "Error while attempting to load from cache, bypassing cache (cause: " + e.getClass() + ")", e );
       return null;
-    }
-    finally{
-      Thread.currentThread().setContextClassLoader(contextCL);
+    } finally {
+      Thread.currentThread().setContextClassLoader( contextCL );
     }
   }
 
@@ -215,78 +196,77 @@ public class EHCacheQueryCache implements IQueryCache {
   public void clearCache() {
     cache.removeAll();
   }
-  
-  public Cache getCache(){
+
+  public Cache getCache() {
     return this.cache;
   }
 
   @Override
-  public boolean remove(TableCacheKey key) {
-    return cache.remove(key);
+  public boolean remove( TableCacheKey key ) {
+    return cache.remove( key );
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings( "unchecked" )
   @Override
   public Iterable<TableCacheKey> getKeys() {
     return cache.getKeys();
   }
 
   @Override
-  public ExtraCacheInfo getCacheEntryInfo(TableCacheKey key) 
-  {
-    Element element = cache.getQuiet(key);
-    if(element == null){
-      logger.warn("Null element in cache, removing.");
-      remove(key);
+  public ExtraCacheInfo getCacheEntryInfo( TableCacheKey key ) {
+    Element element = cache.getQuiet( key );
+    if ( element == null ) {
+      logger.warn( "Null element in cache, removing." );
+      remove( key );
       return null;
     }
     Object val = element.getValue();
-    if(val instanceof CacheElement){
-      return ((CacheElement)val).getInfo();  
-    }
-    else {
-      logger.error("Expected " + CacheElement.class.getCanonicalName() + ", found " + val.getClass().getCanonicalName() + " instead");
-      remove(key);
+    if ( val instanceof CacheElement ) {
+      return ( (CacheElement) val ).getInfo();
+    } else {
+      logger.error( "Expected " + CacheElement.class.getCanonicalName() + ", found "
+          + val.getClass().getCanonicalName() + " instead" );
+      remove( key );
       return null;
     }
   }
 
   @Override
-  public CacheElementInfo getElementInfo(TableCacheKey key) {
-    
-    Element element = cache.getQuiet(key);
+  public CacheElementInfo getElementInfo( TableCacheKey key ) {
+
+    Element element = cache.getQuiet( key );
     CacheElementInfo info = new CacheElementInfo();
-    info.setKey(key);
-    if(element!= null){
-      
-      info.setInsertTime(element.getLatestOfCreationAndUpdateTime());
-      info.setAccessTime(element.getLastAccessTime());
-      info.setHits(element.getHitCount());
+    info.setKey( key );
+    if ( element != null ) {
+
+      info.setInsertTime( element.getLatestOfCreationAndUpdateTime() );
+      info.setAccessTime( element.getLastAccessTime() );
+      info.setHits( element.getHitCount() );
       Object val = element.getValue();
-      if(val instanceof CacheElement){
-        info.setRows(((CacheElement) val).getTable().getRowCount()); 
+      if ( val instanceof CacheElement ) {
+        info.setRows( ( (CacheElement) val ).getTable().getRowCount() );
       }
     }
     return info;
   }
 
   @Override
-  public int removeAll(String cdaSettingsId, String dataAccessId) {
+  public int removeAll( String cdaSettingsId, String dataAccessId ) {
     int deleteCount = 0;
-    
-    if(cdaSettingsId == null){
+
+    if ( cdaSettingsId == null ) {
       deleteCount = cache.getSize();
       clearCache();
     }
-    
-    for(TableCacheKey key : getKeys()){
-      ExtraCacheInfo info = ((CacheElement)cache.getQuiet(key).getObjectValue()).getInfo();
-      
-      if(StringUtils.equals(cdaSettingsId, info.getCdaSettingsId()) &&
-              (dataAccessId==null || 
-               StringUtils.equals(dataAccessId, info.getDataAccessId())))
-      {
-        if(remove(key)) deleteCount++;
+
+    for ( TableCacheKey key : getKeys() ) {
+      ExtraCacheInfo info = ( (CacheElement) cache.getQuiet( key ).getObjectValue() ).getInfo();
+
+      if ( StringUtils.equals( cdaSettingsId, info.getCdaSettingsId() )
+          && ( dataAccessId == null || StringUtils.equals( dataAccessId, info.getDataAccessId() ) ) ) {
+        if ( remove( key ) ) {
+          deleteCount++;
+        }
       }
     }
     return deleteCount;
@@ -296,12 +276,12 @@ public class EHCacheQueryCache implements IQueryCache {
 
   @Override
   public void shutdownIfRunning() {
-    if(cacheManager!= null){
-      if(cache!=null){
+    if ( cacheManager != null ) {
+      if ( cache != null ) {
         cache.flush();
       }
-      if(cacheManager.getStatus() == Status.STATUS_ALIVE){
-        logger.debug("Shutting down cache manager.");
+      if ( cacheManager.getStatus() == Status.STATUS_ALIVE ) {
+        logger.debug( "Shutting down cache manager." );
         cacheManager.shutdown();
         cacheManager = null;
       }

@@ -28,19 +28,18 @@ public abstract class BaseService {
     return PluginEnvironment.env().getContentAccessFactory().getPluginSystemReader( path );
   }
 
-  protected String getResourceAsString(final String path, FileAccess access) throws IOException, AccessDeniedException {
-    IUserContentAccess repo = CdaEngine.getRepo().getUserContentAccess("/");
-    if ( repo.hasAccess(path, access) ){
+  protected String getResourceAsString( final String path, FileAccess access ) throws IOException,
+    AccessDeniedException {
+    IUserContentAccess repo = CdaEngine.getRepo().getUserContentAccess( "/" );
+    if ( repo.hasAccess( path, access ) ) {
       return Util.toString( repo.getFileInputStream( path ) );
-    }
-    else
-    {
-      throw new AccessDeniedException(path, null);
+    } else {
+      throw new AccessDeniedException( path, null );
     }
   }
 
-  protected String getResourceAsString(final String path) throws IOException, AccessDeniedException {
-    return getResourceAsString(path, FileAccess.READ);
+  protected String getResourceAsString( final String path ) throws IOException, AccessDeniedException {
+    return getResourceAsString( path, FileAccess.READ );
   }
 
 }

@@ -22,34 +22,34 @@ import org.pentaho.di.trans.step.RowListener;
  * @author Michael Spector
  */
 public class RowCountListener implements RowListener {
-	private int rowsRead;
-	private int rowsWritten;
-	private int rowsError;
+  private int rowsRead;
+  private int rowsWritten;
+  private int rowsError;
 
-	public RowCountListener() {
-	}
+  public RowCountListener() {
+  }
 
-	public void rowReadEvent(final RowMetaInterface rowMeta, final Object[] row) {
-		rowsRead++;
-	}
+  public void rowReadEvent( final RowMetaInterface rowMeta, final Object[] row ) {
+    rowsRead++;
+  }
 
-	public void rowWrittenEvent(final RowMetaInterface rowMeta, final Object[] row) {
-		rowsWritten++;
-	}
+  public void rowWrittenEvent( final RowMetaInterface rowMeta, final Object[] row ) {
+    rowsWritten++;
+  }
 
-	public void errorRowWrittenEvent(final RowMetaInterface rowMeta, final Object[] row) {
-		rowsError++;
-	}
+  public void errorRowWrittenEvent( final RowMetaInterface rowMeta, final Object[] row ) {
+    rowsError++;
+  }
 
-	public int getRowsRead() {
-		return rowsRead;
-	}
+  public int getRowsRead() {
+    return rowsRead;
+  }
 
-	public int getRowsWritten() {
-		return rowsWritten;
-	}
+  public int getRowsWritten() {
+    return rowsWritten;
+  }
 
-	public int getRowsError() {
-		return rowsError;
-	}
+  public int getRowsError() {
+    return rowsError;
+  }
 }

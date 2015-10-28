@@ -97,10 +97,10 @@ public class JsonScriptableDataAccess extends ScriptableDataAccess {
   }
 
   private String addTypedModelObject( String columnNames, String columnTypes ) {
-    String typedModel = "import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;\n\n" +
-      "String[] columnNames = new String[]{\n" + columnNames + "\n};\n\n" +
-      "Class[] columnTypes = new Class[]{\n" + columnTypes + "\n};\n\n" +
-      "TypedTableModel model = new TypedTableModel(columnNames, columnTypes);\n\n";
+    String typedModel = "import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;\n\n"
+        + "String[] columnNames = new String[]{\n" + columnNames + "\n};\n\n"
+        + "Class[] columnTypes = new Class[]{\n" + columnTypes + "\n};\n\n"
+        + "TypedTableModel model = new TypedTableModel(columnNames, columnTypes);\n\n";
 
     return typedModel;
   }

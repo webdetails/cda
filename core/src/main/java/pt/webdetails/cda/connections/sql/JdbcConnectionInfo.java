@@ -18,8 +18,8 @@ import java.util.Properties;
 
 import org.dom4j.Element;
 import org.apache.commons.lang.StringUtils;
-public class JdbcConnectionInfo
-{
+
+public class JdbcConnectionInfo {
 
   private String driver;
   private String url;
@@ -29,166 +29,136 @@ public class JdbcConnectionInfo
   private String passwordField;
   private Properties properties;
 
-  public JdbcConnectionInfo(final Element connection)
-  {
+  public JdbcConnectionInfo( final Element connection ) {
 
+    final String driver = (String) connection.selectObject( "string(./Driver)" );
+    final String url = (String) connection.selectObject( "string(./Url)" );
+    final String userName = (String) connection.selectObject( "string(./User)" );
+    final String password = (String) connection.selectObject( "string(./Pass)" );
+    final String userFormula = (String) connection.selectObject( "string(./UserField)" );
+    final String passFormula = (String) connection.selectObject( "string(./PassField)" );
 
-    final String driver = (String) connection.selectObject("string(./Driver)");
-    final String url = (String) connection.selectObject("string(./Url)");
-    final String userName = (String) connection.selectObject("string(./User)");
-    final String password = (String) connection.selectObject("string(./Pass)");
-    final String userFormula = (String) connection.selectObject("string(./UserField)");
-    final String passFormula = (String) connection.selectObject("string(./PassField)");
-
-    if (StringUtils.isEmpty(driver))
-    {
-      throw new IllegalStateException("A driver is mandatory");
+    if ( StringUtils.isEmpty( driver ) ) {
+      throw new IllegalStateException( "A driver is mandatory" );
     }
-    if (StringUtils.isEmpty(url))
-    {
-      throw new IllegalStateException("A url is mandatory");
+    if ( StringUtils.isEmpty( url ) ) {
+      throw new IllegalStateException( "A url is mandatory" );
     }
 
-    setDriver(driver);
-    setUrl(url);
+    setDriver( driver );
+    setUrl( url );
 
     // For user / pass, we also need to set them im the properties
     properties = new Properties();
 
-    if (StringUtils.isEmpty(userName) == false)
-    {
-      setUser(userName);
-      properties.setProperty("user", userName);
+    if ( StringUtils.isEmpty( userName ) == false ) {
+      setUser( userName );
+      properties.setProperty( "user", userName );
 
     }
-    if (StringUtils.isEmpty(password) == false)
-    {
-      setPass(password);
-      properties.setProperty("password", password);
+    if ( StringUtils.isEmpty( password ) == false ) {
+      setPass( password );
+      properties.setProperty( "password", password );
     }
-    if (StringUtils.isEmpty(userFormula) == false)
-    {
-      setUserField(userFormula);
+    if ( StringUtils.isEmpty( userFormula ) == false ) {
+      setUserField( userFormula );
     }
-    if (StringUtils.isEmpty(passFormula) == false)
-    {
-      setPasswordField(passFormula);
+    if ( StringUtils.isEmpty( passFormula ) == false ) {
+      setPasswordField( passFormula );
     }
 
-    final List<?> list = connection.elements("Property");
-    for (int i = 0; i < list.size(); i++)
-    {
-      final Element childElement = (Element) list.get(i);
-      final String name = childElement.attributeValue("name");
+    final List<?> list = connection.elements( "Property" );
+    for ( int i = 0; i < list.size(); i++ ) {
+      final Element childElement = (Element) list.get( i );
+      final String name = childElement.attributeValue( "name" );
       final String text = childElement.getText();
-      properties.put(name, text);
+      properties.put( name, text );
     }
   }
 
-  public String getUserField()
-  {
+  public String getUserField() {
     return userField;
   }
 
-  public void setUserField(final String userField)
-  {
+  public void setUserField( final String userField ) {
     this.userField = userField;
   }
 
-  public String getPasswordField()
-  {
+  public String getPasswordField() {
     return passwordField;
   }
 
-  public void setPasswordField(final String passwordField)
-  {
+  public void setPasswordField( final String passwordField ) {
     this.passwordField = passwordField;
   }
 
-  public Properties getProperties()
-  {
+  public Properties getProperties() {
     return properties;
   }
 
-  public String getDriver()
-  {
+  public String getDriver() {
     return driver;
   }
 
-  public void setDriver(final String driver)
-  {
+  public void setDriver( final String driver ) {
     this.driver = driver;
   }
 
-  public String getUrl()
-  {
+  public String getUrl() {
     return url;
   }
 
-  public void setUrl(final String url)
-  {
+  public void setUrl( final String url ) {
     this.url = url;
   }
 
-  public String getUser()
-  {
+  public String getUser() {
     return user;
   }
 
-  public void setUser(final String user)
-  {
+  public void setUser( final String user ) {
     this.user = user;
   }
 
-  public String getPass()
-  {
+  public String getPass() {
     return pass;
   }
 
-  public void setPass(final String pass)
-  {
+  public void setPass( final String pass ) {
     this.pass = pass;
   }
 
-  public boolean equals(final Object o)
-  {
-    if (this == o)
-    {
+  public boolean equals( final Object o ) {
+    if ( this == o ) {
       return true;
     }
-    if (o == null || getClass() != o.getClass())
-    {
+    if ( o == null || getClass() != o.getClass() ) {
       return false;
     }
 
     final JdbcConnectionInfo that = (JdbcConnectionInfo) o;
 
-    if (driver != null ? !driver.equals(that.driver) : that.driver != null)
-    {
+    if ( driver != null ? !driver.equals( that.driver ) : that.driver != null ) {
       return false;
     }
-    if (pass != null ? !pass.equals(that.pass) : that.pass != null)
-    {
+    if ( pass != null ? !pass.equals( that.pass ) : that.pass != null ) {
       return false;
     }
-    if (url != null ? !url.equals(that.url) : that.url != null)
-    {
+    if ( url != null ? !url.equals( that.url ) : that.url != null ) {
       return false;
     }
-    if (user != null ? !user.equals(that.user) : that.user != null)
-    {
+    if ( user != null ? !user.equals( that.user ) : that.user != null ) {
       return false;
     }
 
     return true;
   }
 
-  public int hashCode()
-  {
+  public int hashCode() {
     int result = driver != null ? driver.hashCode() : 0;
-    result = 31 * result + (url != null ? url.hashCode() : 0);
-    result = 31 * result + (user != null ? user.hashCode() : 0);
-    result = 31 * result + (pass != null ? pass.hashCode() : 0);
+    result = 31 * result + ( url != null ? url.hashCode() : 0 );
+    result = 31 * result + ( user != null ? user.hashCode() : 0 );
+    result = 31 * result + ( pass != null ? pass.hashCode() : 0 );
     return result;
   }
 }

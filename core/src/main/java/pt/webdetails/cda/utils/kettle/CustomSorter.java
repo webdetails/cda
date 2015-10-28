@@ -21,13 +21,11 @@ import javax.swing.table.TableModel;
  *
  * @author pdpi
  */
-public class CustomSorter extends SortTableModel
-{
+public class CustomSorter extends SortTableModel {
 
   @Override
-  public TableModel doSort(TableModel unsorted, List<String> sortBy) throws SortException
-  {
-    SortableTableModel sortable = new SortableTableModel(unsorted);
+  public TableModel doSort( TableModel unsorted, List<String> sortBy ) throws SortException {
+    SortableTableModel sortable = new SortableTableModel( unsorted );
     sortable.sort();
     return sortable;
   }

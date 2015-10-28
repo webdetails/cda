@@ -14,12 +14,18 @@
 package pt.webdetails.robochef;
 
 import java.util.concurrent.Callable;
+
 import javax.swing.table.TableModel;
 
 import org.pentaho.di.core.row.RowMeta;
 import org.pentaho.di.core.row.RowMetaInterface;
-import org.pentaho.di.core.row.ValueMeta;
 import org.pentaho.di.core.row.ValueMetaInterface;
+import org.pentaho.di.core.row.value.ValueMetaBigNumber;
+import org.pentaho.di.core.row.value.ValueMetaBoolean;
+import org.pentaho.di.core.row.value.ValueMetaDate;
+import org.pentaho.di.core.row.value.ValueMetaInteger;
+import org.pentaho.di.core.row.value.ValueMetaNumber;
+import org.pentaho.di.core.row.value.ValueMetaString;
 
 public class TableModelInput extends RowProducerBridge {
   public synchronized Callable<Boolean> getCallableRowProducer( final TableModel tableModel,
@@ -54,7 +60,7 @@ public class TableModelInput extends RowProducerBridge {
     }
 
     Object newValue;
-    switch( valueMeta.getType() ) {
+    switch ( valueMeta.getType() ) {
       case ValueMetaInterface.TYPE_STRING:
         newValue = String.valueOf( value );
         break;
@@ -98,38 +104,36 @@ public class TableModelInput extends RowProducerBridge {
       Class<?> columnClass = tableModel.getColumnClass( i );
       while ( columnClass != Object.class ) {
         if ( columnClass == String.class ) {
-          rowMeta.addValueMeta( new ValueMeta( tableModel.getColumnName( i ), ValueMetaInterface.TYPE_STRING ) );
+          rowMeta.addValueMeta( new ValueMetaString( tableModel.getColumnName( i ) ) );
           break;
 
         } else if ( columnClass == java.util.Date.class ) {
-          rowMeta.addValueMeta( new ValueMeta( tableModel.getColumnName( i ), ValueMetaInterface.TYPE_DATE ) );
+          rowMeta.addValueMeta( new ValueMetaDate( tableModel.getColumnName( i ) ) );
           break;
 
         } else if ( columnClass == Boolean.class ) {
-          rowMeta.addValueMeta( new ValueMeta( tableModel.getColumnName( i ), ValueMetaInterface.TYPE_BOOLEAN ) );
+          rowMeta.addValueMeta( new ValueMetaBoolean( tableModel.getColumnName( i ) ) );
           break;
 
         } else if ( columnClass == java.math.BigDecimal.class || columnClass == java.math.BigInteger.class ) {
-          rowMeta.addValueMeta( new ValueMeta( tableModel.getColumnName( i ), ValueMetaInterface.TYPE_BIGNUMBER ) );
+          rowMeta.addValueMeta( new ValueMetaBigNumber( tableModel.getColumnName( i ) ) );
           break;
 
         } else if ( columnClass == Long.class || columnClass == Short.class || columnClass == Integer.class
-          || columnClass == Byte.class ) {
-          rowMeta.addValueMeta( new ValueMeta( tableModel.getColumnName( i ), ValueMetaInterface.TYPE_INTEGER ) );
+            || columnClass == Byte.class ) {
+          rowMeta.addValueMeta( new ValueMetaInteger( tableModel.getColumnName( i ) ) );
           break;
 
         } else if ( columnClass == Double.class || columnClass == Float.class ) {
-          rowMeta.addValueMeta( new ValueMeta( tableModel.getColumnName( i ), ValueMetaInterface.TYPE_NUMBER ) );
+          rowMeta.addValueMeta( new ValueMetaNumber( tableModel.getColumnName( i ) ) );
           break;
 
         } else {
           columnClass = columnClass.getSuperclass();
         }
       }
-      if ( columnClass == Object.class )
-      //TODO Maybe a warning log entry or something for this case?
-      {
-        rowMeta.addValueMeta( new ValueMeta( tableModel.getColumnName( i ), ValueMetaInterface.TYPE_STRING ) );
+      if ( columnClass == Object.class ) {
+        rowMeta.addValueMeta( new ValueMetaString( tableModel.getColumnName( i ) ) );
       }
     }
 
