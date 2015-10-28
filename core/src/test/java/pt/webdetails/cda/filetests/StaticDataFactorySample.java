@@ -34,7 +34,7 @@ public class StaticDataFactorySample {
 
   public TableModel createMainQuery() {
     final TypedTableModel model =
-      new TypedTableModel( new String[] { "ID", "TEXT" }, new Class[] { Long.class, String.class }, 0 );
+        new TypedTableModel( new String[] { "ID", "TEXT" }, new Class[] { Long.class, String.class }, 0 );
     model.addRow( new Object[] { new Long( 0 ), "Hello World" } );
     model.addRow( new Object[] { new Long( 1 ), "Your DataFactory works perfectly." } );
     return model;
@@ -42,15 +42,15 @@ public class StaticDataFactorySample {
 
   public TableModel createSubQuery( Long parameter ) {
     final TypedTableModel model = new TypedTableModel( new String[] { "ID", "NUMBER", "DESCRIPTION" },
-      new Class[] { Long.class, String.class, String.class }, 0 );
+        new Class[] { Long.class, String.class, String.class }, 0 );
     if ( ZERO.equals( parameter ) ) {
       model.addRow( new Object[] { parameter, new Long( 0 ), "Look, you got a new dataset." } );
       model.addRow( new Object[] { parameter, new Long( 1 ), "So Subreport queries work too.." } );
       return model;
     } else {
       model.addRow( new Object[] { parameter, new Long( 0 ), "Ahh, another query-parameter, another table." } );
-      model.addRow(
-        new Object[] { parameter, new Long( 1 ), "Subreports can use parameters to control what data is returned." } );
+      model.addRow( new Object[] {
+          parameter, new Long( 1 ), "Subreports can use parameters to control what data is returned." } );
       return model;
     }
 

@@ -43,9 +43,9 @@ import pt.webdetails.cda.dataaccess.UnionCompoundDataAccess;
  */
 public class DomVisitor {
 
-	/*
+  /*
    * Connections
-	 */
+   */
 
   // All Abstract connections...
   public void visit( AbstractConnection con, Element ele ) {
@@ -159,9 +159,9 @@ public class DomVisitor {
     }
   }
 
-	/*
+  /*
    * DataAccess
-	 */
+   */
 
   public void visit( SimpleDataAccess da, Element daEle ) {
 

@@ -162,7 +162,7 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
     } catch ( TimeoutException e ) {
       int nbrTimeouts = incrTimeouts();
       checkNbrTimeouts( nbrTimeouts );
-      logger.error("Timeout " + getTimeout + " " +  timeoutUnit + " expired fetching from "
+      logger.error( "Timeout " + getTimeout + " " +  timeoutUnit + " expired fetching from "
           + map.getName() + " (timeout#" + nbrTimeouts + ")" );
     } catch ( InterruptedException e ) {
       logger.error( e );

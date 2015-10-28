@@ -168,14 +168,14 @@ public class EHCacheQueryCache implements IQueryCache {
     try {
       //make sure we have the right class loader in thread to instantiate cda classes in case DiskStore is used
       //TODO: ehcache 2.5 has ClassLoaderAwareCache
-      Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader() );
+      Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
       final Element element = cache.get( key );
       if ( element != null ) {
         final TableModel cachedTableModel = (TableModel) ( (CacheElement) element.getObjectValue() ).getTable();
         if ( cachedTableModel != null ) {
           if ( logger.isDebugEnabled() ) {
             // we have a entry in the cache ... great!
-            logger.debug("Found tableModel in cache. Returning" );
+            logger.debug( "Found tableModel in cache. Returning" );
             // Print cache status size
             logger.debug( "Cache status: " + cache.getMemoryStoreSize() + " in memory, "
                     + cache.getDiskStoreSize() + " in disk" );

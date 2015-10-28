@@ -28,118 +28,91 @@ import pt.webdetails.cda.dataaccess.IDataAccessUtils;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.utils.FormulaEvaluator;
 
-/**
- * Created by IntelliJ IDEA.
- * User: pedro
- * Date: Feb 2, 2010
- * Time: 5:09:18 PM
- */
-public class JndiConnection extends AbstractMondrianConnection implements EvaluableConnection
-{
+public class JndiConnection extends AbstractMondrianConnection implements EvaluableConnection {
 
-  private static final Log logger = LogFactory.getLog(JndiConnection.class);
+  private static final Log logger = LogFactory.getLog( JndiConnection.class );
   public static final String TYPE = "mondrianJndi";
   private MondrianJndiConnectionInfo connectionInfo;
   private Element connection;
 
-
-  public JndiConnection(final Element connection) throws InvalidConnectionException
-  {
-    super(connection);
+  public JndiConnection( final Element connection ) throws InvalidConnectionException {
+    super( connection );
     this.connection = connection;
   }
 
-
-  public JndiConnection()
-  {
+  public JndiConnection() {
   }
 
-  public JndiConnection(String id, MondrianJndiConnectionInfo info){
-    super(id);
+  public JndiConnection( String id, MondrianJndiConnectionInfo info ) {
+    super( id );
     connectionInfo = info;
   }
 
   @Override
-  protected void initializeConnection(final Element connection) throws InvalidConnectionException
-  {
+  protected void initializeConnection( final Element connection ) throws InvalidConnectionException {
 
-    connectionInfo = new MondrianJndiConnectionInfo(connection);
+    connectionInfo = new MondrianJndiConnectionInfo( connection );
 
   }
 
-
   @Override
-  public String getType()
-  {
+  public String getType() {
     return TYPE;
   }
 
-
-  public DataSourceProvider getInitializedDataSourceProvider() throws InvalidConnectionException
-  {
-    logger.debug("Creating new jndi connection");
+  public DataSourceProvider getInitializedDataSourceProvider() throws InvalidConnectionException {
+    logger.debug( "Creating new jndi connection" );
     IDataAccessUtils idu = CdaEngine.getEnvironment().getDataAccessUtils();
-    return idu.getMondrianJndiDatasourceProvider(connectionInfo);
-    
+    return idu.getMondrianJndiDatasourceProvider( connectionInfo );
+
   }
 
-
-  public synchronized MondrianJndiConnectionInfo getConnectionInfo()
-  {
+  public synchronized MondrianJndiConnectionInfo getConnectionInfo() {
     return this.connectionInfo;
   }
 
-
-  public boolean equals(final Object o)
-  {
-    if (this == o)
-    {
+  public boolean equals( final Object o ) {
+    if ( this == o ) {
       return true;
     }
-    if (o == null || getClass() != o.getClass())
-    {
+    if ( o == null || getClass() != o.getClass() ) {
       return false;
     }
 
     final JndiConnection that = (JndiConnection) o;
 
-    if (connectionInfo != null ? !connectionInfo.equals(that.connectionInfo) : that.connectionInfo != null)
-    {
+    if ( connectionInfo != null ? !connectionInfo.equals( that.connectionInfo ) : that.connectionInfo != null ) {
       return false;
     }
 
     return true;
   }
 
-
-  public int hashCode()
-  {
+  public int hashCode() {
     return connectionInfo != null ? connectionInfo.hashCode() : 0;
   }
 
-
   @Override
-  public ArrayList<PropertyDescriptor> getProperties()
-  {
+  public ArrayList<PropertyDescriptor> getProperties() {
     final ArrayList<PropertyDescriptor> properties = super.getProperties();
-    properties.add(new PropertyDescriptor("jndi", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    properties
+        .add( new PropertyDescriptor( "jndi", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
     return properties;
   }
 
-
   @Override
   public Connection evaluate() {
-      JndiConnection evaluated = this;
-      try {
-        evaluated= new JndiConnection(this.connection);
-      } catch (InvalidConnectionException e) {
-        logger.error("Unable to duplicate connection for evaluation", e);
-      }
-      evaluated.setCdaSettings(getCdaSettings());
-      //process formula on jndi
-      evaluated.getConnectionInfo().setJndi( FormulaEvaluator.replaceFormula(getConnectionInfo().getJndi()));
-      //assemble role
-      evaluated.getConnectionInfo().setMondrianRole(assembleRole(getConnectionInfo().getCatalog()));
-      return evaluated;
+    JndiConnection evaluated = this;
+    try {
+      evaluated = new JndiConnection( this.connection );
+    } catch ( InvalidConnectionException e ) {
+      logger.error( "Unable to duplicate connection for evaluation", e );
+    }
+    evaluated.setCdaSettings( getCdaSettings() );
+    // process formula on jndi
+    evaluated.getConnectionInfo().setJndi( FormulaEvaluator.replaceFormula( getConnectionInfo().getJndi() ) );
+    // assemble role
+    evaluated.getConnectionInfo().setMondrianRole( assembleRole( getConnectionInfo().getCatalog() ) );
+    return evaluated;
   }
 }

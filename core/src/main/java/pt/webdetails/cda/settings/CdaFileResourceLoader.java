@@ -34,7 +34,7 @@ import pt.webdetails.cpf.utils.MimeTypes;
  */
 public abstract class CdaFileResourceLoader implements ICdaResourceLoader {
 
-  private static final Log logger = LogFactory.getLog(CdaFileResourceLoader.class);
+  private static final Log logger = LogFactory.getLog( CdaFileResourceLoader.class );
   private final String name;
   private final String schema;
 
@@ -74,7 +74,7 @@ public abstract class CdaFileResourceLoader implements ICdaResourceLoader {
       if ( logger.isDebugEnabled() ) {
         logger.debug( "creating key for " + value );
       }
-      return new ResourceKey( schema, value, factoryKeys);
+      return new ResourceKey( schema, value, factoryKeys );
     }
     return null; // let another deal with it
   }

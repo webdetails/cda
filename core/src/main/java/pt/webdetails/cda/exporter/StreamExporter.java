@@ -21,5 +21,5 @@ import java.io.OutputStream;
  * @author Michael Spector
  */
 public interface StreamExporter extends Exporter {
-	public void export(OutputStream out) throws ExporterException;
+  public void export( OutputStream out ) throws ExporterException;
 }

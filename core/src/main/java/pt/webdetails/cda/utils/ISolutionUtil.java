@@ -13,10 +13,6 @@
 
 package pt.webdetails.cda.utils;
 
-/**
- *
- * @author Your Name <your.name at your.org>
- */
 public interface ISolutionUtil {
-    public String getSolutionPath(String path);
+  public String getSolutionPath( String path );
 }

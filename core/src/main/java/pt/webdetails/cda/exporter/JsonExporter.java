@@ -119,7 +119,8 @@ public class JsonExporter extends AbstractExporter {
             // issue with Infinity
           }
         } catch ( ClassCastException e ) {
-        }//just because it says Double doesn't mean we don't get oranges
+          //just because it says Double doesn't mean we don't get oranges
+        }
         rowArray.put( value );
       }
       valuesArray.put( rowArray );

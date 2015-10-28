@@ -16,7 +16,6 @@ package pt.webdetails.cda.dataaccess;
 import java.lang.reflect.Method;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
@@ -51,29 +50,29 @@ public class XPathDataAccess extends PREDataAccess {
 
     // incompatible versions of setQuery in 4.x and 5.x
     legacyFallbackInvoke( dataFactory, "setQuery",
-      new Class<?>[] { String.class, String.class }, new Object[] { "query", getQuery() },
-      new Class<?>[] { String.class, String.class, boolean.class }, new Object[] { "query", getQuery(), true } );
+        new Class<?>[] { String.class, String.class }, new Object[] { "query", getQuery() },
+        new Class<?>[] { String.class, String.class, boolean.class }, new Object[] { "query", getQuery(), true } );
 
     return dataFactory;
   }
 
   private static boolean legacyFallbackInvoke(
-    Object object, String methodName,
-    Class<?>[] argTypes, Object[] args,
-    Class<?>[] argTypesFallback, Object[] argsFallback ) {
+      Object object, String methodName,
+      Class<?>[] argTypes, Object[] args,
+      Class<?>[] argTypesFallback, Object[] argsFallback ) {
     Method method = null;
     try {
       try {
         method = object.getClass().getMethod( methodName, argTypes );
       } catch ( NoSuchMethodException e1 ) {
-        logger.debug( String
-          .format( "failed to find %s(%s): ", methodName, ArrayUtils.toString( argTypes ), e1.getLocalizedMessage() ) );
+        logger.debug(
+            String.format( "failed to find %s(%s): ", methodName, ArrayUtils.toString( argTypes ), e1.getLocalizedMessage() ) );
         try {
           method = object.getClass().getMethod( methodName, argTypesFallback );
           args = argsFallback;
         } catch ( NoSuchMethodException e2 ) {
           logger.error(
-            String.format( "failed to find %1$s(%2$s) or %1$s(%3$s) ",
+              String.format( "failed to find %1$s(%2$s) or %1$s(%3$s) ",
               methodName,
               ArrayUtils.toString( argTypes ),
               ArrayUtils.toString( argTypesFallback ) ) );

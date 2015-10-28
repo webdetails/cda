@@ -33,10 +33,10 @@ public class ParameterArrayToStringEncoder {
 
 
   public String encodeParameterArray( Object parameterArrayValue, Parameter.Type type ) {
-    switch( type ) {
+    switch ( type ) {
       case STRING_ARRAY:
         if ( parameterArrayValue instanceof List ) {
-          parameterArrayValue = ( (List) parameterArrayValue ).toArray();
+          parameterArrayValue = ( (List<?>) parameterArrayValue ).toArray();
         }
 
         if ( !( parameterArrayValue instanceof String[] ) && ( parameterArrayValue instanceof Object[] ) ) {
@@ -66,7 +66,8 @@ public class ParameterArrayToStringEncoder {
       case DATE_ARRAY:
       case INTEGER_ARRAY:
       case NUMERIC_ARRAY:
-      default://also handle whan we want a string and have an array
+      default:
+        //also handle whan we want a string and have an array
         if ( parameterArrayValue instanceof Object[] ) {
           Object[] arr = (Object[]) parameterArrayValue;
           i = 0;

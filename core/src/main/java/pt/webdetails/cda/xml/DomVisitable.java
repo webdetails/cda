@@ -23,7 +23,7 @@ import org.dom4j.Element;
  *
  */
 public interface DomVisitable {
-	
-	public void accept(DomVisitor v, Element ele);
+
+  public void accept( DomVisitor v, Element ele );
 
 }

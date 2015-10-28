@@ -290,7 +290,7 @@ public class DynamicTransConfig {
   private void validate() {
     if ( inputs.size() == 0 ) {
       logger.warn(
-        "No inputs specified. If the transformation has no input defined elsewhere, the transformation could hang." );
+          "No inputs specified. If the transformation has no input defined elsewhere, the transformation could hang." );
     }
     if ( outputs.size() == 0 ) {
       logger.warn( "No outputs specified." );

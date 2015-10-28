@@ -21,27 +21,21 @@ import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 
 /**
- * Todo: Document me!
- * <p/>
- * Date: 16.02.2010
- * Time: 13:22:05
- *
  * @author Thomas Morgner.
  */
 public class ScriptingConnection extends AbstractConnection {
 
   private ScriptingConnectionInfo connectionInfo;
 
-  public ScriptingConnection(final Element connection)
-          throws InvalidConnectionException {
-    super(connection);
+  public ScriptingConnection( final Element connection ) throws InvalidConnectionException {
+    super( connection );
   }
 
   public ScriptingConnection() {
   }
 
-  protected void initializeConnection(final Element connection) throws InvalidConnectionException {
-    connectionInfo = new ScriptingConnectionInfo(connection);
+  protected void initializeConnection( final Element connection ) throws InvalidConnectionException {
+    connectionInfo = new ScriptingConnectionInfo( connection );
   }
 
   public String getType() {
@@ -53,17 +47,17 @@ public class ScriptingConnection extends AbstractConnection {
     return connectionInfo;
   }
 
-  public boolean equals(final Object o) {
-    if (this == o) {
+  public boolean equals( final Object o ) {
+    if ( this == o ) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if ( o == null || getClass() != o.getClass() ) {
       return false;
     }
 
     final ScriptingConnection that = (ScriptingConnection) o;
 
-    if (!connectionInfo.equals(that.connectionInfo)) {
+    if ( !connectionInfo.equals( that.connectionInfo ) ) {
       return false;
     }
 
@@ -81,14 +75,17 @@ public class ScriptingConnection extends AbstractConnection {
 
   @Override
   public ArrayList<PropertyDescriptor> getProperties() {
-   ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
-    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
-    properties.add(new PropertyDescriptor("language", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
-    properties.add(new PropertyDescriptor("initscript", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
+    properties.add(
+        new PropertyDescriptor( "id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB ) );
+    properties.add(
+        new PropertyDescriptor( "language", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+    properties.add(
+        new PropertyDescriptor( "initscript", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
     return properties;
   }
 
   public ScriptingConnectionInfo getConnectionInfo() {
-	  return connectionInfo;
+    return connectionInfo;
   }
 }

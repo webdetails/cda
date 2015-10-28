@@ -18,9 +18,9 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.Defa
 
 public class DefaultCubeFileProviderSetter implements ICubeFileProviderSetter {
 
-    @Override
-    public void setCubeFileProvider(AbstractNamedMDXDataFactory factory, String catalog) {
-        factory.setCubeFileProvider(new DefaultCubeFileProvider(catalog));
-    }
+  @Override
+  public void setCubeFileProvider( AbstractNamedMDXDataFactory factory, String catalog ) {
+    factory.setCubeFileProvider( new DefaultCubeFileProvider( catalog ) );
+  }
 
 }

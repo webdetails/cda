@@ -75,15 +75,15 @@ public class DataAccessConnectionDescriptor {
        * Metadata block
        */
       output.append( "\t\"metadata\": {\n" );
-      output.append( "\t\t\"name\": \"" + dataAccess.getType() + ( this.conn.getGenericType() != ConnectionType.NONE ?
-        " over " + conn.getType() : "" ) + "\",\n" );
-      output.append(
-        this.conn.getGenericType() != ConnectionType.NONE ? "\t\t\"conntype\": \"" + conn.getTypeForFile() + "\",\n" :
-          "" );
+      output.append( "\t\t\"name\": \"" + dataAccess.getType()
+          + ( this.conn.getGenericType() != ConnectionType.NONE ? " over " + conn.getType() : "" ) + "\",\n" );
+      output.append( this.conn.getGenericType() != ConnectionType.NONE ? "\t\t\"conntype\": \"" + conn.getTypeForFile()
+          + "\",\n" : "" );
       output.append( "\t\t\"datype\": \"" + dataAccess.getType() + "\",\n" );
       output.append( "\t\t\"group\": \"" + this.conn.getGenericType().toString() + "\",\n" );
-      output.append( "\t\t\"groupdesc\": \"" + ( this.conn.getGenericType() != ConnectionType.NONE ?
-        this.conn.getGenericType().toString() : "Compound" ) + " Queries\",\n" );
+      output.append( "\t\t\"groupdesc\": \""
+          + ( this.conn.getGenericType() != ConnectionType.NONE ? this.conn.getGenericType().toString() : "Compound" )
+          + " Queries\",\n" );
       output.append( "\t},\n" );
       /* 
        * Definition block
@@ -92,17 +92,15 @@ public class DataAccessConnectionDescriptor {
       if ( connectionInfo.size() > 0 ) {
         output.append( "\t\t\"connection\": {\n" );
         for ( PropertyDescriptor prop : connectionInfo ) {
-          output.append(
-            "\t\t\t\"" + prop.getName() + "\": {\"type\": \"" + prop.getType() + "\", \"placement\": \"" + prop
-              .getPlacement() + "\"},\n" );
+          output.append( "\t\t\t\"" + prop.getName() + "\": {\"type\": \"" + prop.getType() + "\", \"placement\": \""
+              + prop.getPlacement() + "\"},\n" );
         }
         output.append( "\t\t},\n" );
       }
       output.append( "\t\t\"dataaccess\": {\n" );
       for ( PropertyDescriptor prop : dataAccessInfo ) {
-        output.append(
-          "\t\t\t\"" + prop.getName() + "\": {\"type\": \"" + prop.getType() + "\", \"placement\": \"" + prop
-            .getPlacement() + "\"},\n" );
+        output.append( "\t\t\t\"" + prop.getName() + "\": {\"type\": \"" + prop.getType() + "\", \"placement\": \""
+            + prop.getPlacement() + "\"},\n" );
       }
       output.append( "\t\t}\n\t}\n}" );
     }
@@ -117,8 +115,8 @@ public class DataAccessConnectionDescriptor {
       for ( Connection conn : conns ) {
         try {
           String name =
-            sample.getType() + ( !( conn.getGenericType().equals( ConnectionType.NONE ) ) ? ( "_" + conn.getType() ) :
-              "" );
+              sample.getType()
+                  + ( !( conn.getGenericType().equals( ConnectionType.NONE ) ) ? ( "_" + conn.getType() ) : "" );
           DataAccessConnectionDescriptor descriptor = new DataAccessConnectionDescriptor( name );
           descriptor.setDataAccess( sample );
           descriptor.setConnection( conn );

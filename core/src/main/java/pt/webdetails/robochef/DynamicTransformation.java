@@ -24,10 +24,7 @@ import java.util.concurrent.Callable;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.Result;
 import org.pentaho.di.core.exception.KettleException;
-
 import org.pentaho.di.core.logging.CentralLogStore;
-
-
 import org.pentaho.di.core.logging.LogLevel;
 import org.pentaho.di.core.logging.LoggingRegistry;
 import org.pentaho.di.core.variables.VariableSpace;
@@ -41,6 +38,7 @@ import org.pentaho.di.trans.step.StepErrorMeta;
 import org.pentaho.di.trans.step.StepInterface;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.step.StepMetaInterface;
+import org.pentaho.metastore.api.IMetaStore;
 
 /**
  * A dynamically generated Kettle transformation. The transformation is composed of: <ul> <li>the TRANS entry (with
@@ -92,8 +90,8 @@ public class DynamicTransformation {
     }
     if ( initializeJNDI && !isInitializedWithJDNI ) {
       throw new IllegalStateException(
-        "DynamicTransformation was already initialized without JNDI. Call init(true) before new DynamicTransformation"
-					+ "()" );
+          "DynamicTransformation was already initialized without JNDI. Call init(true) before new DynamicTransformation"
+              + "()" );
     }
   }
 
@@ -131,15 +129,16 @@ public class DynamicTransformation {
     this.inputCallables = inputCallables;
 
     for ( final Entry<String, String> entry : transConfig.getFrozenStepConfigEntries().entrySet() ) {
-      final StepMeta stepMeta = new StepMeta( XMLHandler.getSubNode( XMLHandler.loadXMLString( entry.getValue() ),
-        StepMeta.XML_TAG ), transMeta.getDatabases(), transMeta.getCounters() );
+      final StepMeta stepMeta =
+          new StepMeta( XMLHandler.getSubNode( XMLHandler.loadXMLString( entry.getValue() ), StepMeta.XML_TAG ),
+              transMeta.getDatabases(), (IMetaStore) null );
       transMeta.addOrReplaceStep( stepMeta );
     }
 
     final List<StepMeta> steps = transMeta.getSteps();
     for ( final Entry<String, String> entry : transConfig.getFrozenStepErrorHandlingConfigEntries().entrySet() ) {
-      final StepErrorMeta stepErrorMeta = new StepErrorMeta( transMeta, XMLHandler.getSubNode( XMLHandler
-        .loadXMLString( entry.getValue() ), StepErrorMeta.XML_TAG ), steps );
+      final StepErrorMeta stepErrorMeta = new StepErrorMeta( transMeta, XMLHandler.getSubNode(
+          XMLHandler.loadXMLString( entry.getValue() ), StepErrorMeta.XML_TAG ), steps );
       stepErrorMeta.getSourceStep().setStepErrorMeta( stepErrorMeta );
     }
 
@@ -152,8 +151,8 @@ public class DynamicTransformation {
     }
 
     for ( final Entry<String, String> entry : transConfig.getFrozenHopConfigEntries().entrySet() ) {
-      final TransHopMeta hop = new TransHopMeta( transMeta.findStep( entry.getKey() ), transMeta.findStep( entry
-        .getValue() ) );
+      final TransHopMeta hop = new TransHopMeta( transMeta.findStep( entry.getKey() ), transMeta.findStep(
+          entry.getValue() ) );
       transMeta.addTransHop( hop );
     }
 
@@ -237,8 +236,8 @@ public class DynamicTransformation {
     synchronized ( this.getClass() ) {
       if ( !hasCheckedForMethod ) {
         hasCheckedForMethod = true;
-        Class c = LoggingRegistry.class;
-        Class parTypes[] = new Class[ 1 ];
+        Class<?> c = LoggingRegistry.class;
+        Class<?>[] parTypes = new Class[1];
         parTypes[ 0 ] = String.class;
         try {
           logCleaningMethod = c.getDeclaredMethod( "removeIncludingChildren", parTypes );
@@ -251,17 +250,19 @@ public class DynamicTransformation {
 
 
     if ( logCleaningMethod != null ) {
-      Object parameters[] = new Object[ 1 ];
-      parameters[ 0 ] = logChannelId;
+      Object[] parameters = new Object[1];
+      parameters[0] = logChannelId;
       try {
         logCleaningMethod.invoke( LoggingRegistry.getInstance(), parameters );
       } catch ( IllegalArgumentException ex ) {
+        // TODO: review this
       } catch ( InvocationTargetException ex ) {
+        //
       } catch ( IllegalAccessException ilae ) {
+        //
       }
     }
 
-    //		LoggingRegistry.getInstance().  removeIncludingChildren(logChannelId);
   }
 
 

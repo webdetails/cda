@@ -104,10 +104,9 @@ public class DomTraversalHelper {
       }
 
       // Banded Mode
-      if ( da instanceof MdxDataAccess && ( (MdxDataAccess) da ).getBandedMode()
-        .equals( MdxDataAccess.BANDED_MODE.COMPACT ) ) {
-        daEle.addElement( "BandedMode" ).addText(
-          MdxDataAccess.BANDED_MODE.COMPACT.name().toLowerCase() );
+      if ( da instanceof MdxDataAccess
+          && ( (MdxDataAccess) da ).getBandedMode().equals( MdxDataAccess.BANDED_MODE.COMPACT ) ) {
+        daEle.addElement( "BandedMode" ).addText( MdxDataAccess.BANDED_MODE.COMPACT.name().toLowerCase() );
       }
 
       // Outputs

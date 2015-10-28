@@ -24,8 +24,8 @@ public class CdaTestingContentAccessFactory implements IContentAccessFactory {
 
   public CdaTestingContentAccessFactory() {
     // assumes test resources were copied to classpath
-    File base =
-      new File( CdaTestingContentAccessFactory.class.getProtectionDomain().getCodeSource().getLocation().getPath() );
+    File base = new File(
+        CdaTestingContentAccessFactory.class.getProtectionDomain().getCodeSource().getLocation().getPath() );
     baseSystem = base;
     baseRepository = new File( base, DEFAULT_REPOSITORY );
   }

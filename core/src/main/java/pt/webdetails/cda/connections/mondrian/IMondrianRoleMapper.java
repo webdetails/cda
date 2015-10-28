@@ -15,6 +15,6 @@ package pt.webdetails.cda.connections.mondrian;
 
 
 public interface IMondrianRoleMapper {
-  
-  public String getRoles(String catalog);
+
+  public String getRoles( String catalog );
 }

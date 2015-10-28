@@ -157,7 +157,7 @@ public class CdaSettings {
     final String typeName = element.attributeValue( "type" );
     DataAccessInstanceType type = DataAccessInstanceType.parseType( typeName );
     if ( type != null ) {
-      switch( type ) {
+      switch ( type ) {
         case DENORMALIZED_MDX:
           return new DenormalizedMdxDataAccess( element );
         case JOIN:
@@ -197,7 +197,7 @@ public class CdaSettings {
 
     @SuppressWarnings( "unchecked" )
     final List<Element> dataAccessesList =
-      root.selectNodes( "/CDADescriptor/DataAccess | /CDADescriptor/CompoundDataAccess" );
+        root.selectNodes( "/CDADescriptor/DataAccess | /CDADescriptor/CompoundDataAccess" );
 
     for ( final Element element : dataAccessesList ) {
 
@@ -227,7 +227,7 @@ public class CdaSettings {
     ConnectionInstanceType connType = ConnectionInstanceType.parseType( type );
 
     if ( connType != null ) {
-      switch( connType ) {
+      switch ( connType ) {
         case KETTLE_TRANS_FROM_FILE:
           return new TransFromFileConnection( element );
         case Metadata:

@@ -28,10 +28,11 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.Abst
  *
  * @author Thomas Morgner
  */
-public class CompactBandedMDXDataFactory extends AbstractNamedMDXDataFactory
-{
-  public CompactBandedMDXDataFactory()
-  {
+public class CompactBandedMDXDataFactory extends AbstractNamedMDXDataFactory {
+
+  private static final long serialVersionUID = 1L;
+
+  public CompactBandedMDXDataFactory() {
   }
 
   /**
@@ -46,9 +47,8 @@ public class CompactBandedMDXDataFactory extends AbstractNamedMDXDataFactory
    * @return the result of the query as table model.
    * @throws ReportDataFactoryException if an error occured while performing the query.
    */
-  public TableModel queryData(final String queryName, final DataRow parameters) throws ReportDataFactoryException
-  {
-    final Result cellSet = performQuery(queryName, parameters);
-    return new CompactBandedMDXTableModel(cellSet, extractQueryLimit(parameters));
+  public TableModel queryData( final String queryName, final DataRow parameters ) throws ReportDataFactoryException {
+    final Result cellSet = performQuery( queryName, parameters );
+    return new CompactBandedMDXTableModel( cellSet, extractQueryLimit( parameters ) );
   }
 }

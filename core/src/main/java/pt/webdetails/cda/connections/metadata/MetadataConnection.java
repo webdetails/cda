@@ -35,27 +35,26 @@ public class MetadataConnection extends AbstractConnection {
   protected static final ConnectionType connectionType = ConnectionType.MQL;
   private MetadataConnectionInfo connectionInfo;
 
-  public MetadataConnection(final Element connection)
-          throws InvalidConnectionException {
-    super(connection);
+  public MetadataConnection( final Element connection ) throws InvalidConnectionException {
+    super( connection );
   }
 
   public MetadataConnection() {
   }
-  
+
 /**
  * 
  * @param id this connection's ID
  * @param domainId domain ID
  * @param xmiFile XMI file with metadata definition
  */
-  public MetadataConnection(String id, String domainId, String xmiFile){
-  	super(id);
-  	this.connectionInfo = new MetadataConnectionInfo(domainId,xmiFile);
+  public MetadataConnection( String id, String domainId, String xmiFile ) {
+    super( id );
+    this.connectionInfo = new MetadataConnectionInfo( domainId, xmiFile );
   }
 
-  protected void initializeConnection(final Element connection) throws InvalidConnectionException {
-    connectionInfo = new MetadataConnectionInfo(connection);
+  protected void initializeConnection( final Element connection ) throws InvalidConnectionException {
+    connectionInfo = new MetadataConnectionInfo( connection );
   }
 
   public String getType() {
@@ -69,17 +68,17 @@ public class MetadataConnection extends AbstractConnection {
     return connectionInfo;
   }
 
-  public boolean equals(final Object o) {
-    if (this == o) {
+  public boolean equals( final Object o ) {
+    if ( this == o ) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if ( o == null || getClass() != o.getClass() ) {
       return false;
     }
 
     final MetadataConnection that = (MetadataConnection) o;
 
-    if (!connectionInfo.equals(that.connectionInfo)) {
+    if ( !connectionInfo.equals( that.connectionInfo ) ) {
       return false;
     }
 
@@ -98,15 +97,18 @@ public class MetadataConnection extends AbstractConnection {
   @Override
   public List<PropertyDescriptor> getProperties() {
     ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
-    properties.add(new PropertyDescriptor("id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB));
-    properties.add(new PropertyDescriptor("xmiFile", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
-    properties.add(new PropertyDescriptor("domainId", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD));
+    properties.add(
+        new PropertyDescriptor( "id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB ) );
+    properties.add(
+        new PropertyDescriptor( "xmiFile", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+    properties.add(
+        new PropertyDescriptor( "domainId", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
 
     return properties;
   }
-  
+
   public MetadataConnectionInfo getConnectionInfo() {
-	  return connectionInfo;
+    return connectionInfo;
   }
-	
+
 }

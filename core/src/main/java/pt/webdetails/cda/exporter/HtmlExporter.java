@@ -51,7 +51,7 @@ public class HtmlExporter extends AbstractExporter {
     private static final String FULL_HTML = "fullHtml";
   }
 
-  private SimpleDateFormat format = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US );//TODO:..
+  private SimpleDateFormat format = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US ); // TODO:..
   private String title = DEFAULT_TITLE;
   private boolean fullHtml = false;
 
@@ -127,7 +127,7 @@ public class HtmlExporter extends AbstractExporter {
 
       OutputFormat outFormat = new OutputFormat();
       outFormat.setOmitEncoding( true );
-      outFormat.setSuppressDeclaration( true );//otherwise msexcel/oocalc may not recognize content
+      outFormat.setSuppressDeclaration( true ); //otherwise msexcel/oocalc may not recognize content
       outFormat.setNewlines( true );
       outFormat.setIndentSize( columnCount );
       final Writer writer = new BufferedWriter( new OutputStreamWriter( out ) );
@@ -146,7 +146,7 @@ public class HtmlExporter extends AbstractExporter {
     } else if ( value instanceof Date ) {
       return format.format( (Date) value );
     } else {
-      return value.toString();//as of now default formatting, maybe change this in the future for numeric values
+      return value.toString(); //as of now default formatting, maybe change this in the future for numeric values
     }
   }
 
