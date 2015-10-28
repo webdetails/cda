@@ -34,8 +34,7 @@ import pt.webdetails.cda.settings.CdaSettings;
  *
  * @author Thomas Morgner.
  */
-public class TransFromFileConnection extends AbstractConnection implements KettleConnection
-{
+public class TransFromFileConnection extends AbstractConnection implements KettleConnection {
 
   private TransFromFileConnectionInfo connectionInfo;
 

@@ -237,8 +237,8 @@ public class CdaCoreService {
       queryOptions.addSetting( name, (String) parameter );
     }
     // we'll allow for the special "callback" param to be used, and passed as settingcallback to jsonp exports
-    if ( !parameters.getJsonCallback().equals( "<blank>" ) ) // XXX why <blank>?! check the ui for this
-    {
+    // XXX why <blank>?! check the ui for this
+    if ( !parameters.getJsonCallback().equals( "<blank>" ) ) {
       queryOptions.addSetting( JSONP_CALLBACK, parameters.getJsonCallback() );
     }
   }

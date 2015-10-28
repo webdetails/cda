@@ -289,8 +289,7 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
    *
    */
   private static final class SyncRemoveStatsEntryListener
-      extends ClassLoaderAwareCaller implements EntryListener<TableCacheKey, TableModel>
-  {
+      extends ClassLoaderAwareCaller implements EntryListener<TableCacheKey, TableModel> {
     public SyncRemoveStatsEntryListener( ClassLoader classLoader ) {
       super( classLoader );
     }
@@ -450,8 +449,7 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
    * @return
    */
   public Iterable<Map.Entry<TableCacheKey, ExtraCacheInfo>>
-      getCacheStatsEntries( final String cdaSettingsId, final String dataAccessId )
-  {
+      getCacheStatsEntries( final String cdaSettingsId, final String dataAccessId ) {
     //sql predicate would need to instantiate extraCacheInfo in host classloader
     //return getCacheStats().entrySet(new SqlPredicate("cdaSettingsId = " + cdaSettingsId + ((dataAccessId != null)? " AND dataAccessId = " + dataAccessId : "")));
     ArrayList<Entry<TableCacheKey, ExtraCacheInfo>> result = new ArrayList<Entry<TableCacheKey, ExtraCacheInfo>>();

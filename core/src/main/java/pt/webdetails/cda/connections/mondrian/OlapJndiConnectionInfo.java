@@ -19,8 +19,8 @@ import org.apache.commons.lang.StringUtils;
 /**
  * @author Thomas Morgner.
  */
-public class OlapJndiConnectionInfo extends pt.webdetails.cda.connections.JndiConnectionInfo
-{
+public class OlapJndiConnectionInfo extends pt.webdetails.cda.connections.JndiConnectionInfo {
+
   private String roleField;
 
   public OlapJndiConnectionInfo( final String roleFiled, String jndi ) {

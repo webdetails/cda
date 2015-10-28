@@ -113,12 +113,12 @@ public class CacheElementInfo {
     queryInfo.put( "inserted", insertTime );
     queryInfo.put( "accessed", accessTime );
     queryInfo.put( "hits", hits );
-    queryInfo.put("size", byteSize != null ? byteSize.longValue() : null );
+    queryInfo.put( "size", byteSize != null ? byteSize.longValue() : null );
 
     if ( duration != null ) {
       queryInfo.put( "duration", duration.longValue() );
     }
-    queryInfo.put("timeToLive", timeToLive );
+    queryInfo.put( "timeToLive", timeToLive );
 
     // use id to get table;
     // identifier
