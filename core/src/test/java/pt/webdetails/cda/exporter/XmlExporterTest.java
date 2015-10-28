@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 
@@ -26,22 +27,29 @@ public class XmlExporterTest {
 
   @Test
   public void testXmlExport1() throws Exception {
-    TableModel table = BasicExportExamples.getTestTable1();
+    final TimeZone tz = TimeZone.getDefault();
+    try {
+      TimeZone.setDefault( TimeZone.getTimeZone( "GMT" ) );
 
-    final XmlStringTable exported = exportToXmlStringTable( table );
-    assertEquals( "Numeric", exported.getColumnType( 0 ) );
-    assertEquals( "String", exported.getColumnType( 1 ) );
-    assertEquals( "Numeric", exported.getColumnType( 2 ) );
-    assertEquals( "Date", exported.getColumnType( 3 ) );
-    assertEquals( "Numeric", exported.getColumnType( 4 ) );
-    TableModelChecker checker = new TableModelChecker();
-    checker.assertColumnNames( exported, "The Integer", "The String", "The Numeric", "The Date", "The Calculation" );
-    final TableModel expected = new SimpleTableModel(
-        new Object[] { "1", "One", "1.05", "2012-01-01T00:01:01.000+0000", "-12.34567890123456789" },
-        new Object[] { "-2", "Two > One", "-1.05", "", "987654321.12345678900" },
-        new Object[] { "9223372036854775807", "Many", "1.7976931348623157E308",
-                       "1970-01-01T01:00:00.000+0100", "4.9E-325" } );
-    checker.assertEquals( expected, exported );
+      TableModel table = BasicExportExamples.getTestTable1();
+
+      final XmlStringTable exported = exportToXmlStringTable( table );
+      assertEquals( "Numeric", exported.getColumnType( 0 ) );
+      assertEquals( "String", exported.getColumnType( 1 ) );
+      assertEquals( "Numeric", exported.getColumnType( 2 ) );
+      assertEquals( "Date", exported.getColumnType( 3 ) );
+      assertEquals( "Numeric", exported.getColumnType( 4 ) );
+      TableModelChecker checker = new TableModelChecker();
+      checker.assertColumnNames( exported, "The Integer", "The String", "The Numeric", "The Date", "The Calculation" );
+      final TableModel expected = new SimpleTableModel(
+          new Object[] { "1", "One", "1.05", "2012-01-01T00:01:01.000+0000", "-12.34567890123456789" },
+          new Object[] { "-2", "Two > One", "-1.05", "", "987654321.12345678900" },
+          new Object[] { "9223372036854775807", "Many", "1.7976931348623157E308",
+                         "1970-01-01T00:00:00.000+0000", "4.9E-325" } );
+      checker.assertEquals( expected, exported );
+    } finally {
+      TimeZone.setDefault( tz );
+    }
   }
 
   @Test
@@ -128,4 +136,5 @@ public class XmlExporterTest {
       return columnsMetadata.get( columnIndex ).attributeValue( "type" );
     }
   }
+
 }
