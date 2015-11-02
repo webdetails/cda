@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -22,6 +22,7 @@ import org.pentaho.reporting.engine.classic.core.wizard.EmptyDataAttributes;
 import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 import org.pentaho.reporting.libraries.formula.EvaluationException;
 import org.pentaho.reporting.libraries.formula.Formula;
+import org.pentaho.reporting.libraries.formula.LibFormulaErrorValue;
 import org.pentaho.reporting.libraries.formula.parser.ParseException;
 import pt.webdetails.cda.dataaccess.ColumnDefinition;
 
@@ -183,9 +184,15 @@ public class CalculatedTableModel implements MetaTableModel {
       final Formula formulaObject = new Formula( formulaExpression );
       formulaObject.initialize( context );
       Object value = formulaObject.evaluate();
+
+      if ( this.isLibFormulaErrorValue( value ) ) {
+        value = null;
+      }
+
       if ( inferTypes && value != null ) {
         accumulateClassAt( calcColumnIndex, value.getClass() );
       }
+
       return value;
     } finally {
       context.unlock( calcColumnIndex );
@@ -250,5 +257,9 @@ public class CalculatedTableModel implements MetaTableModel {
       return EmptyDataAttributes.INSTANCE;
     }
     return metaTableModel.getTableAttributes();
+  }
+
+  private boolean isLibFormulaErrorValue( Object formulaError ) {
+    return formulaError != null && formulaError instanceof LibFormulaErrorValue;
   }
 }
