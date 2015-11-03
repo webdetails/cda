@@ -71,6 +71,7 @@
 
         $("#dialog").jqm({modal: true});
         $('#help').jqm({modal: true});
+        $('#invalidInput').jqm({modal: true});
         $('#queryUrlDialog').jqm({modal: true});
         $('#outputIndexHelp').jqm({ modal: true});
 
@@ -160,6 +161,23 @@
       </div>
       <div class="webdetailsFooterCtools">
         <a href="http://www.webdetails.pt/ctools.html"></a>
+      </div>
+    </div>
+
+    <div id='invalidInput' class='jqmWindow helpWindow'>
+      <h2 class='dialogTitle'>Invalid Parameter Value</h2>
+
+      <p>
+        Your input must match the parameter type.
+      </p>
+
+      <p>
+        In case the parameter type is <b>Date</b> or <b>DateArray</b>,
+        your input must also match the pattern.
+      </p>
+
+      <div class='dialogAction'>
+        <a href='javascript:' class='jqmClose'>Close</a>
       </div>
     </div>
 
