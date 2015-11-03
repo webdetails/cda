@@ -50,6 +50,7 @@
 		padding-top: 20px;
 		text-align: center;
 		font-family: Verdana, Helvetica, sans-serif;
+		font-size: 12px;
 	}
 
 	#testTable tr td:nth-child(1) {
@@ -100,7 +101,7 @@
 				Version ${project.version}
 			</div>
 			<div class="span-8 append-3 cdaDesc desc last">
-				<p> CDA is the new <b>Data Access component</b> developed for Pentaho </p>
+				<p> CDA is the <b>Data Access component</b> developed for Pentaho </p>
 				<p> Here you can not only access the available datasources but also use it
 					as a test page and reference to the way CDA works </p>
 			</div>
@@ -112,22 +113,10 @@
 
 		</div>
 
-		<div class="span-5 last logos">
-			<div class="logo">
-				<a href="http://www.webdetails.pt/ctools/cda.html#documentation" target="_blank">CDA Documentation <img border="0" src="resources/pastaCDA.png" /> </a>
+		
+		<div class="logo">
+			<a id="about" href="/pentaho/api/repos/cda/static/about.html">About</a>
 
-			</div>
-
-			<div class="logo">
-				<a href="http://tinyurl.com/ydfzw4u" target="_blank">Blog Post <img border="0" src="resources/pastaCDA.png" /> </a>
-
-
-			</div>
-
-			<div class="logo">
-				<a href="http://www.webdetails.pt/cda/CDA.pdf" target="_blank">PDF Brochure <img border="0" src="resources/pastaCDA.png" /> </a>
-
-			</div>
 		</div>
 
 
@@ -211,8 +200,8 @@
     {
       type: "mondrian.jdbc (denormalized)",
       desc: "Denormalized Mdx query over a jdbc mondrian connection",
-      url: webAppPath + "/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/denormalized-mondrian-jndi.cda",
-      expectedCols: 5,
+      url: webAppPath + "/plugin/cda/api/doQuery?dataAccessId=1&path=/public/plugin-samples/cda/cdafiles/denormalized-mondrian-jdbc.cda",
+      expectedCols: 4,
       expectedRows: 6
     },
     {
