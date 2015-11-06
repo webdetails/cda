@@ -85,15 +85,11 @@ public class UnionCompoundDataAccess extends CompoundDataAccess {
 
   @Override
   public ArrayList<PropertyDescriptor> getInterface() {
-    ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
-    properties.add(
-        new PropertyDescriptor( "id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB ) );
+    ArrayList<PropertyDescriptor> properties = super.getInterface();
     properties.add(
         new PropertyDescriptor( "top", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
     properties.add(
         new PropertyDescriptor( "bottom", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
-    properties.add(
-        new PropertyDescriptor( "parameters", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
     return properties;
   }
 

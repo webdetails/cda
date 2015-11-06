@@ -43,6 +43,8 @@ public abstract class CompoundDataAccess extends AbstractDataAccess implements D
     ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
     properties.add( new PropertyDescriptor( "id", Type.STRING, PropertyDescriptor.Placement.ATTRIB ) );
     properties.add( new PropertyDescriptor( "parameters", Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+    properties.add(
+      new PropertyDescriptor( "columns", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD ) );
     return properties;
   }
 

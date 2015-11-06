@@ -358,15 +358,11 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   }
 
   public ArrayList<PropertyDescriptor> getInterface() {
-    ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
-    properties.add(
-        new PropertyDescriptor( "id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB ) );
+    ArrayList<PropertyDescriptor> properties = super.getInterface();
     properties.add(
         new PropertyDescriptor( "left", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
     properties.add(
         new PropertyDescriptor( "right", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
-    properties.add(
-        new PropertyDescriptor( "parameters", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
     properties.add(
         new PropertyDescriptor( "output", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD ) );
     properties.add(
