@@ -53,7 +53,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   private static final String TYPE = "join";
   private static final long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
   private static TimeUnit DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT = TimeUnit.SECONDS;
-  private static int DEFAULT_MAX_ROWS_VALUE_TYPE_SEARCH = 500;//max nbr of rows to search for value
+  private static int DEFAULT_MAX_ROWS_VALUE_TYPE_SEARCH = 500; //max nbr of rows to search for value
   private JoinType joinType;
   private String leftId;
   private String rightId;
@@ -358,19 +358,15 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   }
 
   public ArrayList<PropertyDescriptor> getInterface() {
-    ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
-    properties
-      .add( new PropertyDescriptor( "id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB ) );
-    properties
-      .add( new PropertyDescriptor( "left", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
-    properties
-      .add( new PropertyDescriptor( "right", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+    ArrayList<PropertyDescriptor> properties = super.getInterface();
     properties.add(
-      new PropertyDescriptor( "parameters", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
-    properties
-      .add( new PropertyDescriptor( "output", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD ) );
-    properties
-      .add( new PropertyDescriptor( "joinType", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+      new PropertyDescriptor( "left", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+    properties.add(
+      new PropertyDescriptor( "right", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+    properties.add(
+      new PropertyDescriptor( "output", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD ) );
+    properties.add(
+      new PropertyDescriptor( "joinType", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
     return properties;
   }
 
