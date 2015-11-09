@@ -285,20 +285,183 @@ updateLastQuery = function(dataAccessId) {
 };
 
 refreshParams = function(id) {
+  var myself = this;
   PreviewerBackend.listParameters({path: getFileName(), dataAccessId: id}, function(data) {
     var placeholder = $('#parameterHolder');
     clearParameters();
     for(var param in data.resultset) {
       if (data.resultset.hasOwnProperty(param)) {
-        placeholder.append('<div class="param span-5 last"><div class="span-5" id="parameterDimension">' + data.resultset[param][0] +
-        ':&nbsp;</div><div class="cdaInputWrapper span-5 last"><input class="cdaButton" id="' + data.resultset[param][0] +
-        '" value="' + data.resultset[param][2] + '"' + ((data.resultset[param][4] == 'private') ? ' readonly="readonly"' : '') + '"><div class="helpButton">?</div></div></div>');
+        var paramData = data.resultset[param];
+        var id="param_" + param;
+        var name = paramData[0];
+        var value = paramData[2];
+        var readonly = paramData[4] === "private" ? "readonly='readonly'" : "";
+        var paramCss = "param span-5 last " + (validateInput(value, paramData) ? "" : "invalid-input");
+        var errorMessage = "Must be " + paramData[1] + "*";
+
+
+        var paramInput = $(
+            '<div id="' + id + '" class="' + paramCss + '">' +
+            '  <div class="span-5" id="parameterDimension">' + name + ':&nbsp;' +
+            '    <span class="error-invalid-input">' + errorMessage + '</span>' +
+            '  </div>' +
+            '  <div class="cdaInputWrapper span-5 last">' +
+            '    <input id="' + name + '" class="cdaButton" value="' + value + '" ' + readonly + '>' +
+            '    <div class="helpButton">?</div><div class="errorButton">!</div>' +
+            '  </div>' +
+            '</div>'
+        );
+
+        paramInput.change(function(event) {
+          var wrapper = $(this);
+          var index = wrapper.attr("id").replace("param_", "");
+          var paramData = data.resultset[index];
+
+          var helpB = wrapper.find(".helpButton");
+          var errorB = wrapper.find(".errorButton");
+
+          var inputValue = wrapper.find('.cdaButton').val();
+
+          if(!myself.validateInput(inputValue, paramData)) {
+            wrapper.addClass("invalid-input");
+            helpB.hide();
+            errorB.show();
+
+          } else {
+            wrapper.removeClass("invalid-input");
+            errorB.hide();
+            helpB.show();
+          }
+        });
+
+        placeholder.append(paramInput);
       }
     }
     placeholder.find("div.helpButton").click(helpPopup).hide();
-    placeholder.find("input").focus(inputFocus).blur(inputBlur);
+    placeholder.find("div.errorButton").click(errorButton).hide();
+    placeholder.find("input")
+        .focus(function(event) {
+          var valid = !$(this).parents('.param').hasClass('invalid-input');
+          inputFocus(event, $(this), valid);
+        }).blur(inputBlur);
   });
 
+};
+
+validateInput = function(inputValue, data) {
+  var type = data[1].replace("Array", "") || "";
+  var values = inputValue.split(";");
+
+  for(var i = 0, L = values.length; i < L; i++) {
+    var value = values[i];
+
+    switch(type) {
+      case "String":
+        if(!validateString(value)) {
+          return false;
+        }
+        break;
+
+      case "Integer":
+        if(!validateInteger(value)) {
+          return false;
+        }
+        break;
+
+      case "Numeric":
+        if(!validateNumeric(value)) {
+          return false;
+        }
+        break;
+
+      case "Date":
+        var pattern = data[3] || "";
+        if(!validateDate(value, pattern)) {
+          return false;
+        }
+        break;
+    }
+  }
+
+  return true;
+};
+
+validateString = function(value) {
+  return true;
+};
+
+validateInteger = function(value) {
+  return value.search(/^[+-]?\d+$/) != -1;
+};
+
+validateNumeric = function(value) {
+  return value.search(/^[+-]?((\d*\.)?\d+([eE][+-]?\d+)?)$/) != -1;
+};
+
+validateDate = function(value, pattern) {
+  var date;
+  pattern = translatePattern(pattern);
+
+  if(pattern === null) {
+    return true; //couldn't convert to javascript pattern. will not verify date
+  }
+
+  try {
+    date = $.datepicker.parseDate(pattern, value);
+    return !isNaN(date.getTime());
+  } catch(error) {
+    return false;
+  }
+
+
+};
+
+translatePattern = function( pattern ) {
+
+  if(stringContains(pattern, "w") || stringContains(pattern, "W") || stringContains(pattern, "F")) {
+    return null;
+  }
+
+  //Day of year
+  if(stringContains(pattern, "D")) {
+    pattern = pattern.replace("D", "o");
+  }
+
+  //Day Name
+  if(stringContains(pattern, "EEEE")) {
+    pattern = pattern.replace("EEEE", "DD");
+  } else if(stringContains(pattern, "EEE")) {
+    pattern = pattern.replace("EEE", "D");
+  }
+
+  //Day of month - do nothing
+  if(stringContains(pattern, "MMMM")) {
+    pattern = pattern.replace("MMMM", "MM");
+  } else if(stringContains(pattern, "MMM")) {
+    pattern = pattern.replace("MMM", "M");
+  } else if(stringContains(pattern, "MM")) {
+    pattern = pattern.replace("MM", "mm");
+  }
+
+  //Year
+  if(stringContains(pattern, "yyyy") || stringContains(pattern, "YYYY")) {
+    pattern = pattern.replace("yyyy", "yy").replace("YYYY", "yy");
+  } else if(stringContains(pattern, "yyy") || stringContains(pattern, "YYY")) {
+    pattern = pattern.replace("yyy", "yy").replace("YYY", "yy");
+  } else if(stringContains(pattern, "y") || stringContains(pattern, "Y")) {
+    pattern = pattern.replace("y", "yy").replace("Y", "yy");
+  } else if(stringContains(pattern, "yy") || stringContains(pattern, "YY")) {
+    pattern = pattern.replace("yy", "y").replace("YY", "y");
+  }
+
+  return pattern;
+
+
+
+};
+
+stringContains = function(string, subString) {
+  return string.indexOf(subString) > -1;
 };
 
 getParams = function() {
@@ -393,23 +556,35 @@ simpleCron = function() {
   }
 };
 
-var inputFocus = function(event) {
-  $(this).addClass("cdaButtonSelected");
-  $(this).parent().find("div.helpButton").show();
+var inputFocus = function(event, input, isValid) {
+  var $parent = input.parent();
+
+  input.addClass("cdaButtonSelected");
+
+  if(isValid) {
+    $parent.find("div.helpButton").show();
+  } else {
+    $parent.find("div.errorButton").show();
+  }
 };
 
 var inputBlur = function(event) {
   // we need to delay this evaluation ever so slightly, so that
   // we don't hide the help button before it registers the click
-  var myself = this;
+  var $myself = $(this);
   setTimeout(
       function() {
-        $(myself).removeClass("cdaButtonSelected");
-        $(myself).parent().find("div.helpButton").hide();
+        $myself.removeClass("cdaButtonSelected");
+        $myself.parent().find("div.helpButton").hide();
+        $myself.parent().find("div.errorButton").hide();
       },
       125);
 };
 
 helpPopup = function() {
   $("#help").jqmShow();
+};
+
+errorButton = function() {
+  $("#invalidInput").jqmShow();
 };
