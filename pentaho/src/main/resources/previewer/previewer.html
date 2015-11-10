@@ -77,7 +77,10 @@
 
         toggleAdvanced(false);
 
-        $("#outputIndexId").focus(inputFocus).blur(inputBlur);
+        $("#outputIndexId")
+                .focus(function(event) {
+                    inputFocus(event, $(this), true);
+                }).blur(inputBlur);
 
         // get initial list of queries
         PreviewerBackend.listQueries({
