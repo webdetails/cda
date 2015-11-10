@@ -31,9 +31,6 @@
 
         <!-- Legacy -->
         <dependency org="net.sf.ehcache" name="ehcache-core"                        rev="2.0.1"                                     conf="legacy->default"/>
-        <dependency org="pentaho"        name="pentaho-bi-platform-scheduler"       rev="${dependency.bi-platform.revision.legacy}" conf="legacy->default" transitive="false" changing="true" />
-        <dependency org="pentaho"        name="pentaho-bi-platform-plugin-services" rev="${dependency.bi-platform.revision.legacy}" conf="legacy->default" transitive="false" changing="true"/>
-        <dependency org="pentaho"        name="pentaho-bi-platform-plugin-actions"  rev="${dependency.bi-platform.revision.legacy}" conf="legacy->default" transitive="false" changing="true"/>
 
         <!-- Test dependencies -->
         <dependency org="org.mockito"   name="mockito-all"   rev="1.8.4" conf="test,default->default"/>
