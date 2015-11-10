@@ -5,123 +5,135 @@ body {
   overflow-y: scroll;
 }
 
-.center{
+.center {
   text-align: center;
   margin-left: auto;
   margin-right: auto;
 }
 
 .cdalogo {
-  	background-repeat: no-repeat;
-  	padding: 0px;
-	margin-top: 5px !important;
+  background-repeat: no-repeat;
+  padding: 0;
+  margin-top: 5px !important;
 }
 
 .params {
-  color:#222222;
-  font-size:115%;
-  font-weight:normal;
-  padding:10px;
+  color: #222222;
+  font-size: 115%;
+  font-weight: normal;
+  padding: 10px;
 }
 
 .cdaButton {
   border: none;
   padding: 5px;
-  background-color: #f5f5f5;
   width: 125px;
   height: 30px;
-  background-image: none;
+  background: #f5f5f5 none;
   margin: 10px 5px;
   color: #333;
   float: right;
   font-size: 14px;
-  box-shadow: inset 0px 0px 5px #ccc;
-	-webkit-border-radius: 3px;
-	   -moz-border-radius: 3px;
-			border-radius: 3px;
+  box-shadow: inset 0 0 5px #ccc;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 }
 
 .cdaButton:hover {
-	background: #eee;
-	cursor: pointer;
+  background: #eee;
+  cursor: pointer;
 }
 
 .cdaButton:active {
-	box-shadow: inset 0px 0px 2px #222;	
+  box-shadow: inset 0 0 2px #222;
+}
+
+.invalid-input .cdaButton, .invalid-input .cdaButton:focus, .invalid-input .cdaButton:active {
+  border: 1px solid red;
+  outline-color: red;
 }
 
 .cdaButtonShort {
-	width: 35px;
-	height: 20px;
-	padding: 5px;
-  padding-left: 10px;
+  width: 35px;
+  height: 20px;
+  padding: 5px 5px 5px 10px;
   float: left;
-	box-shadow: inset 0px 0px 5px #ccc;
-	font-size: 14px;
-	-webkit-border-radius: 3px;
-	   -moz-border-radius: 3px;
-			border-radius: 3px;
+  box-shadow: inset 0 0 5px #ccc;
+  font-size: 14px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 }
 
 .cdaButtonShort:hover {
-	cursor: text;
+  cursor: text;
 }
 
 .cdaInputWrapper {
-	float: left;
-	margin-left: 5px;	
+  float: left;
+  margin-left: 5px;
+}
+
+.error-invalid-input {
+  float: right;
+  font-weight: bold;
+  display: none;
+}
+
+.invalid-input .error-invalid-input {
+  display: initial;
 }
 
 select#dataAccessSelector {
-	float: left;
-	height: 30px;
-	line-height: 40px;
-   	font-size: 14px;
-	box-shadow: none;
-	padding: 5px;
-  	width: 230px;
-	box-shadow: inset 0px 0px 5px #ccc;
-	-webkit-border-radius: 3px;
-	   -moz-border-radius: 3px;
-			border-radius: 3px;
+  float: left;
+  height: 30px;
+  line-height: 40px;
+  font-size: 14px;
+  box-shadow: none;
+  padding: 5px;
+  width: 230px;
+  box-shadow: inset 0 0 5px #ccc;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 }
 
 select#dataAccessSelector option {
-	height: 15px;
-	padding: 5px;
-	background: #f5f5f5;
-	color: #222;
-	border: 1px #fff solid;
-	border: none;
+  height: 15px;
+  padding: 5px;
+  background: #f5f5f5;
+  color: #222;
+  border: 1px #fff solid;
+  border: none;
 }
 
-input[readonly]{
+input[readonly] {
   background-color: lightgrey;
-  font-style:italic;
+  font-style: italic;
 }
 
 #doQueryUrl {
-  display:block;
+  display: block;
   width: 557px;
 }
 
-#selectorText{
+#selectorText {
   display: inline;
 }
 
 #button {
-	background: url('img/refresh.png') no-repeat center center;
-	background-color: #216dbf;
-	color: #f5f5f5;	
-	width: 40px;
-	box-shadow: none;
-	-webkit-border-radius: 3px;
-	   -moz-border-radius: 3px;
-			border-radius: 3px;
+  background: #216dbf url('img/refresh.png') no-repeat center center;
+  color: #f5f5f5;
+  width: 40px;
+  box-shadow: none;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 }
 
 #button:hover {
-	background-color: #4d94e0;
+  background-color: #4d94e0;
 }
 
 .param {
@@ -129,50 +141,49 @@ input[readonly]{
 }
 
 .filename {
-	padding: 5px;
-	color: #141919;
-	max-width: 910px;
+  padding: 5px;
+  color: #141919;
+  max-width: 910px;
 }
 
-#about,#back  {
-	float: right;
-	margin-right: 10px;
-	color: #007ee0;	
-	text-decoration: none;
-	font-size: 11px;
+#about, #back {
+  float: right;
+  margin-right: 10px;
+  color: #007ee0;
+  text-decoration: none;
+  font-size: 11px;
 }
 
 #about:hover {
-	color: #005ca4;
-	cursor: pointer;
+  color: #005ca4;
+  cursor: pointer;
 }
 
 #fileid {
 
-  font-size:11px;
-	color: #555;
+  font-size: 11px;
+  color: #555;
 }
 
 #pleaseselect, .error-status {
-  color:#666;
+  color: #666;
   margin: 0;
-  font-size:8pt;
+  font-size: 8pt;
   display: block;
   background: #F5D6D6;
   border: 1px #ccc solid;
   padding: 5px 10px;
   width: 930px;
-	-webkit-border-radius: 3px;
-	   -moz-border-radius: 3px;
-			border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 }
 
-#previewerTable  {
+#previewerTable {
   min-height: 300px;
   width: 950px;
-  margin:auto;
+  margin: auto;
 }
-
 
 #previewerTable tr.odd > td {
   background-color: #f1f1f1;
@@ -190,18 +201,17 @@ input[readonly]{
   border: 1px solid #999;
 }
 
-#parameterHolder{
+#parameterHolder {
   text-align: center;
 }
 
 #parameterHolder .cdaButton {
-	width: 190px;
-	margin-top: 0px;
-	padding: 0px;
-	padding-left: 10px;
-	-webkit-box-sizing: border-box;
-	   -moz-box-sizing: border-box;
-			box-sizing: border-box;
+  width: 190px;
+  margin-top: 0;
+  padding: 0 0 0 10px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 #parameterHolder .cdaButtonSelected {
@@ -214,111 +224,117 @@ input[readonly]{
 }
 
 #parameterDimension {
-	float: left;
-	height: 30px;
-	margin-top: 0px;
-	margin-left: 2px;
-	line-height: 30px;
-	font-size: 10px;
-	text-align: left;
+  float: left;
+  height: 30px;
+  margin-top: 0;
+  margin-left: 2px;
+  line-height: 30px;
+  font-size: 10px;
+  text-align: left;
 }
 
 #dimension {
-	padding-right: 32px;
-	float:left;
-	height: 20px;
-	cursor: text;
-	box-shadow: inset 0px 0px 5px #ccc;
+  padding-right: 32px;
+  float: left;
+  height: 20px;
+  cursor: text;
+  box-shadow: inset 0 0 5px #ccc;
 }
 
 .dialogAction .notification {
-    float: left;
+  float: left;
 }
+
 #previewerTable input, #previewerTable select {
-    border: none;
-	box-shadow: inset 0px 0px 5px #ccc;
-	height: 30px;
-	line-height: 30px;
-	padding: 5px;
-	-webkit-border-radius: 3px;
-	   -moz-border-radius: 3px;
-			border-radius: 3px;
+  border: none;
+  box-shadow: inset 0 0 5px #ccc;
+  height: 30px;
+  line-height: 30px;
+  padding: 5px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 }
 
 #previewerTable input {
-    height: 20px;
+  height: 20px;
 }
 
 #previewerTable input:hover, #previewerTable select:hover {
-	background: #eee;
-	cursor: pointer;
+  background: #eee;
+  cursor: pointer;
 }
 
 #previewerTable input:active, #previewerTable select:active {
-	box-shadow: inset 0px 0px 2px #222;	
+  box-shadow: inset 0 0 2px #222;
 }
 
 #previewerTable .paginate_disabled_next,
 #previewerTable .paginate_enabled_next,
 #previewerTable .paginate_disabled_previous,
-#previewerTable .paginate_enabled_previous{
-  float:left;
-  height:15px;
-  margin-left:3px;
-  width:8px;
+#previewerTable .paginate_enabled_previous {
+  float: left;
+  height: 15px;
+  margin-left: 3px;
+  width: 8px;
 
 }
 
-#previewerTable .paginate_disabled_next{
+#previewerTable .paginate_disabled_next {
   background-image: url("../static/img/right_inactive.png");
 }
 
-#previewerTable .paginate_enabled_next{
+#previewerTable .paginate_enabled_next {
   background-image: url("../static/img/right_active.png");
 }
 
-#previewerTable .paginate_disabled_previous{
+#previewerTable .paginate_disabled_previous {
   background-image: url("../static/img/left_inactive.png");
 }
 
-#previewerTable .paginate_enabled_previous{
+#previewerTable .paginate_enabled_previous {
   background-image: url("../static/img/left_active.png");
 
 }
 
-
-
-div#footerContainer{
+div#footerContainer {
   text-align: center;
 
 }
 
-div#footer{
+div#footer {
   width: 950px;
   height: 30px;
   margin-left: auto;
   margin-right: auto;
 }
 
+.helpButton, .errorButton {
+  text-align: center;
+  font-size: 10px;
+  float: right;
+  height: 14px;
+  width: 14px;
+  border: 1px solid white;
+  color: #f5f5f5;
+  font-weight: bold;
+  position: absolute;
+  margin-left: 160px;
+  margin-top: 7px;
+  z-index: 100;
+  cursor: pointer;
+}
+
 .helpButton {
-    text-align: center;
-    font-size: 10px;
-    float: right;
-    background: #216dbf;
-    height:14px;
-    width:14px;
-    border:1px solid white;
-    color:#f5f5f5;
-    font-weight:bold;
-	position:absolute;
-	margin-left: 160px;
-	margin-top: 7px;
-	z-index: 100;
+  background: #216dbf;
 }
 
 .helpButton:hover {
-    background: #4d94e0;
-	cursor: pointer;
+  background: #4d94e0;
+}
+
+.errorButton {
+  background: red;
 }
 
 .helpButtonShort {
@@ -327,53 +343,53 @@ div#footer{
 }
 
 #aboutContainer {
-	width: 910px;
-	box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	padding: 20px 150px 20px 150px;	
+  width: 910px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  padding: 20px 150px 20px 150px;
 }
 
 #aboutSubContainer {
-	width: 100%;
+  width: 100%;
 }
 
 #aboutSubContainerLeft {
-	float: left;
-	width: 420px;
-	font-size: 14px;
-	line-height: 20px;
-	color: #333;
+  float: left;
+  width: 420px;
+  font-size: 14px;
+  line-height: 20px;
+  color: #333;
 }
 
 #aboutSubContainerRight {
-	float:right;
-	width: 160px;
-	color: #333;
-	font-size: 20px;
-	text-align: right;
+  float: right;
+  width: 160px;
+  color: #333;
+  font-size: 20px;
+  text-align: right;
 }
 
 #aboutSubContainerRight .aboutSubContainerTop {
-	padding-top: 90px;	
-	height: 60px;
-	text-align: right;
+  padding-top: 90px;
+  height: 60px;
+  text-align: right;
 }
 
 .aboutSubContainerTop {
-	width: 100%;
-	height: 100px;
-	padding-top: 50px;
+  width: 100%;
+  height: 100px;
+  padding-top: 50px;
 }
 
 .aboutSubContainerBottom a:link, .aboutSubContainerBottom a:visited {
-	text-align: right;
-	text-decoration: none;
-	font-size: 17px;
-	display: block;
-	color: #007ee0;
+  text-align: right;
+  text-decoration: none;
+  font-size: 17px;
+  display: block;
+  color: #007ee0;
 }
 
 .aboutSubContainerBottom a:hover {
-	color: #005ca4;
+  color: #005ca4;
 }

@@ -49,4 +49,33 @@ return model;
             <Parameter name="status" type="String" default="In Process"/>
         </Parameters>
     </DataAccess>
+
+  <DataAccess id="3" connection="2" type="scriptable" access="public">
+    <Name>Calculated Columns Values</Name>
+    <Query>
+<![CDATA[
+  import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
+
+  String[] columnNames = new String[2];
+  columnNames[0] = "Q1";
+  columnNames[1] = "Q2";
+  Class[] columnTypes = new Class[2];
+  columnTypes[0] = Integer.class;
+  columnTypes[1] = Integer.class;
+
+  TypedTableModel model = new TypedTableModel(columnNames, columnTypes);
+  model.addRow(new Object[]{ new Integer(14), new Integer(2) });
+  model.addRow(new Object[]{ new Integer(14), new Integer(0) });
+  model.addRow(new Object[]{ null, new Integer(2) });
+  model.addRow(new Object[]{ new Integer(14), null });
+  return model;
+]]>
+    </Query>
+    <Columns>
+      <CalculatedColumn>
+        <Name>NewValue</Name>
+        <Formula>=[Q1]/[Q2]</Formula>
+      </CalculatedColumn>
+    </Columns>
+  </DataAccess>
 </CDADescriptor>
