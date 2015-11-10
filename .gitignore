@@ -4,6 +4,7 @@
 */runtime-lib/
 */test-lib/
 *~
+*.iml
 *.class
 .metadata
 .project
@@ -18,3 +19,4 @@ nbproject/private/
 runtime-lib/
 .project
 
+override.properties
