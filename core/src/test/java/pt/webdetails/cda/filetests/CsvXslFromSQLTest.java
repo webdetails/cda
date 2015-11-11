@@ -1,13 +1,13 @@
 /*!
- * Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
- * 
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
  * this file except in compliance with the license. If you need a copy of the license,
  * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
  *
  * Software distributed under the Mozilla Public License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
  * the license for the specific language governing your rights and limitations.
  */
 
@@ -133,7 +133,8 @@ public class CsvXslFromSQLTest extends CdaTestCase {
     }
   }
 
-  protected boolean matchColumnNames( String fileName, String[] names, List<Integer> outputIndexes ) throws IOException {
+  protected boolean matchColumnNames( String fileName, String[] names, List<Integer> outputIndexes )
+    throws IOException {
     File f = new File( fileName );
     try ( HSSFWorkbook workbook = new HSSFWorkbook( new FileInputStream( f ) ) ) {
       HSSFSheet sheet = workbook.getSheetAt( 0 );

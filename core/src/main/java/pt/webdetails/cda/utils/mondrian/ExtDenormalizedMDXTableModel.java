@@ -4,7 +4,7 @@
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
  * this file except in compliance with the license. If you need a copy of the license,
- * please go to http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
  *
  * Software distributed under the Mozilla Public License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
@@ -346,8 +346,8 @@ public class ExtDenormalizedMDXTableModel extends AbstractTableModel implements 
   public DataAttributes getTableAttributes() {
     final DefaultDataAttributes dataAttributes = new DefaultDataAttributes();
     dataAttributes.setMetaAttribute( MetaAttributeNames.Core.NAMESPACE,
-        MetaAttributeNames.Core.CROSSTAB_MODE, DefaultConceptQueryMapper.INSTANCE,
-        MetaAttributeNames.Core.CROSSTAB_VALUE_NORMALIZED );
+      MetaAttributeNames.Core.CROSSTAB_MODE, DefaultConceptQueryMapper.INSTANCE,
+      MetaAttributeNames.Core.CROSSTAB_VALUE_NORMALIZED );
     return dataAttributes;
   }
 

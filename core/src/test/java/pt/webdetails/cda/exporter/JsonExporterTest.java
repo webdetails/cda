@@ -1,3 +1,16 @@
+/*!
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
+
 package pt.webdetails.cda.exporter;
 
 import static org.junit.Assert.*;
@@ -16,6 +29,7 @@ import org.junit.Test;
 import pt.webdetails.cda.test.util.CdaTestHelper.SimpleTableModel;
 import pt.webdetails.cda.utils.MetadataTableModel;
 import pt.webdetails.cpf.Util;
+
 import static pt.webdetails.cda.test.util.CdaTestHelper.assertJsonEquals;
 
 public class JsonExporterTest {
@@ -33,42 +47,42 @@ public class JsonExporterTest {
     TableModel table = BasicExportExamples.getNullOneLiner();
     String json = exportToJsonString( table );
     String expected = "{ \"queryInfo\" : {},"
-        + " \"metadata\" : ["
-        + " { \"colIndex\" : 0, \"colType\" : \"Numeric\", \"colName\" : \"long null\" },"
-        + " { \"colIndex\" : 1, \"colType\" : \"String\", \"colName\" : \"string null\" },"
-        + " { \"colIndex\" : 2, \"colType\" : \"Numeric\", \"colName\" : \"double null\" },"
-        + " { \"colIndex\" : 3, \"colType\" : \"Date\", \"colName\" : \"date null\" },"
-        + " { \"colIndex\" : 4, \"colType\" : \"Numeric\", \"colName\" : \"big decimal null\" } ],"
-        + " \"resultset\" : [ [ null, null, null, null, null ] ] }";
+      + " \"metadata\" : ["
+      + " { \"colIndex\" : 0, \"colType\" : \"Numeric\", \"colName\" : \"long null\" },"
+      + " { \"colIndex\" : 1, \"colType\" : \"String\", \"colName\" : \"string null\" },"
+      + " { \"colIndex\" : 2, \"colType\" : \"Numeric\", \"colName\" : \"double null\" },"
+      + " { \"colIndex\" : 3, \"colType\" : \"Date\", \"colName\" : \"date null\" },"
+      + " { \"colIndex\" : 4, \"colType\" : \"Numeric\", \"colName\" : \"big decimal null\" } ],"
+      + " \"resultset\" : [ [ null, null, null, null, null ] ] }";
     assertJsonEquals( "", expected, json );
   }
 
   @Test
   public void testExportFunkyStrings() throws Exception {
     MetadataTableModel table = new MetadataTableModel(
-        new String[] { "string A", "string B" },
-        new Class<?>[] { String.class, String.class },
-        3 );
+      new String[] { "string A", "string B" },
+      new Class<?>[] { String.class, String.class },
+      3 );
     table.addRow( "{ \"json\" : \"hi\"}", "},,}" );
     table.addRow( "null", "new Date()" );
     table.addRow( "\nwow\twoooow\n\n\t...", "\\o/" );
     String jsonExport = exportToJsonString( table );
     String expected = "{"
-        + "  \"queryInfo\" : {"
-        + "  },"
-        + "  \"resultset\" : ["
-        + " [ \"{ \\\"json\\\" : \\\"hi\\\"}\", \"},,}\" ],"
-        + " [ \"null\", \"new Date()\" ],"
-        + " [ \"\\nwow\\twoooow\\n\\n\\t...\", \"\\\\o/\" ] ],"
-        + "  \"metadata\" : [ {"
-        + "    \"colIndex\" : 0,"
-        + "    \"colType\" : \"String\","
-        + "    \"colName\" : \"string A\""
-        + "  }, {\n"
-        + "    \"colIndex\" : 1,"
-        + "    \"colType\" : \"String\","
-        + "    \"colName\" : \"string B\""
-        + "  } ] }";
+      + "  \"queryInfo\" : {"
+      + "  },"
+      + "  \"resultset\" : ["
+      + " [ \"{ \\\"json\\\" : \\\"hi\\\"}\", \"},,}\" ],"
+      + " [ \"null\", \"new Date()\" ],"
+      + " [ \"\\nwow\\twoooow\\n\\n\\t...\", \"\\\\o/\" ] ],"
+      + "  \"metadata\" : [ {"
+      + "    \"colIndex\" : 0,"
+      + "    \"colType\" : \"String\","
+      + "    \"colName\" : \"string A\""
+      + "  }, {\n"
+      + "    \"colIndex\" : 1,"
+      + "    \"colType\" : \"String\","
+      + "    \"colName\" : \"string B\""
+      + "  } ] }";
     assertJsonEquals( "", expected, jsonExport );
   }
 
@@ -81,16 +95,16 @@ public class JsonExporterTest {
       TimeZone.setDefault( TimeZone.getTimeZone( "GMT" ) );
       String exported = exportToJsonString( table );
       final String expected = "{\"metadata\":[\n"
-          + "  {\"colName\":\"The Integer\",\"colType\":\"Numeric\",\"colIndex\":0},"
-          + "  {\"colName\":\"The String\",\"colType\":\"String\",\"colIndex\":1},"
-          + "  {\"colName\":\"The Numeric\",\"colType\":\"Numeric\",\"colIndex\":2},"
-          + "  {\"colName\":\"The Date\",\"colType\":\"Date\",\"colIndex\":3},"
-          + "  {\"colName\":\"The Calculation\",\"colType\":\"Numeric\",\"colIndex\":4}],"
-          + "\"resultset\":[\n"
-          + "  [1,\"One\",1.05, \"Sun Jan 01 00:01:01 GMT 2012\", -12.34567890123456789],"
-          + "  [-2,\"Two > One\", -1.05, null, 987654321.123456789],"
-          + "  [9223372036854775807, \"Many\", 1.7976931348623157E308, \"Thu Jan 01 00:00:00 GMT 1970\",4.9E-325]],"
-          + "\"queryInfo\":{}}";
+        + "  {\"colName\":\"The Integer\",\"colType\":\"Numeric\",\"colIndex\":0},"
+        + "  {\"colName\":\"The String\",\"colType\":\"String\",\"colIndex\":1},"
+        + "  {\"colName\":\"The Numeric\",\"colType\":\"Numeric\",\"colIndex\":2},"
+        + "  {\"colName\":\"The Date\",\"colType\":\"Date\",\"colIndex\":3},"
+        + "  {\"colName\":\"The Calculation\",\"colType\":\"Numeric\",\"colIndex\":4}],"
+        + "\"resultset\":[\n"
+        + "  [1,\"One\",1.05, \"Sun Jan 01 00:01:01 GMT 2012\", -12.34567890123456789],"
+        + "  [-2,\"Two > One\", -1.05, null, 987654321.123456789],"
+        + "  [9223372036854775807, \"Many\", 1.7976931348623157E308, \"Thu Jan 01 00:00:00 GMT 1970\",4.9E-325]],"
+        + "\"queryInfo\":{}}";
       assertJsonEquals( "json export", expected, exported );
     } finally {
       TimeZone.setDefault( tz );
@@ -100,13 +114,13 @@ public class JsonExporterTest {
   @Test
   public void testJsonP() throws Exception {
     TableModel table = new SimpleTableModel(
-        new Object[] { "hello" } );
+      new Object[] { "hello" } );
     String exported = exportToJsonString( table, Collections.singletonMap( "callback", "callMe" ) );
-    Matcher callRegex =  Pattern.compile( "\\s*callMe[(]([^)]*)[)]\\s*;\\s*" ).matcher( exported );
+    Matcher callRegex = Pattern.compile( "\\s*callMe[(]([^)]*)[)]\\s*;\\s*" ).matcher( exported );
     assertTrue( "makes callback", callRegex.matches() );
     String obj = callRegex.group( 1 );
     String expectArg = "{ metadata: [ { colIndex : 0, colType: 'String', colName: 'A' } ], "
-        + "resultset: [[ 'hello' ]] }";
+      + "resultset: [[ 'hello' ]] }";
     assertJsonEquals( "call arg value", expectArg, obj );
   }
 

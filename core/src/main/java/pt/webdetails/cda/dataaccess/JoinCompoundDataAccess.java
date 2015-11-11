@@ -85,7 +85,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   }
 
   private static String getMergeJoinType( JoinType joinType ) {
-    switch ( joinType ) {
+    switch( joinType ) {
       case INNER:
         return "INNER";
       case LEFT_OUTER:
@@ -203,7 +203,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   private String getSortXmlStep( final String name, final String[] columnNames ) {
 
     StringBuilder sortXML = new StringBuilder(
-        "  <step>\n"
+      "  <step>\n"
         + "    <name>" + name + "</name>\n"
         + "    <type>SortRows</type>\n"
         + "    <description/>\n"
@@ -333,7 +333,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     String timeoutStr = CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeout" );
     long timeout = StringUtil.isEmpty( timeoutStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT : Long.parseLong( timeoutStr );
     String unitStr =
-        CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
+      CdaEngine.getInstance().getConfigProperty( "pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit" );
     TimeUnit unit = StringUtil.isEmpty( unitStr ) ? DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT : TimeUnit.valueOf( unitStr );
     startRowProduction( timeout, unit, inputCallables );
   }
@@ -360,13 +360,13 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   public ArrayList<PropertyDescriptor> getInterface() {
     ArrayList<PropertyDescriptor> properties = super.getInterface();
     properties.add(
-        new PropertyDescriptor( "left", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+      new PropertyDescriptor( "left", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
     properties.add(
-        new PropertyDescriptor( "right", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+      new PropertyDescriptor( "right", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
     properties.add(
-        new PropertyDescriptor( "output", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD ) );
+      new PropertyDescriptor( "output", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD ) );
     properties.add(
-        new PropertyDescriptor( "joinType", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+      new PropertyDescriptor( "joinType", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
     return properties;
   }
 

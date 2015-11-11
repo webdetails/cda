@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.cache;
 
@@ -50,7 +50,7 @@ public class TableCacheKey implements Serializable {
 
 
   public TableCacheKey( final Connection connection, final String query,
-                       final List<Parameter> parameters, final Serializable extraCacheKey ) {
+                        final List<Parameter> parameters, final Serializable extraCacheKey ) {
     if ( connection == null ) {
       throw new NullPointerException();
     }
@@ -63,7 +63,7 @@ public class TableCacheKey implements Serializable {
 
     this.connectionHash = connection.hashCode();
     this.query = query;
-    this.parameters = parameters.toArray( new Parameter[parameters.size()] );
+    this.parameters = parameters.toArray( new Parameter[ parameters.size() ] );
     sortParameters( this.parameters );
     this.extraCacheKey = extraCacheKey;
   }
@@ -83,7 +83,7 @@ public class TableCacheKey implements Serializable {
     this.connectionHash = connection.hashCode();
     this.query = query;
     this.queryType = queryType;
-    this.parameters = parameters.toArray( new Parameter[parameters.size()] );
+    this.parameters = parameters.toArray( new Parameter[ parameters.size() ] );
     sortParameters( this.parameters );
     this.extraCacheKey = extraCacheKey;
   }
@@ -115,9 +115,9 @@ public class TableCacheKey implements Serializable {
     this.queryType = queryType;
   }
 
-//    public ParameterDataRow getParameterDataRow() {
-//      return Parameter.createParameterDataRowFromParameters(parameters);
-//    }
+  //    public ParameterDataRow getParameterDataRow() {
+  //      return Parameter.createParameterDataRowFromParameters(parameters);
+  //    }
 
   public Parameter[] getParameters() {
     return parameters;
@@ -152,12 +152,12 @@ public class TableCacheKey implements Serializable {
     queryType = (String) in.readObject();
 
     int len = in.readInt();
-    Parameter[] params = new Parameter[len];
+    Parameter[] params = new Parameter[ len ];
 
     for ( int i = 0; i < params.length; i++ ) {
       Parameter param = new Parameter();
       param.readObject( in );
-      params[i] = param;
+      params[ i ] = param;
     }
     parameters = params;
     extraCacheKey = (Serializable) in.readObject();
@@ -244,12 +244,12 @@ public class TableCacheKey implements Serializable {
   @Override
   public String toString() {
     return
-        TableCacheKey.class.getName() + " [" + hashCode() + "]\n"
-            + "\tConnectionHash:[" + getConnectionHash() + "]\n"
-            + "\tQuery:[" + getQuery() + "]\n"
-            + "\tQueryType:[" + getQueryType() + "]\n"
-            + "\tParameters: [" + StringUtils.join( getParameters(), ", " ) + "]\n"
-            + "\tExtra: [" + getExtraCacheKey() + "]\n";
+      TableCacheKey.class.getName() + " [" + hashCode() + "]\n"
+        + "\tConnectionHash:[" + getConnectionHash() + "]\n"
+        + "\tQuery:[" + getQuery() + "]\n"
+        + "\tQueryType:[" + getQueryType() + "]\n"
+        + "\tParameters: [" + StringUtils.join( getParameters(), ", " ) + "]\n"
+        + "\tExtra: [" + getExtraCacheKey() + "]\n";
   }
 
   private static void sortParameters( Parameter[] params ) {
@@ -265,7 +265,7 @@ public class TableCacheKey implements Serializable {
    */
   private static Parameter[] createParametersFromParameterDataRow( final ParameterDataRow row ) {
     ArrayList<Parameter> parameters = new ArrayList<Parameter>();
-    if  ( row != null ) {
+    if ( row != null ) {
       for ( String name : row.getColumnNames() ) {
         Object value = row.get( name );
         Parameter param = new Parameter( name, value != null ? value : null );
@@ -274,7 +274,7 @@ public class TableCacheKey implements Serializable {
         parameters.add( param );
       }
     }
-    Parameter[] params = parameters.toArray( new Parameter[parameters.size()] );
+    Parameter[] params = parameters.toArray( new Parameter[ parameters.size() ] );
     //so comparisons will not fail when parameters are added in different order
     sortParameters( params );
     return params;

@@ -1,3 +1,16 @@
+/*!
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
+
 package pt.webdetails.cda.settings;
 
 import java.io.ByteArrayInputStream;
@@ -109,9 +122,9 @@ public abstract class CdaFileResourceLoader implements ICdaResourceLoader {
 
   public String serialize( ResourceKey bundleKey, ResourceKey key ) throws ResourceException {
     return ResourceKeyUtils.createStringResourceKey(
-        key.getSchema().toString(),
-        key.getIdentifierAsString(),
-        key.getFactoryParameters() );
+      key.getSchema().toString(),
+      key.getIdentifierAsString(),
+      key.getFactoryParameters() );
   }
 
   public ResourceKey deserialize( ResourceKey bundleKey, String stringKey ) throws ResourceKeyCreationException {
@@ -137,7 +150,7 @@ public abstract class CdaFileResourceLoader implements ICdaResourceLoader {
     private String resourceLoaderName;
 
     public CdaResourceData( String resourceLoader, ResourceKey key, IReadAccess reader, String path )
-        throws ResourceLoadingException {
+      throws ResourceLoadingException {
       this.key = key;
       this.path = path;
       IBasicFile file = reader.fetchFile( path );
@@ -174,7 +187,6 @@ public abstract class CdaFileResourceLoader implements ICdaResourceLoader {
     }
 
 
-
     public ResourceKey getKey() {
       return key;
     }
@@ -182,7 +194,7 @@ public abstract class CdaFileResourceLoader implements ICdaResourceLoader {
     public long getVersion( ResourceManager caller ) throws ResourceLoadingException {
       // getVerson has to be always up-to-date
       ICdaResourceLoader loader =
-          CdaEngine.getInstance().getSettingsManager().getResourceLoader( resourceLoaderName );
+        CdaEngine.getInstance().getSettingsManager().getResourceLoader( resourceLoaderName );
       long version = ( loader != null ) ? loader.getLastModified( path ) : NO_VERSION;
       // long version = CdaEngine.getRepo().getUserContentAccess( null ).getLastModified( path );
       return ( version == 0 ) ? NO_VERSION : version;

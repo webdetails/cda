@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.exporter;
 
@@ -41,14 +41,14 @@ public class CsvExporter extends AbstractKettleExporter {
     super( extraSettings );
 
     this.separator = getSetting(
-        CSV_SEPARATOR_SETTING,
-        CdaEngine.getInstance().getConfigProperty(
-            "pt.webdetails.cda.exporter.csv.Separator", DEFAULT_CSV_SEPARATOR_SETTING ) );
+      CSV_SEPARATOR_SETTING,
+      CdaEngine.getInstance().getConfigProperty(
+        "pt.webdetails.cda.exporter.csv.Separator", DEFAULT_CSV_SEPARATOR_SETTING ) );
 
     this.enclosure = getSetting(
-        CSV_QUOTE_SETTING,
-        CdaEngine.getInstance().getConfigProperty(
-            "pt.webdetails.cda.exporter.csv.Enclosure", DEFAULT_CSV_ENCLOSURE_SETTING ) );
+      CSV_QUOTE_SETTING,
+      CdaEngine.getInstance().getConfigProperty(
+        "pt.webdetails.cda.exporter.csv.Enclosure", DEFAULT_CSV_ENCLOSURE_SETTING ) );
 
     this.attachmentName = getSetting( ATTACHMENT_NAME_SETTING, "cda-export.csv" );
 
@@ -64,7 +64,7 @@ public class CsvExporter extends AbstractKettleExporter {
 
   protected StepMeta getExportStepMeta( String name ) {
     TextFileOutputMeta csvOutputStepMeta = new TextFileOutputMeta();
-    csvOutputStepMeta.setOutputFields( new TextFileField[0] );
+    csvOutputStepMeta.setOutputFields( new TextFileField[ 0 ] );
     csvOutputStepMeta.setSeparator( this.separator );
     csvOutputStepMeta.setEnclosure( this.enclosure );
     csvOutputStepMeta.setEnclosureForced( true );

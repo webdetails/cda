@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.filetests;
 
@@ -44,7 +44,7 @@ public class RoundtripSuiteTest extends XMLTestCase {
   private DomTraversalHelper tHelper;
   private CdaTestEnvironment testEnvironment;
   private static final Class<?>[] customDataFactories = {
-      CompactBandedMDXDataFactory.class, ExtBandedMDXDataFactory.class, ExtDenormalizedMDXDataFactory.class };
+    CompactBandedMDXDataFactory.class, ExtBandedMDXDataFactory.class, ExtDenormalizedMDXDataFactory.class };
   private static final String USER_DIR = System.getProperty( "user.dir" );
 
   private static final String OLAP4J_STRING = "olap4j";
@@ -204,28 +204,28 @@ public class RoundtripSuiteTest extends XMLTestCase {
       @Override public int differenceFound( Difference difference ) {
         if ( difference.getId() == DifferenceConstants.ATTR_VALUE_ID ) {
           String controlNodeString = difference.getControlNodeDetail().getValue(),
-                 testNodeString = difference.getTestNodeDetail().getValue();
+            testNodeString = difference.getTestNodeDetail().getValue();
 
           if ( controlNodeString.equals( OLAP4J_STRING )
-              && ( testNodeString.equals( OLAP4J_STRING ) || testNodeString.equals( OLAP4J_DEFAULT_STRING ) ) ) {
+            && ( testNodeString.equals( OLAP4J_STRING ) || testNodeString.equals( OLAP4J_DEFAULT_STRING ) ) ) {
             return DifferenceListener.RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR;
           }
         } else if ( difference.getId() == DifferenceConstants.CHILD_NODELIST_SEQUENCE_ID ) {
           return DifferenceListener.RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR;
         } else if ( difference.getId() == DifferenceConstants.ELEMENT_NUM_ATTRIBUTES_ID
-            || difference.getId() == DifferenceConstants.ATTR_NAME_NOT_FOUND_ID ) {
+          || difference.getId() == DifferenceConstants.ATTR_NAME_NOT_FOUND_ID ) {
           Node cacheTestNode = difference.getTestNodeDetail().getNode().getAttributes().getNamedItem( "cache" ),
-               controlTestNode = difference.getControlNodeDetail().getNode().getAttributes().getNamedItem( "cache" );
+            controlTestNode = difference.getControlNodeDetail().getNode().getAttributes().getNamedItem( "cache" );
 
           if ( cacheTestNode.getNodeValue().equals( "true" )
-              && cacheTestNode.getNodeValue().equals( controlTestNode.getNodeValue() ) ) {
+            && cacheTestNode.getNodeValue().equals( controlTestNode.getNodeValue() ) ) {
             Node cacheDurationTestNode =
-                  difference.getTestNodeDetail().getNode().getAttributes().getNamedItem( "cacheDuration" ),
-                 cacheDurationControlNode =
-                  difference.getControlNodeDetail().getNode().getAttributes().getNamedItem( "cacheDuration" );
+              difference.getTestNodeDetail().getNode().getAttributes().getNamedItem( "cacheDuration" ),
+              cacheDurationControlNode =
+                difference.getControlNodeDetail().getNode().getAttributes().getNamedItem( "cacheDuration" );
 
             if ( cacheDurationControlNode.getNodeValue().equals( "3600" )
-                && ( cacheDurationTestNode == null || cacheDurationTestNode.getNodeValue().equals( "3600" ) ) ) {
+              && ( cacheDurationTestNode == null || cacheDurationTestNode.getNodeValue().equals( "3600" ) ) ) {
               return DifferenceListener.RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR;
             }
           }
@@ -246,9 +246,9 @@ public class RoundtripSuiteTest extends XMLTestCase {
   protected static void registerCustomDataFactories() {
     for ( Class<?> clazz : customDataFactories ) {
       DefaultDataFactoryMetaData dmd =
-          new DefaultDataFactoryMetaData(
-              clazz.getName(), "", "", true, false, true, false, false, false, false,
-              MaturityLevel.Production, new DefaultDataFactoryCore(), 0 );
+        new DefaultDataFactoryMetaData(
+          clazz.getName(), "", "", true, false, true, false, false, false, false,
+          MaturityLevel.Production, new DefaultDataFactoryCore(), 0 );
       DataFactoryRegistry.getInstance().register( dmd );
     }
   }

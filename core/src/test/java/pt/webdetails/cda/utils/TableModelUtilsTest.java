@@ -1,15 +1,16 @@
 /*!
-* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
-*
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
+
 package pt.webdetails.cda.utils;
 
 import org.junit.Assert;
@@ -25,6 +26,7 @@ import pt.webdetails.cda.dataaccess.MdxDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccess.OutputMode;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.test.util.TableModelChecker;
+
 import static pt.webdetails.cda.test.util.CdaTestHelper.*;
 import static org.mockito.Mockito.*;
 
@@ -69,48 +71,50 @@ public class TableModelUtilsTest {
   @Test
   public void testCopyTableModel() {
     SimpleTableModel table = new SimpleTableModel(
-        new Object[] { 1, "2", null },
-        new Object[] { null, "", 3 } );
+      new Object[] { 1, "2", null },
+      new Object[] { null, "", 3 } );
     DataAccess daColDef = mock( DataAccess.class );
     final String[] names = { "X1", "nope", "X3" };
     when( daColDef.getColumnDefinition( anyInt() ) ).thenAnswer( new Answer<ColumnDefinition>() {
       public ColumnDefinition answer( InvocationOnMock invocation ) throws Throwable {
-        final int i = (int) invocation.getArguments()[0];
+        final int i = (int) invocation.getArguments()[ 0 ];
         return i == 1 ? null : new ColumnDefinition() {
           public String getName() {
-            return names[i];
-          };
+            return names[ i ];
+          }
+
+          ;
         };
       }
     } );
     TableModelChecker checker = new TableModelChecker( true, false );
     TableModel copy = TableModelUtils.copyTableModel( daColDef, table );
     checker.assertEquals( table, copy );
-    checker.assertColumnNames( copy, names[0], table.getColumnName( 1 ), names[2] );
+    checker.assertColumnNames( copy, names[ 0 ], table.getColumnName( 1 ), names[ 2 ] );
   }
 
   @Test
   public void testAppendTableModel() throws Exception {
     TableModel table1 = new SimpleTableModel(
-        new Object[] { 1, 2, 3 },
-        new Object[] { 4, 5, 6 } );
+      new Object[] { 1, 2, 3 },
+      new Object[] { 4, 5, 6 } );
     TableModel table2 = new SimpleTableModel(
-        new Object[] { 7, 8 },
-        new Object[] { null, 9 } );
+      new Object[] { 7, 8 },
+      new Object[] { null, 9 } );
     TableModel appended = TableModelUtils.appendTableModel( table1, table2 );
     TableModelChecker checker = new TableModelChecker();
     checker.assertEquals( new SimpleTableModel(
-        new Object[] { 1, 2, 3 },
-        new Object[] { 4, 5, 6 },
-        new Object[] { 7, 8, null },
-        new Object[] { null, 9, null } ), appended );
+      new Object[] { 1, 2, 3 },
+      new Object[] { 4, 5, 6 },
+      new Object[] { 7, 8, null },
+      new Object[] { null, 9, null } ), appended );
   }
 
   @Test
   public void testOutputIdx() throws Exception {
     TypedTableModel tm = new TypedTableModel(
-        new String[] { "c1", "c2", "c3" },
-        new Class<?>[] { Long.class, String.class, Double.class }, 2 );
+      new String[] { "c1", "c2", "c3" },
+      new Class<?>[] { Long.class, String.class, Double.class }, 2 );
     tm.addRow( 1L, "one", 1.0d );
     tm.addRow( 2L, "two", 2.0d );
     DataAccess dataAccess = mock( DataAccess.class );
@@ -122,16 +126,16 @@ public class TableModelUtilsTest {
     TableModel result = TableModelUtils.postProcessTableModel( dataAccess, opts, tm );
     TableModelChecker checker = new TableModelChecker();
     checker.assertEquals( new SimpleTableModel(
-        new Object[] { 1.0d, "one" },
-        new Object[] { 2.0d, "two" } ), result );
+      new Object[] { 1.0d, "one" },
+      new Object[] { 2.0d, "two" } ), result );
     checker.assertColumnNames( result, "c3", "c2" );
     checker.assertColumnClasses( result, Double.class, String.class );
 
     when( dataAccess.getOutputMode( 6 ) ).thenReturn( OutputMode.EXCLUDE );
     result = TableModelUtils.postProcessTableModel( dataAccess, opts, tm );
     checker.assertEquals(
-        new SimpleTableModel( new Object[] { 1L }, new Object[] { 2L } ),
-        result );
+      new SimpleTableModel( new Object[] { 1L }, new Object[] { 2L } ),
+      result );
     checker.assertColumnNames( result, "c1" );
     checker.assertColumnClasses( result, Long.class );
   }
@@ -145,11 +149,11 @@ public class TableModelUtilsTest {
 
       // Define names and types
       final String[] colNames = {
-          "id", "name", "type"
+        "id", "name", "type"
       };
 
       final Class<?>[] colTypes = {
-          String.class, String.class, String.class
+        String.class, String.class, String.class
       };
 
       typedTableModel = new TypedTableModel( colNames, colTypes, rowCount );
@@ -165,7 +169,7 @@ public class TableModelUtilsTest {
 
       for ( DataAccess dataAccess : dam.values() ) {
         model.addRow( new Object[] {
-            dataAccess.getId(), dataAccess.getName(), dataAccess.getType() } );
+          dataAccess.getId(), dataAccess.getName(), dataAccess.getType() } );
       }
 
       return model;

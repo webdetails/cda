@@ -1,3 +1,16 @@
+/*!
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
+
 package pt.webdetails.cda.services;
 
 
@@ -25,16 +38,15 @@ import pt.webdetails.cpf.utils.MimeTypes;
 import pt.webdetails.cpf.utils.Pair;
 
 /**
- * Serves a pre-processed webpage.
- * Updates URLs so a page can be serviced outside its location.
- * Also allows to inject simple javascript assignments.
+ * Serves a pre-processed webpage. Updates URLs so a page can be serviced outside its location. Also allows to inject
+ * simple javascript assignments.
  */
 public abstract class ProcessedHtmlPage extends BaseService {
 
-  private static Log log = LogFactory.getLog(ProcessedHtmlPage.class);
-  protected static final Pattern URL_PROTOCOL = Pattern.compile("^\\w*\\:");
+  private static Log log = LogFactory.getLog( ProcessedHtmlPage.class );
+  protected static final Pattern URL_PROTOCOL = Pattern.compile( "^\\w*\\:" );
 
-  private static final String CODE_SNIPPET_START_TAG = String.format( "<script type=\"%s\">\n", MimeTypes.JAVASCRIPT) ;
+  private static final String CODE_SNIPPET_START_TAG = String.format( "<script type=\"%s\">\n", MimeTypes.JAVASCRIPT );
   private static final String CODE_SNIPPET_END_TAG = "\n</script>\n";
 
   private IUrlProvider urlProvider;
@@ -48,17 +60,18 @@ public abstract class ProcessedHtmlPage extends BaseService {
   private IUrlProvider getUrlProvider() {
     return urlProvider;
   }
+
   private IContentAccessFactory getRepo() {
     return access;
   }
 
-  protected String processPage(PathOrigin baseDir, String pagePath) throws IOException {
+  protected String processPage( PathOrigin baseDir, String pagePath ) throws IOException {
 
     long start = System.currentTimeMillis();
     InputStream file = null;
     try {
       file = baseDir.getReader( getRepo() ).getFileInputStream( pagePath );
-      Source html = new Source( file ); 
+      Source html = new Source( file );
       OutputDocument outDoc = new OutputDocument( html );
       // transform
       modifyDocument( html, baseDir, outDoc );
@@ -66,7 +79,7 @@ public abstract class ProcessedHtmlPage extends BaseService {
     } finally {
       IOUtils.closeQuietly( file );
       if ( log.isDebugEnabled() ) {
-        log.debug( String.format("processPage for %s took %dms", pagePath, System.currentTimeMillis() - start ) );
+        log.debug( String.format( "processPage for %s took %dms", pagePath, System.currentTimeMillis() - start ) );
       }
     }
 
@@ -74,25 +87,26 @@ public abstract class ProcessedHtmlPage extends BaseService {
 
   /**
    * Updates relative source attributes to externally accessible abs paths
-   * @param html the document
+   *
+   * @param html    the document
    * @param baseDir html location
-   * @param out processed document
+   * @param out     processed document
    */
   protected void modifyDocument( Source html, PathOrigin baseDir, OutputDocument out ) {
-    replaceUrlAttribute( html.getAllStartTags( HTMLElementName.LINK ), "href", baseDir, out);
-    replaceUrlAttribute( html.getAllStartTags( HTMLElementName.SCRIPT ), "src", baseDir, out);
-    replaceUrlAttribute( html.getAllStartTags( HTMLElementName.IMG ), "src", baseDir, out);
-    int insertPos = html.getFirstElement( HTMLElementName.HEAD ).getEndTag().getBegin() ;
+    replaceUrlAttribute( html.getAllStartTags( HTMLElementName.LINK ), "href", baseDir, out );
+    replaceUrlAttribute( html.getAllStartTags( HTMLElementName.SCRIPT ), "src", baseDir, out );
+    replaceUrlAttribute( html.getAllStartTags( HTMLElementName.IMG ), "src", baseDir, out );
+    int insertPos = html.getFirstElement( HTMLElementName.HEAD ).getEndTag().getBegin();
     out.insert( insertPos, getCodeSnippet( getBackendAssignments( getUrlProvider() ) ) );
   }
 
   /**
    * Will be added in a code snippet at the end of the HEAD element.
-   */ 
+   */
   protected abstract Iterable<Pair<String, String>> getBackendAssignments( IUrlProvider urlProvider );
 
-  protected String getCodeSnippet(Iterable<Pair<String,String>> assignments) {
-    StringBuilder element =  new StringBuilder( CODE_SNIPPET_START_TAG );
+  protected String getCodeSnippet( Iterable<Pair<String, String>> assignments ) {
+    StringBuilder element = new StringBuilder( CODE_SNIPPET_START_TAG );
     for ( Pair<String, String> assignment : assignments ) {
       element.append( assignment.first ).append( " = " ).append( assignment.second ).append( ";\n" );
     }
@@ -102,17 +116,18 @@ public abstract class ProcessedHtmlPage extends BaseService {
 
   protected boolean shouldProcessPath( String path ) {
     // if it is a relative path
-    return 
-        !StringUtils.isEmpty( path ) &&
+    return
+      !StringUtils.isEmpty( path ) &&
         !path.startsWith( "/" ) &&
         !URL_PROTOCOL.matcher( path ).find();
   }
 
-  protected String processPath(PathOrigin origin, String path, IUrlProvider urlProvider ) {
+  protected String processPath( PathOrigin origin, String path, IUrlProvider urlProvider ) {
     return normalizeUri( origin.getUrl( path, urlProvider ) );
   }
 
-  protected int replaceUrlAttribute ( Iterable<StartTag> tags, final String pathAttribute, PathOrigin baseDir, OutputDocument doc ) {
+  protected int replaceUrlAttribute( Iterable<StartTag> tags, final String pathAttribute, PathOrigin baseDir,
+                                     OutputDocument doc ) {
     int count = 0;
     for ( StartTag tag : tags ) {
       Attributes attr = tag.parseAttributes();
@@ -120,7 +135,8 @@ public abstract class ProcessedHtmlPage extends BaseService {
       if ( shouldProcessPath( path ) ) {
         String newPath = processPath( baseDir, path, getUrlProvider() );
         if ( log.isTraceEnabled() ) { //TODO: trace
-          log.trace( String.format( "replaced: in %s@%s \"%s\" --> \"%s\"", tag.getName(), pathAttribute, path, newPath ) );
+          log.trace(
+            String.format( "replaced: in %s@%s \"%s\" --> \"%s\"", tag.getName(), pathAttribute, path, newPath ) );
         }
         doc.replace( attr, true ).put( pathAttribute, newPath );
         count++;
@@ -129,12 +145,12 @@ public abstract class ProcessedHtmlPage extends BaseService {
     return count;
   }
 
-  private static String normalizeUri ( String path ) {
+  private static String normalizeUri( String path ) {
     try {
       URI uri = new URI( path );
       return uri.normalize().getPath();
     } catch ( URISyntaxException e ) {
-      log.error("normalizeUri: cannot process path " + path, e);
+      log.error( "normalizeUri: cannot process path " + path, e );
       return path;
     }
   }

@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
-*
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.dataaccess.kettle;
 
@@ -38,8 +38,6 @@ import java.util.List;
 
 /**
  * Adapts from SQL data access to Kettle "Table Input" step
- *
- * @author Michael Spector
  */
 public class SQLKettleAdapter implements DataAccessKettleAdapter {
 
@@ -163,7 +161,7 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
           connectionInfo.getUser(), connectionInfo.getPass() );
         databaseMeta.getAttributes().put( GenericDatabaseMeta.ATRRIBUTE_CUSTOM_URL, connectionInfo.getUrl() );
         databaseMeta.getAttributes().put( GenericDatabaseMeta.ATRRIBUTE_CUSTOM_DRIVER_CLASS,
-            connectionInfo.getDriver() );
+          connectionInfo.getDriver() );
       } else {
         if ( connection instanceof JndiConnection ) {
           JndiConnection jndiConnection = (JndiConnection) connection;

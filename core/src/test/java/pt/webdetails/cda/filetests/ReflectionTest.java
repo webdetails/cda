@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.filetests;
 
@@ -36,9 +36,9 @@ public class ReflectionTest extends CdaTestCase {
 
     TableModel result = engine.doQuery( cdaSettings, queryOptions );
     TypedTableModel expected =
-        new TypedTableModel(
-            new String[] { "ID", "NUMBER", "DESCRIPTION" },
-            new Class<?>[] { Long.class, Long.class, String.class }, 2 );
+      new TypedTableModel(
+        new String[] { "ID", "NUMBER", "DESCRIPTION" },
+        new Class<?>[] { Long.class, Long.class, String.class }, 2 );
     expected.addRow( 0L, 0L, "Look, you got a new dataset." );
     expected.addRow( 0L, 1L, "So Subreport queries work too.." );
     // FIXME reports wrong type for second column: String instead of Long

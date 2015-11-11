@@ -1,3 +1,16 @@
+/*!
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
+
 package pt.webdetails.cda.dataaccess;
 
 import java.util.ArrayList;
@@ -21,6 +34,7 @@ import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.xml.DomVisitor;
 import pt.webdetails.cpf.messaging.IEventPublisher;
+
 import static pt.webdetails.cda.test.util.CdaTestHelper.*;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
@@ -38,7 +52,7 @@ public class DataAccessTest {
     DataAccess da = new TestDataAccess( "a", "a" ) {
       protected TableModel queryDataSource( QueryOptions queryOptions ) throws QueryException {
         if ( queryOptions.getParameter( "p" ).getStringValue().equals( "baah" )
-            && queryOptions.getParameter( "a" ).getStringValue().equals( "meh" ) ) {
+          && queryOptions.getParameter( "a" ).getStringValue().equals( "meh" ) ) {
           return new SimpleTableModel( new Object[] { "a1" }, new Object[] { "a2" } );
         }
         throw new AssertionError( "no params" );
@@ -56,8 +70,8 @@ public class DataAccessTest {
     DataAccess dataAccess = new TestDataAccess( "dataAccess", "test" ) {
       protected TableModel queryDataSource( QueryOptions queryOptions ) throws QueryException {
         params.add( queryOptions.getParameter( "p1" ).getStringValue()
-            + ":" + queryOptions.getParameter( "p2" ).getStringValue() );
-        return new SimpleTableModel( new Object[0] );
+          + ":" + queryOptions.getParameter( "p2" ).getStringValue() );
+        return new SimpleTableModel( new Object[ 0 ] );
       }
     };
     dataAccess.setCdaSettings( settings );
@@ -76,7 +90,7 @@ public class DataAccessTest {
 
   @Test
   public void testQueryDataSource() throws Exception {
-    ICdaEnvironment env = getMockEnvironment( );
+    ICdaEnvironment env = getMockEnvironment();
     IQueryCache cache = mock( IQueryCache.class );
     when( env.getQueryCache() ).thenReturn( cache );
     IEventPublisher pub = mock( IEventPublisher.class );
@@ -84,7 +98,7 @@ public class DataAccessTest {
     initBareEngine( env );
 
     final IDataSourceQuery dsQuery = mock( IDataSourceQuery.class );
-    when( dsQuery.getTableModel() ).thenReturn( new SimpleTableModel( new Object[0] ) );
+    when( dsQuery.getTableModel() ).thenReturn( new SimpleTableModel( new Object[ 0 ] ) );
 
     CdaSettings settings = mock( CdaSettings.class );
     TestSimpleDataAccess dataAccess = spy( new TestSimpleDataAccess( "id", "name", null, "q", "test" ) {
@@ -103,13 +117,13 @@ public class DataAccessTest {
     verify( dataAccess, times( 1 ) ).performRawQuery( any( ParameterDataRow.class ) );
     verify( cache, times( 1 ) ).getTableModel( any( TableCacheKey.class ) );
     verify( cache, times( 1 ) ).putTableModel( any( TableCacheKey.class ), any( TableModel.class ), anyInt(),
-        any( ExtraCacheInfo.class ) );
+      any( ExtraCacheInfo.class ) );
 
   }
 
   @Test
   public void testQueryDataSourceError() throws Exception {
-    ICdaEnvironment env = getMockEnvironment( );
+    ICdaEnvironment env = getMockEnvironment();
     IQueryCache cache = mock( IQueryCache.class );
     when( env.getQueryCache() ).thenReturn( cache );
     IEventPublisher pub = mock( IEventPublisher.class );

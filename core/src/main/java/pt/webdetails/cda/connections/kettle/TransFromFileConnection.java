@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.connections.kettle;
 
@@ -28,11 +28,6 @@ import pt.webdetails.cda.settings.CdaSettings;
 
 /**
  * Todo: Document me!
- * <p/>
- * Date: 08.05.2010
- * Time: 14:02:09
- *
- * @author Thomas Morgner.
  */
 public class TransFromFileConnection extends AbstractConnection implements KettleConnection {
 
@@ -98,9 +93,9 @@ public class TransFromFileConnection extends AbstractConnection implements Kettl
   public ArrayList<PropertyDescriptor> getProperties() {
     final ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
     properties.add(
-        new PropertyDescriptor( "ktrFile", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+      new PropertyDescriptor( "ktrFile", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
     properties.add(
-        new PropertyDescriptor( "variables", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD ) );
+      new PropertyDescriptor( "variables", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD ) );
     return properties;
   }
 

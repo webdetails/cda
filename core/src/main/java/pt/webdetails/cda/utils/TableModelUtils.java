@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.utils;
 
@@ -36,8 +36,6 @@ import pt.webdetails.cda.utils.kettle.SortTableModel;
 
 /**
  * Utility class to handle TableModel operations
- * <p/>
- * User: pedro Date: Feb 4, 2010 Time: 12:31:54 PM
  */
 public class TableModelUtils {
 
@@ -96,13 +94,13 @@ public class TableModelUtils {
     //in this cases, the output indexes will be ignored
     boolean useOutputIndexes = true;
     if ( table.getRowCount() == 0
-        && ( dataAccess.getType().equals( "mdx" ) || dataAccess.getType().equals( "denormalizedMdx" ) ) ) {
+      && ( dataAccess.getType().equals( "mdx" ) || dataAccess.getType().equals( "denormalizedMdx" ) ) ) {
       useOutputIndexes = false;
       logger.warn( "Mdx query returned empty result set, output indexes will be ignored." );
     }
     table = useOutputIndexes
-        ? filterTable( table, outputIndexes, columnNames, rowFilter, dataAccess.getColumnDefinitions().size() > 0 )
-        : filterTable( table, new ArrayList<Integer>(), columnNames, rowFilter, false );
+      ? filterTable( table, outputIndexes, columnNames, rowFilter, dataAccess.getColumnDefinitions().size() > 0 )
+      : filterTable( table, new ArrayList<Integer>(), columnNames, rowFilter, false );
 
     //  3. Sort
     if ( !queryOptions.getSortBy().isEmpty() ) {
@@ -156,7 +154,7 @@ public class TableModelUtils {
   /**
    * @param table
    * @param outputIndexes
-   * @param rowFilter     (optional)
+   * @param rowFilter            (optional)
    * @param hasColumnDefinitions
    * @return
    * @throws InvalidOutputIndexException
@@ -178,7 +176,7 @@ public class TableModelUtils {
       //logger.info(Collections.max(outputIndexes)+" "+table.getColumnCount());
       if ( ( Collections.max( outputIndexes ) > table.getColumnCount() - 1 ) ) {
         String errorMessage = String.format( "Output index higher than number of columns in tableModel. %s > %s",
-            Collections.max( outputIndexes ), table.getColumnCount() );
+          Collections.max( outputIndexes ), table.getColumnCount() );
         logger.error( errorMessage );
 
         if ( table.getColumnCount() > 0 ) {
@@ -241,7 +239,7 @@ public class TableModelUtils {
           searchableIndexes = null;
         } catch ( NumberFormatException e ) {
           logger.error( DT_SEARCHABLE + " not a comma-separated list of integers: "
-              + queryOptions.getExtraSettings().get( DT_SEARCHABLE ) );
+            + queryOptions.getExtraSettings().get( DT_SEARCHABLE ) );
           searchableIndexes = null;
         }
       }
@@ -294,7 +292,7 @@ public class TableModelUtils {
     // If output mode == exclude, we need to translate the excluded outputColuns
     // into included ones
     if ( dataAccess.getOutputMode( queryOptions.getOutputIndexId() ) == DataAccess.OutputMode.EXCLUDE
-        && outputIndexes.size() > 0 ) {
+      && outputIndexes.size() > 0 ) {
 
       ArrayList<Integer> newOutputIndexes = new ArrayList<Integer>();
       for ( int i = 0; i < table.getColumnCount(); i++ ) {
@@ -344,7 +342,7 @@ public class TableModelUtils {
     for ( int i = 0; i < t.getColumnCount(); i++ ) {
       String colName = t.getColumnName( i );
       if ( !colName.startsWith( "::table-by-index::" )
-          && !colName.startsWith( "::column::" ) ) {
+        && !colName.startsWith( "::column::" ) ) {
         namedColumns.add( colName );
         namedColumnsClasses.add( t.getColumnClass( i ) );
       }
@@ -352,8 +350,8 @@ public class TableModelUtils {
 
     final int count = namedColumns.size();
 
-    final Class<?>[] colTypes = namedColumnsClasses.toArray( new Class[] { } );
-    final String[] colNames = namedColumns.toArray( new String[] { } );
+    final Class<?>[] colTypes = namedColumnsClasses.toArray( new Class[] {} );
+    final String[] colNames = namedColumns.toArray( new String[] {} );
 
     for ( int i = 0; i < count; i++ ) {
       colTypes[ i ] = t.getColumnClass( i );
@@ -391,11 +389,11 @@ public class TableModelUtils {
 
     // Define names and types
     final String[] colNames = {
-        "id", "name", "type"
+      "id", "name", "type"
     };
 
     final Class<?>[] colTypes = {
-        String.class, String.class, String.class
+      String.class, String.class, String.class
     };
 
     final TypedTableModel typedTableModel = new TypedTableModel( colNames, colTypes, rowCount );
@@ -406,7 +404,7 @@ public class TableModelUtils {
     for ( DataAccess dataAccess : dataAccessSortedMap.values() ) {
       if ( dataAccess.getAccess() == DataAccessEnums.ACCESS_TYPE.PUBLIC ) {
         typedTableModel.addRow( new Object[] {
-            dataAccess.getId(), dataAccess.getName(), dataAccess.getType()
+          dataAccess.getId(), dataAccess.getName(), dataAccess.getType()
         } );
       }
     }
@@ -422,18 +420,18 @@ public class TableModelUtils {
 
     // Define names and types
     final String[] colNames = {
-        "name", "type", "defaultValue", "pattern", "access"
+      "name", "type", "defaultValue", "pattern", "access"
     };
 
     final Class<?>[] colTypes = {
-        String.class, String.class, String.class, String.class, String.class
+      String.class, String.class, String.class, String.class, String.class
     };
 
     final TypedTableModel typedTableModel = new TypedTableModel( colNames, colTypes, rowCount );
 
     for ( Parameter p : parameters ) {
       typedTableModel.addRow( new Object[] {
-          p.getName(), p.getTypeAsString(), p.getDefaultValue(), p.getPattern(), p.getAccess().toString()
+        p.getName(), p.getTypeAsString(), p.getDefaultValue(), p.getPattern(), p.getAccess().toString()
       } );
     }
 
@@ -453,7 +451,7 @@ public class TableModelUtils {
     // We will believe the data is correct - no type checking
 
     int colCountA = tableModelA.getColumnCount(),
-        colCountB = tableModelB.getColumnCount();
+      colCountB = tableModelB.getColumnCount();
     boolean usingA = colCountA > colCountB;
     int colCount = usingA ? colCountA : colCountB;
     TableModel referenceTable = ( usingA ? tableModelA : tableModelB );
@@ -511,7 +509,7 @@ public class TableModelUtils {
     }
 
     final MetadataTableModel resultTableModel =
-        new MetadataTableModel( colNames, colTypes, rowCount, t.getAllMetadata() );
+      new MetadataTableModel( colNames, colTypes, rowCount, t.getAllMetadata() );
     resultTableModel.setMetadata( "pageSize", queryOptions.getPageSize() );
     resultTableModel.setMetadata( "pageStart", queryOptions.getPageStart() );
 

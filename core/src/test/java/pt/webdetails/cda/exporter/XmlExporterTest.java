@@ -1,3 +1,16 @@
+/*!
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
+
 package pt.webdetails.cda.exporter;
 
 import org.dom4j.Document;
@@ -42,10 +55,10 @@ public class XmlExporterTest {
       TableModelChecker checker = new TableModelChecker();
       checker.assertColumnNames( exported, "The Integer", "The String", "The Numeric", "The Date", "The Calculation" );
       final TableModel expected = new SimpleTableModel(
-          new Object[] { "1", "One", "1.05", "2012-01-01T00:01:01.000+0000", "-12.34567890123456789" },
-          new Object[] { "-2", "Two > One", "-1.05", "", "987654321.12345678900" },
-          new Object[] { "9223372036854775807", "Many", "1.7976931348623157E308",
-                         "1970-01-01T00:00:00.000+0000", "4.9E-325" } );
+        new Object[] { "1", "One", "1.05", "2012-01-01T00:01:01.000+0000", "-12.34567890123456789" },
+        new Object[] { "-2", "Two > One", "-1.05", "", "987654321.12345678900" },
+        new Object[] { "9223372036854775807", "Many", "1.7976931348623157E308",
+          "1970-01-01T00:00:00.000+0000", "4.9E-325" } );
       checker.assertEquals( expected, exported );
     } finally {
       TimeZone.setDefault( tz );
@@ -55,8 +68,8 @@ public class XmlExporterTest {
   @Test
   public void testXmlExportFunkyStrings() throws Exception {
     MetadataTableModel table =
-        new MetadataTableModel( new String[] { "string A", "string B" }, new Class<?>[] { String.class, String.class },
-            3 );
+      new MetadataTableModel( new String[] { "string A", "string B" }, new Class<?>[] { String.class, String.class },
+        3 );
     table.addRow( "<hi xml/>  </bye>", ">>>>>>>>" );
     table.addRow( "& = &amp;", "<!CDATA[ muahaha! ]>" );
     table.addRow( "wow\n\twoooow\n\n\t...", "\\o/" );
@@ -76,7 +89,7 @@ public class XmlExporterTest {
     assertEquals( "Numeric", result.getColumnType( 2 ) );
     assertEquals( "Date", result.getColumnType( 3 ) );
     assertEquals( "Numeric", result.getColumnType( 4 ) );
-    checker.assertEquals( new SimpleTableModel( new Object[] {"", "", "", "", ""} ), result );
+    checker.assertEquals( new SimpleTableModel( new Object[] { "", "", "", "", "" } ), result );
   }
 
   private XmlStringTable exportToXmlStringTable( TableModel table ) throws Exception {

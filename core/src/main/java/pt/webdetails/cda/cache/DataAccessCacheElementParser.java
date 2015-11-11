@@ -1,15 +1,16 @@
 /*!
-* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
-*
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
+
 package pt.webdetails.cda.cache;
 
 import org.apache.commons.lang.StringUtils;
@@ -48,12 +49,12 @@ public class DataAccessCacheElementParser {
 
       // default is true; we change it *only* if it has been explicitly set to false
       if ( contains( element, ATTR_CACHE_ENABLED )
-          && element.attributeValue( ATTR_CACHE_ENABLED ).toString().equalsIgnoreCase( "false" ) ) {
+        && element.attributeValue( ATTR_CACHE_ENABLED ).toString().equalsIgnoreCase( "false" ) ) {
         setCacheEnabled( false );
       }
 
       if ( contains( element, ATTR_DURATION )
-          && isValidPositiveInteger( element.attributeValue( ATTR_DURATION ).toString() ) ) {
+        && isValidPositiveInteger( element.attributeValue( ATTR_DURATION ).toString() ) ) {
         setCacheDuration( Integer.parseInt( element.attributeValue( ATTR_DURATION ).toString() ) );
       }
 
@@ -100,7 +101,7 @@ public class DataAccessCacheElementParser {
 
       // if no value was fetched from formula AND user defined a default-value, we apply it
       if ( StringUtils.isEmpty( value ) || value.trim().equals( "null" )
-          && keyNode.attributeValue( ATTR_KEY_DEFAULT_VALUE ) != null ) {
+        && keyNode.attributeValue( ATTR_KEY_DEFAULT_VALUE ) != null ) {
         value = keyNode.attributeValue( ATTR_KEY_DEFAULT_VALUE ).toString();
       }
 
