@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.connections.sql;
 
@@ -28,9 +28,6 @@ import pt.webdetails.cda.dataaccess.PropertyDescriptor;
 import pt.webdetails.cda.utils.FormulaEvaluator;
 import pt.webdetails.cda.utils.Util;
 
-/**
- * @author Thomas Morgner.
- */
 public class JndiConnection extends AbstractSqlConnection implements EvaluableConnection {
 
   private SqlJndiConnectionInfo connectionInfo;
@@ -44,9 +41,8 @@ public class JndiConnection extends AbstractSqlConnection implements EvaluableCo
 
   /**
    * TODO:new API
-   * 
-   * @param jndi
-   *          the connection name as defined in the <code>datasources.xml</code> file
+   *
+   * @param jndi the connection name as defined in the <code>datasources.xml</code> file
    */
   public JndiConnection( String id, String jndi ) {
     super( id );
@@ -69,7 +65,7 @@ public class JndiConnection extends AbstractSqlConnection implements EvaluableCo
     } catch ( SQLException e ) {
 
       throw new InvalidConnectionException( getClass().getName() + ": Found SQLException: "
-          + Util.getExceptionDescription( e ), e );
+        + Util.getExceptionDescription( e ), e );
     }
 
     return connectionProvider;
@@ -108,7 +104,7 @@ public class JndiConnection extends AbstractSqlConnection implements EvaluableCo
   public ArrayList<PropertyDescriptor> getProperties() {
     ArrayList<PropertyDescriptor> properties = super.getProperties();
     properties
-        .add( new PropertyDescriptor( "jndi", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+      .add( new PropertyDescriptor( "jndi", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
     return properties;
   }
 
@@ -123,9 +119,9 @@ public class JndiConnection extends AbstractSqlConnection implements EvaluableCo
   @Override
   public pt.webdetails.cda.connections.Connection evaluate() {
     SqlJndiConnectionInfo info =
-        new SqlJndiConnectionInfo( FormulaEvaluator.replaceFormula( connectionInfo.getJndi() ),
-            connectionInfo.getUser(), connectionInfo.getPass(), connectionInfo.getUserField(),
-            connectionInfo.getPasswordField() );
+      new SqlJndiConnectionInfo( FormulaEvaluator.replaceFormula( connectionInfo.getJndi() ),
+        connectionInfo.getUser(), connectionInfo.getPass(), connectionInfo.getUserField(),
+        connectionInfo.getPasswordField() );
     JndiConnection conn = new JndiConnection( getId(), info );
     conn.setCdaSettings( getCdaSettings() );
     return conn;

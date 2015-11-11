@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.dataaccess;
 
@@ -49,8 +49,6 @@ import pt.webdetails.cda.utils.kettle.SortException;
 
 /**
  * This is the top level implementation of a DataAccess. Only the common methods are used here
- * <p/>
- * User: pedro Date: Feb 3, 2010 Time: 11:05:38 AM
  */
 public abstract class AbstractDataAccess implements DataAccess {
 
@@ -141,7 +139,7 @@ public abstract class AbstractDataAccess implements DataAccess {
     }
 
     if ( element.attribute( "cacheDuration" ) != null && !element.attribute( "cacheDuration" ).toString()
-        .equals( "" ) ) {
+      .equals( "" ) ) {
       cacheDuration = Integer.parseInt( element.attributeValue( "cacheDuration" ) );
     }
 
@@ -207,7 +205,7 @@ public abstract class AbstractDataAccess implements DataAccess {
         setCacheEnabled( cdaCacheParser.isCacheEnabled() ); // overrides the cacheEnabled declared at DataAccess node
         if ( cdaCacheParser.getCacheDuration() != null ) {
           setCacheDuration(
-              cdaCacheParser.getCacheDuration() ); // overrides the cacheDuration declared at DataAccess node
+            cdaCacheParser.getCacheDuration() ); // overrides the cacheDuration declared at DataAccess node
         }
       }
     }
@@ -466,12 +464,12 @@ public abstract class AbstractDataAccess implements DataAccess {
    * Identify $FOREACH directives and get their iterators
    */
   private Map<String, Iterable<String>> getIterableParametersValues(
-      final QueryOptions queryOptions ) throws QueryException {
+    final QueryOptions queryOptions ) throws QueryException {
 
     //name, values
     Map<String, Iterable<String>> iterableParameters = new HashMap<String, Iterable<String>>();
     final String splitRegex =
-        PARAM_ITERATOR_ARG_SEPARATOR + "(?=([^\"]*\"[^\"]*\")*[^\"]*$)"; //ignore separator inside dquotes
+      PARAM_ITERATOR_ARG_SEPARATOR + "(?=([^\"]*\"[^\"]*\")*[^\"]*$)"; //ignore separator inside dquotes
 
     for ( Parameter param : queryOptions.getParameters() ) {
       String value = param.getStringValue();
@@ -548,7 +546,7 @@ public abstract class AbstractDataAccess implements DataAccess {
 
     //do query and get selected columns
     logger.debug( "expandParameterIteration: Doing inner query on CdaSettings [ " + cdaSettings.getId()
-        + " (" + queryOptions.getDataAccessId() + ")]" );
+      + " (" + queryOptions.getDataAccessId() + ")]" );
     try {
 
       DataAccess dataAccess = getCdaSettings().getDataAccess( queryOptions.getDataAccessId() );
@@ -677,7 +675,7 @@ public abstract class AbstractDataAccess implements DataAccess {
 
   public Serializable getCacheKey() {
     String cacheKeyInfo =
-        "Getting Cache Key for file: " + this.getCdaSettings().getId() + ", DataAccessID: " + this.getId() + "\n";
+      "Getting Cache Key for file: " + this.getCdaSettings().getId() + ", DataAccessID: " + this.getId() + "\n";
     CacheKey systemWideCacheKey = getSystemCacheKeys();
     if ( cdaCacheParser != null ) {
       if ( cdaCacheParser.parseKeys() ) {
@@ -704,7 +702,7 @@ public abstract class AbstractDataAccess implements DataAccess {
     while ( extraCacheKeys.hasNext() ) {
       key = extraCacheKeys.next();
       cacheKey.addKeyValuePair( key.replace( EXTRA_CACHE_KEYS_PROPERTY + ".", "" ),
-          FormulaEvaluator.replaceFormula( config.getConfigProperty( key ) ) );
+        FormulaEvaluator.replaceFormula( config.getConfigProperty( key ) ) );
     }
     return cacheKey;
   }

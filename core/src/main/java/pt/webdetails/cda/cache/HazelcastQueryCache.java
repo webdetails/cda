@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.cache;
 
@@ -44,9 +44,7 @@ import com.hazelcast.query.SqlPredicate;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 
  * Hazelcast implementation of CDA query cache
- * 
  */
 public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQueryCache {
 
@@ -64,13 +62,13 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
   // max consecutive timeouts
   private static int maxTimeouts = CdaPropertiesHelper.getIntProperty( "pt.webdetails.cda.cache.maxTimeouts", 4 );
   private static long cacheDisablePeriod =
-      CdaPropertiesHelper.getIntProperty( "pt.webdetails.cda.cache.disablePeriod", 5 );
+    CdaPropertiesHelper.getIntProperty( "pt.webdetails.cda.cache.disablePeriod", 5 );
   private static boolean debugCache = CdaPropertiesHelper.getBoolProperty( "pt.webdetails.cda.cache.debug", true );
 
   private static int timeoutsReached = 0;
   private static boolean active = true;
 
-  /** 
+  /**
    * @return main cache (will hold actual values)
    */
   private static IMap<TableCacheKey, TableModel> getCache() {
@@ -78,7 +76,7 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
   }
 
   /**
-   * @return used for holding extra info 
+   * @return used for holding extra info
    */
   private static IMap<TableCacheKey, ExtraCacheInfo> getCacheStats() {
     return getHazelcast().getMap( AUX_MAP_NAME );
@@ -162,8 +160,8 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
     } catch ( TimeoutException e ) {
       int nbrTimeouts = incrTimeouts();
       checkNbrTimeouts( nbrTimeouts );
-      logger.error( "Timeout " + getTimeout + " " +  timeoutUnit + " expired fetching from "
-          + map.getName() + " (timeout#" + nbrTimeouts + ")" );
+      logger.error( "Timeout " + getTimeout + " " + timeoutUnit + " expired fetching from "
+        + map.getName() + " (timeout#" + nbrTimeouts + ")" );
     } catch ( InterruptedException e ) {
       logger.error( e );
     } catch ( ExecutionException e ) {
@@ -245,7 +243,7 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
     } catch ( Exception e ) {
       if ( e.getCause() instanceof IOException ) { // most likely a StreamCorruptedException
         logger.error( "IO error while attempting to get key " + key + "(" + e.getCause().getMessage()
-            + "), removing from cache!", e );
+          + "), removing from cache!", e );
         getCache().removeAsync( key );
       } else {
         logger.error( "Unexpected exception ", e );
@@ -274,7 +272,7 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
 
   public Iterable<TableCacheKey> getKeys( String cdaSettingsId, String dataAccessId ) {
     return getCacheStats().keySet(
-        new SqlPredicate( "cdaSettingsId = " + cdaSettingsId + " AND dataAccessId = " + dataAccessId ) );
+      new SqlPredicate( "cdaSettingsId = " + cdaSettingsId + " AND dataAccessId = " + dataAccessId ) );
   }
 
   @Override
@@ -283,13 +281,10 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
   }
 
   /**
-   * 
-   *  Synchronizes both maps' removals and evictions
-   *  
-   *
+   * Synchronizes both maps' removals and evictions
    */
   private static final class SyncRemoveStatsEntryListener
-      extends ClassLoaderAwareCaller implements EntryListener<TableCacheKey, TableModel> {
+    extends ClassLoaderAwareCaller implements EntryListener<TableCacheKey, TableModel> {
     public SyncRemoveStatsEntryListener( ClassLoader classLoader ) {
       super( classLoader );
     }
@@ -401,7 +396,7 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
         public Integer call() {
           int size = 0;
           Iterable<Map.Entry<TableCacheKey, ExtraCacheInfo>> entries =
-              getCacheStatsEntries( cdaSettingsId, dataAccessId );
+            getCacheStatsEntries( cdaSettingsId, dataAccessId );
           if ( entries != null ) {
             for ( Map.Entry<TableCacheKey, ExtraCacheInfo> entry : entries ) {
               getCache().remove( entry.getKey() );
@@ -443,19 +438,21 @@ public class HazelcastQueryCache extends ClassLoaderAwareCaller implements IQuer
   }
 
   /**
-   * (Make sure right class loader is set when accessing the iterator) 
+   * (Make sure right class loader is set when accessing the iterator)
+   *
    * @param cdaSettingsId
    * @param dataAccessId
    * @return
    */
   public Iterable<Map.Entry<TableCacheKey, ExtraCacheInfo>>
-      getCacheStatsEntries( final String cdaSettingsId, final String dataAccessId ) {
+  getCacheStatsEntries( final String cdaSettingsId, final String dataAccessId ) {
     //sql predicate would need to instantiate extraCacheInfo in host classloader
-    //return getCacheStats().entrySet(new SqlPredicate("cdaSettingsId = " + cdaSettingsId + ((dataAccessId != null)? " AND dataAccessId = " + dataAccessId : "")));
+    //return getCacheStats().entrySet(new SqlPredicate("cdaSettingsId = " + cdaSettingsId + ((dataAccessId != null)?
+    // " AND dataAccessId = " + dataAccessId : "")));
     ArrayList<Entry<TableCacheKey, ExtraCacheInfo>> result = new ArrayList<Entry<TableCacheKey, ExtraCacheInfo>>();
     for ( Entry<TableCacheKey, ExtraCacheInfo> entry : getCacheStats().entrySet() ) {
       if ( entry.getValue().getCdaSettingsId().equals( cdaSettingsId )
-          && ( dataAccessId == null || dataAccessId.equals( entry.getValue().getDataAccessId() ) ) ) {
+        && ( dataAccessId == null || dataAccessId.equals( entry.getValue().getDataAccessId() ) ) ) {
         result.add( entry );
       }
     }

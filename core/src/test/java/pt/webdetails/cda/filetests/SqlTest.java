@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.filetests;
 
@@ -78,7 +78,7 @@ public class SqlTest extends CdaTestCase {
     engine.doQuery( cdaSettings, queryOptions );
 
     verify( cache, times( 2 ) ).putTableModel( any( TableCacheKey.class ), any( TableModel.class ), anyInt(),
-        any( ExtraCacheInfo.class ) );
+      any( ExtraCacheInfo.class ) );
   }
 
   public void testStringArrayParameter() throws Exception {
@@ -88,12 +88,12 @@ public class SqlTest extends CdaTestCase {
     TableModelChecker checker = new TableModelChecker();
     checker.setDoubleComparison( 2, "1e-8" );
     checker.setBigDecimalComparison( 3, "1e-14" );
-    final SimpleTableModel expected =  new SimpleTableModel(
-        new Object[] { "Shipped", 2003L, 3303111.46, new BigDecimal( 3.30311146 ) },
-        new Object[] { "Cancelled", 2003L, 75132.16, new BigDecimal( 0.07513216 ) },
-        new Object[] { "Shipped", 2004L, 4750205.89, new BigDecimal( 4.75020589 ) },
-        new Object[] { "Cancelled", 2004L, 187195.13, new BigDecimal( 0.18719513 ) },
-        new Object[] { "Shipped", 2005L, 1513074.46, new BigDecimal( 1.51307446 ) } );
+    final SimpleTableModel expected = new SimpleTableModel(
+      new Object[] { "Shipped", 2003L, 3303111.46, new BigDecimal( 3.30311146 ) },
+      new Object[] { "Cancelled", 2003L, 75132.16, new BigDecimal( 0.07513216 ) },
+      new Object[] { "Shipped", 2004L, 4750205.89, new BigDecimal( 4.75020589 ) },
+      new Object[] { "Cancelled", 2004L, 187195.13, new BigDecimal( 0.18719513 ) },
+      new Object[] { "Shipped", 2005L, 1513074.46, new BigDecimal( 1.51307446 ) } );
 
     QueryOptions queryOptions = new QueryOptions();
     queryOptions.setDataAccessId( "1" );
@@ -144,16 +144,16 @@ public class SqlTest extends CdaTestCase {
     queryOptions.setDataAccessId( "1" );
     Calendar cal = Calendar.getInstance();
     queryOptions.addParameter( "orderDate", "${DATE(" + cal.get( Calendar.YEAR ) + ";"
-        + ( cal.get( Calendar.MONTH ) + 1 ) + ";" + cal.get( Calendar.DAY_OF_MONTH ) + ")}" );
+      + ( cal.get( Calendar.MONTH ) + 1 ) + ";" + cal.get( Calendar.DAY_OF_MONTH ) + ")}" );
     TableModel result = engine.doQuery( cdaSettings, queryOptions );
 
     verify( cache, times( 2 ) ).putTableModel( any( TableCacheKey.class ), any( TableModel.class ), anyInt(),
-        any( ExtraCacheInfo.class ) );
+      any( ExtraCacheInfo.class ) );
 
     final TypedTableModel expected = new TypedTableModel(
-        new String[] { "STATUS", "Year", "PRICE", "PriceInK" } );
+      new String[] { "STATUS", "Year", "PRICE", "PriceInK" } );
     expected.addRow( "Shipped", 2003L, 3573701.2500000014, new BigDecimal( "3.5737012500000014" ) );
-    expected.addRow( "Shipped", 2004L, 4750205.889999998,  new BigDecimal( "4.750205889999998" ) );
+    expected.addRow( "Shipped", 2004L, 4750205.889999998, new BigDecimal( "4.750205889999998" ) );
     expected.addRow( "Shipped", 2005L, 1513074.4600000002, new BigDecimal( "1.51307446" ) );
     TableModelChecker checker = new TableModelChecker( true, true );
     checker.setDoubleComparison( 2, 1e-8 );

@@ -1,3 +1,16 @@
+/*!
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
+
 package pt.webdetails.cda.services;
 
 import java.io.IOException;
@@ -28,29 +41,29 @@ public class Editor extends BaseService {
     this.contentAccess = contentAccess;
   }
 
-  public InputStream getEditor ( String path ) throws AccessDeniedException, IOException {
+  public InputStream getEditor( String path ) throws AccessDeniedException, IOException {
     IUserContentAccess repository = getRepository();
-    if (!repository.hasAccess(path, FileAccess.WRITE)) {
-      throw new AccessDeniedException("No write access for " + path, null);
+    if ( !repository.hasAccess( path, FileAccess.WRITE ) ) {
+      throw new AccessDeniedException( "No write access for " + path, null );
     }
     final String editorPath = ( hasCde() ? EXT_EDITOR_SOURCE : EDITOR_SOURCE );
-    IReadAccess sysDir = CdaEngine.getRepo().getPluginSystemReader(EDITOR_PATH);
+    IReadAccess sysDir = CdaEngine.getRepo().getPluginSystemReader( EDITOR_PATH );
     return sysDir.getFileInputStream( editorPath );
   }
 
   private static synchronized boolean hasCde() {
     if ( hasCde == null ) {
-      IReadAccess cdeDir = CdaEngine.getRepo().getOtherPluginSystemReader( CDE, "" ); 
-      hasCde = cdeDir.fileExists(".");
+      IReadAccess cdeDir = CdaEngine.getRepo().getOtherPluginSystemReader( CDE, "" );
+      hasCde = cdeDir.fileExists( "." );
     }
     return hasCde;
   }
 
   /**
-   * 
+   *
    */
-  public String getFile(String filePath) throws AccessDeniedException, IOException {
-      return getResourceAsString(filePath);
+  public String getFile( String filePath ) throws AccessDeniedException, IOException {
+    return getResourceAsString( filePath );
   }
 
   public boolean canEdit( String filePath ) {
@@ -58,40 +71,38 @@ public class Editor extends BaseService {
   }
 
   /**
-   * 
    * @param repoPath
    * @param fileContents
    * @return
    * @throws AccessDeniedException
    */
-  public boolean writeFile(String repoPath, InputStream fileContents ) throws AccessDeniedException {
+  public boolean writeFile( String repoPath, InputStream fileContents ) throws AccessDeniedException {
     IUserContentAccess writer = getRepository();
-    if ( !writer.hasAccess(repoPath, FileAccess.WRITE) ) {
+    if ( !writer.hasAccess( repoPath, FileAccess.WRITE ) ) {
       throw new AccessDeniedException( repoPath, null );
     }
     return writer.saveFile( repoPath, fileContents );
   }
 
-  public boolean writeFile(String repoPath, String fileContents ) throws AccessDeniedException {
+  public boolean writeFile( String repoPath, String fileContents ) throws AccessDeniedException {
     return writeFile( repoPath, Util.toInputStream( fileContents ) );
   }
 
   /**
-   * 
    * @param repoPath
    * @return
    * @throws AccessDeniedException
    */
-  public boolean deleteFile(String repoPath) throws AccessDeniedException {
+  public boolean deleteFile( String repoPath ) throws AccessDeniedException {
     IUserContentAccess writer = getRepository();
-    if ( !writer.hasAccess(repoPath, FileAccess.WRITE) ) {
+    if ( !writer.hasAccess( repoPath, FileAccess.WRITE ) ) {
       throw new AccessDeniedException( repoPath, null );
     }
     return writer.deleteFile( repoPath );
   }
 
   private IUserContentAccess getRepository() {
-    return contentAccess.getUserContentAccess("/");
+    return contentAccess.getUserContentAccess( "/" );
   }
 
 }

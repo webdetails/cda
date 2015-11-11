@@ -28,8 +28,6 @@ import pt.webdetails.cda.dataaccess.ColumnDefinition;
 
 /**
  * A {@link TableModel} extended with calculated columns.
- *
- * @author Thomas Morgner.
  */
 public class CalculatedTableModel implements MetaTableModel {
   private class DataAccessFormulaContext extends DefaultFormulaContext {
@@ -38,7 +36,7 @@ public class CalculatedTableModel implements MetaTableModel {
 
     private DataAccessFormulaContext( final int rowIndex ) {
       this.rowIndex = rowIndex;
-      this.columnLocks = new boolean[calculatedColumns.length];
+      this.columnLocks = new boolean[ calculatedColumns.length ];
     }
 
     public int getRowIndex() {
@@ -46,15 +44,15 @@ public class CalculatedTableModel implements MetaTableModel {
     }
 
     public void lock( final int calcColumnIndex ) {
-      if ( columnLocks[calcColumnIndex] ) {
+      if ( columnLocks[ calcColumnIndex ] ) {
         throw new IllegalStateException( "Infinite loop while evaluating a formula" );
       }
 
-      columnLocks[calcColumnIndex] = true;
+      columnLocks[ calcColumnIndex ] = true;
     }
 
     public void unlock( final int calcColumnIndex ) {
-      columnLocks[calcColumnIndex] = true;
+      columnLocks[ calcColumnIndex ] = true;
     }
 
     public Object resolveReference( final Object name ) {
@@ -75,17 +73,17 @@ public class CalculatedTableModel implements MetaTableModel {
   private Class<?>[] calculatedColumnClasses;
 
   /**
-   * 
-   * @param backend Table that provides the first columns of the table, which can be used by the calculated columns 
+   * @param backend           Table that provides the first columns of the table, which can be used by the calculated
+   *                          columns
    * @param calculatedColumns Formula-based columns to be evaluated
-   * @param inferColumnTypes Whether to attempt to determine column types as they are calculated
+   * @param inferColumnTypes  Whether to attempt to determine column types as they are calculated
    */
   public CalculatedTableModel( final TableModel backend, final ColumnDefinition[] calculatedColumns,
-      boolean inferColumnTypes ) {
+                               boolean inferColumnTypes ) {
     this( backend, calculatedColumns );
     inferTypes = inferColumnTypes;
     if ( inferTypes ) {
-      calculatedColumnClasses = new Class<?>[calculatedColumns.length];
+      calculatedColumnClasses = new Class<?>[ calculatedColumns.length ];
     }
   }
 
@@ -117,7 +115,7 @@ public class CalculatedTableModel implements MetaTableModel {
       return backend.getColumnName( columnIndex );
     }
     final int calculatedColumnIndex = columnIndex - backendColumnCount;
-    return calculatedColumns[calculatedColumnIndex].getName();
+    return calculatedColumns[ calculatedColumnIndex ].getName();
   }
 
   /**
@@ -128,8 +126,8 @@ public class CalculatedTableModel implements MetaTableModel {
       return backend.getColumnClass( columnIndex );
     } else if ( inferTypes ) {
       final int calcColumnIndex = columnIndex - backendColumnCount;
-      if ( calcColumnIndex < calculatedColumnClasses.length && calculatedColumnClasses[calcColumnIndex] != null ) {
-        return calculatedColumnClasses[calcColumnIndex];
+      if ( calcColumnIndex < calculatedColumnClasses.length && calculatedColumnClasses[ calcColumnIndex ] != null ) {
+        return calculatedColumnClasses[ calcColumnIndex ];
       }
     }
     return Object.class;
@@ -143,20 +141,20 @@ public class CalculatedTableModel implements MetaTableModel {
   }
 
   protected void accumulateClassAt( final int calcColumnIndex, Class<?> valueClass ) {
-    if ( calculatedColumnClasses[calcColumnIndex] == null ) {
-      calculatedColumnClasses[calcColumnIndex] = valueClass;
-    } else if ( !calculatedColumnClasses[calcColumnIndex].isAssignableFrom( valueClass ) ) {
-      if ( valueClass.isAssignableFrom( calculatedColumnClasses[calcColumnIndex] ) ) {
-        calculatedColumnClasses[calcColumnIndex] = valueClass;
+    if ( calculatedColumnClasses[ calcColumnIndex ] == null ) {
+      calculatedColumnClasses[ calcColumnIndex ] = valueClass;
+    } else if ( !calculatedColumnClasses[ calcColumnIndex ].isAssignableFrom( valueClass ) ) {
+      if ( valueClass.isAssignableFrom( calculatedColumnClasses[ calcColumnIndex ] ) ) {
+        calculatedColumnClasses[ calcColumnIndex ] = valueClass;
       } else {
-        calculatedColumnClasses[calcColumnIndex] = Object.class;
+        calculatedColumnClasses[ calcColumnIndex ] = Object.class;
       }
     }
   }
 
   protected Object
-      getValueInternal( final int columnIndex, final DataAccessFormulaContext context ) throws ParseException,
-                                                                                       EvaluationException {
+  getValueInternal( final int columnIndex, final DataAccessFormulaContext context ) throws ParseException,
+    EvaluationException {
     if ( columnIndex < backendColumnCount ) {
       return backend.getValueAt( context.getRowIndex(), columnIndex );
     }
@@ -164,7 +162,7 @@ public class CalculatedTableModel implements MetaTableModel {
     final int calcColumnIndex = columnIndex - backendColumnCount;
     try {
       context.lock( calcColumnIndex );
-      final String formula = calculatedColumns[calcColumnIndex].getFormula();
+      final String formula = calculatedColumns[ calcColumnIndex ].getFormula();
       // final String formulaNamespace;
       final String formulaExpression;
       if ( formula.length() > 0 && formula.charAt( 0 ) == '=' ) {
@@ -209,7 +207,7 @@ public class CalculatedTableModel implements MetaTableModel {
       return getValueInternal( columnIndex, formulaContext );
     } catch ( Exception e ) {
       throw new IllegalStateException( new CalculatedColumnException( "Error in calculated column position ("
-          + rowIndex + "," + columnIndex + ");", e ) );
+        + rowIndex + "," + columnIndex + ");", e ) );
     }
   }
 

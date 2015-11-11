@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.cache;
 
@@ -87,7 +87,7 @@ public class EHCacheQueryCache implements IQueryCache {
           Thread.currentThread().setContextClassLoader( EHCacheQueryCache.class.getClassLoader() );
         }
         boolean useTerracotta =
-            Boolean.parseBoolean( CdaEngine.getInstance().getConfigProperty( USE_TERRACOTTA_PROPERTY ) );
+          Boolean.parseBoolean( CdaEngine.getInstance().getConfigProperty( USE_TERRACOTTA_PROPERTY ) );
         String configFilePath = useTerracotta ? CACHE_CFG_FILE_DIST : CACHE_CFG_FILE;
 
         InputStream configFile = null;
@@ -159,7 +159,7 @@ public class EHCacheQueryCache implements IQueryCache {
 
     // Print cache status size
     logger.debug( "Cache status: " + cache.getMemoryStoreSize() + " in memory, "
-            + cache.getDiskStoreSize() + " in disk" );
+      + cache.getDiskStoreSize() + " in disk" );
   }
 
   @Override
@@ -178,7 +178,7 @@ public class EHCacheQueryCache implements IQueryCache {
             logger.debug( "Found tableModel in cache. Returning" );
             // Print cache status size
             logger.debug( "Cache status: " + cache.getMemoryStoreSize() + " in memory, "
-                    + cache.getDiskStoreSize() + " in disk" );
+              + cache.getDiskStoreSize() + " in disk" );
           }
           return cachedTableModel;
         }
@@ -225,7 +225,7 @@ public class EHCacheQueryCache implements IQueryCache {
       return ( (CacheElement) val ).getInfo();
     } else {
       logger.error( "Expected " + CacheElement.class.getCanonicalName() + ", found "
-          + val.getClass().getCanonicalName() + " instead" );
+        + val.getClass().getCanonicalName() + " instead" );
       remove( key );
       return null;
     }
@@ -263,7 +263,7 @@ public class EHCacheQueryCache implements IQueryCache {
       ExtraCacheInfo info = ( (CacheElement) cache.getQuiet( key ).getObjectValue() ).getInfo();
 
       if ( StringUtils.equals( cdaSettingsId, info.getCdaSettingsId() )
-          && ( dataAccessId == null || StringUtils.equals( dataAccessId, info.getDataAccessId() ) ) ) {
+        && ( dataAccessId == null || StringUtils.equals( dataAccessId, info.getDataAccessId() ) ) ) {
         if ( remove( key ) ) {
           deleteCount++;
         }
@@ -271,7 +271,6 @@ public class EHCacheQueryCache implements IQueryCache {
     }
     return deleteCount;
   }
-
 
 
   @Override

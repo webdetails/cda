@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda;
 
@@ -42,8 +42,7 @@ public interface ICdaEnvironment {
   public IMondrianRoleMapper getMondrianRoleMapper();
 
   /**
-   * {@link FormulaContext} exposing parameters in CDA formulas.<br>
-   * Refer to implementations for available parameters.
+   * {@link FormulaContext} exposing parameters in CDA formulas.<br> Refer to implementations for available parameters.
    */
   public FormulaContext getFormulaContext();
 
@@ -61,10 +60,10 @@ public interface ICdaEnvironment {
    * Differs between pentaho 4.x and 5.x
    */
   public void initializeDataFactory(
-      final DataFactory dataFactory,
-      final Configuration configuration,
-      final ResourceKey contextKey,
-      final ResourceManager resourceManager ) throws ReportDataFactoryException;
+    final DataFactory dataFactory,
+    final Configuration configuration,
+    final ResourceKey contextKey,
+    final ResourceManager resourceManager ) throws ReportDataFactoryException;
 
   public Locale getLocale();
 }

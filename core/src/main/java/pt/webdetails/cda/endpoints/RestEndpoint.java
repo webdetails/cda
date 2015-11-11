@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.endpoints;
 
@@ -17,6 +17,7 @@ package pt.webdetails.cda.endpoints;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 
@@ -116,11 +117,11 @@ public class RestEndpoint {
   @Path( "/listQueries" )
   @Consumes( { APPLICATION_XML, APPLICATION_JSON, APPLICATION_FORM_URLENCODED } )
   public void listQueries( @QueryParam( "path" ) String path,
-      @QueryParam( "solution" ) String solution,
-      @QueryParam( "file" ) String file,
-      @DefaultValue( "json" ) @QueryParam( "outputType" ) String outputType,
-      @Context HttpServletResponse servletResponse,
-      @Context HttpServletRequest servletRequest ) throws Exception {
+                           @QueryParam( "solution" ) String solution,
+                           @QueryParam( "file" ) String file,
+                           @DefaultValue( "json" ) @QueryParam( "outputType" ) String outputType,
+                           @Context HttpServletResponse servletResponse,
+                           @Context HttpServletRequest servletRequest ) throws Exception {
     CdaCoreService coreService = getCoreService();
     DoQueryParameters params = new DoQueryParameters( path, solution, file );
     ExportedQueryResult result = coreService.listQueries( params.getPath(), getSimpleExportOptions( outputType ) );
@@ -141,7 +142,7 @@ public class RestEndpoint {
     CdaCoreService coreService = getCoreService();
     DoQueryParameters params = new DoQueryParameters( path, solution, file );
     ExportedQueryResult result =
-        coreService.listParameters( params.getPath(), dataAccessId, getSimpleExportOptions( outputType ) );
+      coreService.listParameters( params.getPath(), dataAccessId, getSimpleExportOptions( outputType ) );
     result.writeResponse( servletResponse );
   }
 
@@ -150,11 +151,11 @@ public class RestEndpoint {
   @Path( "/getCdaList" )
   @Consumes( { APPLICATION_XML, APPLICATION_JSON } )
   public void getCdaList(
-      @QueryParam( "path" ) String path,
-      @QueryParam( "solution" ) String solution,
-      @QueryParam( "file" ) String file,
-      @DefaultValue( "json" ) @QueryParam( "outputType" ) String outputType,
-      @Context HttpServletResponse servletResponse, @Context HttpServletRequest servletRequest ) throws Exception {
+    @QueryParam( "path" ) String path,
+    @QueryParam( "solution" ) String solution,
+    @QueryParam( "file" ) String file,
+    @DefaultValue( "json" ) @QueryParam( "outputType" ) String outputType,
+    @Context HttpServletResponse servletResponse, @Context HttpServletRequest servletRequest ) throws Exception {
 
     CdaCoreService coreService = getCoreService();
     ExportedQueryResult result = coreService.getCdaList( getSimpleExportOptions( outputType ) );
@@ -179,7 +180,8 @@ public class RestEndpoint {
   @Produces( "text/css" )
   @Consumes( { APPLICATION_XML, APPLICATION_JSON } )
   public void getCssResource( @QueryParam( "resource" ) String resource,
-      @Context HttpServletResponse servletResponse, @Context HttpServletRequest servletRequest ) throws Exception {
+                              @Context HttpServletResponse servletResponse, @Context HttpServletRequest servletRequest )
+    throws Exception {
     getCssResource( servletResponse.getOutputStream(), resource );
   }
 
@@ -188,9 +190,9 @@ public class RestEndpoint {
   @Produces( MimeTypes.JAVASCRIPT )
   @Consumes( { APPLICATION_XML, APPLICATION_JSON } )
   public void getJsResource(
-      @QueryParam( "resource" ) String resource,
-      @Context HttpServletResponse servletResponse,
-      @Context HttpServletRequest servletRequest ) throws Exception {
+    @QueryParam( "resource" ) String resource,
+    @Context HttpServletResponse servletResponse,
+    @Context HttpServletRequest servletRequest ) throws Exception {
 
     getJsResource( servletResponse.getOutputStream(), resource );
   }
@@ -200,8 +202,8 @@ public class RestEndpoint {
   @Produces( MimeTypes.JSON )
   @Consumes( { APPLICATION_XML, APPLICATION_JSON } )
   public String listDataAccessTypes(
-      @DefaultValue( "false" ) @QueryParam( "refreshCache" ) Boolean refreshCache,
-      @Context HttpServletResponse servletResponse, @Context HttpServletRequest servletRequest ) throws Exception {
+    @DefaultValue( "false" ) @QueryParam( "refreshCache" ) Boolean refreshCache,
+    @Context HttpServletResponse servletResponse, @Context HttpServletRequest servletRequest ) throws Exception {
     CdaCoreService coreService = getCoreService();
     return coreService.listDataAccessTypes( refreshCache );
   }

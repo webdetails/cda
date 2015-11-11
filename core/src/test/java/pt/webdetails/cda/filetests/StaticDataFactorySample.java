@@ -1,18 +1,14 @@
-/*
- * This program is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License, version 2.1 as published by the Free Software
- * Foundation.
+/*!
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
  *
- * You should have received a copy of the GNU Lesser General Public License along with this
- * program; if not, you can obtain a copy at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
- * or from the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
- *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
  */
 
 package pt.webdetails.cda.filetests;
@@ -23,8 +19,6 @@ import javax.swing.table.TableModel;
 
 /**
  * Todo: Document me
- *
- * @author Thomas Morgner
  */
 public class StaticDataFactorySample {
   private static final Long ZERO = new Long( 0 );
@@ -34,7 +28,7 @@ public class StaticDataFactorySample {
 
   public TableModel createMainQuery() {
     final TypedTableModel model =
-        new TypedTableModel( new String[] { "ID", "TEXT" }, new Class[] { Long.class, String.class }, 0 );
+      new TypedTableModel( new String[] { "ID", "TEXT" }, new Class[] { Long.class, String.class }, 0 );
     model.addRow( new Object[] { new Long( 0 ), "Hello World" } );
     model.addRow( new Object[] { new Long( 1 ), "Your DataFactory works perfectly." } );
     return model;
@@ -42,7 +36,7 @@ public class StaticDataFactorySample {
 
   public TableModel createSubQuery( Long parameter ) {
     final TypedTableModel model = new TypedTableModel( new String[] { "ID", "NUMBER", "DESCRIPTION" },
-        new Class[] { Long.class, String.class, String.class }, 0 );
+      new Class[] { Long.class, String.class, String.class }, 0 );
     if ( ZERO.equals( parameter ) ) {
       model.addRow( new Object[] { parameter, new Long( 0 ), "Look, you got a new dataset." } );
       model.addRow( new Object[] { parameter, new Long( 1 ), "So Subreport queries work too.." } );
@@ -50,7 +44,7 @@ public class StaticDataFactorySample {
     } else {
       model.addRow( new Object[] { parameter, new Long( 0 ), "Ahh, another query-parameter, another table." } );
       model.addRow( new Object[] {
-          parameter, new Long( 1 ), "Subreports can use parameters to control what data is returned." } );
+        parameter, new Long( 1 ), "Subreports can use parameters to control what data is returned." } );
       return model;
     }
 

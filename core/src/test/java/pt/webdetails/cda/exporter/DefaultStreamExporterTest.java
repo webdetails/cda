@@ -1,3 +1,16 @@
+/*!
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
+
 package pt.webdetails.cda.exporter;
 
 import static org.junit.Assert.*;
@@ -27,7 +40,7 @@ public class DefaultStreamExporterTest extends AbstractKettleExporterTestBase {
   public void testStreamQueryAndExport() throws Exception {
     SqlDataAccess sqlDataAccess = new SqlDataAccess( "id", "name", null, null );
     HashMap<Integer, ArrayList<Integer>> outs = new HashMap<>();
-    ArrayList<Integer> arr =  new ArrayList<Integer>();
+    ArrayList<Integer> arr = new ArrayList<Integer>();
     arr.add( 0 );
     outs.put( 1, arr );
     sqlDataAccess.setOutputs( outs );
@@ -37,12 +50,12 @@ public class DefaultStreamExporterTest extends AbstractKettleExporterTestBase {
     SQLKettleAdapter sqlAdapter = new BogusSqlKettleDataAccess( sqlDataAccess, opts );
 
     DefaultStreamExporter kettleFileWriter =
-        new DefaultStreamExporter( new CsvExporter( Collections.<String, String>emptyMap() ), sqlAdapter );
+      new DefaultStreamExporter( new CsvExporter( Collections.<String, String>emptyMap() ), sqlAdapter );
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     kettleFileWriter.export( out );
     String[] res = Util.toString( out.toByteArray() ).split( "\n\r?" );
-    assertEquals( "\"a\"", res[0] );
-    assertEquals( "\"val\"", res[1] );
+    assertEquals( "\"a\"", res[ 0 ] );
+    assertEquals( "\"val\"", res[ 1 ] );
     assertNotNull( res );
   }
 
@@ -54,7 +67,7 @@ public class DefaultStreamExporterTest extends AbstractKettleExporterTestBase {
     CdaSettings settings = mock( CdaSettings.class );
     when( settings.getDataAccess( "id" ) ).thenReturn( sqlDataAccess );
 
-    QueryOptions queryOptions = new QueryOptions(  );
+    QueryOptions queryOptions = new QueryOptions();
     queryOptions.setDataAccessId( "id" );
     queryOptions.addParameter( "param", "..." );
 
@@ -76,14 +89,17 @@ public class DefaultStreamExporterTest extends AbstractKettleExporterTestBase {
       DataGridMeta meta = new DataGridMeta();
       meta.setDefault();
       meta.allocate( 1 );
-      meta.getFieldName()[0] = "a";
-      meta.getFieldType()[0] = "String";
+      meta.getFieldName()[ 0 ] = "a";
+      meta.getFieldType()[ 0 ] = "String";
       meta.setDataLines( Collections.singletonList( Collections.singletonList( "val" ) ) );
       return new StepMeta( name, meta );
-    };
+    }
+
+    ;
+
     @Override
     public DatabaseMeta[] getDatabases() throws KettleAdapterException {
-      return new DatabaseMeta[0];
+      return new DatabaseMeta[ 0 ];
     }
   }
 

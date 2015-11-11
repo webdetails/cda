@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
-*
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.robochef;
 
@@ -48,8 +48,6 @@ import org.pentaho.metastore.api.IMetaStore;
  * (optional) <li>a map of parameter names to default values (optional) <li>a map of step names to RowProducers
  * (optional but used in the typical scenario) <li>a map of step names to RowListeners (optional but used in the typical
  * scenario)
- *
- * @author Daniel Einspanjer
  */
 public class DynamicTransformation {
   /**
@@ -90,8 +88,8 @@ public class DynamicTransformation {
     }
     if ( initializeJNDI && !isInitializedWithJDNI ) {
       throw new IllegalStateException(
-          "DynamicTransformation was already initialized without JNDI. Call init(true) before new DynamicTransformation"
-              + "()" );
+        "DynamicTransformation was already initialized without JNDI. Call init(true) before new DynamicTransformation"
+          + "()" );
     }
   }
 
@@ -130,15 +128,15 @@ public class DynamicTransformation {
 
     for ( final Entry<String, String> entry : transConfig.getFrozenStepConfigEntries().entrySet() ) {
       final StepMeta stepMeta =
-          new StepMeta( XMLHandler.getSubNode( XMLHandler.loadXMLString( entry.getValue() ), StepMeta.XML_TAG ),
-              transMeta.getDatabases(), (IMetaStore) null );
+        new StepMeta( XMLHandler.getSubNode( XMLHandler.loadXMLString( entry.getValue() ), StepMeta.XML_TAG ),
+          transMeta.getDatabases(), (IMetaStore) null );
       transMeta.addOrReplaceStep( stepMeta );
     }
 
     final List<StepMeta> steps = transMeta.getSteps();
     for ( final Entry<String, String> entry : transConfig.getFrozenStepErrorHandlingConfigEntries().entrySet() ) {
       final StepErrorMeta stepErrorMeta = new StepErrorMeta( transMeta, XMLHandler.getSubNode(
-          XMLHandler.loadXMLString( entry.getValue() ), StepErrorMeta.XML_TAG ), steps );
+        XMLHandler.loadXMLString( entry.getValue() ), StepErrorMeta.XML_TAG ), steps );
       stepErrorMeta.getSourceStep().setStepErrorMeta( stepErrorMeta );
     }
 
@@ -152,7 +150,7 @@ public class DynamicTransformation {
 
     for ( final Entry<String, String> entry : transConfig.getFrozenHopConfigEntries().entrySet() ) {
       final TransHopMeta hop = new TransHopMeta( transMeta.findStep( entry.getKey() ), transMeta.findStep(
-          entry.getValue() ) );
+        entry.getValue() ) );
       transMeta.addTransHop( hop );
     }
 
@@ -233,11 +231,11 @@ public class DynamicTransformation {
     CentralLogStore.discardLines( logChannelId, true );
     // Remove the entries from the registry
 
-    synchronized ( this.getClass() ) {
+    synchronized( this.getClass() ) {
       if ( !hasCheckedForMethod ) {
         hasCheckedForMethod = true;
         Class<?> c = LoggingRegistry.class;
-        Class<?>[] parTypes = new Class[1];
+        Class<?>[] parTypes = new Class[ 1 ];
         parTypes[ 0 ] = String.class;
         try {
           logCleaningMethod = c.getDeclaredMethod( "removeIncludingChildren", parTypes );
@@ -250,8 +248,8 @@ public class DynamicTransformation {
 
 
     if ( logCleaningMethod != null ) {
-      Object[] parameters = new Object[1];
-      parameters[0] = logChannelId;
+      Object[] parameters = new Object[ 1 ];
+      parameters[ 0 ] = logChannelId;
       try {
         logCleaningMethod.invoke( LoggingRegistry.getInstance(), parameters );
       } catch ( IllegalArgumentException ex ) {

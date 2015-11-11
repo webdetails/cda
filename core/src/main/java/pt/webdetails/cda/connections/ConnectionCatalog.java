@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.connections;
 
@@ -30,16 +30,13 @@ import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cpf.repository.api.IBasicFile;
 import pt.webdetails.cpf.repository.api.IReadAccess;
 import pt.webdetails.cpf.repository.util.RepositoryHelper;
-/**
- *
- * @author pdpi
- */
+
 public class ConnectionCatalog {
 
   public enum ConnectionType {
 
     SQL, MQL, MDX, OLAP4J, SCRIPTING, NONE, XPATH, KETTLE
-  };
+  }
 
   private static final String CONN_PATH = "resources/components/connections";
 
@@ -97,7 +94,7 @@ public class ConnectionCatalog {
         }
       }
     }
-    return conns.toArray( new Connection[conns.size()] );
+    return conns.toArray( new Connection[ conns.size() ] );
   }
 
   private Connection connectionFromClass( String className ) {
@@ -130,6 +127,7 @@ class ConnectionInfo {
   public ConnectionType getType() {
     return type;
   }
+
   private ConnectionType type;
   private Class<? extends Connection> implementation;
 

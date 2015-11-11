@@ -4,7 +4,7 @@
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
  * this file except in compliance with the license. If you need a copy of the license,
- * please go to http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
  *
  * Software distributed under the Mozilla Public License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
@@ -45,12 +45,10 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.MDXM
  * This class exists for legacy reasons to provide existing reports the same view on MDX data as implemented in the
  * Pentaho-Platform and the Report-Designer. It can also be somewhat useful if you have a requirement to produce banded
  * reporting over a MDX data source.
- *
- * @author : Thomas Morgner
  */
 
 public class CompactBandedMDXTableModel extends AbstractTableModel
-    implements CloseableTableModel, MetaTableModel {
+  implements CloseableTableModel, MetaTableModel {
 
   private static final long serialVersionUID = 1L;
 
@@ -326,7 +324,7 @@ public class CompactBandedMDXTableModel extends AbstractTableModel
 
     }
     for ( int i = 1; i
-        < axesSize.length; i++ ) {
+      < axesSize.length; i++ ) {
       final int axisSize = axesSize[ i ];
 
 
@@ -367,7 +365,7 @@ public class CompactBandedMDXTableModel extends AbstractTableModel
 
 
     for ( int i = 0; i
-        < position.size(); i++ ) {
+      < position.size(); i++ ) {
       final Member member = position.get( i );
 
 
@@ -461,8 +459,8 @@ public class CompactBandedMDXTableModel extends AbstractTableModel
   public DataAttributes getTableAttributes() {
     final DefaultDataAttributes dataAttributes = new DefaultDataAttributes();
     dataAttributes.setMetaAttribute( MetaAttributeNames.Core.NAMESPACE,
-        MetaAttributeNames.Core.CROSSTAB_MODE, DefaultConceptQueryMapper.INSTANCE,
-        MetaAttributeNames.Core.CROSSTAB_VALUE_NORMALIZED );
+      MetaAttributeNames.Core.CROSSTAB_MODE, DefaultConceptQueryMapper.INSTANCE,
+      MetaAttributeNames.Core.CROSSTAB_VALUE_NORMALIZED );
 
 
     return dataAttributes;

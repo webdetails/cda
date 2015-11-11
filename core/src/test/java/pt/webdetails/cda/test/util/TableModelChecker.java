@@ -1,3 +1,16 @@
+/*!
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
+
 package pt.webdetails.cda.test.util;
 
 import java.math.BigDecimal;
@@ -48,6 +61,7 @@ public class TableModelChecker {
   public void setCheckColumnCount( boolean enable ) {
     this.checkColumnCount = enable;
   }
+
   public void setCheckRowCount( boolean enable ) {
     this.checkRowCount = enable;
   }
@@ -75,9 +89,9 @@ public class TableModelChecker {
       @Override
       public boolean equal( Object one, Object two ) {
         return Objects.equals( one, two )
-            || one != null
-              && two != null
-              && ( (BigDecimal) one ).compareTo( (BigDecimal) two ) == 0;
+          || one != null
+          && two != null
+          && ( (BigDecimal) one ).compareTo( (BigDecimal) two ) == 0;
       }
     } );
   }
@@ -101,12 +115,13 @@ public class TableModelChecker {
   }
 
   /**
-   * Checks if cells match. Will use default equals unless custom comparisons are set.<br>
-   * Does not check names or types.
-   * @see {@link #assertColumnNames}
-   * @see {@link #assertColumnClasses}
+   * Checks if cells match. Will use default equals unless custom comparisons are set.<br> Does not check names or
+   * types.
+   *
    * @param expected
    * @param actual
+   * @see {@link #assertColumnNames}
+   * @see {@link #assertColumnClasses}
    */
   public void assertEquals( TableModel expected, TableModel actual ) {
     if ( checkColumnCount ) {
@@ -123,7 +138,7 @@ public class TableModelChecker {
       }
     }
     for ( int col = 0; col < expected.getColumnCount(); col++ ) {
-      Comparison comp  = defaultComp;
+      Comparison comp = defaultComp;
       if ( comparators.containsKey( col ) ) {
         comp = comparators.get( col );
       }
@@ -134,8 +149,8 @@ public class TableModelChecker {
           try {
             if ( !comp.equal( expectedVal, actualVal ) ) {
               throw new ComparisonFailure( String.format( "Mismatch at row %d, column %d.", row, col ),
-                  String.format( "%s (%s)", Objects.toString( expectedVal ), getClassDesc( expectedVal ) ),
-                  String.format( "%s (%s)", Objects.toString( actualVal ), getClassDesc( actualVal ) ) );
+                String.format( "%s (%s)", Objects.toString( expectedVal ), getClassDesc( expectedVal ) ),
+                String.format( "%s (%s)", Objects.toString( actualVal ), getClassDesc( actualVal ) ) );
             }
           } catch ( ClassCastException e ) {
             throw new AssertionError( String.format( "At row %d, column %d: %s", row, col, e.getMessage() ), e );
@@ -151,30 +166,32 @@ public class TableModelChecker {
   /**
    * checks if the columns names match
    */
-  public void assertColumnNames( TableModel table, String...names ) {
+  public void assertColumnNames( TableModel table, String... names ) {
     for ( int i = 0; i < names.length; i++ ) {
-      assertColumnNameEquals( i, names[i], table.getColumnName( i ) );
+      assertColumnNameEquals( i, names[ i ], table.getColumnName( i ) );
     }
   }
 
-  private void assertColumnNameEquals( int columnIdx, String expectedColumn, String actualColumn ) throws ComparisonFailure {
+  private void assertColumnNameEquals( int columnIdx, String expectedColumn, String actualColumn )
+    throws ComparisonFailure {
     if ( !Objects.equals( expectedColumn, actualColumn ) ) {
       throw new ComparisonFailure( String.format( "wrong name for column %d", columnIdx ),
-          expectedColumn, actualColumn );
+        expectedColumn, actualColumn );
     }
   }
+
   /**
    * checks if the columns names match
    */
-  public void assertColumnClasses( boolean allowSubclasses, TableModel table, Class<?>...classes ) {
+  public void assertColumnClasses( boolean allowSubclasses, TableModel table, Class<?>... classes ) {
     for ( int i = 0; i < classes.length; i++ ) {
-      Class<?> expected = classes[i];
+      Class<?> expected = classes[ i ];
       Class<?> actual = table.getColumnClass( i );
       assertClassEquals( allowSubclasses, i, expected, actual );
     }
   }
 
-  public void assertColumnClasses( TableModel result, Class<?>...classes ) {
+  public void assertColumnClasses( TableModel result, Class<?>... classes ) {
     assertColumnClasses( false, result, classes );
   }
 
@@ -182,7 +199,7 @@ public class TableModelChecker {
     throws ComparisonFailure {
     if ( !( allowSubclasses && expected.isAssignableFrom( actual ) || Objects.equals( expected, actual ) ) ) {
       throw new ComparisonFailure( String.format( "wrong class for column %d", columnIdx ),
-          expected.getName(), actual.getName() );
+        expected.getName(), actual.getName() );
     }
   }
 
