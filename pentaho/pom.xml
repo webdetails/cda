@@ -7,12 +7,10 @@
   <parent>
     <artifactId>cda-plugin</artifactId>
     <groupId>pentaho</groupId>
-    <version>6.1-SNAPSHOT</version>
+    <version>6.0-15.10.26</version>
   </parent>
 
-  <groupId>pentaho</groupId>
   <artifactId>cda-pentaho</artifactId>
-  <version>6.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <licenses>
@@ -24,8 +22,8 @@
 
   <properties>
     <publish-sonar-phase>verify</publish-sonar-phase>
-    <dependency.bi-platform.revision>${project.version}</dependency.bi-platform.revision>
-    <dependency.pentaho-report-wizard-core.revision>${project.version}</dependency.pentaho-report-wizard-core.revision>
+    <dependency.bi-platform.revision>${pentaho.version}</dependency.bi-platform.revision>
+    <dependency.pentaho-report-wizard-core.revision>${pentaho.version}</dependency.pentaho-report-wizard-core.revision>
   </properties>
 
   <dependencies>

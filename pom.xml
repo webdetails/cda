@@ -13,7 +13,7 @@
   <groupId>pentaho</groupId>
   <artifactId>cda-plugin</artifactId>
   <packaging>pom</packaging>
-  <version>6.1-SNAPSHOT</version>
+  <version>6.0-15.10.26</version>
 
   <licenses>
     <license>
@@ -37,12 +37,13 @@
   <properties>
     <publish-sonar-phase/>
     <project.stage>master</project.stage>
+    <pentaho.version>6.0.0.0-353</pentaho.version>
     <dependency.pentaho-cpf-plugin.revision>${project.version}</dependency.pentaho-cpf-plugin.revision>
     <dependency.mondrian.revision>3.12-SNAPSHOT</dependency.mondrian.revision>
-    <dependency.pentaho-reporting.revision>${project.version}</dependency.pentaho-reporting.revision>
-    <dependency.pentaho-kettle.revision>${project.version}</dependency.pentaho-kettle.revision>
-    <dependency.pentaho-library.revision>${project.version}</dependency.pentaho-library.revision>
-    <dependency.pentaho-metadata.revision>${project.version}</dependency.pentaho-metadata.revision>
+    <dependency.pentaho-reporting.revision>${pentaho.version}</dependency.pentaho-reporting.revision>
+    <dependency.pentaho-kettle.revision>${pentaho.version}</dependency.pentaho-kettle.revision>
+    <dependency.pentaho-library.revision>${pentaho.version}</dependency.pentaho-library.revision>
+    <dependency.pentaho-metadata.revision>${pentaho.version}</dependency.pentaho-metadata.revision>
 
     <dependency.jericho-html.revision>3.1</dependency.jericho-html.revision>
     <dependency.hazelcast.revision>2.5</dependency.hazelcast.revision>
