@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.dataaccess;
 
@@ -41,7 +41,7 @@ public class KettleDataAccess extends PREDataAccess {
 
 
   private static final String PARAMETER_KETTLE_SEPARATOR =
-      "pt.webdetails.cda.dataaccess.parameterarray.kettle.Separator";
+    "pt.webdetails.cda.dataaccess.parameterarray.kettle.Separator";
   private static final String PARAMETER_KETTLE_QUOTE = "pt.webdetails.cda.dataaccess.parameterarray.kettle.Quote";
 
 
@@ -132,11 +132,11 @@ public class KettleDataAccess extends PREDataAccess {
 
       //CDA-55: We explicitly encode array parameters as strings so that they can be used in transformations
       if ( parameter.getType() == Parameter.Type.STRING_ARRAY
-          || parameter.getType() == Parameter.Type.INTEGER_ARRAY
-          || parameter.getType() == Parameter.Type.NUMERIC_ARRAY
-          || parameter.getType() == Parameter.Type.DATE_ARRAY ) {
+        || parameter.getType() == Parameter.Type.INTEGER_ARRAY
+        || parameter.getType() == Parameter.Type.NUMERIC_ARRAY
+        || parameter.getType() == Parameter.Type.DATE_ARRAY ) {
         ParameterArrayToStringEncoder encoder =
-            new ParameterArrayToStringEncoder( getSeparator(), getQuoteCharacter() );
+          new ParameterArrayToStringEncoder( getSeparator(), getQuoteCharacter() );
         value = encoder.encodeParameterArray( parameterDataRow.get( columnNames[ i ] ), parameter.getType() );
       } else {
         value = parameterDataRow.get( columnNames[ i ] );

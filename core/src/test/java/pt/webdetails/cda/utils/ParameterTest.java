@@ -1,15 +1,16 @@
 /*!
-* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
-*
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
+
 package pt.webdetails.cda.utils;
 
 import org.junit.Test;
@@ -187,7 +188,7 @@ public class ParameterTest {
   public void testNumericArrayParameterCreation() throws Exception {
     Parameter p = new ParameterForTest( "TestParam", "NumericArray", "12.5;35.1", null, null );
     Double[] value = (Double[]) p.getValue();
-    Assert.assertEquals( 12.5d , value[0].doubleValue() , 1e-5 );
+    Assert.assertEquals( 12.5d, value[ 0 ].doubleValue(), 1e-5 );
   }
 
   @Test
@@ -203,7 +204,7 @@ public class ParameterTest {
     Parameter p = new ParameterForTest( "TestParam", "NumericArray", "12;35", null, null );
     p.setStringValue( "45.5;89.2" );
     Double[] value = (Double[]) p.getValue();
-    Assert.assertEquals( 45.5, value[0].doubleValue() , 1e-5 );
+    Assert.assertEquals( 45.5, value[ 0 ].doubleValue(), 1e-5 );
   }
 
   @Test
@@ -211,7 +212,7 @@ public class ParameterTest {
     Parameter p = new ParameterForTest( "TestParam", "NumericArray", "12;35", null, null );
     p.setValue( new String[] { "45.5", "89.2" } );
     Double[] value = (Double[]) p.getValue();
-    Assert.assertEquals( 89.2, value[1].doubleValue() , 1e-5 );
+    Assert.assertEquals( 89.2, value[ 1 ].doubleValue(), 1e-5 );
   }
 
 

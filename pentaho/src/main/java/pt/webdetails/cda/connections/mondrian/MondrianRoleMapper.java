@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.connections.mondrian;
 
@@ -31,7 +31,7 @@ public class MondrianRoleMapper implements IMondrianRoleMapper {
   }
 
   protected IConnectionUserRoleMapper getConnectionUserRoleMapper() {
-    return PentahoSystem.get(IConnectionUserRoleMapper.class, MDXConnection.MDX_CONNECTION_MAPPER_KEY, null);
+    return PentahoSystem.get( IConnectionUserRoleMapper.class, MDXConnection.MDX_CONNECTION_MAPPER_KEY, null );
   }
 
   protected boolean isObjectDefined() {
@@ -45,19 +45,19 @@ public class MondrianRoleMapper implements IMondrianRoleMapper {
       try {
         final String[] validMondrianRolesForUser;
         //XXX report the exception
-        validMondrianRolesForUser = mondrianUserRoleMapper.mapConnectionRoles(getSession(), catalog );
+        validMondrianRolesForUser = mondrianUserRoleMapper.mapConnectionRoles( getSession(), catalog );
 
         if ( ( validMondrianRolesForUser != null ) && ( validMondrianRolesForUser.length > 0 ) ) {
           final StringBuffer buff = new StringBuffer();
 
           for ( int i = 0; i < validMondrianRolesForUser.length; i++ ) {
-            final String aRole = validMondrianRolesForUser[i];
+            final String aRole = validMondrianRolesForUser[ i ];
             // According to http://mondrian.pentaho.org/documentation/configuration.php
             // double-comma escapes a comma
             if ( i > 0 ) {
               buff.append( "," );
             }
-            buff.append(aRole.replaceAll( ",", ",," ) );
+            buff.append( aRole.replaceAll( ",", ",," ) );
           }
           logger.debug( "Assembled role: " + buff.toString() + " for catalog: " + catalog );
           return buff.toString();

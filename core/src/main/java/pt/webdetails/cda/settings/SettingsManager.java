@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.settings;
 
@@ -46,9 +46,7 @@ import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
  * <p/>
  * Works mostly with inputStreams
  * <p/>
- * User: pedro
- * Date: Feb 2, 2010
- * Time: 2:40:12 PM
+ * User: pedro Date: Feb 2, 2010 Time: 2:40:12 PM
  */
 public class SettingsManager {
 
@@ -65,10 +63,9 @@ public class SettingsManager {
   private static final int MAX_SETTINGS_CACHE_SIZE = 50;
 
   /**
-   * This class controls how the different .cda files will be read
-   * and cached.
+   * This class controls how the different .cda files will be read and cached.
    */
-  public SettingsManager( ) {
+  public SettingsManager() {
 
     // TODO - Read the cache size from disk. Eventually move to ehcache, if necessary
 
@@ -117,7 +114,7 @@ public class SettingsManager {
         Long savedFileTime = loader.getLastModified( id );
 
         if ( savedFileTime != null && // don't cache on-the-fly items
-            savedFileTime <= cachedTime ) {
+          savedFileTime <= cachedTime ) {
           // Up-to-date, use cache
           return cachedCda;
         }
@@ -152,10 +149,8 @@ public class SettingsManager {
    * @param id The identifier for this settings file (path to file).
    * @return
    * @throws pt.webdetails.cda.dataaccess.UnsupportedDataAccessException
-   *
    * @throws org.dom4j.DocumentException
    * @throws pt.webdetails.cda.connections.UnsupportedConnectionException
-   *
    */
   public synchronized CdaSettings parseSettingsFile( final String id ) throws CdaSettingsReadException,
     AccessDeniedException {
@@ -172,9 +167,9 @@ public class SettingsManager {
   public ResourceManager getResourceManager() {
     final ResourceManager resourceManager = new ResourceManager();
     resourceManager.registerDefaults();
-//    // Create only default loaders and factories, not the caches
-//    resourceManager.registerDefaultLoaders();
-//    resourceManager.registerDefaultFactories();
+    //    // Create only default loaders and factories, not the caches
+    //    resourceManager.registerDefaultLoaders();
+    //    resourceManager.registerDefaultFactories();
     resourceManager.registerLoader( this.defaultResourceLoader );
     resourceManager.registerLoader( resourceLoaders.get( SYSTEM_RESOURCE_LOADER_NAME ) );
     return resourceManager;
@@ -183,8 +178,10 @@ public class SettingsManager {
   public ICdaResourceLoader getResourceLoader( String name ) {
     return resourceLoaders.get( name );
   }
+
   /**
    * (use in synchronized methods)
+   *
    * @param settings
    */
   private void addToCache( CdaSettings settings ) {
@@ -194,8 +191,7 @@ public class SettingsManager {
   }
 
   /**
-   * Forces removal of settings file from cache. This method must be called
-   * when we update the .cda file
+   * Forces removal of settings file from cache. This method must be called when we update the .cda file
    *
    * @param id
    */
@@ -218,16 +214,18 @@ public class SettingsManager {
   public DataAccessConnectionDescriptor[] getDataAccessDescriptors( boolean refreshCache ) {
 
     ArrayList<DataAccessConnectionDescriptor> descriptors = new ArrayList<DataAccessConnectionDescriptor>();
-    // First we need a list of all the data accesses. We're getting that from a .properties file, as a comma-separated array.
+    // First we need a list of all the data accesses. We're getting that from a .properties file, as a
+    // comma-separated array.
 
     Properties components = CdaEngine.getEnvironment().getCdaComponents();
     String[] dataAccesses =
-        StringUtils.split( StringUtils.defaultString( components.getProperty( "dataAccesses" ) ), "," );
+      StringUtils.split( StringUtils.defaultString( components.getProperty( "dataAccesses" ) ), "," );
 
     // We apply some sanity checks to the dataAccesses listed:
     //    1. It can't be abstract,
     //    2. It must inherit from AbstractDataAccess
-    // For any class that passes those tests, we get its getDataAccessDescripts() method, and use it to get a description.
+    // For any class that passes those tests, we get its getDataAccessDescripts() method, and use it to get a
+    // description.
     for ( String dataAccess : dataAccesses ) {
 
       Class<?> clazz = null;
@@ -245,7 +243,7 @@ public class SettingsManager {
         try {
           @SuppressWarnings( "unchecked" )
           DataAccessConnectionDescriptor[] descriptor =
-              DataAccessConnectionDescriptor.fromClass( (Class<? extends AbstractDataAccess>) clazz );
+            DataAccessConnectionDescriptor.fromClass( (Class<? extends AbstractDataAccess>) clazz );
           descriptors.addAll( Arrays.asList( descriptor ) );
         } catch ( InvocationTargetException e ) {
           Throwable cause = e.getTargetException();
@@ -260,6 +258,6 @@ public class SettingsManager {
       }
 
     }
-    return descriptors.toArray( new DataAccessConnectionDescriptor[descriptors.size()] );
+    return descriptors.toArray( new DataAccessConnectionDescriptor[ descriptors.size() ] );
   }
 }

@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.filetests;
 
@@ -35,7 +35,7 @@ public class ScriptingTest extends CdaTestCase {
     queryOptions.addParameter( "status", "Shipped" );
 
     TypedTableModel expected = new TypedTableModel( new String[] { "Region", "Q1", "Q2", "Q3", "Q4" },
-        new Class<?>[] { String.class, Integer.class, Integer.class, Integer.class, Integer.class } );
+      new Class<?>[] { String.class, Integer.class, Integer.class, Integer.class, Integer.class } );
     expected.addRow( "East", 10, 10, 14, 21 );
     expected.addRow( "West", 14, 34, 10, 12 );
     expected.addRow( "South", 10, 11, 14, 15 );
@@ -56,7 +56,7 @@ public class ScriptingTest extends CdaTestCase {
 
     TableModel result = doQuery( cdaSettings, queryOptions );
     TypedTableModel expected = new TypedTableModel( new String[] { "Year-Quarter", "Value" },
-        new Class<?>[] { String.class, Double.class } );
+      new Class<?>[] { String.class, Double.class } );
     expected.addRow( "2006 Q1", 242.0d );
     expected.addRow( "2006 Q2", 410.0d );
     expected.addRow( "2006 Q3", 340.0d );

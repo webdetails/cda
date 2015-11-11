@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
-*
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.robochef;
 
@@ -35,8 +35,6 @@ import org.pentaho.di.trans.TransMeta;
  * configure the transformation <li>Type.XML_STRING, <xml data> -- Kettle will parse the XML string and configure the
  * transformation <li>Type.REPOSITORY, <repository path>, <Repository object> -- Kettle will connect to the repository
  * and configure the transformation at the specified path
- *
- * @author Daniel Einspanjer
  */
 public class DynamicTransMetaConfig {
   public enum Type {
@@ -54,7 +52,7 @@ public class DynamicTransMetaConfig {
       throw new IllegalArgumentException( "Name is null" );
     }
 
-    switch ( type ) {
+    switch( type ) {
       case EMPTY:
         transMeta = new TransMeta();
         transMeta.setRepository( connectToRepository( rc ) );
@@ -107,7 +105,7 @@ public class DynamicTransMetaConfig {
       throw new IllegalArgumentException( String.format( "Repository %s not found", rc.repositoryName ) );
     }
     final Repository rep =
-        PluginRegistry.getInstance().loadClass( RepositoryPluginType.class, repositoryMeta, Repository.class );
+      PluginRegistry.getInstance().loadClass( RepositoryPluginType.class, repositoryMeta, Repository.class );
     rep.init( repositoryMeta );
     rep.connect( rc.userName, rc.password );
     return rep;
@@ -140,11 +138,11 @@ public class DynamicTransMetaConfig {
     public static RepositoryConfig get( final String repositoryName, final String userName, final String password,
                                         final String directory, final String transformation, final String version ) {
       if ( isEmpty( trim( repositoryName ) )
-          || isEmpty( trim( userName ) )
-          || password == null
-          || isEmpty( trim( directory ) )
-          || isEmpty( trim( transformation ) )
-          || isEmpty( trim( version ) ) ) {
+        || isEmpty( trim( userName ) )
+        || password == null
+        || isEmpty( trim( directory ) )
+        || isEmpty( trim( transformation ) )
+        || isEmpty( trim( version ) ) ) {
         throw new IllegalArgumentException( "Invalid RepositoryConfig" );
       }
       return new RepositoryConfig( repositoryName, userName, password, directory, transformation, version );

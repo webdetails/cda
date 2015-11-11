@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.filetests;
 
@@ -65,7 +65,7 @@ public class CacheKeysTest extends CdaTestCase {
       assertNotNull( key.getExtraCacheKey() );
       Assert.assertTrue( key.getExtraCacheKey() != null && key.getExtraCacheKey() instanceof CacheKey );
       Assert.assertTrue( ( (CacheKey) key.getExtraCacheKey() ).getKeyValuePairs() != null
-          && ( (CacheKey) key.getExtraCacheKey() ).getKeyValuePairs().size() > 0 );
+        && ( (CacheKey) key.getExtraCacheKey() ).getKeyValuePairs().size() > 0 );
 
       boolean hasValueAsCacheExtraKey = false;
       boolean hasSystemWideExtraCacheKey = false;
@@ -76,11 +76,11 @@ public class CacheKeysTest extends CdaTestCase {
           hasValueAsCacheExtraKey = true;
         }
         if ( pair.getKey().equals( SYSTEM_DEFINED_CACHE_KEY )
-            && pair.getValue().equals( SYSTEM_DEFINED_CACHE_VALUE ) ) {
+          && pair.getValue().equals( SYSTEM_DEFINED_CACHE_VALUE ) ) {
           hasSystemWideExtraCacheKey = true;
         }
         if ( pair.getKey().equals( SYSTEM_AND_USER_DEFINED_CACHE_KEY )
-            && pair.getValue().equals( USER_DEFINED_CACHE_VALUE ) ) {
+          && pair.getValue().equals( USER_DEFINED_CACHE_VALUE ) ) {
           systemCantOverrideUser = true;
         }
       }

@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.utils.kettle;
 
@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicMarkableReference;
 
 import javax.swing.table.TableModel;
+
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.di.trans.step.RowListener;
@@ -25,27 +26,27 @@ import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 
 /**
  * Bridge class between Kettle's RowMeta and CDA's TableModel
- * 
- * @author Daniel Einspanjer
  */
 public class RowMetaToTableModel implements RowListener {
   private boolean recordRowsRead;
   private final AtomicMarkableReference<RowMetaInterface> rowsReadMeta =
-      new AtomicMarkableReference<RowMetaInterface>( null, false );
+    new AtomicMarkableReference<RowMetaInterface>( null, false );
   private List<Object[]> rowsRead;
 
   private boolean recordRowsWritten;
   private final AtomicMarkableReference<RowMetaInterface> rowsWrittenMeta =
-      new AtomicMarkableReference<RowMetaInterface>( null, false );;
+    new AtomicMarkableReference<RowMetaInterface>( null, false );
+  ;
   private List<Object[]> rowsWritten;
 
   private boolean recordRowsError;
   private final AtomicMarkableReference<RowMetaInterface> rowsErrorMeta =
-      new AtomicMarkableReference<RowMetaInterface>( null, false );;
+    new AtomicMarkableReference<RowMetaInterface>( null, false );
+  ;
   private List<Object[]> rowsError;
 
   public RowMetaToTableModel( final boolean recordRowsRead, final boolean recordRowsWritten,
-      final boolean recordRowsError ) {
+                              final boolean recordRowsError ) {
     if ( !( recordRowsWritten || recordRowsRead || recordRowsError ) ) {
       throw new IllegalArgumentException( "Not recording any output. Must listen to something." );
     }
@@ -102,11 +103,11 @@ public class RowMetaToTableModel implements RowListener {
     }
 
     final TypedTableModel output =
-        new TypedTableModel( rowMeta.getFieldNames(), getClassesForFields( rowMeta ), rows.size() );
+      new TypedTableModel( rowMeta.getFieldNames(), getClassesForFields( rowMeta ), rows.size() );
     for ( int i = 0; i < rows.size(); i++ ) {
       final Object[] row = rows.get( i );
       for ( int j = 0; j < row.length; j++ ) {
-        output.setValueAt( row[j], i, j );
+        output.setValueAt( row[ j ], i, j );
       }
     }
     return output;
@@ -114,36 +115,36 @@ public class RowMetaToTableModel implements RowListener {
 
   private Class<?>[] getClassesForFields( final RowMetaInterface rowMeta ) throws IllegalArgumentException {
     final List<ValueMetaInterface> valueMetas = rowMeta.getValueMetaList();
-    final Class<?>[] types = new Class[valueMetas.size()];
+    final Class<?>[] types = new Class[ valueMetas.size() ];
     for ( int i = 0; i < valueMetas.size(); i++ ) {
       final ValueMetaInterface valueMeta = valueMetas.get( i );
-      switch ( valueMeta.getType() ) {
+      switch( valueMeta.getType() ) {
         case ValueMetaInterface.TYPE_STRING:
-          types[i] = String.class;
+          types[ i ] = String.class;
           break;
         case ValueMetaInterface.TYPE_NUMBER:
-          types[i] = Double.class;
+          types[ i ] = Double.class;
           break;
         case ValueMetaInterface.TYPE_INTEGER:
-          types[i] = Long.class;
+          types[ i ] = Long.class;
           break;
         case ValueMetaInterface.TYPE_DATE:
-          types[i] = java.util.Date.class;
+          types[ i ] = java.util.Date.class;
           break;
         case ValueMetaInterface.TYPE_BIGNUMBER:
-          types[i] = java.math.BigDecimal.class;
+          types[ i ] = java.math.BigDecimal.class;
           break;
         case ValueMetaInterface.TYPE_BOOLEAN:
-          types[i] = Boolean.class;
+          types[ i ] = Boolean.class;
           break;
         case ValueMetaInterface.TYPE_BINARY:
-          types[i] = byte[].class;
+          types[ i ] = byte[].class;
           break;
         case ValueMetaInterface.TYPE_SERIALIZABLE:
         case ValueMetaInterface.TYPE_NONE:
         default:
           throw new IllegalArgumentException( String.format( "No type conversion found for Field %d %s", i, valueMeta
-              .toString() ) );
+            .toString() ) );
       }
     }
     return types;

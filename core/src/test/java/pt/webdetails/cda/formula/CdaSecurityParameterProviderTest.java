@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
-*
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.formula;
 
@@ -63,11 +63,11 @@ public class CdaSecurityParameterProviderTest extends TestCase {
     doReturn( authorities ).when( userSessionMock ).getAuthorities();
     assertNull( cdaSecurityParameterProvider.getParameter( name ) );
 
-    authorities = new String[0];
+    authorities = new String[ 0 ];
     doReturn( authorities ).when( userSessionMock ).getAuthorities();
     assertNull( cdaSecurityParameterProvider.getParameter( name ) );
 
-    authorities = new String[]{"Administrator", "Test"};
+    authorities = new String[] { "Administrator", "Test" };
     doReturn( authorities ).when( userSessionMock ).getAuthorities();
     assertEquals( cdaSecurityParameterProvider.getParameter( name ), "Administrator,Test" );
     verify( userSessionMock, times( 3 ) ).getAuthorities();
@@ -81,11 +81,11 @@ public class CdaSecurityParameterProviderTest extends TestCase {
     doReturn( systemPrincipals ).when( sessionUtilsMock ).getSystemPrincipals();
     assertNull( cdaSecurityParameterProvider.getParameter( name ) );
 
-    systemPrincipals = new String[0];
+    systemPrincipals = new String[ 0 ];
     doReturn( systemPrincipals ).when( sessionUtilsMock ).getSystemPrincipals();
     assertNull( cdaSecurityParameterProvider.getParameter( name ) );
 
-    systemPrincipals = new String[]{"Admin", "Manager"};
+    systemPrincipals = new String[] { "Admin", "Manager" };
     doReturn( systemPrincipals ).when( sessionUtilsMock ).getSystemPrincipals();
     assertEquals( cdaSecurityParameterProvider.getParameter( name ), "Admin,Manager" );
     verify( sessionUtilsMock, times( 3 ) ).getSystemPrincipals();
@@ -95,11 +95,11 @@ public class CdaSecurityParameterProviderTest extends TestCase {
     doReturn( systemAuthorities ).when( sessionUtilsMock ).getSystemAuthorities();
     assertNull( cdaSecurityParameterProvider.getParameter( name ) );
 
-    systemAuthorities = new String[0];
+    systemAuthorities = new String[ 0 ];
     doReturn( systemAuthorities ).when( sessionUtilsMock ).getSystemAuthorities();
     assertNull( cdaSecurityParameterProvider.getParameter( name ) );
 
-    systemAuthorities = new String[]{"Admin", "Manager"};
+    systemAuthorities = new String[] { "Admin", "Manager" };
     doReturn( systemAuthorities ).when( sessionUtilsMock ).getSystemAuthorities();
     assertEquals( cdaSecurityParameterProvider.getParameter( name ), "Admin,Manager" );
     verify( sessionUtilsMock, times( 3 ) ).getSystemAuthorities();

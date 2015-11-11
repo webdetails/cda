@@ -1,3 +1,16 @@
+/*!
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
+
 package pt.webdetails.cda.test.util;
 
 import org.apache.commons.collections.Predicate;
@@ -128,27 +141,28 @@ public class CdaTestHelper {
     ICdaEnvironment env = Mockito.mock( ICdaEnvironment.class );
     Configuration conf = Mockito.mock( Configuration.class );
     Mockito.when( conf.getConfigProperty( Matchers.any( String.class ), Matchers.any( String.class ) ) ).thenAnswer(
-        new Answer<String>() {
-          @Override
-          public String answer( InvocationOnMock invocation ) throws Throwable {
-            String defaultValue = (String) invocation.getArguments()[1];
-            String result = configurationProperties.get( invocation.getArguments()[0] );
-            return result != null ? result : defaultValue;
-          }
+      new Answer<String>() {
+        @Override
+        public String answer( InvocationOnMock invocation ) throws Throwable {
+          String defaultValue = (String) invocation.getArguments()[ 1 ];
+          String result = configurationProperties.get( invocation.getArguments()[ 0 ] );
+          return result != null ? result : defaultValue;
         }
+      }
     );
     Mockito.when( conf.findPropertyKeys( Matchers.any( String.class ) ) ).thenAnswer(
-        new Answer<Iterator<String>>() {
-          @SuppressWarnings( "unchecked" )
-          public Iterator<String> answer( final InvocationOnMock invocation ) throws Throwable {
-            return configurationProperties.isEmpty()
-                ? Collections.<String>emptyIterator()
-                : new FilterIterator( configurationProperties.keySet().iterator(), new Predicate() {
-                    public boolean evaluate( Object object ) {
-                      return StringUtils.startsWith( (String) object, (String) invocation.getArguments()[0] );
-                    }
-                  } );
-          } } );
+      new Answer<Iterator<String>>() {
+        @SuppressWarnings( "unchecked" )
+        public Iterator<String> answer( final InvocationOnMock invocation ) throws Throwable {
+          return configurationProperties.isEmpty()
+            ? Collections.<String>emptyIterator()
+            : new FilterIterator( configurationProperties.keySet().iterator(), new Predicate() {
+            public boolean evaluate( Object object ) {
+              return StringUtils.startsWith( (String) object, (String) invocation.getArguments()[ 0 ] );
+            }
+          } );
+        }
+      } );
     Mockito.when( env.getBaseConfig() ).thenReturn( conf );
     return env;
   }
@@ -176,6 +190,7 @@ public class CdaTestHelper {
     public static void init( ICdaEnvironment env ) {
       CdaEngine.initTestBare( new CdaTestEngine( env ) );
     }
+
     public static void init( CdaEngine eng ) {
       CdaEngine.initTestBare( eng );
     }
@@ -218,13 +233,13 @@ public class CdaTestHelper {
 
     @Override
     public int getColumnCount() {
-      return rows.length > 0 ? rows[0].length : 0;
+      return rows.length > 0 ? rows[ 0 ].length : 0;
     }
 
     @Override
     public Object getValueAt( int rowIndex, int columnIndex ) {
       try {
-        return rows[rowIndex][columnIndex];
+        return rows[ rowIndex ][ columnIndex ];
       } catch ( ArrayIndexOutOfBoundsException e ) {
         return null;
       }
@@ -235,14 +250,15 @@ public class CdaTestHelper {
       if ( columnNames == null ) {
         return super.getColumnName( 0 );
       }
-      return columnNames[column];
+      return columnNames[ column ];
     }
+
     @Override
     public Class<?> getColumnClass( int column ) {
       if ( columnClasses == null ) {
         return super.getColumnClass( 0 );
       }
-      return columnClasses[column];
+      return columnClasses[ column ];
     }
 
   }

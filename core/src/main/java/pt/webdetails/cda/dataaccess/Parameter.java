@@ -1,15 +1,15 @@
 /*!
-* Copyright 2002 - 2015 Webdetails, a Pentaho company.  All rights reserved.
-* 
-* This software was developed by Webdetails and is provided under the terms
-* of the Mozilla Public License, Version 2.0, or any later version. You may not use
-* this file except in compliance with the license. If you need a copy of the license,
-* please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
-*
-* Software distributed under the Mozilla Public License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
-* the license for the specific language governing your rights and limitations.
-*/
+ * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ *
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 
 package pt.webdetails.cda.dataaccess;
 
@@ -122,7 +122,7 @@ public class Parameter implements java.io.Serializable {
     }
 
     final ParameterDataRow parameterDataRow =
-        new ParameterDataRow( names.toArray( new String[] { } ), values.toArray() );
+      new ParameterDataRow( names.toArray( new String[] {} ), values.toArray() );
 
     return parameterDataRow;
   }
@@ -145,9 +145,9 @@ public class Parameter implements java.io.Serializable {
     //This is used to make sure that if we set an array as a string array, getValue returns
     // a properly typed array and not the original string array
     if ( objValue.getClass().isAssignableFrom( String[].class )
-        && ( ( Type.INTEGER_ARRAY.equals( getType() ) )
-        || Type.NUMERIC_ARRAY.equals( getType() )
-        || Type.DATE_ARRAY.equals( getType() ) ) ) {
+      && ( ( Type.INTEGER_ARRAY.equals( getType() ) )
+      || Type.NUMERIC_ARRAY.equals( getType() )
+      || Type.DATE_ARRAY.equals( getType() ) ) ) {
 
       ParameterArrayToStringEncoder encoder = new ParameterArrayToStringEncoder( getSeparator(), getQuoteCharacter() );
       objValue = encoder.encodeParameterArray( objValue, getType() );
@@ -200,7 +200,7 @@ public class Parameter implements java.io.Serializable {
    */
   private Object getValueFromString( final String localValue, Type valueType ) throws InvalidParameterException {
 
-    switch ( valueType ) {
+    switch( valueType ) {
       case STRING:
         return localValue;
       case INTEGER:
@@ -296,7 +296,7 @@ public class Parameter implements java.io.Serializable {
     } else if ( value instanceof String ) {
       return (String) value;
     } else if ( type != null ) {
-      switch ( type ) {
+      switch( type ) {
         case STRING_ARRAY://csvTokenizer compatible
           return encoder.encodeParameterArray( value, type );
         case DATE:
@@ -516,7 +516,7 @@ public class Parameter implements java.io.Serializable {
     }
 
     public boolean isArrayType() {
-      switch ( this ) {
+      switch( this ) {
         case STRING_ARRAY:
         case INTEGER_ARRAY:
         case NUMERIC_ARRAY:
