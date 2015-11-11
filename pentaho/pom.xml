@@ -21,6 +21,7 @@
   </licenses>
 
   <properties>
+
     <publish-sonar-phase>verify</publish-sonar-phase>
     <dependency.bi-platform.revision>${pentaho.version}</dependency.bi-platform.revision>
     <dependency.pentaho-report-wizard-core.revision>${pentaho.version}</dependency.pentaho-report-wizard-core.revision>

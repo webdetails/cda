@@ -19,7 +19,6 @@
   </modules>
 
   <properties>
-    <publish-sonar-phase/>
     <cda.root.dir>/cda</cda.root.dir>
 
     <dependency.json.revision>3.1</dependency.json.revision>
@@ -75,7 +74,6 @@
     <plugins>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>${dependency.maven-resources-plugin.revision}</version>
         <executions>
           <execution>
             <id>copy-resources</id>

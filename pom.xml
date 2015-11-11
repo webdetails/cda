@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.pentaho</groupId>
     <artifactId>pentaho-ce-jar-parent-pom</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.2</version>
   </parent>
 
   <groupId>pentaho</groupId>
@@ -29,13 +29,12 @@
   </modules>
 
   <scm>
-    <connection>scm:git:git@github.com:${github.user}/${project.artifactId}.git</connection>
-    <developerConnection>scm:git:git@github.com:${github.user}/${project.artifactId}.git</developerConnection>
-    <url>scm:git:git@github.com:${github.user}/${project.artifactId}.git</url>
+    <connection>scm:git:git@github.com:webdetails/${project.artifactId}.git</connection>
+    <developerConnection>scm:git:git@github.com:webdetails/${project.artifactId}.git</developerConnection>
+    <url>scm:git:git@github.com:webdetails/${project.artifactId}.git</url>
   </scm>
 
   <properties>
-    <publish-sonar-phase/>
     <project.stage>master</project.stage>
     <pentaho.version>6.0.0.0-353</pentaho.version>
     <dependency.pentaho-cpf-plugin.revision>${project.version}</dependency.pentaho-cpf-plugin.revision>
@@ -49,12 +48,6 @@
     <dependency.hazelcast.revision>2.5</dependency.hazelcast.revision>
     <dependency.jackson-mapper-asl.revision>1.9.3</dependency.jackson-mapper-asl.revision>
     <dependency.mockito-all.revision>1.8.4</dependency.mockito-all.revision>
-
-    <!-- maven properties -->
-    <dependency.maven-resources-plugin.revision>2.7</dependency.maven-resources-plugin.revision>
-    <dependency.maven-clean-plugin.revision>2.5</dependency.maven-clean-plugin.revision>
-    <dependency.maven-assembly-plugin.revision>2.4</dependency.maven-assembly-plugin.revision>
-    <dependency.maven-failsafe-plugin.revision>2.17</dependency.maven-failsafe-plugin.revision>
 
     <!-- marketplace.xml properties -->
     <marketplace.metadata.development_stage.lane>Customer</marketplace.metadata.development_stage.lane>

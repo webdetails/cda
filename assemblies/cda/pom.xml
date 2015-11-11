@@ -12,17 +12,11 @@
 
   <artifactId>cda</artifactId>
   <packaging>pom</packaging>
-  
-  <properties>
-    <publish-sonar-phase>verify</publish-sonar-phase>
-  </properties>
-  
 
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>${dependency.maven-assembly-plugin.revision}</version>
         <executions>
           <execution>
             <id>cda</id>
