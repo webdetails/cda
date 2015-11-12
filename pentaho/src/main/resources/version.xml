@@ -1,1 +1,1 @@
-<version branch='${project.stage}' buildId='${sequential.build.id}'>${project.revision}</version>
+<version branch='${project.stage}' buildId='${sequential.build.id}'>${project.version}</version>
