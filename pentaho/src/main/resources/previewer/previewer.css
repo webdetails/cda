@@ -45,6 +45,10 @@ body {
   cursor: pointer;
 }
 
+.cdaButton:focus:hover {
+  cursor: text;
+}
+
 .cdaButton:active {
   box-shadow: inset 0 0 2px #222;
 }
@@ -64,10 +68,6 @@ body {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-}
-
-.cdaButtonShort:hover {
-  cursor: text;
 }
 
 .cdaInputWrapper {
@@ -160,7 +160,6 @@ input[readonly] {
 }
 
 #fileid {
-
   font-size: 11px;
   color: #555;
 }
@@ -277,7 +276,10 @@ input[readonly] {
   height: 15px;
   margin-left: 3px;
   width: 8px;
+}
 
+#previewerTable .paginate_enabled_next, #previewerTable .paginate_enabled_previous {
+  cursor: pointer;
 }
 
 #previewerTable .paginate_disabled_next {
@@ -294,12 +296,10 @@ input[readonly] {
 
 #previewerTable .paginate_enabled_previous {
   background-image: url("../static/img/left_active.png");
-
 }
 
 div#footerContainer {
   text-align: center;
-
 }
 
 div#footer {
