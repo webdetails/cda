@@ -264,7 +264,7 @@ exportFunc = function(dataAccessId) {
 };
 
 getUnwrapQueryUrl = function(parameters) {
-  return PreviewerBackend.PATH_unwrapQuery + "?" + $.param(parameters)
+  return PreviewerBackend.PATH_unwrapQuery + "?" + $.param(parameters);
 };
 
 getFullQueryUrl = function(dataAccessId, extraParams) {
@@ -272,9 +272,8 @@ getFullQueryUrl = function(dataAccessId, extraParams) {
 
   var params = getParams();
   return window.location.protocol + '//' + window.location.host +
-      PreviewerBackend.PATH_doQuery
-      + '?path=' + getFileName()
-      + '&' + $.param($.extend({dataAccessId: dataAccessId}, params, extraParams));
+      PreviewerBackend.PATH_doQuery + '?path=' + getFileName() +
+      '&' + $.param($.extend({dataAccessId: dataAccessId}, params, extraParams));
 };
 
 updateLastQuery = function(dataAccessId) {
@@ -355,6 +354,10 @@ validateInput = function(inputValue, data) {
   for(var i = 0, L = values.length; i < L; i++) {
     var value = values[i];
 
+    if(value === "" || validateFormula(value)) {
+      return true;
+    }
+
     switch(type) {
       case "String":
         if(!validateString(value)) {
@@ -386,16 +389,20 @@ validateInput = function(inputValue, data) {
   return true;
 };
 
+validateFormula = function(value) {
+  return value.search(/^(\$|=|[^:=]+:)(.+)$/) !== -1;
+};
+
 validateString = function(value) {
   return true;
 };
 
 validateInteger = function(value) {
-  return value.search(/^[+-]?\d+$/) != -1;
+  return value.search(/^[+-]?\d+$/) !== -1;
 };
 
 validateNumeric = function(value) {
-  return value.search(/^[+-]?((\d*\.)?\d+([eE][+-]?\d+)?)$/) != -1;
+  return value.search(/^[+-]?((\d*\.)?\d+([eE][+-]?\d+)?)$/) !== -1;
 };
 
 validateDate = function(value, pattern) {
@@ -467,7 +474,7 @@ stringContains = function(string, subString) {
 getParams = function() {
   var params = {};
   $('#parameterHolder input').each(function(index, param) {
-    params['param' + $(param).attr('id')] = $(param).val()
+    params['param' + $(param).attr('id')] = $(param).val();
   });
   return params;
 };
