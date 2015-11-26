@@ -72,6 +72,27 @@ public class CompoundQueryTest {
   }
 
   @Test
+  public void testCompoundJoinCaseSensitive() throws Exception {
+    final CdaSettings cdaSettings = getSettingsManager().parseSettingsFile( "sample-join.cda" );
+
+    QueryOptions queryOptions = new QueryOptions();
+    queryOptions.setDataAccessId( "6" );
+    TableModel result = getEngine().doQuery( cdaSettings, queryOptions );
+
+    TableModelChecker checker = new TableModelChecker();
+
+    TableModel expected = new SimpleTableModel(
+      new Object[] { "2003", "Shipped", "2003", "Shipped" },
+      new Object[] { null,   null,      "2004", "SHIPPED" },
+      new Object[] { "2004", "Shipped", null,   null },
+      new Object[] { "2005", "Shipped", null,   null },
+      new Object[] { null,   null,      "2005", "shipped" }
+    );
+
+    checker.assertEquals( expected, result );
+  }
+
+  @Test
   public void testCDA43_CreationWithNullJoinType() throws Exception {
     CdaSettings cdaSettings = getSettingsManager().parseSettingsFile( "sample-join-null-jointype.cda" );
     JoinCompoundDataAccess jcda = (JoinCompoundDataAccess) cdaSettings.getDataAccess( "3" );
