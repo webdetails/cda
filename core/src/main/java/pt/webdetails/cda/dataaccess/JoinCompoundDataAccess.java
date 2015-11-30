@@ -85,7 +85,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   }
 
   private static String getMergeJoinType( JoinType joinType ) {
-    switch( joinType ) {
+    switch ( joinType ) {
       case INNER:
         return "INNER";
       case LEFT_OUTER:
@@ -226,7 +226,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       sortXML.append( "      <field>\n" )
         .append( "        <name>" ).append( columnName ).append( "</name>\n" )
         .append( "        <ascending>Y</ascending>\n" )
-        .append( "        <case_sensitive>N</case_sensitive>\n" )
+        .append( "        <case_sensitive>Y</case_sensitive>\n" )
         .append( "      </field>\n" );
     }
 
