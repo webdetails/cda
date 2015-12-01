@@ -14,8 +14,8 @@
       <Pass></Pass>
     </Connection>
     <Connection id="2" type="scripting.scripting">
-      <Initscript/>
       <Language>beanshell</Language>
+      <InitScript></InitScript>
     </Connection>
   </DataSources>
 
@@ -70,10 +70,8 @@
     <Output indexes="0,1,2,5,6"/>
   </CompoundDataAccess>
 
-  <DataAccess id="4" connection="2" access="public" type="scriptable">
-    <Cache duration="3600" enabled="true"/>
-    <Columns/>
-    <Parameters/>
+  <DataAccess id="4" connection="2" access="public" type="scriptable" cache="true" cacheDuration="3600">
+    <Name>Scriptable Query - 4</Name>
     <Query>
       <![CDATA[
         import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
@@ -81,7 +79,6 @@
         String[] columnNames = new String[]{
           "year_4", "status_4"
         };
-
 
         Class[] columnTypes = new Class[]{
           String.class,
@@ -99,10 +96,8 @@
     </Query>
   </DataAccess>
 
-  <DataAccess id="5" connection="2" access="public" type="scriptable">
-    <Cache duration="3600" enabled="true"/>
-    <Columns/>
-    <Parameters/>
+  <DataAccess id="5" connection="2" access="public" type="scriptable" cache="true" cacheDuration="3600">
+    <Name>Scriptable Query - 5</Name>
     <Query>
       <![CDATA[
         import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
@@ -110,7 +105,6 @@
         String[] columnNames = new String[]{
           "year_5", "status_5"
         };
-
 
         Class[] columnTypes = new Class[]{
           String.class,
