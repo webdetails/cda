@@ -97,6 +97,8 @@
               <nonFilteredFileExtensions>
                 <nonFilteredFileExtension>js</nonFilteredFileExtension>
                 <nonFilteredFileExtension>css</nonFilteredFileExtension>
+                <nonFilteredFileExtension>ico</nonFilteredFileExtension>
+                <nonFilteredFileExtension>psd</nonFilteredFileExtension>
               </nonFilteredFileExtensions>
               <supportMultiLineFiltering>false</supportMultiLineFiltering>
             </configuration>

@@ -2,7 +2,6 @@
 <html>
 	<head>
 		<link href="../previewer/previewer.css" type="text/css" rel="stylesheet"/>
-		<link href="../previewer/dataTables/css/demo_table_jui.css" type="text/css" rel="stylesheet"/>
 		<link type="text/css" href="../previewer/fg-menu/fg.menu.css" rel="stylesheet" />
 		<link type="text/css" href="blueprint/screen.css" rel="stylesheet" />
 		<link type="text/css" href="cda.css" rel="stylesheet" />
@@ -18,20 +17,19 @@
 				font-size: 62.5%;
 				margin: 0;
 				padding: 0;
-				min-height: 500px
+				min-height: 500px;
 			}
-
 		</style>
 
 		<script language="javascript">
-                  $(document).ready(function() {
-                        if ( document.referrer ) {
-                          $('#back').attr('href', document.referrer);
-                        }
-                        else {
-                          $('#back').hide();
-                        }
-                  });
+			$(document).ready(function() {
+						if ( document.referrer ) {
+							$('#back').attr('href', document.referrer);
+						}
+						else {
+							$('#back').hide();
+						}
+			});
 		</script>
 	</head>
 
