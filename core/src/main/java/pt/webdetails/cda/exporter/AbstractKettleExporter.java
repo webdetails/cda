@@ -98,9 +98,9 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
         result.get();
       }
     } catch ( InterruptedException e ) {
-      logger.error( e );
+      logger.error( "InterruptedException while executing transformation", e );
     } catch ( ExecutionException e ) {
-      logger.error( e );
+      logger.error( "ExecutionException while executing transformation", e );
     }
   }
 
