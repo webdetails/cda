@@ -234,6 +234,12 @@ input[readonly]{
 .dialogAction .notification {
     float: left;
 }
+
+#previewerTable .dataTables_filter {
+  margin-bottom: 0.5em;
+  margin-top: 0.5em;
+}
+
 #previewerTable input, #previewerTable select {
     border: none;
 	box-shadow: inset 0px 0px 5px #ccc;
@@ -243,10 +249,6 @@ input[readonly]{
 	-webkit-border-radius: 3px;
 	   -moz-border-radius: 3px;
 			border-radius: 3px;
-}
-
-#previewerTable input {
-    height: 20px;
 }
 
 #previewerTable input:hover, #previewerTable select:hover {
