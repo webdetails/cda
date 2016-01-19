@@ -48,6 +48,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.IOUtils;
@@ -77,6 +78,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.security.SecurityHelper;
 
+import pt.webdetails.cda.settings.CdaSettingsReadException;
 import pt.webdetails.cda.utils.DoQueryParameters;
 import pt.webdetails.cpf.PluginEnvironment;
 import pt.webdetails.cpf.audit.CpfAuditHelper;
@@ -507,10 +509,22 @@ public class CdaUtils {
   @Path( "/previewQuery" )
   @Produces( MimeTypes.HTML )
   public String previewQuery( @Context HttpServletRequest servletRequest ) throws Exception {
-    return getPreviewer().previewQuery( getPath( servletRequest ) );
+    String path = getPath( servletRequest );
+    try {
+      checkFileExists( path );
+    } catch ( Exception e ) {
+      logger.error( "Error on trying to read: " + path, e );
+      throw e;
+    }
+    return getPreviewer().previewQuery( path );
   }
 
-  private String getPath( HttpServletRequest servletRequest ) {
+  @VisibleForTesting
+  void checkFileExists( String path ) throws CdaSettingsReadException, AccessDeniedException {
+    CdaEngine.getInstance().getSettingsManager().parseSettingsFile( path );
+  }
+
+  private String getPath( HttpServletRequest servletRequest ) throws Exception {
     String path = servletRequest.getParameter( "path" );
     if ( !StringUtils.isEmpty( path ) ) {
       return path;
@@ -524,7 +538,8 @@ public class CdaUtils {
     return null;
   }
 
-  private Previewer getPreviewer() {
+  @VisibleForTesting
+  Previewer getPreviewer() {
     return new Previewer( PluginEnvironment.env().getUrlProvider(), CdaEngine.getEnvironment().getRepo() );
   }
 
