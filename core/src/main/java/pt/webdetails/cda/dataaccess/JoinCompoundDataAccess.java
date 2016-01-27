@@ -54,7 +54,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   private static final long DEFAULT_ROW_PRODUCTION_TIMEOUT = 120;
   private static TimeUnit DEFAULT_ROW_PRODUCTION_TIMEOUT_UNIT = TimeUnit.SECONDS;
   private static int DEFAULT_MAX_ROWS_VALUE_TYPE_SEARCH = 500; //max nbr of rows to search for value
-  private JoinType joinType;
+  protected JoinType joinType;
   private String leftId;
   private String rightId;
   private String[] leftKeys;
@@ -85,7 +85,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   }
 
   private static String getMergeJoinType( JoinType joinType ) {
-    switch ( joinType ) {
+    switch( joinType ) {
       case INNER:
         return "INNER";
       case LEFT_OUTER:
@@ -96,6 +96,32 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       default:
         return "FULL OUTER";
     }
+  }
+
+  protected TableModel voidMerge( TableModel tableModelA, TableModel tableModelB ) {
+    TableModel empty = null;
+    TableModel full = null;
+
+    if ( tableModelA.getRowCount() == 0 ) {
+      empty = tableModelA;
+      full = tableModelB;
+    } else if ( tableModelB.getRowCount() == 0 ) {
+      empty = tableModelB;
+      full = tableModelA;
+    }
+
+    switch( this.joinType ) {
+      case INNER:
+        return empty;
+      case LEFT_OUTER:
+        return tableModelA;
+      case RIGHT_OUTER:
+        return tableModelB;
+      case FULL_OUTER:
+        return full;
+      default:
+    }
+    return null;
   }
 
   public String getType() {
@@ -120,7 +146,10 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
 
       if ( tableModelA.getColumnCount() == 0 || tableModelB.getColumnCount() == 0 ) {
         return new MetadataTableModel( new String[ 0 ], new Class[ 0 ], 0 );
+      }
 
+      if ( tableModelA.getRowCount() == 0 || tableModelB.getRowCount() == 0 ) {
+        return voidMerge( tableModelA, tableModelB );
       }
 
       String[] leftColumnNames = new String[ leftKeys.length ];
