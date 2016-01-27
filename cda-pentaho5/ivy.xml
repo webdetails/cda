@@ -53,7 +53,7 @@
         <dependency org="pentaho"                name="cpf-core"             rev="${dependency.pentaho-cpf-plugin.revision}" conf='test, runtime->default' transitive="false" changing="true"/>
         <dependency org="pentaho"                name="cpf-pentaho5"         rev="${dependency.pentaho-cpf-plugin.revision}" conf='test, runtime->default' transitive="false" changing="true"/>
         <dependency org="pentaho"                name="cda-core"             rev="${project.revision}"                       conf="test, runtime->default" transitive="false" changing="true"/>
-        <dependency org="net.htmlparser.jericho" name="jericho-html"         rev="3.1"                                       conf="runtime->default"/>
+        <dependency org="net.htmlparser.jericho" name="jericho-html"         rev="3.1"                                       conf="test, runtime->default"/>
         <dependency org="org.json"               name="json"                 rev="3.1"                                       conf='runtime->default'/>
         <dependency org="pentaho-kettle"         name="kettle5-log4j-plugin" rev="${dependency.kettle.revision}"             conf='runtime->default' transitive="false" changing="false"/>
 
