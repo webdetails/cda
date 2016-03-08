@@ -1,31 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <artifactId>cda-plugin</artifactId>
-    <groupId>pentaho</groupId>
-    <version>6.1-SNAPSHOT</version>
-  </parent>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
+  <parent>
+    <groupId>pentaho</groupId>
+    <artifactId>cda-plugin</artifactId>
+    <version>7.0-SNAPSHOT</version>
+  </parent>
   <artifactId>cda-plugin-assemblies</artifactId>
+  <version>7.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-
   <modules>
     <module>cda</module>
     <module>cda-disabled</module>
     <module>cda-samples</module>
   </modules>
-
   <properties>
     <cda.root.dir>/cda</cda.root.dir>
-
-    <dependency.json.revision>3.1</dependency.json.revision>
+    <dependency.json.revision>7.0-SNAPSHOT</dependency.json.revision>
   </properties>
-
   <dependencies>
-    <!-- cda dependencies -->
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>cda-core</artifactId>
@@ -38,8 +32,6 @@
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
-
-    <!-- cpf dependencies -->
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>cpf-core</artifactId>
@@ -50,8 +42,6 @@
       <artifactId>cpf-pentaho</artifactId>
       <scope>runtime</scope>
     </dependency>
-
-    <!-- other dependencies -->
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle5-log4j-plugin</artifactId>
@@ -69,7 +59,6 @@
       <scope>runtime</scope>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
