@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2016 Webdetails, a Pentaho company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -130,8 +130,15 @@ public class TableModelUtilsTest {
       new Object[] { 2.0d, "two" } ), result );
     checker.assertColumnNames( result, "c3", "c2" );
     checker.assertColumnClasses( result, Double.class, String.class );
+    opts.addParameter( "searchBox", "one" );
+    result = TableModelUtils.postProcessTableModel( dataAccess, opts, tm );
+    checker = new TableModelChecker();
+    checker.assertEquals( new SimpleTableModel(
+      new Object[] { 1.0d, "one" } ), result );
 
     when( dataAccess.getOutputMode( 6 ) ).thenReturn( OutputMode.EXCLUDE );
+    opts = new QueryOptions();
+    opts.setOutputIndexId( 6 );
     result = TableModelUtils.postProcessTableModel( dataAccess, opts, tm );
     checker.assertEquals(
       new SimpleTableModel( new Object[] { 1L }, new Object[] { 2L } ),

@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2016 Webdetails, a Pentaho company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -245,17 +245,27 @@ public class TableModelUtils {
       }
 
       if ( searchableIndexes == null ) { //include all
-        searchableIndexes = new int[ outputIndexes.size() ];
-        for ( int i = 0; i < searchableIndexes.length; i++ ) {
-          searchableIndexes[ i ] = outputIndexes.get( i );
-        }
+        searchableIndexes = toIntArray( outputIndexes );
       }
 
       return new DataTableFilter( filterText, searchableIndexes );
     }
+
+    for ( Parameter parameter:queryOptions.getParameters() ) {
+      if ( parameter.getName().equals( "searchBox" ) ) {
+        return new DataTableFilter( parameter.getStringValue(), toIntArray( outputIndexes ) );
+      }
+    }
     return null;
   }
 
+  private static int[] toIntArray( List<Integer> outputIndexes )  {
+    int [] searchableIndexes = new int[ outputIndexes.size() ];
+    for ( int i = 0; i < searchableIndexes.length; i++ ) {
+      searchableIndexes[ i ] = outputIndexes.get( i );
+    }
+    return searchableIndexes;
+  }
 
   private static List<Integer> getOutputIndexes( final DataAccess dataAccess, final QueryOptions queryOptions,
                                                  TableModel table ) throws InvalidOutputIndexException {
