@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2016 Webdetails, a Pentaho company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.util.Comparator;
 
+import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
 import pt.webdetails.robochef.DynamicTransConfig;
 import pt.webdetails.robochef.DynamicTransConfig.EntryType;
@@ -163,8 +164,8 @@ public class SortTableModel implements RowProductionManager {
       SortDescriptor sort = new SortDescriptor( ( s ) );
 
       sortXML.append( "      <field>\n"
-        + "        <name>" + unsorted.getColumnName( sort.getIndex() ) + "</name>\n"
-        + "        <ascending>" + sort.getIsAscendingString() + "</ascending>\n"
+        + XMLHandler.addTagValue( "name", unsorted.getColumnName( sort.getIndex() ) )
+        + XMLHandler.addTagValue( "ascending", sort.getIsAscendingString() )
         + "        <case_sensitive>N</case_sensitive>\n"
         + "      </field>\n" );
     }
