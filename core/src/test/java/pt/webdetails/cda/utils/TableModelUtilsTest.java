@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2016 Webdetails, a Pentaho company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -138,6 +138,29 @@ public class TableModelUtilsTest {
       result );
     checker.assertColumnNames( result, "c1" );
     checker.assertColumnClasses( result, Long.class );
+  }
+ @Test
+  public void testSpecialChars() throws Exception {
+    TypedTableModel tm = new TypedTableModel(
+            new String[] { "c1&c2", "c2<'>c3" },
+            new Class<?>[] { Long.class, String.class}, 2 );
+    tm.addRow( 1L, "one");
+    tm.addRow( 2L, "two");
+    DataAccess dataAccess = mock( DataAccess.class );
+    when( dataAccess.getType() ).thenReturn( "any type" );
+    when( dataAccess.getColumnDefinitions() ).thenReturn( new ArrayList<ColumnDefinition>( 0 ) );
+    when( dataAccess.getOutputs( 6 ) ).thenReturn( new ArrayList<Integer>( Arrays.asList( 2, 1 ) ) );
+    QueryOptions opts = new QueryOptions();
+    opts.setOutputIndexId( 2 );
+    opts.setSortBy(new ArrayList<>(Arrays.asList("1D")));
+    TableModel result = TableModelUtils.postProcessTableModel( dataAccess, opts, tm );
+    TableModelChecker checker = new TableModelChecker();
+    checker.assertEquals( new SimpleTableModel(
+            new Object[] { 2L, "two" },
+            new Object[] { 1L, "one" } ), result );
+    checker.assertColumnNames( result, "c1&c2", "c2<'>c3" );
+    checker.assertColumnClasses( result, Long.class, String.class );
+
   }
 
   private class TableModelUtilsForTest {
