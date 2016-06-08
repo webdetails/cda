@@ -26,7 +26,7 @@
     <dependency.ehcache-core.revision>2.5.1</dependency.ehcache-core.revision>
     <dependency.commons-codec.revision>1.9</dependency.commons-codec.revision>
     <dependency.slf4j-log4j12.revision>1.5.8</dependency.slf4j-log4j12.revision>
-    <dependency.jxl.revision>2.4.3</dependency.jxl.revision>
+    <dependency.jxl.revision>2.6.12</dependency.jxl.revision>
     <dependency.jsr311-api.revision>1.1-ea</dependency.jsr311-api.revision>
     <dependency.spring.framework.revision>3.2.14.RELEASE</dependency.spring.framework.revision>
   </properties>
