@@ -187,7 +187,7 @@
     <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-core</artifactId>
-      <version>1.16</version>
+      <version>1.19.1</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
