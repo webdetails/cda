@@ -5,11 +5,11 @@
   <parent>
     <groupId>pentaho</groupId>
     <artifactId>cda-plugin</artifactId>
-    <version>7.0-SNAPSHOT</version>
+    <version>6.1-16.08.18</version>
   </parent>
   <groupId>pentaho</groupId>
   <artifactId>cda-pentaho</artifactId>
-  <version>7.0-SNAPSHOT</version>
+  <version>6.1-16.08.18</version>
 
   <licenses>
     <license>
@@ -18,8 +18,11 @@
     </license>
   </licenses>
   <properties>
-    <dependency.bi-platform.revision>7.0-SNAPSHOT</dependency.bi-platform.revision>
-    <dependency.pentaho-report-wizard-core.revision>7.0-SNAPSHOT</dependency.pentaho-report-wizard-core.revision>
+    <dependency.bi-platform.revision>6.1.0.1-196</dependency.bi-platform.revision>
+    <dependency.pentaho-report-wizard-core.revision>6.1.0.1-196</dependency.pentaho-report-wizard-core.revision>
+    <dependency.pentaho-library.revision>6.1.0.1-196</dependency.pentaho-library.revision>    
+    <dependency.pentaho-kettle.revision>6.1.0.1-196</dependency.pentaho-kettle.revision>
+    
   </properties>
   <dependencies>
     <dependency>

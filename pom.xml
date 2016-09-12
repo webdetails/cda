@@ -9,7 +9,7 @@
   </parent>
   <groupId>pentaho</groupId>
   <artifactId>cda-plugin</artifactId>
-  <version>7.0-SNAPSHOT</version>
+  <version>6.1-16.08.18</version>
   <packaging>pom</packaging>
   <licenses>
     <license>
@@ -44,10 +44,10 @@
     <dependency.mockito-all.revision>1.8.4</dependency.mockito-all.revision>
     <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
     <marketplace.metadata.min_parent_version>1.0</marketplace.metadata.min_parent_version>
-    <dependency.pentaho-reporting.revision>7.0-SNAPSHOT</dependency.pentaho-reporting.revision>
-    <dependency.pentaho-kettle.revision>${project.version}</dependency.pentaho-kettle.revision>
-    <dependency.pentaho-library.revision>${project.version}</dependency.pentaho-library.revision>
-    <dependency.pentaho-cpf-plugin.revision>7.0-SNAPSHOT</dependency.pentaho-cpf-plugin.revision>
+    <dependency.pentaho-reporting.revision>6.1.0.1-196</dependency.pentaho-reporting.revision>
+    <dependency.pentaho-kettle.revision>6.1.0.1-196</dependency.pentaho-kettle.revision>
+    <dependency.pentaho-library.revision>6.1.0.1-196</dependency.pentaho-library.revision>
+    <dependency.pentaho-cpf-plugin.revision>6.1-16.08.18</dependency.pentaho-cpf-plugin.revision>
     <dependency.jackson-mapper-asl.revision>1.9.3</dependency.jackson-mapper-asl.revision>
     <dependency.mondrian.revision>3.13-SNAPSHOT</dependency.mondrian.revision>
     <marketplace.metadata.development_stage.phase>2</marketplace.metadata.development_stage.phase>
