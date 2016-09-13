@@ -28,7 +28,7 @@
     <dependency.slf4j-log4j12.revision>1.5.8</dependency.slf4j-log4j12.revision>
     <dependency.jxl.revision>2.6.12</dependency.jxl.revision>
     <dependency.jsr311-api.revision>1.1-ea</dependency.jsr311-api.revision>
-    <dependency.spring.framework.revision>3.2.14.RELEASE</dependency.spring.framework.revision>
+    <dependency.spring.framework.revision>4.3.2.RELEASE</dependency.spring.framework.revision>
   </properties>
   <dependencies>
     <dependency>
