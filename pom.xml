@@ -1,39 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>org.pentaho</groupId>
     <artifactId>pentaho-ce-jar-parent-pom</artifactId>
     <version>1.1.7</version>
   </parent>
-
   <groupId>pentaho</groupId>
   <artifactId>cda-plugin</artifactId>
+  <version>6.1.0.6-242</version>
   <packaging>pom</packaging>
-  <version>6.1-SNAPSHOT</version>
-
   <licenses>
     <license>
       <name>Mozilla Public License, Version 2.0</name>
       <url>http://www.mozilla.org/MPL/2.0/index.txt</url>
     </license>
   </licenses>
-
   <modules>
     <module>core</module>
     <module>pentaho</module>
     <module>assemblies</module>
   </modules>
-
   <scm>
     <connection>scm:git:git@github.com:webdetails/${project.artifactId}.git</connection>
     <developerConnection>scm:git:git@github.com:webdetails/${project.artifactId}.git</developerConnection>
     <url>scm:git:git@github.com:webdetails/${project.artifactId}.git</url>
   </scm>
-  
   <distributionManagement>
     <site>
       <id>pentaho.public.snapshot.repo</id>
@@ -41,39 +34,31 @@
       <url>dav:${site.publish.url}/${project.groupId}/cda-plugin-${project.version}</url>
     </site>
   </distributionManagement>
-
   <properties>
+    <marketplace.metadata.sequential.build.id>${sequential.build.id}</marketplace.metadata.sequential.build.id>
+    <sequential.build.id>manual-${maven.build.timestamp}</sequential.build.id>
+    <dependency.pentaho-metadata.revision>6.1.0.6-242</dependency.pentaho-metadata.revision>
+    <marketplace.metadata.package_url></marketplace.metadata.package_url>
+    <marketplace.metadata.description></marketplace.metadata.description>
     <project.stage>master</project.stage>
-    <dependency.pentaho-cpf-plugin.revision>${project.version}</dependency.pentaho-cpf-plugin.revision>
-    <dependency.mondrian.revision>3.12-SNAPSHOT</dependency.mondrian.revision>
-    <dependency.pentaho-reporting.revision>${project.version}</dependency.pentaho-reporting.revision>
+    <dependency.mockito-all.revision>1.8.4</dependency.mockito-all.revision>
+    <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
+    <marketplace.metadata.min_parent_version>1.0</marketplace.metadata.min_parent_version>
+    <dependency.pentaho-reporting.revision>6.1.0.6-242</dependency.pentaho-reporting.revision>
     <dependency.pentaho-kettle.revision>${project.version}</dependency.pentaho-kettle.revision>
     <dependency.pentaho-library.revision>${project.version}</dependency.pentaho-library.revision>
-    <dependency.pentaho-metadata.revision>${project.version}</dependency.pentaho-metadata.revision>
-
-    <dependency.jericho-html.revision>3.1</dependency.jericho-html.revision>
-    <dependency.hazelcast.revision>2.5</dependency.hazelcast.revision>
+    <dependency.pentaho-cpf-plugin.revision>6.1.0.6-242</dependency.pentaho-cpf-plugin.revision>
     <dependency.jackson-mapper-asl.revision>1.9.3</dependency.jackson-mapper-asl.revision>
-    <dependency.mockito-all.revision>1.8.4</dependency.mockito-all.revision>
-
-    <!-- marketplace.xml properties -->
-    <marketplace.metadata.development_stage.lane>Customer</marketplace.metadata.development_stage.lane>
+    <dependency.mondrian.revision>3.12.0.6-242</dependency.mondrian.revision>
     <marketplace.metadata.development_stage.phase>2</marketplace.metadata.development_stage.phase>
-    <marketplace.metadata.name>${project.artifactId}</marketplace.metadata.name>
-    <marketplace.metadata.min_parent_version>1.0</marketplace.metadata.min_parent_version>
     <marketplace.metadata.samples_url>http://nexus.pentaho.org/content/groups/omni/pentaho/cda-samples/6.0.0.0-353/cda-samples-6.0.0.0-353.zip</marketplace.metadata.samples_url>
-    <marketplace.metadata.description></marketplace.metadata.description>
-    <marketplace.metadata.package_url></marketplace.metadata.package_url>
-    <marketplace.metadata.sequential.build.id>${sequential.build.id}</marketplace.metadata.sequential.build.id>
-
-    <!-- version.xml properties -->
-    <sequential.build.id>manual-${maven.build.timestamp}</sequential.build.id>
-    <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
+    <dependency.jericho-html.revision>3.1</dependency.jericho-html.revision>
+    <marketplace.metadata.development_stage.lane>Customer</marketplace.metadata.development_stage.lane>
+    <dependency.hazelcast.revision>2.5</dependency.hazelcast.revision>
+    <marketplace.metadata.name>${project.artifactId}</marketplace.metadata.name>
   </properties>
-
   <dependencyManagement>
     <dependencies>
-      <!-- cpf libs -->
       <dependency>
         <groupId>pentaho</groupId>
         <artifactId>cpf-core</artifactId>
@@ -85,13 +70,11 @@
         <version>${project.version}</version>
         <exclusions>
           <exclusion>
-            <groupId>*</groupId>
             <artifactId>*</artifactId>
+            <groupId>*</groupId>
           </exclusion>
         </exclusions>
       </dependency>
-
-      <!-- reporting libs -->
       <dependency>
         <groupId>pentaho-reporting-engine</groupId>
         <artifactId>pentaho-reporting-engine-classic-core</artifactId>
@@ -152,8 +135,6 @@
         <artifactId>pentaho-reporting-engine-wizard-core</artifactId>
         <version>${dependency.pentaho-reporting.revision}</version>
       </dependency>
-
-      <!-- other libs -->
       <dependency>
         <groupId>com.hazelcast</groupId>
         <artifactId>hazelcast</artifactId>
@@ -164,7 +145,6 @@
         <artifactId>jackson-mapper-asl</artifactId>
         <version>${dependency.jackson-mapper-asl.revision}</version>
       </dependency>
-
       <dependency>
         <groupId>pentaho-library</groupId>
         <artifactId>libloader</artifactId>
@@ -175,15 +155,11 @@
         <artifactId>jericho-html</artifactId>
         <version>${dependency.jericho-html.revision}</version>
       </dependency>
-
-      <!-- other runtime libs -->
       <dependency>
         <groupId>pentaho-kettle</groupId>
         <artifactId>kettle5-log4j-plugin</artifactId>
         <version>${dependency.pentaho-kettle.revision}</version>
       </dependency>
-
-      <!-- test libs -->
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
@@ -198,12 +174,10 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  
   <profiles>
     <profile>
       <id>aggregate-reporting</id>
       <activation>
-        <activeByDefault>false</activeByDefault>
         <property>
           <name>!skipTests</name>
         </property>
@@ -211,60 +185,55 @@
       <reporting>
         <plugins>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jxr-plugin</artifactId>
-            <configuration>
-              <linkJavadoc>true</linkJavadoc>
-            </configuration>
             <reportSets>
               <reportSet>
                 <id>aggregate-jxr</id>
-                <inherited>false</inherited>
                 <reports>
                   <report>aggregate</report>
                 </reports>
+                <inherited>false</inherited>
               </reportSet>
             </reportSets>
+            <configuration>
+              <linkJavadoc>true</linkJavadoc>
+            </configuration>
           </plugin>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <configuration>
-              <failOnError>false</failOnError>
-            </configuration>
             <reportSets>
               <reportSet>
                 <id>aggregate-javadoc</id>
-                <inherited>false</inherited>
                 <reports>
                   <report>aggregate</report>
                 </reports>
+                <inherited>false</inherited>
               </reportSet>
             </reportSets>
+            <configuration>
+              <failOnError>false</failOnError>
+            </configuration>
           </plugin>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-checkstyle-plugin</artifactId>
+            <reportSets>
+              <reportSet>
+                <id>aggregate-checkstyle</id>
+                <reports>
+                  <report>checkstyle-aggregate</report>
+                </reports>
+                <inherited>false</inherited>
+              </reportSet>
+            </reportSets>
             <configuration>
               <configLocation>${checkstyle-config-url}</configLocation>
               <propertiesLocation>${checkstyle-properties-url}</propertiesLocation>
               <linkXRef>true</linkXRef>
               <cacheFile />
             </configuration>
-            <reportSets>
-              <reportSet>
-                <id>aggregate-checkstyle</id>
-                <inherited>false</inherited>
-                <reports>
-                  <report>checkstyle-aggregate</report>
-                </reports>
-              </reportSet>
-            </reportSets>
           </plugin>
         </plugins>
       </reporting>
     </profile>
   </profiles>
-
 </project>
-
