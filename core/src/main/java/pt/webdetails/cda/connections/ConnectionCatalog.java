@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2016 Webdetails, a Pentaho company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -30,6 +30,7 @@ import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cpf.repository.api.IBasicFile;
 import pt.webdetails.cpf.repository.api.IReadAccess;
 import pt.webdetails.cpf.repository.util.RepositoryHelper;
+import pt.webdetails.cpf.utils.XmlParserFactoryProducer;
 
 public class ConnectionCatalog {
 
@@ -58,7 +59,7 @@ public class ConnectionCatalog {
         InputStream in = null;
         try {
           in = file.getContents();
-          SAXReader reader = new SAXReader();
+          SAXReader reader = XmlParserFactoryProducer.getSAXReader( null );
           Document doc = reader.read( in );
           // To figure out whether the component is generic or has a special implementation,
           // we directly look for the class override in the definition
