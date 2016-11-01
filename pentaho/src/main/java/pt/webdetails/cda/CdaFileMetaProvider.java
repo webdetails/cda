@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2016 Webdetails, a Pentaho company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -19,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
+import org.pentaho.di.core.xml.XMLParserFactoryProducer;
 import org.pentaho.platform.api.engine.IFileInfo;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.SolutionFileMetaAdapter;
@@ -41,7 +42,7 @@ public class CdaFileMetaProvider extends SolutionFileMetaAdapter {
   public IFileInfo getFileInfo( ISolutionFile solutionFile, InputStream in ) {
     try {
       // XmlDom4JHelper would have throw if inputstream doesn't support marks
-      final SAXReader saxReader = new SAXReader();
+      final SAXReader saxReader = XMLParserFactoryProducer.getSAXReader( null );
       final Document doc = saxReader.read( in );
       if ( doc == null ) {
         return null;

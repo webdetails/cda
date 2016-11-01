@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2016 Webdetails, a Pentaho company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -25,6 +25,7 @@ import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
+import org.pentaho.di.core.xml.XMLParserFactoryProducer;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cpf.repository.api.IBasicFile;
@@ -58,7 +59,7 @@ public class ConnectionCatalog {
         InputStream in = null;
         try {
           in = file.getContents();
-          SAXReader reader = new SAXReader();
+          SAXReader reader = XMLParserFactoryProducer.getSAXReader( null );
           Document doc = reader.read( in );
           // To figure out whether the component is generic or has a special implementation,
           // we directly look for the class override in the definition
