@@ -136,7 +136,7 @@ public class DynamicTransformation {
     final List<StepMeta> steps = transMeta.getSteps();
     for ( final Entry<String, String> entry : transConfig.getFrozenStepErrorHandlingConfigEntries().entrySet() ) {
       final StepErrorMeta stepErrorMeta = new StepErrorMeta( transMeta, XMLHandler.getSubNode(
-        XMLHandler.loadXMLString( entry.getValue() ), StepErrorMeta.XML_TAG ), steps );
+        XMLHandler.loadXMLString( entry.getValue() ), StepErrorMeta.XML_ERROR_TAG ), steps );
       stepErrorMeta.getSourceStep().setStepErrorMeta( stepErrorMeta );
     }
 
