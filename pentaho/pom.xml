@@ -73,12 +73,6 @@
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
-      <artifactId>pentaho-user-console-package</artifactId>
-      <version>${dependency.bi-platform.revision}</version>
-      <type>zip</type>
-    </dependency>
-    <dependency>
-      <groupId>pentaho</groupId>
       <artifactId>pentaho-report-wizard-core</artifactId>
       <version>${dependency.pentaho-report-wizard-core.revision}</version>
     </dependency>
