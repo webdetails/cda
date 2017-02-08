@@ -47,20 +47,21 @@ public class Olap4jTest extends CdaTestCase {
     queryOptions.setOutputType( "json" );
     queryOptions.addParameter( "status", "Shipped" );
 
-    engine.doQuery( cdaSettings, queryOptions );
-    boolean hasCash = false;
+    TableModel result = engine.doQuery( cdaSettings, queryOptions );
 
-    String query = ( (Olap4JDataAccess) cdaSettings.getDataAccess( "2" ) ).getQuery();
-    IQueryCache cache = getEnvironment().getQueryCache();
+    TypedTableModel expected =
+      new TypedTableModel(
+        new String[] { "[Time].[(All)]", "Year", "price", "PriceInK" },
+        new Class<?>[] { String.class, String.class, Double.class, BigDecimal.class }, 2 );
+    expected.addRow( "All Years", "2003", 3573701.2500000023d, new BigDecimal( "3.5737012500000023" ) );
+    expected.addRow( "All Years", "2004", 4750205.889999998d, new BigDecimal( "4.750205889999998" ) );
+    expected.addRow( "All Years", "2005", 1513074.4600000002d, new BigDecimal( "1.5130744600000002" ) );
+    TableModelChecker checker = new TableModelChecker( true, true );
+    checker.setDoubleComparison( 2, 1e-7 );
+    checker.setBigDecimalComparison( 3, "1e-12" );
+    checker.assertEquals( expected, result );
 
-    cache.clearCache();
-    engine.doQuery( cdaSettings, queryOptions );
-    engine.doQuery( cdaSettings, queryOptions );
-    for ( TableCacheKey key : cache.getKeys() ) {
-      assertEquals( key.getQuery(), query );
-      hasCash = true;
-    }
-    assertTrue( hasCash );
+
   }
 
   /**
