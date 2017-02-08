@@ -118,6 +118,8 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     try {
       key = createCacheKey( parameters );
 
+      System.out.println( " queryDataSource: " + isCacheEnabled() );
+
       if ( isCacheEnabled() && !queryOptions.isCacheBypass() ) {
         try {
           final TableModel cachedTableModel = getCdaCache().getTableModel( key );
@@ -167,11 +169,18 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
     // put the copy into the cache ...
     if ( isCacheEnabled() ) {
+
+      System.out.println( "Saving to cache" );
+
       ExtraCacheInfo cInfo =
         new ExtraCacheInfo( this.getCdaSettings().getId(), getId(), queryTime, tableModelCopy );
       IQueryCache cache = getCdaCache();
       if ( cache != null ) {
+
+        System.out.println( "Cache not null" );
         cache.putTableModel( key, tableModelCopy, getCacheDuration(), cInfo );
+
+        System.out.println( "Saved to cache" );
       } else {
         logger.error( "Cache enabled but no cache available." );
       }
