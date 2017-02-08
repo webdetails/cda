@@ -57,6 +57,7 @@ public class Olap4jTest extends CdaTestCase {
     engine.doQuery( cdaSettings, queryOptions );
     engine.doQuery( cdaSettings, queryOptions );
     for ( TableCacheKey key : cache.getKeys() ) {
+        System.out.println("Here with key: " + key);
       assertEquals( key.getQuery(), query );
       hasCash = true;
     }
