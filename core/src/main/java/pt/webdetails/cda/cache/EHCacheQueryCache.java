@@ -151,6 +151,9 @@ public class EHCacheQueryCache implements IQueryCache {
   }
 
   public void putTableModel( TableCacheKey key, TableModel table, int ttlSec, ExtraCacheInfo info ) {
+
+    System.out.println( "Adding element to cache" );
+
     final CacheElement cacheElement = new CacheElement( table, info );
     final Element storeElement = new Element( key, cacheElement );
     storeElement.setTimeToLive( ttlSec );

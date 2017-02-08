@@ -48,20 +48,24 @@ public class Olap4jTest extends CdaTestCase {
     queryOptions.addParameter( "status", "Shipped" );
 
     engine.doQuery( cdaSettings, queryOptions );
-    boolean hasCash = false;
+    boolean hasCache = false;
 
     String query = ( (Olap4JDataAccess) cdaSettings.getDataAccess( "2" ) ).getQuery();
     IQueryCache cache = getEnvironment().getQueryCache();
 
     cache.clearCache();
     engine.doQuery( cdaSettings, queryOptions );
+
+    System.out.println("Cache is " + cache.getClass().getCanonicalName() );
+    System.out.println("Cache bypass: " + queryOptions.isCacheBypass() );
+
     engine.doQuery( cdaSettings, queryOptions );
     for ( TableCacheKey key : cache.getKeys() ) {
-        System.out.println("Here with key: " + key);
+        System.out.println( "Here with key: " + key );
       assertEquals( key.getQuery(), query );
-      hasCash = true;
+      hasCache = true;
     }
-    assertTrue( hasCash );
+    assertTrue( hasCache );
   }
 
   /**
