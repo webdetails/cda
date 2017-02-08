@@ -14,6 +14,7 @@
 package pt.webdetails.cda.filetests;
 
 import java.math.BigDecimal;
+import java.util.Iterator;
 
 import javax.swing.table.TableModel;
 
@@ -60,6 +61,16 @@ public class Olap4jTest extends CdaTestCase {
     System.out.println("Cache bypass: " + queryOptions.isCacheBypass() );
 
     engine.doQuery( cdaSettings, queryOptions );
+
+    Iterator<TableCacheKey> testIterator = cache.getKeys().iterator();
+    int cacheCount = 0;
+    while ( testIterator.hasNext() ) {
+      cacheCount++;
+      testIterator.next();
+    }
+
+    System.out.println( "Cache size is " + cacheCount );
+
     for ( TableCacheKey key : cache.getKeys() ) {
         System.out.println( "Here with key: " + key );
       assertEquals( key.getQuery(), query );
