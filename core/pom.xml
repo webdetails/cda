@@ -42,65 +42,65 @@
       <version>${dependency.mondrian.revision}</version>
     </dependency>
     <dependency>
-      <groupId>pentaho-reporting-engine</groupId>
-      <artifactId>pentaho-reporting-engine-classic-core</artifactId>
+      <groupId>org.pentaho.reporting.engine</groupId>
+      <artifactId>classic-core</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>pentaho-reporting-engine</groupId>
-      <artifactId>pentaho-reporting-engine-classic-extensions</artifactId>
+      <groupId>org.pentaho.reporting.engine</groupId>
+      <artifactId>classic-extensions</artifactId>
     </dependency>
     <dependency>
-      <groupId>pentaho-reporting-engine</groupId>
-      <artifactId>pentaho-reporting-engine-classic-extensions-kettle</artifactId>
+      <groupId>org.pentaho.reporting.engine</groupId>
+      <artifactId>classic-extensions-kettle</artifactId>
     </dependency>
     <dependency>
-      <groupId>pentaho-reporting-engine</groupId>
-      <artifactId>pentaho-reporting-engine-classic-extensions-mondrian</artifactId>
+      <groupId>org.pentaho.reporting.engine</groupId>
+      <artifactId>classic-extensions-mondrian</artifactId>
     </dependency>
     <dependency>
-      <groupId>pentaho-reporting-engine</groupId>
-      <artifactId>pentaho-reporting-engine-classic-extensions-olap4j</artifactId>
+      <groupId>org.pentaho.reporting.engine</groupId>
+      <artifactId>classic-extensions-olap4j</artifactId>
     </dependency>
     <dependency>
-      <groupId>pentaho-reporting-engine</groupId>
-      <artifactId>pentaho-reporting-engine-classic-extensions-pmd</artifactId>
+      <groupId>org.pentaho.reporting.engine</groupId>
+      <artifactId>classic-extensions-pmd</artifactId>
     </dependency>
     <dependency>
-      <groupId>pentaho-reporting-engine</groupId>
-      <artifactId>pentaho-reporting-engine-classic-extensions-reportdesigner-parser</artifactId>
+      <groupId>org.pentaho.reporting.engine</groupId>
+      <artifactId>classic-extensions-reportdesigner-parser</artifactId>
     </dependency>
     <dependency>
-      <groupId>pentaho-reporting-engine</groupId>
-      <artifactId>pentaho-reporting-engine-classic-extensions-sampledata</artifactId>
+      <groupId>org.pentaho.reporting.engine</groupId>
+      <artifactId>classic-extensions-sampledata</artifactId>
     </dependency>
     <dependency>
-      <groupId>pentaho-reporting-engine</groupId>
-      <artifactId>pentaho-reporting-engine-classic-extensions-scripting</artifactId>
+      <groupId>org.pentaho.reporting.engine</groupId>
+      <artifactId>classic-extensions-scripting</artifactId>
     </dependency>
     <dependency>
-      <groupId>pentaho-reporting-engine</groupId>
-      <artifactId>pentaho-reporting-engine-classic-extensions-xpath</artifactId>
+      <groupId>org.pentaho.reporting.engine</groupId>
+      <artifactId>classic-extensions-xpath</artifactId>
     </dependency>
     <dependency>
-      <groupId>pentaho-reporting-engine</groupId>
-      <artifactId>pentaho-reporting-engine-legacy-functions</artifactId>
+      <groupId>org.pentaho.reporting.engine</groupId>
+      <artifactId>legacy-functions</artifactId>
     </dependency>
     <dependency>
-      <groupId>pentaho-reporting-engine</groupId>
-      <artifactId>pentaho-reporting-engine-wizard-core</artifactId>
+      <groupId>org.pentaho.reporting.engine</groupId>
+      <artifactId>wizard-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>pentaho-library</groupId>
+      <groupId>org.pentaho.reporting.library</groupId>
       <artifactId>libloader</artifactId>
     </dependency>
     <dependency>
-      <groupId>pentaho-library</groupId>
+      <groupId>org.pentaho.reporting.library</groupId>
       <artifactId>libbase</artifactId>
       <version>${dependency.pentaho-library.revision}</version>
     </dependency>
     <dependency>
-      <groupId>pentaho-library</groupId>
+      <groupId>org.pentaho.reporting.library</groupId>
       <artifactId>libformula</artifactId>
       <version>${dependency.pentaho-library.revision}</version>
     </dependency>
@@ -198,37 +198,37 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>pentaho-library</groupId>
+      <groupId>org.pentaho.reporting.library</groupId>
       <artifactId>libserializer</artifactId>
       <version>${dependency.pentaho-library.revision}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>pentaho-library</groupId>
+      <groupId>org.pentaho.reporting.library</groupId>
       <artifactId>libfonts</artifactId>
       <version>${dependency.pentaho-library.revision}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>pentaho-library</groupId>
+      <groupId>org.pentaho.reporting.library</groupId>
       <artifactId>libformat</artifactId>
       <version>${dependency.pentaho-library.revision}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>pentaho-library</groupId>
+      <groupId>org.pentaho.reporting.library</groupId>
       <artifactId>libdocbundle</artifactId>
       <version>${dependency.pentaho-library.revision}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>pentaho-library</groupId>
+      <groupId>org.pentaho.reporting.library</groupId>
       <artifactId>libxml</artifactId>
       <version>${dependency.pentaho-library.revision}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>pentaho-library</groupId>
+      <groupId>org.pentaho.reporting.library</groupId>
       <artifactId>librepository</artifactId>
       <version>${dependency.pentaho-library.revision}</version>
       <scope>test</scope>
