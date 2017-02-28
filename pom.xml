@@ -76,63 +76,63 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>pentaho-reporting-engine</groupId>
-        <artifactId>pentaho-reporting-engine-classic-core</artifactId>
+        <groupId>org.pentaho.reporting.engine</groupId>
+        <artifactId>classic-core</artifactId>
         <version>${dependency.pentaho-reporting.revision}</version>
       </dependency>
       <dependency>
-        <groupId>pentaho-reporting-engine</groupId>
-        <artifactId>pentaho-reporting-engine-classic-extensions</artifactId>
+        <groupId>org.pentaho.reporting.engine</groupId>
+        <artifactId>classic-extensions</artifactId>
         <version>${dependency.pentaho-reporting.revision}</version>
       </dependency>
       <dependency>
-        <groupId>pentaho-reporting-engine</groupId>
-        <artifactId>pentaho-reporting-engine-classic-extensions-kettle</artifactId>
+        <groupId>org.pentaho.reporting.engine</groupId>
+        <artifactId>classic-extensions-kettle</artifactId>
         <version>${dependency.pentaho-reporting.revision}</version>
       </dependency>
       <dependency>
-        <groupId>pentaho-reporting-engine</groupId>
-        <artifactId>pentaho-reporting-engine-classic-extensions-mondrian</artifactId>
+        <groupId>org.pentaho.reporting.engine</groupId>
+        <artifactId>classic-extensions-mondrian</artifactId>
         <version>${dependency.pentaho-reporting.revision}</version>
       </dependency>
       <dependency>
-        <groupId>pentaho-reporting-engine</groupId>
-        <artifactId>pentaho-reporting-engine-classic-extensions-olap4j</artifactId>
+        <groupId>org.pentaho.reporting.engine</groupId>
+        <artifactId>classic-extensions-olap4j</artifactId>
         <version>${dependency.pentaho-reporting.revision}</version>
       </dependency>
       <dependency>
-        <groupId>pentaho-reporting-engine</groupId>
-        <artifactId>pentaho-reporting-engine-classic-extensions-pmd</artifactId>
+        <groupId>org.pentaho.reporting.engine</groupId>
+        <artifactId>classic-extensions-pmd</artifactId>
         <version>${dependency.pentaho-reporting.revision}</version>
       </dependency>
       <dependency>
-        <groupId>pentaho-reporting-engine</groupId>
-        <artifactId>pentaho-reporting-engine-classic-extensions-reportdesigner-parser</artifactId>
+        <groupId>org.pentaho.reporting.engine</groupId>
+        <artifactId>classic-extensions-reportdesigner-parser</artifactId>
         <version>${dependency.pentaho-reporting.revision}</version>
       </dependency>
       <dependency>
-        <groupId>pentaho-reporting-engine</groupId>
-        <artifactId>pentaho-reporting-engine-classic-extensions-sampledata</artifactId>
+        <groupId>org.pentaho.reporting.engine</groupId>
+        <artifactId>classic-extensions-sampledata</artifactId>
         <version>${dependency.pentaho-reporting.revision}</version>
       </dependency>
       <dependency>
-        <groupId>pentaho-reporting-engine</groupId>
-        <artifactId>pentaho-reporting-engine-classic-extensions-scripting</artifactId>
+        <groupId>org.pentaho.reporting.engine</groupId>
+        <artifactId>classic-extensions-scripting</artifactId>
         <version>${dependency.pentaho-reporting.revision}</version>
       </dependency>
       <dependency>
-        <groupId>pentaho-reporting-engine</groupId>
-        <artifactId>pentaho-reporting-engine-classic-extensions-xpath</artifactId>
+        <groupId>org.pentaho.reporting.engine</groupId>
+        <artifactId>classic-extensions-xpath</artifactId>
         <version>${dependency.pentaho-reporting.revision}</version>
       </dependency>
       <dependency>
-        <groupId>pentaho-reporting-engine</groupId>
-        <artifactId>pentaho-reporting-engine-legacy-functions</artifactId>
+        <groupId>org.pentaho.reporting.engine</groupId>
+        <artifactId>legacy-functions</artifactId>
         <version>${dependency.pentaho-reporting.revision}</version>
       </dependency>
       <dependency>
-        <groupId>pentaho-reporting-engine</groupId>
-        <artifactId>pentaho-reporting-engine-wizard-core</artifactId>
+        <groupId>org.pentaho.reporting.engine</groupId>
+        <artifactId>wizard-core</artifactId>
         <version>${dependency.pentaho-reporting.revision}</version>
       </dependency>
       <dependency>
@@ -146,7 +146,7 @@
         <version>${dependency.jackson-mapper-asl.revision}</version>
       </dependency>
       <dependency>
-        <groupId>pentaho-library</groupId>
+        <groupId>org.pentaho.reporting.library</groupId>
         <artifactId>libloader</artifactId>
         <version>${dependency.pentaho-library.revision}</version>
       </dependency>
