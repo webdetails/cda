@@ -21,4 +21,5 @@ http://jax-ws.dev.java.net/spring/servlet http://jax-ws.dev.java.net/spring/serv
   <!--<bean id="ISessionUtils" class="pt.webdetails.cpf.session.PentahoSessionUtils" scope="prototype"/>-->
   <bean id="ICubeFileProviderSetter" class="pt.webdetails.cda.dataaccess.PentahoCubeFileProviderSetter" scope="prototype"/>      
   <bean id="IEventPublisher" class="pt.webdetails.cpf.messaging.EventPublisher" scope="prototype"/>
+  <bean id="IResourceLoader" class="pt.webdetails.cpf.resources.PentahoPluginResourceLoader" scope="prototype"/>
 </beans>

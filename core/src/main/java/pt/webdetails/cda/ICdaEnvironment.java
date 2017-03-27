@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2017 Webdetails, a Pentaho company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -29,6 +29,7 @@ import pt.webdetails.cda.dataaccess.ICubeFileProviderSetter;
 import pt.webdetails.cda.dataaccess.IDataAccessUtils;
 import pt.webdetails.cpf.messaging.IEventPublisher;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
+import pt.webdetails.cpf.resources.IResourceLoader;
 
 
 public interface ICdaEnvironment {
@@ -66,4 +67,15 @@ public interface ICdaEnvironment {
     final ResourceManager resourceManager ) throws ReportDataFactoryException;
 
   public Locale getLocale();
+
+  /**
+   * Provides an access to plugin's resource loader.
+   * The default implementation returns null, and exists for the compatibility sake.
+   *
+   * @return a resource loader if it is present, otherwise returns null
+   * @see BaseCdaEnvironment#init() for the reference implementation
+   */
+  default IResourceLoader getResourceLoader() {
+    throw new UnsupportedOperationException( "The method is not implemented" );
+  }
 }

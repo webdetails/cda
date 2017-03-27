@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2017 Webdetails, a Pentaho company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -79,6 +79,7 @@ import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.security.SecurityHelper;
 
 import pt.webdetails.cda.settings.CdaSettingsReadException;
+import pt.webdetails.cda.utils.CorsUtil;
 import pt.webdetails.cda.utils.DoQueryParameters;
 import pt.webdetails.cpf.PluginEnvironment;
 import pt.webdetails.cpf.audit.CpfAuditHelper;
@@ -637,11 +638,7 @@ public class CdaUtils {
   }
 
   private void setCorsHeaders( HttpServletRequest request, HttpServletResponse response ) {
-    String origin = request.getHeader( "ORIGIN" );
-    if ( origin != null ) {
-      response.setHeader( "Access-Control-Allow-Origin", origin );
-      response.setHeader( "Access-Control-Allow-Credentials", "true" );
-    }
+    CorsUtil.getInstance().setCorsHeaders( request, response );
   }
 
   //Adding this because of compatibility with the reporting plugin on 5.0.1. The cda datasource on the reporting plugin

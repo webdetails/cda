@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2017 Webdetails, a Pentaho company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -52,6 +52,7 @@ import pt.webdetails.cpf.repository.api.IBasicFileFilter;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
 import pt.webdetails.cpf.repository.api.IReadAccess;
 import pt.webdetails.cpf.repository.api.IUserContentAccess;
+import pt.webdetails.cpf.resources.IResourceLoader;
 
 /**
  * Main singleton, brokering access to most functionality.
@@ -253,4 +254,9 @@ public class CdaEngine {
   public Configuration getConfig() {
     return getEnv().getBaseConfig();
   }
+
+  public IResourceLoader getResourceLoader() {
+    return this.environment.getResourceLoader();
+  }
+
 }
