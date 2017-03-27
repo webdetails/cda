@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2017 Webdetails, a Pentaho company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,10 +13,6 @@
 
 package pt.webdetails.cda;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,7 +21,6 @@ import org.pentaho.reporting.libraries.base.config.HierarchicalConfiguration;
 import org.pentaho.reporting.libraries.base.config.PropertyFileConfiguration;
 import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
-
 import pt.webdetails.cda.cache.EHCacheQueryCache;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.connections.mondrian.IMondrianRoleMapper;
@@ -34,12 +29,17 @@ import pt.webdetails.cda.dataaccess.DefaultDataAccessUtils;
 import pt.webdetails.cda.dataaccess.ICubeFileProviderSetter;
 import pt.webdetails.cda.dataaccess.IDataAccessUtils;
 import pt.webdetails.cpf.PluginEnvironment;
-import pt.webdetails.cpf.bean.IBeanFactory;
 import pt.webdetails.cpf.bean.AbstractBeanFactory;
+import pt.webdetails.cpf.bean.IBeanFactory;
 import pt.webdetails.cpf.messaging.IEventPublisher;
 import pt.webdetails.cpf.messaging.PluginEvent;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
 import pt.webdetails.cpf.repository.api.IReadAccess;
+import pt.webdetails.cpf.resources.IResourceLoader;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 public abstract class BaseCdaEnvironment implements ICdaEnvironment {
 
@@ -56,6 +56,7 @@ public abstract class BaseCdaEnvironment implements ICdaEnvironment {
   private IBeanFactory beanFactory;
 
   private HierarchicalConfiguration config;
+  private IResourceLoader resourceLoader;
 
   public BaseCdaEnvironment() throws InitializationException {
     init();
@@ -72,6 +73,10 @@ public abstract class BaseCdaEnvironment implements ICdaEnvironment {
 
   public void init( IBeanFactory factory ) {
     this.beanFactory = factory;
+
+    if ( factory.containsBean( IResourceLoader.class.getSimpleName() ) ) {
+      resourceLoader = (IResourceLoader) factory.getBean( IResourceLoader.class.getSimpleName() );
+    }
   }
 
 
@@ -82,6 +87,10 @@ public abstract class BaseCdaEnvironment implements ICdaEnvironment {
         return "cda.spring.xml";
       }
     };
+
+    if ( beanFactory.containsBean( IResourceLoader.class.getSimpleName() ) ) {
+      resourceLoader = (IResourceLoader) beanFactory.getBean( IResourceLoader.class.getSimpleName() );
+    }
   }
 
   @Override
@@ -209,5 +218,13 @@ public abstract class BaseCdaEnvironment implements ICdaEnvironment {
       }
     }
     return config;
+  }
+
+  /**
+   * Provides an access to plugin's resource loader.
+   * @return resource loader if it was found on an environment initialization, otherwise returns null
+   */
+  @Override public IResourceLoader getResourceLoader() {
+    return resourceLoader;
   }
 }
