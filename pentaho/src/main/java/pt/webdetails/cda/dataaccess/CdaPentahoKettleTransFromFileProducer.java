@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2017 Webdetails, a Pentaho company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -27,11 +27,15 @@ import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
 import org.pentaho.di.trans.step.RowListener;
 import org.pentaho.di.trans.step.StepMetaDataCombi;
+import org.pentaho.reporting.engine.classic.core.DataFactoryContext;
 import org.pentaho.reporting.engine.classic.core.DataRow;
 import org.pentaho.reporting.engine.classic.core.ParameterMapping;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleTransFromFileProducer;
+import org.pentaho.reporting.libraries.base.util.ArgumentNullException;
+import org.pentaho.reporting.libraries.formula.EvaluationException;
+import org.pentaho.reporting.libraries.formula.parser.ParseException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
@@ -48,6 +52,7 @@ public class CdaPentahoKettleTransFromFileProducer extends KettleTransFromFilePr
   private ParameterMapping[] definedVariableNames;
   private String[] definedArgumentNames;
   private transient Trans currentlyRunningTransformation;
+  private Repository repository;
 
   public CdaPentahoKettleTransFromFileProducer( final String repositoryName,
                                                 final String transformationFile,
@@ -184,6 +189,32 @@ public class CdaPentahoKettleTransFromFileProducer extends KettleTransFromFilePr
     }
   }
 
+  public TableModel performQuery( final DataRow parameters,
+                                  final int queryLimit,
+                                  final DataFactoryContext context )
+          throws KettleException, ReportDataFactoryException {
+    ArgumentNullException.validate( "context", context );
+    ArgumentNullException.validate( "parameters", parameters );
+
+    String targetStepName = getStepName();
+    if ( targetStepName == null ) {
+      throw new ReportDataFactoryException( "No step name defined." );
+    }
+
+    final Repository repo = ( repository == null ) ? connectToRepository() : repository;
+    try {
+      final TransMeta transMeta =
+              loadTransformation( repo, context.getResourceManager(), context.getContextKey() );
+      transMeta.setRepository( repo );
+      return performQueryOnTransformation( parameters, queryLimit, context, transMeta );
+    } catch ( EvaluationException | ParseException e ) {
+      throw new ReportDataFactoryException( "Failed to evaluate parameter", e );
+    } finally {
+      if ( repo != null ) {
+        repo.disconnect();
+      }
+    }
+  }
 
   @Override
   protected String computeFullFilename( ResourceKey key ) {
@@ -255,7 +286,7 @@ public class CdaPentahoKettleTransFromFileProducer extends KettleTransFromFilePr
         for ( int columnNo = 0; columnNo < count; columnNo++ ) {
           final ValueMetaInterface valueMeta = rowMeta.getValueMeta( columnNo );
 
-          switch( valueMeta.getType() ) {
+          switch ( valueMeta.getType() ) {
             case ValueMetaInterface.TYPE_BIGNUMBER:
               dataRow[ columnNo ] = rowMeta.getBigNumber( row, columnNo );
               break;
@@ -300,7 +331,7 @@ public class CdaPentahoKettleTransFromFileProducer extends KettleTransFromFilePr
         final ValueMetaInterface valueMeta = rowMeta.getValueMeta( columnNo );
         fieldNames[ columnNo ] = valueMeta.getName();
 
-        switch( valueMeta.getType() ) {
+        switch ( valueMeta.getType() ) {
           case ValueMetaInterface.TYPE_BIGNUMBER:
             fieldTypes[ columnNo ] = BigDecimal.class;
             break;
@@ -369,6 +400,13 @@ public class CdaPentahoKettleTransFromFileProducer extends KettleTransFromFilePr
     }
   }
 
+  public void setRepository( Repository repository ) {
+    this.repository = repository;
+  }
+
+  public Repository getRepository() {
+    return repository;
+  }
 
 }
 
