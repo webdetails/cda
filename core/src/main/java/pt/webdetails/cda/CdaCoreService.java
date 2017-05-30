@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2016 Webdetails, a Pentaho company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -124,6 +124,7 @@ public class CdaCoreService {
     final CdaSettings cdaSettings = settingsManager.parseSettingsFile( path );
     QueryOptions queryOptions = engine.unwrapQuery( uuid );
     if ( queryOptions != null ) {
+      queryOptions.setPaginate( false );
       return engine.doExportQuery( cdaSettings, queryOptions );
     } else {
       logger.error( "unwrapQuery: uuid " + uuid + " not found." );
