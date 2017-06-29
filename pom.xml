@@ -156,8 +156,8 @@
         <version>${dependency.jericho-html.revision}</version>
       </dependency>
       <dependency>
-        <groupId>pentaho-kettle</groupId>
-        <artifactId>kettle5-log4j-plugin</artifactId>
+        <groupId>org.pentaho.di.plugins</groupId>
+        <artifactId>kettle-log4j-core</artifactId>
         <version>${dependency.pentaho-kettle.revision}</version>
       </dependency>
       <dependency>
