@@ -1,32 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
-    <artifactId>cda-plugin</artifactId>
     <groupId>pentaho</groupId>
-    <version>6.1-SNAPSHOT</version>
+    <artifactId>cda-plugin</artifactId>
+    <version>6.1.0.16-368</version>
   </parent>
-
   <groupId>pentaho</groupId>
   <artifactId>cda-pentaho</artifactId>
-  <version>6.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
-
+  <version>6.1.0.16-368</version>
   <licenses>
     <license>
       <name>Mozilla Public License, Version 2.0</name>
       <url>http://www.mozilla.org/MPL/2.0/index.txt</url>
     </license>
   </licenses>
-
   <properties>
-    <dependency.bi-platform.revision>${project.version}</dependency.bi-platform.revision>
-    <dependency.pentaho-report-wizard-core.revision>${project.version}</dependency.pentaho-report-wizard-core.revision>
+    <dependency.bi-platform.revision>6.1.0.16-368</dependency.bi-platform.revision>
+    <dependency.pentaho-report-wizard-core.revision>6.1.0.16-368</dependency.pentaho-report-wizard-core.revision>
   </properties>
-
   <dependencies>
     <dependency>
       <groupId>pentaho</groupId>
@@ -36,13 +29,11 @@
       <groupId>pentaho</groupId>
       <artifactId>cpf-pentaho</artifactId>
     </dependency>
-
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>cda-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>data-access-plugin</artifactId>
@@ -75,8 +66,8 @@
       <version>${dependency.bi-platform.revision}</version>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -86,13 +77,11 @@
       <version>${dependency.bi-platform.revision}</version>
       <type>zip</type>
     </dependency>
-
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-report-wizard-core</artifactId>
       <version>${dependency.pentaho-report-wizard-core.revision}</version>
     </dependency>
-
     <dependency>
       <groupId>pentaho-reporting-engine</groupId>
       <artifactId>pentaho-reporting-engine-classic-core</artifactId>
@@ -173,7 +162,6 @@
       <version>${dependency.pentaho-reporting.revision}</version>
       <type>zip</type>
     </dependency>
-
     <dependency>
       <groupId>com.hazelcast</groupId>
       <artifactId>hazelcast</artifactId>
@@ -200,7 +188,6 @@
       <artifactId>jersey-core</artifactId>
       <version>1.16</version>
     </dependency>
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -210,7 +197,6 @@
       <artifactId>mockito-all</artifactId>
     </dependency>
   </dependencies>
-
   <build>
     <resources>
       <resource>
