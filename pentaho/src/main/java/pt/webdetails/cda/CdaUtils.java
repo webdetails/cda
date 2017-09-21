@@ -54,11 +54,13 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.api.engine.IAuthorizationPolicy;
 import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.apache.commons.lang.StringUtils;
+import org.pentaho.platform.security.policy.rolebased.actions.RepositoryCreateAction;
 import org.pentaho.platform.util.logging.SimpleLogger;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
@@ -81,10 +83,13 @@ import org.pentaho.platform.engine.security.SecurityHelper;
 import pt.webdetails.cda.settings.CdaSettingsReadException;
 import pt.webdetails.cda.utils.CorsUtil;
 import pt.webdetails.cda.utils.DoQueryParameters;
+import pt.webdetails.cda.utils.Messages;
 import pt.webdetails.cpf.PluginEnvironment;
 import pt.webdetails.cpf.audit.CpfAuditHelper;
 import pt.webdetails.cpf.messaging.JsonGeneratorSerializable;
 import pt.webdetails.cpf.messaging.JsonResult;
+import pt.webdetails.cpf.session.IUserSession;
+import pt.webdetails.cpf.session.PentahoSessionUtils;
 import pt.webdetails.cpf.utils.CharsetHelper;
 import pt.webdetails.cpf.utils.JsonHelper;
 import pt.webdetails.cpf.utils.MimeTypes;
@@ -469,12 +474,31 @@ public class CdaUtils {
     return msg;
   }
 
+  public IUserSession getUserSession() {
+    return new PentahoSessionUtils().getCurrentSession();
+  }
+
+  public boolean canCreateContent() {
+    IAuthorizationPolicy authorizationPolicy = SecurityHelper.getInstance().getAuthorizationPolicy();
+    if ( authorizationPolicy == null ) {
+      authorizationPolicy = PentahoSystem.get( IAuthorizationPolicy.class );
+      if ( authorizationPolicy == null ) {
+        logger.warn( "Couldn't retrieve Authorization Policy" );
+        return getUserSession().isAdministrator();
+      }
+    }
+    return authorizationPolicy.isAllowed( RepositoryCreateAction.NAME );
+  }
+
   @GET
   @Path( "/editFile" )
   @Produces( MimeTypes.HTML )
   public String editFile( @QueryParam( "path" ) String path ) throws WebApplicationException, IOException {
     if ( StringUtils.isEmpty( path ) ) {
       throw new WebApplicationException( 400 );
+    }
+    if ( !canCreateContent() ) {
+      return Messages.getString( "CdaUtils.ERROR_ACCESS_DENIED" );
     }
     return getExtEditor().getMainEditor();
   }
