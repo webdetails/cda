@@ -81,6 +81,7 @@ import org.pentaho.platform.engine.security.SecurityHelper;
 import pt.webdetails.cda.settings.CdaSettingsReadException;
 import pt.webdetails.cda.utils.CorsUtil;
 import pt.webdetails.cda.utils.DoQueryParameters;
+import pt.webdetails.cda.utils.Messages;
 import pt.webdetails.cpf.PluginEnvironment;
 import pt.webdetails.cpf.audit.CpfAuditHelper;
 import pt.webdetails.cpf.messaging.JsonGeneratorSerializable;
@@ -475,6 +476,9 @@ public class CdaUtils {
   public String editFile( @QueryParam( "path" ) String path ) throws WebApplicationException, IOException {
     if ( StringUtils.isEmpty( path ) ) {
       throw new WebApplicationException( 400 );
+    }
+    if ( !CdaEngine.getEnvironment().canCreateContent() ) {
+      return Messages.getString( "CdaUtils.ERROR_ACCESS_DENIED" );
     }
     return getExtEditor().getMainEditor();
   }
