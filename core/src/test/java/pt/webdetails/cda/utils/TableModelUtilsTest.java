@@ -130,8 +130,15 @@ public class TableModelUtilsTest {
       new Object[] { 2.0d, "two" } ), result );
     checker.assertColumnNames( result, "c3", "c2" );
     checker.assertColumnClasses( result, Double.class, String.class );
+    opts.addParameter( "searchBox", "one" );
+    result = TableModelUtils.postProcessTableModel( dataAccess, opts, tm );
+    checker = new TableModelChecker();
+    checker.assertEquals( new SimpleTableModel(
+      new Object[] { 1.0d, "one" } ), result );
 
     when( dataAccess.getOutputMode( 6 ) ).thenReturn( OutputMode.EXCLUDE );
+    opts = new QueryOptions();
+    opts.setOutputIndexId( 6 );
     result = TableModelUtils.postProcessTableModel( dataAccess, opts, tm );
     checker.assertEquals(
       new SimpleTableModel( new Object[] { 1L }, new Object[] { 2L } ),
