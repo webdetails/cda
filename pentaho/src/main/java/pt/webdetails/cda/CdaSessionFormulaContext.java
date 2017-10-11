@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -28,7 +28,7 @@ import org.pentaho.platform.engine.security.SecurityParameterProvider;
 import org.pentaho.platform.plugin.services.connections.javascript.JavaScriptResultSet;
 
 /**
- * Provides access to Pentaho parameter providers for formula reference resolution, accessible as
+ * Provides access to Hitachi Vantara parameter providers for formula reference resolution, accessible as
  * [&lt;prefix&gt:&lt;parameter_name&gt;]<br><br> Available prefixes are: <ul> <li> security: {@link
  * SecurityParameterProvider} </li> <li> session: {@link PentahoSessionParameterProvider}</li> <li> system: {@link
  * SystemSettingsParameterProvider} </li> </ul>

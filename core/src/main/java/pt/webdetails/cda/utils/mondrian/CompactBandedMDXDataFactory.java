@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -22,7 +22,7 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.mondrian.Abst
 
 /**
  * This data-factory operates in Legacy-Mode providing a preprocessed view on the mondrian result. It behaves exactly as
- * known from the Pentaho-Platform and the Pentaho-Report-Designer. This mode of operation breaks the structure of the
+ * known from the Pentaho-Platform and the Hitachi Vantara-Report-Designer. This mode of operation breaks the structure of the
  * resulting table as soon as new rows are returned by the server.
  */
 public class CompactBandedMDXDataFactory extends AbstractNamedMDXDataFactory {
