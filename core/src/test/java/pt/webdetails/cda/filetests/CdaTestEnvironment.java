@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2017 Webdetails, a Pentaho company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -28,6 +28,7 @@ import pt.webdetails.cda.cache.EHCacheQueryCache;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cpf.bean.AbstractBeanFactory;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
+import pt.webdetails.cpf.session.IUserSession;
 
 import java.util.Locale;
 import java.util.TimeZone;
@@ -36,6 +37,8 @@ public class CdaTestEnvironment extends BaseCdaEnvironment implements ICdaEnviro
 
   private CdaTestingContentAccessFactory factory;
   private IQueryCache cache;
+  private boolean canCreateContent;
+  private IUserSession mockedUserSession;
 
   public CdaTestEnvironment( CdaTestingContentAccessFactory factory ) throws InitializationException {
     super( new AbstractBeanFactory() {
@@ -56,7 +59,7 @@ public class CdaTestEnvironment extends BaseCdaEnvironment implements ICdaEnviro
 
   @Override
   public IQueryCache getQueryCache() {
-    synchronized( this ) {
+    synchronized ( this ) {
       if ( cache == null ) {
         cache = new EHCacheQueryCache( false );
       }
@@ -75,5 +78,21 @@ public class CdaTestEnvironment extends BaseCdaEnvironment implements ICdaEnviro
   @Override
   public Locale getLocale() {
     return Locale.getDefault();
+  }
+
+  public void setMockedUserSession( IUserSession mockedUserSession ) {
+    this.mockedUserSession = mockedUserSession;
+  }
+
+  public void setCanCreateContent( boolean canCreateContent ) {
+    this.canCreateContent = canCreateContent;
+  }
+
+  public IUserSession getUserSession() {
+    return mockedUserSession;
+  }
+
+  public boolean canCreateContent() {
+    return canCreateContent;
   }
 }
