@@ -30,6 +30,7 @@ import pt.webdetails.cda.dataaccess.IDataAccessUtils;
 import pt.webdetails.cpf.messaging.IEventPublisher;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
 import pt.webdetails.cpf.resources.IResourceLoader;
+import pt.webdetails.cpf.session.IUserSession;
 
 
 public interface ICdaEnvironment {
@@ -78,4 +79,8 @@ public interface ICdaEnvironment {
   default IResourceLoader getResourceLoader() {
     throw new UnsupportedOperationException( "The method is not implemented" );
   }
+
+  public IUserSession getUserSession();
+
+  public boolean canCreateContent();
 }
