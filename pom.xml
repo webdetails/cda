@@ -37,19 +37,19 @@
   <properties>
     <marketplace.metadata.sequential.build.id>${sequential.build.id}</marketplace.metadata.sequential.build.id>
     <sequential.build.id>manual-${maven.build.timestamp}</sequential.build.id>
-    <dependency.pentaho-metadata.revision>8.1-SNAPSHOT</dependency.pentaho-metadata.revision>
+    <pentaho-metadata.version>8.1-SNAPSHOT</pentaho-metadata.version>
     <marketplace.metadata.package_url></marketplace.metadata.package_url>
     <marketplace.metadata.description></marketplace.metadata.description>
     <project.stage>master</project.stage>
     <dependency.mockito-all.revision>1.8.4</dependency.mockito-all.revision>
     <marketplace.metadata.min_parent_version>1.0</marketplace.metadata.min_parent_version>
     <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
-    <dependency.pentaho-reporting.revision>8.1-SNAPSHOT</dependency.pentaho-reporting.revision>
+    <pentaho-reporting.version>8.1-SNAPSHOT</pentaho-reporting.version>
     <dependency.pentaho-kettle.revision>${project.version}</dependency.pentaho-kettle.revision>
     <dependency.pentaho-library.revision>${project.version}</dependency.pentaho-library.revision>
-    <dependency.pentaho-cpf-plugin.revision>8.1-SNAPSHOT</dependency.pentaho-cpf-plugin.revision>
+    <pentaho-cpf-plugin.version>8.1-SNAPSHOT</pentaho-cpf-plugin.version>
     <dependency.jackson-mapper-asl.revision>1.9.3</dependency.jackson-mapper-asl.revision>
-    <dependency.mondrian.revision>8.1-SNAPSHOT</dependency.mondrian.revision>
+    <mondrian.version>8.1-SNAPSHOT</mondrian.version>
     <marketplace.metadata.development_stage.phase>2</marketplace.metadata.development_stage.phase>
     <marketplace.metadata.samples_url>http://nexus.pentaho.org/content/groups/omni/pentaho/cda-samples/6.0.0.0-353/cda-samples-6.0.0.0-353.zip</marketplace.metadata.samples_url>
     <dependency.jericho-html.revision>3.1</dependency.jericho-html.revision>
@@ -78,62 +78,62 @@
       <dependency>
         <groupId>org.pentaho.reporting.engine</groupId>
         <artifactId>classic-core</artifactId>
-        <version>${dependency.pentaho-reporting.revision}</version>
+        <version>${pentaho-reporting.version}</version>
       </dependency>
       <dependency>
         <groupId>org.pentaho.reporting.engine</groupId>
         <artifactId>classic-extensions</artifactId>
-        <version>${dependency.pentaho-reporting.revision}</version>
+        <version>${pentaho-reporting.version}</version>
       </dependency>
       <dependency>
         <groupId>org.pentaho.reporting.engine</groupId>
         <artifactId>classic-extensions-kettle</artifactId>
-        <version>${dependency.pentaho-reporting.revision}</version>
+        <version>${pentaho-reporting.version}</version>
       </dependency>
       <dependency>
         <groupId>org.pentaho.reporting.engine</groupId>
         <artifactId>classic-extensions-mondrian</artifactId>
-        <version>${dependency.pentaho-reporting.revision}</version>
+        <version>${pentaho-reporting.version}</version>
       </dependency>
       <dependency>
         <groupId>org.pentaho.reporting.engine</groupId>
         <artifactId>classic-extensions-olap4j</artifactId>
-        <version>${dependency.pentaho-reporting.revision}</version>
+        <version>${pentaho-reporting.version}</version>
       </dependency>
       <dependency>
         <groupId>org.pentaho.reporting.engine</groupId>
         <artifactId>classic-extensions-pmd</artifactId>
-        <version>${dependency.pentaho-reporting.revision}</version>
+        <version>${pentaho-reporting.version}</version>
       </dependency>
       <dependency>
         <groupId>org.pentaho.reporting.engine</groupId>
         <artifactId>classic-extensions-reportdesigner-parser</artifactId>
-        <version>${dependency.pentaho-reporting.revision}</version>
+        <version>${pentaho-reporting.version}</version>
       </dependency>
       <dependency>
         <groupId>org.pentaho.reporting.engine</groupId>
         <artifactId>classic-extensions-sampledata</artifactId>
-        <version>${dependency.pentaho-reporting.revision}</version>
+        <version>${pentaho-reporting.version}</version>
       </dependency>
       <dependency>
         <groupId>org.pentaho.reporting.engine</groupId>
         <artifactId>classic-extensions-scripting</artifactId>
-        <version>${dependency.pentaho-reporting.revision}</version>
+        <version>${pentaho-reporting.version}</version>
       </dependency>
       <dependency>
         <groupId>org.pentaho.reporting.engine</groupId>
         <artifactId>classic-extensions-xpath</artifactId>
-        <version>${dependency.pentaho-reporting.revision}</version>
+        <version>${pentaho-reporting.version}</version>
       </dependency>
       <dependency>
         <groupId>org.pentaho.reporting.engine</groupId>
         <artifactId>legacy-functions</artifactId>
-        <version>${dependency.pentaho-reporting.revision}</version>
+        <version>${pentaho-reporting.version}</version>
       </dependency>
       <dependency>
         <groupId>org.pentaho.reporting.engine</groupId>
         <artifactId>wizard-core</artifactId>
-        <version>${dependency.pentaho-reporting.revision}</version>
+        <version>${pentaho-reporting.version}</version>
       </dependency>
       <dependency>
         <groupId>com.hazelcast</groupId>

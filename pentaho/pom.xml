@@ -17,8 +17,8 @@
     </license>
   </licenses>
   <properties>
-    <dependency.bi-platform.revision>8.1-SNAPSHOT</dependency.bi-platform.revision>
-    <dependency.pentaho-report-wizard-core.revision>8.1-SNAPSHOT</dependency.pentaho-report-wizard-core.revision>
+    <platform.version>8.1-SNAPSHOT</platform.version>
+    <pentaho-report-wizard-core.version>8.1-SNAPSHOT</pentaho-report-wizard-core.version>
   </properties>
   <dependencies>
     <dependency>
@@ -37,33 +37,33 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>data-access-plugin</artifactId>
-      <version>${dependency.bi-platform.revision}</version>
+      <version>${platform.version}</version>
       <type>zip</type>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-platform-api</artifactId>
-      <version>${dependency.bi-platform.revision}</version>
+      <version>${platform.version}</version>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-platform-core</artifactId>
-      <version>${dependency.bi-platform.revision}</version>
+      <version>${platform.version}</version>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-platform-repository</artifactId>
-      <version>${dependency.bi-platform.revision}</version>
+      <version>${platform.version}</version>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-platform-scheduler</artifactId>
-      <version>${dependency.bi-platform.revision}</version>
+      <version>${platform.version}</version>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-platform-extensions</artifactId>
-      <version>${dependency.bi-platform.revision}</version>
+      <version>${platform.version}</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -74,7 +74,7 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-report-wizard-core</artifactId>
-      <version>${dependency.pentaho-report-wizard-core.revision}</version>
+      <version>${pentaho-report-wizard-core.version}</version>
     </dependency>
     <dependency>
       <groupId>org.pentaho.reporting.engine</groupId>
@@ -127,22 +127,22 @@
     <dependency>
       <groupId>org.pentaho.reporting.engine</groupId>
       <artifactId>classic-extensions-drill-down</artifactId>
-      <version>${dependency.pentaho-reporting.revision}</version>
+      <version>${pentaho-reporting.version}</version>
     </dependency>
     <dependency>
       <groupId>org.pentaho.reporting.engine</groupId>
       <artifactId>classic-extensions-toc</artifactId>
-      <version>${dependency.pentaho-reporting.revision}</version>
+      <version>${pentaho-reporting.version}</version>
     </dependency>
     <dependency>
       <groupId>org.pentaho.reporting.engine</groupId>
       <artifactId>legacy-charts</artifactId>
-      <version>${dependency.pentaho-reporting.revision}</version>
+      <version>${pentaho-reporting.version}</version>
     </dependency>
     <dependency>
       <groupId>org.pentaho.reporting.plugin</groupId>
       <artifactId>classic-core-platform-plugin</artifactId>
-      <version>${dependency.pentaho-reporting.revision}</version>
+      <version>${pentaho-reporting.version}</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -153,7 +153,7 @@
     <dependency>
       <groupId>org.pentaho.reporting.plugin</groupId>
       <artifactId>classic-core-platform-plugin-package</artifactId>
-      <version>${dependency.pentaho-reporting.revision}</version>
+      <version>${pentaho-reporting.version}</version>
       <type>zip</type>
     </dependency>
     <dependency>

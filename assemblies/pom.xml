@@ -17,7 +17,7 @@
   </modules>
   <properties>
     <cda.root.dir>/cda</cda.root.dir>
-    <dependency.json.revision>8.1-SNAPSHOT</dependency.json.revision>
+    <pentaho-json.version>8.1-SNAPSHOT</pentaho-json.version>
   </properties>
   <dependencies>
     <dependency>
@@ -55,7 +55,7 @@
     <dependency>
       <groupId>org.pentaho</groupId>
       <artifactId>json</artifactId>
-      <version>${dependency.json.revision}</version>
+      <version>${pentaho-json.version}</version>
       <scope>runtime</scope>
     </dependency>
   </dependencies>
