@@ -39,7 +39,7 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>mondrian</artifactId>
-      <version>${dependency.mondrian.revision}</version>
+      <version>${mondrian.version}</version>
     </dependency>
     <dependency>
       <groupId>org.pentaho.reporting.engine</groupId>
@@ -122,7 +122,7 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-metadata</artifactId>
-      <version>${dependency.pentaho-metadata.revision}</version>
+      <version>${pentaho-metadata.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
