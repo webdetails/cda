@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -16,6 +16,7 @@ package pt.webdetails.cda;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.DriverConnectionProvider;
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.base.config.HierarchicalConfiguration;
 import org.pentaho.reporting.libraries.base.config.PropertyFileConfiguration;
@@ -23,6 +24,7 @@ import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 import pt.webdetails.cda.cache.EHCacheQueryCache;
 import pt.webdetails.cda.cache.IQueryCache;
+import pt.webdetails.cda.connections.dataservices.IDataservicesLocalConnection;
 import pt.webdetails.cda.connections.mondrian.IMondrianRoleMapper;
 import pt.webdetails.cda.dataaccess.DefaultCubeFileProviderSetter;
 import pt.webdetails.cda.dataaccess.DefaultDataAccessUtils;
@@ -166,6 +168,19 @@ public abstract class BaseCdaEnvironment implements ICdaEnvironment {
         return "";
       }
     };
+  }
+
+  @Override
+  public IDataservicesLocalConnection getDataServicesLocalConnection() {
+    try {
+      String id = "IDataservicesLocalConnection";
+      if ( beanFactory != null && beanFactory.containsBean( id ) ) {
+        return (IDataservicesLocalConnection) beanFactory.getBean( id );
+      }
+    } catch ( Exception e ) {
+      logger.error( "Cannot get bean IDataservicesLocalConnection. Using pseudo DataservicesLocalConnection", e );
+    }
+    return () -> new DriverConnectionProvider();
   }
 
   @Override

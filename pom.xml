@@ -45,6 +45,7 @@
     <marketplace.metadata.min_parent_version>1.0</marketplace.metadata.min_parent_version>
     <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
     <pentaho-reporting.version>8.1.0.0-SNAPSHOT</pentaho-reporting.version>
+    <dependency.pentaho-dataservices.version>8.1.0.0-SNAPSHOT</dependency.pentaho-dataservices.version>
     <dependency.pentaho-kettle.revision>${project.version}</dependency.pentaho-kettle.revision>
     <dependency.pentaho-library.revision>${project.version}</dependency.pentaho-library.revision>
     <pentaho-cpf-plugin.version>8.1.0.0-SNAPSHOT</pentaho-cpf-plugin.version>
@@ -134,6 +135,16 @@
         <groupId>org.pentaho.reporting.engine</groupId>
         <artifactId>wizard-core</artifactId>
         <version>${pentaho-reporting.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>pentaho</groupId>
+        <artifactId>pdi-dataservice-client-plugin-api</artifactId>
+        <version>${dependency.pentaho-dataservices.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>pentaho</groupId>
+        <artifactId>pdi-dataservice-client-plugin</artifactId>
+        <version>${dependency.pentaho-dataservices.version}</version>
       </dependency>
       <dependency>
         <groupId>com.hazelcast</groupId>

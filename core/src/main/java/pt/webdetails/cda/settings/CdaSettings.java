@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -23,6 +23,7 @@ import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.EvaluableConnection;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.UnsupportedConnectionException;
+import pt.webdetails.cda.connections.dataservices.DataservicesConnection;
 import pt.webdetails.cda.connections.kettle.TransFromFileConnection;
 import pt.webdetails.cda.connections.metadata.MetadataConnection;
 import pt.webdetails.cda.connections.scripting.ScriptingConnection;
@@ -30,6 +31,7 @@ import pt.webdetails.cda.connections.xpath.XPathConnection;
 import pt.webdetails.cda.dataaccess.DataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessEnums.ConnectionInstanceType;
 import pt.webdetails.cda.dataaccess.DataAccessEnums.DataAccessInstanceType;
+import pt.webdetails.cda.dataaccess.DataservicesDataAccess;
 import pt.webdetails.cda.dataaccess.DenormalizedMdxDataAccess;
 import pt.webdetails.cda.dataaccess.DenormalizedOlap4JDataAccess;
 import pt.webdetails.cda.dataaccess.JoinCompoundDataAccess;
@@ -157,7 +159,7 @@ public class CdaSettings {
     final String typeName = element.attributeValue( "type" );
     DataAccessInstanceType type = DataAccessInstanceType.parseType( typeName );
     if ( type != null ) {
-      switch( type ) {
+      switch ( type ) {
         case DENORMALIZED_MDX:
           return new DenormalizedMdxDataAccess( element );
         case JOIN:
@@ -184,6 +186,8 @@ public class CdaSettings {
           return new UnionCompoundDataAccess( element );
         case XPATH:
           return new XPathDataAccess( element );
+        case DATASERVICES:
+          return new DataservicesDataAccess( element );
       }
     }
     return null;
@@ -227,7 +231,7 @@ public class CdaSettings {
     ConnectionInstanceType connType = ConnectionInstanceType.parseType( type );
 
     if ( connType != null ) {
-      switch( connType ) {
+      switch ( connType ) {
         case KETTLE_TRANS_FROM_FILE:
           return new TransFromFileConnection( element );
         case Metadata:
@@ -246,6 +250,8 @@ public class CdaSettings {
           return new pt.webdetails.cda.connections.sql.JndiConnection( element );
         case XPATH:
           return new XPathConnection( element );
+        case DATASERVICES:
+          return new DataservicesConnection( element );
       }
     }
     return null;
