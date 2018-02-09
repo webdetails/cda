@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -18,6 +18,8 @@ import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterMapping;
 
 import pt.webdetails.cda.connections.AbstractConnection;
+import pt.webdetails.cda.connections.dataservices.DataservicesConnection;
+import pt.webdetails.cda.connections.dataservices.DataservicesConnectionInfo;
 import pt.webdetails.cda.connections.kettle.TransFromFileConnection;
 import pt.webdetails.cda.connections.kettle.TransFromFileConnectionInfo;
 import pt.webdetails.cda.connections.metadata.MetadataConnection;
@@ -72,7 +74,15 @@ public class DomVisitor {
       visit( (XPathConnection) con, conEle );
     } else if ( con instanceof TransFromFileConnection ) {
       visit( (TransFromFileConnection) con, conEle );
+    } else if ( con instanceof DataservicesConnection ) {
+      visit( (DataservicesConnection) con, conEle );
     }
+  }
+
+  // ...dataservices.dataservices
+  private void visit( DataservicesConnection con, Element ele ) {
+    final DataservicesConnectionInfo conInfo = con.getConnectionInfo();
+    ele.addElement( "DataServiceName" ).addText( conInfo.getDataServiceName() );
   }
 
   // ...metadata.metadata

@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,17 +13,14 @@
 
 package pt.webdetails.cda;
 
-import java.util.Locale;
-import java.util.Properties;
-
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
-
 import pt.webdetails.cda.cache.IQueryCache;
+import pt.webdetails.cda.connections.dataservices.IDataservicesLocalConnection;
 import pt.webdetails.cda.connections.mondrian.IMondrianRoleMapper;
 import pt.webdetails.cda.dataaccess.ICubeFileProviderSetter;
 import pt.webdetails.cda.dataaccess.IDataAccessUtils;
@@ -31,6 +28,9 @@ import pt.webdetails.cpf.messaging.IEventPublisher;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
 import pt.webdetails.cpf.resources.IResourceLoader;
 import pt.webdetails.cpf.session.IUserSession;
+
+import java.util.Locale;
+import java.util.Properties;
 
 
 public interface ICdaEnvironment {
@@ -42,6 +42,8 @@ public interface ICdaEnvironment {
   public IQueryCache getQueryCache();
 
   public IMondrianRoleMapper getMondrianRoleMapper();
+
+  public IDataservicesLocalConnection getDataServicesLocalConnection();
 
   /**
    * {@link FormulaContext} exposing parameters in CDA formulas.<br> Refer to implementations for available parameters.
