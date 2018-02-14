@@ -23,6 +23,8 @@ import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.dataservices.DataservicesConnection;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 
+import java.util.List;
+
 /**
  * Implementation of a DataAccess that will get data from a Pentaho Data Service
  */
@@ -58,5 +60,13 @@ public class DataservicesDataAccess extends PREDataAccess {
   @Override
   public ConnectionType getConnectionType() {
     return ConnectionType.DATASERVICES;
+  }
+
+  @Override
+  public List<PropertyDescriptor> getInterface() {
+    List<PropertyDescriptor> properties = super.getInterface();
+    properties.add(
+        new PropertyDescriptor( "dataServiceName", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+    return properties;
   }
 }
