@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CDADescriptor>
+   <DataSources>
+      <Connection id="1" type="dataservices.dataservices">
+         <DataServiceName>sales</DataServiceName>
+      </Connection>
+   </DataSources>
+   <DataAccess access="public" connection="1" id="streamingDataservice"
+               type="streaming">
+      <Name>testDataserviceQuery</Name>
+      <Query><![CDATA[SELECT * FROM "sales"]]></Query>
+   </DataAccess>
+</CDADescriptor>
