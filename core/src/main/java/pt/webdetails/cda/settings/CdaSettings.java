@@ -32,6 +32,7 @@ import pt.webdetails.cda.dataaccess.DataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessEnums.ConnectionInstanceType;
 import pt.webdetails.cda.dataaccess.DataAccessEnums.DataAccessInstanceType;
 import pt.webdetails.cda.dataaccess.DataservicesDataAccess;
+import pt.webdetails.cda.dataaccess.StreamingDataservicesDataAccess;
 import pt.webdetails.cda.dataaccess.DenormalizedMdxDataAccess;
 import pt.webdetails.cda.dataaccess.DenormalizedOlap4JDataAccess;
 import pt.webdetails.cda.dataaccess.JoinCompoundDataAccess;
@@ -186,6 +187,8 @@ public class CdaSettings {
           return new UnionCompoundDataAccess( element );
         case XPATH:
           return new XPathDataAccess( element );
+        case STREAMING_DATASERVICES:
+          return new StreamingDataservicesDataAccess( element );
         case DATASERVICES:
           return new DataservicesDataAccess( element );
       }

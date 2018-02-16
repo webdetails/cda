@@ -152,6 +152,10 @@ public class RoundtripSuiteTest extends XMLTestCase {
     equalityCheck( "sample-dataservice.cda" );
   }
 
+  public void testStreamingDataservice() throws Exception {
+    equalityCheck( "sample-streaming-dataservice.cda" );
+  }
+
   protected SettingsManager getSettingsManager() {
     return getEngine().getSettingsManager();
   }
