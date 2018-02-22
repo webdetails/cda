@@ -5,10 +5,10 @@
   <parent>
     <groupId>pentaho</groupId>
     <artifactId>cda-plugin</artifactId>
-    <version>7.1-SNAPSHOT</version>
+    <version>7.1.0.9-101</version>
   </parent>
   <artifactId>cda-plugin-assemblies</artifactId>
-  <version>7.1-SNAPSHOT</version>
+  <version>7.1.0.9-101</version>
   <packaging>pom</packaging>
   <modules>
     <module>cda</module>
@@ -17,7 +17,7 @@
   </modules>
   <properties>
     <cda.root.dir>/cda</cda.root.dir>
-    <dependency.json.revision>7.1-SNAPSHOT</dependency.json.revision>
+    <dependency.json.revision>7.1.0.9-101</dependency.json.revision>
   </properties>
   <dependencies>
     <dependency>
