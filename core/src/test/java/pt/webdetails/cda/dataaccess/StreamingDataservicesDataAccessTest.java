@@ -15,11 +15,19 @@ package pt.webdetails.cda.dataaccess;
 
 import junit.framework.TestCase;
 import org.junit.Before;
+import org.junit.Test;
+import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
+import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.SQLReportDataFactory;
 import pt.webdetails.cda.connections.ConnectionCatalog;
+import pt.webdetails.cda.connections.InvalidConnectionException;
+import pt.webdetails.cda.connections.dataservices.DataservicesConnection;
+import pt.webdetails.cda.settings.UnknownConnectionException;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static pt.webdetails.cda.test.util.CdaTestHelper.getMockEnvironment;
 import static pt.webdetails.cda.test.util.CdaTestHelper.initBareEngine;
 
@@ -34,14 +42,17 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
     da = new StreamingDataservicesDataAccess();
   }
 
+  @Test
   public void testGetType() {
     assertEquals( da.getType(), "streaming" );
   }
 
+  @Test
   public void testGetConnectionType() {
     assertEquals( da.getConnectionType(), ConnectionCatalog.ConnectionType.DATASERVICES );
   }
 
+  @Test
   public void testGetInterface() {
     List<PropertyDescriptor> daInterface = da.getInterface();
 
@@ -49,6 +60,12 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
         .filter( p -> p.getName().equals( "streamingDataServiceName" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> queryProperty = daInterface.stream()
             .filter( p -> p.getName().equals( "query" ) ).collect( Collectors.toList() );
+    List<PropertyDescriptor> windowRowSizeProperty = daInterface.stream()
+            .filter( p -> p.getName().equals( "windowRowSize" ) ).collect( Collectors.toList() );
+    List<PropertyDescriptor> windowRateProperty = daInterface.stream()
+            .filter( p -> p.getName().equals( "windowRate" ) ).collect( Collectors.toList() );
+    List<PropertyDescriptor> windowMillisSizeProperty = daInterface.stream()
+            .filter( p -> p.getName().equals( "windowMillisSize" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> cacheProperty = daInterface.stream()
             .filter( p -> p.getName().equals( "cache" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> cacheDurationProperty = daInterface.stream()
@@ -58,9 +75,20 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
 
     assertEquals( dataServiceNameProperty.size(), 1 );
     assertEquals( queryProperty.size(), 1 );
+    assertEquals( windowRowSizeProperty.size(), 1 );
+    assertEquals( windowRateProperty.size(), 1 );
+    assertEquals( windowMillisSizeProperty.size(), 1 );
     assertEquals( cacheProperty.size(), 0 );
     assertEquals( cacheDurationProperty.size(), 0 );
     assertEquals( cacheKeysProperty.size(), 0 );
+  }
+
+  @Test
+  public void testSqlReportingDataFactoryType() throws InvalidConnectionException, UnknownConnectionException {
+    DataservicesConnection mockConnection = mock( DataservicesConnection.class );
+    ConnectionProvider mockConnectionProvider = mock( ConnectionProvider.class );
+    doReturn( mockConnectionProvider ).when( mockConnection ).getInitializedConnectionProvider();
+    assertTrue( da.getSQLReportDataFactory( mockConnection ) instanceof SQLReportDataFactory );
   }
 
 }

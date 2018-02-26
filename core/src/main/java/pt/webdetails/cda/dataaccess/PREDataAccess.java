@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -64,15 +64,16 @@ public abstract class PREDataAccess extends SimpleDataAccess {
   }
 
 
-  public abstract DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException;
-
+  public DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException {
+    return new CachingDataFactory( getDataFactory(), false );
+  }
 
   protected static class PREDataSourceQuery implements IDataSourceQuery {
 
     private TableModel tableModel;
-    private CachingDataFactory localDataFactory;
+    private DataFactory localDataFactory;
 
-    public PREDataSourceQuery( TableModel tm, CachingDataFactory df ) {
+    public PREDataSourceQuery( TableModel tm, DataFactory df ) {
       this.tableModel = tm;
       this.localDataFactory = df;
     }
@@ -109,9 +110,7 @@ public abstract class PREDataAccess extends SimpleDataAccess {
     //    boolean threadVarSet = false;
 
     try {
-
-      final CachingDataFactory dataFactory = new CachingDataFactory( getDataFactory(), false );
-
+      final DataFactory dataFactory = getDataFactory();
       final Configuration configuration = ClassicEngineBoot.getInstance().getGlobalConfig();
 
       initializeDataFactory( dataFactory, configuration );
@@ -131,7 +130,7 @@ public abstract class PREDataAccess extends SimpleDataAccess {
         queryExecution = new PREDataSourceQuery( tm, dataFactory );
       } finally {
 
-        //There was an exception while getting the dataset - need to make sure 
+        //There was an exception while getting the dataset - need to make sure
         //that the dataFactory is closed
         if ( queryExecution == null ) {
           dataFactory.close();
