@@ -57,7 +57,7 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
             PropertyDescriptor.Placement.CHILD ) );
     properties.add( new PropertyDescriptor( "connection", PropertyDescriptor.Type.STRING,
             PropertyDescriptor.Placement.ATTRIB ) );
-    properties.add( new PropertyDescriptor( "dataServiceName", PropertyDescriptor.Type.STRING,
+    properties.add( new PropertyDescriptor( "streamingDataServiceName", PropertyDescriptor.Type.STRING,
             PropertyDescriptor.Placement.CHILD ) );
     return properties;
   }

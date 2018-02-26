@@ -91,9 +91,7 @@ public class DataservicesConnection extends AbstractConnection {
 
   @Override
   public List<PropertyDescriptor> getProperties() {
-    final List<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
-    properties.add( new PropertyDescriptor( "dataServiceName", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
-    return properties;
+    return new ArrayList<PropertyDescriptor>();
   }
 
   public String getTypeForFile() {

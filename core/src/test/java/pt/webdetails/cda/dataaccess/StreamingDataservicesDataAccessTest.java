@@ -46,7 +46,7 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
     List<PropertyDescriptor> daInterface = da.getInterface();
 
     List<PropertyDescriptor> dataServiceNameProperty = daInterface.stream()
-        .filter( p -> p.getName().equals( "dataServiceName" ) ).collect( Collectors.toList() );
+        .filter( p -> p.getName().equals( "streamingDataServiceName" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> queryProperty = daInterface.stream()
             .filter( p -> p.getName().equals( "query" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> cacheProperty = daInterface.stream()
