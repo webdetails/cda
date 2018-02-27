@@ -105,6 +105,10 @@
       <version>${dependency.pentaho-library.revision}</version>
     </dependency>
     <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>pdi-dataservice-client-plugin-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
       <version>${dependency.pentaho-kettle.revision}</version>

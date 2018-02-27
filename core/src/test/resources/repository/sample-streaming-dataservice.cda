@@ -5,9 +5,12 @@
          <DataServiceName>sales</DataServiceName>
       </Connection>
    </DataSources>
-   <DataAccess access="public" connection="1" id="streamingDataservice"
-               type="streaming">
+   <DataAccess access="public" connection="1" id="streamingDataservice" type="streaming">
       <Name>testDataserviceQuery</Name>
+      <DataServiceName>sales</DataServiceName>
       <Query><![CDATA[SELECT * FROM "sales"]]></Query>
+      <WindowMillisSize>0</WindowMillisSize>
+      <WindowRate>0</WindowRate>
+      <WindowRowSize>0</WindowRowSize>
    </DataAccess>
 </CDADescriptor>
