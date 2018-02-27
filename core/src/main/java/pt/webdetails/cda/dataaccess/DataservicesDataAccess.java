@@ -44,18 +44,13 @@ public class DataservicesDataAccess extends PREDataAccess {
     logger.debug( "Creating DataServicesDataFactory" );
 
     final DataservicesConnection connection = (DataservicesConnection) getCdaSettings().getConnection( getConnectionId() );
-    final SQLReportDataFactory reportDataFactory = getSQLReportDataFactory( connection );
+    final SQLReportDataFactory reportDataFactory = new SQLReportDataFactory( connection.getInitializedConnectionProvider() );
 
     // using deprecated version for 3.9/3.10 support until it breaks with latest
     reportDataFactory.setQuery( "query", getQuery() );
     // reportDataFactory.setQuery("query", getQuery(), null, null);
 
     return reportDataFactory;
-  }
-
-  public SQLReportDataFactory getSQLReportDataFactory( DataservicesConnection connection )
-          throws InvalidConnectionException, UnknownConnectionException {
-    return new SQLReportDataFactory( connection.getInitializedConnectionProvider() );
   }
 
   public String getType() {

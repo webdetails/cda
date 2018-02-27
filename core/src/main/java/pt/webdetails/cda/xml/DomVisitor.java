@@ -32,7 +32,6 @@ import pt.webdetails.cda.connections.sql.SqlJndiConnectionInfo;
 import pt.webdetails.cda.connections.xpath.XPathConnection;
 import pt.webdetails.cda.connections.xpath.XPathConnectionInfo;
 import pt.webdetails.cda.dataaccess.ColumnDefinition;
-import pt.webdetails.cda.dataaccess.StreamingDataservicesDataAccess;
 import pt.webdetails.cda.dataaccess.CompoundDataAccess;
 import pt.webdetails.cda.dataaccess.JoinCompoundDataAccess;
 import pt.webdetails.cda.dataaccess.Parameter;
@@ -188,15 +187,6 @@ public class DomVisitor {
 
     daEle.addElement( "Query" ).addCDATA( da.getQuery() );
 
-  }
-
-  public void visit( StreamingDataservicesDataAccess da, Element daEle ) {
-
-    visit( (SimpleDataAccess) da, daEle );
-    daEle.addElement( "DataServiceName" ).addText( da.getDataServiceName() );
-    daEle.addElement( "WindowMillisSize" ).addText( String.valueOf( da.getWindowMillisSize() ) );
-    daEle.addElement( "WindowRate" ).addText( String.valueOf( da.getWindowRate() ) );
-    daEle.addElement( "WindowRowSize" ).addText( String.valueOf( da.getWindowRowSize() ) );
   }
 
   // Compound data accesses
