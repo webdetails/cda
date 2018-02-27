@@ -16,13 +16,7 @@ package pt.webdetails.cda.dataaccess;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.SQLReportDataFactory;
-import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.SQLStreamingReportDataFactory;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
-import pt.webdetails.cda.connections.InvalidConnectionException;
-import pt.webdetails.cda.connections.dataservices.DataservicesConnection;
-import pt.webdetails.cda.settings.UnknownConnectionException;
-import pt.webdetails.cda.xml.DomVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,43 +28,12 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
 
   private static final Log logger = LogFactory.getLog( StreamingDataservicesDataAccess.class );
   private static final String TYPE = "streaming";
-  protected String dataServiceName;
-  protected int windowRowSize;
-  protected long windowRate;
-  protected long windowMillisSize;
 
   public StreamingDataservicesDataAccess( final Element element ) {
     super( element );
-    this.dataServiceName = element.selectSingleNode( "./DataServiceName" ).getText();
-    this.windowRowSize = Integer.valueOf( element.selectSingleNode( "./WindowRowSize" ).getText() );
-    this.windowRate = Long.valueOf( element.selectSingleNode( "./WindowRate" ).getText() );
-    this.windowMillisSize = Long.valueOf( element.selectSingleNode( "./WindowMillisSize" ).getText() );
-  }
-
-  public String getDataServiceName() {
-    return dataServiceName;
-  }
-
-  public int getWindowRowSize() {
-    return windowRowSize;
-  }
-
-  public long getWindowRate() {
-    return windowRate;
-  }
-
-  public long getWindowMillisSize() {
-    return windowMillisSize;
   }
 
   public StreamingDataservicesDataAccess() {
-  }
-
-  @Override
-  public SQLReportDataFactory getSQLReportDataFactory( DataservicesConnection connection )
-          throws InvalidConnectionException, UnknownConnectionException {
-    return new SQLStreamingReportDataFactory( connection.getInitializedConnectionProvider(),
-            this.windowRowSize, this.windowMillisSize, this.windowRate );
   }
 
   public String getType() {
@@ -96,17 +59,7 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
             PropertyDescriptor.Placement.ATTRIB ) );
     properties.add( new PropertyDescriptor( "streamingDataServiceName", PropertyDescriptor.Type.STRING,
             PropertyDescriptor.Placement.CHILD ) );
-    properties.add( new PropertyDescriptor( "windowRowSize", PropertyDescriptor.Type.STRING,
-            PropertyDescriptor.Placement.CHILD ) );
-    properties.add( new PropertyDescriptor( "windowRate", PropertyDescriptor.Type.STRING,
-            PropertyDescriptor.Placement.CHILD ) );
-    properties.add( new PropertyDescriptor( "windowMillisSize", PropertyDescriptor.Type.STRING,
-            PropertyDescriptor.Placement.CHILD ) );
     return properties;
-  }
-
-  public void accept( DomVisitor xmlVisitor, Element root ) {
-    xmlVisitor.visit( (StreamingDataservicesDataAccess) this, root );
   }
 
   @Override
