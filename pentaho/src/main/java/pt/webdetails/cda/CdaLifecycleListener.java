@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -18,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPlatformReadyListener;
 import org.pentaho.platform.api.engine.PluginLifecycleException;
 
+import pt.webdetails.cda.utils.streaming.SQLStreamingReportDataFactory;
 import pt.webdetails.cda.utils.mondrian.CompactBandedMDXDataFactory;
 import pt.webdetails.cda.utils.mondrian.ExtBandedMDXDataFactory;
 import pt.webdetails.cda.utils.mondrian.ExtDenormalizedMDXDataFactory;
@@ -37,7 +38,8 @@ public class CdaLifecycleListener extends SimpleLifeCycleListener implements IPl
 
   static Log logger = LogFactory.getLog( CdaLifecycleListener.class );
   private final Class[] customDataFactories = {
-    CompactBandedMDXDataFactory.class, ExtBandedMDXDataFactory.class, ExtDenormalizedMDXDataFactory.class };
+    CompactBandedMDXDataFactory.class, ExtBandedMDXDataFactory.class, ExtDenormalizedMDXDataFactory.class,
+    SQLStreamingReportDataFactory.class };
 
 
   public void init() throws PluginLifecycleException {

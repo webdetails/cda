@@ -15,7 +15,7 @@
  * Copyright (c) 2018 Object Refinery Ltd, Hitachi Vantara and Contributors..  All rights reserved.
  */
 
-package pt.webdetails.cda.dataaccess.datafactory;
+package pt.webdetails.cda.utils.streaming;
 
 import org.pentaho.di.trans.dataservice.jdbc.api.IThinStatement;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;

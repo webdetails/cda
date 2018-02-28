@@ -20,7 +20,7 @@ import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.SQ
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.dataservices.DataservicesConnection;
-import pt.webdetails.cda.dataaccess.datafactory.SQLStreamingReportDataFactory;
+import pt.webdetails.cda.utils.streaming.SQLStreamingReportDataFactory;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 import pt.webdetails.cda.xml.DomVisitor;
 
@@ -41,7 +41,7 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
 
   public StreamingDataservicesDataAccess( final Element element ) {
     super( element );
-    this.dataServiceName = element.selectSingleNode( "./DataServiceName" ).getText();
+    this.dataServiceName = element.selectSingleNode( "./StreamingDataServiceName" ).getText();
     this.windowRowSize = Integer.valueOf( element.selectSingleNode( "./WindowRowSize" ).getText() );
     this.windowRate = Long.valueOf( element.selectSingleNode( "./WindowRate" ).getText() );
     this.windowMillisSize = Long.valueOf( element.selectSingleNode( "./WindowMillisSize" ).getText() );
