@@ -192,7 +192,7 @@ public class DomVisitor {
 
   public void visit( StreamingDataservicesDataAccess da, Element daEle ) {
     visit( (SimpleDataAccess) da, daEle );
-    daEle.addElement( "DataServiceName" ).addText( da.getDataServiceName() );
+    daEle.addElement( "StreamingDataServiceName" ).addText( da.getDataServiceName() );
     daEle.addElement( "WindowMillisSize" ).addText( String.valueOf( da.getWindowMillisSize() ) );
     daEle.addElement( "WindowRate" ).addText( String.valueOf( da.getWindowRate() ) );
     daEle.addElement( "WindowRowSize" ).addText( String.valueOf( da.getWindowRowSize() ) );

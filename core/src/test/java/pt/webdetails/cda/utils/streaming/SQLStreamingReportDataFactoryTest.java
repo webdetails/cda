@@ -15,7 +15,7 @@
  * Copyright (c) 2018 Hitachi Vantara, Simba Management Limited and Contributors...  All rights reserved.
  */
 
-package pt.webdetails.cda.dataaccess.datafactory;
+package pt.webdetails.cda.utils.streaming;
 
 import org.junit.Before;
 import org.junit.Test;
