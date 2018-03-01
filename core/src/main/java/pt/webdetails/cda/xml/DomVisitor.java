@@ -16,10 +16,7 @@ package pt.webdetails.cda.xml;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterMapping;
-
 import pt.webdetails.cda.connections.AbstractConnection;
-import pt.webdetails.cda.connections.dataservices.DataservicesConnection;
-import pt.webdetails.cda.connections.dataservices.DataservicesConnectionInfo;
 import pt.webdetails.cda.connections.kettle.TransFromFileConnection;
 import pt.webdetails.cda.connections.kettle.TransFromFileConnectionInfo;
 import pt.webdetails.cda.connections.metadata.MetadataConnection;
@@ -32,11 +29,11 @@ import pt.webdetails.cda.connections.sql.SqlJndiConnectionInfo;
 import pt.webdetails.cda.connections.xpath.XPathConnection;
 import pt.webdetails.cda.connections.xpath.XPathConnectionInfo;
 import pt.webdetails.cda.dataaccess.ColumnDefinition;
-import pt.webdetails.cda.dataaccess.StreamingDataservicesDataAccess;
 import pt.webdetails.cda.dataaccess.CompoundDataAccess;
 import pt.webdetails.cda.dataaccess.JoinCompoundDataAccess;
 import pt.webdetails.cda.dataaccess.Parameter;
 import pt.webdetails.cda.dataaccess.SimpleDataAccess;
+import pt.webdetails.cda.dataaccess.StreamingDataservicesDataAccess;
 import pt.webdetails.cda.dataaccess.UnionCompoundDataAccess;
 
 /**
@@ -75,15 +72,7 @@ public class DomVisitor {
       visit( (XPathConnection) con, conEle );
     } else if ( con instanceof TransFromFileConnection ) {
       visit( (TransFromFileConnection) con, conEle );
-    } else if ( con instanceof DataservicesConnection ) {
-      visit( (DataservicesConnection) con, conEle );
     }
-  }
-
-  // ...dataservices.dataservices
-  private void visit( DataservicesConnection con, Element ele ) {
-    final DataservicesConnectionInfo conInfo = con.getConnectionInfo();
-    ele.addElement( "DataServiceName" ).addText( conInfo.getDataServiceName() );
   }
 
   // ...metadata.metadata

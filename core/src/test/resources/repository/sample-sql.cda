@@ -15,6 +15,9 @@
             <User>sa</User>
             <Pass></Pass>
         </Connection>
+        <Connection id="2" type="sql.jndi">
+          <Jndi>SampleData</Jndi>
+        </Connection>
     </DataSources>
     <!-- DataAccess object controls the query itself
 
