@@ -22,14 +22,8 @@ public class DataservicesConnectionInfo {
 
   private Properties properties;
 
-  private String dataServiceName;
-
   public DataservicesConnectionInfo( final Element connection ) {
     properties = new Properties();
-
-    final String dataServiceName = (String) connection.selectObject( "string(./DataServiceName)" );
-    this.dataServiceName = dataServiceName;
-    properties.setProperty( "dataServiceName", dataServiceName );
 
     final List<?> list = connection.elements( "Property" );
     for ( int i = 0; i < list.size(); i++ ) {
@@ -38,10 +32,6 @@ public class DataservicesConnectionInfo {
       final String text = childElement.getText();
       properties.put( name, text );
     }
-  }
-
-  public String getDataServiceName() {
-    return dataServiceName;
   }
 
   public Properties getProperties() {
@@ -58,10 +48,16 @@ public class DataservicesConnectionInfo {
 
     DataservicesConnectionInfo that = (DataservicesConnectionInfo) o;
 
-    return getDataServiceName().equals( that.getDataServiceName() );
+    for ( Object key : getProperties().keySet() ) {
+      Object thatName = that.getProperties().get( key );
+      if ( thatName == null || !thatName.equals( getProperties().get( key ) ) ) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @Override public int hashCode() {
-    return getDataServiceName().hashCode();
+    return getProperties().hashCode();
   }
 }
