@@ -48,17 +48,27 @@ public class DataAccessEnums {
     SQL( "sql" ),
     UNION( "union" ),
     XPATH( "xPath" ),
-    DATASERVICES( "dataservices" ),
+    DATASERVICES( "dataservices", "sql" ),
     STREAMING_DATASERVICES( "streaming" );
 
     private String type;
+    private String label;
 
     public String getType() {
       return this.type;
     }
+    public String getLabel() {
+      return this.label;
+    }
 
     DataAccessInstanceType( String type ) {
       this.type = type;
+      this.label = type;
+    }
+
+    DataAccessInstanceType( String type, String label ) {
+      this.type = type;
+      this.label = label;
     }
 
     public static DataAccessInstanceType parseType( String type ) {

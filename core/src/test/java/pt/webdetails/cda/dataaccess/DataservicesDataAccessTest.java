@@ -34,7 +34,7 @@ public class DataservicesDataAccessTest extends TestCase {
   }
 
   public void testGetType() {
-    assertEquals( da.getType(), "dataservices" );
+    assertEquals( da.getType(), "sql" );
   }
 
   public void testGetConnectionType() {

@@ -33,7 +33,8 @@ import java.util.List;
 public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
 
   private static final Log logger = LogFactory.getLog( StreamingDataservicesDataAccess.class );
-  private static final String TYPE = "streaming";
+  private static final DataAccessEnums.DataAccessInstanceType TYPE =
+    DataAccessEnums.DataAccessInstanceType.STREAMING_DATASERVICES;
   protected String dataServiceName;
   protected int windowRowSize;
   protected long windowRate;
@@ -74,7 +75,7 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
   }
 
   public String getType() {
-    return TYPE;
+    return TYPE.getLabel();
   }
 
   @Override
