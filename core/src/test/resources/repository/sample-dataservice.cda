@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CDADescriptor>
     <DataSources>
-      <Connection id="1" type="dataservices.dataservices">
-        <DataServiceName>testName</DataServiceName>
-      </Connection>
+      <Connection id="1" type="dataservices.dataservices"/>
     </DataSources>
 
   <DataAccess id="1" connection="1" type="dataservices" access="public" >
