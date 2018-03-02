@@ -176,7 +176,7 @@ public class DomVisitor {
 
     daEle.addAttribute( "id", da.getId() );
     daEle.addAttribute( "connection", da.getConnectionId() );
-    daEle.addAttribute( "type", da.getType() );
+    daEle.addAttribute( "type", da.getQueryType() );
     daEle.addAttribute( "access", da.getAccess().name().toLowerCase() );
     if ( da.isCacheEnabled() ) {
       daEle.addAttribute( "cache", new Boolean( da.isCacheEnabled() ).toString() );

@@ -31,7 +31,7 @@ import java.util.List;
 public class DataservicesDataAccess extends PREDataAccess {
 
   private static final Log logger = LogFactory.getLog( DataservicesDataAccess.class );
-  private static final String TYPE = "dataservices";
+  private static final DataAccessEnums.DataAccessInstanceType TYPE = DataAccessEnums.DataAccessInstanceType.DATASERVICES;
 
   public DataservicesDataAccess( final Element element ) {
     super( element );
@@ -59,7 +59,7 @@ public class DataservicesDataAccess extends PREDataAccess {
   }
 
   public String getType() {
-    return TYPE;
+    return TYPE.getLabel();
   }
 
   @Override
