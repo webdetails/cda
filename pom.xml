@@ -45,9 +45,8 @@
     <marketplace.metadata.min_parent_version>1.0</marketplace.metadata.min_parent_version>
     <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
     <pentaho-reporting.version>8.1.0.0-SNAPSHOT</pentaho-reporting.version>
-    <dependency.pentaho-dataservices.version>8.1.0.0-SNAPSHOT</dependency.pentaho-dataservices.version>
-    <dependency.pentaho-kettle.revision>${project.version}</dependency.pentaho-kettle.revision>
-    <dependency.pentaho-library.revision>${project.version}</dependency.pentaho-library.revision>
+    <pdi-dataservice-client-plugin.version>8.1.0.0-SNAPSHOT</pdi-dataservice-client-plugin.version>
+    <pdi.version>8.1.0.0-SNAPSHOT</pdi.version>
     <pentaho-cpf-plugin.version>8.1.0.0-SNAPSHOT</pentaho-cpf-plugin.version>
     <dependency.jackson-mapper-asl.revision>1.9.3</dependency.jackson-mapper-asl.revision>
     <mondrian.version>8.1.0.0-SNAPSHOT</mondrian.version>
@@ -139,12 +138,12 @@
       <dependency>
         <groupId>pentaho</groupId>
         <artifactId>pdi-dataservice-client-plugin-api</artifactId>
-        <version>${dependency.pentaho-dataservices.version}</version>
+        <version>${pdi-dataservice-client-plugin.version}</version>
       </dependency>
       <dependency>
         <groupId>pentaho</groupId>
         <artifactId>pdi-dataservice-client-plugin</artifactId>
-        <version>${dependency.pentaho-dataservices.version}</version>
+        <version>${pdi-dataservice-client-plugin.version}</version>
       </dependency>
       <dependency>
         <groupId>com.hazelcast</groupId>
@@ -159,7 +158,7 @@
       <dependency>
         <groupId>org.pentaho.reporting.library</groupId>
         <artifactId>libloader</artifactId>
-        <version>${dependency.pentaho-library.revision}</version>
+        <version>${pentaho-reporting.version}</version>
       </dependency>
       <dependency>
         <groupId>net.htmlparser.jericho</groupId>
@@ -169,7 +168,7 @@
       <dependency>
         <groupId>org.pentaho.di.plugins</groupId>
         <artifactId>kettle-log4j-core</artifactId>
-        <version>${dependency.pentaho-kettle.revision}</version>
+        <version>${pdi.version}</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
