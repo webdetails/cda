@@ -59,6 +59,10 @@ public class DataservicesDataAccess extends PREDataAccess {
   }
 
   public String getType() {
+    return TYPE.getType();
+  }
+
+  public String getLabel() {
     return TYPE.getLabel();
   }
 

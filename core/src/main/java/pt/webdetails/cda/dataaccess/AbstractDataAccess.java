@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,22 +13,10 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import javax.swing.table.TableModel;
-
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.cache.CacheKey;
@@ -46,6 +34,16 @@ import pt.webdetails.cda.utils.InvalidOutputIndexException;
 import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.Util;
 import pt.webdetails.cda.utils.kettle.SortException;
+
+import javax.swing.table.TableModel;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * This is the top level implementation of a DataAccess. Only the common methods are used here
@@ -118,9 +116,7 @@ public abstract class AbstractDataAccess implements DataAccess {
     this.parameters.addAll( params );
   }
 
-
   public abstract String getType();
-
 
   private void parseOptions( final Element element ) {
     id = element.attributeValue( "id" );
