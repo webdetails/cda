@@ -15,13 +15,14 @@ package pt.webdetails.cda.dataaccess;
 
 import junit.framework.TestCase;
 import org.junit.Before;
+import org.junit.Test;
+import pt.webdetails.cda.connections.ConnectionCatalog;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
-import pt.webdetails.cda.connections.ConnectionCatalog;
 import static pt.webdetails.cda.test.util.CdaTestHelper.getMockEnvironment;
 import static pt.webdetails.cda.test.util.CdaTestHelper.initBareEngine;
-
 
 public class DataservicesDataAccessTest extends TestCase {
 
@@ -33,19 +34,27 @@ public class DataservicesDataAccessTest extends TestCase {
     da = new DataservicesDataAccess();
   }
 
+  @Test
   public void testGetType() {
-    assertEquals( da.getType(), "sql" );
+    assertEquals( da.getType(), "dataservices" );
   }
 
+  @Test
+  public void testGetLabel() {
+    assertEquals( da.getLabel(), "sql" );
+  }
+
+  @Test
   public void testGetConnectionType() {
     assertEquals( da.getConnectionType(), ConnectionCatalog.ConnectionType.DATASERVICES );
   }
 
+  @Test
   public void testGetInterface() {
     List<PropertyDescriptor> daInterface = da.getInterface();
 
     List<PropertyDescriptor> dataServiceNameProperty = daInterface.stream()
-        .filter( p -> p.getName().equals( "dataServiceName" ) ).collect( Collectors.toList() );
+      .filter( p -> p.getName().equals( "dataServiceName" ) ).collect( Collectors.toList() );
 
     assertEquals( dataServiceNameProperty.size(), 1 );
   }

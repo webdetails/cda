@@ -75,7 +75,7 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
   }
 
   public String getType() {
-    return TYPE.getLabel();
+    return TYPE.getType();
   }
 
   @Override
