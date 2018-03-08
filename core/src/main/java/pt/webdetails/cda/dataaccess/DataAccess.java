@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,13 +13,13 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.util.ArrayList;
-import javax.swing.table.TableModel;
-
+import org.dom4j.Element;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
-import org.dom4j.Element;
 import pt.webdetails.cda.xml.DomVisitor;
+
+import javax.swing.table.TableModel;
+import java.util.ArrayList;
 
 /**
  * DataAccess interface
@@ -35,6 +35,11 @@ public interface DataAccess {
   String getName();
 
   String getType();
+
+  // the default behaviour is to have the label equal to the type
+  default String getLabel() {
+    return getType();
+  }
 
   DataAccessEnums.ACCESS_TYPE getAccess();
 

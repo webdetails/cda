@@ -20,8 +20,8 @@ import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.SQ
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.dataservices.DataservicesConnection;
-import pt.webdetails.cda.utils.streaming.SQLStreamingReportDataFactory;
 import pt.webdetails.cda.settings.UnknownConnectionException;
+import pt.webdetails.cda.utils.streaming.SQLStreamingReportDataFactory;
 import pt.webdetails.cda.xml.DomVisitor;
 
 import java.util.ArrayList;
@@ -75,6 +75,10 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
   }
 
   public String getType() {
+    return TYPE.getType();
+  }
+
+  public String getLabel() {
     return TYPE.getLabel();
   }
 
