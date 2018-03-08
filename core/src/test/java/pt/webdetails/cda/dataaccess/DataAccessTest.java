@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,20 +13,15 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
-import javax.swing.table.TableModel;
-
 import org.dom4j.Element;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
-
 import pt.webdetails.cda.ICdaEnvironment;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.cache.TableCacheKey;
 import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
+import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.dataaccess.SimpleDataAccess.IDataSourceQuery;
 import pt.webdetails.cda.events.QueryErrorEvent;
@@ -35,9 +30,23 @@ import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.xml.DomVisitor;
 import pt.webdetails.cpf.messaging.IEventPublisher;
 
-import static pt.webdetails.cda.test.util.CdaTestHelper.*;
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
+import javax.swing.table.TableModel;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static pt.webdetails.cda.test.util.CdaTestHelper.SimpleTableModel;
+import static pt.webdetails.cda.test.util.CdaTestHelper.getMockEnvironment;
+import static pt.webdetails.cda.test.util.CdaTestHelper.initBareEngine;
 
 public class DataAccessTest {
 
@@ -45,6 +54,27 @@ public class DataAccessTest {
   public static void init() {
     AbstractDataAccess.shutdownCache();
     initBareEngine( getMockEnvironment() );
+  }
+
+  @Test
+  public void testGetLabel() {
+    DataAccess dataAccessTestInterface = new SimpleDataAccess() {
+      @Override public String getType() {
+        return "expected type";
+      }
+
+      @Override public ConnectionCatalog.ConnectionType getConnectionType() {
+        return null;
+      }
+
+      @Override protected IDataSourceQuery performRawQuery( ParameterDataRow parameterDataRow )
+        throws QueryException {
+        return null;
+      }
+    };
+
+    assertEquals( "expected type", dataAccessTestInterface.getLabel() );
+    assertEquals( dataAccessTestInterface.getType(), dataAccessTestInterface.getLabel() );
   }
 
   @Test
