@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,14 +13,14 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.settings.SettingsManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class DataAccessConnectionDescriptor {
@@ -73,7 +73,7 @@ public class DataAccessConnectionDescriptor {
        * Metadata block
        */
       output.append( "\t\"metadata\": {\n" );
-      output.append( "\t\t\"name\": \"" + dataAccess.getType()
+      output.append( "\t\t\"name\": \"" + dataAccess.getLabel()
         + ( this.conn.getGenericType() != ConnectionType.NONE ? " over " + conn.getType() : "" ) + "\",\n" );
       output.append( this.conn.getGenericType() != ConnectionType.NONE ? "\t\t\"conntype\": \"" + conn.getTypeForFile()
         + "\",\n" : "" );
