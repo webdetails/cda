@@ -48,6 +48,11 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
   }
 
   @Test
+  public void testGetLabel() {
+    assertEquals( da.getLabel(), "streaming" );
+  }
+
+  @Test
   public void testGetConnectionType() {
     assertEquals( da.getConnectionType(), ConnectionCatalog.ConnectionType.DATASERVICES );
   }
