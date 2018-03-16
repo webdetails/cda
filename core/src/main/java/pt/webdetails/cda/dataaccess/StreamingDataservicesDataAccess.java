@@ -40,6 +40,7 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
   protected long windowSize;
   protected long windowEvery;
   protected long windowLimit;
+  protected int componentRefreshPeriod = 10;
 
   public StreamingDataservicesDataAccess( final Element element ) {
     super( element );
@@ -48,6 +49,7 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
     this.windowSize = Integer.valueOf( element.selectSingleNode( "./WindowSize" ).getText() );
     this.windowEvery = Long.valueOf( element.selectSingleNode( "./WindowEvery" ).getText() );
     this.windowLimit = Long.valueOf( element.selectSingleNode( "./WindowLimit" ).getText() );
+    this.componentRefreshPeriod = Integer.valueOf( element.selectSingleNode( "./ComponentRefreshPeriod" ).getText() );
   }
 
   public String getDataServiceName() {
@@ -68,6 +70,10 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
 
   public long getWindowLimit() {
     return windowLimit;
+  }
+
+  public int getComponentRefreshPeriod() {
+    return componentRefreshPeriod;
   }
 
   public StreamingDataservicesDataAccess() {
@@ -121,6 +127,8 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
             PropertyDescriptor.Placement.CHILD ) );
     properties.add( new PropertyDescriptor( "windowLimit", PropertyDescriptor.Type.STRING,
             PropertyDescriptor.Placement.CHILD ) );
+    properties.add( new PropertyDescriptor( "componentRefreshPeriod", PropertyDescriptor.Type.STRING,
+      PropertyDescriptor.Placement.CHILD ) );
     return properties;
   }
 

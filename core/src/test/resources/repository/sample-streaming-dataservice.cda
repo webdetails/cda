@@ -11,5 +11,6 @@
       <WindowEvery>0</WindowEvery>
       <WindowSize>0</WindowSize>
       <WindowMode>ROW_BASED</WindowMode>
+      <ComponentRefreshPeriod>10</ComponentRefreshPeriod>
    </DataAccess>
 </CDADescriptor>
