@@ -67,12 +67,14 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
       .filter( p -> p.getName().equals( "query" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> dataServiceQueryProperty = daInterface.stream()
       .filter( p -> p.getName().equals( "dataServiceQuery" ) ).collect( Collectors.toList() );
-    List<PropertyDescriptor> windowRowSizeProperty = daInterface.stream()
-      .filter( p -> p.getName().equals( "windowRowSize" ) ).collect( Collectors.toList() );
-    List<PropertyDescriptor> windowRateProperty = daInterface.stream()
-      .filter( p -> p.getName().equals( "windowRate" ) ).collect( Collectors.toList() );
-    List<PropertyDescriptor> windowMillisSizeProperty = daInterface.stream()
-      .filter( p -> p.getName().equals( "windowMillisSize" ) ).collect( Collectors.toList() );
+    List<PropertyDescriptor> windowModeProperty = daInterface.stream()
+            .filter( p -> p.getName().equals( "windowMode" ) ).collect( Collectors.toList() );
+    List<PropertyDescriptor> windowSizeProperty = daInterface.stream()
+            .filter( p -> p.getName().equals( "windowSize" ) ).collect( Collectors.toList() );
+    List<PropertyDescriptor> windowEveryProperty = daInterface.stream()
+            .filter( p -> p.getName().equals( "windowEvery" ) ).collect( Collectors.toList() );
+    List<PropertyDescriptor> windowLimitProperty = daInterface.stream()
+            .filter( p -> p.getName().equals( "windowLimit" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> cacheProperty = daInterface.stream()
       .filter( p -> p.getName().equals( "cache" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> cacheDurationProperty = daInterface.stream()
@@ -82,9 +84,10 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
 
     assertEquals( 1, dataServiceNameProperty.size() );
     assertEquals( 1, dataServiceQueryProperty.size() );
-    assertEquals( 1, windowRowSizeProperty.size() );
-    assertEquals( 1, windowRateProperty.size() );
-    assertEquals( 1, windowMillisSizeProperty.size() );
+    assertEquals( 1, windowModeProperty.size() );
+    assertEquals( 1, windowSizeProperty.size() );
+    assertEquals( 1, windowEveryProperty.size() );
+    assertEquals( 1, windowLimitProperty.size() );
     assertEquals( 0, cacheProperty.size() );
     assertEquals( 0, cacheDurationProperty.size() );
     assertEquals( 0, cacheKeysProperty.size() );

@@ -191,9 +191,10 @@ public class DomVisitor {
     visit( (DataservicesDataAccess) da, daEle );
     daEle.remove( daEle.element( "DataServiceName" ) );
     daEle.addElement( "StreamingDataServiceName" ).addText( da.getDataServiceName() );
-    daEle.addElement( "WindowMillisSize" ).addText( String.valueOf( da.getWindowMillisSize() ) );
-    daEle.addElement( "WindowRate" ).addText( String.valueOf( da.getWindowRate() ) );
-    daEle.addElement( "WindowRowSize" ).addText( String.valueOf( da.getWindowRowSize() ) );
+    daEle.addElement( "WindowMode" ).addText( da.getWindowMode() );
+    daEle.addElement( "WindowSize" ).addText( String.valueOf( da.getWindowSize() ) );
+    daEle.addElement( "WindowEvery" ).addText( String.valueOf( da.getWindowEvery() ) );
+    daEle.addElement( "WindowLimit" ).addText( String.valueOf( da.getWindowLimit() ) );
   }
 
   // Compound data accesses

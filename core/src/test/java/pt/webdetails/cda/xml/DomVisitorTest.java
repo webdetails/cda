@@ -77,18 +77,20 @@ public class DomVisitorTest {
     when( streamingDataservicesDataAccess.getName() ).thenReturn( "name" );
     when( streamingDataservicesDataAccess.getQuery() ).thenReturn( "select * from dummy" );
     when( streamingDataservicesDataAccess.getDataServiceName() ).thenReturn( "dummy" );
-    when( streamingDataservicesDataAccess.getWindowMillisSize() ).thenReturn( 0l );
-    when( streamingDataservicesDataAccess.getWindowRate() ).thenReturn( 0l );
-    when( streamingDataservicesDataAccess.getWindowRowSize() ).thenReturn( 0 );
+    when( streamingDataservicesDataAccess.getWindowMode() ).thenReturn( "ROW_BASED" );
+    when( streamingDataservicesDataAccess.getWindowSize() ).thenReturn( 0l );
+    when( streamingDataservicesDataAccess.getWindowEvery() ).thenReturn( 0l );
+    when( streamingDataservicesDataAccess.getWindowLimit() ).thenReturn( 0L );
     domVisitor.visit( streamingDataservicesDataAccess, element );
 
     assertNull( element.element( "Query" ) );
     assertNull( element.element( "DataServiceName" ) );
     assertEquals( "dummy", element.element( "StreamingDataServiceName" ).getText() );
-    assertEquals( "0", element.element( "WindowMillisSize" ).getText() );
-    assertEquals( "0", element.element( "WindowRate" ).getText() );
-    assertEquals( "0", element.element( "WindowRowSize" ).getText() );
     assertEquals( "select * from dummy", element.element( "DataServiceQuery" ).getText() );
+    assertEquals( "ROW_BASED", element.element( "WindowMode" ).getText() );
+    assertEquals( "0", element.element( "WindowSize" ).getText() );
+    assertEquals( "0", element.element( "WindowEvery" ).getText() );
+    assertEquals( "0", element.element( "WindowLimit" ).getText() );
   }
 
   @Test
