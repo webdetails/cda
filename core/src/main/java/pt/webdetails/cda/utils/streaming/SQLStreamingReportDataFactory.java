@@ -17,6 +17,7 @@
 
 package pt.webdetails.cda.utils.streaming;
 
+import org.pentaho.di.trans.dataservice.client.api.IDataServiceClientService;
 import org.pentaho.di.trans.dataservice.jdbc.api.IThinStatement;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.SQLReportDataFactory;
@@ -28,15 +29,20 @@ import java.sql.Statement;
 
 public class SQLStreamingReportDataFactory extends SQLReportDataFactory {
 
-  private final int windowRowSize;
-  private final long windowMillisSize;
-  private final long windowRate;
+  private final IDataServiceClientService.StreamingMode windowMode;
+  private final long windowSize;
+  private final long windowEvery;
+  private final long windowLimit;
 
-  public SQLStreamingReportDataFactory( final ConnectionProvider connectionProvider, int windowRowSize, long windowMillisSize, long windowRate ) {
+  public SQLStreamingReportDataFactory( final ConnectionProvider connectionProvider,
+                                        IDataServiceClientService.StreamingMode windowMode,
+                                        long windowSize, long windowEvery,
+                                        long windowLimit ) {
     super( connectionProvider );
-    this.windowRowSize = windowRowSize;
-    this.windowMillisSize = windowMillisSize;
-    this.windowRate = windowRate;
+    this.windowMode = windowMode;
+    this.windowSize = windowSize;
+    this.windowEvery = windowEvery;
+    this.windowLimit = windowLimit;
   }
 
   @Override
@@ -44,7 +50,8 @@ public class SQLStreamingReportDataFactory extends SQLReportDataFactory {
     throws SQLException {
     final ResultSet res;
     if ( preparedParameterNames.length == 0 ) {
-      res = ( (IThinStatement) statement ).executeQuery( translatedQuery, windowRowSize, windowMillisSize, windowRate );
+      res = ( (IThinStatement) statement ).executeQuery( translatedQuery, windowMode, windowSize, windowEvery,
+              windowLimit );
     } else {
       final PreparedStatement pstmt = (PreparedStatement) statement;
       res = pstmt.executeQuery();

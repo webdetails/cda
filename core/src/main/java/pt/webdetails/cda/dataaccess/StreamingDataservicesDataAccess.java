@@ -16,6 +16,7 @@ package pt.webdetails.cda.dataaccess;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.pentaho.di.trans.dataservice.client.api.IDataServiceClientService;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.SQLReportDataFactory;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
@@ -35,32 +36,38 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
   private static final Log logger = LogFactory.getLog( StreamingDataservicesDataAccess.class );
   private static final DataAccessEnums.DataAccessInstanceType TYPE = DataAccessEnums.DataAccessInstanceType.STREAMING_DATASERVICES;
   protected String dataServiceName;
-  protected int windowRowSize;
-  protected long windowRate;
-  protected long windowMillisSize;
+  protected String windowMode;
+  protected long windowSize;
+  protected long windowEvery;
+  protected long windowLimit;
 
   public StreamingDataservicesDataAccess( final Element element ) {
     super( element );
     this.dataServiceName = element.selectSingleNode( "./StreamingDataServiceName" ).getText();
-    this.windowRowSize = Integer.valueOf( element.selectSingleNode( "./WindowRowSize" ).getText() );
-    this.windowRate = Long.valueOf( element.selectSingleNode( "./WindowRate" ).getText() );
-    this.windowMillisSize = Long.valueOf( element.selectSingleNode( "./WindowMillisSize" ).getText() );
+    this.windowMode = String.valueOf( element.selectSingleNode( "./WindowMode" ).getText() );
+    this.windowSize = Integer.valueOf( element.selectSingleNode( "./WindowSize" ).getText() );
+    this.windowEvery = Long.valueOf( element.selectSingleNode( "./WindowEvery" ).getText() );
+    this.windowLimit = Long.valueOf( element.selectSingleNode( "./WindowLimit" ).getText() );
   }
 
   public String getDataServiceName() {
     return dataServiceName;
   }
 
-  public int getWindowRowSize() {
-    return windowRowSize;
+  public String getWindowMode() {
+    return windowMode;
   }
 
-  public long getWindowRate() {
-    return windowRate;
+  public long getWindowSize() {
+    return windowSize;
   }
 
-  public long getWindowMillisSize() {
-    return windowMillisSize;
+  public long getWindowEvery() {
+    return windowEvery;
+  }
+
+  public long getWindowLimit() {
+    return windowLimit;
   }
 
   public StreamingDataservicesDataAccess() {
@@ -69,8 +76,14 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
   @Override
   public SQLReportDataFactory getSQLReportDataFactory( DataservicesConnection connection )
           throws InvalidConnectionException, UnknownConnectionException {
+
+    IDataServiceClientService.StreamingMode mode =
+            IDataServiceClientService.StreamingMode.ROW_BASED.toString().equalsIgnoreCase( windowMode )
+                    ? IDataServiceClientService.StreamingMode.ROW_BASED
+                    : IDataServiceClientService.StreamingMode.TIME_BASED;
+
     return new SQLStreamingReportDataFactory( connection.getInitializedConnectionProvider(),
-            this.windowRowSize, this.windowMillisSize, this.windowRate );
+            mode, this.windowSize, this.windowEvery, this.windowLimit );
   }
 
   public String getType() {
@@ -100,11 +113,13 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
             PropertyDescriptor.Placement.ATTRIB ) );
     properties.add( new PropertyDescriptor( "streamingDataServiceName", PropertyDescriptor.Type.STRING,
             PropertyDescriptor.Placement.CHILD ) );
-    properties.add( new PropertyDescriptor( "windowRowSize", PropertyDescriptor.Type.STRING,
+    properties.add( new PropertyDescriptor( "windowMode", PropertyDescriptor.Type.STRING,
             PropertyDescriptor.Placement.CHILD ) );
-    properties.add( new PropertyDescriptor( "windowRate", PropertyDescriptor.Type.STRING,
+    properties.add( new PropertyDescriptor( "windowSize", PropertyDescriptor.Type.STRING,
             PropertyDescriptor.Placement.CHILD ) );
-    properties.add( new PropertyDescriptor( "windowMillisSize", PropertyDescriptor.Type.STRING,
+    properties.add( new PropertyDescriptor( "windowEvery", PropertyDescriptor.Type.STRING,
+            PropertyDescriptor.Placement.CHILD ) );
+    properties.add( new PropertyDescriptor( "windowLimit", PropertyDescriptor.Type.STRING,
             PropertyDescriptor.Placement.CHILD ) );
     return properties;
   }
