@@ -62,30 +62,33 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
     List<PropertyDescriptor> daInterface = da.getInterface();
 
     List<PropertyDescriptor> dataServiceNameProperty = daInterface.stream()
-        .filter( p -> p.getName().equals( "streamingDataServiceName" ) ).collect( Collectors.toList() );
+      .filter( p -> p.getName().equals( "streamingDataServiceName" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> queryProperty = daInterface.stream()
-            .filter( p -> p.getName().equals( "query" ) ).collect( Collectors.toList() );
+      .filter( p -> p.getName().equals( "query" ) ).collect( Collectors.toList() );
+    List<PropertyDescriptor> dataServiceQueryProperty = daInterface.stream()
+      .filter( p -> p.getName().equals( "dataServiceQuery" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> windowRowSizeProperty = daInterface.stream()
-            .filter( p -> p.getName().equals( "windowRowSize" ) ).collect( Collectors.toList() );
+      .filter( p -> p.getName().equals( "windowRowSize" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> windowRateProperty = daInterface.stream()
-            .filter( p -> p.getName().equals( "windowRate" ) ).collect( Collectors.toList() );
+      .filter( p -> p.getName().equals( "windowRate" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> windowMillisSizeProperty = daInterface.stream()
-            .filter( p -> p.getName().equals( "windowMillisSize" ) ).collect( Collectors.toList() );
+      .filter( p -> p.getName().equals( "windowMillisSize" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> cacheProperty = daInterface.stream()
-            .filter( p -> p.getName().equals( "cache" ) ).collect( Collectors.toList() );
+      .filter( p -> p.getName().equals( "cache" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> cacheDurationProperty = daInterface.stream()
-            .filter( p -> p.getName().equals( "cacheDuration" ) ).collect( Collectors.toList() );
+      .filter( p -> p.getName().equals( "cacheDuration" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> cacheKeysProperty = daInterface.stream()
-            .filter( p -> p.getName().equals( "cacheKeys" ) ).collect( Collectors.toList() );
+      .filter( p -> p.getName().equals( "cacheKeys" ) ).collect( Collectors.toList() );
 
-    assertEquals( dataServiceNameProperty.size(), 1 );
-    assertEquals( queryProperty.size(), 1 );
-    assertEquals( windowRowSizeProperty.size(), 1 );
-    assertEquals( windowRateProperty.size(), 1 );
-    assertEquals( windowMillisSizeProperty.size(), 1 );
-    assertEquals( cacheProperty.size(), 0 );
-    assertEquals( cacheDurationProperty.size(), 0 );
-    assertEquals( cacheKeysProperty.size(), 0 );
+    assertEquals( 1, dataServiceNameProperty.size() );
+    assertEquals( 1, dataServiceQueryProperty.size() );
+    assertEquals( 1, windowRowSizeProperty.size() );
+    assertEquals( 1, windowRateProperty.size() );
+    assertEquals( 1, windowMillisSizeProperty.size() );
+    assertEquals( 0, cacheProperty.size() );
+    assertEquals( 0, cacheDurationProperty.size() );
+    assertEquals( 0, cacheKeysProperty.size() );
+    assertEquals( 0, queryProperty.size() );
   }
 
   @Test

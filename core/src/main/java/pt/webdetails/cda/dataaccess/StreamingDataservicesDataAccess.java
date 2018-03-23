@@ -33,8 +33,7 @@ import java.util.List;
 public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
 
   private static final Log logger = LogFactory.getLog( StreamingDataservicesDataAccess.class );
-  private static final DataAccessEnums.DataAccessInstanceType TYPE =
-    DataAccessEnums.DataAccessInstanceType.STREAMING_DATASERVICES;
+  private static final DataAccessEnums.DataAccessInstanceType TYPE = DataAccessEnums.DataAccessInstanceType.STREAMING_DATASERVICES;
   protected String dataServiceName;
   protected int windowRowSize;
   protected long windowRate;
@@ -95,7 +94,7 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
             PropertyDescriptor.Placement.CHILD ) );
     properties.add( new PropertyDescriptor( "columns", PropertyDescriptor.Type.ARRAY,
             PropertyDescriptor.Placement.CHILD ) );
-    properties.add( new PropertyDescriptor( "query", PropertyDescriptor.Type.STRING,
+    properties.add( new PropertyDescriptor( "dataServiceQuery", PropertyDescriptor.Type.STRING,
             PropertyDescriptor.Placement.CHILD ) );
     properties.add( new PropertyDescriptor( "connection", PropertyDescriptor.Type.STRING,
             PropertyDescriptor.Placement.ATTRIB ) );

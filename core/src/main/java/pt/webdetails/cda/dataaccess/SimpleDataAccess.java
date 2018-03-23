@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,18 +13,11 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.table.TableModel;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.cache.TableCacheKey;
@@ -41,6 +34,11 @@ import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.xml.DomVisitable;
 import pt.webdetails.cda.xml.DomVisitor;
 import pt.webdetails.cpf.messaging.IEventPublisher;
+
+import javax.swing.table.TableModel;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implementation of the SimpleDataAccess
@@ -65,7 +63,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
     super( element );
     this.connectionId = element.attributeValue( "connection" );
-    this.query = element.selectSingleNode( "./Query" ).getText();
+    this.query = element.selectSingleNode( "./Query" ) != null ? element.selectSingleNode( "./Query" ).getText() : null;
     this.eventPublisher = CdaEngine.getEnvironment().getEventPublisher();
     this.queryType = element.attributeValue( "type" );
   }

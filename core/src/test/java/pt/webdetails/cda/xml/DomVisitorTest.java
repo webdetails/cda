@@ -24,6 +24,7 @@ import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.dataservices.DataservicesConnection;
 import pt.webdetails.cda.connections.dataservices.IDataservicesLocalConnection;
 import pt.webdetails.cda.dataaccess.DataAccessEnums;
+import pt.webdetails.cda.dataaccess.DataservicesDataAccess;
 import pt.webdetails.cda.dataaccess.StreamingDataservicesDataAccess;
 import pt.webdetails.cda.filetests.CdaTestEnvironment;
 import pt.webdetails.cda.filetests.CdaTestingContentAccessFactory;
@@ -36,6 +37,7 @@ import java.sql.Statement;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -80,10 +82,30 @@ public class DomVisitorTest {
     when( streamingDataservicesDataAccess.getWindowRowSize() ).thenReturn( 0 );
     domVisitor.visit( streamingDataservicesDataAccess, element );
 
+    assertNull( element.element( "Query" ) );
+    assertNull( element.element( "DataServiceName" ) );
     assertEquals( "dummy", element.element( "StreamingDataServiceName" ).getText() );
     assertEquals( "0", element.element( "WindowMillisSize" ).getText() );
     assertEquals( "0", element.element( "WindowRate" ).getText() );
     assertEquals( "0", element.element( "WindowRowSize" ).getText() );
+    assertEquals( "select * from dummy", element.element( "DataServiceQuery" ).getText() );
+  }
+
+  @Test
+  public void testVisitDataServices() throws Exception {
+    DataservicesDataAccess dataservicesDataAccess = mock( DataservicesDataAccess.class );
+    Element element = getElementFromSnippet( "<emptyElement/>" );
+    when( dataservicesDataAccess.getAccess() ).thenReturn( DataAccessEnums.ACCESS_TYPE.PUBLIC );
+    when( dataservicesDataAccess.isCacheEnabled() ).thenReturn( true );
+    when( dataservicesDataAccess.getName() ).thenReturn( "name" );
+    when( dataservicesDataAccess.getQuery() ).thenReturn( "select * from dummy" );
+    when( dataservicesDataAccess.getDataServiceName() ).thenReturn( "dummy" );
+    domVisitor.visit( dataservicesDataAccess, element );
+
+    assertNull( element.element( "Query" ) );
+    assertNull( element.element( "StreamingDataServiceName" ) );
+    assertEquals( "dummy", element.element( "DataServiceName" ).getText() );
+    assertEquals( "select * from dummy", element.element( "DataServiceQuery" ).getText() );
   }
 
   @Test
