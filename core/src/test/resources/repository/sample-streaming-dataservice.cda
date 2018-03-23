@@ -5,8 +5,8 @@
    </DataSources>
    <DataAccess access="public" connection="1" id="streamingDataservice" type="streaming">
       <Name>testDataserviceQuery</Name>
+      <DataServiceQuery><![CDATA[SELECT * FROM "sales"]]></DataServiceQuery>
       <StreamingDataServiceName>sales</StreamingDataServiceName>
-      <Query><![CDATA[SELECT * FROM "sales"]]></Query>
       <WindowMillisSize>0</WindowMillisSize>
       <WindowRate>0</WindowRate>
       <WindowRowSize>0</WindowRowSize>

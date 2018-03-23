@@ -30,6 +30,7 @@ import pt.webdetails.cda.connections.xpath.XPathConnection;
 import pt.webdetails.cda.connections.xpath.XPathConnectionInfo;
 import pt.webdetails.cda.dataaccess.ColumnDefinition;
 import pt.webdetails.cda.dataaccess.CompoundDataAccess;
+import pt.webdetails.cda.dataaccess.DataservicesDataAccess;
 import pt.webdetails.cda.dataaccess.JoinCompoundDataAccess;
 import pt.webdetails.cda.dataaccess.Parameter;
 import pt.webdetails.cda.dataaccess.SimpleDataAccess;
@@ -179,8 +180,16 @@ public class DomVisitor {
 
   }
 
-  public void visit( StreamingDataservicesDataAccess da, Element daEle ) {
+  public void visit( DataservicesDataAccess da, Element daEle ) {
     visit( (SimpleDataAccess) da, daEle );
+    daEle.remove( daEle.element( "Query" ) );
+    daEle.addElement( "DataServiceName" ).addText( da.getDataServiceName() );
+    daEle.addElement( "DataServiceQuery" ).addCDATA( da.getQuery() );
+  }
+
+  public void visit( StreamingDataservicesDataAccess da, Element daEle ) {
+    visit( (DataservicesDataAccess) da, daEle );
+    daEle.remove( daEle.element( "DataServiceName" ) );
     daEle.addElement( "StreamingDataServiceName" ).addText( da.getDataServiceName() );
     daEle.addElement( "WindowMillisSize" ).addText( String.valueOf( da.getWindowMillisSize() ) );
     daEle.addElement( "WindowRate" ).addText( String.valueOf( da.getWindowRate() ) );

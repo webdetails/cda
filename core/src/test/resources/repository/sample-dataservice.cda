@@ -3,10 +3,10 @@
     <DataSources>
       <Connection id="1" type="dataservices.dataservices"/>
     </DataSources>
-
   <DataAccess id="1" connection="1" type="dataservices" access="public" >
      <Name>testDataserviceQuery</Name>
-     <Query><![CDATA[SELECT * FROM "DataService from PDI"]]></Query>
+     <DataServiceName>dataServiceName</DataServiceName>
+     <DataServiceQuery><![CDATA[SELECT * FROM "DataService from PDI"]]></DataServiceQuery>
   </DataAccess>
 </CDADescriptor>
 

@@ -22,6 +22,7 @@ import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.dataservices.DataservicesConnection;
 import pt.webdetails.cda.settings.UnknownConnectionException;
+import pt.webdetails.cda.xml.DomVisitor;
 
 import java.util.List;
 
@@ -32,9 +33,12 @@ public class DataservicesDataAccess extends PREDataAccess {
 
   private static final Log logger = LogFactory.getLog( DataservicesDataAccess.class );
   private static final DataAccessEnums.DataAccessInstanceType TYPE = DataAccessEnums.DataAccessInstanceType.DATASERVICES;
+  protected String dataServiceName;
 
   public DataservicesDataAccess( final Element element ) {
     super( element );
+    this.query = element.selectSingleNode( "./DataServiceQuery" ).getText();
+    this.dataServiceName = element.selectSingleNode( "./DataServiceName" ) != null ? element.selectSingleNode( "./DataServiceName" ).getText() : null;
   }
 
   public DataservicesDataAccess() {
@@ -51,6 +55,14 @@ public class DataservicesDataAccess extends PREDataAccess {
     // reportDataFactory.setQuery("query", getQuery(), null, null);
 
     return reportDataFactory;
+  }
+
+  public String getDataServiceName() {
+    return dataServiceName;
+  }
+
+  public void setDataServiceQuery( String dataServiceQuery ) {
+    this.query = dataServiceQuery;
   }
 
   public SQLReportDataFactory getSQLReportDataFactory( DataservicesConnection connection )
@@ -75,7 +87,14 @@ public class DataservicesDataAccess extends PREDataAccess {
   public List<PropertyDescriptor> getInterface() {
     List<PropertyDescriptor> properties = super.getInterface();
     properties.add(
-        new PropertyDescriptor( "dataServiceName", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+      new PropertyDescriptor( "dataServiceName", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+    properties.add( new PropertyDescriptor( "dataServiceQuery", PropertyDescriptor.Type.STRING,
+      PropertyDescriptor.Placement.CHILD ) );
+    properties.removeIf( propertyDescriptor -> propertyDescriptor.getName().equalsIgnoreCase( "query" ) );
     return properties;
+  }
+
+  public void accept( DomVisitor xmlVisitor, Element root ) {
+    xmlVisitor.visit( (DataservicesDataAccess) this, root );
   }
 }
