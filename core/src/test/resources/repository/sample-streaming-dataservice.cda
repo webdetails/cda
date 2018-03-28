@@ -7,7 +7,6 @@
       <Name>testDataserviceQuery</Name>
       <DataServiceQuery><![CDATA[SELECT * FROM "sales"]]></DataServiceQuery>
       <StreamingDataServiceName>sales</StreamingDataServiceName>
-      <Query><![CDATA[SELECT * FROM "sales"]]></Query>
       <WindowLimit>0</WindowLimit>
       <WindowEvery>0</WindowEvery>
       <WindowSize>0</WindowSize>
