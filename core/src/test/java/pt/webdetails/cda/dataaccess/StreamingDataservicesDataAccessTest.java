@@ -14,6 +14,9 @@
 package pt.webdetails.cda.dataaccess;
 
 import junit.framework.TestCase;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
@@ -22,6 +25,7 @@ import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.dataservices.DataservicesConnection;
 import pt.webdetails.cda.settings.UnknownConnectionException;
+import pt.webdetails.cpf.Util;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,6 +62,30 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
   }
 
   @Test
+  public void testGetComponentRefreshPeriod() {
+    assertEquals( 10, da.getComponentRefreshPeriod() );
+  }
+
+  @Test
+  public void testConstructor() throws Exception {
+    Element element = getElementFromSnippet("<element><DataServiceQuery>SELECT * FROM NOWHERE</DataServiceQuery>"
+      + "<StreamingDataServiceName>DATA_SERVICE_NAME</StreamingDataServiceName>"
+      + "<WindowMode>WINDOW_MODE</WindowMode>"
+      + ""+ "<WindowSize>11111</WindowSize>"
+      + ""+ "<WindowEvery>22222</WindowEvery>"
+      + ""+ "<WindowLimit>33333</WindowLimit>"
+      + ""+ "<ComponentRefreshPeriod>44444</ComponentRefreshPeriod></element>");
+    StreamingDataservicesDataAccess streamingDataservicesDataAccess = new StreamingDataservicesDataAccess(element);
+    assertEquals( "SELECT * FROM NOWHERE", streamingDataservicesDataAccess.getQuery() );
+    assertEquals( "DATA_SERVICE_NAME", streamingDataservicesDataAccess.getDataServiceName() );
+    assertEquals( "WINDOW_MODE", streamingDataservicesDataAccess.getWindowMode() );
+    assertEquals( 11111, streamingDataservicesDataAccess.getWindowSize() );
+    assertEquals( 22222, streamingDataservicesDataAccess.getWindowEvery() );
+    assertEquals( 33333, streamingDataservicesDataAccess.getWindowLimit() );
+    assertEquals( 44444, streamingDataservicesDataAccess.getComponentRefreshPeriod() );
+  }
+
+  @Test
   public void testGetInterface() {
     List<PropertyDescriptor> daInterface = da.getInterface();
 
@@ -68,13 +96,15 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
     List<PropertyDescriptor> dataServiceQueryProperty = daInterface.stream()
       .filter( p -> p.getName().equals( "dataServiceQuery" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> windowModeProperty = daInterface.stream()
-            .filter( p -> p.getName().equals( "windowMode" ) ).collect( Collectors.toList() );
+      .filter( p -> p.getName().equals( "windowMode" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> windowSizeProperty = daInterface.stream()
-            .filter( p -> p.getName().equals( "windowSize" ) ).collect( Collectors.toList() );
+      .filter( p -> p.getName().equals( "windowSize" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> windowEveryProperty = daInterface.stream()
-            .filter( p -> p.getName().equals( "windowEvery" ) ).collect( Collectors.toList() );
+      .filter( p -> p.getName().equals( "windowEvery" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> windowLimitProperty = daInterface.stream()
-            .filter( p -> p.getName().equals( "windowLimit" ) ).collect( Collectors.toList() );
+      .filter( p -> p.getName().equals( "windowLimit" ) ).collect( Collectors.toList() );
+    List<PropertyDescriptor> componentRefreshPeriodProperty = daInterface.stream()
+      .filter( p -> p.getName().equals( "componentRefreshPeriod" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> cacheProperty = daInterface.stream()
       .filter( p -> p.getName().equals( "cache" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> cacheDurationProperty = daInterface.stream()
@@ -88,6 +118,7 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
     assertEquals( 1, windowSizeProperty.size() );
     assertEquals( 1, windowEveryProperty.size() );
     assertEquals( 1, windowLimitProperty.size() );
+    assertEquals( 1, componentRefreshPeriodProperty.size() );
     assertEquals( 0, cacheProperty.size() );
     assertEquals( 0, cacheDurationProperty.size() );
     assertEquals( 0, cacheKeysProperty.size() );
@@ -100,5 +131,11 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
     ConnectionProvider mockConnectionProvider = mock( ConnectionProvider.class );
     doReturn( mockConnectionProvider ).when( mockConnection ).getInitializedConnectionProvider();
     assertTrue( da.getSQLReportDataFactory( mockConnection ) instanceof SQLReportDataFactory );
+  }
+
+  private Element getElementFromSnippet( String xml ) throws Exception {
+    SAXReader reader = new SAXReader( false );
+    Document doc = reader.read( Util.toInputStream( xml ) );
+    return doc.getRootElement();
   }
 }
