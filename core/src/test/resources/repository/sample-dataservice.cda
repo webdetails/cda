@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CDADescriptor>
-    <DataSources>
-      <Connection id="1" type="dataservices.dataservices"/>
-    </DataSources>
-  <DataAccess id="1" connection="1" type="dataservices" access="public" >
-     <Name>testDataserviceQuery</Name>
-     <DataServiceName>dataServiceName</DataServiceName>
-     <DataServiceQuery><![CDATA[SELECT * FROM "DataService from PDI"]]></DataServiceQuery>
+  <DataSources>
+    <Connection id="1" type="dataservices.dataservices">
+      <variables datarow-name="paramComp2" variable-name="paramComp3"/>
+    </Connection>
+  </DataSources>
+  <DataAccess id="1" connection="1" type="dataservices" access="public">
+    <Name>testDataserviceQuery</Name>
+    <DataServiceName>dataServiceName</DataServiceName>
+    <DataServiceQuery><![CDATA[SELECT * FROM "DataService from PDI"]]></DataServiceQuery>
+    <Parameters>
+      <Parameter name="paramComp2" type="String" default="" separator=";"/>
+    </Parameters>
   </DataAccess>
 </CDADescriptor>
 

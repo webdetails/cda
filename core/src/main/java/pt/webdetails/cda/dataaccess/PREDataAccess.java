@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,11 +13,6 @@
 
 package pt.webdetails.cda.dataaccess;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
-import javax.swing.table.TableModel;
-
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
@@ -30,10 +25,13 @@ import org.pentaho.reporting.engine.classic.core.util.CloseableTableModel;
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.settings.UnknownConnectionException;
+
+import javax.swing.table.TableModel;
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * This is the DataAccess implementation for PentahoReportingEngine based queries.
@@ -66,6 +64,9 @@ public abstract class PREDataAccess extends SimpleDataAccess {
 
   public abstract DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException;
 
+  public DataFactory getDataFactory( final ParameterDataRow parameterDataRow ) throws UnknownConnectionException, InvalidConnectionException {
+    return getDataFactory();
+  }
 
   protected static class PREDataSourceQuery implements IDataSourceQuery {
 
@@ -110,7 +111,7 @@ public abstract class PREDataAccess extends SimpleDataAccess {
 
     try {
 
-      final CachingDataFactory dataFactory = new CachingDataFactory( getDataFactory(), false );
+      final CachingDataFactory dataFactory = new CachingDataFactory( getDataFactory( parameterDataRow ), false );
 
       final Configuration configuration = ClassicEngineBoot.getInstance().getGlobalConfig();
 

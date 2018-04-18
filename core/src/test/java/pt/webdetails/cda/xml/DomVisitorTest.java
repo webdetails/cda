@@ -19,9 +19,12 @@ import org.dom4j.io.SAXReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.pentaho.reporting.engine.classic.core.ParameterMapping;
+import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.DriverConnectionProvider;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.dataservices.DataservicesConnection;
+import pt.webdetails.cda.connections.dataservices.DataservicesConnectionInfo;
 import pt.webdetails.cda.connections.dataservices.IDataservicesLocalConnection;
 import pt.webdetails.cda.dataaccess.DataAccessEnums;
 import pt.webdetails.cda.dataaccess.DataservicesDataAccess;
@@ -38,6 +41,8 @@ import java.sql.Statement;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -62,7 +67,7 @@ public class DomVisitorTest {
     DriverConnectionProvider dataserviceLocalConnectionProvider = mock( DriverConnectionProvider.class );
     when( dataserviceLocalConnectionProvider.createConnection( Mockito.anyString(), Mockito.anyString() ) ).thenReturn( connection );
     IDataservicesLocalConnection dataserviceLocalConnection = mock( IDataservicesLocalConnection.class );
-    when( dataserviceLocalConnection.getDriverConnectionProvider() ).thenReturn( dataserviceLocalConnectionProvider );
+    when( dataserviceLocalConnection.getDriverConnectionProvider( any() ) ).thenReturn( dataserviceLocalConnectionProvider );
     CdaTestEnvironment testEnvironment = spy( new CdaTestEnvironment( factory ) );
     when( testEnvironment.getDataServicesLocalConnection() ).thenReturn( dataserviceLocalConnection );
     CdaEngine.init( testEnvironment );
@@ -113,11 +118,19 @@ public class DomVisitorTest {
   }
 
   @Test
-  public void testVisit() throws Exception {
+  public void testVisitDataServicesConnection() throws Exception {
     Element element = getElementFromSnippet( "<emptyElement/>" );
     DataservicesConnection connection = mock( DataservicesConnection.class );
     when( connection.getId() ).thenReturn( "id" );
     when( connection.getTypeForFile() ).thenReturn( "type" );
+
+    ConnectionProvider mockConnectionProvider = mock( ConnectionProvider.class );
+    doReturn( mockConnectionProvider ).when( connection ).getInitializedConnectionProvider( any() );
+    DataservicesConnectionInfo mockConnectionInfo = mock( DataservicesConnectionInfo.class );
+    when( connection.getConnectionInfo() ).thenReturn( mockConnectionInfo );
+    final ParameterMapping[] parametersMapping = new ParameterMapping[ 1 ];
+    parametersMapping[0] = new ParameterMapping( "param", "alias" );
+    when( mockConnectionInfo.getDefinedVariableNames() ).thenReturn( parametersMapping );
 
     domVisitor.visit( connection, element );
 

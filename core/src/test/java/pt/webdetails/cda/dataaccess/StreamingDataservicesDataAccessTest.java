@@ -19,19 +19,22 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.junit.Before;
 import org.junit.Test;
+import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
+import org.pentaho.reporting.engine.classic.core.ParameterMapping;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.SQLReportDataFactory;
 import pt.webdetails.cda.connections.ConnectionCatalog;
-import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.dataservices.DataservicesConnection;
-import pt.webdetails.cda.settings.UnknownConnectionException;
+import pt.webdetails.cda.connections.dataservices.DataservicesConnectionInfo;
 import pt.webdetails.cpf.Util;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static pt.webdetails.cda.test.util.CdaTestHelper.getMockEnvironment;
 import static pt.webdetails.cda.test.util.CdaTestHelper.initBareEngine;
 
@@ -126,11 +129,17 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
   }
 
   @Test
-  public void testSqlReportingDataFactoryType() throws InvalidConnectionException, UnknownConnectionException {
+  public void testSqlReportingDataFactoryType() throws Exception {
     DataservicesConnection mockConnection = mock( DataservicesConnection.class );
+    ParameterDataRow parameterDataRow = mock( ParameterDataRow.class );
     ConnectionProvider mockConnectionProvider = mock( ConnectionProvider.class );
-    doReturn( mockConnectionProvider ).when( mockConnection ).getInitializedConnectionProvider();
-    assertTrue( da.getSQLReportDataFactory( mockConnection ) instanceof SQLReportDataFactory );
+    doReturn( mockConnectionProvider ).when( mockConnection ).getInitializedConnectionProvider( any() );
+    DataservicesConnectionInfo mockConnectionInfo = mock( DataservicesConnectionInfo.class );
+    when( mockConnection.getConnectionInfo() ).thenReturn( mockConnectionInfo );
+    final ParameterMapping[] parametersMapping = new ParameterMapping[ 1 ];
+    parametersMapping[0] = new ParameterMapping( "param", "alias" );
+    when( mockConnectionInfo.getDefinedVariableNames() ).thenReturn( parametersMapping );
+    assertTrue( da.getSQLReportDataFactory( mockConnection, parameterDataRow ) instanceof SQLReportDataFactory );
   }
 
   private Element getElementFromSnippet( String xml ) throws Exception {

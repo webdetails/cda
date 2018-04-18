@@ -31,6 +31,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class DataservicesConnection extends AbstractConnection {
@@ -60,14 +61,14 @@ public class DataservicesConnection extends AbstractConnection {
     return TYPE;
   }
 
-  public ConnectionProvider getInitializedConnectionProvider() throws InvalidConnectionException {
+  public ConnectionProvider getInitializedConnectionProvider( Map<String, String> dataserviceParameters ) throws InvalidConnectionException {
 
     logger.debug( "Creating new dataservices connection" );
 
     IDataservicesLocalConnection dataservicesLocalConnection = CdaEngine.getEnvironment().getDataServicesLocalConnection();
 
     try {
-      final DriverConnectionProvider connectionProvider = dataservicesLocalConnection.getDriverConnectionProvider();
+      final DriverConnectionProvider connectionProvider = dataservicesLocalConnection.getDriverConnectionProvider( dataserviceParameters );
 
       final Properties properties = connectionInfo.getProperties();
       final Enumeration<Object> keys = properties.keys();
@@ -91,7 +92,10 @@ public class DataservicesConnection extends AbstractConnection {
 
   @Override
   public List<PropertyDescriptor> getProperties() {
-    return new ArrayList<PropertyDescriptor>();
+    final ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
+    properties.add(
+      new PropertyDescriptor( "variables", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD ) );
+    return properties;
   }
 
   public String getTypeForFile() {

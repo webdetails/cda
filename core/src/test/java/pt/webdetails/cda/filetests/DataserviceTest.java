@@ -26,18 +26,20 @@ import pt.webdetails.cda.dataaccess.DataservicesDataAccess;
 import pt.webdetails.cda.dataaccess.QueryException;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
+
 import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.when;
 
 
 public class DataserviceTest extends CdaTestCase {
@@ -56,7 +58,7 @@ public class DataserviceTest extends CdaTestCase {
     DriverConnectionProvider dataserviceLocalConnectionProvider = mock( DriverConnectionProvider.class );
     when( dataserviceLocalConnectionProvider.createConnection( Mockito.anyString(), Mockito.anyString() ) ).thenReturn( connection );
     IDataservicesLocalConnection dataserviceLocalConnection = mock( IDataservicesLocalConnection.class );
-    when( dataserviceLocalConnection.getDriverConnectionProvider() ).thenReturn( dataserviceLocalConnectionProvider );
+    when( dataserviceLocalConnection.getDriverConnectionProvider( any() ) ).thenReturn( dataserviceLocalConnectionProvider );
     CdaTestEnvironment testEnvironment = spy( new CdaTestEnvironment( factory ) );
     when( testEnvironment.getDataServicesLocalConnection() ).thenReturn( dataserviceLocalConnection );
     CdaEngine.init( testEnvironment );
@@ -81,8 +83,7 @@ public class DataserviceTest extends CdaTestCase {
   public void testDatasourceDataserviceDriverConnectionProviderException() throws Exception {
     CdaTestingContentAccessFactory factory = new CdaTestingContentAccessFactory();
     IDataservicesLocalConnection dataserviceLocalConnection = mock( IDataservicesLocalConnection.class );
-    when( dataserviceLocalConnection.getDriverConnectionProvider() )
-            .thenThrow( new MalformedURLException( "wrong url" ) );
+    when( dataserviceLocalConnection.getDriverConnectionProvider( any() ) ).thenThrow( new MalformedURLException( "wrong url" ) );
     CdaTestEnvironment testEnvironment = spy( new CdaTestEnvironment( factory ) );
     when( testEnvironment.getDataServicesLocalConnection() ).thenReturn( dataserviceLocalConnection );
     CdaEngine.init( testEnvironment );
@@ -98,8 +99,7 @@ public class DataserviceTest extends CdaTestCase {
       Assert.fail( "no exception" );
     } catch ( QueryException e ) {
       String msg = ExceptionUtils.getRootCauseMessage( e.getCause() );
-      Assert.assertEquals(
-              "MalformedURLException: wrong url", msg );
+      Assert.assertEquals( "MalformedURLException: wrong url", msg );
     }
   }
 
@@ -110,7 +110,7 @@ public class DataserviceTest extends CdaTestCase {
     when( dataserviceLocalConnectionProvider.createConnection( Mockito.anyString(), Mockito.anyString() ) )
             .thenThrow( new SQLException( "couldn't create connection" ) );
     IDataservicesLocalConnection dataserviceLocalConnection = mock( IDataservicesLocalConnection.class );
-    when( dataserviceLocalConnection.getDriverConnectionProvider() ).thenReturn( dataserviceLocalConnectionProvider );
+    when( dataserviceLocalConnection.getDriverConnectionProvider( any() ) ).thenReturn( dataserviceLocalConnectionProvider );
     CdaTestEnvironment testEnvironment = spy( new CdaTestEnvironment( factory ) );
     when( testEnvironment.getDataServicesLocalConnection() ).thenReturn( dataserviceLocalConnection );
     CdaEngine.init( testEnvironment );
