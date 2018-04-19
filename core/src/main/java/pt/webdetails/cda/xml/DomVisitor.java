@@ -17,6 +17,8 @@ import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterMapping;
 import pt.webdetails.cda.connections.AbstractConnection;
+import pt.webdetails.cda.connections.dataservices.DataservicesConnection;
+import pt.webdetails.cda.connections.dataservices.DataservicesConnectionInfo;
 import pt.webdetails.cda.connections.kettle.TransFromFileConnection;
 import pt.webdetails.cda.connections.kettle.TransFromFileConnectionInfo;
 import pt.webdetails.cda.connections.metadata.MetadataConnection;
@@ -73,6 +75,8 @@ public class DomVisitor {
       visit( (XPathConnection) con, conEle );
     } else if ( con instanceof TransFromFileConnection ) {
       visit( (TransFromFileConnection) con, conEle );
+    } else if ( con instanceof DataservicesConnection ) {
+      visit( (DataservicesConnection) con, conEle );
     }
   }
 
@@ -147,6 +151,20 @@ public class DomVisitor {
   private void visit( TransFromFileConnection con, Element ele ) {
     final TransFromFileConnectionInfo conInfo = con.getConnectionInfo();
     ele.addElement( "KtrFile" ).addText( conInfo.getTransformationFile() );
+    //for each variable
+    final ParameterMapping[] variables = conInfo.getDefinedVariableNames();
+    for ( int i = 0; i < variables.length; i++ ) {
+      ParameterMapping var = variables[ i ];
+      Element vars = ele.addElement( "variables" ).addAttribute( "datarow-name", var.getName() );
+      if ( !var.getName().equals( var.getAlias() ) ) {
+        vars.addAttribute( "variable-name", var.getAlias() );
+      }
+    }
+  }
+
+  // ...dataservices.Dataservices
+  private void visit( DataservicesConnection con, Element ele ) {
+    final DataservicesConnectionInfo conInfo = con.getConnectionInfo();
     //for each variable
     final ParameterMapping[] variables = conInfo.getDefinedVariableNames();
     for ( int i = 0; i < variables.length; i++ ) {

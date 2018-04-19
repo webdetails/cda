@@ -13,12 +13,16 @@
 
 package pt.webdetails.cda.connections.dataservices;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.pentaho.di.trans.dataservice.client.api.IDataServiceClientService;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.DriverConnectionProvider;
 import pt.webdetails.cpf.PluginEnvironment;
 import pt.webdetails.cpf.context.api.IUrlProvider;
 
 import java.net.MalformedURLException;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -27,17 +31,31 @@ import static org.mockito.Mockito.mock;
 
 public class DataservicesLocalConnectionTest {
 
-  @Test
-  public void getDriverConnectionProviderTest() throws MalformedURLException {
+  @Before
+  public void setup(){
     PluginEnvironment mockEnv = mock(PluginEnvironment.class);
     IUrlProvider mockUrlProvider = mock(IUrlProvider.class);
     doReturn( "http://localhost:8080" ).when( mockUrlProvider ).getWebappContextRoot();
     doReturn( "/pentaho" ).when( mockUrlProvider ).getWebappContextPath();
     doReturn( mockUrlProvider ).when( mockEnv ).getUrlProvider();
     PluginEnvironment.init(mockEnv);
-    DriverConnectionProvider connectionProvider = new DataservicesLocalConnection().getDriverConnectionProvider();
+  }
+
+  @Test
+  public void getDriverConnectionProviderTest() throws MalformedURLException {
+    DriverConnectionProvider connectionProvider = new DataservicesLocalConnection().getDriverConnectionProvider( new TreeMap<>( ) );
     assertNotNull("Driver shouldn't be empty", connectionProvider.getDriver());
     assertNotNull("Url shouldn't be empty", connectionProvider.getUrl());
     assertEquals("jdbc:pdi://localhost:8080/pentaho/kettle?local=true", connectionProvider.getUrl());
+  }
+
+  @Test
+  public void getDriverConnectionProviderWithParametersTest() throws MalformedURLException {
+    Map<String, String> dataserviceParameters = new TreeMap<>( );
+    dataserviceParameters.put( "param1", "value1" );
+    DriverConnectionProvider connectionProvider = new DataservicesLocalConnection().getDriverConnectionProvider( dataserviceParameters );
+    assertNotNull("Driver shouldn't be empty", connectionProvider.getDriver());
+    assertNotNull("Url shouldn't be empty", connectionProvider.getUrl());
+    assertEquals("jdbc:pdi://localhost:8080/pentaho/kettle?local=true&"+ IDataServiceClientService.PARAMETER_PREFIX +"param1=value1", connectionProvider.getUrl());
   }
 }

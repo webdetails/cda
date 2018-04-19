@@ -18,11 +18,11 @@
 package pt.webdetails.cda.utils.streaming;
 
 import org.pentaho.di.trans.dataservice.client.api.IDataServiceClientService;
+import org.pentaho.di.trans.dataservice.jdbc.api.IThinPreparedStatement;
 import org.pentaho.di.trans.dataservice.jdbc.api.IThinStatement;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.SQLReportDataFactory;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -53,8 +53,8 @@ public class SQLStreamingReportDataFactory extends SQLReportDataFactory {
       res = ( (IThinStatement) statement ).executeQuery( translatedQuery, windowMode, windowSize, windowEvery,
               windowLimit );
     } else {
-      final PreparedStatement pstmt = (PreparedStatement) statement;
-      res = pstmt.executeQuery();
+      final IThinPreparedStatement pstmt = (IThinPreparedStatement) statement;
+      res = pstmt.executeQuery( windowMode, windowSize, windowEvery, windowLimit );
     }
     return res;
   }

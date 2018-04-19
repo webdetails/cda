@@ -180,7 +180,7 @@ public abstract class BaseCdaEnvironment implements ICdaEnvironment {
     } catch ( Exception e ) {
       logger.error( "Cannot get bean IDataservicesLocalConnection. Using pseudo DataservicesLocalConnection", e );
     }
-    return () -> new DriverConnectionProvider();
+    return dataserviceParameters -> new DriverConnectionProvider( );
   }
 
   @Override

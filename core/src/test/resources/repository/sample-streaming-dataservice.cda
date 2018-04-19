@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CDADescriptor>
-   <DataSources>
-      <Connection id="1" type="dataservices.dataservices"/>
-   </DataSources>
-   <DataAccess access="public" connection="1" id="streamingDataservice" type="streaming">
-      <Name>testDataserviceQuery</Name>
-      <DataServiceQuery><![CDATA[SELECT * FROM "sales"]]></DataServiceQuery>
-      <StreamingDataServiceName>sales</StreamingDataServiceName>
-      <WindowLimit>0</WindowLimit>
-      <WindowEvery>0</WindowEvery>
-      <WindowSize>0</WindowSize>
-      <WindowMode>ROW_BASED</WindowMode>
-      <ComponentRefreshPeriod>10</ComponentRefreshPeriod>
-   </DataAccess>
+  <DataSources>
+    <Connection id="1" type="dataservices.dataservices">
+      <variables datarow-name="paramComp2" variable-name="paramComp3"/>
+    </Connection>
+  </DataSources>
+  <DataAccess id="streamingDataservice" connection="1" type="streaming" access="public">
+    <Name>testDataserviceQuery</Name>
+    <DataServiceQuery><![CDATA[SELECT * FROM "sales"]]></DataServiceQuery>
+    <StreamingDataServiceName>sales</StreamingDataServiceName>
+    <WindowMode>ROW_BASED</WindowMode>
+    <WindowSize>0</WindowSize>
+    <WindowEvery>0</WindowEvery>
+    <WindowLimit>0</WindowLimit>
+    <ComponentRefreshPeriod>10</ComponentRefreshPeriod>
+    <Parameters>
+      <Parameter name="paramComp2" type="String" default="" separator=";"/>
+    </Parameters>
+  </DataAccess>
 </CDADescriptor>

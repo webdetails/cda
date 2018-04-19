@@ -20,12 +20,15 @@ import org.dom4j.io.SAXReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
+import org.pentaho.reporting.engine.classic.core.ParameterMapping;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.DriverConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.SQLReportDataFactory;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.dataservices.DataservicesConnection;
+import pt.webdetails.cda.connections.dataservices.DataservicesConnectionInfo;
 import pt.webdetails.cda.connections.dataservices.IDataservicesLocalConnection;
 import pt.webdetails.cda.filetests.CdaTestEnvironment;
 import pt.webdetails.cda.filetests.CdaTestingContentAccessFactory;
@@ -38,6 +41,7 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -104,7 +108,13 @@ public class DataservicesDataAccessTest extends TestCase {
   public void testGetSQLReportDataFactory() throws Exception {
     DataservicesConnection dataservicesConnection = mock( DataservicesConnection.class );
     ConnectionProvider connectionProvider = mock( ConnectionProvider.class );
-    when( dataservicesConnection.getInitializedConnectionProvider() ).thenReturn( connectionProvider );
+    when( dataservicesConnection.getInitializedConnectionProvider( any() ) ).thenReturn( connectionProvider );
+
+    DataservicesConnectionInfo connectionInfo = mock( DataservicesConnectionInfo.class );
+    final ParameterMapping[] parametersMapping = new ParameterMapping[ 1 ];
+    parametersMapping[0] = new ParameterMapping( "param", "alias" );
+    when( connectionInfo.getDefinedVariableNames() ).thenReturn( parametersMapping );
+    when( dataservicesConnection.getConnectionInfo() ).thenReturn( connectionInfo );
 
     CdaTestingContentAccessFactory factory = new CdaTestingContentAccessFactory();
     Connection connection = mock( Connection.class );
@@ -119,12 +129,13 @@ public class DataservicesDataAccessTest extends TestCase {
     when( dataserviceLocalConnectionProvider.createConnection( anyString(), anyString() ) ).thenReturn( connection );
     when( dataserviceLocalConnectionProvider.getProperty( anyString() ) ).thenReturn( "value" );
     IDataservicesLocalConnection dataserviceLocalConnection = mock( IDataservicesLocalConnection.class );
-    when( dataserviceLocalConnection.getDriverConnectionProvider() ).thenReturn( dataserviceLocalConnectionProvider );
+    when( dataserviceLocalConnection.getDriverConnectionProvider( any() ) ).thenReturn( dataserviceLocalConnectionProvider );
     CdaTestEnvironment testEnvironment = spy( new CdaTestEnvironment( factory ) );
     when( testEnvironment.getDataServicesLocalConnection() ).thenReturn( dataserviceLocalConnection );
+    ParameterDataRow parameterDataRow = mock( ParameterDataRow.class );
     CdaEngine.init( testEnvironment );
 
-    SQLReportDataFactory sqlReportDataFactory = da.getSQLReportDataFactory( dataservicesConnection );
+    SQLReportDataFactory sqlReportDataFactory = da.getSQLReportDataFactory( dataservicesConnection, parameterDataRow );
     assertNotNull( sqlReportDataFactory );
   }
 

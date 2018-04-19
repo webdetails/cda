@@ -20,10 +20,10 @@ package pt.webdetails.cda.utils.streaming;
 import org.junit.Before;
 import org.junit.Test;
 import org.pentaho.di.trans.dataservice.client.api.IDataServiceClientService;
+import org.pentaho.di.trans.dataservice.jdbc.api.IThinPreparedStatement;
 import org.pentaho.di.trans.dataservice.jdbc.api.IThinStatement;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -59,8 +59,8 @@ public class SQLStreamingReportDataFactoryTest {
   @Test
   public void testPreparedStatementIsExecuted() throws SQLException {
     preparedParameterNames = new String[]{"some prepared parameter"};
-    statement = mock( PreparedStatement.class );
+    statement = mock( IThinPreparedStatement.class );
     dataFactory.performQuery( statement, query, preparedParameterNames );
-    verify( (PreparedStatement) statement ).executeQuery();
+    verify( (IThinPreparedStatement) statement ).executeQuery( windowMode, windowSize, windowEvery, windowLimit );
   }
 }

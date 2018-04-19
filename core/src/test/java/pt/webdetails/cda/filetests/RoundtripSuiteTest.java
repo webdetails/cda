@@ -204,36 +204,28 @@ public class RoundtripSuiteTest extends XMLTestCase {
     String controlXml = readCdaFile( file );
     String testXml = generateXml( file );
 
-    //    System.out.println( testXml );
-
     DetailedDiff myDiff = new DetailedDiff( compareXML( controlXml, testXml ) );
     myDiff.overrideElementQualifier( new ElementNameAndAttributeQualifier() );
     myDiff.overrideDifferenceListener( new DifferenceListener() {
       @Override public int differenceFound( Difference difference ) {
         if ( difference.getId() == DifferenceConstants.ATTR_VALUE_ID ) {
-          String controlNodeString = difference.getControlNodeDetail().getValue(),
-            testNodeString = difference.getTestNodeDetail().getValue();
+          String controlNodeString = difference.getControlNodeDetail().getValue(), testNodeString = difference.getTestNodeDetail().getValue();
 
-          if ( controlNodeString.equals( OLAP4J_STRING )
-            && ( testNodeString.equals( OLAP4J_STRING ) || testNodeString.equals( OLAP4J_DEFAULT_STRING ) ) ) {
+          if ( controlNodeString.equals( OLAP4J_STRING ) && ( testNodeString.equals( OLAP4J_STRING ) || testNodeString.equals( OLAP4J_DEFAULT_STRING ) ) ) {
             return DifferenceListener.RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR;
           }
         } else if ( difference.getId() == DifferenceConstants.CHILD_NODELIST_SEQUENCE_ID ) {
           return DifferenceListener.RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR;
-        } else if ( difference.getId() == DifferenceConstants.ELEMENT_NUM_ATTRIBUTES_ID
-          || difference.getId() == DifferenceConstants.ATTR_NAME_NOT_FOUND_ID ) {
-          Node cacheTestNode = difference.getTestNodeDetail().getNode().getAttributes().getNamedItem( "cache" ),
-            controlTestNode = difference.getControlNodeDetail().getNode().getAttributes().getNamedItem( "cache" );
 
-          if ( cacheTestNode.getNodeValue().equals( "true" )
-            && cacheTestNode.getNodeValue().equals( controlTestNode.getNodeValue() ) ) {
-            Node cacheDurationTestNode =
-              difference.getTestNodeDetail().getNode().getAttributes().getNamedItem( "cacheDuration" ),
-              cacheDurationControlNode =
-                difference.getControlNodeDetail().getNode().getAttributes().getNamedItem( "cacheDuration" );
+        } else if ( difference.getId() == DifferenceConstants.ELEMENT_NUM_ATTRIBUTES_ID || difference.getId() == DifferenceConstants.ATTR_NAME_NOT_FOUND_ID ) {
+          Node cacheTestNode = difference.getTestNodeDetail().getNode().getAttributes().getNamedItem( "cache" );
+          Node controlTestNode = difference.getControlNodeDetail().getNode().getAttributes().getNamedItem( "cache" );
 
-            if ( cacheDurationControlNode.getNodeValue().equals( "3600" )
-              && ( cacheDurationTestNode == null || cacheDurationTestNode.getNodeValue().equals( "3600" ) ) ) {
+          if ( cacheTestNode.getNodeValue().equals( "true" ) && cacheTestNode.getNodeValue().equals( controlTestNode.getNodeValue() ) ) {
+            Node cacheDurationTestNode = difference.getTestNodeDetail().getNode().getAttributes().getNamedItem( "cacheDuration" );
+            Node cacheDurationControlNode = difference.getControlNodeDetail().getNode().getAttributes().getNamedItem( "cacheDuration" );
+
+            if ( cacheDurationControlNode.getNodeValue().equals( "3600" ) && ( cacheDurationTestNode == null || cacheDurationTestNode.getNodeValue().equals( "3600" ) ) ) {
               return DifferenceListener.RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR;
             }
           }
