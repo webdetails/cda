@@ -40,11 +40,13 @@ public class DataservicesLocalConnection implements IDataservicesLocalConnection
 
     //puts the properties in the connection URL (they must be prefixed with "PARAMETER_", or they are ignored)
     for ( String paramenterKey : dataserviceParameters.keySet() ) {
-      try {
-        url += "&" + URLEncoder.encode( IDataServiceClientService.PARAMETER_PREFIX + paramenterKey, "UTF-8" ) + "="
-          + URLEncoder.encode( dataserviceParameters.get( paramenterKey ), "UTF-8" );
-      } catch ( UnsupportedEncodingException e ) {
-        throw new RuntimeException( "Error encoding dataservice URL", e );
+      if ( dataserviceParameters.get( paramenterKey ) != null ) {
+        try {
+          url += "&" + URLEncoder.encode( IDataServiceClientService.PARAMETER_PREFIX + paramenterKey, "UTF-8" ) + "="
+            + URLEncoder.encode( dataserviceParameters.get( paramenterKey ), "UTF-8" );
+        } catch ( UnsupportedEncodingException e ) {
+          throw new RuntimeException( "Error encoding dataservice URL", e );
+        }
       }
     }
 

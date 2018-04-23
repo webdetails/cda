@@ -58,4 +58,15 @@ public class DataservicesLocalConnectionTest {
     assertNotNull("Url shouldn't be empty", connectionProvider.getUrl());
     assertEquals("jdbc:pdi://localhost:8080/pentaho/kettle?local=true&"+ IDataServiceClientService.PARAMETER_PREFIX +"param1=value1", connectionProvider.getUrl());
   }
+
+  @Test
+  public void getDriverConnectionProviderWithNullParameterTest() throws MalformedURLException {
+    Map<String, String> dataserviceParameters = new TreeMap<>( );
+    dataserviceParameters.put( "param1", "value1" );
+    dataserviceParameters.put( "paramNull", null );
+    DriverConnectionProvider connectionProvider = new DataservicesLocalConnection().getDriverConnectionProvider( dataserviceParameters );
+    assertNotNull("Driver shouldn't be empty", connectionProvider.getDriver());
+    assertNotNull("Url shouldn't be empty", connectionProvider.getUrl());
+    assertEquals("jdbc:pdi://localhost:8080/pentaho/kettle?local=true&"+ IDataServiceClientService.PARAMETER_PREFIX +"param1=value1", connectionProvider.getUrl());
+  }
 }
