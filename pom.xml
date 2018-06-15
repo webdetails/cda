@@ -48,7 +48,6 @@
     <pdi-dataservice-client-plugin.version>8.1.0.0-SNAPSHOT</pdi-dataservice-client-plugin.version>
     <pdi.version>8.1.0.0-SNAPSHOT</pdi.version>
     <pentaho-cpf-plugin.version>8.1.0.0-SNAPSHOT</pentaho-cpf-plugin.version>
-    <dependency.jackson-mapper-asl.revision>1.9.3</dependency.jackson-mapper-asl.revision>
     <mondrian.version>8.1.0.0-SNAPSHOT</mondrian.version>
     <marketplace.metadata.development_stage.phase>2</marketplace.metadata.development_stage.phase>
     <marketplace.metadata.samples_url>http://nexus.pentaho.org/content/groups/omni/pentaho/cda-samples/6.0.0.0-353/cda-samples-6.0.0.0-353.zip</marketplace.metadata.samples_url>
@@ -149,11 +148,6 @@
         <groupId>com.hazelcast</groupId>
         <artifactId>hazelcast</artifactId>
         <version>${dependency.hazelcast.revision}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.jackson</groupId>
-        <artifactId>jackson-mapper-asl</artifactId>
-        <version>${dependency.jackson-mapper-asl.revision}</version>
       </dependency>
       <dependency>
         <groupId>org.pentaho.reporting.library</groupId>
