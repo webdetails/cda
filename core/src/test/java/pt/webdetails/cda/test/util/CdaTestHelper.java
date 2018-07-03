@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,13 +13,14 @@
 
 package pt.webdetails.cda.test.util;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.iterators.FilterIterator;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationConfig;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.dom4j.Document;
@@ -70,7 +71,7 @@ public class CdaTestHelper {
       try {
         // attempt to build a friendly comparison
         // om.configure( SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, true );
-        om.configure( SerializationConfig.Feature.INDENT_OUTPUT, true );
+        om.enable( SerializationFeature.INDENT_OUTPUT );
         Object first = om.treeToValue( parsedExpected, TreeMap.class );
         Object second = om.treeToValue( parsedResult, TreeMap.class );
         expectedJson = om.writeValueAsString( first );
