@@ -7,9 +7,10 @@
     <artifactId>cda-plugin-assemblies</artifactId>
     <version>9.0.0.0-SNAPSHOT</version>
   </parent>
+
   <artifactId>cda-disabled</artifactId>
-  <version>9.0.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
+
   <build>
     <plugins>
       <plugin>
