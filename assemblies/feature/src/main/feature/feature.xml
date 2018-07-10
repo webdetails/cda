@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features name="${project.artifactId}-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.2.1">
+    <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.karaf.version}/xml/features</repository>
+
+    <feature name="${project.artifactId}" version="${project.version}">
+
+        <feature version="${cxf.karaf.version}">cxf-jaxrs</feature>
+
+    </feature>
+
+</features>

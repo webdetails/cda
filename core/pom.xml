@@ -9,6 +9,7 @@
   </parent>
 
   <artifactId>cda-core</artifactId>
+  <packaging>bundle</packaging>
 
   <licenses>
     <license>

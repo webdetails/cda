@@ -18,6 +18,7 @@
   <modules>
     <module>platform</module>
     <module>cda-proxy</module>
+    <module>feature</module>
   </modules>
 
 </project>

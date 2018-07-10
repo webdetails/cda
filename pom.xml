@@ -58,7 +58,11 @@
     <dependency.hazelcast.revision>2.5</dependency.hazelcast.revision>
     <marketplace.metadata.name>${project.artifactId}</marketplace.metadata.name>
     <rxjava.version>2.0.4</rxjava.version>
+    <karaf-maven-plugin.aggregateFeatures>false</karaf-maven-plugin.aggregateFeatures>
+    <karaf-maven-plugin.version>3.0.8</karaf-maven-plugin.version>
+    <cxf.karaf.version>3.0.13</cxf.karaf.version>
   </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -280,8 +284,41 @@
         </plugins>
       </reporting>
     </profile>
+
+    <profile>
+      <!-- This profile generates a feature file to deploy in karaf. -->
+      <id>feature-generation</id>
+      <activation>
+        <file>
+          <exists>${basedir}/src/main/feature</exists>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.karaf.tooling</groupId>
+            <artifactId>karaf-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.karaf.tooling</groupId>
+          <artifactId>karaf-maven-plugin</artifactId>
+          <version>${karaf-maven-plugin.version}</version>
+          <extensions>true</extensions>
+          <configuration>
+            <aggregateFeatures>${karaf-maven-plugin.aggregateFeatures}</aggregateFeatures>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 
   <repositories>
     <repository>
