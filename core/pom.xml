@@ -30,6 +30,12 @@
     <dependency.jxl.revision>2.6.12</dependency.jxl.revision>
     <dependency.jsr311-api.revision>1.1-ea</dependency.jsr311-api.revision>
     <dependency.spring.framework.revision>4.3.2.RELEASE</dependency.spring.framework.revision>
+    <owasp.encoder.version>1.2</owasp.encoder.version>
+    <google.guava.version>17.0</google.guava.version>
+    <xercesImpl.version>2.9.1</xercesImpl.version>
+    <eigenbase-properties.version>1.1.2</eigenbase-properties.version>
+    <eigenbase-resgen.version>1.3.1</eigenbase-resgen.version>
+
   </properties>
   <dependencies>
     <dependency>
@@ -40,16 +46,11 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>mondrian</artifactId>
-      <version>${mondrian.version}</version>
     </dependency>
     <dependency>
       <groupId>org.pentaho.reporting.engine</groupId>
       <artifactId>classic-core</artifactId>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.pentaho.reporting.engine</groupId>
-      <artifactId>classic-extensions</artifactId>
     </dependency>
     <dependency>
       <groupId>org.pentaho.reporting.engine</groupId>
@@ -69,14 +70,6 @@
     </dependency>
     <dependency>
       <groupId>org.pentaho.reporting.engine</groupId>
-      <artifactId>classic-extensions-reportdesigner-parser</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.pentaho.reporting.engine</groupId>
-      <artifactId>classic-extensions-sampledata</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.pentaho.reporting.engine</groupId>
       <artifactId>classic-extensions-scripting</artifactId>
     </dependency>
     <dependency>
@@ -84,17 +77,11 @@
       <artifactId>classic-extensions-xpath</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.pentaho.reporting.engine</groupId>
-      <artifactId>legacy-functions</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.pentaho.reporting.engine</groupId>
-      <artifactId>wizard-core</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.pentaho.reporting.library</groupId>
       <artifactId>libloader</artifactId>
     </dependency>
+    <!-- TODO: It appears that we're only depending from libbase because of StringUtils.isEmpty( string )
+         We probably can remove this dependency with a small refactor. -->
     <dependency>
       <groupId>org.pentaho.reporting.library</groupId>
       <artifactId>libbase</artifactId>
@@ -112,22 +99,18 @@
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
-      <version>${pdi.version}</version>
     </dependency>
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-engine</artifactId>
-      <version>${pdi.version}</version>
     </dependency>
     <dependency>
       <groupId>org.pentaho.di.plugins</groupId>
       <artifactId>kettle-log4j-core</artifactId>
-      <version>${pdi.version}</version>
     </dependency>
     <dependency>
       <groupId>org.pentaho</groupId>
       <artifactId>pentaho-metadata</artifactId>
-      <version>${pentaho-metadata.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
@@ -142,6 +125,37 @@
     <dependency>
       <groupId>com.hazelcast</groupId>
       <artifactId>hazelcast</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>eigenbase</groupId>
+      <artifactId>eigenbase-properties</artifactId>
+      <version>${eigenbase-properties.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>eigenbase</groupId>
+      <artifactId>eigenbase-resgen</artifactId>
+      <version>${eigenbase-resgen.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>${xercesImpl.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${google.guava.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.owasp.encoder</groupId>
+      <artifactId>encoder</artifactId>
+      <version>${owasp.encoder.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.reactivex.rxjava2</groupId>
