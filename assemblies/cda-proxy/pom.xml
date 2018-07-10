@@ -2,18 +2,38 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>cda-plugin-assemblies</artifactId>
     <groupId>pentaho</groupId>
     <version>9.0.0.0-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
+
   <artifactId>cda-proxy</artifactId>
-  <version>9.0.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
+
   <properties>
     <cda.proxy.dir>../../proxy</cda.proxy.dir>
   </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>cda-proxy-impl</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>cpf-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>cpf-pentaho</artifactId>
+    </dependency>
+
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>

@@ -4,11 +4,11 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>pentaho</groupId>
-    <artifactId>cda-plugin-assemblies</artifactId>
+    <artifactId>cda-plugin-assemblies-platform</artifactId>
     <version>9.0.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>cda-disabled</artifactId>
+  <artifactId>cda-samples</artifactId>
   <packaging>pom</packaging>
 
   <build>
@@ -17,7 +17,7 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
           <execution>
-            <id>cda-disabled</id>
+            <id>cda-samples</id>
             <phase>package</phase>
             <goals>
               <goal>single</goal>

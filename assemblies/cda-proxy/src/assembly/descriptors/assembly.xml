@@ -23,14 +23,6 @@
       <outputDirectory>${cda.root.dir}/lib</outputDirectory>
       <scope>runtime</scope>
       <useTransitiveDependencies>false</useTransitiveDependencies>
-      <excludes>
-        <exclude>pentaho:cda-core</exclude>
-        <exclude>pentaho:cda-pentaho</exclude>
-        <exclude>pentaho:cpf-core</exclude>
-        <exclude>org.pentaho.di.plugins:kettle-log4j-core</exclude>
-        <exclude>net.htmlparser.jericho:jericho-html</exclude>
-        <exclude>org.pentaho:json</exclude>
-      </excludes>
     </dependencySet>
   </dependencySets>
 </assembly>
