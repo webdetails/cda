@@ -61,6 +61,7 @@
     <karaf-maven-plugin.aggregateFeatures>false</karaf-maven-plugin.aggregateFeatures>
     <karaf-maven-plugin.version>3.0.8</karaf-maven-plugin.version>
     <cxf.karaf.version>3.0.13</cxf.karaf.version>
+    <commons-codec.version>1.9</commons-codec.version>
   </properties>
 
   <dependencyManagement>
@@ -220,6 +221,11 @@
         <groupId>io.reactivex.rxjava2</groupId>
         <artifactId>rxjava</artifactId>
         <version>${rxjava.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>${commons-codec.version}</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>

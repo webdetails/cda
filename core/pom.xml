@@ -26,7 +26,6 @@
     <dependency.bsh.revision>1.3.0</dependency.bsh.revision>
     <dependency.bsf.revision>2.4.0</dependency.bsf.revision>
     <dependency.ehcache-core.revision>2.5.1</dependency.ehcache-core.revision>
-    <dependency.commons-codec.revision>1.9</dependency.commons-codec.revision>
     <dependency.slf4j-log4j12.revision>1.5.8</dependency.slf4j-log4j12.revision>
     <dependency.jxl.revision>2.6.12</dependency.jxl.revision>
     <dependency.jsr311-api.revision>1.1-ea</dependency.jsr311-api.revision>
@@ -126,6 +125,10 @@
     <dependency>
       <groupId>com.hazelcast</groupId>
       <artifactId>hazelcast</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
     </dependency>
     <dependency>
       <groupId>eigenbase</groupId>
