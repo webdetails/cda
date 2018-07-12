@@ -21,6 +21,7 @@
   <modules>
     <module>core</module>
     <module>pentaho</module>
+    <module>osgi</module>
     <module>assemblies</module>
     <module>proxy</module>
   </modules>
@@ -205,6 +206,11 @@
       <dependency>
         <groupId>org.pentaho.reporting.library</groupId>
         <artifactId>libloader</artifactId>
+        <version>${pentaho-reporting.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.pentaho.reporting.library</groupId>
+        <artifactId>libformula</artifactId>
         <version>${pentaho-reporting.version}</version>
       </dependency>
       <dependency>

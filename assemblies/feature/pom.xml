@@ -144,6 +144,11 @@
             <artifactId>cda-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.pentaho.ctools</groupId>
+            <artifactId>cda-osgi-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- Dependencies Bundles-->
     </dependencies>

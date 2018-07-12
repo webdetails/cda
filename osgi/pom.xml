@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>cda-plugin</artifactId>
+    <groupId>pentaho</groupId>
+    <version>9.0.0.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.pentaho.ctools</groupId>
+  <artifactId>cda-osgi-impl</artifactId>
+  <packaging>bundle</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>cda-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>cpf-core</artifactId>
+    </dependency>
+
+    <!-- Used in Blueprint -->
+    <dependency>
+      <groupId>org.pentaho.reporting.library</groupId>
+      <artifactId>libformula</artifactId>
+    </dependency>
+  </dependencies>
+
+</project>

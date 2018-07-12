@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+           xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
+                               http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+                               http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0
+                               http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd
+                               http://cxf.apache.org/blueprint/jaxrs
+                               http://cxf.apache.org/schemas/blueprint/jaxrs.xsd">
+
+ 
+
+  <reference id="contentAccessFactory" interface="pt.webdetails.cpf.repository.api.IContentAccessFactory" />
+
+  <bean id="cdaEnvironment" class="org.pentaho.ctools.cda.CdaEnvironment" scope="singleton">
+    <!--region Default values from BaseCdaEnvironment -->
+    <property name="cubeFileProviderSetter">
+      <bean class="pt.webdetails.cda.dataaccess.DefaultCubeFileProviderSetter"/>
+    </property>
+    <property name="dataAccessUtils">
+      <bean class="pt.webdetails.cda.dataaccess.DefaultDataAccessUtils"/>
+    </property>
+    <property name="queryCache">
+      <bean class="pt.webdetails.cda.cache.EHCacheQueryCache"/>
+    </property>
+    <property name="formulaContext">
+      <bean class="org.pentaho.reporting.libraries.formula.DefaultFormulaContext"/>
+    </property>
+    <!--endregion-->
+
+    <!--region Dummy support classes-->
+    <property name="eventPublisher">
+      <bean class="org.pentaho.ctools.cda.messaging.EventPublisher"/>
+    </property>
+    <property name="mondrianRoleMapper">
+      <bean class="org.pentaho.ctools.cda.connections.mondrian.MondrianRoleMapper"/>
+    </property>
+    <!--endregion-->
+
+    <property name="repo" ref="contentAccessFactory"/>
+  </bean>
+
+  <!-- Trying to set the cdaEnvironment of the CdaEngine via factory-method even if it returns void -->
+  <bean id="dummyBeanForCdaEngineInit" class="pt.webdetails.cda.CdaEngine" factory-method="init">
+    <argument ref="cdaEnvironment"/>
+  </bean>
+
+
+  <jaxrs:server address="/cda" id="cdaService">
+    <jaxrs:serviceBeans>
+      <bean class="pt.webdetails.cda.endpoints.RestEndpoint"/>
+    </jaxrs:serviceBeans>
+  </jaxrs:server>
+
+</blueprint>
