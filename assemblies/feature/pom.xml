@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>pentaho-cda</artifactId>
-    <packaging>feature</packaging>
+    <packaging>kar</packaging>
 
     <properties>
         <pdi-dataservice-client-plugin.version>${project.version}</pdi-dataservice-client-plugin.version>

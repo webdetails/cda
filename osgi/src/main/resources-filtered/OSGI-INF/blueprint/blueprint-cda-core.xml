@@ -10,26 +10,16 @@
                                http://cxf.apache.org/blueprint/jaxrs
                                http://cxf.apache.org/schemas/blueprint/jaxrs.xsd">
 
- 
+  <reference id="contentAccessFactory" interface="pt.webdetails.cpf.repository.api.IContentAccessFactory" timeout="20000" />
 
-  <reference id="contentAccessFactory" interface="pt.webdetails.cpf.repository.api.IContentAccessFactory" />
+  <!-- Gain access to files available in bundles through CPF IReadAccess -->
+  <service interface="pt.webdetails.cpf.repository.api.IReadAccess">
+    <bean class="org.pentaho.ctools.cpf.repository.bundle.ReadAccess">
+      <property name="bundle" ref="blueprintBundle"/>
+    </bean>
+  </service>
 
   <bean id="cdaEnvironment" class="org.pentaho.ctools.cda.CdaEnvironment" scope="singleton">
-    <!--region Default values from BaseCdaEnvironment -->
-    <property name="cubeFileProviderSetter">
-      <bean class="pt.webdetails.cda.dataaccess.DefaultCubeFileProviderSetter"/>
-    </property>
-    <property name="dataAccessUtils">
-      <bean class="pt.webdetails.cda.dataaccess.DefaultDataAccessUtils"/>
-    </property>
-    <property name="queryCache">
-      <bean class="pt.webdetails.cda.cache.EHCacheQueryCache"/>
-    </property>
-    <property name="formulaContext">
-      <bean class="org.pentaho.reporting.libraries.formula.DefaultFormulaContext"/>
-    </property>
-    <!--endregion-->
-
     <!--region Dummy support classes-->
     <property name="eventPublisher">
       <bean class="org.pentaho.ctools.cda.messaging.EventPublisher"/>
@@ -38,15 +28,37 @@
       <bean class="org.pentaho.ctools.cda.connections.mondrian.MondrianRoleMapper"/>
     </property>
     <!--endregion-->
-
     <property name="repo" ref="contentAccessFactory"/>
+
+    <!--region Default values from BaseCdaEnvironment -->
+    <property name="cubeFileProviderSetter">
+      <bean class="pt.webdetails.cda.dataaccess.DefaultCubeFileProviderSetter"/>
+    </property>
+    <property name="dataAccessUtils">
+      <bean class="pt.webdetails.cda.dataaccess.DefaultDataAccessUtils"/>
+    </property>
+    <property name="formulaContext">
+      <bean class="org.pentaho.reporting.libraries.formula.DefaultFormulaContext"/>
+    </property>
+    <property name="dataservicesLocalConnection">
+      <bean class="org.pentaho.ctools.cda.connections.dataservices.DataservicesLocalConnection"/>
+    </property>
+    <property name="queryCache">
+      <!--
+      <bean class="pt.webdetails.cda.cache.EHCacheQueryCache" depends-on="dummyBeanForCdaEngineInit">
+        <argument type="boolean" value="false"/>
+      </bean>
+      -->
+      <bean class="org.pentaho.ctools.cda.cache.NoCache"/>
+    </property>
+    <!--endregion-->
+
   </bean>
 
   <!-- Trying to set the cdaEnvironment of the CdaEngine via factory-method even if it returns void -->
   <bean id="dummyBeanForCdaEngineInit" class="pt.webdetails.cda.CdaEngine" factory-method="init">
     <argument ref="cdaEnvironment"/>
   </bean>
-
 
   <jaxrs:server address="/cda" id="cdaService">
     <jaxrs:serviceBeans>

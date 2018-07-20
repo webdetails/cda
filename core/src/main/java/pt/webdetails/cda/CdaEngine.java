@@ -215,7 +215,7 @@ public class CdaEngine {
    * @return
    */
   public TableModel getCdaList() {
-    IUserContentAccess userRepo = PluginEnvironment.env().getContentAccessFactory().getUserContentAccess( "/" );
+    IUserContentAccess userRepo = this.getEnv().getRepo().getUserContentAccess( "/" );
     List<IBasicFile> cdaFiles = userRepo.listFiles( "", new IBasicFileFilter() {
       public boolean accept( IBasicFile file ) {
         return StringUtils.equals( file.getExtension(), "cda" );

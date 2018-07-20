@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CDADescriptor>
+
+    <!-- DataSource definition. 
+	
+	Type controls what the datasource type is.
+	The connection and query controls how the data is fetched. These values
+	are specific to each access type
+
+	-->
+    <DataSources>
+        <Connection id="1" type="sql.jndi">
+            <Jndi>SampleData</Jndi>
+        </Connection>
+    </DataSources>
+    <!-- DataAccess object controls the query itself
+
+	Access controls if the datasource can be seen from the outside or is to
+	be used from a Compound datasource only
+
+	-->
+    <DataAccess id="1" connection="1" type="sql" access="public" cache="true" cacheDuration="3600">
+		<Name>Sql Query on SampleData - Jndi</Name>
+        <Query>
+			select o.YEAR_ID, o.STATUS, sum(o.TOTALPRICE) as price from orderfact o
+			where o.STATUS = ${status} and o.ORDERDATE &gt; ${orderDate}
+			group by o.YEAR_ID, o.STATUS
+		</Query>
+        <!-- All parameters are passed as string from the outside. Their
+		type is defined here. If needed, a conversion pattern must be specified
+
+		Supported types: String, Date, Integer, Numeric
+		-->
+        <Parameters>
+            <Parameter name="status" type="String" default="Shipped"/>
+            <Parameter name="orderDate" type="Date" pattern="yyyy-MM-dd" default="2004-03-01"/>
+        </Parameters>
+        <!-- 
+		Columns block allow specifying name and CalculatedColumn the creation of new
+		columns based on formulas
+		-->
+		<Columns>
+			<Column idx="0">
+				<Name>Year</Name>
+			</Column>
+			<CalculatedColumn>
+				<Name>PriceInK</Name>
+				<Formula>=[PRICE]/1000000</Formula>
+			</CalculatedColumn>
+		</Columns>
+        <!-- Settings block here overrides defaults and general settings -->
+        <Settings>
+            <Export type="csv" includeTotals="true">
+                <Column idx="0" aggregator="None"/>
+                <Column idx="1" aggregator="Average"/>
+            </Export>
+        </Settings>
+        <!-- Output controls what is outputed and by what order. Defaults to everything -->
+        <Output indexes="1,0,2,3"/>
+        <Output id="2" indexes="0,1,3"/>
+        <Output id="3" indexes="1,0,2"/>
+    </DataAccess>
+</CDADescriptor>

@@ -33,4 +33,25 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <!-- We need to explicitly include these imports because reporting dynamically loads
+            ResourceFactory(s) in the ResourceManager. Since CDA is running within OSGi when it instantiates
+            a new ResourceManager the dynamic loading fails because the resource factory classes are not
+            found. -->
+            <!-- <DynamicImport-Package>org.pentaho.reporting.libraries.*,org.pentaho.reporting.engine.*</DynamicImport-Package>
+            -->
+            <Import-Package>org.pentaho.reporting.libraries.xmlns.parser,*</Import-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>

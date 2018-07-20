@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CDADescriptor>
+
+    <!-- DataSource definition. 
+	
+	Type controls what the datasource type is.
+	The connection and query controls how the data is fetched. These values
+	are specific to each access type
+
+	-->
+    <DataSources>
+        <Connection id="1" type="metadata.metadata">
+			<DomainId>steel-wheels</DomainId>
+			<XmiFile>metadata.xml</XmiFile>
+        </Connection>
+    </DataSources>
+    <!-- DataAccess object controls the query itself
+
+	Access controls if the datasource can be seen from the outside or is to
+	be used from a Compound datasource only
+
+	-->
+
+	<DataAccess id="1" connection="1" type="mql" access="public">
+		<Name>Mql on SampleData - Metadata</Name>
+		<Query><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+			<mql>
+				<domain_type>relational</domain_type>
+				<domain_id>steel-wheels</domain_id>
+				<model_id>BV_ORDERS</model_id>
+				<model_name>Orders</model_name>
+				<selections>
+					<selection>
+						<view>CAT_ORDERS</view>
+						<column>BC_ORDERS_ORDERDATE</column>
+					</selection>
+					<selection>
+						<view>CAT_ORDERS</view>
+						<column>BC_ORDERS_ORDERNUMBER</column>
+					</selection>
+					<selection>
+						<view>CAT_ORDERS</view>
+						<column>BC_ORDER_DETAILS_QUANTITYORDERED</column>
+					</selection>
+				</selections>
+				<constraints>
+
+					<constraint>
+						<operator>AND</operator>
+						<condition>[CAT_ORDERS.BC_ORDERDETAILS_QUANTITYORDERED] &gt;70</condition>
+					</constraint>
+
+					<constraint>
+						<operator>AND</operator>
+						<condition>[CAT_ORDERS.BC_ORDERS_ORDERDATE] &gt; "2003-12-31 00:00:00.0"</condition>
+					</constraint>
+				</constraints>
+				<orders/>
+			</mql>]]>
+		</Query> 
+		<Parameters>
+			<Parameter name="status" type="String" default="Shipped"/>
+		</Parameters>
+	</DataAccess>
+</CDADescriptor>

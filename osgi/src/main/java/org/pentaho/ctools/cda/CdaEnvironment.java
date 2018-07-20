@@ -3,6 +3,8 @@ package org.pentaho.ctools.cda;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.libraries.base.config.Configuration;
+import org.pentaho.reporting.libraries.base.config.HierarchicalConfiguration;
+import org.pentaho.reporting.libraries.base.config.PropertyFileConfiguration;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
@@ -15,13 +17,22 @@ import pt.webdetails.cda.dataaccess.ICubeFileProviderSetter;
 import pt.webdetails.cda.dataaccess.IDataAccessUtils;
 import pt.webdetails.cpf.messaging.IEventPublisher;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
+import pt.webdetails.cpf.repository.api.IReadAccess;
 import pt.webdetails.cpf.session.IUserSession;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 
 public class CdaEnvironment implements ICdaEnvironment {
 
+  private Configuration config;
+  private static final String BASE_PROPERTIES = "cda.properties";
 
   //region Initialization
   @Override
@@ -120,13 +131,73 @@ public class CdaEnvironment implements ICdaEnvironment {
   @Override
   public Properties getCdaComponents() {
     // TODO: perhaps port things from BaseCdaEnvironment
-    return null;
+    Properties cdaComponents = new Properties();
+    cdaComponents.setProperty("dataAccesses",
+      "AbstractDataAccess,ColumnDefinition,CompoundDataAccess,DataAccess,DataAccessConnectionDescriptor," +
+      "DataAccessEnums,DenormalizedMdxDataAccess,DenormalizedOlap4JDataAccess,JoinCompoundDataAccess," +
+      "KettleDataAccess,MdxDataAccess,MqlDataAccess,Olap4JDataAccess,PREDataAccess,ScriptableDataAccess," +
+      "SimpleDataAccess,JsonScriptableDataAccess,SqlDataAccess,UnionCompoundDataAccess,XPathDataAccess," +
+      "DataservicesDataAccess,StreamingDataservicesDataAccess");
+
+    cdaComponents.setProperty( "connections" ,"AbstractConnection,Connection,metadata.MetadataConnection," +
+      "mondrian.AbstractMondrianConnection,mondrian.JdbcConnection,mondrian.JndiConnection," +
+      "mondrian.MondrianConnection,olap4j.JdbcConnection,olap4j.DefaultOlap4jConnection," +
+      "olap4j.Olap4JConnection,scripting.ScriptingConnection,sql.AbstractSqlConnection,sql.JdbcConnection," +
+      "sql.JndiConnection,sql.SqlConnection,dataservices.dataservicesConnection");
+
+    return cdaComponents;
   }
 
   @Override
-  public Configuration getBaseConfig() {
+  public synchronized Configuration getBaseConfig() {
     // TODO: perhaps port things from BaseCdaEnvironment
-    return null;
+    if ( config == null ) {
+
+      Map<String, String> map = new HashMap<>(  );
+      map.put("pt.webdetails.cda.DefaultRowProductionTimeout", "120");
+      map.put("pt.webdetails.cda.DefaultRowProductionTimeoutTimeUnit", "SECONDS");
+      map.put("pt.webdetails.cda.exporter.csv.Separator", ";");
+      map.put("pt.webdetails.cda.dataaccess.parameterarray.Separator", ";");
+      map.put("pt.webdetails.cda.dataaccess.parameterarray.Quote", "\"");
+      map.put("pt.webdetails.cda.dataaccess.parameterarray.kettle.Separator", ",");
+      map.put("pt.webdetails.cda.dataaccess.parameterarray.kettle.Quote", "'");
+      map.put("pt.webdetails.cda.TypeSearchMaxRows", "500");
+      map.put("pt.webdetails.cda.UseTerracotta", "false");
+      map.put("pt.webdetails.cda.QueryTimeThreshold", "10");
+      map.put("pt.webdetails.cda.SortingType", "DEFAULT");
+      map.put("pt.webdetails.cda.BandedMDXMode", "compact");
+      map.put("pt.webdetails.cda.cache.executeAtStart", "false");
+      map.put("pt.webdetails.cda.cache.backupWarmerCron", "0 0 0/30 * * ?");
+
+      config = new Configuration() {
+        @Override
+        public String getConfigProperty( String key ) {
+          return map.get(key);
+        }
+
+        @Override
+        public String getConfigProperty( String key, String defaultValue ) {
+          return map.get(key);
+        }
+
+        @Override
+        public Iterator<String> findPropertyKeys( String prefix ) {
+          return map.keySet().stream().filter( key -> key.startsWith( prefix ) ).iterator();
+        }
+
+        @Override
+        public Enumeration<String> getConfigProperties() {
+          return Collections.enumeration( map.values() );
+        }
+
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+          return null;
+        }
+      };
+
+    }
+    return config;
   }
   //endregion
 
