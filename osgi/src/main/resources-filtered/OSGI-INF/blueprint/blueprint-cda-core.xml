@@ -40,9 +40,21 @@
     <property name="formulaContext">
       <bean class="org.pentaho.reporting.libraries.formula.DefaultFormulaContext"/>
     </property>
+    <!--endregion-->
+
+    <!-- Slightly changed import from data services in cda-pentaho -->
     <property name="dataservicesLocalConnection">
-      <bean class="org.pentaho.ctools.cda.connections.dataservices.DataservicesLocalConnection"/>
+      <bean class="org.pentaho.ctools.cda.connections.dataservices.DataservicesLocalConnection">
+        <argument>
+          <bean class="org.pentaho.ctools.cda.connections.dataservices.DataservicesDriverLocalConnectionProvider">
+            <argument>
+              <reference-list interface="org.pentaho.di.trans.dataservice.client.api.IDataServiceClientService" availability="optional"/>
+            </argument>
+          </bean>
+        </argument>
+      </bean>
     </property>
+
     <property name="queryCache">
       <!--
       <bean class="pt.webdetails.cda.cache.EHCacheQueryCache" depends-on="dummyBeanForCdaEngineInit">
@@ -51,7 +63,6 @@
       -->
       <bean class="org.pentaho.ctools.cda.cache.NoCache"/>
     </property>
-    <!--endregion-->
 
   </bean>
 

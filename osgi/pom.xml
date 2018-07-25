@@ -23,6 +23,10 @@
 
     <dependency>
       <groupId>pentaho</groupId>
+      <artifactId>pdi-dataservice-client-plugin</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>pentaho</groupId>
       <artifactId>cpf-core</artifactId>
     </dependency>
 

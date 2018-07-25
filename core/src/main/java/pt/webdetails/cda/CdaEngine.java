@@ -87,12 +87,13 @@ public class CdaEngine {
     return _instance;
   }
 
-  public static synchronized void init( ICdaEnvironment env ) throws InitializationException {
+  public static synchronized CdaEngine init( ICdaEnvironment env ) throws InitializationException {
     assert env != null;
     _instance = new CdaEngine( env );
 
     // Start ClassicEngineBoot
     ClassicEngineBoot.getInstance().start();
+    return _instance;
   }
 
   /**

@@ -195,8 +195,10 @@ public class CdaTestHelper {
       super( env );
     }
 
-    public static void init( ICdaEnvironment env ) {
-      CdaEngine.initTestBare( new CdaTestEngine( env ) );
+    public static CdaEngine init( ICdaEnvironment env ) {
+      CdaEngine engine = new CdaTestEngine( env );
+      CdaEngine.initTestBare( engine );
+      return engine;
     }
 
     public static void init( CdaEngine eng ) {

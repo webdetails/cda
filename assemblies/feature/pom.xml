@@ -15,6 +15,7 @@
 
     <properties>
         <pdi-dataservice-client-plugin.version>${project.version}</pdi-dataservice-client-plugin.version>
+        <pdi-dataservice-plugin.version>${project.version}</pdi-dataservice-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -132,11 +133,20 @@
 
         <dependency>
             <groupId>pentaho</groupId>
+            <artifactId>pentaho-dataservice</artifactId>
+            <version>${pdi-dataservice-plugin.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>pentaho</groupId>
             <artifactId>pentaho-dataservice-client</artifactId>
             <version>${pdi-dataservice-client-plugin.version}</version>
             <type>xml</type>
             <classifier>features</classifier>
         </dependency>
+        -->
 
         <!-- Bundles -->
         <dependency>

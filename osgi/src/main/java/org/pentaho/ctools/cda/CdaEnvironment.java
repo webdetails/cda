@@ -1,7 +1,10 @@
 package org.pentaho.ctools.cda;
 
 import org.pentaho.reporting.engine.classic.core.DataFactory;
+import org.pentaho.reporting.engine.classic.core.DataFactoryContext;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
+import org.pentaho.reporting.engine.classic.core.ResourceBundleFactory;
+import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFactory;
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.base.config.HierarchicalConfiguration;
 import org.pentaho.reporting.libraries.base.config.PropertyFileConfiguration;
@@ -28,6 +31,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TimeZone;
 
 public class CdaEnvironment implements ICdaEnvironment {
 
@@ -41,6 +45,33 @@ public class CdaEnvironment implements ICdaEnvironment {
   @Override
   public void initializeDataFactory(DataFactory dataFactory, Configuration configuration, ResourceKey contextKey, ResourceManager resourceManager) throws ReportDataFactoryException {
 
+    dataFactory.initialize( new DataFactoryContext() {
+      public Configuration getConfiguration() {
+        return configuration;
+      }
+
+      public ResourceManager getResourceManager() {
+        return resourceManager;
+      }
+
+      public ResourceKey getContextKey() {
+        return contextKey;
+      }
+
+      public ResourceBundleFactory getResourceBundleFactory() {
+        return new LibLoaderResourceBundleFactory( resourceManager, contextKey,
+          getLocale(), TimeZone.getDefault() );
+      }
+
+      public DataFactory getContextDataFactory() {
+        return dataFactory;
+      }
+
+      @Override
+      public FormulaContext getFormulaContext() {
+        return null;
+      }
+    } );
   }
   //endregion
 
