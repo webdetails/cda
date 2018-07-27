@@ -46,11 +46,7 @@
     <property name="dataservicesLocalConnection">
       <bean class="org.pentaho.ctools.cda.connections.dataservices.DataservicesLocalConnection">
         <argument>
-          <bean class="org.pentaho.ctools.cda.connections.dataservices.DataservicesDriverLocalConnectionProvider">
-            <argument>
-              <reference-list interface="org.pentaho.di.trans.dataservice.client.api.IDataServiceClientService" availability="optional"/>
-            </argument>
-          </bean>
+          <bean class="org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.DriverConnectionProvider"/>
         </argument>
       </bean>
     </property>

@@ -16,6 +16,7 @@
     <properties>
         <pdi-dataservice-client-plugin.version>${project.version}</pdi-dataservice-client-plugin.version>
         <pdi-dataservice-plugin.version>${project.version}</pdi-dataservice-plugin.version>
+        <pentaho-metaverse.version>${project.version}</pentaho-metaverse.version>
     </properties>
 
     <dependencyManagement>
@@ -138,7 +139,11 @@
             <type>xml</type>
             <classifier>features</classifier>
         </dependency>
-        <!--
+
+        <!-- pentaho-dataservice-client feature is included in the pentaho-dataservice feature however,
+             the common bundles between that feature and the one we're generating here are being
+             included in this feature. We're adding the pentaho-dataservice-client feature here
+             explicitly to prevent that. -->
         <dependency>
             <groupId>pentaho</groupId>
             <artifactId>pentaho-dataservice-client</artifactId>
@@ -146,7 +151,7 @@
             <type>xml</type>
             <classifier>features</classifier>
         </dependency>
-        -->
+
 
         <!-- Bundles -->
         <dependency>
@@ -159,6 +164,23 @@
             <artifactId>cda-osgi-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        
+        <!-- This is to support pentaho-dataservice-server-plugin.
+             Hammer in pentaho-modeler but do not handle its transitives properly
+             TODO: handle transitives properly. Probably we should have a pentaho-modeler feature -->
+        <dependency>
+            <groupId>pentaho</groupId>
+            <artifactId>pentaho-modeler</artifactId>
+            <version>${pdi.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
 
         <!-- Dependencies Bundles-->
     </dependencies>
