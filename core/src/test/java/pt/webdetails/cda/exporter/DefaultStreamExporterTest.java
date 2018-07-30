@@ -53,7 +53,7 @@ public class DefaultStreamExporterTest extends AbstractKettleExporterTestBase {
       new DefaultStreamExporter( new CsvExporter( Collections.<String, String>emptyMap() ), sqlAdapter );
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     kettleFileWriter.export( out );
-    String[] res = Util.toString( out.toByteArray() ).split( "\n\r?" );
+    String[] res = Util.toString( out.toByteArray() ).split( System.lineSeparator() );
     assertEquals( "\"a\"", res[ 0 ] );
     assertEquals( "\"val\"", res[ 1 ] );
     assertNotNull( res );
