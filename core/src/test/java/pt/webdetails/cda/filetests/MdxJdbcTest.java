@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -290,7 +290,8 @@ public class MdxJdbcTest extends CdaTestCase {
   }
 
   public void testCsvExport() throws Exception {
-    String expectedOutput = "\"[Measures].[MeasuresLevel]\";Year;price\n\"Sales\";445094.69;564842.02\n";
+    String expectedOutput = "\"[Measures].[MeasuresLevel]\";Year;price" + System.lineSeparator()
+      + "\"Sales\";445094.69;564842.02" + System.lineSeparator();
 
     final CdaSettings cdaSettings = parseSettingsFile( "sample-output.cda" );
 

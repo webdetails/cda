@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -53,7 +53,7 @@ public class DefaultStreamExporterTest extends AbstractKettleExporterTestBase {
       new DefaultStreamExporter( new CsvExporter( Collections.<String, String>emptyMap() ), sqlAdapter );
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     kettleFileWriter.export( out );
-    String[] res = Util.toString( out.toByteArray() ).split( "\n\r?" );
+    String[] res = Util.toString( out.toByteArray() ).split( System.lineSeparator() );
     assertEquals( "\"a\"", res[ 0 ] );
     assertEquals( "\"val\"", res[ 1 ] );
     assertNotNull( res );
