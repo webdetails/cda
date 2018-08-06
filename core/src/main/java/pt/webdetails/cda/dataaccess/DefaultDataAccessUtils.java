@@ -44,6 +44,21 @@ import pt.webdetails.cda.settings.CdaSettings;
 
 public class DefaultDataAccessUtils implements IDataAccessUtils {
 
+
+  private String repositoryName = "";
+  private String username;
+  private String password;
+
+  public DefaultDataAccessUtils( String repositoryName, String username, String password ) {
+    this.repositoryName = repositoryName;
+    this.username = username;
+    this.password = password;
+  }
+
+  public DefaultDataAccessUtils() {
+
+  }
+
   @Override
   public void setMdxDataFactoryBaseConnectionProperties( MondrianConnection connection,
                                                          AbstractNamedMDXDataFactory mdxDataFactory ) {
@@ -62,10 +77,8 @@ public class DefaultDataAccessUtils implements IDataAccessUtils {
   @Override
   public KettleTransformationProducer createKettleTransformationProducer( TransFromFileConnectionInfo connectionInfo,
                                                                           String query, CdaSettings settings ) {
-    return new KettleTransFromFileProducer( "",
-      connectionInfo.getTransformationFile(),
-      query, null, null, connectionInfo.getDefinedArgumentNames(),
-      connectionInfo.getDefinedVariableNames() );
+    return new KettleTransFromFileProducer( this.repositoryName, connectionInfo.getTransformationFile(), query,
+        this.username, this.password, connectionInfo.getDefinedArgumentNames(), connectionInfo.getDefinedVariableNames() );
 
   }
 
