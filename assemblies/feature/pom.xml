@@ -126,7 +126,7 @@
         <!-- Features -->
         <dependency>
             <groupId>org.pentaho.ctools</groupId>
-            <artifactId>pentaho-cpf</artifactId>
+            <artifactId>pentaho-cpf-rca</artifactId>
             <version>${pentaho-cpf-plugin.version}</version>
             <type>xml</type>
             <classifier>features</classifier>

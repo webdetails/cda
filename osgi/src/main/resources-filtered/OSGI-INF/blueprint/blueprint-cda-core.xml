@@ -2,6 +2,7 @@
 <blueprint xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs"
            xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+           xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0"
            xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
                                http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
@@ -10,14 +11,31 @@
                                http://cxf.apache.org/blueprint/jaxrs
                                http://cxf.apache.org/schemas/blueprint/jaxrs.xsd">
 
-  <reference id="contentAccessFactory" interface="pt.webdetails.cpf.repository.api.IContentAccessFactory" timeout="20000" />
+  <!--<reference id="contentAccessFactory" interface="pt.webdetails.cpf.repository.api.IContentAccessFactory" timeout="20000" />-->
 
   <!-- Gain access to files available in bundles through CPF IReadAccess -->
-  <service interface="pt.webdetails.cpf.repository.api.IReadAccess">
-    <bean class="org.pentaho.ctools.cpf.repository.bundle.ReadAccess">
-      <property name="bundle" ref="blueprintBundle"/>
-    </bean>
-  </service>
+  <!--<service interface="pt.webdetails.cpf.repository.api.IReadAccess">-->
+    <!--<bean class="org.pentaho.ctools.cpf.repository.bundle.ReadAccess">-->
+      <!--<property name="bundle" ref="blueprintBundle"/>-->
+    <!--</bean>-->
+  <!--</service>-->
+
+  <!-- Load system property -->
+  <ext:property-placeholder />
+
+  <bean id="contentAccessFactory" class="org.pentaho.ctools.cpf.repository.factory.ContentAccessFactory">
+    <!--<argument value="${storage.path}"/>-->
+    <argument value="cda"/>
+  </bean>
+
+  <reference-list interface="pt.webdetails.cpf.repository.api.IReadAccess" availability="optional" >
+    <reference-listener ref="contentAccessFactory" bind-method="addReadAccess" unbind-method="removeReadAccess"/>
+  </reference-list>
+
+  <reference interface="pt.webdetails.cpf.api.IUserContentAccessExtended" availability="optional">
+    <reference-listener ref="contentAccessFactory" bind-method="setUserContentAccess" unbind-method="removeUserContentAccess"/>
+  </reference>
+
 
   <bean id="cdaEnvironment" class="org.pentaho.ctools.cda.CdaEnvironment" scope="singleton">
     <!--region Dummy support classes-->
@@ -35,22 +53,19 @@
       <bean class="pt.webdetails.cda.dataaccess.DefaultCubeFileProviderSetter"/>
     </property>
     <property name="dataAccessUtils">
-      <bean class="pt.webdetails.cda.dataaccess.DefaultDataAccessUtils"/>
+      <!--<bean class="pt.webdetails.cda.dataaccess.DefaultDataAccessUtils"/>-->
+      <bean class="pt.webdetails.cda.dataaccess.DefaultDataAccessUtils">
+        <argument value="${repos.repoName}"/>
+        <argument value="${repos.user}"/>
+        <argument value="${repos.password}"/>
+      </bean>
     </property>
     <property name="formulaContext">
       <bean class="org.pentaho.reporting.libraries.formula.DefaultFormulaContext"/>
     </property>
-    <!--endregion-->
-
-    <!-- Slightly changed import from data services in cda-pentaho -->
     <property name="dataservicesLocalConnection">
-      <bean class="org.pentaho.ctools.cda.connections.dataservices.DataservicesLocalConnection">
-        <argument>
-          <bean class="org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.DriverConnectionProvider"/>
-        </argument>
-      </bean>
+      <bean class="org.pentaho.ctools.cda.connections.dataservices.DataservicesLocalConnection"/>
     </property>
-
     <property name="queryCache">
       <!--
       <bean class="pt.webdetails.cda.cache.EHCacheQueryCache" depends-on="dummyBeanForCdaEngineInit">
@@ -59,6 +74,7 @@
       -->
       <bean class="org.pentaho.ctools.cda.cache.NoCache"/>
     </property>
+    <!--endregion-->
 
   </bean>
 
