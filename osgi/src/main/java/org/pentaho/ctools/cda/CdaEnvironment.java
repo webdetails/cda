@@ -8,6 +8,7 @@ import org.pentaho.reporting.engine.classic.core.metadata.DataFactoryRegistry;
 import org.pentaho.reporting.engine.classic.core.metadata.DefaultDataFactoryCore;
 import org.pentaho.reporting.engine.classic.core.metadata.DefaultDataFactoryMetaData;
 import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFactory;
+import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleDataFactory;
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
@@ -52,7 +53,7 @@ public class CdaEnvironment implements ICdaEnvironment {
   }
 
   private final Class[] customDataFactories = {
-      CompactBandedMDXDataFactory.class, ExtBandedMDXDataFactory.class, ExtDenormalizedMDXDataFactory.class,
+      KettleDataFactory.class,
       SQLStreamingReportDataFactory.class };
 
   private void registerCustomDataFactories() {

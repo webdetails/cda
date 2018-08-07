@@ -132,13 +132,13 @@
             <classifier>features</classifier>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>pentaho</groupId>-->
-            <!--<artifactId>pentaho-dataservice</artifactId>-->
-            <!--<version>${pdi-dataservice-plugin.version}</version>-->
-            <!--<type>xml</type>-->
-            <!--<classifier>features</classifier>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>pentaho</groupId>
+            <artifactId>pentaho-dataservice</artifactId>
+            <version>${pdi-dataservice-plugin.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
 
         <!-- pentaho-dataservice-client feature is included in the pentaho-dataservice feature however,
              the common bundles between that feature and the one we're generating here are being
