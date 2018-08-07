@@ -4,11 +4,7 @@ import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.DataFactoryContext;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.engine.classic.core.ResourceBundleFactory;
-import org.pentaho.reporting.engine.classic.core.metadata.DataFactoryRegistry;
-import org.pentaho.reporting.engine.classic.core.metadata.DefaultDataFactoryCore;
-import org.pentaho.reporting.engine.classic.core.metadata.DefaultDataFactoryMetaData;
 import org.pentaho.reporting.engine.classic.core.util.LibLoaderResourceBundleFactory;
-import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.KettleDataFactory;
 import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
@@ -20,10 +16,6 @@ import pt.webdetails.cda.connections.dataservices.IDataservicesLocalConnection;
 import pt.webdetails.cda.connections.mondrian.IMondrianRoleMapper;
 import pt.webdetails.cda.dataaccess.ICubeFileProviderSetter;
 import pt.webdetails.cda.dataaccess.IDataAccessUtils;
-import pt.webdetails.cda.utils.mondrian.CompactBandedMDXDataFactory;
-import pt.webdetails.cda.utils.mondrian.ExtBandedMDXDataFactory;
-import pt.webdetails.cda.utils.mondrian.ExtDenormalizedMDXDataFactory;
-import pt.webdetails.cda.utils.streaming.SQLStreamingReportDataFactory;
 import pt.webdetails.cpf.messaging.IEventPublisher;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
 import pt.webdetails.cpf.session.IUserSession;
@@ -45,24 +37,6 @@ public class CdaEnvironment implements ICdaEnvironment {
   //region Initialization
   @Override
   public void init() throws InitializationException {
-    // TODO figure out a different solution for makeing SQLStreamingReportDataFactory available,
-    // because as is this causes exceptions on boot:
-    // - "ResourceCreationException: There are no root-handlers registered..."
-    // - "IllegalStateException: Booting the report-engine failed."
-    registerCustomDataFactories();
-  }
-
-  private final Class[] customDataFactories = {
-      KettleDataFactory.class,
-      SQLStreamingReportDataFactory.class };
-
-  private void registerCustomDataFactories() {
-    for ( Class clazz : customDataFactories ) {
-      DefaultDataFactoryMetaData dmd = new DefaultDataFactoryMetaData(
-          clazz.getName(), "", "", true, false, true, false, false, false, false, false,
-          new DefaultDataFactoryCore(), 0 );
-      DataFactoryRegistry.getInstance().register( dmd );
-    }
   }
 
   @Override

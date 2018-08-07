@@ -87,6 +87,10 @@
     <argument ref="cdaEnvironment"/>
   </bean>
 
+  <bean id="dataFactoryRegister" class="org.pentaho.ctools.cda.DataFactoryRegister" init-method="init">
+    <argument ref="dummyBeanForCdaEngineInit"/>
+  </bean>
+
   <jaxrs:server address="/cda" id="cdaService">
     <jaxrs:serviceBeans>
       <bean class="pt.webdetails.cda.endpoints.RestEndpoint"/>
