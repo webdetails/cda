@@ -34,7 +34,7 @@
   </reference>
 
 
-  <bean id="cdaEnvironment" class="org.pentaho.ctools.cda.CdaEnvironment" scope="singleton">
+  <bean id="cdaEnvironment" class="org.pentaho.ctools.cda.CdaEnvironment" scope="singleton" init-method="init">
     <!--region Dummy support classes-->
     <property name="eventPublisher">
       <bean class="org.pentaho.ctools.cda.messaging.EventPublisher"/>
@@ -66,7 +66,7 @@
     <property name="dataservicesLocalConnection">
       <bean class="org.pentaho.ctools.cda.connections.dataservices.DataservicesLocalConnection">
         <argument>
-          <bean class="org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.DriverConnectionProvider"/>
+          <bean class="org.pentaho.ctools.cda.connections.dataservices.DataservicesDriverLocalConnectionProvider"/>
         </argument>
       </bean>
     </property>

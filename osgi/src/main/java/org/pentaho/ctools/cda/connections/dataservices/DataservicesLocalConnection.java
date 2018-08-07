@@ -24,19 +24,14 @@ import java.net.URLEncoder;
 import java.util.Map;
 
 public class DataservicesLocalConnection implements IDataservicesLocalConnection {
+  private final DriverConnectionProvider connectionProvider;
 
   public DataservicesLocalConnection( DriverConnectionProvider connectionProvider ) {
     this.connectionProvider = connectionProvider;
   }
 
-  public DriverConnectionProvider getConnectionProvider() {
-    return connectionProvider;
-  }
-  private final DriverConnectionProvider connectionProvider;
-
-
   public DriverConnectionProvider getDriverConnectionProvider( Map<String, String> dataserviceParameters ) throws MalformedURLException {
-    final DriverConnectionProvider connectionProvider = this.getConnectionProvider();
+    final DriverConnectionProvider connectionProvider = this.connectionProvider;
 
     DataServiceClientPlugin client = new DataServiceClientPlugin();
 
