@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+  <reference id="dataServiceMetaFactory" interface="org.pentaho.di.trans.dataservice.IDataServiceMetaFactory" />
+  <reference id="dataServiceContext" interface="org.pentaho.di.trans.dataservice.Context"/>
+
+  <bean id="unnamedDataServiceResolverBean" class="org.pentaho.ctools.cda.connections.dataservices.UnnamedDataServiceResolver">
+    <argument ref="dataServiceMetaFactory"/>
+    <argument ref="dataServiceContext"/>
+  </bean>
+
+  <service ref="unnamedDataServiceResolverBean" interface="org.pentaho.di.trans.dataservice.resolvers.DataServiceResolver" ranking="3"/>
+</blueprint>
