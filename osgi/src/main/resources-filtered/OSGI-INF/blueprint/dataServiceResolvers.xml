@@ -9,6 +9,9 @@
   <bean id="unnamedDataServiceResolverBean" class="org.pentaho.ctools.cda.connections.dataservices.UnnamedDataServiceResolver">
     <argument ref="dataServiceMetaFactory"/>
     <argument ref="dataServiceContext"/>
+    <argument value="${repos.repoName}"/>
+    <argument value="${repos.user}"/>
+    <argument value="${repos.password}"/>
   </bean>
 
   <service ref="unnamedDataServiceResolverBean" interface="org.pentaho.di.trans.dataservice.resolvers.DataServiceResolver" ranking="3"/>

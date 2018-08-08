@@ -32,14 +32,13 @@ public class UnnamedDataServiceResolver implements DataServiceResolver {
 
   private final HashMap<String, DataServiceMeta> dataServiceMetaCache;
 
-  public UnnamedDataServiceResolver( IDataServiceMetaFactory dataServiceMetaFactory, Context context ) {
+  public UnnamedDataServiceResolver( IDataServiceMetaFactory dataServiceMetaFactory, Context context, String repositoryName, String username, String password  ) {
     this.dataServiceMetaFactory = dataServiceMetaFactory;
     this.context = context;
 
-    // TODO Inject this via blueprint, like in the other similar cases
-    this.repoName = "Pentaho";
-    this.repoUsername = "admin";
-    this.repoPassword = "password";
+    this.repoName = repositoryName;
+    this.repoUsername = username;
+    this.repoPassword = password;
 
     this.dataServiceMetaCache = new HashMap<>();
   }
