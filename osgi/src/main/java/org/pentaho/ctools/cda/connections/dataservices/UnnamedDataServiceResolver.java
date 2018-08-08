@@ -17,6 +17,9 @@ import org.pentaho.di.trans.dataservice.DataServiceMeta;
 import org.pentaho.di.trans.dataservice.IDataServiceMetaFactory;
 import org.pentaho.di.trans.dataservice.resolvers.DataServiceResolver;
 import org.pentaho.di.trans.step.StepMeta;
+import org.pentaho.metastore.api.IMetaStoreAttribute;
+import org.pentaho.metastore.api.IMetaStoreElementType;
+import org.pentaho.metastore.api.exceptions.MetaStoreException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +35,7 @@ public class UnnamedDataServiceResolver implements DataServiceResolver {
 
   private final HashMap<String, DataServiceMeta> dataServiceMetaCache;
 
-  public UnnamedDataServiceResolver( IDataServiceMetaFactory dataServiceMetaFactory, Context context, String repositoryName, String username, String password  ) {
+  public UnnamedDataServiceResolver( IDataServiceMetaFactory dataServiceMetaFactory, Context context, String repositoryName, String username, String password ) {
     this.dataServiceMetaFactory = dataServiceMetaFactory;
     this.context = context;
 
@@ -64,10 +67,13 @@ public class UnnamedDataServiceResolver implements DataServiceResolver {
 
   private DataServiceProperties findDataServiceProperties( String dataServiceName ) {
     // TODO All the logic of data service registration and discover
-    // TODO Don't forget to check and replicate the default values for streaming, rowLimit and timeLimit
 
-    if ( !dataServiceName.equals( "unknown" ) ) {
-      return new DataServiceProperties( dataServiceName, "/public/plugin-samples/pentaho-cdf-dd/legacy/realtime", "real_time", "Data generation", true, 1000, 1000L );
+    if ( dataServiceName.equals( "plugin_sample_real_time_require" ) ) {
+      return new DataServiceProperties( dataServiceName, "/public/plugin-samples/pentaho-cdf-dd/realtime", "real_time" );
+    }
+
+    if ( dataServiceName.equals( "ricardo" ) || dataServiceName.equals( "nelson" ) ) {
+      return new DataServiceProperties( dataServiceName, "/public", "mega" );
     }
 
     return null;
@@ -110,15 +116,39 @@ public class UnnamedDataServiceResolver implements DataServiceResolver {
 
     // Load the transformation
     TransMeta transMeta = repository.loadTransformation( dataServiceProperties.getKtrName(), ktrDirectory, null, true, null );
+
+    // Load the Metastore info and set values in dataServiceProperties
+    try {
+      IMetaStoreElementType iMetaStoreElementType = transMeta.getEmbeddedMetaStore().getElementTypeByName( "pentaho", "Kettle Data Service" );
+      List<IMetaStoreAttribute> iMetaStoreAttributes = iMetaStoreAttributes = transMeta.getEmbeddedMetaStore().getElement( "pentaho",
+          iMetaStoreElementType, dataServiceProperties.getName() ).getChildren();
+      for ( IMetaStoreAttribute iMetaStoreAttribute : iMetaStoreAttributes ) {
+        if ( iMetaStoreAttribute.getId().equals( "streaming" ) ) {
+          dataServiceProperties.setStreaming( iMetaStoreAttribute.getValue().toString().toUpperCase().equals( "Y" ) );
+        }
+        if ( iMetaStoreAttribute.getId().equals( "time_limit" ) ) {
+          dataServiceProperties.setTimeLimit( Integer.parseInt( iMetaStoreAttribute.getValue().toString() ) );
+        }
+        if ( iMetaStoreAttribute.getId().equals( "row_limit" ) ) {
+          dataServiceProperties.setRowLimit( Integer.parseInt( iMetaStoreAttribute.getValue().toString() ) );
+        }
+        if ( iMetaStoreAttribute.getId().equals( "step_name" ) ) {
+          dataServiceProperties.setStepName( iMetaStoreAttribute.getValue().toString() );
+        }
+      }
+    } catch ( MetaStoreException e ) {
+      // exception muffler
+    }
+
+    // Get the step
     StepMeta stepMeta = transMeta.findStep( dataServiceProperties.getStepName() );
 
-    DataServiceMeta dataServiceMeta = dataServiceMetaFactory.createDataService( stepMeta );
+    DataServiceMeta dataServiceMeta = dataServiceMetaFactory.createDataService( stepMeta ); // try use createStreamingDataService ??? are we always streaming???
     if ( dataServiceMeta != null ) {
       dataServiceMeta.setName( dataServiceProperties.getName() );
-      dataServiceMeta.setStreaming( dataServiceProperties.isStreaming() );
-      dataServiceMeta.setRowLimit( dataServiceProperties.getRowLimit() );
-      dataServiceMeta.setTimeLimit( dataServiceProperties.getTimeLimit() );
-
+      dataServiceMeta.setStreaming( dataServiceProperties.streaming );
+      dataServiceMeta.setRowLimit( dataServiceProperties.rowLimit );
+      dataServiceMeta.setTimeLimit( dataServiceProperties.timeLimit );
       return dataServiceMeta;
     }
 
@@ -126,23 +156,45 @@ public class UnnamedDataServiceResolver implements DataServiceResolver {
   }
 
   private class DataServiceProperties {
-    private final String name;
-    private final String ktrPath;
-    private final String ktrName;
-    private final String stepName;
-    private final boolean streaming;
-    private final int rowLimit;
-    private final long timeLimit;
+    private String name;
+    private String ktrPath;
+    private String ktrName;
+    private String stepName;
+    private boolean streaming;
+    private int rowLimit;
+    private long timeLimit;
 
-    private DataServiceProperties( String name, String ktrPath, String ktrName, String stepName, boolean streaming, int rowLimit, long timeLimit ) {
+    private DataServiceProperties( String name, String ktrPath, String ktrName ) {
       this.name = name;
-
       this.ktrPath = ktrPath;
       this.ktrName = ktrName;
-      this.stepName = stepName;
+    }
 
+    public void setName( String name ) {
+      this.name = name;
+    }
+
+    public void setKtrPath( String ktrPath ) {
+      this.ktrPath = ktrPath;
+    }
+
+    public void setKtrName( String ktrName ) {
+      this.ktrName = ktrName;
+    }
+
+    public void setStepName( String stepName ) {
+      this.stepName = stepName;
+    }
+
+    public void setStreaming( boolean streaming ) {
       this.streaming = streaming;
+    }
+
+    public void setRowLimit( int rowLimit ) {
       this.rowLimit = rowLimit;
+    }
+
+    public void setTimeLimit( long timeLimit ) {
       this.timeLimit = timeLimit;
     }
 
