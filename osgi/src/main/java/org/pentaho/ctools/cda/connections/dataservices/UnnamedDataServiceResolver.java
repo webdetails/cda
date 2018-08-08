@@ -21,6 +21,7 @@ import org.pentaho.metastore.api.IMetaStoreAttribute;
 import org.pentaho.metastore.api.IMetaStoreElementType;
 import org.pentaho.metastore.api.exceptions.MetaStoreException;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,7 @@ public class UnnamedDataServiceResolver implements DataServiceResolver {
   private final String repoUsername;
   private final String repoPassword;
 
-  private final HashMap<String, DataServiceMeta> dataServiceMetaCache;
+  private final HashMap<String, DataServiceMetaCacheElement> dataServiceMetaCache;
 
   public UnnamedDataServiceResolver( IDataServiceMetaFactory dataServiceMetaFactory, Context context, String repositoryName, String username, String password ) {
     this.dataServiceMetaFactory = dataServiceMetaFactory;
@@ -80,19 +81,30 @@ public class UnnamedDataServiceResolver implements DataServiceResolver {
   }
 
   private DataServiceMeta getDataServiceMeta( String dataServiceName ) throws KettleException {
-    // TODO All the logic of caching
-
-    DataServiceMeta dataServiceMeta = this.dataServiceMetaCache.get( dataServiceName );
+    DataServiceMeta dataServiceMeta = getCachedDataServiceMeta( dataServiceName );
     if ( dataServiceMeta == null ) {
       DataServiceProperties dataServiceProperties = findDataServiceProperties( dataServiceName );
 
       if ( dataServiceProperties != null ) {
         dataServiceMeta = this.createDataServiceMeta( dataServiceProperties );
-        this.dataServiceMetaCache.put( dataServiceName, dataServiceMeta );
+        this.dataServiceMetaCache.put( dataServiceName, new DataServiceMetaCacheElement( dataServiceMeta ) );
       }
     }
 
     return dataServiceMeta;
+  }
+
+  private DataServiceMeta getCachedDataServiceMeta( String dataServiceName ) {
+    //TODO: rethink caching
+    long fiveMinutesInMills = 5L * 60L * 1000L;
+    DataServiceMetaCacheElement dataServiceMetaCacheElement = this.dataServiceMetaCache.get( dataServiceName );
+    if ( dataServiceMetaCacheElement != null ) {
+      Instant cacheInstant = dataServiceMetaCacheElement.getCacheInstant();
+      if ( cacheInstant.toEpochMilli() + Instant.now().toEpochMilli() < fiveMinutesInMills ) {
+        return dataServiceMetaCacheElement.getDataServiceMeta();
+      }
+    }
+    return null;
   }
 
   private DataServiceMeta createDataServiceMeta( DataServiceProperties dataServiceProperties ) throws KettleException {
@@ -227,6 +239,24 @@ public class UnnamedDataServiceResolver implements DataServiceResolver {
     }
   }
 
+  private class DataServiceMetaCacheElement {
+    private Instant cacheInstant;
+    private DataServiceMeta dataServiceMeta;
+
+    public DataServiceMetaCacheElement( DataServiceMeta dataServiceMeta ) {
+      this.cacheInstant = Instant.now();
+      this.dataServiceMeta = dataServiceMeta;
+    }
+
+    public Instant getCacheInstant() {
+      return cacheInstant;
+    }
+
+    public DataServiceMeta getDataServiceMeta() {
+      return dataServiceMeta;
+    }
+  }
+
   @Override
   public DataServiceMeta getDataService( String dataServiceName ) {
     try {
@@ -239,7 +269,11 @@ public class UnnamedDataServiceResolver implements DataServiceResolver {
 
   @Override
   public List<DataServiceMeta> getDataServices( Function<Exception, Void> logger ) {
-    return new ArrayList<>( this.dataServiceMetaCache.values() );
+    List<DataServiceMeta> elements = new ArrayList();
+    for ( DataServiceMetaCacheElement cacheElement : this.dataServiceMetaCache.values() ) {
+      elements.add( cacheElement.getDataServiceMeta() );
+    }
+    return elements;
   }
 
   @Override
