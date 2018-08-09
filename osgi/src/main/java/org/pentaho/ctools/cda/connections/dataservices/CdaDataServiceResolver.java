@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class UnnamedDataServiceResolver implements DataServiceResolver {
+public class CdaDataServiceResolver implements DataServiceResolver {
   private IDataServiceMetaFactory dataServiceMetaFactory;
   private Context context;
 
@@ -47,9 +47,17 @@ public class UnnamedDataServiceResolver implements DataServiceResolver {
   private final String repoUsername;
   private final String repoPassword;
 
+  private String dataServiceName;
+  private String ktrPath;
+  private String ktrName;
+  private String stepName;
+  private boolean isStreaming;
+  private int rowLimit;
+  private long timeLimit;
+
   private final HashMap<String, DataServiceMetaCacheElement> dataServiceMetaCache;
 
-  public UnnamedDataServiceResolver( IDataServiceMetaFactory dataServiceMetaFactory, Context context, String repositoryName, String username, String password ) {
+  public CdaDataServiceResolver( IDataServiceMetaFactory dataServiceMetaFactory, Context context, String repositoryName, String username, String password ) {
     this.dataServiceMetaFactory = dataServiceMetaFactory;
     this.context = context;
 
@@ -63,47 +71,42 @@ public class UnnamedDataServiceResolver implements DataServiceResolver {
   @Override
   public Builder createBuilder( SQL sql ) throws KettleException {
     final String dataServiceName = sql.getServiceName();
-
     DataServiceMeta dataServiceMeta = getDataServiceMeta( dataServiceName );
 
-    if ( dataServiceMeta != null ) {
-      if ( dataServiceMeta.isStreaming() ) {
-        return new DataServiceExecutor.Builder( sql, dataServiceMeta, context )
-            .rowLimit( dataServiceMeta.getRowLimit() ).timeLimit( dataServiceMeta.getTimeLimit() );
-      }
-
+    if ( dataServiceMeta == null ) {
       return new DataServiceExecutor.Builder( sql, dataServiceMeta, context );
     }
-
+    if ( dataServiceMeta.isStreaming() ) {
+      return new DataServiceExecutor.Builder( sql, dataServiceMeta, context )
+          .rowLimit( dataServiceMeta.getRowLimit() ).timeLimit( dataServiceMeta.getTimeLimit() );
+    }
     // data service not found
     return null;
   }
 
-  private DataServiceProperties findDataServiceProperties( String dataServiceName ) {
+  private void findDataServiceProperties( String dataServiceName ) {
     // TODO All the logic of data service registration and discover
-
+    /*
+        The ktrPaths and names are hardcoded here for test purposes
+     */
+    this.dataServiceName = dataServiceName;
     if ( dataServiceName.equals( "plugin_sample_real_time_require" ) ) {
-      return new DataServiceProperties( dataServiceName, "/public/plugin-samples/pentaho-cdf-dd/realtime", "real_time" );
+      this.ktrPath = "/public/plugin-samples/pentaho-cdf-dd/realtime";
+      this.ktrName = "real_time";
     }
-
     if ( dataServiceName.equals( "ricardo" ) || dataServiceName.equals( "nelson" ) ) {
-      return new DataServiceProperties( dataServiceName, "/public", "mega" );
+      this.ktrPath = "/public";
+      this.ktrName = "mega";
     }
-
-    return null;
   }
 
   private DataServiceMeta getDataServiceMeta( String dataServiceName ) throws KettleException {
     DataServiceMeta dataServiceMeta = getCachedDataServiceMeta( dataServiceName );
     if ( dataServiceMeta == null ) {
-      DataServiceProperties dataServiceProperties = findDataServiceProperties( dataServiceName );
-
-      if ( dataServiceProperties != null ) {
-        dataServiceMeta = this.createDataServiceMeta( dataServiceProperties );
-        this.dataServiceMetaCache.put( dataServiceName, new DataServiceMetaCacheElement( dataServiceMeta ) );
-      }
+      findDataServiceProperties( dataServiceName );
+      dataServiceMeta = this.createDataServiceMeta();
+      this.dataServiceMetaCache.put( dataServiceName, new DataServiceMetaCacheElement( dataServiceMeta ) );
     }
-
     return dataServiceMeta;
   }
 
@@ -120,7 +123,7 @@ public class UnnamedDataServiceResolver implements DataServiceResolver {
     return null;
   }
 
-  private DataServiceMeta createDataServiceMeta( DataServiceProperties dataServiceProperties ) throws KettleException {
+  private DataServiceMeta createDataServiceMeta() throws KettleException {
     // Connecting to the repository
     RepositoriesMeta repositoriesMeta = new RepositoriesMeta();
     repositoriesMeta.readData();
@@ -132,142 +135,51 @@ public class UnnamedDataServiceResolver implements DataServiceResolver {
         Repository.class
     );
     repository.init( repositoryMeta );
-
     repository.connect( repoUsername, repoPassword );
 
     // Find the directory
     RepositoryDirectoryInterface rootTree = repository.loadRepositoryDirectoryTree();
-    RepositoryDirectoryInterface ktrDirectory = rootTree.findDirectory( dataServiceProperties.getKtrPath() );
+    RepositoryDirectoryInterface ktrDirectory = rootTree.findDirectory( ktrPath );
 
     // Load the transformation
-    TransMeta transMeta = repository.loadTransformation( dataServiceProperties.getKtrName(), ktrDirectory, null, true, null );
+    TransMeta transMeta = repository.loadTransformation( ktrName, ktrDirectory, null, true, null );
 
     // Load the Metastore info and set values in dataServiceProperties
     try {
       IMetaStoreElementType iMetaStoreElementType = transMeta.getEmbeddedMetaStore().getElementTypeByName( "pentaho", "Kettle Data Service" );
-      List<IMetaStoreAttribute> iMetaStoreAttributes = iMetaStoreAttributes = transMeta.getEmbeddedMetaStore().getElement( "pentaho",
-          iMetaStoreElementType, dataServiceProperties.getName() ).getChildren();
+      List<IMetaStoreAttribute> iMetaStoreAttributes = transMeta.getEmbeddedMetaStore().getElement( "pentaho",
+          iMetaStoreElementType, this.dataServiceName ).getChildren();
       for ( IMetaStoreAttribute iMetaStoreAttribute : iMetaStoreAttributes ) {
         if ( iMetaStoreAttribute.getId().equals( "streaming" ) ) {
-          dataServiceProperties.setStreaming( iMetaStoreAttribute.getValue().toString().toUpperCase().equals( "Y" ) );
+          this.isStreaming = iMetaStoreAttribute.getValue().toString().toUpperCase().equals( "Y" );
         }
         if ( iMetaStoreAttribute.getId().equals( "time_limit" ) ) {
-          dataServiceProperties.setTimeLimit( Integer.parseInt( iMetaStoreAttribute.getValue().toString() ) );
+          this.timeLimit = Integer.parseInt( iMetaStoreAttribute.getValue().toString() );
         }
         if ( iMetaStoreAttribute.getId().equals( "row_limit" ) ) {
-          dataServiceProperties.setRowLimit( Integer.parseInt( iMetaStoreAttribute.getValue().toString() ) );
+          this.rowLimit = Integer.parseInt( iMetaStoreAttribute.getValue().toString() );
         }
         if ( iMetaStoreAttribute.getId().equals( "step_name" ) ) {
-          dataServiceProperties.setStepName( iMetaStoreAttribute.getValue().toString() );
+          this.stepName = iMetaStoreAttribute.getValue().toString();
         }
       }
     } catch ( MetaStoreException e ) {
-      // exception muffler
+      // Could not get the metastore
+      return null;
     }
 
     // Get the step
-    StepMeta stepMeta = transMeta.findStep( dataServiceProperties.getStepName() );
+    StepMeta stepMeta = transMeta.findStep( this.stepName );
 
-    DataServiceMeta dataServiceMeta = dataServiceMetaFactory.createDataService( stepMeta ); // try use createStreamingDataService ??? are we always streaming???
+    // Create the Dataservice
+    DataServiceMeta dataServiceMeta = dataServiceMetaFactory.createDataService( stepMeta );
     if ( dataServiceMeta != null ) {
-      dataServiceMeta.setName( dataServiceProperties.getName() );
-      dataServiceMeta.setStreaming( dataServiceProperties.streaming );
-      dataServiceMeta.setRowLimit( dataServiceProperties.rowLimit );
-      dataServiceMeta.setTimeLimit( dataServiceProperties.timeLimit );
-      return dataServiceMeta;
+      dataServiceMeta.setName( this.dataServiceName );
+      dataServiceMeta.setStreaming( this.isStreaming );
+      dataServiceMeta.setRowLimit( this.rowLimit );
+      dataServiceMeta.setTimeLimit( this.timeLimit );
     }
-
-    return null;
-  }
-
-  private class DataServiceProperties {
-    private String name;
-    private String ktrPath;
-    private String ktrName;
-    private String stepName;
-    private boolean streaming;
-    private int rowLimit;
-    private long timeLimit;
-
-    private DataServiceProperties( String name, String ktrPath, String ktrName ) {
-      this.name = name;
-      this.ktrPath = ktrPath;
-      this.ktrName = ktrName;
-    }
-
-    public void setName( String name ) {
-      this.name = name;
-    }
-
-    public void setKtrPath( String ktrPath ) {
-      this.ktrPath = ktrPath;
-    }
-
-    public void setKtrName( String ktrName ) {
-      this.ktrName = ktrName;
-    }
-
-    public void setStepName( String stepName ) {
-      this.stepName = stepName;
-    }
-
-    public void setStreaming( boolean streaming ) {
-      this.streaming = streaming;
-    }
-
-    public void setRowLimit( int rowLimit ) {
-      this.rowLimit = rowLimit;
-    }
-
-    public void setTimeLimit( long timeLimit ) {
-      this.timeLimit = timeLimit;
-    }
-
-    String getName() {
-      return this.name;
-    }
-
-    String getKtrPath() {
-      return ktrPath;
-    }
-
-    String getKtrName() {
-      return ktrName;
-    }
-
-    String getStepName() {
-      return stepName;
-    }
-
-    boolean isStreaming() {
-      return streaming;
-    }
-
-    int getRowLimit() {
-      return rowLimit;
-    }
-
-    long getTimeLimit() {
-      return timeLimit;
-    }
-  }
-
-  private class DataServiceMetaCacheElement {
-    private Instant cacheInstant;
-    private DataServiceMeta dataServiceMeta;
-
-    public DataServiceMetaCacheElement( DataServiceMeta dataServiceMeta ) {
-      this.cacheInstant = Instant.now();
-      this.dataServiceMeta = dataServiceMeta;
-    }
-
-    public Instant getCacheInstant() {
-      return cacheInstant;
-    }
-
-    public DataServiceMeta getDataServiceMeta() {
-      return dataServiceMeta;
-    }
+    return dataServiceMeta;
   }
 
   @Override
@@ -302,5 +214,23 @@ public class UnnamedDataServiceResolver implements DataServiceResolver {
   @Override
   public List<String> getDataServiceNames( String dataServiceName ) {
     return this.getDataServiceNames();
+  }
+
+  private class DataServiceMetaCacheElement {
+    private Instant cacheInstant;
+    private DataServiceMeta dataServiceMeta;
+
+    public DataServiceMetaCacheElement( DataServiceMeta dataServiceMeta ) {
+      this.cacheInstant = Instant.now();
+      this.dataServiceMeta = dataServiceMeta;
+    }
+
+    public Instant getCacheInstant() {
+      return cacheInstant;
+    }
+
+    public DataServiceMeta getDataServiceMeta() {
+      return dataServiceMeta;
+    }
   }
 }
