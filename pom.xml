@@ -51,6 +51,7 @@
     <pdi-dataservice-client-plugin.version>9.0.0.0-SNAPSHOT</pdi-dataservice-client-plugin.version>
     <pdi.version>9.0.0.0-SNAPSHOT</pdi.version>
     <pentaho-cpf-plugin.version>9.0.0.0-SNAPSHOT</pentaho-cpf-plugin.version>
+    <pentaho-json.version>${project.version}</pentaho-json.version>
     <mondrian.version>9.0.0.0-SNAPSHOT</mondrian.version>
     <marketplace.metadata.development_stage.phase>2</marketplace.metadata.development_stage.phase>
     <marketplace.metadata.samples_url>http://nexus.pentaho.org/content/groups/omni/pentaho/cda-samples/6.0.0.0-353/cda-samples-6.0.0.0-353.zip</marketplace.metadata.samples_url>
@@ -64,6 +65,8 @@
     <cxf.karaf.version>3.0.13</cxf.karaf.version>
     <commons-codec.version>1.9</commons-codec.version>
     <commons-collections.version>3.2.2</commons-collections.version>
+    <commons-logging.version>1.1.3</commons-logging.version>
+    <guava.version>17.0</guava.version>
     <metastore.version>9.0.0.0-SNAPSHOT</metastore.version>
     <xml-apis.version>1.3.04</xml-apis.version>
     <dom4j.version>1.6.1</dom4j.version>
@@ -153,6 +156,11 @@
         <version>${pentaho-reporting.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.pentaho.reporting.library</groupId>
+        <artifactId>libbase</artifactId>
+        <version>${pentaho-reporting.version}</version>
+      </dependency>
+      <dependency>
         <groupId>pentaho-kettle</groupId>
         <artifactId>kettle-core</artifactId>
         <version>${pdi.version}</version>
@@ -233,9 +241,19 @@
         <version>${pdi.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.pentaho</groupId>
+        <artifactId>json</artifactId>
+        <version>${pentaho-json.version}</version>
+      </dependency>
+      <dependency>
         <groupId>io.reactivex.rxjava2</groupId>
         <artifactId>rxjava</artifactId>
         <version>${rxjava.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>${commons-logging.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-codec</groupId>
@@ -246,6 +264,11 @@
         <groupId>commons-collections</groupId>
         <artifactId>commons-collections</artifactId>
         <version>${commons-collections.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
