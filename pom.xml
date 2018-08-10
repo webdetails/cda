@@ -5,11 +5,11 @@
   <parent>
     <groupId>org.pentaho</groupId>
     <artifactId>pentaho-ce-jar-parent-pom</artifactId>
-    <version>8.1.0.0-SNAPSHOT</version>
+    <version>8.1.0.3-538</version>
   </parent>
   <groupId>pentaho</groupId>
   <artifactId>cda-plugin</artifactId>
-  <version>8.1.0.0-SNAPSHOT</version>
+  <version>8.1.0.3-538</version>
   <packaging>pom</packaging>
   <licenses>
     <license>
@@ -37,18 +37,18 @@
   <properties>
     <marketplace.metadata.sequential.build.id>${sequential.build.id}</marketplace.metadata.sequential.build.id>
     <sequential.build.id>manual-${maven.build.timestamp}</sequential.build.id>
-    <pentaho-metadata.version>8.1.0.0-SNAPSHOT</pentaho-metadata.version>
+    <pentaho-metadata.version>8.1.0.3-538</pentaho-metadata.version>
     <marketplace.metadata.package_url></marketplace.metadata.package_url>
     <marketplace.metadata.description></marketplace.metadata.description>
     <project.stage>master</project.stage>
     <dependency.mockito-all.revision>1.8.4</dependency.mockito-all.revision>
     <marketplace.metadata.min_parent_version>1.0</marketplace.metadata.min_parent_version>
     <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
-    <pentaho-reporting.version>8.1.0.0-SNAPSHOT</pentaho-reporting.version>
-    <pdi-dataservice-client-plugin.version>8.1.0.0-SNAPSHOT</pdi-dataservice-client-plugin.version>
-    <pdi.version>8.1.0.0-SNAPSHOT</pdi.version>
-    <pentaho-cpf-plugin.version>8.1.0.0-SNAPSHOT</pentaho-cpf-plugin.version>
-    <mondrian.version>8.1.0.0-SNAPSHOT</mondrian.version>
+    <pentaho-reporting.version>8.1.0.3-538</pentaho-reporting.version>
+    <pdi-dataservice-client-plugin.version>8.1.0.3-538</pdi-dataservice-client-plugin.version>
+    <pdi.version>8.1.0.3-538</pdi.version>
+    <pentaho-cpf-plugin.version>8.1.0.3-538</pentaho-cpf-plugin.version>
+    <mondrian.version>8.1.0.3-538</mondrian.version>
     <marketplace.metadata.development_stage.phase>2</marketplace.metadata.development_stage.phase>
     <marketplace.metadata.samples_url>http://nexus.pentaho.org/content/groups/omni/pentaho/cda-samples/6.0.0.0-353/cda-samples-6.0.0.0-353.zip</marketplace.metadata.samples_url>
     <dependency.jericho-html.revision>3.1</dependency.jericho-html.revision>
