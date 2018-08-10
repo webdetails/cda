@@ -13,7 +13,12 @@
 
 package org.pentaho.ctools.cda.connections.dataservices;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.pentaho.di.core.Const;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.plugins.PluginRegistry;
 import org.pentaho.di.core.plugins.RepositoryPluginType;
@@ -25,7 +30,6 @@ import org.pentaho.di.repository.RepositoryMeta;
 import org.pentaho.di.trans.TransMeta;
 import org.pentaho.di.trans.dataservice.Context;
 import org.pentaho.di.trans.dataservice.DataServiceExecutor;
-import org.pentaho.di.trans.dataservice.DataServiceExecutor.Builder;
 import org.pentaho.di.trans.dataservice.DataServiceMeta;
 import org.pentaho.di.trans.dataservice.IDataServiceMetaFactory;
 import org.pentaho.di.trans.dataservice.resolvers.DataServiceResolver;
@@ -34,12 +38,17 @@ import org.pentaho.metastore.api.IMetaStoreAttribute;
 import org.pentaho.metastore.api.IMetaStoreElementType;
 import org.pentaho.metastore.api.exceptions.MetaStoreException;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CdaDataServiceResolver implements DataServiceResolver {
+  private static Log logger = LogFactory.getLog( CdaDataServiceResolver.class );
   private IDataServiceMetaFactory dataServiceMetaFactory;
   private Context context;
 
@@ -57,7 +66,8 @@ public class CdaDataServiceResolver implements DataServiceResolver {
 
   private final HashMap<String, DataServiceMetaCacheElement> dataServiceMetaCache;
 
-  public CdaDataServiceResolver( IDataServiceMetaFactory dataServiceMetaFactory, Context context, String repositoryName, String username, String password ) {
+  public CdaDataServiceResolver( IDataServiceMetaFactory dataServiceMetaFactory, Context context, String
+      repositoryName, String username, String password ) {
     this.dataServiceMetaFactory = dataServiceMetaFactory;
     this.context = context;
 
@@ -69,7 +79,7 @@ public class CdaDataServiceResolver implements DataServiceResolver {
   }
 
   @Override
-  public Builder createBuilder( SQL sql ) throws KettleException {
+  public  DataServiceExecutor.Builder createBuilder( SQL sql ) throws KettleException {
     final String dataServiceName = sql.getServiceName();
     DataServiceMeta dataServiceMeta = getDataServiceMeta( dataServiceName );
 
@@ -85,18 +95,21 @@ public class CdaDataServiceResolver implements DataServiceResolver {
   }
 
   private void findDataServiceProperties( String dataServiceName ) {
-    // TODO All the logic of data service registration and discover
-    /*
-        The ktrPaths and names are hardcoded here for test purposes
-     */
     this.dataServiceName = dataServiceName;
-    if ( dataServiceName.equals( "plugin_sample_real_time_require" ) ) {
-      this.ktrPath = "/public/plugin-samples/pentaho-cdf-dd/realtime";
-      this.ktrName = "real_time";
-    }
-    if ( dataServiceName.equals( "ricardo" ) || dataServiceName.equals( "nelson" ) ) {
-      this.ktrPath = "/public";
-      this.ktrName = "mega";
+
+    // load recorded dataservices from local json file located in KETTLE_HOME
+    File file = new File( Const.getKettleDirectory() + Const.FILE_SEPARATOR + "dataServices.json" );
+    ObjectMapper mapper = new ObjectMapper();
+
+    // get the ktr path and name for this dataservice from the loaded json file
+    try {
+      Map<String, LinkedHashMap<String, String>> map = mapper.readValue( file, new TypeReference<Map<String, LinkedHashMap<String, String>>>() {
+      } );
+      LinkedHashMap<String, String> ktrLocation = map.get( dataServiceName );
+      this.ktrPath = ktrLocation.get( "ktrPath" );
+      this.ktrName = ktrLocation.get( "ktrName" );
+    } catch ( IOException e ) {
+      logger.error( e );
     }
   }
 

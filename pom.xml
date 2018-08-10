@@ -67,6 +67,7 @@
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-logging.version>1.1.3</commons-logging.version>
     <guava.version>17.0</guava.version>
+    <dependency.com.fasterxml.jackson.core.version>2.9.5</dependency.com.fasterxml.jackson.core.version>
     <metastore.version>9.0.0.0-SNAPSHOT</metastore.version>
     <xml-apis.version>1.3.04</xml-apis.version>
     <dom4j.version>1.6.1</dom4j.version>
@@ -281,6 +282,16 @@
         <artifactId>mockito-all</artifactId>
         <version>${dependency.mockito-all.revision}</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${dependency.com.fasterxml.jackson.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>${dependency.com.fasterxml.jackson.core.version}</version>
       </dependency>
       <dependency>
         <groupId>xml-apis</groupId>
