@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin title="Pentaho Community Data Access" name="cda"> <!--loader="OVERRIDING"-->
+
+	<!--lifecycle-listener class="pt.webdetails.cda.CdaLifecycleListener"/-->
+
+	<content-types>
+
+		<content-type type="cda" mime-type="text/html">
+    		<title>Data Access</title>
+     		<description>Community Data Access File</description>
+
+    	</content-type>
+	</content-types>
+
+</plugin>

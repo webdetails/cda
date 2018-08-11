@@ -14,6 +14,7 @@
     <module>cda</module>
     <module>cda-disabled</module>
     <module>cda-samples</module>
+    <module>cda-proxy</module>
   </modules>
   <properties>
     <cda.root.dir>/cda</cda.root.dir>
@@ -29,6 +30,12 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>cda-pentaho</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>cda-proxy</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>

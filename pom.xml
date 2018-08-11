@@ -21,6 +21,7 @@
     <module>core</module>
     <module>pentaho</module>
     <module>assemblies</module>
+    <module>proxy</module>
   </modules>
   <scm>
     <connection>scm:git:git@github.com:webdetails/${project.artifactId}.git</connection>
