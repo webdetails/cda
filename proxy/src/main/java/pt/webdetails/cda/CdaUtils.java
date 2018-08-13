@@ -13,6 +13,7 @@
 
 package pt.webdetails.cda;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -27,7 +28,9 @@ import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 
 import pt.webdetails.cpf.utils.MimeTypes;
 
-import java.util.Iterator;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -36,20 +39,18 @@ import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import com.sun.jersey.api.json.JSONConfiguration;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 
 @Path( "/cda/api" )
 public class CdaUtils {
   private static final Log logger = LogFactory.getLog(CdaUtils.class);
 
-  //TODO - get properties to be set somehwere...
-  private static String CDA_HOST = "localhost";
-  private static String CDA_PORT = "8585";
-  private static String USER = "admin";
-  private static String PASS = "password";
+  private static String CDA_HOST = System.getProperty( "cda.hostname" );
+  private static String CDA_PORT = System.getProperty( "cda.port" );
+  private static String USER = System.getProperty( "repos.user" );
+  private static String PASS = System.getProperty( "repos.password" );
   private static String URL_DO_QUERY = "http://" + CDA_HOST + ":"
-      + CDA_PORT + "/pentaho/plugin/cda/api/doQuery?";
+      + CDA_PORT + "/pentaho/plugin/cda/api/doQuery";
 
 
   public CdaUtils() {
@@ -75,18 +76,25 @@ public class CdaUtils {
 
     //Invoke Rest endpoint with same params
     WebResource webResource = client.resource( url );
-    MultivaluedMapImpl formData = new MultivaluedMapImpl();
-    Iterator<String> it = formParams.keySet().iterator();
-    String key;
-    while(it.hasNext()){
-      key = it.next();
-      formData.add(key, formParams.get(key) );
-    }
+
     try {
       ClientResponse response = webResource.type(MediaType.APPLICATION_FORM_URLENCODED)
-          .post(ClientResponse.class, formData);
+          .post(ClientResponse.class, formParams);
 
-      return response.getEntity(StreamingOutput.class);
+      if ( response.getStatus() == 200 ) {
+        InputStream in = response.getEntityInputStream();
+
+        return new StreamingOutput() {
+          @Override
+          public void write(OutputStream outputStream) throws IOException, WebApplicationException {
+            try {
+              IOUtils.copy( in, outputStream );
+            } finally {
+              IOUtils.closeQuietly( in );
+            }
+          }
+        };
+      }
     } catch ( Exception ex ) {
       logger.fatal(ex);
     } finally {
