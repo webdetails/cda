@@ -35,7 +35,7 @@
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
-      <artifactId>cda-proxy</artifactId>
+      <artifactId>cda-proxy-impl</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
