@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+  <bean id="repositoryProvider" class="org.pentaho.ctools.cda.RepositoryProvider" scope="singleton">
+    <argument value="${repos.repoName}"/>
+    <argument value="${repos.user}"/>
+    <argument value="${repos.password}"/>
+  </bean>
+
+  <service ref="repositoryProvider" interface="org.pentaho.osgi.kettle.repository.locator.api.KettleRepositoryProvider" ranking="150"/>
+
+</blueprint>
