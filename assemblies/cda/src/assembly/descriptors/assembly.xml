@@ -24,6 +24,9 @@
       <outputDirectory>${cda.root.dir}/lib</outputDirectory>
       <scope>runtime</scope>
       <useTransitiveDependencies>false</useTransitiveDependencies>
+      <excludes>
+        <exclude>pentaho:cda-proxy</exclude>
+      </excludes>
     </dependencySet>
   </dependencySets>
 </assembly>

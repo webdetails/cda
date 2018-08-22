@@ -1,29 +1,19 @@
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd">
-  <id>disabled</id>
+  <id>cda-proxy</id>
   <formats>
     <format>zip</format>
   </formats>
 
   <includeBaseDirectory>false</includeBaseDirectory>
 
-  <files>
-    <file>
-      <source>${basedir}/../target/processed/plugin.xml.disabled</source>
-      <outputDirectory>${cda.root.dir}</outputDirectory>
-      <destName>plugin.xml</destName>
-    </file>
-  </files>
-
   <fileSets>
     <fileSet>
-      <directory>${basedir}/../target/processed</directory>
+      <directory>${basedir}/target</directory>
       <outputDirectory>${cda.root.dir}</outputDirectory>
       <excludes>
-        <exclude>plugin.xml</exclude>
-        <exclude>marketplace.xml</exclude>
-        <exclude>plugin.xml.disabled</exclude>
+        <exclude>archive-tmp</exclude>
       </excludes>
     </fileSet>
   </fileSets>
@@ -34,7 +24,12 @@
       <scope>runtime</scope>
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <excludes>
-        <exclude>pentaho:cda-proxy</exclude>
+        <exclude>pentaho:cda-core</exclude>
+        <exclude>pentaho:cda-pentaho</exclude>
+        <exclude>pentaho:cpf-core</exclude>
+        <exclude>org.pentaho.di.plugins:kettle-log4j-core</exclude>
+        <exclude>net.htmlparser.jericho:jericho-html</exclude>
+        <exclude>org.pentaho:json</exclude>
       </excludes>
     </dependencySet>
   </dependencySets>
