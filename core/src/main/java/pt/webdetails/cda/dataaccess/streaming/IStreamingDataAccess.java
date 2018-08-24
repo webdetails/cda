@@ -13,13 +13,13 @@
 
 package pt.webdetails.cda.dataaccess.streaming;
 
-import javax.swing.table.TableModel;
-
-import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import org.pentaho.di.core.RowMetaAndData;
 import pt.webdetails.cda.dataaccess.DataAccess;
 import pt.webdetails.cda.dataaccess.QueryException;
-import pt.webdetails.cda.dataaccess.SimpleDataAccess;
 import pt.webdetails.cda.query.QueryOptions;
+
+import java.util.List;
 
 /**
  * 
@@ -29,12 +29,9 @@ public interface IStreamingDataAccess extends DataAccess {
   /**
    * 
    * @param queryOptions
-   * @return
+   * @param consumer
    * @throws QueryException
    */
-  IPushWindowQuery doPushStreamQuery( QueryOptions queryOptions ) throws QueryException;
+  void doPushStreamQuery( QueryOptions queryOptions, Observer<List<RowMetaAndData>> consumer ) throws QueryException;
 
-  public interface IPushWindowQuery  extends SimpleDataAccess.IDataSourceQuery {
-    ObservableSource<TableModel> getTableSource();
-  }
 }

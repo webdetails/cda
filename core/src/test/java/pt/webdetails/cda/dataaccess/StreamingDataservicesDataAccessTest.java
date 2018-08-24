@@ -13,12 +13,15 @@
 
 package pt.webdetails.cda.dataaccess;
 
+import io.reactivex.subjects.PublishSubject;
 import junit.framework.TestCase;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.junit.Before;
 import org.junit.Test;
+import org.pentaho.di.core.RowMetaAndData;
+import org.pentaho.di.trans.dataservice.client.api.IDataServiceClientService;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.core.ParameterMapping;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
@@ -26,14 +29,20 @@ import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.SQ
 import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.dataservices.DataservicesConnection;
 import pt.webdetails.cda.connections.dataservices.DataservicesConnectionInfo;
+import pt.webdetails.cda.query.QueryOptions;
+import pt.webdetails.cda.settings.CdaSettings;
+import pt.webdetails.cda.xml.DomVisitor;
 import pt.webdetails.cpf.Util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static pt.webdetails.cda.test.util.CdaTestHelper.getMockEnvironment;
 import static pt.webdetails.cda.test.util.CdaTestHelper.initBareEngine;
@@ -65,19 +74,14 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
   }
 
   @Test
-  public void testGetComponentRefreshPeriod() {
-    assertEquals( 10, da.getComponentRefreshPeriod() );
-  }
-
-  @Test
   public void testConstructor() throws Exception {
     Element element = getElementFromSnippet("<element><DataServiceQuery>SELECT * FROM NOWHERE</DataServiceQuery>"
       + "<StreamingDataServiceName>DATA_SERVICE_NAME</StreamingDataServiceName>"
       + "<WindowMode>WINDOW_MODE</WindowMode>"
-      + ""+ "<WindowSize>11111</WindowSize>"
-      + ""+ "<WindowEvery>22222</WindowEvery>"
-      + ""+ "<WindowLimit>33333</WindowLimit>"
-      + ""+ "<ComponentRefreshPeriod>44444</ComponentRefreshPeriod></element>");
+      + "<WindowSize>11111</WindowSize>"
+      + "<WindowEvery>22222</WindowEvery>"
+      + "<WindowLimit>33333</WindowLimit>"
+      + "</element>");
     StreamingDataservicesDataAccess streamingDataservicesDataAccess = new StreamingDataservicesDataAccess(element);
     assertEquals( "SELECT * FROM NOWHERE", streamingDataservicesDataAccess.getQuery() );
     assertEquals( "DATA_SERVICE_NAME", streamingDataservicesDataAccess.getDataServiceName() );
@@ -85,7 +89,6 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
     assertEquals( 11111, streamingDataservicesDataAccess.getWindowSize() );
     assertEquals( 22222, streamingDataservicesDataAccess.getWindowEvery() );
     assertEquals( 33333, streamingDataservicesDataAccess.getWindowLimit() );
-    assertEquals( 44444, streamingDataservicesDataAccess.getComponentRefreshPeriod() );
   }
 
   @Test
@@ -106,8 +109,6 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
       .filter( p -> p.getName().equals( "windowEvery" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> windowLimitProperty = daInterface.stream()
       .filter( p -> p.getName().equals( "windowLimit" ) ).collect( Collectors.toList() );
-    List<PropertyDescriptor> componentRefreshPeriodProperty = daInterface.stream()
-      .filter( p -> p.getName().equals( "componentRefreshPeriod" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> cacheProperty = daInterface.stream()
       .filter( p -> p.getName().equals( "cache" ) ).collect( Collectors.toList() );
     List<PropertyDescriptor> cacheDurationProperty = daInterface.stream()
@@ -121,7 +122,6 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
     assertEquals( 1, windowSizeProperty.size() );
     assertEquals( 1, windowEveryProperty.size() );
     assertEquals( 1, windowLimitProperty.size() );
-    assertEquals( 1, componentRefreshPeriodProperty.size() );
     assertEquals( 0, cacheProperty.size() );
     assertEquals( 0, cacheDurationProperty.size() );
     assertEquals( 0, cacheKeysProperty.size() );
@@ -147,5 +147,65 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
     SAXReader reader = new SAXReader( false );
     Document doc = reader.read( Util.toInputStream( xml ) );
     return doc.getRootElement();
+  }
+
+  @Test
+  public void testAccept() {
+    DomVisitor visitor = mock( DomVisitor.class );
+    Element element = mock( Element.class );
+    da.accept( visitor, element );
+    verify( visitor ).visit( da, element );
+  }
+
+  @Test
+  public void testDoPushStreamQuery() throws Exception {
+    QueryOptions queryOptions = mock( QueryOptions.class );
+    PublishSubject<List<RowMetaAndData>> consumer = PublishSubject.create();
+    IDataServiceClientService.IStreamingParams params = new StreamingDataservicesDataAccess.StreamingParams(
+      IDataServiceClientService.StreamingMode.ROW_BASED,
+      10,
+      1,
+      10000 );
+    DataservicesConnection connection = mock( DataservicesConnection.class );
+
+    StreamingDataservicesDataAccess streamingDataservicesDataAccess = spy( da );
+    doReturn( connection ).when( streamingDataservicesDataAccess ).getConnection();
+    doReturn( params ).when( streamingDataservicesDataAccess ).getStreamingParams();
+    doReturn( new ArrayList() ).when( streamingDataservicesDataAccess ).getParameters();
+    CdaSettings cdaSettings = mock( CdaSettings.class );
+    doReturn( cdaSettings).when( streamingDataservicesDataAccess ).getCdaSettings();
+
+    List<Parameter> parameters = streamingDataservicesDataAccess.getFilledParameters( queryOptions );
+    ParameterDataRow parameterDataRow = Parameter.createParameterDataRowFromParameters( parameters );
+    StreamingDataservicesDataAccess.PushStreamAndSQLReportDataFactory dataFactory = mock( StreamingDataservicesDataAccess.PushStreamAndSQLReportDataFactory.class );
+    doReturn( dataFactory ).when( streamingDataservicesDataAccess ).getDataFactory( connection, parameterDataRow );
+
+    streamingDataservicesDataAccess.doPushStreamQuery( queryOptions, consumer );
+    verify( streamingDataservicesDataAccess ).doPushStreamQuery( queryOptions, consumer );
+  }
+
+  @Test
+  public void testIStreamingParams(){
+    IDataServiceClientService.IStreamingParams params = spy( new StreamingDataservicesDataAccess.StreamingParams(
+      IDataServiceClientService.StreamingMode.ROW_BASED,
+      10,
+      1,
+      1000 ) );
+
+    assertEquals( 1, params.getWindowEvery() );
+    assertEquals( 1000, params.getWindowLimit() );
+    assertEquals( IDataServiceClientService.StreamingMode.ROW_BASED, params.getWindowMode() );
+    assertEquals( 10, params.getWindowSize() );
+
+    params = spy( new StreamingDataservicesDataAccess.StreamingParams(
+      IDataServiceClientService.StreamingMode.ROW_BASED.toString(),
+      20,
+      2,
+      2000 ) );
+
+    assertEquals( 2, params.getWindowEvery() );
+    assertEquals( 2000, params.getWindowLimit() );
+    assertEquals( IDataServiceClientService.StreamingMode.ROW_BASED, params.getWindowMode() );
+    assertEquals( 20, params.getWindowSize() );
   }
 }

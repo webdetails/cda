@@ -24,4 +24,18 @@
     <bean id="CdaCacheWarmup" class="pt.webdetails.cda.cache.scheduler.CdaCacheWarmer"/>
     <bean id="CdaCacheMonitor" class="pt.webdetails.cda.cache.endpoints.CacheMonitorEndpoint" />
     <bean id="CdaCacheScheduler" class="pt.webdetails.cda.cache.endpoints.CacheControllerEndpoint" />
+
+    <!-- Websocket configuration bean -->
+    <bean id="corsUtil" class="pt.webdetails.cda.utils.CorsUtil" factory-method="getInstance" />
+    <bean id="cda.plataform.websocket.query" class="org.pentaho.platform.web.websocket.WebsocketEndpointConfig">
+      <constructor-arg value="query"/>
+      <constructor-arg type="java.lang.Class" value="pt.webdetails.cda.push.CdaPushQueryEndpoint"/>
+      <constructor-arg>
+        <list>
+          <value>JSON-CDA-query</value>
+        </list>
+      </constructor-arg>
+      <constructor-arg value="#{corsUtil.isCorsRequestOriginAllowedPredicate()}" />
+      <constructor-arg value="8192" />
+    </bean>
 </beans>

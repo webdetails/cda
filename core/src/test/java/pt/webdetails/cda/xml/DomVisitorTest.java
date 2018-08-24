@@ -86,7 +86,6 @@ public class DomVisitorTest {
     when( streamingDataservicesDataAccess.getWindowSize() ).thenReturn( 0l );
     when( streamingDataservicesDataAccess.getWindowEvery() ).thenReturn( 0l );
     when( streamingDataservicesDataAccess.getWindowLimit() ).thenReturn( 0L );
-    when( streamingDataservicesDataAccess.getComponentRefreshPeriod() ).thenReturn( 9999 );
     domVisitor.visit( streamingDataservicesDataAccess, element );
 
     assertNull( element.element( "Query" ) );
@@ -97,7 +96,6 @@ public class DomVisitorTest {
     assertEquals( "0", element.element( "WindowSize" ).getText() );
     assertEquals( "0", element.element( "WindowEvery" ).getText() );
     assertEquals( "0", element.element( "WindowLimit" ).getText() );
-    assertEquals( "9999", element.element( "ComponentRefreshPeriod" ).getText() );
   }
 
   @Test
