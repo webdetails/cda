@@ -31,6 +31,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.StreamingOutput;
+import javax.ws.rs.core.UriInfo;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -60,14 +61,76 @@ public class CdaUtils {
   private static String CDA_PORT = System.getProperty( "cda.port" );
   private static String USER = System.getProperty( "repos.user" );
   private static String PASS = System.getProperty( "repos.password" );
-  private String url_do_query = "http://" + CDA_HOST + ":"
+  private String urlDoQuery = "http://" + CDA_HOST + ":"
       + CDA_PORT + "/cxf/cda/cda/api/utils/doQuery";
+  private String urlListDataAccessTypes = "http://" + CDA_HOST + ":"
+    + CDA_PORT + "/cxf/cda/cda/api/utils/listDataAccessTypes";
 
   public CdaUtils() {
     String serverFlag = System.getProperty( "cda.to_server" );
     if ( serverFlag != null && serverFlag.equals( "1" ) ) {
-      url_do_query = "http://" + CDA_HOST + ":" + CDA_PORT + "/pentaho/plugin/cda/api/doQuery";
+      urlDoQuery = "http://" + CDA_HOST + ":" + CDA_PORT + "/pentaho/plugin/cda/api/doQuery";
+      urlListDataAccessTypes = "http://" + CDA_HOST + ":" + CDA_PORT + "/pentaho/plugin/cda/api/listDataAccessTypes";
     }
+  }
+
+  private Client getClientInitialized() {
+    ClientConfig clientConfig = new DefaultClientConfig();
+    clientConfig.getFeatures().put( JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE );
+    Client client = Client.create( clientConfig );
+    client.addFilter( new HTTPBasicAuthFilter( USER, PASS ) );
+    return client;
+  }
+
+  @GET
+  @Path( "/doQuery" )
+  @Produces( { MimeTypes.JSON, MimeTypes.XML, MimeTypes.CSV, MimeTypes.XLS, MimeTypes.PLAIN_TEXT, MimeTypes.HTML } )
+  public StreamingOutput doQueryGet( @Context UriInfo urii, @Context HttpServletRequest servletRequest,
+                                    @Context HttpServletResponse servletResponse ) throws WebApplicationException {
+    //proxy request to the real CDA Endpoint
+    String url = urlDoQuery;
+
+    //Init
+    Client client = getClientInitialized();
+
+    //Invoke Rest endpoint with same params
+    WebResource webResource = client.resource( url );
+
+    // add parameters
+    if ( urii != null && urii.getQueryParameters() != null ) {
+      Iterator<String> it = urii.getQueryParameters().keySet().iterator();
+      String key;
+      while ( it.hasNext() ) {
+        key = it.next();
+        webResource = webResource.queryParam( key, urii.getQueryParameters().get( key ).get( 0 ) );
+      }
+    }
+
+    try {
+      ClientResponse response = webResource.type( MediaType.APPLICATION_FORM_URLENCODED )
+        .get( ClientResponse.class );
+
+      if ( response.getStatus() == ClientResponse.Status.OK.getStatusCode() ) {
+        InputStream in = response.getEntityInputStream();
+
+        return new StreamingOutput() {
+          @Override
+          public void write( OutputStream outputStream ) throws IOException, WebApplicationException {
+            try {
+              IOUtils.copy( in, outputStream );
+            } finally {
+              IOUtils.closeQuietly( in );
+            }
+          }
+        };
+      }
+    } catch ( Exception ex ) {
+      logger.fatal( ex );
+    } finally {
+      client.destroy();
+    }
+
+    return null;
   }
 
   @POST
@@ -79,31 +142,19 @@ public class CdaUtils {
       @Context HttpServletResponse servletResponse ) throws WebApplicationException {
 
     //proxy request to the real CDA Endpoint
-
-    String url = url_do_query + servletRequest.getQueryString();
+    String url = urlDoQuery + servletRequest.getQueryString();
 
     //Init
-    ClientConfig clientConfig = new DefaultClientConfig();
-    clientConfig.getFeatures().put( JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE );
-    Client client = Client.create( clientConfig );
-    client.addFilter( new HTTPBasicAuthFilter( USER, PASS ) );
+    Client client = getClientInitialized();
 
-    //Invoke Rest endpoint with same params, converting POST into a GET request
+    //Invoke Rest endpoint with same params
     WebResource webResource = client.resource( url );
 
-    // add parameters
-    Iterator<String> it = formParams.keySet().iterator();
-    String key;
-    while ( it.hasNext() ) {
-      key = it.next();
-      webResource = webResource.queryParam( key, formParams.get( key ).get( 0 ) );
-    }
-
     try {
-      ClientResponse response = webResource.type( MediaType.APPLICATION_OCTET_STREAM_TYPE )
-        .get( ClientResponse.class );
+      ClientResponse response = webResource.type( MediaType.APPLICATION_FORM_URLENCODED )
+        .post( ClientResponse.class, formParams );
 
-      if ( response.getStatus() == 200 ) {
+      if ( response.getStatus() == ClientResponse.Status.OK.getStatusCode() ) {
         InputStream in = response.getEntityInputStream();
 
         return new StreamingOutput() {
@@ -137,475 +188,33 @@ public class CdaUtils {
   public String listDataAccessTypes( @DefaultValue( "false" ) @QueryParam( "refreshCache" ) Boolean refreshCache )
       throws Exception {
 
-    String dataSourceDefinitions = "{\n"
-        + "\"denormalizedMdx_mondrianJdbc\": {\n"
-        + "\t\"metadata\": {\n"
-        + "\t\t\"name\": \"denormalizedMdx over mondrianJdbc\",\n"
-        + "\t\t\"conntype\": \"mondrian.jdbc\",\n"
-        + "\t\t\"datype\": \"denormalizedMdx\",\n"
-        + "\t\t\"group\": \"MDX\",\n"
-        + "\t\t\"groupdesc\": \"MDX Queries\"\n"
-        + "\t},\n"
-        + "\t\"definition\": {\n"
-        + "\t\t\"connection\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"catalog\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"driver\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"url\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"user\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"pass\": {\"type\": \"STRING\", \"placement\": \"CHILD\"}\n"
-        + "\t\t},\n"
-        + "\t\t\"dataaccess\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"access\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"parameters\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"output\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"columns\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"query\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"connection\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cache\": {\"type\": \"BOOLEAN\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"cacheDuration\": {\"type\": \"NUMERIC\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cacheKeys\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"}\n"
-        + "\t\t}\n"
-        + "\t}\n"
-        + "},\n"
-        + "\"denormalizedMdx_mondrianJndi\": {\n"
-        + "\t\"metadata\": {\n"
-        + "\t\t\"name\": \"denormalizedMdx over mondrianJndi\",\n"
-        + "\t\t\"conntype\": \"mondrian.jndi\",\n"
-        + "\t\t\"datype\": \"denormalizedMdx\",\n"
-        + "\t\t\"group\": \"MDX\",\n"
-        + "\t\t\"groupdesc\": \"MDX Queries\"\n"
-        + "\t},\n"
-        + "\t\"definition\": {\n"
-        + "\t\t\"connection\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"catalog\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"jndi\": {\"type\": \"STRING\", \"placement\": \"CHILD\"}\n"
-        + "\t\t},\n"
-        + "\t\t\"dataaccess\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"access\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"parameters\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"output\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"columns\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"query\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"connection\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cache\": {\"type\": \"BOOLEAN\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"cacheDuration\": {\"type\": \"NUMERIC\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cacheKeys\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"}\n"
-        + "\t\t}\n"
-        + "\t}\n"
-        + "},\n"
-        + "\"denormalizedOlap4j_olap4j\": {\n"
-        + "\t\"metadata\": {\n"
-        + "\t\t\"name\": \"denormalizedOlap4j over olap4j\",\n"
-        + "\t\t\"conntype\": \"olap4j.defaultolap4j\",\n"
-        + "\t\t\"datype\": \"denormalizedOlap4j\",\n"
-        + "\t\t\"group\": \"OLAP4J\",\n"
-        + "\t\t\"groupdesc\": \"OLAP4J Queries\"\n"
-        + "\t},\n"
-        + "\t\"definition\": {\n"
-        + "\t\t\"connection\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"driver\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"url\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"role\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"property\": {\"type\": \"STRING\", \"placement\": \"CHILD\"}\n"
-        + "\t\t},\n"
-        + "\t\t\"dataaccess\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"access\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"parameters\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"output\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"columns\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"query\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"connection\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cache\": {\"type\": \"BOOLEAN\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"cacheDuration\": {\"type\": \"NUMERIC\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cacheKeys\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"}\n"
-        + "\t\t}\n"
-        + "\t}\n"
-        + "},\n"
-        + "\"join\": {\n"
-        + "\t\"metadata\": {\n"
-        + "\t\t\"name\": \"join\",\n"
-        + "\t\t\"datype\": \"join\",\n"
-        + "\t\t\"group\": \"NONE\",\n"
-        + "\t\t\"groupdesc\": \"Compound Queries\"\n"
-        + "\t},\n"
-        + "\t\"definition\": {\n"
-        + "\t\t\"dataaccess\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"parameters\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"columns\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"left\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"right\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"output\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"joinType\": {\"type\": \"STRING\", \"placement\": \"CHILD\"}\n"
-        + "\t\t}\n"
-        + "\t}\n"
-        + "},\n"
-        + "\"kettle_kettleTransFromFile\": {\n"
-        + "\t\"metadata\": {\n"
-        + "\t\t\"name\": \"kettle over kettleTransFromFile\",\n"
-        + "\t\t\"conntype\": \"kettle.TransFromFile\",\n"
-        + "\t\t\"datype\": \"kettle\",\n"
-        + "\t\t\"group\": \"KETTLE\",\n"
-        + "\t\t\"groupdesc\": \"KETTLE Queries\"\n"
-        + "\t},\n"
-        + "\t\"definition\": {\n"
-        + "\t\t\"connection\": {\n"
-        + "\t\t\t\"ktrFile\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"variables\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"}\n"
-        + "\t\t},\n"
-        + "\t\t\"dataaccess\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"access\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"parameters\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"output\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"columns\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"query\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"connection\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cache\": {\"type\": \"BOOLEAN\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"cacheDuration\": {\"type\": \"NUMERIC\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cacheKeys\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"}\n"
-        + "\t\t}\n"
-        + "\t}\n"
-        + "},\n"
-        + "\"mdx_mondrianJdbc\": {\n"
-        + "\t\"metadata\": {\n"
-        + "\t\t\"name\": \"mdx over mondrianJdbc\",\n"
-        + "\t\t\"conntype\": \"mondrian.jdbc\",\n"
-        + "\t\t\"datype\": \"mdx\",\n"
-        + "\t\t\"group\": \"MDX\",\n"
-        + "\t\t\"groupdesc\": \"MDX Queries\"\n"
-        + "\t},\n"
-        + "\t\"definition\": {\n"
-        + "\t\t\"connection\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"catalog\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"driver\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"url\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"user\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"pass\": {\"type\": \"STRING\", \"placement\": \"CHILD\"}\n"
-        + "\t\t},\n"
-        + "\t\t\"dataaccess\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"access\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"parameters\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"output\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"columns\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"query\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"connection\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cache\": {\"type\": \"BOOLEAN\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"cacheDuration\": {\"type\": \"NUMERIC\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cacheKeys\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"bandedMode\": {\"type\": \"STRING\", \"placement\": \"CHILD\"}\n"
-        + "\t\t}\n"
-        + "\t}\n"
-        + "},\n"
-        + "\"mdx_mondrianJndi\": {\n"
-        + "\t\"metadata\": {\n"
-        + "\t\t\"name\": \"mdx over mondrianJndi\",\n"
-        + "\t\t\"conntype\": \"mondrian.jndi\",\n"
-        + "\t\t\"datype\": \"mdx\",\n"
-        + "\t\t\"group\": \"MDX\",\n"
-        + "\t\t\"groupdesc\": \"MDX Queries\"\n"
-        + "\t},\n"
-        + "\t\"definition\": {\n"
-        + "\t\t\"connection\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"catalog\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"jndi\": {\"type\": \"STRING\", \"placement\": \"CHILD\"}\n"
-        + "\t\t},\n"
-        + "\t\t\"dataaccess\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"access\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"parameters\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"output\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"columns\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"query\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"connection\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cache\": {\"type\": \"BOOLEAN\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"cacheDuration\": {\"type\": \"NUMERIC\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cacheKeys\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"bandedMode\": {\"type\": \"STRING\", \"placement\": \"CHILD\"}\n"
-        + "\t\t}\n"
-        + "\t}\n"
-        + "},\n"
-        + "\"mql_metadata\": {\n"
-        + "\t\"metadata\": {\n"
-        + "\t\t\"name\": \"mql over metadata\",\n"
-        + "\t\t\"conntype\": \"metadata.metadata\",\n"
-        + "\t\t\"datype\": \"mql\",\n"
-        + "\t\t\"group\": \"MQL\",\n"
-        + "\t\t\"groupdesc\": \"MQL Queries\"\n"
-        + "\t},\n"
-        + "\t\"definition\": {\n"
-        + "\t\t\"connection\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"xmiFile\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"domainId\": {\"type\": \"STRING\", \"placement\": \"CHILD\"}\n"
-        + "\t\t},\n"
-        + "\t\t\"dataaccess\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"access\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"parameters\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"output\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"columns\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"query\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"connection\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cache\": {\"type\": \"BOOLEAN\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"cacheDuration\": {\"type\": \"NUMERIC\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cacheKeys\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"}\n"
-        + "\t\t}\n"
-        + "\t}\n"
-        + "},\n"
-        + "\"olap4j_olap4j\": {\n"
-        + "\t\"metadata\": {\n"
-        + "\t\t\"name\": \"olap4j over olap4j\",\n"
-        + "\t\t\"conntype\": \"olap4j.defaultolap4j\",\n"
-        + "\t\t\"datype\": \"olap4j\",\n"
-        + "\t\t\"group\": \"OLAP4J\",\n"
-        + "\t\t\"groupdesc\": \"OLAP4J Queries\"\n"
-        + "\t},\n"
-        + "\t\"definition\": {\n"
-        + "\t\t\"connection\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"driver\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"url\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"role\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"property\": {\"type\": \"STRING\", \"placement\": \"CHILD\"}\n"
-        + "\t\t},\n"
-        + "\t\t\"dataaccess\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"access\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"parameters\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"output\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"columns\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"query\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"connection\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cache\": {\"type\": \"BOOLEAN\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"cacheDuration\": {\"type\": \"NUMERIC\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cacheKeys\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"}\n"
-        + "\t\t}\n"
-        + "\t}\n"
-        + "},\n"
-        + "\"scriptable_scripting\": {\n"
-        + "\t\"metadata\": {\n"
-        + "\t\t\"name\": \"scriptable over scripting\",\n"
-        + "\t\t\"conntype\": \"scripting.scripting\",\n"
-        + "\t\t\"datype\": \"scriptable\",\n"
-        + "\t\t\"group\": \"SCRIPTING\",\n"
-        + "\t\t\"groupdesc\": \"SCRIPTING Queries\"\n"
-        + "\t},\n"
-        + "\t\"definition\": {\n"
-        + "\t\t\"connection\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"language\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"initscript\": {\"type\": \"STRING\", \"placement\": \"CHILD\"}\n"
-        + "\t\t},\n"
-        + "\t\t\"dataaccess\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"access\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"parameters\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"output\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"columns\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"query\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"connection\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cache\": {\"type\": \"BOOLEAN\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"cacheDuration\": {\"type\": \"NUMERIC\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cacheKeys\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"}\n"
-        + "\t\t}\n"
-        + "\t}\n"
-        + "},\n"
-        + "\"jsonScriptable_scripting\": {\n"
-        + "\t\"metadata\": {\n"
-        + "\t\t\"name\": \"jsonScriptable over scripting\",\n"
-        + "\t\t\"conntype\": \"scripting.scripting\",\n"
-        + "\t\t\"datype\": \"jsonScriptable\",\n"
-        + "\t\t\"group\": \"SCRIPTING\",\n"
-        + "\t\t\"groupdesc\": \"SCRIPTING Queries\"\n"
-        + "\t},\n"
-        + "\t\"definition\": {\n"
-        + "\t\t\"connection\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"language\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"initscript\": {\"type\": \"STRING\", \"placement\": \"CHILD\"}\n"
-        + "\t\t},\n"
-        + "\t\t\"dataaccess\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"access\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"parameters\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"output\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"columns\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"query\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"connection\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cache\": {\"type\": \"BOOLEAN\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"cacheDuration\": {\"type\": \"NUMERIC\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cacheKeys\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"}\n"
-        + "\t\t}\n"
-        + "\t}\n"
-        + "},\n"
-        + "\"sql_sqlJdbc\": {\n"
-        + "\t\"metadata\": {\n"
-        + "\t\t\"name\": \"sql over sqlJdbc\",\n"
-        + "\t\t\"conntype\": \"sql.jdbc\",\n"
-        + "\t\t\"datype\": \"sql\",\n"
-        + "\t\t\"group\": \"SQL\",\n"
-        + "\t\t\"groupdesc\": \"SQL Queries\"\n"
-        + "\t},\n"
-        + "\t\"definition\": {\n"
-        + "\t\t\"connection\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"driver\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"url\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"user\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"pass\": {\"type\": \"STRING\", \"placement\": \"CHILD\"}\n"
-        + "\t\t},\n"
-        + "\t\t\"dataaccess\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"access\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"parameters\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"output\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"columns\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"query\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"connection\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cache\": {\"type\": \"BOOLEAN\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"cacheDuration\": {\"type\": \"NUMERIC\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cacheKeys\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"}\n"
-        + "\t\t}\n"
-        + "\t}\n"
-        + "},\n"
-        + "\"sql_sqlJndi\": {\n"
-        + "\t\"metadata\": {\n"
-        + "\t\t\"name\": \"sql over sqlJndi\",\n"
-        + "\t\t\"conntype\": \"sql.jndi\",\n"
-        + "\t\t\"datype\": \"sql\",\n"
-        + "\t\t\"group\": \"SQL\",\n"
-        + "\t\t\"groupdesc\": \"SQL Queries\"\n"
-        + "\t},\n"
-        + "\t\"definition\": {\n"
-        + "\t\t\"connection\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"jndi\": {\"type\": \"STRING\", \"placement\": \"CHILD\"}\n"
-        + "\t\t},\n"
-        + "\t\t\"dataaccess\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"access\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"parameters\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"output\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"columns\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"query\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"connection\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cache\": {\"type\": \"BOOLEAN\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"cacheDuration\": {\"type\": \"NUMERIC\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cacheKeys\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"}\n"
-        + "\t\t}\n"
-        + "\t}\n"
-        + "},\n"
-        + "\"union\": {\n"
-        + "\t\"metadata\": {\n"
-        + "\t\t\"name\": \"union\",\n"
-        + "\t\t\"datype\": \"union\",\n"
-        + "\t\t\"group\": \"NONE\",\n"
-        + "\t\t\"groupdesc\": \"Compound Queries\"\n"
-        + "\t},\n"
-        + "\t\"definition\": {\n"
-        + "\t\t\"dataaccess\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"parameters\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"columns\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"top\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"bottom\": {\"type\": \"STRING\", \"placement\": \"CHILD\"}\n"
-        + "\t\t}\n"
-        + "\t}\n"
-        + "},\n"
-        + "\"xPath_xPath\": {\n"
-        + "\t\"metadata\": {\n"
-        + "\t\t\"name\": \"xPath over xPath\",\n"
-        + "\t\t\"conntype\": \"xpath.xPath\",\n"
-        + "\t\t\"datype\": \"xPath\",\n"
-        + "\t\t\"group\": \"XPATH\",\n"
-        + "\t\t\"groupdesc\": \"XPATH Queries\"\n"
-        + "\t},\n"
-        + "\t\"definition\": {\n"
-        + "\t\t\"connection\": {\n"
-        + "\t\t\t\"dataFile\": {\"type\": \"STRING\", \"placement\": \"CHILD\"}\n"
-        + "\t\t},\n"
-        + "\t\t\"dataaccess\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"access\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"parameters\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"output\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"columns\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"query\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"connection\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cache\": {\"type\": \"BOOLEAN\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"cacheDuration\": {\"type\": \"NUMERIC\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cacheKeys\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"}\n"
-        + "\t\t}\n"
-        + "\t}\n"
-        + "},\n"
-        + "\"dataservices_dataservices\": {\n"
-        + "\t\"metadata\": {\n"
-        + "\t\t\"name\": \"sql over dataservices\",\n"
-        + "\t\t\"conntype\": \"dataservices.dataservices\",\n"
-        + "\t\t\"datype\": \"dataservices\",\n"
-        + "\t\t\"group\": \"DATASERVICES\",\n"
-        + "\t\t\"groupdesc\": \"DATASERVICES Queries\"\n"
-        + "\t},\n"
-        + "\t\"definition\": {\n"
-        + "\t\t\"connection\": {\n"
-        + "\t\t\t\"variables\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"}\n"
-        + "\t\t},\n"
-        + "\t\t\"dataaccess\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"access\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"parameters\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"output\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"columns\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"connection\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cache\": {\"type\": \"BOOLEAN\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"cacheDuration\": {\"type\": \"NUMERIC\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"cacheKeys\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"dataServiceName\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"dataServiceQuery\": {\"type\": \"STRING\", \"placement\": \"CHILD\"}\n"
-        + "\t\t}\n"
-        + "\t}\n"
-        + "},\n"
-        + "\"streaming_dataservices\": {\n"
-        + "\t\"metadata\": {\n"
-        + "\t\t\"name\": \"streaming over dataservices\",\n"
-        + "\t\t\"conntype\": \"dataservices.dataservices\",\n"
-        + "\t\t\"datype\": \"streaming\",\n"
-        + "\t\t\"group\": \"DATASERVICES\",\n"
-        + "\t\t\"groupdesc\": \"DATASERVICES Queries\"\n"
-        + "\t},\n"
-        + "\t\"definition\": {\n"
-        + "\t\t\"connection\": {\n"
-        + "\t\t\t\"variables\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"}\n"
-        + "\t\t},\n"
-        + "\t\t\"dataaccess\": {\n"
-        + "\t\t\t\"id\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"access\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"parameters\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"output\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"columns\": {\"type\": \"ARRAY\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"dataServiceQuery\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"connection\": {\"type\": \"STRING\", \"placement\": \"ATTRIB\"},\n"
-        + "\t\t\t\"streamingDataServiceName\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"windowMode\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"windowSize\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"windowEvery\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"windowLimit\": {\"type\": \"STRING\", \"placement\": \"CHILD\"},\n"
-        + "\t\t\t\"componentRefreshPeriod\": {\"type\": \"STRING\", \"placement\": \"CHILD\"}\n"
-        + "\t\t}\n"
-        + "\t}\n"
-        + "}\n"
-        + "}";
+    //proxy request to the real CDA Endpoint
+    String url = urlListDataAccessTypes;
 
-    return dataSourceDefinitions;
+    //Init
+    Client client = getClientInitialized();
+
+    WebResource webResource = client.resource( url );
+    webResource = webResource.queryParam( "refreshCache", refreshCache.toString() );
+
+    try {
+      ClientResponse response = webResource.type( MediaType.APPLICATION_JSON )
+        .get( ClientResponse.class );
+
+      if ( response.getStatus() == ClientResponse.Status.OK.getStatusCode() ) {
+        InputStream in = response.getEntityInputStream();
+        try {
+          return IOUtils.toString( in );
+        } finally {
+          IOUtils.closeQuietly( in );
+        }
+      }
+    } catch ( Exception ex ) {
+      logger.fatal( ex );
+    } finally {
+      client.destroy();
+    }
+
+    return null;
   }
 }
