@@ -10,13 +10,23 @@
 
   <!--<reference id="contentAccessFactory" interface="pt.webdetails.cpf.repository.api.IContentAccessFactory" timeout="20000" />-->
 
-  <!-- Gain access to files available in bundles through CPF IReadAccess -->
-  <!--<service interface="pt.webdetails.cpf.repository.api.IReadAccess">-->
-    <!--<bean class="org.pentaho.ctools.cpf.repository.bundle.ReadAccess">-->
-      <!--<property name="bundle" ref="blueprintBundle"/>-->
-    <!--</bean>-->
-  <!--</service>-->
+  <!--Gain access to files available in bundles through CPF IReadAccess -->
+  <service interface="pt.webdetails.cpf.repository.api.IReadAccess">
+    <service-properties>
+      <entry key="pluginId" value="cda"/>
+    </service-properties>
+    <bean class="org.pentaho.ctools.cpf.repository.bundle.ReadAccess">
+      <property name="bundle" ref="blueprintBundle"/>
+    </bean>
+  </service>
 
+  <!--<bean id="myReadAccess" class="org.pentaho.ctools.cpf.repository.bundle.ReadAccess">-->
+    <!--<property name="bundle" ref="blueprintBundle"/>-->
+  <!--</bean>-->
+
+  <!--<service interface="pt.webdetails.cpf.repository.api.IReadAccess">-->
+    <!--<ref component-id="myReadAcceess"/>-->
+  <!--</service>-->
   <!-- Load system property -->
   <ext:property-placeholder />
 
