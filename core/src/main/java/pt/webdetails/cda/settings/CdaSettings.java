@@ -47,6 +47,8 @@ import pt.webdetails.cda.dataaccess.SqlDataAccess;
 import pt.webdetails.cda.dataaccess.UnionCompoundDataAccess;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
 import pt.webdetails.cda.dataaccess.XPathDataAccess;
+import pt.webdetails.cda.dataaccess.streaming.IStreamingDataAccess;
+import pt.webdetails.cda.dataaccess.streaming.PushStreamDataAccess;
 import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.Util;
 import pt.webdetails.cda.xml.DomTraversalHelper;
@@ -61,6 +63,7 @@ import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * CdaSettings class
@@ -191,6 +194,8 @@ public class CdaSettings {
           return new StreamingDataservicesDataAccess( element );
         case DATASERVICES:
           return new DataservicesDataAccess( element );
+        case DATASERVICES_PUSH:
+          return new PushStreamDataAccess( element );
       }
     }
     return null;
@@ -346,6 +351,12 @@ public class CdaSettings {
       throw new UnknownDataAccessException( "Unknown dataAccess with id " + id, null );
     }
     return dataAccessMap.get( id );
+  }
+
+  public IStreamingDataAccess getStreamingDataAccess( String id ) throws UnknownDataAccessException {
+    return Optional.ofNullable( dataAccessMap.get( id ) )
+        .filter( da -> da instanceof IStreamingDataAccess ).map( da -> (IStreamingDataAccess) da )
+        .orElseThrow( () -> new UnknownDataAccessException( "Unknown IStreamingDataAccess with id " + id, null ) );
   }
 
   public String getId() {

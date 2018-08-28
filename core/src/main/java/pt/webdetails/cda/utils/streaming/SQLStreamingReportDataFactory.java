@@ -29,10 +29,28 @@ import java.sql.Statement;
 
 public class SQLStreamingReportDataFactory extends SQLReportDataFactory {
 
+  private static final long serialVersionUID = 1L;
+
   private final IDataServiceClientService.StreamingMode windowMode;
   private final long windowSize;
   private final long windowEvery;
   private final long windowLimit;
+
+  protected IDataServiceClientService.StreamingMode getWindowMode() {
+    return windowMode;
+  }
+
+  protected long getWindowSize() {
+    return windowSize;
+  }
+
+  protected long getWindowEvery() {
+    return windowEvery;
+  }
+
+  protected long getWindowLimit() {
+    return windowLimit;
+  }
 
   public SQLStreamingReportDataFactory( final ConnectionProvider connectionProvider,
                                         IDataServiceClientService.StreamingMode windowMode,
@@ -58,4 +76,5 @@ public class SQLStreamingReportDataFactory extends SQLReportDataFactory {
     }
     return res;
   }
+
 }

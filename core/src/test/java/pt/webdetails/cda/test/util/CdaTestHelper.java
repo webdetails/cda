@@ -169,13 +169,20 @@ public class CdaTestHelper {
   }
 
   public static Element getElementFromSnippet( String xml ) throws DocumentException {
-    SAXReader reader = new SAXReader( false );
-    Document doc = reader.read( Util.toInputStream( xml ) );
+    Document doc = getDocumentFromString( xml );
     return doc.getRootElement();
   }
 
-  public static void initBareEngine( ICdaEnvironment env ) {
-    CdaTestEngine.init( new CdaTestEngine( env ) );
+  public static Document getDocumentFromString( String xml ) throws DocumentException {
+    SAXReader reader = new SAXReader( false );
+    Document doc = reader.read( Util.toInputStream( xml ) );
+    return doc;
+  }
+
+  public static CdaEngine initBareEngine( ICdaEnvironment env ) {
+    CdaTestEngine testEngine = new CdaTestEngine( env );
+    CdaTestEngine.init( testEngine );
+    return testEngine;
   }
 
   interface Comparison<T> {

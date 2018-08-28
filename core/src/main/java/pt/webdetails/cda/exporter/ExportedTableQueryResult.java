@@ -20,13 +20,20 @@ import javax.swing.table.TableModel;
 public class ExportedTableQueryResult extends ExportedQueryResult {
 
   private TableModel table;
+  private TableExporter exporter;
 
   public ExportedTableQueryResult( TableExporter exporter, TableModel table ) {
     super( exporter );
     this.table = table;
+    this.exporter = exporter;
+  }
+
+  @Override
+  public TableExporter getExporter() {
+    return exporter;
   }
 
   public void writeOut( OutputStream out ) throws ExporterException {
-    ( (TableExporter) getExporter() ).export( out, table );
+    getExporter().export( out, table );
   }
 }

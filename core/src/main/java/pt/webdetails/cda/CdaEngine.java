@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.table.TableModel;
 
@@ -31,6 +33,8 @@ import pt.webdetails.cda.dataaccess.DataAccess;
 import pt.webdetails.cda.dataaccess.QueryException;
 import pt.webdetails.cda.dataaccess.kettle.DataAccessKettleAdapter;
 import pt.webdetails.cda.dataaccess.kettle.DataAccessKettleAdapterFactory;
+import pt.webdetails.cda.dataaccess.streaming.IStreamingDataAccess;
+import pt.webdetails.cda.dataaccess.streaming.IStreamingDataAccess.IPushWindowQuery;
 import pt.webdetails.cda.exporter.AbstractKettleExporter;
 import pt.webdetails.cda.exporter.DefaultStreamExporter;
 import pt.webdetails.cda.exporter.ExportOptions;
@@ -42,6 +46,7 @@ import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.exporter.StreamExporter;
 import pt.webdetails.cda.exporter.TableExporter;
 import pt.webdetails.cda.exporter.UnsupportedExporterException;
+
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
@@ -146,27 +151,33 @@ public class CdaEngine {
     DataAccess dataAccess = cdaSettings.getDataAccess( queryOptions.getDataAccessId() );
     TableExporter exporter = getExporter( queryOptions );
 
-    StreamExporter streamingExporter = null;
-    //[CDA-124] - Exporting queries with parameters and output indexes was failing when done with a
-    //streaming Kettle Transformation. In this case CDA 'doQuery' method should be used instead.
-    if ( !dataAccess.hasIterableParameterValues( queryOptions ) && exporter instanceof AbstractKettleExporter
-      && ( queryOptions.getParameters().isEmpty() || dataAccess.getOutputs().isEmpty() )
-      && queryOptions.getOutputColumnName().isEmpty() ) {
+    if ( isLegacyStreamingExport( queryOptions, dataAccess, exporter ) ) {
       // Try to initiate a streaming Kettle transformation:
       DataAccessKettleAdapter dataAccessKettleAdapter =
         DataAccessKettleAdapterFactory.create( dataAccess, queryOptions );
       if ( dataAccessKettleAdapter != null ) {
-        streamingExporter = new DefaultStreamExporter( (AbstractKettleExporter) exporter, dataAccessKettleAdapter );
+        return createStreamingKettleResult( exporter, dataAccessKettleAdapter );
       }
     }
 
-    // Handle the exports
-    if ( streamingExporter != null ) {
-      return new ExportedStreamQueryResult( streamingExporter );
-    } else {
-      TableModel table = doQuery( cdaSettings, queryOptions );
-      return new ExportedTableQueryResult( exporter, table );
-    }
+    TableModel table = doQuery( cdaSettings, queryOptions );
+    return new ExportedTableQueryResult( exporter, table );
+  }
+
+  private boolean isLegacyStreamingExport( QueryOptions queryOptions, DataAccess dataAccess, TableExporter exporter )
+    throws QueryException {
+    //[CDA-124] - Exporting queries with parameters and output indexes was failing when done with a
+    //streaming Kettle Transformation. In this case CDA 'doQuery' method should be used instead.
+    return !dataAccess.hasIterableParameterValues( queryOptions ) && exporter instanceof AbstractKettleExporter
+      && ( queryOptions.getParameters().isEmpty() || dataAccess.getOutputs().isEmpty() )
+      && queryOptions.getOutputColumnName().isEmpty();
+  }
+
+  private ExportedQueryResult createStreamingKettleResult( TableExporter exporter,
+      DataAccessKettleAdapter dataAccessKettleAdapter ) {
+    StreamExporter streamingExporter =
+        new DefaultStreamExporter( (AbstractKettleExporter) exporter, dataAccessKettleAdapter );
+    return new ExportedStreamQueryResult( streamingExporter );
   }
 
   /**
@@ -223,6 +234,10 @@ public class CdaEngine {
       typedTableModel.addRow( new Object[] { file.getName(), file.getFullPath() } );
     }
     return typedTableModel;
+  }
+
+  public ExecutorService getExecutorService() {
+    return Executors.newCachedThreadPool();
   }
 
   private ICdaEnvironment getEnv() {

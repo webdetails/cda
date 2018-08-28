@@ -134,6 +134,7 @@ public class StreamingDataservicesDataAccessTest extends TestCase {
     ParameterDataRow parameterDataRow = mock( ParameterDataRow.class );
     ConnectionProvider mockConnectionProvider = mock( ConnectionProvider.class );
     doReturn( mockConnectionProvider ).when( mockConnection ).getInitializedConnectionProvider( any() );
+    doReturn( mockConnectionProvider ).when( mockConnection ).getInitializedConnectionProvider( any(), any() );
     DataservicesConnectionInfo mockConnectionInfo = mock( DataservicesConnectionInfo.class );
     when( mockConnection.getConnectionInfo() ).thenReturn( mockConnectionInfo );
     final ParameterMapping[] parametersMapping = new ParameterMapping[ 1 ];

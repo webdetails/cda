@@ -49,7 +49,8 @@ public class DataAccessEnums {
     UNION( "union" ),
     XPATH( "xPath" ),
     DATASERVICES( "dataservices", "sql" ),
-    STREAMING_DATASERVICES( "streaming" );
+    STREAMING_DATASERVICES( "streaming" ),
+    DATASERVICES_PUSH( "push-dataservices" );
 
     private String type;
     private String label;
