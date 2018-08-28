@@ -38,6 +38,7 @@ import pt.webdetails.cda.connections.mondrian.MondrianJndiConnectionInfo;
 import pt.webdetails.cda.connections.sql.SqlJndiConnectionInfo;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.utils.PathRelativizer;
+
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -76,20 +77,22 @@ public class DefaultDataAccessUtils implements IDataAccessUtils {
   @Override
   public KettleTransformationProducer createKettleTransformationProducer( TransFromFileConnectionInfo connectionInfo,
                                                                           String query, CdaSettings settings ) {
-    String ktrPath = connectionInfo.getTransformationFile();
-    String relPath;
-    // Just in case the user typed the path without the leading "/"
-    if ( ktrPath.contains( "/" ) ) {
-      if ( ktrPath.charAt( 0 ) != '/' ) {
-        ktrPath = "/" + ktrPath;
-      }
-      relPath = PathRelativizer.relativizePath( settings.getId(), ktrPath );
-    } else {
-      relPath = ktrPath;
-    }
+    String ktrPath = normalizePath( connectionInfo.getTransformationFile() );
+    String cdaPath = normalizePath( settings.getId() );
+    String relPath = PathRelativizer.relativizePath( cdaPath, ktrPath );
     return new KettleTransFromFileProducer( this.repositoryName, relPath, query,
         this.username, this.password, connectionInfo.getDefinedArgumentNames(), connectionInfo.getDefinedVariableNames() );
+  }
 
+  // Just in case the user typed the path without the leading "/"
+  private String normalizePath( String path ) {
+    if ( !path.contains( "/" ) ) {
+      return path;
+    }
+    if ( path.charAt( 0 ) != '/' ) {
+      path = "/" + path;
+    }
+    return path;
   }
 
   @Override
