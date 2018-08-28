@@ -177,11 +177,7 @@ public class CdaEnvironment implements ICdaEnvironment {
     // TODO: perhaps port things from BaseCdaEnvironment
     Properties cdaComponents = new Properties();
     cdaComponents.setProperty( "dataAccesses",
-        "AbstractDataAccess,ColumnDefinition,CompoundDataAccess,DataAccess,DataAccessConnectionDescriptor," +
-            "DataAccessEnums,DenormalizedMdxDataAccess,DenormalizedOlap4JDataAccess,JoinCompoundDataAccess," +
-            "KettleDataAccess,MdxDataAccess,MqlDataAccess,Olap4JDataAccess,PREDataAccess,ScriptableDataAccess," +
-            "SimpleDataAccess,JsonScriptableDataAccess,SqlDataAccess,UnionCompoundDataAccess,XPathDataAccess," +
-            "DataservicesDataAccess,StreamingDataservicesDataAccess" );
+            "KettleDataAccess,DataservicesDataAccess,StreamingDataservicesDataAccess" );
 
     cdaComponents.setProperty( "connections", "AbstractConnection,Connection,metadata.MetadataConnection," +
         "mondrian.AbstractMondrianConnection,mondrian.JdbcConnection,mondrian.JndiConnection," +
