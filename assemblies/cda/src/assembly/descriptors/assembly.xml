@@ -25,7 +25,7 @@
       <scope>runtime</scope>
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <excludes>
-        <exclude>pentaho:cda-proxy</exclude>
+        <exclude>pentaho:cda-proxy-impl</exclude>
       </excludes>
     </dependencySet>
   </dependencySets>
