@@ -27,7 +27,6 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -56,7 +55,7 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
   public static final String COLUMN_HEADERS_SETTING = "columnHeaders";
   public static final String FILE_EXTENSION_SETTING = "fileExtension";
 
-  protected ExecutorService executorService = Executors.newCachedThreadPool();
+  protected ExecutorService executorService = CdaEngine.getInstance().getExecutorService();
 
 
   private SimpleDateFormat dateFormat = new SimpleDateFormat( "yyMMddHHmmssZ" );

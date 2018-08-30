@@ -109,6 +109,7 @@ public class DataservicesDataAccessTest extends TestCase {
     DataservicesConnection dataservicesConnection = mock( DataservicesConnection.class );
     ConnectionProvider connectionProvider = mock( ConnectionProvider.class );
     when( dataservicesConnection.getInitializedConnectionProvider( any() ) ).thenReturn( connectionProvider );
+    when( dataservicesConnection.getInitializedConnectionProvider( any(), any() ) ).thenReturn( connectionProvider );
 
     DataservicesConnectionInfo connectionInfo = mock( DataservicesConnectionInfo.class );
     final ParameterMapping[] parametersMapping = new ParameterMapping[ 1 ];

@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.dom4j.Node;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.cache.IQueryCache;
@@ -39,6 +40,8 @@ import javax.swing.table.TableModel;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Implementation of the SimpleDataAccess
@@ -209,8 +212,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     return parameters;
   }
 
-
-  private TableCacheKey createCacheKey( final List<Parameter> parameters ) throws QueryException {
+  protected TableCacheKey createCacheKey( final List<Parameter> parameters ) throws QueryException {
     try {
       final Connection connection;
       if ( getConnectionType() == ConnectionCatalog.ConnectionType.NONE ) {
@@ -241,7 +243,6 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
           new QueryTooLongEvent.QueryInfo( this.getCdaSettings().getId(), queryId, query,
             Parameter.createParameterDataRowFromParameters( parameters ) ), duration ) );
       } catch ( Exception e ) {
-        //TODO
         logger.error( "Error pushing event", e );
       }
 
@@ -265,7 +266,6 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     return tm;
   }
 
-  //TODO:
 
   /**
    * Query state.
@@ -338,5 +338,25 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
   public void setQueryType( String queryType ) {
     this.queryType = queryType;
+  }
+
+  /**
+   * Parses the text content of an xml node defensively.
+   * @param element base node
+   * @param nodePath path from {@code element}
+   * @param parse convert string to value
+   * @param defaultValue default value in case of not found, empty or error
+   * @return
+   */
+  protected <T> T parseNode( Element element, String nodePath, Function<String, T> parse, T defaultValue ) {
+    try {
+      return Optional.ofNullable( element.selectSingleNode( nodePath ) )
+          .map( Node::getText )
+          .map( parse )
+          .orElse( defaultValue );
+    } catch ( Exception e ) {
+      logger.error( " parse error in " + this.getName() + ": " + e.getMessage() );
+      return defaultValue;
+    }
   }
 }

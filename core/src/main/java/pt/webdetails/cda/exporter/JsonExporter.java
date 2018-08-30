@@ -46,7 +46,7 @@ public class JsonExporter extends AbstractExporter {
     // returned inline
     this.attachmentName = getSetting( ATTACHMENT_NAME_SETTING, null );
 
-    logger.debug( "Initialized JsonExporter with attachement filename '" + attachmentName + "'" );
+    logger.debug( "Initialized JsonExporter with attachment filename '" + attachmentName + "'" );
   }
 
   public void export( final OutputStream out, final TableModel tableModel ) throws ExporterException {

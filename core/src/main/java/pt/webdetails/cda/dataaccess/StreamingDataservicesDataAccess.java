@@ -19,9 +19,8 @@ import org.dom4j.Element;
 import org.pentaho.di.trans.dataservice.client.api.IDataServiceClientService;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.SQLReportDataFactory;
-import org.pentaho.reporting.libraries.formula.EvaluationException;
-import org.pentaho.reporting.libraries.formula.parser.ParseException;
 import pt.webdetails.cda.connections.ConnectionCatalog.ConnectionType;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.connections.dataservices.DataservicesConnection;
 import pt.webdetails.cda.settings.UnknownConnectionException;
@@ -37,7 +36,8 @@ import java.util.List;
 public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
 
   private static final Log logger = LogFactory.getLog( StreamingDataservicesDataAccess.class );
-  private static final DataAccessEnums.DataAccessInstanceType TYPE = DataAccessEnums.DataAccessInstanceType.STREAMING_DATASERVICES;
+  private static final DataAccessEnums.DataAccessInstanceType TYPE =
+      DataAccessEnums.DataAccessInstanceType.STREAMING_DATASERVICES;
   protected String dataServiceName;
   protected String windowMode;
   protected long windowSize;
@@ -84,21 +84,14 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
 
   @Override
   public SQLReportDataFactory getSQLReportDataFactory( DataservicesConnection connection,
-                                                       ParameterDataRow parameterDataRow )
+      ParameterDataRow parameterDataRow )
     throws InvalidConnectionException, UnknownConnectionException {
-
     IDataServiceClientService.StreamingMode mode =
-      IDataServiceClientService.StreamingMode.ROW_BASED.toString().equalsIgnoreCase( windowMode )
-        ? IDataServiceClientService.StreamingMode.ROW_BASED
-        : IDataServiceClientService.StreamingMode.TIME_BASED;
-
-    try {
-      return new SQLStreamingReportDataFactory(
-        connection.getInitializedConnectionProvider( getParameterValues( connection, parameterDataRow ) ),
+        IDataServiceClientService.StreamingMode.ROW_BASED.toString().equalsIgnoreCase( windowMode )
+            ? IDataServiceClientService.StreamingMode.ROW_BASED : IDataServiceClientService.StreamingMode.TIME_BASED;
+    return new SQLStreamingReportDataFactory(
+        connection.getInitializedConnectionProvider( parameterDataRow, CdaEngine.getEnvironment().getFormulaContext() ),
         mode, this.windowSize, this.windowEvery, this.windowLimit );
-    } catch ( InvalidParameterException | QueryException | EvaluationException | ParseException e ) {
-      throw new InvalidConnectionException( "Error when creating the connection from the parameters", e );
-    }
   }
 
   public String getType() {
@@ -112,32 +105,33 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess {
   @Override
   public List<PropertyDescriptor> getInterface() {
     ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
-    properties.add( new PropertyDescriptor( "id", PropertyDescriptor.Type.STRING,
-      PropertyDescriptor.Placement.ATTRIB ) );
-    properties.add( new PropertyDescriptor( "access", PropertyDescriptor.Type.STRING,
-      PropertyDescriptor.Placement.ATTRIB ) );
-    properties.add( new PropertyDescriptor( "parameters", PropertyDescriptor.Type.ARRAY,
-      PropertyDescriptor.Placement.CHILD ) );
-    properties.add( new PropertyDescriptor( "output", PropertyDescriptor.Type.ARRAY,
-      PropertyDescriptor.Placement.CHILD ) );
-    properties.add( new PropertyDescriptor( "columns", PropertyDescriptor.Type.ARRAY,
-      PropertyDescriptor.Placement.CHILD ) );
-    properties.add( new PropertyDescriptor( "dataServiceQuery", PropertyDescriptor.Type.STRING,
-      PropertyDescriptor.Placement.CHILD ) );
-    properties.add( new PropertyDescriptor( "connection", PropertyDescriptor.Type.STRING,
-      PropertyDescriptor.Placement.ATTRIB ) );
-    properties.add( new PropertyDescriptor( "streamingDataServiceName", PropertyDescriptor.Type.STRING,
-      PropertyDescriptor.Placement.CHILD ) );
-    properties.add( new PropertyDescriptor( "windowMode", PropertyDescriptor.Type.STRING,
-      PropertyDescriptor.Placement.CHILD ) );
-    properties.add( new PropertyDescriptor( "windowSize", PropertyDescriptor.Type.STRING,
-      PropertyDescriptor.Placement.CHILD ) );
-    properties.add( new PropertyDescriptor( "windowEvery", PropertyDescriptor.Type.STRING,
-      PropertyDescriptor.Placement.CHILD ) );
-    properties.add( new PropertyDescriptor( "windowLimit", PropertyDescriptor.Type.STRING,
-      PropertyDescriptor.Placement.CHILD ) );
-    properties.add( new PropertyDescriptor( "componentRefreshPeriod", PropertyDescriptor.Type.STRING,
-      PropertyDescriptor.Placement.CHILD ) );
+    properties.add(
+      new PropertyDescriptor( "id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB ) );
+    properties.add(
+      new PropertyDescriptor( "access", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB ) );
+    properties.add(
+      new PropertyDescriptor( "parameters", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD ) );
+    properties.add(
+      new PropertyDescriptor( "output", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD ) );
+    properties.add(
+      new PropertyDescriptor( "columns", PropertyDescriptor.Type.ARRAY, PropertyDescriptor.Placement.CHILD ) );
+    properties.add(
+      new PropertyDescriptor( "dataServiceQuery", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+    properties.add(
+      new PropertyDescriptor( "connection", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB ) );
+    properties.add(
+      new PropertyDescriptor( "streamingDataServiceName", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+    properties.add(
+      new PropertyDescriptor( "windowMode", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+    properties.add(
+      new PropertyDescriptor( "windowSize", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+    properties.add(
+      new PropertyDescriptor( "windowEvery", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+    properties.add(
+      new PropertyDescriptor( "windowLimit", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.CHILD ) );
+    properties.add(
+      new PropertyDescriptor( "componentRefreshPeriod", PropertyDescriptor.Type.STRING,
+        PropertyDescriptor.Placement.CHILD ) );
     return properties;
   }
 

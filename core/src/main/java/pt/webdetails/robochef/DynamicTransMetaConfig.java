@@ -13,14 +13,13 @@
 
 package pt.webdetails.robochef;
 
-import static org.pentaho.di.core.Const.isEmpty;
-import static org.pentaho.di.core.Const.trim;
-
 import java.io.File;
 
+import org.pentaho.di.core.Const;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.plugins.PluginRegistry;
 import org.pentaho.di.core.plugins.RepositoryPluginType;
+import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.variables.VariableSpace;
 import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.di.repository.RepositoriesMeta;
@@ -48,11 +47,11 @@ public class DynamicTransMetaConfig {
     if ( type == null ) {
       throw new IllegalArgumentException( "Type is null" );
     }
-    if ( isEmpty( trim( name ) ) ) {
+    if ( Utils.isEmpty( Const.trim( name ) ) ) {
       throw new IllegalArgumentException( "Name is null" );
     }
 
-    switch( type ) {
+    switch ( type ) {
       case EMPTY:
         transMeta = new TransMeta();
         transMeta.setRepository( connectToRepository( rc ) );
@@ -71,11 +70,11 @@ public class DynamicTransMetaConfig {
         }
         final Repository rep = connectToRepository( rc );
         final File transPath = new File( configDataSource );
-        if ( isEmpty( transPath.getName() ) ) {
+        if ( Utils.isEmpty( transPath.getName() ) ) {
           throw new IllegalArgumentException( "Type.REPOSITORY configDataSource must have path to transformation" );
         }
         RepositoryDirectoryInterface directory = rep.loadRepositoryDirectoryTree();
-        if ( !isEmpty( transPath.getParent() ) ) {
+        if ( !Utils.isEmpty( transPath.getParent() ) ) {
           directory = directory.findDirectory( transPath.getParent() );
         }
         if ( directory == null ) {
@@ -137,12 +136,12 @@ public class DynamicTransMetaConfig {
 
     public static RepositoryConfig get( final String repositoryName, final String userName, final String password,
                                         final String directory, final String transformation, final String version ) {
-      if ( isEmpty( trim( repositoryName ) )
-        || isEmpty( trim( userName ) )
+      if ( Utils.isEmpty( Const.trim( repositoryName ) )
+        || Utils.isEmpty( Const.trim( userName ) )
         || password == null
-        || isEmpty( trim( directory ) )
-        || isEmpty( trim( transformation ) )
-        || isEmpty( trim( version ) ) ) {
+        || Utils.isEmpty( ( directory ) )
+        || Utils.isEmpty( Const.trim( transformation ) )
+        || Utils.isEmpty( Const.trim( version ) ) ) {
         throw new IllegalArgumentException( "Invalid RepositoryConfig" );
       }
       return new RepositoryConfig( repositoryName, userName, password, directory, transformation, version );

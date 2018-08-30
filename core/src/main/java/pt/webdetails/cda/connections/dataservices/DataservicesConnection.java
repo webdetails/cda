@@ -16,13 +16,22 @@ package pt.webdetails.cda.connections.dataservices;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.DriverConnectionProvider;
+import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.FormulaParameter;
+import org.pentaho.reporting.engine.classic.extensions.datasources.kettle.WrappingFormulaContext;
+import org.pentaho.reporting.libraries.formula.EvaluationException;
+import org.pentaho.reporting.libraries.formula.FormulaContext;
+import org.pentaho.reporting.libraries.formula.parser.ParseException;
+
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.AbstractConnection;
 import pt.webdetails.cda.connections.ConnectionCatalog;
 import pt.webdetails.cda.connections.InvalidConnectionException;
+import pt.webdetails.cda.dataaccess.InvalidParameterException;
 import pt.webdetails.cda.dataaccess.PropertyDescriptor;
+import pt.webdetails.cda.dataaccess.QueryException;
 import pt.webdetails.cda.utils.Util;
 
 import java.net.MalformedURLException;
@@ -33,6 +42,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
 public class DataservicesConnection extends AbstractConnection {
 
@@ -61,14 +71,17 @@ public class DataservicesConnection extends AbstractConnection {
     return TYPE;
   }
 
-  public ConnectionProvider getInitializedConnectionProvider( Map<String, String> dataserviceParameters ) throws InvalidConnectionException {
+  public ConnectionProvider getInitializedConnectionProvider( Map<String, String> dataserviceParameters )
+    throws InvalidConnectionException {
 
     logger.debug( "Creating new dataservices connection" );
 
-    IDataservicesLocalConnection dataservicesLocalConnection = CdaEngine.getEnvironment().getDataServicesLocalConnection();
+    IDataservicesLocalConnection dataservicesLocalConnection =
+        CdaEngine.getEnvironment().getDataServicesLocalConnection();
 
     try {
-      final DriverConnectionProvider connectionProvider = dataservicesLocalConnection.getDriverConnectionProvider( dataserviceParameters );
+      final DriverConnectionProvider connectionProvider =
+          dataservicesLocalConnection.getDriverConnectionProvider( dataserviceParameters );
 
       final Properties properties = connectionInfo.getProperties();
       final Enumeration<Object> keys = properties.keys();
@@ -84,10 +97,45 @@ public class DataservicesConnection extends AbstractConnection {
       logger.debug( "Connection opened" );
       return connectionProvider;
     } catch ( MalformedURLException e ) {
-      throw new InvalidConnectionException( "DataservicesConnection: Found MalformedURLException: " + Util.getExceptionDescription( e ), e );
+      throw new InvalidConnectionException(
+          "DataservicesConnection: Found MalformedURLException: " + Util.getExceptionDescription( e ), e );
     } catch ( SQLException e ) {
-      throw new InvalidConnectionException( "DataservicesConnection: Found SQLException: " + Util.getExceptionDescription( e ), e );
+      throw new InvalidConnectionException(
+          "DataservicesConnection: Found SQLException: " + Util.getExceptionDescription( e ), e );
     }
+  }
+
+  public ConnectionProvider getInitializedConnectionProvider(
+      ParameterDataRow parameterDataRow,
+      FormulaContext formulaContext ) throws InvalidConnectionException {
+    try {
+      Map<String, String> paramValues = getParameterValues( parameterDataRow, formulaContext );
+      return getInitializedConnectionProvider( paramValues );
+    } catch ( InvalidParameterException | QueryException | EvaluationException | ParseException e ) {
+      throw new InvalidConnectionException( "Error when creating the connection from the parameters", e );
+    }
+  }
+
+  private Map<String, String> getParameterValues( ParameterDataRow parameterDataRow, FormulaContext formulaContext )
+    throws InvalidParameterException, QueryException, EvaluationException, ParseException {
+    FormulaContext wrappedContext =
+        new WrappingFormulaContext( formulaContext, parameterDataRow );
+
+    Map<String, String> parametersValues = new TreeMap<>();
+
+    FormulaParameter[] definedVariableNames =
+        FormulaParameter.convert( getConnectionInfo().getDefinedVariableNames() );
+    for ( int i = 0; i < definedVariableNames.length; ++i ) {
+      FormulaParameter mapping = definedVariableNames[i];
+      String sourceName = mapping.getName();
+      Object value = mapping.compute( wrappedContext );
+      if ( value != null ) {
+        parametersValues.put( sourceName, String.valueOf( value ) );
+      } else {
+        parametersValues.put( sourceName, (String) null );
+      }
+    }
+    return parametersValues;
   }
 
   @Override

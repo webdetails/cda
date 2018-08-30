@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import javax.swing.table.TableModel;
@@ -59,7 +58,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   private String rightId;
   private String[] leftKeys;
   private String[] rightKeys;
-  private ExecutorService executorService = Executors.newCachedThreadPool();
+  private ExecutorService executorService = CdaEngine.getInstance().getExecutorService();
 
   public JoinCompoundDataAccess() {
   }
@@ -85,7 +84,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
   }
 
   private static String getMergeJoinType( JoinType joinType ) {
-    switch( joinType ) {
+    switch ( joinType ) {
       case INNER:
         return "INNER";
       case LEFT_OUTER:
@@ -110,7 +109,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
       full = tableModelA;
     }
 
-    switch( this.joinType ) {
+    switch ( this.joinType ) {
       case INNER:
         return empty;
       case LEFT_OUTER:

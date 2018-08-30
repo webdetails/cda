@@ -42,7 +42,7 @@
     <marketplace.metadata.package_url></marketplace.metadata.package_url>
     <marketplace.metadata.description></marketplace.metadata.description>
     <project.stage>master</project.stage>
-    <dependency.mockito-all.revision>1.8.4</dependency.mockito-all.revision>
+    <dependency.mockito-all.revision>1.9.5</dependency.mockito-all.revision>
     <marketplace.metadata.min_parent_version>1.0</marketplace.metadata.min_parent_version>
     <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
     <pentaho-reporting.version>9.0.0.0-SNAPSHOT</pentaho-reporting.version>
@@ -56,6 +56,7 @@
     <marketplace.metadata.development_stage.lane>Customer</marketplace.metadata.development_stage.lane>
     <dependency.hazelcast.revision>2.5</dependency.hazelcast.revision>
     <marketplace.metadata.name>${project.artifactId}</marketplace.metadata.name>
+    <rxjava.version>2.0.4</rxjava.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -164,6 +165,11 @@
         <groupId>org.pentaho.di.plugins</groupId>
         <artifactId>kettle-log4j-core</artifactId>
         <version>${pdi.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.reactivex.rxjava2</groupId>
+        <artifactId>rxjava</artifactId>
+        <version>${rxjava.version}</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
