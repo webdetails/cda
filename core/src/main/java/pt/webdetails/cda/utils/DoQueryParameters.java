@@ -25,6 +25,10 @@ import org.apache.commons.lang.StringUtils;
  */
 public class DoQueryParameters {
 
+  public static final String DEFAULT_OUTPUT_TYPE = "json";
+  public static final String DEFAULT_DATA_ACCESS_ID = "<blank>";
+  private static final String DEFAULT_JSON_CALLBACK = "<blank>";
+
   private String path;
   private String solution;
   private String file;
@@ -47,14 +51,16 @@ public class DoQueryParameters {
     this.path = path;
     this.solution = solution;
     this.file = file;
-    this.outputType = "json";
+
+    this.outputType = DEFAULT_OUTPUT_TYPE;
     this.outputIndexId = 1;
-    this.dataAccessId = "<blank>";
-    this.jsonCallback = "<blank>";
-    this.sortBy = new ArrayList<String>();
-    this.outputColumnName = new ArrayList<String>();
-    parameters = new HashMap<String, Object>();
-    extraSettings = new HashMap<String, Object>();
+    this.dataAccessId = DEFAULT_DATA_ACCESS_ID;
+    this.jsonCallback = DEFAULT_JSON_CALLBACK;
+
+    this.sortBy = new ArrayList<>();
+    this.outputColumnName = new ArrayList<>();
+    parameters = new HashMap<>();
+    extraSettings = new HashMap<>();
   }
 
   public DoQueryParameters( String cdaSettingsPath ) {

@@ -58,38 +58,63 @@ public abstract class ExportedQueryResult {
     return Util.toString( out.toByteArray() );
   }
 
-  private static void setResponseHeaders( HttpServletResponse response, String mimeType, String attachmentName ) {
+  public String getContentType() {
+    final String mimeType = exporter.getMimeType();
+    final String attachmentName = exporter.getAttachmentName();
+
+    return getContentType( mimeType, attachmentName );
+  }
+
+  private static String getContentType( String mimeType, String attachmentName ) {
     if ( StringUtils.isEmpty( mimeType ) && !StringUtils.isEmpty( attachmentName ) ) {
-      mimeType = MimeTypes.getMimeType( attachmentName );
+      return MimeTypes.getMimeType( attachmentName );
     }
 
-    response.setContentType( mimeType );
+    return mimeType;
+  }
 
+  public String getContentDisposition() {
+    final String attachmentName = exporter.getAttachmentName();
+    final String contentType = getContentType();
+
+    return getContentDisposition( contentType, attachmentName );
+  }
+
+  private static String getContentDisposition( String mimeType, String attachmentName ) {
     if ( attachmentName != null ) {
-      response.setHeader( "content-disposition", "attachment; filename=" + attachmentName );
-    } else {
-      final String extension;
-      switch( mimeType ) {
-        case MimeTypes.CSV:
-          extension = "." + ExporterEngine.OutputType.CSV.toString();
-          break;
-        case MimeTypes.JSON:
-          extension = "." + ExporterEngine.OutputType.JSON.toString();
-          break;
-        case MimeTypes.XLS:
-          extension = "." + ExporterEngine.OutputType.XLS.toString();
-          break;
-        case MimeTypes.XML:
-          extension = "." + ExporterEngine.OutputType.XML.toString();
-          break;
-        case MimeTypes.HTML:
-          extension = "." + ExporterEngine.OutputType.HTML.toString();
-          break;
-        default: // e.g. BINARY
-          extension = "";
-          break;
-      }
-      response.setHeader( "content-disposition", "inline; filename=doQuery" + extension );
+      return "attachment; filename=" + attachmentName;
     }
+
+    final String extension;
+    switch ( mimeType ) {
+      case MimeTypes.CSV:
+        extension = "." + ExporterEngine.OutputType.CSV.toString();
+        break;
+      case MimeTypes.JSON:
+        extension = "." + ExporterEngine.OutputType.JSON.toString();
+        break;
+      case MimeTypes.XLS:
+        extension = "." + ExporterEngine.OutputType.XLS.toString();
+        break;
+      case MimeTypes.XML:
+        extension = "." + ExporterEngine.OutputType.XML.toString();
+        break;
+      case MimeTypes.HTML:
+        extension = "." + ExporterEngine.OutputType.HTML.toString();
+        break;
+      default: // e.g. BINARY
+        extension = "";
+        break;
+    }
+
+    return "inline; filename=doQuery" + extension;
+  }
+
+  private static void setResponseHeaders( HttpServletResponse response, String mimeType, String attachmentName ) {
+    final String contentType = getContentType( mimeType, attachmentName );
+    response.setContentType( contentType );
+
+    final String contentDisposition = getContentDisposition( mimeType, attachmentName );
+    response.setHeader( "content-disposition", contentDisposition );
   }
 }
