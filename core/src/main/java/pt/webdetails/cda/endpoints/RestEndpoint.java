@@ -183,7 +183,7 @@ public class RestEndpoint {
       final ExportedQueryResult cdaListResult = this.getCdaList( queryParameters );
 
       return buildOkResponse( cdaListResult );
-    } catch( Exception ex ) {
+    } catch ( Exception ex ) {
       return buildServerErrorResponse();
     }
   }
