@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -10,7 +10,6 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
  * the license for the specific language governing your rights and limitations.
  */
-
 package pt.webdetails.cda.utils;
 
 import java.util.ArrayList;
@@ -24,6 +23,10 @@ import org.apache.commons.lang.StringUtils;
  * TODO: merge with queryOptions?
  */
 public class DoQueryParameters {
+
+  public static final String DEFAULT_OUTPUT_TYPE = "json";
+  public static final String DEFAULT_DATA_ACCESS_ID = "<blank>";
+  private static final String DEFAULT_JSON_CALLBACK = "<blank>";
 
   private String path;
   private String solution;
@@ -47,14 +50,16 @@ public class DoQueryParameters {
     this.path = path;
     this.solution = solution;
     this.file = file;
-    this.outputType = "json";
+
+    this.outputType = DEFAULT_OUTPUT_TYPE;
     this.outputIndexId = 1;
-    this.dataAccessId = "<blank>";
-    this.jsonCallback = "<blank>";
-    this.sortBy = new ArrayList<String>();
-    this.outputColumnName = new ArrayList<String>();
-    parameters = new HashMap<String, Object>();
-    extraSettings = new HashMap<String, Object>();
+    this.dataAccessId = DEFAULT_DATA_ACCESS_ID;
+    this.jsonCallback = DEFAULT_JSON_CALLBACK;
+
+    this.sortBy = new ArrayList<>();
+    this.outputColumnName = new ArrayList<>();
+    parameters = new HashMap<>();
+    extraSettings = new HashMap<>();
   }
 
   public DoQueryParameters( String cdaSettingsPath ) {
@@ -84,11 +89,11 @@ public class DoQueryParameters {
    * @return the path
    */
   public String getPath() {
-    // legacy path support
-    if ( !StringUtils.isEmpty( solution ) ) {
-      // legacy
+    final boolean isLegacyPath = !StringUtils.isEmpty( solution );
+    if ( isLegacyPath ) {
       return Util.joinPath( solution, path, file );
     }
+
     return path;
   }
 
