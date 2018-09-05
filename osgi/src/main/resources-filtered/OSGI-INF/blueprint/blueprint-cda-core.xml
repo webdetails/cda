@@ -8,9 +8,7 @@
                                http://cxf.apache.org/blueprint/jaxrs
                                http://cxf.apache.org/schemas/blueprint/jaxrs.xsd">
 
-  <!--<reference id="contentAccessFactory" interface="pt.webdetails.cpf.repository.api.IContentAccessFactory" timeout="20000" />-->
-
-  <!--Gain access to files available in bundles through CPF IReadAccess -->
+   <!--Gain access to files available in bundles through CPF IReadAccess -->
   <service interface="pt.webdetails.cpf.repository.api.IReadAccess">
     <service-properties>
       <entry key="pluginId" value="cda"/>
@@ -20,13 +18,6 @@
     </bean>
   </service>
 
-  <!--<bean id="myReadAccess" class="org.pentaho.ctools.cpf.repository.bundle.ReadAccess">-->
-    <!--<property name="bundle" ref="blueprintBundle"/>-->
-  <!--</bean>-->
-
-  <!--<service interface="pt.webdetails.cpf.repository.api.IReadAccess">-->
-    <!--<ref component-id="myReadAcceess"/>-->
-  <!--</service>-->
   <!-- Load system property -->
   <ext:property-placeholder />
 

@@ -118,12 +118,6 @@
                 <version>${mondrian.version}</version>
                 <scope>provided</scope>
             </dependency>
-
-            <dependency>
-                <groupId>pentaho</groupId>
-                <artifactId>pentaho-kettle-repository-locator-impl-plugin</artifactId>
-                <version>${pentaho-osgi-bundles.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -170,10 +164,9 @@
             <artifactId>cda-osgi-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>pentaho</groupId>
-            <artifactId>pentaho-kettle-repository-locator-impl-plugin</artifactId>
+            <groupId>org.pentaho.di.plugins</groupId>
+            <artifactId>repository-proxy</artifactId>
         </dependency>
 
         
