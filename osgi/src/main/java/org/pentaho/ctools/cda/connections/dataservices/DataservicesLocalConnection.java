@@ -10,18 +10,17 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
  * the license for the specific language governing your rights and limitations.
  */
-
 package org.pentaho.ctools.cda.connections.dataservices;
 
 import org.pentaho.di.trans.dataservice.client.DataServiceClientPlugin;
-import org.pentaho.di.trans.dataservice.client.api.IDataServiceClientService;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.DriverConnectionProvider;
 import pt.webdetails.cda.connections.dataservices.IDataservicesLocalConnection;
 
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.util.Map;
+
+import static org.pentaho.di.trans.dataservice.client.api.IDataServiceClientService.PARAMETER_PREFIX;
 
 public class DataservicesLocalConnection implements IDataservicesLocalConnection {
   private final DriverConnectionProvider connectionProvider;
@@ -30,7 +29,7 @@ public class DataservicesLocalConnection implements IDataservicesLocalConnection
     this.connectionProvider = connectionProvider;
   }
 
-  public DriverConnectionProvider getDriverConnectionProvider( Map<String, String> dataserviceParameters ) throws MalformedURLException {
+  public DriverConnectionProvider getDriverConnectionProvider( Map<String, String> dataserviceParameters ) {
     final DriverConnectionProvider connectionProvider = this.connectionProvider;
 
     DataServiceClientPlugin client = new DataServiceClientPlugin();
@@ -38,23 +37,25 @@ public class DataservicesLocalConnection implements IDataservicesLocalConnection
     String driver = client.getDriverClass();
     connectionProvider.setDriver( driver );
 
-    // NOTE: hostnam, port and path don't matter in a local connection ?
-    String url = null;
-    url = client.getURL( "0.0.0.0", "12345", "" ) + "?local=true";
+    // NOTE: hostname, port and path don't matter in a local connection ?
+    StringBuilder url = new StringBuilder( client.getURL( "0.0.0.0", "12345", "" ) );
+    url.append( "?local=true" );
 
     //puts the properties in the connection URL (they must be prefixed with "PARAMETER_", or they are ignored)
-    for ( String paramenterKey : dataserviceParameters.keySet() ) {
-      if ( dataserviceParameters.get( paramenterKey ) != null ) {
+    for ( String parameterKey : dataserviceParameters.keySet() ) {
+      if ( dataserviceParameters.get( parameterKey ) != null ) {
         try {
-          url += "&" + URLEncoder.encode( IDataServiceClientService.PARAMETER_PREFIX + paramenterKey, "UTF-8" ) + "="
-            + URLEncoder.encode( dataserviceParameters.get( paramenterKey ), "UTF-8" );
+          final String name = URLEncoder.encode( PARAMETER_PREFIX + parameterKey, "UTF-8" );
+          final String value = URLEncoder.encode( dataserviceParameters.get( parameterKey ), "UTF-8" );
+
+          url.append( "&" ).append( name ).append( "=" ).append( value );
         } catch ( UnsupportedEncodingException e ) {
           throw new RuntimeException( "Error encoding dataservice URL", e );
         }
       }
     }
 
-    connectionProvider.setUrl( url );
+    connectionProvider.setUrl( url.toString() );
     return connectionProvider;
   }
 }

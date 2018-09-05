@@ -10,7 +10,6 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
  * the license for the specific language governing your rights and limitations.
  */
-
 package pt.webdetails.cda.dataaccess;
 
 import org.dom4j.Element;
@@ -26,6 +25,7 @@ import org.pentaho.reporting.libraries.base.config.Configuration;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.ICdaEnvironment;
 import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 
@@ -45,9 +45,7 @@ public abstract class PREDataAccess extends SimpleDataAccess {
 
 
   public PREDataAccess( final Element element ) {
-
     super( element );
-
   }
 
 
@@ -60,7 +58,6 @@ public abstract class PREDataAccess extends SimpleDataAccess {
   public PREDataAccess( String id, String name, String connectionId, String query ) {
     super( id, name, connectionId, query );
   }
-
 
   public abstract DataFactory getDataFactory() throws UnknownConnectionException, InvalidConnectionException;
 
@@ -89,13 +86,13 @@ public abstract class PREDataAccess extends SimpleDataAccess {
         return;
       }
 
-      // and at the end, close your tablemodel if it holds on to resources like a resultset
+      // and at the end, close your table model if it holds on to resources like a resultset
       if ( getTableModel() instanceof CloseableTableModel ) {
         final CloseableTableModel ctm = (CloseableTableModel) getTableModel();
         ctm.close();
       }
 
-      // and finally shut down the datafactory to free any connection that may be open.
+      // and finally shut down the data factory to free any connection that may be open.
       localDataFactory.close();
 
       localDataFactory = null;
@@ -106,18 +103,14 @@ public abstract class PREDataAccess extends SimpleDataAccess {
 
   @Override
   protected IDataSourceQuery performRawQuery( final ParameterDataRow parameterDataRow ) throws QueryException {
-
-    //    boolean threadVarSet = false;
-
     try {
-
       final CachingDataFactory dataFactory = new CachingDataFactory( getDataFactory( parameterDataRow ), false );
 
       final Configuration configuration = ClassicEngineBoot.getInstance().getGlobalConfig();
 
       initializeDataFactory( dataFactory, configuration );
 
-      // fire the query. you always get a tablemodel or an exception.
+      // fire the query. you always get a table model or an exception.
 
       IDataAccessUtils dataAccessUtils = CdaEngine.getEnvironment().getDataAccessUtils();
       final ReportEnvironmentDataRow environmentDataRow = dataAccessUtils.createEnvironmentDataRow( configuration );
@@ -125,15 +118,15 @@ public abstract class PREDataAccess extends SimpleDataAccess {
 
       PREDataSourceQuery queryExecution = null;
       try {
-        final TableModel tm = dataFactory.queryData( "query",
-          new CompoundDataRow( environmentDataRow, parameterDataRow ) );
+        final CompoundDataRow compoundDataRow = new CompoundDataRow( environmentDataRow, parameterDataRow );
+        final TableModel tableModel = dataFactory.queryData( "query", compoundDataRow );
 
         //  Store this variable so that we can close it later
-        queryExecution = new PREDataSourceQuery( tm, dataFactory );
+        queryExecution = new PREDataSourceQuery( tableModel, dataFactory );
       } finally {
 
-        //There was an exception while getting the dataset - need to make sure 
-        //that the dataFactory is closed
+        // There was an exception while getting the dataset - need to make sure
+        // that the dataFactory is closed
         if ( queryExecution == null ) {
           dataFactory.close();
         }
@@ -141,9 +134,7 @@ public abstract class PREDataAccess extends SimpleDataAccess {
 
       return queryExecution;
 
-    } catch ( UnknownConnectionException e ) {
-      throw new QueryException( "Unknown connection", e );
-    } catch ( InvalidConnectionException e ) {
+    } catch ( UnknownConnectionException | InvalidConnectionException e ) {
       throw new QueryException( "Unknown connection", e );
     } catch ( ReportDataFactoryException e ) {
       // break this and pstoellberger will haunt you!
@@ -159,20 +150,21 @@ public abstract class PREDataAccess extends SimpleDataAccess {
         try {
           lastKnownParent = (Throwable) m.invoke( e );
           oldPrd = true;
-        } catch ( Exception e1 ) {
-          //Exception
-        } catch ( Error e1 ) {
-          //Error
+        } catch ( Exception | Error e1 ) {
+          // Exception | Error
         }
+
         break;
       }
 
       if ( !oldPrd || lastKnownParent == null ) {
         lastKnownParent = e.getCause();
       }
+
       if ( lastKnownParent != null ) {
         throw new QueryException( lastKnownParent.getMessage(), lastKnownParent );
       }
+
       throw new QueryException( e.getMessage(), e );
     }
   }
@@ -182,14 +174,14 @@ public abstract class PREDataAccess extends SimpleDataAccess {
     throws ReportDataFactoryException {
     final ResourceManager resourceManager = CdaEngine.getInstance().getSettingsManager().getResourceManager();
     final ResourceKey contextKey = getCdaSettings().getContextKey();
-    CdaEngine.getEnvironment().initializeDataFactory( dataFactory, configuration, contextKey, resourceManager );
-    //    dataFactory.open();
+
+    final ICdaEnvironment environment = CdaEngine.getEnvironment();
+    environment.initializeDataFactory( dataFactory, configuration, contextKey, resourceManager );
   }
 
 
   @Override
   public List<PropertyDescriptor> getInterface() {
-    List<PropertyDescriptor> properties = super.getInterface();
-    return properties;
+    return super.getInterface();
   }
 }

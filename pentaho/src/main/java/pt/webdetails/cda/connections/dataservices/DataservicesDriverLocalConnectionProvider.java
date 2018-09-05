@@ -10,7 +10,6 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. Please refer to
  * the license for the specific language governing your rights and limitations.
  */
-
 package pt.webdetails.cda.connections.dataservices;
 
 import org.pentaho.di.trans.dataservice.client.api.IDataServiceClientService;
@@ -39,14 +38,15 @@ public class DataservicesDriverLocalConnectionProvider extends DriverConnectionP
     return () -> PentahoSystem.getAll( IDataServiceClientService.class );
   }
 
-  @Override public Connection createConnection( String user, String password ) throws SQLException {
+  @Override
+  public Connection createConnection( String user, String password ) throws SQLException {
     if ( ThinConnection.localClient == null ) {
       List<IDataServiceClientService> listDataServiceClientServices = this.serviceSupplier.get();
       if ( listDataServiceClientServices != null ) {
         if ( listDataServiceClientServices.size() > 0 ) {
           // gets the first one... if later more than one implementation exists, we need to think on how to filter
           // the correct one
-          ThinConnection.localClient = (IDataServiceClientService) listDataServiceClientServices.get( 0 );
+          ThinConnection.localClient = listDataServiceClientServices.get( 0 );
         }
       }
     }
