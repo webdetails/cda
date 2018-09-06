@@ -4,12 +4,13 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>pentaho</groupId>
-    <artifactId>cda-plugin-assemblies</artifactId>
+    <artifactId>cda-plugin-assemblies-platform</artifactId>
     <version>9.0.0.0-SNAPSHOT</version>
   </parent>
+
   <artifactId>cda-disabled</artifactId>
-  <version>9.0.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
+
   <build>
     <plugins>
       <plugin>

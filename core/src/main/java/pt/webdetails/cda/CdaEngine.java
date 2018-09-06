@@ -87,12 +87,13 @@ public class CdaEngine {
     return _instance;
   }
 
-  public static synchronized void init( ICdaEnvironment env ) throws InitializationException {
+  public static synchronized CdaEngine init( ICdaEnvironment env ) throws InitializationException {
     assert env != null;
     _instance = new CdaEngine( env );
 
     // Start ClassicEngineBoot
     ClassicEngineBoot.getInstance().start();
+    return _instance;
   }
 
   /**
@@ -215,7 +216,7 @@ public class CdaEngine {
    * @return
    */
   public TableModel getCdaList() {
-    IUserContentAccess userRepo = PluginEnvironment.env().getContentAccessFactory().getUserContentAccess( "/" );
+    IUserContentAccess userRepo = this.getEnv().getRepo().getUserContentAccess( "/" );
     List<IBasicFile> cdaFiles = userRepo.listFiles( "", new IBasicFileFilter() {
       public boolean accept( IBasicFile file ) {
         return StringUtils.equals( file.getExtension(), "cda" );

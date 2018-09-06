@@ -7,117 +7,18 @@
     <artifactId>cda-plugin</artifactId>
     <version>9.0.0.0-SNAPSHOT</version>
   </parent>
+
   <artifactId>cda-plugin-assemblies</artifactId>
-  <version>9.0.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <modules>
-    <module>cda</module>
-    <module>cda-disabled</module>
-    <module>cda-samples</module>
-    <module>cda-proxy</module>
-  </modules>
+
   <properties>
     <cda.root.dir>/cda</cda.root.dir>
-    <pentaho-json.version>9.0.0.0-SNAPSHOT</pentaho-json.version>
   </properties>
-  <dependencies>
-    <dependency>
-      <groupId>pentaho</groupId>
-      <artifactId>cda-core</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>pentaho</groupId>
-      <artifactId>cda-pentaho</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>pentaho</groupId>
-      <artifactId>cda-proxy-impl</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>pentaho</groupId>
-      <artifactId>cpf-core</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>pentaho</groupId>
-      <artifactId>cpf-pentaho</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.pentaho.di.plugins</groupId>
-      <artifactId>kettle-log4j-core</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.htmlparser.jericho</groupId>
-      <artifactId>jericho-html</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.pentaho</groupId>
-      <artifactId>json</artifactId>
-      <version>${pentaho-json.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-  </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-resources</id>
-            <phase>process-sources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <overwrite>true</overwrite>
-              <outputDirectory>${basedir}/target/processed</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>../core/src/main/resources</directory>
-                  <filtering>true</filtering>
-                </resource>
-                <resource>
-                  <directory>../pentaho/src/main/resources</directory>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>
-              <nonFilteredFileExtensions>
-                <nonFilteredFileExtension>js</nonFilteredFileExtension>
-                <nonFilteredFileExtension>css</nonFilteredFileExtension>
-                <nonFilteredFileExtension>ico</nonFilteredFileExtension>
-                <nonFilteredFileExtension>psd</nonFilteredFileExtension>
-              </nonFilteredFileExtensions>
-              <supportMultiLineFiltering>false</supportMultiLineFiltering>
-            </configuration>
-          </execution>
-          <execution>
-            <id>copy-assembly-resources</id>
-            <phase>process-sources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <overwrite>true</overwrite>
-              <outputDirectory>${basedir}/target/</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${basedir}/src/main/resources</directory>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+
+  <modules>
+    <module>platform</module>
+    <module>cda-proxy</module>
+    <module>feature</module>
+  </modules>
+
 </project>

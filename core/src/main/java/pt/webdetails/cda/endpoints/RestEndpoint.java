@@ -28,10 +28,12 @@ import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
@@ -59,10 +61,37 @@ public class RestEndpoint {
     return CharsetHelper.getEncoding();
   }
 
+  @POST
+  @Path( "/doQuery" )
+  @Consumes( { APPLICATION_XML, APPLICATION_JSON, APPLICATION_FORM_URLENCODED } )
+  public Response doQueryPost( @FormParam( "path" ) String path,
+                           @FormParam( "solution" ) String solution,
+                           @FormParam( "file" ) String file,
+                           @DefaultValue( "json" ) @FormParam( "outputType" ) String outputType,
+                           @DefaultValue( "1" ) @FormParam( "outputIndexId" ) int outputIndexId,
+                           @DefaultValue( "<blank>" ) @FormParam( "dataAccessId" ) String dataAccessId,
+                           @DefaultValue( "false" ) @FormParam( "bypassCache" ) Boolean bypassCache,
+                           @DefaultValue( "false" ) @FormParam( "paginateQuery" ) Boolean paginateQuery,
+                           @DefaultValue( "0" ) @FormParam( "pageSize" ) int pageSize,
+                           @DefaultValue( "0" ) @FormParam( "pageStart" ) int pageStart,
+                           @DefaultValue( "false" ) @FormParam( "wrapItUp" ) Boolean wrapItUp,
+                           @FormParam( "sortBy" ) List<String> sortBy,
+                           @DefaultValue( "<blank>" ) @FormParam( "jsonCallback" ) String jsonCallback ) {
+    try {
+      final DoQueryParameters queryParams = getQueryParameters( path, solution, file, outputType, outputIndexId,
+        dataAccessId, bypassCache, paginateQuery, pageSize, pageStart, wrapItUp, sortBy, jsonCallback );
+
+      return this.doQuery( queryParams );
+    } catch ( Exception ex ) {
+      return buildServerErrorResponse();
+    }
+  }
+
+
   @GET
   @Path( "/doQuery" )
   @Consumes( { APPLICATION_XML, APPLICATION_JSON, APPLICATION_FORM_URLENCODED } )
-  public Response doQuery( @QueryParam( "path" ) String path,
+  public Response doQueryGet( @QueryParam( "path" ) String path,
                            @QueryParam( "solution" ) String solution,
                            @QueryParam( "file" ) String file,
                            @DefaultValue( "json" ) @QueryParam( "outputType" ) String outputType,

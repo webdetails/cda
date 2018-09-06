@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>cda-plugin-assemblies</artifactId>
+        <groupId>pentaho</groupId>
+        <version>9.0.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>pentaho-cda</artifactId>
+    <packaging>kar</packaging>
+
+    <properties>
+        <pdi-dataservice-client-plugin.version>${project.version}</pdi-dataservice-client-plugin.version>
+        <pdi-dataservice-plugin.version>${project.version}</pdi-dataservice-plugin.version>
+        <pentaho-metaverse.version>${project.version}</pentaho-metaverse.version>
+        <pentaho-osgi-bundles.version>${project.version}</pentaho-osgi-bundles.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--    REPORTING    -->
+            <dependency>
+                <groupId>org.pentaho.reporting.engine</groupId>
+                <artifactId>classic-core</artifactId>
+                <version>${pentaho-reporting.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.pentaho.reporting.engine</groupId>
+                <artifactId>classic-extensions-kettle</artifactId>
+                <version>${pentaho-reporting.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.pentaho.reporting.engine</groupId>
+                <artifactId>classic-extensions-mondrian</artifactId>
+                <version>${pentaho-reporting.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.pentaho.reporting.engine</groupId>
+                <artifactId>classic-extensions-olap4j</artifactId>
+                <version>${pentaho-reporting.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.pentaho.reporting.engine</groupId>
+                <artifactId>classic-extensions-pmd</artifactId>
+                <version>${pentaho-reporting.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.pentaho.reporting.engine</groupId>
+                <artifactId>classic-extensions-scripting</artifactId>
+                <version>${pentaho-reporting.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.pentaho.reporting.engine</groupId>
+                <artifactId>classic-extensions-xpath</artifactId>
+                <version>${pentaho-reporting.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.pentaho.reporting.library</groupId>
+                <artifactId>libloader</artifactId>
+                <version>${pentaho-reporting.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.pentaho.reporting.library</groupId>
+                <artifactId>libbase</artifactId>
+                <version>${pentaho-reporting.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.pentaho.reporting.library</groupId>
+                <artifactId>libformula</artifactId>
+                <version>${pentaho-reporting.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Kettle -->
+            <dependency>
+                <groupId>pentaho-kettle</groupId>
+                <artifactId>kettle-core</artifactId>
+                <version>${pdi.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>pentaho-kettle</groupId>
+                <artifactId>kettle-engine</artifactId>
+                <version>${pdi.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.pentaho.di.plugins</groupId>
+                <artifactId>kettle-log4j-core</artifactId>
+                <version>${pdi.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.pentaho</groupId>
+                <artifactId>pentaho-metadata</artifactId>
+                <version>${pentaho-metadata.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>pentaho</groupId>
+                <artifactId>mondrian</artifactId>
+                <version>${mondrian.version}</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+    <dependencies>
+        <!-- Features -->
+        <dependency>
+            <groupId>org.pentaho.ctools</groupId>
+            <artifactId>pentaho-cpf-rca</artifactId>
+            <version>${pentaho-cpf-plugin.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>pentaho</groupId>
+            <artifactId>pentaho-dataservice</artifactId>
+            <version>${pdi-dataservice-plugin.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
+
+        <!-- pentaho-dataservice-client feature is included in the pentaho-dataservice feature however,
+             the common bundles between that feature and the one we're generating here are being
+             included in this feature. We're adding the pentaho-dataservice-client feature here
+             explicitly to prevent that. -->
+        <dependency>
+            <groupId>pentaho</groupId>
+            <artifactId>pentaho-dataservice-client</artifactId>
+            <version>${pdi-dataservice-client-plugin.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
+
+
+        <!-- Bundles -->
+        <dependency>
+            <groupId>pentaho</groupId>
+            <artifactId>cda-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.pentaho.ctools</groupId>
+            <artifactId>cda-osgi-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.pentaho.di.plugins</groupId>
+            <artifactId>repository-proxy</artifactId>
+        </dependency>
+
+        
+        <!-- This is to support pentaho-dataservice-server-plugin.
+             Hammer in pentaho-modeler but do not handle its transitives properly
+             TODO: handle transitives properly. Probably we should have a pentaho-modeler feature -->
+        <dependency>
+            <groupId>pentaho</groupId>
+            <artifactId>pentaho-modeler</artifactId>
+            <version>${pdi.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
+        <!-- Dependencies Bundles-->
+    </dependencies>
+
+
+</project>
