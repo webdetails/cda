@@ -49,6 +49,7 @@
     <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
     <pentaho-reporting.version>8.2.0.0-SNAPSHOT</pentaho-reporting.version>
     <pdi-dataservice-client-plugin.version>8.2.0.0-SNAPSHOT</pdi-dataservice-client-plugin.version>
+    <pdi-dataservice-plugin.version>8.2.0.0-SNAPSHOT</pdi-dataservice-plugin.version>
     <pdi.version>8.2.0.0-SNAPSHOT</pdi.version>
     <pentaho-cpf-plugin.version>8.2.0.0-SNAPSHOT</pentaho-cpf-plugin.version>
     <pentaho-json.version>8.2.0.0-SNAPSHOT</pentaho-json.version>
@@ -236,6 +237,11 @@
         <groupId>org.pentaho.reporting.library</groupId>
         <artifactId>libformula</artifactId>
         <version>${pentaho-reporting.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>pentaho</groupId>
+        <artifactId>pdi-dataservice-server-plugin</artifactId>
+        <version>${pdi-dataservice-plugin.version}</version>
       </dependency>
       <dependency>
         <groupId>net.htmlparser.jericho</groupId>
