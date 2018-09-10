@@ -191,11 +191,11 @@ public class CdaEnvironment implements ICdaEnvironment {
     cdaComponents.setProperty( "dataAccesses",
             "KettleDataAccess,DataservicesDataAccess,StreamingDataservicesDataAccess" );
 
-    cdaComponents.setProperty( "connections", "AbstractConnection,Connection,metadata.MetadataConnection," +
-        "mondrian.AbstractMondrianConnection,mondrian.JdbcConnection,mondrian.JndiConnection," +
-        "mondrian.MondrianConnection,olap4j.JdbcConnection,olap4j.DefaultOlap4jConnection," +
-        "olap4j.Olap4JConnection,scripting.ScriptingConnection,sql.AbstractSqlConnection,sql.JdbcConnection," +
-        "sql.JndiConnection,sql.SqlConnection,dataservices.dataservicesConnection" );
+    cdaComponents.setProperty( "connections", "AbstractConnection,Connection,metadata.MetadataConnection,"
+        + "mondrian.AbstractMondrianConnection,mondrian.JdbcConnection,mondrian.JndiConnection,"
+        + "mondrian.MondrianConnection,olap4j.JdbcConnection,olap4j.DefaultOlap4jConnection,"
+        + "olap4j.Olap4JConnection,scripting.ScriptingConnection,sql.AbstractSqlConnection,sql.JdbcConnection,"
+        + "sql.JndiConnection,sql.SqlConnection,dataservices.dataservicesConnection" );
 
     return cdaComponents;
   }

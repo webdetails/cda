@@ -33,7 +33,7 @@ public class DataFactoryRegister {
   }
 
   private final Class[] customDataFactories = {
-      SQLStreamingReportDataFactory.class
+    SQLStreamingReportDataFactory.class
   };
 
   private void registerCustomDataFactories() {
