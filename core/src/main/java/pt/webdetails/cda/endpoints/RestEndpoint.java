@@ -27,6 +27,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -390,6 +391,14 @@ public class RestEndpoint {
   }
 
   Map<String, Object> getExtraParameters( HttpServletRequest request ) {
+    return getParameters( request, RequestParameter::isExtraParameter );
+  }
+
+  Map<String, Object> getExtraSettings( HttpServletRequest request ) {
+    return getParameters( request, RequestParameter::isSettingParameter );
+  }
+
+  private Map<String, Object> getParameters( HttpServletRequest request, Predicate<RequestParameter> predicate ) {
     Map<String, Object> parameters = new HashMap<>();
 
     final Enumeration<String> parameterNames = request.getParameterNames();
@@ -397,7 +406,7 @@ public class RestEndpoint {
       final String parameterName = parameterNames.nextElement();
       final RequestParameter requestParameter = new RequestParameter( request, parameterName );
 
-      if ( requestParameter.isExtraParameter() ) {
+      if ( predicate.test( requestParameter ) ) {
         parameters.put( requestParameter.getName(), requestParameter.getValue() );
       }
     }
@@ -405,23 +414,7 @@ public class RestEndpoint {
     return parameters;
   }
 
-  Map<String, Object> getExtraSettings( HttpServletRequest request ) {
-    Map<String, Object> extraSettings = new HashMap<>();
-
-    final Enumeration<String> parameterNames = request.getParameterNames();
-    while ( parameterNames.hasMoreElements() ) {
-      final String parameterName = parameterNames.nextElement();
-      final RequestParameter requestParameter = new RequestParameter( request, parameterName );
-
-      if ( requestParameter.isSettingParameter() ) {
-        extraSettings.put( requestParameter.getName(), requestParameter.getValue() );
-      }
-    }
-
-    return extraSettings;
-  }
-
-  private class RequestParameter {
+  private final class RequestParameter {
 
     private HttpServletRequest request;
 
