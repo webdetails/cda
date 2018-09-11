@@ -42,7 +42,7 @@ public class DoQueryParameters {
   private String jsonCallback;
   private List<String> sortBy;
   private List<String> outputColumnName;
-  private Map<String, Object> parameters;
+  private Map<String, Object> extraParameters;
   private Map<String, Object> extraSettings;
 
 
@@ -58,8 +58,9 @@ public class DoQueryParameters {
 
     this.sortBy = new ArrayList<>();
     this.outputColumnName = new ArrayList<>();
-    parameters = new HashMap<>();
-    extraSettings = new HashMap<>();
+
+    this.extraParameters = new HashMap<>();
+    this.extraSettings = new HashMap<>();
   }
 
   public DoQueryParameters( String cdaSettingsPath ) {
@@ -237,11 +238,11 @@ public class DoQueryParameters {
    * @return the extraParams
    */
   public Map<String, Object> getParameters() {
-    return parameters;
+    return extraParameters;
   }
 
   public void setParameters( Map<String, Object> parameters ) {
-    this.parameters = parameters;
+    this.extraParameters = parameters;
   }
 
   public Object getParameter( String paramName ) {
