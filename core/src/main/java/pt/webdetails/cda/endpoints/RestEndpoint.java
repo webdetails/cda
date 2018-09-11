@@ -54,10 +54,14 @@ import pt.webdetails.cpf.utils.CharsetHelper;
 import pt.webdetails.cpf.utils.MimeTypes;
 
 /**
+ * TODO: Remove deprecated tag?
  * @deprecated
  */
 @Path( "/cda/api/utils" )
 public class RestEndpoint {
+  static final String PREFIX_PARAMETER = "param";
+  static final String PREFIX_SETTING = "setting";
+
   private static final String HEADER_CONTENT_TYPE = "Content-Type";
   private static final String HEADER_CONTENT_DISPOSITION = "Content-Disposition";
 
@@ -385,7 +389,7 @@ public class RestEndpoint {
     return queryParameters;
   }
 
-  private Map<String, Object> getExtraParameters( HttpServletRequest request ) {
+  Map<String, Object> getExtraParameters( HttpServletRequest request ) {
     Map<String, Object> parameters = new HashMap<>();
 
     final Enumeration<String> parameterNames = request.getParameterNames();
@@ -401,7 +405,7 @@ public class RestEndpoint {
     return parameters;
   }
 
-  private Map<String, Object> getExtraSettings( HttpServletRequest request ) {
+  Map<String, Object> getExtraSettings( HttpServletRequest request ) {
     Map<String, Object> extraSettings = new HashMap<>();
 
     final Enumeration<String> parameterNames = request.getParameterNames();
@@ -418,8 +422,6 @@ public class RestEndpoint {
   }
 
   private class RequestParameter {
-    private static final String PREFIX_PARAMETER = "param";
-    private static final String PREFIX_SETTING = "setting";
 
     private HttpServletRequest request;
 
