@@ -17,6 +17,8 @@ import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 
+import pt.webdetails.cda.endpoints.RestEndpoint.RequestParameter;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -41,7 +43,7 @@ public class RestEndpointTest {
   }
 
   @Test
-  public void testGetExtraParameters_singleValue() {
+  public void testGetParameters_singleValueExtraParameter() {
     final String expectedName = "foo";
     final String expectedValue = "bar";
 
@@ -51,14 +53,14 @@ public class RestEndpointTest {
 
     // ---
 
-    Map<String, Object> extraParameters = this.restEndpoint.getExtraParameters( servletRequestMock );
+    Map<String, Object> extraParameters = getExtraParameters();
 
     assertEquals( 1, extraParameters.size() );
     assertEquals( expectedValue, extraParameters.get( expectedName ) );
   }
 
   @Test
-  public void testGetExtraParameters_MultipleValues() {
+  public void testGetParameters_MultipleValueExtraParameter() {
     final String expectedName = "foo";
     final String[] expectedValue = getParameterValues( "bar1", "bar2" );
 
@@ -68,14 +70,18 @@ public class RestEndpointTest {
 
     // ---
 
-    Map<String, Object> extraParameters = this.restEndpoint.getExtraParameters( servletRequestMock );
+    Map<String, Object> extraParameters = getExtraParameters();
 
     assertEquals( 1, extraParameters.size() );
     assertEquals( expectedValue, extraParameters.get( expectedName ) );
   }
 
+  private Map<String, Object> getExtraParameters() {
+    return this.restEndpoint.getParameters( servletRequestMock, RequestParameter::isExtraParameter );
+  }
+
   @Test
-  public void testGetExtraSettings_singleValue() {
+  public void testGetParameters_singleValueExtraSetting() {
     final String expectedName = "foo";
     final String expectedValue = "bar";
 
@@ -85,14 +91,14 @@ public class RestEndpointTest {
 
     // ---
 
-    Map<String, Object> extraParameters = this.restEndpoint.getExtraSettings( servletRequestMock );
+    Map<String, Object> extraSettings = getExtraSettings();
 
-    assertEquals( 1, extraParameters.size() );
-    assertEquals( expectedValue, extraParameters.get( expectedName ) );
+    assertEquals( 1, extraSettings.size() );
+    assertEquals( expectedValue, extraSettings.get( expectedName ) );
   }
 
   @Test
-  public void testGetExtraSettings_MultipleValues() {
+  public void testGetParameters_MultipleValueExtraSetting() {
     final String expectedName = "foo";
     final String[] expectedValue = getParameterValues( "bar1", "bar2" );
 
@@ -102,10 +108,14 @@ public class RestEndpointTest {
 
     // ---
 
-    Map<String, Object> extraParameters = this.restEndpoint.getExtraSettings( servletRequestMock );
+    Map<String, Object> extraSettings = getExtraSettings();
 
-    assertEquals( 1, extraParameters.size() );
-    assertEquals( expectedValue, extraParameters.get( expectedName ) );
+    assertEquals( 1, extraSettings.size() );
+    assertEquals( expectedValue, extraSettings.get( expectedName ) );
+  }
+
+  private Map<String, Object> getExtraSettings() {
+    return this.restEndpoint.getParameters( servletRequestMock, RequestParameter::isSettingParameter );
   }
 
   private Enumeration<String> getParameterNames( String ...names ) {

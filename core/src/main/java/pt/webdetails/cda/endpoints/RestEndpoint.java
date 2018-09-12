@@ -381,24 +381,16 @@ public class RestEndpoint {
     queryParameters.setWrapItUp( wrapItUp );
     queryParameters.setJsonCallback( jsonCallback );
 
-    final Map<String, Object> extraParameters = getExtraParameters( request );
+    final Map<String, Object> extraParameters = getParameters( request, RequestParameter::isExtraParameter );
     queryParameters.setParameters( extraParameters );
 
-    final Map<String, Object> extraSettings = getExtraSettings( request );
+    final Map<String, Object> extraSettings = getParameters( request, RequestParameter::isSettingParameter );
     queryParameters.setExtraSettings( extraSettings );
 
     return queryParameters;
   }
 
-  Map<String, Object> getExtraParameters( HttpServletRequest request ) {
-    return getParameters( request, RequestParameter::isExtraParameter );
-  }
-
-  Map<String, Object> getExtraSettings( HttpServletRequest request ) {
-    return getParameters( request, RequestParameter::isSettingParameter );
-  }
-
-  private Map<String, Object> getParameters( HttpServletRequest request, Predicate<RequestParameter> predicate ) {
+  Map<String, Object> getParameters( HttpServletRequest request, Predicate<RequestParameter> predicate ) {
     Map<String, Object> parameters = new HashMap<>();
 
     final Enumeration<String> parameterNames = request.getParameterNames();
@@ -414,7 +406,7 @@ public class RestEndpoint {
     return parameters;
   }
 
-  private final class RequestParameter {
+  final class RequestParameter {
 
     private HttpServletRequest request;
 
