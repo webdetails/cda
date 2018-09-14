@@ -12,14 +12,16 @@
   <packaging>pom</packaging>
 
   <properties>
-    <karaf.features.version>3.0.8</karaf.features.version>
+    <karaf.features.version>3.0.3</karaf.features.version>
+    <pdi-pur-plugin.version>${project.version}</pdi-pur-plugin.version>
+    <maven-patch-plugin.version>1.2</maven-patch-plugin.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>com.pentaho.di</groupId>
       <artifactId>pdi-core-ee</artifactId>
-      <version>8.2.0.0-SNAPSHOT</version>
+      <version>8.2.0.0-SNAPSHOT</version> <!-- TODO: Change version to proper property name when its available -->
       <type>zip</type>
       <exclusions>
         <exclusion>
@@ -28,6 +30,61 @@
         </exclusion>
       </exclusions>
     </dependency>
+
+    <!-- region used in the karaf assembly descriptors -->
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>pentaho-cda</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
+
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>pentaho-karaf-features</artifactId>
+      <version>${pentaho-karaf.version}</version>
+      <type>xml</type>
+      <classifier>standard</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.pentaho.karaf</groupId>
+      <artifactId>pentaho-karaf-overrides</artifactId>
+      <version>${pentaho-karaf.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.karaf.features</groupId>
+      <artifactId>standard</artifactId>
+      <version>${karaf.features.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.karaf.features</groupId>
+      <artifactId>enterprise</artifactId>
+      <version>${karaf.features.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf.karaf</groupId>
+      <artifactId>apache-cxf</artifactId>
+      <version>${cxf.karaf.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
+    <!-- endregion -->
+
+    <dependency>
+      <groupId>org.pentaho.di.plugins</groupId>
+      <artifactId>pdi-pur-plugin</artifactId>
+      <version>${pdi-pur-plugin.version}</version>
+      <type>zip</type>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -82,7 +139,6 @@
       <plugin>
         <groupId>org.apache.karaf.tooling</groupId>
         <artifactId>karaf-maven-plugin</artifactId>
-        <version>${karaf-maven-plugin.version}</version>
 
         <executions>
           <execution>
@@ -109,7 +165,7 @@
                 <feature>pentaho-cda</feature>
               </features>
 
-              <repository>target/pdi-core-ee/data-integration/system/karaf/system</repository>
+              <repository>${project.build.directory}/pdi-core-ee/data-integration/system/karaf/system</repository>
             </configuration>
           </execution>
         </executions>
@@ -118,6 +174,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-patch-plugin</artifactId>
+        <version>${maven-patch-plugin.version}</version>
 
         <executions>
           <execution>
@@ -125,7 +182,7 @@
             <phase>process-resources</phase>
 
             <configuration>
-              <targetDirectory>target/pdi-core-ee/data-integration/system/karaf/etc</targetDirectory>
+              <targetDirectory>${project.build.directory}/pdi-core-ee/data-integration/system/karaf/etc</targetDirectory>
 
               <patches>
                 <patch>custom.properties.patch</patch>

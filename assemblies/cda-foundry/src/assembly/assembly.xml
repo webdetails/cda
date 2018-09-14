@@ -15,4 +15,14 @@
     </fileSet>
   </fileSets>
 
+  <dependencySets>
+    <dependencySet>
+      <includes>
+        <include>org.pentaho.di.plugins:pdi-pur-plugin:zip</include>
+      </includes>
+      <outputDirectory>data-integration/plugins</outputDirectory>
+      <unpack>true</unpack>
+    </dependencySet>
+  </dependencySets>
+
 </assembly>
