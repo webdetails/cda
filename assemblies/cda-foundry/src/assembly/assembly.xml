@@ -10,21 +10,9 @@
 
   <fileSets>
     <fileSet>
-      <!--<directory>${project.build.directory}/pdi-core-ee/</directory>-->
       <directory>${project.build.directory}/pdi-core-ee/</directory>
       <outputDirectory>.</outputDirectory>
-      <!--<excludes>-->
-        <!--<exclude>*.disabled</exclude>-->
-        <!--<exclude>marketplace.xml</exclude>-->
-      <!--</excludes>-->
     </fileSet>
   </fileSets>
 
-  <!--<dependencySets>-->
-    <!--<dependencySet>-->
-      <!--<outputDirectory>${cda.root.dir}/lib</outputDirectory>-->
-      <!--<scope>runtime</scope>-->
-      <!--<useTransitiveDependencies>false</useTransitiveDependencies>-->
-    <!--</dependencySet>-->
-  <!--</dependencySets>-->
 </assembly>

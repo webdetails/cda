@@ -23,6 +23,9 @@ REM
 REM *****************************************************************************
 
 setlocal
+
+set OPT=%OPT% "-Drepos.url=%REPOS_URL%" "-Drepos.user=%REPOS_USER%" "-Drepos.password=%REPOS_PASSOWORD%"
+
 SET initialDir=%cd%
 pushd %~dp0
 SET STARTTITLE="Scale"

@@ -5,17 +5,21 @@
   <parent>
     <groupId>pentaho</groupId>
     <artifactId>cda-plugin-assemblies</artifactId>
-    <version>9.0.0.0-SNAPSHOT</version>
+    <version>8.2.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>cda-foundry</artifactId>
   <packaging>pom</packaging>
 
+  <properties>
+    <karaf.features.version>3.0.8</karaf.features.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>com.pentaho.di</groupId>
       <artifactId>pdi-core-ee</artifactId>
-      <version>9.0.0.0-SNAPSHOT</version>
+      <version>8.2.0.0-SNAPSHOT</version>
       <type>zip</type>
       <exclusions>
         <exclusion>
@@ -24,19 +28,22 @@
         </exclusion>
       </exclusions>
     </dependency>
-
   </dependencies>
+
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
+
         <executions>
           <execution>
-            <id>add-pdi-core-ee</id>
+            <id>unpack-pdi-core-ee</id>
             <phase>generate-resources</phase>
+
             <goals>
               <goal>unpack-dependencies</goal>
             </goals>
+
             <configuration>
               <includeArtifactIds>pdi-core-ee</includeArtifactIds>
               <outputDirectory>${project.build.directory}/pdi-core-ee</outputDirectory>
@@ -44,25 +51,26 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-scale-and-spoon</id>
+            <id>copy-boot-script</id>
             <phase>generate-resources</phase>
+
             <goals>
               <goal>copy-resources</goal>
             </goals>
+
             <configuration>
               <outputDirectory>${project.build.directory}/pdi-core-ee/data-integration</outputDirectory>
               <resources>
                 <resource>
-                  <directory>src/resources</directory>
+                  <directory>src/main/resources</directory>
                   <includes>
                     <include>Scale.bat</include>
                     <include>scale.sh</include>
-                    <include>Spoon.bat</include>
-                    <include>spoon.sh</include>
                   </includes>
                 </resource>
               </resources>
@@ -70,24 +78,67 @@
           </execution>
         </executions>
       </plugin>
-      <!--<plugin>-->
-        <!--<artifactId>maven-assembly-plugin</artifactId>-->
-        <!--<executions>-->
-          <!--<execution>-->
-            <!--<id>cda-foundry</id>-->
-            <!--<phase>package</phase>-->
-            <!--<goals>-->
-              <!--<goal>single</goal>-->
-            <!--</goals>-->
-            <!--<configuration>-->
-              <!--<descriptors>-->
-                <!--<descriptor>src/assembly/descriptors/assembly.xml</descriptor>-->
-              <!--</descriptors>-->
-              <!--<appendAssemblyId>false</appendAssemblyId>-->
-            <!--</configuration>-->
-          <!--</execution>-->
-        <!--</executions>-->
-      <!--</plugin>-->
+
+      <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>karaf-maven-plugin</artifactId>
+        <version>${karaf-maven-plugin.version}</version>
+
+        <executions>
+          <execution>
+            <id>add-pentaho-cda-feature-to-pdi-core-repo</id>
+
+            <phase>process-resources</phase>
+
+            <goals>
+              <goal>features-add-to-repository</goal>
+            </goals>
+
+            <configuration>
+              <descriptors>
+                <descriptor>mvn:org.apache.karaf.features/standard/${karaf.features.version}/xml/features</descriptor>
+                <descriptor>mvn:org.apache.karaf.features/enterprise/${karaf.features.version}/xml/features</descriptor>
+                <descriptor>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.karaf.version}/xml/features</descriptor>
+                <descriptor>mvn:org.pentaho.karaf/pentaho-karaf-overrides/${project.version}/xml/features</descriptor>
+                <descriptor>mvn:pentaho/pentaho-karaf-features/${project.version}/xml/standard</descriptor>
+
+                <descriptor>mvn:pentaho/pentaho-cda/${project.version}/xml/features</descriptor>
+              </descriptors>
+
+              <features>
+                <feature>pentaho-cda</feature>
+              </features>
+
+              <repository>target/pdi-core-ee/data-integration/system/karaf/system</repository>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-patch-plugin</artifactId>
+
+        <executions>
+          <execution>
+            <id>patch-karaf-etc</id>
+            <phase>process-resources</phase>
+
+            <configuration>
+              <targetDirectory>target/pdi-core-ee/data-integration/system/karaf/etc</targetDirectory>
+
+              <patches>
+                <patch>custom.properties.patch</patch>
+                <patch>org.apache.karaf.features.cfg.patch</patch>
+              </patches>
+            </configuration>
+
+            <goals>
+              <goal>apply</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>
