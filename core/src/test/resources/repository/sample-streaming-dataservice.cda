@@ -13,7 +13,6 @@
     <WindowSize>0</WindowSize>
     <WindowEvery>0</WindowEvery>
     <WindowLimit>0</WindowLimit>
-    <ComponentRefreshPeriod>10</ComponentRefreshPeriod>
     <Parameters>
       <Parameter name="paramComp2" type="String" default="" separator=";"/>
     </Parameters>

@@ -213,7 +213,6 @@ public class DomVisitor {
     daEle.addElement( "WindowSize" ).addText( String.valueOf( da.getWindowSize() ) );
     daEle.addElement( "WindowEvery" ).addText( String.valueOf( da.getWindowEvery() ) );
     daEle.addElement( "WindowLimit" ).addText( String.valueOf( da.getWindowLimit() ) );
-    daEle.addElement( "ComponentRefreshPeriod" ).addText( String.valueOf( da.getComponentRefreshPeriod() ) );
   }
 
   // Compound data accesses

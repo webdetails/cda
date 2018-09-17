@@ -32,7 +32,6 @@ import pt.webdetails.cda.dataaccess.DataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessEnums.ConnectionInstanceType;
 import pt.webdetails.cda.dataaccess.DataAccessEnums.DataAccessInstanceType;
 import pt.webdetails.cda.dataaccess.DataservicesDataAccess;
-import pt.webdetails.cda.dataaccess.StreamingDataservicesDataAccess;
 import pt.webdetails.cda.dataaccess.DenormalizedMdxDataAccess;
 import pt.webdetails.cda.dataaccess.DenormalizedOlap4JDataAccess;
 import pt.webdetails.cda.dataaccess.JoinCompoundDataAccess;
@@ -44,11 +43,11 @@ import pt.webdetails.cda.dataaccess.Olap4JDataAccess;
 import pt.webdetails.cda.dataaccess.ReflectionDataAccess;
 import pt.webdetails.cda.dataaccess.ScriptableDataAccess;
 import pt.webdetails.cda.dataaccess.SqlDataAccess;
+import pt.webdetails.cda.dataaccess.StreamingDataservicesDataAccess;
 import pt.webdetails.cda.dataaccess.UnionCompoundDataAccess;
 import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
 import pt.webdetails.cda.dataaccess.XPathDataAccess;
 import pt.webdetails.cda.dataaccess.streaming.IStreamingDataAccess;
-import pt.webdetails.cda.dataaccess.streaming.PushStreamDataAccess;
 import pt.webdetails.cda.utils.TableModelUtils;
 import pt.webdetails.cda.utils.Util;
 import pt.webdetails.cda.xml.DomTraversalHelper;
@@ -194,8 +193,6 @@ public class CdaSettings {
           return new StreamingDataservicesDataAccess( element );
         case DATASERVICES:
           return new DataservicesDataAccess( element );
-        case DATASERVICES_PUSH:
-          return new PushStreamDataAccess( element );
       }
     }
     return null;

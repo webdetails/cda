@@ -13,14 +13,6 @@
 
 package pt.webdetails.cda.utils.kettle;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicMarkableReference;
-import java.util.function.Function;
-
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.RowMetaAndData;
@@ -29,6 +21,16 @@ import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.di.trans.step.RowListener;
 import org.pentaho.reporting.engine.classic.core.states.datarow.EmptyTableModel;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
+
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicMarkableReference;
+import java.util.function.Function;
 
 
 /**
@@ -203,9 +205,22 @@ public class RowMetaToTableModel implements RowListener {
           }
           @Override
           public Object getValueAt( int rowIndex, int columnIndex ) {
-            return rowMetaAndData.get( rowIndex ).getData()[columnIndex];
-          }
+            RowMetaAndData rowMetaData = rowMetaAndData.get( rowIndex );
+            Object value = rowMetaData.getData()[ columnIndex ];
 
+            //getting dates as java.sql.Timestamp and not as java.util.Date makes simpler to deal with them
+            //since they get formated as a simpler format when "stringded"
+            if ( value != null
+              && value instanceof Date
+              && rowMetaData.getValueMeta( columnIndex ).getType() == ValueMetaInterface.TYPE_DATE ) {
+
+              Calendar calendar = Calendar.getInstance();
+              calendar.setTime( (Date) value );
+              return new Timestamp( calendar.getTimeInMillis() );
+            }
+
+            return value;
+          }
         };
       }
     };
