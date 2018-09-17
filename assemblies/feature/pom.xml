@@ -16,7 +16,6 @@
     <properties>
         <pdi-dataservice-client-plugin.version>8.2.0.0-SNAPSHOT</pdi-dataservice-client-plugin.version>
         <pdi-dataservice-plugin.version>8.2.0.0-SNAPSHOT</pdi-dataservice-plugin.version>
-        <pentaho-metaverse.version>8.2.0.0-SNAPSHOT</pentaho-metaverse.version>
         <pentaho-osgi-bundles.version>8.2.0.0-SNAPSHOT</pentaho-osgi-bundles.version>
     </properties>
 

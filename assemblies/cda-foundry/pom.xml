@@ -87,15 +87,6 @@
       <type>zip</type>
     </dependency>
 
-    <!-- Temporarily including the pentaho-cda Kar while we don't fix the boot deadlock between Kettle and Karaf -->
-    <dependency>
-      <groupId>pentaho</groupId>
-      <artifactId>pentaho-cda</artifactId>
-      <version>${project.version}</version>
-      <type>kar</type>
-    </dependency>
-
-
   </dependencies>
 
   <build>

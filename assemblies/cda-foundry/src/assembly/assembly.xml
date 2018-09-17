@@ -30,8 +30,6 @@
       <filtered>true</filtered>
       <outputDirectory>.</outputDirectory>
     </fileSet>
-
-
     <!-- copy the maven repository generated for the pentaho-cda feature -->
     <fileSet>
       <directory>${project.build.directory}/pentaho-cda-mvn-repo/</directory>
@@ -62,10 +60,10 @@
       <unpack>true</unpack>
     </dependencySet>
 
-    <!-- Temporarily including the pentaho-cda Kar while we don't fix the boot deadlock between Kettle and Karaf -->
+    <!-- Temporarily including the pentaho-cda feature descriptor while we don't fix the boot deadlock between Kettle and Karaf -->
     <dependencySet>
       <includes>
-        <include>pentaho:pentaho-cda:kar</include>
+        <include>pentaho:pentaho-cda:xml:features</include>
       </includes>
       <unpack>false</unpack>
       <outputDirectory>data-integration/system/karaf/deploy</outputDirectory>
