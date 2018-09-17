@@ -14,14 +14,16 @@
   <properties>
     <karaf.features.version>3.0.3</karaf.features.version>
     <pdi-pur-plugin.version>${project.version}</pdi-pur-plugin.version>
-    <maven-patch-plugin.version>1.2</maven-patch-plugin.version>
+    <pentaho-osgi-bundles.version>${project.version}</pentaho-osgi-bundles.version>
+    <pdi-plugins-ee.version>${project.version}</pdi-plugins-ee.version>
+    <camel.karaf.version>2.17.7</camel.karaf.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>com.pentaho.di</groupId>
       <artifactId>pdi-core-ee</artifactId>
-      <version>8.2.0.0-SNAPSHOT</version> <!-- TODO: Change version to proper property name when its available -->
+      <version>${pdi.version}</version>
       <type>zip</type>
       <exclusions>
         <exclusion>
@@ -85,56 +87,19 @@
       <type>zip</type>
     </dependency>
 
+    <!-- Temporarily including the pentaho-cda Kar while we don't fix the boot deadlock between Kettle and Karaf -->
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>pentaho-cda</artifactId>
+      <version>${project.version}</version>
+      <type>kar</type>
+    </dependency>
+
+
   </dependencies>
 
   <build>
     <plugins>
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-
-        <executions>
-          <execution>
-            <id>unpack-pdi-core-ee</id>
-            <phase>generate-resources</phase>
-
-            <goals>
-              <goal>unpack-dependencies</goal>
-            </goals>
-
-            <configuration>
-              <includeArtifactIds>pdi-core-ee</includeArtifactIds>
-              <outputDirectory>${project.build.directory}/pdi-core-ee</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-boot-script</id>
-            <phase>generate-resources</phase>
-
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-
-            <configuration>
-              <outputDirectory>${project.build.directory}/pdi-core-ee/data-integration</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>src/main/resources</directory>
-                  <includes>
-                    <include>Scale.bat</include>
-                    <include>scale.sh</include>
-                  </includes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
 
       <plugin>
         <groupId>org.apache.karaf.tooling</groupId>
@@ -165,37 +130,12 @@
                 <feature>pentaho-cda</feature>
               </features>
 
-              <repository>${project.build.directory}/pdi-core-ee/data-integration/system/karaf/system</repository>
+              <repository>${project.build.directory}/pentaho-cda-mvn-repo</repository>
             </configuration>
           </execution>
         </executions>
       </plugin>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-patch-plugin</artifactId>
-        <version>${maven-patch-plugin.version}</version>
-
-        <executions>
-          <execution>
-            <id>patch-karaf-etc</id>
-            <phase>process-resources</phase>
-
-            <configuration>
-              <targetDirectory>${project.build.directory}/pdi-core-ee/data-integration/system/karaf/etc</targetDirectory>
-
-              <patches>
-                <patch>custom.properties.patch</patch>
-                <patch>org.apache.karaf.features.cfg.patch</patch>
-              </patches>
-            </configuration>
-
-            <goals>
-              <goal>apply</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 </project>

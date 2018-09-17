@@ -19,7 +19,21 @@
     <module>platform</module>
     <module>cda-proxy</module>
     <module>feature</module>
-    <module>cda-foundry</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <!-- Profile to build the new foundry services -->
+      <id>foundry-next</id>
+      <activation>
+        <property>
+          <name>foundry-next</name>
+        </property>
+      </activation>
+      <modules>
+        <module>cda-foundry</module>
+      </modules>
+    </profile>
+  </profiles>
 
 </project>
