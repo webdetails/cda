@@ -51,6 +51,7 @@
         </excludes>
       </unpackOptions>
       <unpack>true</unpack>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
     </dependencySet>
     <dependencySet>
       <includes>
@@ -58,6 +59,7 @@
       </includes>
       <outputDirectory>data-integration/plugins</outputDirectory>
       <unpack>true</unpack>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
     </dependencySet>
 
     <!-- Temporarily including the pentaho-cda feature descriptor while we don't fix the boot deadlock between Kettle and Karaf -->
@@ -67,6 +69,7 @@
       </includes>
       <unpack>false</unpack>
       <outputDirectory>data-integration/system/karaf/deploy</outputDirectory>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
     </dependencySet>
   </dependencySets>
 
