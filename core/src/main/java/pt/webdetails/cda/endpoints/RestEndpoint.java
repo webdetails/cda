@@ -28,6 +28,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -431,10 +432,10 @@ public class RestEndpoint {
     queryParameters.setWrapItUp( wrapItUp );
     queryParameters.setJsonCallback( jsonCallback );
 
-    final Map<String, Object> extraParameters = getParameters( multivaluedMap, name -> name.startsWith( PREFIX_PARAMETER ) );
+    final Map<String, Object> extraParameters = getParameters( multivaluedMap, name -> name.startsWith( PREFIX_PARAMETER ), name -> name.replaceFirst( PREFIX_PARAMETER, "" ) );
     queryParameters.setParameters( extraParameters );
 
-    final Map<String, Object> extraSettings = getParameters( multivaluedMap, name -> name.startsWith( PREFIX_SETTING ) );
+    final Map<String, Object> extraSettings = getParameters( multivaluedMap, name -> name.startsWith( PREFIX_SETTING ), name -> name.replaceFirst( PREFIX_SETTING, "" ) );
     queryParameters.setExtraSettings( extraSettings );
 
     return queryParameters;
@@ -445,13 +446,13 @@ public class RestEndpoint {
     return stringValue != null ? stringValue : defaultValue;
   }
 
-  Map<String, Object> getParameters( MultivaluedMap<String, String> multivaluedMap, Predicate<String> predicate ) {
+  Map<String, Object> getParameters( MultivaluedMap<String, String> multivaluedMap, Predicate<String> predicate, Function<String, String> transformName ) {
     Map<String, Object> parameters = new HashMap<>();
 
     for( Map.Entry<String, List<String>> entry : multivaluedMap.entrySet() ) {
       if( predicate.test( entry.getKey() )) {
         final String[] values = entry.getValue().toArray(new String[0]);
-        parameters.put( entry.getKey(), values.length > 1 ? values : values[ 0 ]);
+        parameters.put( transformName.apply( entry.getKey() ), values.length > 1 ? values : values[ 0 ]);
       }
     }
 
