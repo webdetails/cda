@@ -22,12 +22,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -39,6 +41,7 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
@@ -73,7 +76,9 @@ public class RestEndpoint {
   @POST
   @Path( "/doQuery" )
   @Consumes( { APPLICATION_XML, APPLICATION_JSON, APPLICATION_FORM_URLENCODED } )
-  public Response doQueryPost( @FormParam( "path" ) String path,
+  public Response doQueryPost( MultivaluedMap<String, String> multivaluedMap
+
+/*    @FormParam( "path" ) String path,
                                @FormParam( "solution" ) String solution,
                                @FormParam( "file" ) String file,
                                @DefaultValue( "json" ) @FormParam( "outputType" ) String outputType,
@@ -86,10 +91,15 @@ public class RestEndpoint {
                                @DefaultValue( "false" ) @FormParam( "wrapItUp" ) Boolean wrapItUp,
                                @FormParam( "sortBy" ) List<String> sortBy,
                                @DefaultValue( "<blank>" ) @FormParam( "jsonCallback" ) String jsonCallback,
-                               @Context HttpServletRequest request ) {
+                               @Context HttpServletRequest request
+                               */
+) {
     try {
+      /*
       final DoQueryParameters queryParams = getQueryParameters( path, solution, file, outputType, outputIndexId,
               dataAccessId, bypassCache, paginateQuery, pageSize, pageStart, wrapItUp, sortBy, jsonCallback, request );
+              */
+      final DoQueryParameters queryParams = getQueryParameters( multivaluedMap );
 
       return this.doQuery( queryParams );
     } catch ( Exception ex ) {
@@ -389,6 +399,65 @@ public class RestEndpoint {
 
     return queryParameters;
   }
+
+
+  private DoQueryParameters getQueryParameters( MultivaluedMap<String, String> multivaluedMap ) {
+    String path = multivaluedMap.getFirst("path" );
+    String solution = multivaluedMap.getFirst( "solution" );
+    String file = multivaluedMap.getFirst( "file" );
+
+    DoQueryParameters queryParameters = new DoQueryParameters( path, solution, file );
+
+    boolean bypassCache = new Boolean( getValueOrDefault( multivaluedMap, "bypassCache", "false" ) );
+    String dataAccessId = getValueOrDefault( multivaluedMap, "dataAccessId", "<blank>" );
+    int outputIndexId = new Integer( getValueOrDefault( multivaluedMap, "outputIndexId", "1" ) );
+    String outputType = getValueOrDefault( multivaluedMap, "outputType", "json" );
+    int pageSize = new Integer( getValueOrDefault( multivaluedMap, "pageSize", "0" ) );
+    int pageStart = new Integer( getValueOrDefault( multivaluedMap, "pageStart", "0" ) );
+    boolean paginateQuery = new Boolean( getValueOrDefault( multivaluedMap, "paginateQuery", "false" ) );
+    List<String> sortBy = multivaluedMap.get( "sortBy" );
+    sortBy = sortBy != null ? sortBy : new ArrayList<>();
+    boolean wrapItUp = new Boolean( getValueOrDefault( multivaluedMap, "wrapItUp", "false" ) );
+    String jsonCallback = getValueOrDefault( multivaluedMap, "jsonCallback", "<blank>" );
+
+    queryParameters.setBypassCache( bypassCache );
+    queryParameters.setDataAccessId( dataAccessId );
+    queryParameters.setOutputIndexId( outputIndexId );
+    queryParameters.setOutputType( outputType );
+    queryParameters.setPageSize( pageSize );
+    queryParameters.setPageStart( pageStart );
+    queryParameters.setPaginateQuery( paginateQuery );
+    queryParameters.setSortBy( sortBy );
+    queryParameters.setWrapItUp( wrapItUp );
+    queryParameters.setJsonCallback( jsonCallback );
+
+    final Map<String, Object> extraParameters = getParameters( multivaluedMap, name -> name.startsWith( PREFIX_PARAMETER ) );
+    queryParameters.setParameters( extraParameters );
+
+    final Map<String, Object> extraSettings = getParameters( multivaluedMap, name -> name.startsWith( PREFIX_SETTING ) );
+    queryParameters.setExtraSettings( extraSettings );
+
+    return queryParameters;
+  }
+
+  private String getValueOrDefault( MultivaluedMap<String, String> multivaluedMap, String key, String defaultValue ) {
+    String stringValue = multivaluedMap.getFirst( key );
+    return stringValue != null ? stringValue : defaultValue;
+  }
+
+  Map<String, Object> getParameters( MultivaluedMap<String, String> multivaluedMap, Predicate<String> predicate ) {
+    Map<String, Object> parameters = new HashMap<>();
+
+    for( Map.Entry<String, List<String>> entry : multivaluedMap.entrySet() ) {
+      if( predicate.test( entry.getKey() )) {
+        final String[] values = entry.getValue().toArray(new String[0]);
+        parameters.put( entry.getKey(), values.length > 1 ? values : values[ 0 ]);
+      }
+    }
+
+    return parameters;
+  }
+
 
   Map<String, Object> getParameters( HttpServletRequest request, Predicate<RequestParameter> predicate ) {
     Map<String, Object> parameters = new HashMap<>();
