@@ -21,4 +21,19 @@
     <module>feature</module>
   </modules>
 
+  <profiles>
+    <profile>
+      <!-- Profile to build the new foundry services -->
+      <id>foundry-next</id>
+      <activation>
+        <property>
+          <name>foundry-next</name>
+        </property>
+      </activation>
+      <modules>
+        <module>cda-foundry</module>
+      </modules>
+    </profile>
+  </profiles>
+
 </project>

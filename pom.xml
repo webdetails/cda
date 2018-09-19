@@ -53,6 +53,7 @@
     <pdi.version>8.2.0.0-SNAPSHOT</pdi.version>
     <pentaho-cpf-plugin.version>8.2.0.0-SNAPSHOT</pentaho-cpf-plugin.version>
     <pentaho-json.version>8.2.0.0-SNAPSHOT</pentaho-json.version>
+    <pentaho-karaf.version>${project.version}</pentaho-karaf.version>
     <mondrian.version>8.2.0.0-SNAPSHOT</mondrian.version>
     <marketplace.metadata.development_stage.phase>2</marketplace.metadata.development_stage.phase>
     <marketplace.metadata.samples_url>http://nexus.pentaho.org/content/groups/omni/pentaho/cda-samples/6.0.0.0-353/cda-samples-6.0.0.0-353.zip</marketplace.metadata.samples_url>

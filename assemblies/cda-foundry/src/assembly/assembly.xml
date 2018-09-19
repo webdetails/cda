@@ -1,0 +1,76 @@
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd">
+  <id>cda-foundry</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+
+  <includeBaseDirectory>false</includeBaseDirectory>
+
+  <fileSets>
+
+    <!-- Script files that require execution permissions -->
+    <fileSet>
+      <directory>${project.basedir}/src/main/resources</directory>
+      <outputDirectory>.</outputDirectory>
+      <includes>
+        <include>**/*.sh</include>
+      </includes>
+      <fileMode>0755</fileMode>
+    </fileSet>
+    <!-- the remaining static non filtered resources -->
+    <fileSet>
+      <directory>${project.basedir}/src/main/resources</directory>
+      <outputDirectory>.</outputDirectory>
+    </fileSet>
+    <!-- filtered resources -->
+    <fileSet>
+      <directory>${project.basedir}/src/main/resources-filtered</directory>
+      <filtered>true</filtered>
+      <outputDirectory>.</outputDirectory>
+    </fileSet>
+    <!-- copy the maven repository generated for the pentaho-cda feature -->
+    <fileSet>
+      <directory>${project.build.directory}/pentaho-cda-mvn-repo/</directory>
+      <outputDirectory>data-integration/system/karaf/system</outputDirectory>
+    </fileSet>
+
+  </fileSets>
+
+  <dependencySets>
+    <dependencySet>
+      <includes>
+        <include>com.pentaho.di:pdi-core-ee:zip</include>
+      </includes>
+      <unpackOptions>
+        <excludes>
+          <!-- Excluding legacy-charts as it is sometimes breaking initialization of reporting.
+               We don't know why this is happening at the moment -->
+          <exclude>data-integration/lib/legacy-charts*jar</exclude>
+        </excludes>
+      </unpackOptions>
+      <unpack>true</unpack>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+    </dependencySet>
+    <dependencySet>
+      <includes>
+        <include>org.pentaho.di.plugins:pdi-pur-plugin:zip</include>
+      </includes>
+      <outputDirectory>data-integration/plugins</outputDirectory>
+      <unpack>true</unpack>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+    </dependencySet>
+
+    <!-- Temporarily including the pentaho-cda feature descriptor while we don't fix the boot deadlock between Kettle and Karaf -->
+    <dependencySet>
+      <includes>
+        <include>pentaho:pentaho-cda:xml:features</include>
+      </includes>
+      <unpack>false</unpack>
+      <outputDirectory>data-integration/system/karaf/deploy</outputDirectory>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+    </dependencySet>
+  </dependencySets>
+
+</assembly>
