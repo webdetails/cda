@@ -14,6 +14,10 @@
   <artifactId>cda-osgi-impl</artifactId>
   <packaging>bundle</packaging>
 
+  <properties>
+    <jetty.version>8.1.15.v20140411</jetty.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>pentaho</groupId>
@@ -83,6 +87,21 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-websocket</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
     </dependency>
   </dependencies>
 

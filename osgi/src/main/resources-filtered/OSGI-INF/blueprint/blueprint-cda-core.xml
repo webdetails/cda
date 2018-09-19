@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:cxf="http://cxf.apache.org/blueprint/core"
            xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs"
            xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0"
            xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
                                http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+                                http://cxf.apache.org/blueprint/core
                                http://cxf.apache.org/blueprint/jaxrs
                                http://cxf.apache.org/schemas/blueprint/jaxrs.xsd">
 
@@ -97,5 +99,14 @@
       <bean class="pt.webdetails.cda.endpoints.RestEndpoint"/>
     </jaxrs:serviceBeans>
   </jaxrs:server>
+
+  <service id="jettyWebSocketServlet" interface="javax.servlet.Servlet">
+    <service-properties>
+      <entry key="alias" value="/cda/websocket/query" />
+      <entry key="servlet-name" value="CDA Jetty WebSocket Servlet" />
+    </service-properties>
+
+    <bean class="org.pentaho.ctools.cda.endpoints.CdaJettyWebSocketServlet" />
+  </service>
 
 </blueprint>
