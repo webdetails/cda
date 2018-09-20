@@ -26,22 +26,35 @@ public class DoQueryParameters {
 
   public static final String DEFAULT_OUTPUT_TYPE = "json";
   public static final String DEFAULT_DATA_ACCESS_ID = "<blank>";
-  private static final String DEFAULT_JSON_CALLBACK = "<blank>";
+  public static final String DEFAULT_JSON_CALLBACK = "<blank>";
+
+  public static final String DEFAULT_OUTPUT_INDEX_ID = "1";
+  public static final String DEFAULT_PAGE_SIZE = "0";
+  public static final String DEFAULT_PAGE_START = "0";
+
+  public static final String DEFAULT_BYPASS_CACHE = "false";
+  public static final String DEFAULT_WRAP_IT_UP = "false";
+  public static final String DEFAULT_PAGINATE_QUERY = "false";
 
   private String path;
   private String solution;
   private String file;
+
   private String outputType;
-  private int outputIndexId;
   private String dataAccessId;
-  private boolean bypassCache;
-  private boolean paginateQuery;
+  private String jsonCallback;
+
+  private int outputIndexId;
   private int pageSize;
   private int pageStart;
+
+  private boolean bypassCache;
+  private boolean paginateQuery;
   private boolean wrapItUp;
-  private String jsonCallback;
+
   private List<String> sortBy;
   private List<String> outputColumnName;
+
   private Map<String, Object> extraParameters;
   private Map<String, Object> extraSettings;
 
@@ -52,7 +65,7 @@ public class DoQueryParameters {
     this.file = file;
 
     this.outputType = DEFAULT_OUTPUT_TYPE;
-    this.outputIndexId = 1;
+    this.outputIndexId = Integer.valueOf( DEFAULT_OUTPUT_INDEX_ID );
     this.dataAccessId = DEFAULT_DATA_ACCESS_ID;
     this.jsonCallback = DEFAULT_JSON_CALLBACK;
 
