@@ -364,7 +364,7 @@ public class RestEndpoint {
   }
 
   private DoQueryParameters getQueryParameters( MultivaluedMap<String, String> formParameters ) {
-    final String path = formParameters.getFirst("path" );
+    final String path = formParameters.getFirst( "path" );
     final String solution = formParameters.getFirst( "solution" );
     final String file = formParameters.getFirst( "file" );
 
@@ -384,11 +384,9 @@ public class RestEndpoint {
 
     final List<String> sortBy = formParameters.getOrDefault( "sortBy", Collections.emptyList() );
 
-    final Map<String, Object> extraParameters = getParameters( formParameters,
-        name -> name.startsWith( PREFIX_PARAMETER ), name -> name.replaceFirst( PREFIX_PARAMETER, "" ) );
+    final Map<String, Object> extraParameters = getParameters( formParameters, name -> name.startsWith( PREFIX_PARAMETER ), name -> name.replaceFirst( PREFIX_PARAMETER, "" ) );
 
-    final Map<String, Object> extraSettings = getParameters( formParameters,
-        name -> name.startsWith( PREFIX_SETTING ), name -> name.replaceFirst( PREFIX_SETTING, "" ) );
+    final Map<String, Object> extraSettings = getParameters( formParameters, name -> name.startsWith( PREFIX_SETTING ), name -> name.replaceFirst( PREFIX_SETTING, "" ) );
 
     return getQueryParameters( path, solution, file, outputType, outputIndexId, dataAccessId, bypassCache,
         paginateQuery, pageSize, pageStart, wrapItUp, sortBy, jsonCallback, extraParameters, extraSettings );
@@ -438,10 +436,10 @@ public class RestEndpoint {
                                              Predicate<String> parameterType, Function<String, String> transformName ) {
     Map<String, Object> parameters = new HashMap<>();
 
-    for( Map.Entry<String, List<String>> entry : multivaluedMap.entrySet() ) {
+    for ( Map.Entry<String, List<String>> entry : multivaluedMap.entrySet() ) {
       final String parameterName = entry.getKey();
 
-      if( parameterType.test( parameterName ) ) {
+      if ( parameterType.test( parameterName ) ) {
         final String[] parameterValues = entry.getValue().toArray( new String[0] );
 
         final String name = transformName.apply( parameterName );
