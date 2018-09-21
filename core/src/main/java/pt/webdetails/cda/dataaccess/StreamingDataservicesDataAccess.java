@@ -260,7 +260,8 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess impl
       if ( orderedNames.length > 0 ) {
         final java.sql.PreparedStatement pstmt = connection.prepareStatement( translatedQuery );
         for ( int i = 0; i < orderedNames.length; i++ ) {
-          pstmt.setObject( i, parameters.get( orderedNames[i] ) );
+          //prepared statement parameter index start with 1, then 2, ...
+          pstmt.setObject( i + 1, parameters.get( orderedNames[ i ] ) );
         }
         IThinPreparedStatement thinStmt = unwrap( pstmt, IThinPreparedStatement.class );
         thinStmt.executePushQuery( getStreamingParams(), consumer );
