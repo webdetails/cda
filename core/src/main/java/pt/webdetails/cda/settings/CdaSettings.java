@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -157,7 +157,7 @@ public class CdaSettings {
     final String typeName = element.attributeValue( "type" );
     DataAccessInstanceType type = DataAccessInstanceType.parseType( typeName );
     if ( type != null ) {
-      switch( type ) {
+      switch ( type ) {
         case DENORMALIZED_MDX:
           return new DenormalizedMdxDataAccess( element );
         case JOIN:
@@ -195,9 +195,8 @@ public class CdaSettings {
 
     // 1 - Parse data access, and then parse the CompoundDataAccess
 
-    @SuppressWarnings( "unchecked" )
     final List<Element> dataAccessesList =
-      root.selectNodes( "/CDADescriptor/DataAccess | /CDADescriptor/CompoundDataAccess" );
+      Util.selectElements( root, "/CDADescriptor/DataAccess | /CDADescriptor/CompoundDataAccess" );
 
     for ( final Element element : dataAccessesList ) {
 
@@ -227,7 +226,7 @@ public class CdaSettings {
     ConnectionInstanceType connType = ConnectionInstanceType.parseType( type );
 
     if ( connType != null ) {
-      switch( connType ) {
+      switch ( connType ) {
         case KETTLE_TRANS_FROM_FILE:
           return new TransFromFileConnection( element );
         case Metadata:
@@ -252,9 +251,7 @@ public class CdaSettings {
   }
 
   private void parseConnections() throws UnsupportedConnectionException {
-
-    @SuppressWarnings( "unchecked" )
-    final List<Element> connectionList = root.selectNodes( "/CDADescriptor/DataSources/Connection" );
+    final List<Element> connectionList = Util.selectElements( root, "/CDADescriptor/DataSources/Connection" );
 
     for ( final Element element : connectionList ) {
 

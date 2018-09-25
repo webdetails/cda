@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,10 +13,14 @@
 
 package pt.webdetails.cda.utils;
 
+import org.dom4j.Document;
+import org.dom4j.Element;
+
+import java.util.List;
+
 public class Util extends pt.webdetails.cpf.Util {
 
   public static String getExceptionDescription( final Exception e ) {
-
     final StringBuilder out = new StringBuilder();
     out.append( "[ " ).append( e.getClass().getName() ).append( " ] - " );
     out.append( e.getMessage() );
@@ -32,7 +36,6 @@ public class Util extends pt.webdetails.cpf.Util {
     }
 
     return out.toString();
-
   }
 
 
@@ -56,5 +59,15 @@ public class Util extends pt.webdetails.cpf.Util {
     }
 
     return source.substring( startIdx, endIdx );
+  }
+
+  @SuppressWarnings( "unchecked" )
+  public static List<Element> selectElements( Document document, String xpath ) {
+    return (List<Element>) (List<?>) document.selectNodes( xpath );
+  }
+
+  @SuppressWarnings( "unchecked" )
+  public static List<Element> selectElements( Element element, String xpath ) {
+    return (List<Element>) (List<?>) element.selectNodes( xpath );
   }
 }
