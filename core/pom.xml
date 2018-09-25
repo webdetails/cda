@@ -18,7 +18,6 @@
     </license>
   </licenses>
   <properties>
-    <dependency.jaxen.revision>1.1.1</dependency.jaxen.revision>
     <dependency.poi.revision>3.12</dependency.poi.revision>
     <dependency.commons-io.revision>2.1</dependency.commons-io.revision>
     <commons-lang.version>2.6</commons-lang.version>
@@ -157,10 +156,6 @@
       <groupId>xml-apis</groupId>
       <artifactId>xml-apis</artifactId>
     </dependency>
-    <dependency>
-      <groupId>dom4j</groupId>
-      <artifactId>dom4j</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>eigenbase</groupId>
@@ -244,9 +239,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+    </dependency>
+    <dependency>
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
-      <version>${dependency.jaxen.revision}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

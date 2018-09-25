@@ -204,9 +204,8 @@ public class CdaSettings {
 
     // 1 - Parse data access, and then parse the CompoundDataAccess
 
-    @SuppressWarnings( "unchecked" )
     final List<Element> dataAccessesList =
-      root.selectNodes( "/CDADescriptor/DataAccess | /CDADescriptor/CompoundDataAccess" );
+      Util.selectElements( root, "/CDADescriptor/DataAccess | /CDADescriptor/CompoundDataAccess" );
 
     for ( final Element element : dataAccessesList ) {
 
@@ -263,9 +262,7 @@ public class CdaSettings {
   }
 
   private void parseConnections() throws UnsupportedConnectionException {
-
-    @SuppressWarnings( "unchecked" )
-    final List<Element> connectionList = root.selectNodes( "/CDADescriptor/DataSources/Connection" );
+    final List<Element> connectionList = Util.selectElements( root, "/CDADescriptor/DataSources/Connection" );
 
     for ( final Element element : connectionList ) {
 
