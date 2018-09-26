@@ -439,14 +439,18 @@ public class RestEndpoint {
 
   private Boolean getFirstBoolean( MultivaluedMap<String, String> multivaluedMap, String key ) {
     String value = multivaluedMap.getFirst( key );
-    if ( value == null ) return null;
+    if ( value == null ) {
+      return null;
+    }
 
     return Boolean.valueOf( value );
   }
 
   private Integer getFirstInteger( MultivaluedMap<String, String> multivaluedMap, String key ) {
     String value = multivaluedMap.getFirst( key );
-    if ( value == null ) return null;
+    if ( value == null ) {
+      return null;
+    }
 
     return Integer.valueOf( value );
   }
