@@ -16,12 +16,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 
-import pt.webdetails.cda.endpoints.RestEndpoint.RequestParameter;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -35,91 +33,125 @@ public class RestEndpointTest {
 
   private RestEndpoint restEndpoint;
   private HttpServletRequest servletRequestMock;
+  private MultivaluedMap<String, String> formParameters;
 
   @Before
   public void setup() {
     this.restEndpoint = spy( new RestEndpoint() );
     this.servletRequestMock = mock( HttpServletRequest.class );
+    this.formParameters = new MultivaluedHashMap<>();
   }
 
   @Test
-  public void testGetParameters_singleValueExtraParameter() {
-    final String expectedName = "foo";
+  public void testGetParameters_singleValueExtraParameterFromRequest() {
+    final String expectedName = "foo1";
     final String expectedValue = "bar";
 
-    final String paramName = PREFIX_PARAMETER + expectedName;
-    doReturn( getParameterNames( paramName ) ).when( servletRequestMock ).getParameterNames();
-    doReturn( getParameterValues( expectedValue ) ).when( servletRequestMock ).getParameterValues( paramName );
+    mockGetParameterMapFromRequest( PREFIX_PARAMETER + expectedName, expectedValue );
 
-    // ---
+    assertGetParametersFromRequest( PREFIX_PARAMETER, expectedName, expectedValue );
+  }
 
-    Map<String, Object> extraParameters = getExtraParameters();
+  @Test
+  public void testGetParameters_multipleValueExtraParameterFromRequest() {
+    final String expectedName = "foo2";
+    final String[] expectedValue = getParameterValues( "bar1", "bar2" );
+
+    mockGetParameterMapFromRequest( PREFIX_PARAMETER + expectedName, expectedValue );
+
+    assertGetParametersFromRequest( PREFIX_PARAMETER, expectedName, expectedValue );
+  }
+
+  @Test
+  public void testGetParameters_singleValueExtraSettingFromRequest() {
+    final String expectedName = "foo3";
+    final String expectedValue = "bar";
+
+    mockGetParameterMapFromRequest( PREFIX_SETTING + expectedName, expectedValue );
+
+    assertGetParametersFromRequest( PREFIX_SETTING, expectedName, expectedValue );
+  }
+
+  @Test
+  public void testGetParameters_multipleValueExtraSettingFromRequest() {
+    final String expectedName = "foo4";
+    final String[] expectedValue = getParameterValues( "bar1", "bar2" );
+
+    mockGetParameterMapFromRequest( PREFIX_SETTING + expectedName, expectedValue );
+
+    assertGetParametersFromRequest( PREFIX_SETTING, expectedName, expectedValue );
+  }
+
+  @Test
+  public void testGetParameters_singleValueExtraParameterFromMultivaluedMap() {
+    final String expectedName = "foo1";
+    final String expectedValue = "bar1";
+
+    this.formParameters.add( PREFIX_PARAMETER + expectedName, expectedValue );
+
+    assertGetParametersFromMultivaluedMap( PREFIX_PARAMETER, expectedName, expectedValue );
+  }
+
+  @Test
+  public void testGetParameters_multipleValueExtraParameterFromMultivaluedMap() {
+    final String expectedName = "foo2";
+    final String[] expectedValue = getParameterValues( "bar1", "bar2" );
+
+    this.formParameters.addAll( PREFIX_PARAMETER + expectedName, expectedValue );
+
+    assertGetParametersFromMultivaluedMap( PREFIX_PARAMETER, expectedName, expectedValue );
+  }
+
+  @Test
+  public void testGetParameters_singleValueExtraSettingFromMultivaluedMap() {
+    final String expectedName = "foo3";
+    final String expectedValue = "bar3";
+
+    this.formParameters.add( PREFIX_SETTING + expectedName, expectedValue );
+
+    assertGetParametersFromMultivaluedMap( PREFIX_SETTING, expectedName, expectedValue );
+  }
+
+  @Test
+  public void testGetParameters_multipleValueExtraSettingFromMultivaluedMap() {
+    final String expectedName = "foo4";
+    final String[] expectedValue = getParameterValues( "bar1", "bar2" );
+
+    this.formParameters.addAll( PREFIX_SETTING + expectedName, expectedValue );
+
+    assertGetParametersFromMultivaluedMap( PREFIX_SETTING, expectedName, expectedValue );
+  }
+
+  private void mockGetParameterMapFromRequest( String paramName, String ...paramValues ) {
+    Map<String, String[]> parameterMap = new HashMap<>();
+    parameterMap.put( paramName, paramValues );
+
+    doReturn( parameterMap ).when( this.servletRequestMock ).getParameterMap();
+  }
+
+  private void assertGetParametersFromRequest( String parameterType, String expectedName, Object expectedValue ) {
+    Map<String, Object> extraParameters = this.restEndpoint.getParameters( this.servletRequestMock, parameterType );
 
     assertEquals( 1, extraParameters.size() );
     assertEquals( expectedValue, extraParameters.get( expectedName ) );
   }
 
-  @Test
-  public void testGetParameters_MultipleValueExtraParameter() {
-    final String expectedName = "foo";
-    final String[] expectedValue = getParameterValues( "bar1", "bar2" );
-
-    final String paramName = PREFIX_PARAMETER + expectedName;
-    doReturn( getParameterNames( paramName ) ).when( servletRequestMock ).getParameterNames();
-    doReturn( expectedValue ).when( servletRequestMock ).getParameterValues( paramName );
-
-    // ---
-
-    Map<String, Object> extraParameters = getExtraParameters();
+  private void assertGetParametersFromMultivaluedMap( String parameterType, String expectedName, String expectedValue ) {
+    Map<String, Object> extraParameters = this.restEndpoint.getParameters( this.formParameters, parameterType );
 
     assertEquals( 1, extraParameters.size() );
     assertEquals( expectedValue, extraParameters.get( expectedName ) );
   }
 
-  private Map<String, Object> getExtraParameters() {
-    return this.restEndpoint.getParameters( servletRequestMock, RequestParameter::isExtraParameter );
-  }
+  private void assertGetParametersFromMultivaluedMap( String parameterType, String expectedName, String[] expectedValue ) {
+    Map<String, Object> extraParameters = this.restEndpoint.getParameters( this.formParameters, parameterType );
 
-  @Test
-  public void testGetParameters_singleValueExtraSetting() {
-    final String expectedName = "foo";
-    final String expectedValue = "bar";
+    assertEquals( 1, extraParameters.size() );
 
-    final String paramName = PREFIX_SETTING + expectedName;
-    doReturn( getParameterNames( paramName ) ).when( servletRequestMock ).getParameterNames();
-    doReturn( getParameterValues( expectedValue ) ).when( servletRequestMock ).getParameterValues( paramName );
-
-    // ---
-
-    Map<String, Object> extraSettings = getExtraSettings();
-
-    assertEquals( 1, extraSettings.size() );
-    assertEquals( expectedValue, extraSettings.get( expectedName ) );
-  }
-
-  @Test
-  public void testGetParameters_MultipleValueExtraSetting() {
-    final String expectedName = "foo";
-    final String[] expectedValue = getParameterValues( "bar1", "bar2" );
-
-    final String paramName = PREFIX_SETTING + expectedName;
-    doReturn( getParameterNames( paramName ) ).when( servletRequestMock ).getParameterNames();
-    doReturn( expectedValue ).when( servletRequestMock ).getParameterValues( paramName );
-
-    // ---
-
-    Map<String, Object> extraSettings = getExtraSettings();
-
-    assertEquals( 1, extraSettings.size() );
-    assertEquals( expectedValue, extraSettings.get( expectedName ) );
-  }
-
-  private Map<String, Object> getExtraSettings() {
-    return this.restEndpoint.getParameters( servletRequestMock, RequestParameter::isSettingParameter );
-  }
-
-  private Enumeration<String> getParameterNames( String ...names ) {
-    return Collections.enumeration( Arrays.asList( names ) );
+    String[] actualValue = (String[]) extraParameters.get( expectedName );
+    for ( int i = 0; i < expectedValue.length; i++ ) {
+      assertEquals( expectedValue[ i ], actualValue[ i ] );
+    }
   }
 
   private String[] getParameterValues( String ...values ) {
