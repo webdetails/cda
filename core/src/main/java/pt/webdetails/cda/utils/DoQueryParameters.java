@@ -24,18 +24,6 @@ import org.apache.commons.lang.StringUtils;
  */
 public class DoQueryParameters {
 
-  public static final String DEFAULT_OUTPUT_TYPE = "json";
-  public static final String DEFAULT_DATA_ACCESS_ID = "<blank>";
-  public static final String DEFAULT_JSON_CALLBACK = "<blank>";
-
-  public static final String DEFAULT_OUTPUT_INDEX_ID = "1";
-  public static final String DEFAULT_PAGE_SIZE = "0";
-  public static final String DEFAULT_PAGE_START = "0";
-
-  public static final String DEFAULT_BYPASS_CACHE = "false";
-  public static final String DEFAULT_WRAP_IT_UP = "false";
-  public static final String DEFAULT_PAGINATE_QUERY = "false";
-
   private String path;
   private String solution;
   private String file;
@@ -58,16 +46,15 @@ public class DoQueryParameters {
   private Map<String, Object> extraParameters;
   private Map<String, Object> extraSettings;
 
-
   public DoQueryParameters( String path, String solution, String file ) {
     this.path = path;
     this.solution = solution;
     this.file = file;
 
-    this.outputType = DEFAULT_OUTPUT_TYPE;
-    this.outputIndexId = Integer.valueOf( DEFAULT_OUTPUT_INDEX_ID );
-    this.dataAccessId = DEFAULT_DATA_ACCESS_ID;
-    this.jsonCallback = DEFAULT_JSON_CALLBACK;
+    this.outputType = "json";
+    this.outputIndexId = 1;
+    this.dataAccessId = "<blank>";
+    this.jsonCallback = "<blank>";
 
     this.sortBy = new ArrayList<>();
     this.outputColumnName = new ArrayList<>();
