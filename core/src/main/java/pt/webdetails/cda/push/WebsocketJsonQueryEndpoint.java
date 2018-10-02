@@ -28,17 +28,15 @@ import pt.webdetails.cda.exporter.TableExporter;
 import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.utils.DoQueryParameters;
+import pt.webdetails.cda.utils.QueryParameters;
 import pt.webdetails.cda.utils.kettle.RowMetaToTableModel;
 
-import javax.ws.rs.core.MultivaluedMap;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
-
-import static pt.webdetails.cda.utils.QueryParameters.getDoQueryParameters;
-import static pt.webdetails.cda.utils.QueryParameters.getParameters;
 
 public class WebsocketJsonQueryEndpoint implements IWebsocketEndpoint {
 
@@ -49,6 +47,24 @@ public class WebsocketJsonQueryEndpoint implements IWebsocketEndpoint {
   private PublishSubject<List<RowMetaAndData>> consumer;
   private WebsocketDisposableObserver<List<RowMetaAndData>> disposableConsumer;
 
+  private QueryParameters queryParametersUtil;
+
+  public WebsocketJsonQueryEndpoint( ) {
+    this.queryParametersUtil = new QueryParameters();
+  }
+
+  public WebsocketJsonQueryEndpoint( QueryParameters queryParameters ) {
+    this.queryParametersUtil = queryParameters;
+  }
+
+  public void setQueryParametersUtil( QueryParameters queryParametersUtil ) {
+    this.queryParametersUtil = queryParametersUtil;
+  }
+
+  public QueryParameters getQueryParametersUtil() {
+    return queryParametersUtil;
+  }
+
   @Override public void onOpen( Consumer<String> outboundMessageConsumer ) {
 
   }
@@ -56,8 +72,8 @@ public class WebsocketJsonQueryEndpoint implements IWebsocketEndpoint {
   @Override
   public void onMessage( String message, Consumer<String> outboundMessageConsumer ) {
     try {
-      MultivaluedMap<String, String> params = getParameters( message );
-      DoQueryParameters parameters = getDoQueryParameters( params );
+      Map<String, List<String>> params = queryParametersUtil.getParametersFromJson( message );
+      DoQueryParameters parameters = queryParametersUtil.getDoQueryParameters( params );
       CdaCoreService core = getCdaCoreService();
 
       final String path = parameters.getPath();

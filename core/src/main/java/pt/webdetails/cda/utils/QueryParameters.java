@@ -18,29 +18,28 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 /**
- * This abstract class with some query parameters functions.
+ * This class provides some query parameters functions.
  */
-public abstract class QueryParameters {
+public class QueryParameters {
 
-  private static final String PREFIX_PARAMETER = "param";
-  private static final String PREFIX_SETTING = "setting";
+  private final String PREFIX_PARAMETER = "param";
+  private final String PREFIX_SETTING = "setting";
 
   /**
-   * Gets a {@link MultivaluedMap} from the message received.
+   * Gets a {@link Map<String, List<String>>} from the message received.
    * @param message a JSON message with parameters.
    * @return a multi value map of values obtained from the JSON message received as parameter.
    * @throws JSONException Is thrown when there is a problem converting the message into a JSON object.
    */
-  public static MultivaluedMap<String, String> getParameters( String message ) throws JSONException {
-    MultivaluedMap<String, String> params = new MultivaluedHashMap<>( );
+  public Map<String, List<String>> getParametersFromJson( String message ) throws JSONException {
+    Map<String, List<String>> params = new HashMap();
 
     JSONObject jsonObject = new JSONObject( message );
     Iterator<?> keys = jsonObject.keys();
@@ -51,10 +50,10 @@ public abstract class QueryParameters {
       if ( item instanceof JSONArray ) {
         JSONArray itemArray = (JSONArray) item;
         for ( int i = 0; i < itemArray.length(); i++ ) {
-          params.add( key, itemArray.getString( i ) );
+          addMultiValueToMap( params, key, itemArray.getString( i ) );
         }
       } else {
-        params.add( key, jsonObject.getString( key ) );
+        addMultiValueToMap( params, key, jsonObject.getString( key ) );
       }
     }
     return params;
@@ -66,7 +65,7 @@ public abstract class QueryParameters {
    * @return A {@link DoQueryParameters} object initialized with the received parameters.
    * @throws Exception
    */
-  public static DoQueryParameters getDoQueryParameters( MultivaluedMap<String, String> parameters ) throws Exception {
+  public DoQueryParameters getDoQueryParameters( Map<String, List<String>> parameters ) throws Exception {
     DoQueryParameters doQueryParams = new DoQueryParameters();
 
     //should populate everything but prefixed parameters TODO: recheck defaults
@@ -76,9 +75,9 @@ public abstract class QueryParameters {
     Map<String, Object> extraSettings = new HashMap<String, Object>();
     for ( String name : parameters.keySet() ) {
       if ( name.startsWith( PREFIX_PARAMETER ) ) {
-        params.put( name.substring( PREFIX_PARAMETER.length() ), getParam( parameters.get( name ) ) );
+        params.put( name.replaceFirst( PREFIX_PARAMETER, "" ), getParam( parameters.get( name ) ) );
       } else if ( name.startsWith( PREFIX_SETTING ) ) {
-        extraSettings.put( name.substring( PREFIX_SETTING.length() ), getParam( parameters.get( name ) ) );
+        extraSettings.put( name.replaceFirst( PREFIX_SETTING, "" ), getParam( parameters.get( name ) ) );
       }
     }
     doQueryParams.setParameters( params );
@@ -92,7 +91,7 @@ public abstract class QueryParameters {
    * @param paramValues the parameter values received in a multivalued map.
    * @return the object as an array, or the object value if the received list has size 1.
    */
-  private static Object getParam( List<String> paramValues ) {
+  private Object getParam( List<String> paramValues ) {
     if ( paramValues == null ) {
       return null;
     }
@@ -103,5 +102,18 @@ public abstract class QueryParameters {
       return paramValues.toArray();
     }
     return paramValues;
+  }
+
+  public void addMultiValueToMap( Map<String, List<String>> map, String key, String value ) {
+    if ( value != null ) {
+      List<String> values = map.get( key );
+      if ( values != null ) {
+        values.add( value );
+      } else {
+        ArrayList<String> newValuesList = new ArrayList<>();
+        newValuesList.add( value );
+        map.put( key, newValuesList );
+      }
+    }
   }
 }
