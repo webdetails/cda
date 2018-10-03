@@ -59,11 +59,6 @@
       <version>${pentaho-json.version}</version>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
-      <groupId>javax.ws.rs</groupId>
-      <artifactId>javax.ws.rs-api</artifactId>
-      <scope>runtime</scope>
-    </dependency>
   </dependencies>
   <build>
     <plugins>

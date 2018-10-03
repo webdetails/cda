@@ -12,74 +12,37 @@
  */
 package pt.webdetails.cda;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.MediaType.APPLICATION_XML;
-import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
-import static pt.webdetails.cda.CdaConstants.PREFIX_PARAMETER;
-import static pt.webdetails.cda.CdaConstants.PREFIX_SETTING;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
-import javax.ws.rs.core.UriInfo;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MultivaluedMap;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.api.engine.IParameterProvider;
+import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.apache.commons.lang.StringUtils;
+import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.util.logging.SimpleLogger;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.exporter.ExportOptions;
 import pt.webdetails.cda.exporter.ExportedQueryResult;
 import pt.webdetails.cda.exporter.Exporter;
-import pt.webdetails.cda.exporter.TableExporter;
 import pt.webdetails.cda.exporter.ExporterException;
+import pt.webdetails.cda.exporter.TableExporter;
 import pt.webdetails.cda.exporter.UnsupportedExporterException;
 import pt.webdetails.cda.services.CacheManager;
 import pt.webdetails.cda.services.Editor;
 import pt.webdetails.cda.services.ExtEditor;
 import pt.webdetails.cda.services.Previewer;
-
-import org.pentaho.platform.api.engine.IPentahoSession;
-
-import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-import org.pentaho.platform.engine.security.SecurityHelper;
-
 import pt.webdetails.cda.settings.CdaSettingsReadException;
 import pt.webdetails.cda.utils.CorsUtil;
 import pt.webdetails.cda.utils.DoQueryParameters;
 import pt.webdetails.cda.utils.Messages;
+import pt.webdetails.cda.utils.QueryParameters;
 import pt.webdetails.cpf.PluginEnvironment;
 import pt.webdetails.cpf.audit.CpfAuditHelper;
 import pt.webdetails.cpf.messaging.JsonGeneratorSerializable;
@@ -88,6 +51,36 @@ import pt.webdetails.cpf.utils.CharsetHelper;
 import pt.webdetails.cpf.utils.JsonHelper;
 import pt.webdetails.cpf.utils.MimeTypes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+import javax.ws.rs.core.UriInfo;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.APPLICATION_XML;
+
 @Path( "/{plugin}/api" )
 public class CdaUtils {
   private static final Log logger = LogFactory.getLog( CdaUtils.class );
@@ -95,7 +88,22 @@ public class CdaUtils {
   // TODO: safer to get from repos?
   private static final Pattern CDA_PATH = Pattern.compile( "^[^:]*([^/]+)[^?]*" );
 
+  private QueryParameters queryParametersUtil;
+
   public CdaUtils() {
+    this.queryParametersUtil = new QueryParameters();
+  }
+
+  public CdaUtils( QueryParameters queryParametersUtil ) {
+    this.queryParametersUtil = queryParametersUtil;
+  }
+
+  public void setQueryParametersUtil( QueryParameters queryParametersUtil ) {
+    this.queryParametersUtil = queryParametersUtil;
+  }
+
+  public QueryParameters getQueryParametersUtil() {
+    return queryParametersUtil;
   }
 
   protected static String getEncoding() {
@@ -132,7 +140,8 @@ public class CdaUtils {
     return doQuery( params, servletResponse );
   }
 
-  private ExportedQueryResult doQueryInternal( DoQueryParameters parameters ) throws Exception {
+  @VisibleForTesting
+  protected ExportedQueryResult doQueryInternal( DoQueryParameters parameters ) throws Exception {
     CdaCoreService core = getCdaCoreService();
 
     return core.doQuery( parameters );
@@ -147,7 +156,7 @@ public class CdaUtils {
 
     final UUID auditUuid = startAudit( path, auditLogger, params );
     try {
-      final DoQueryParameters parameters = getDoQueryParameters( params );
+      final DoQueryParameters parameters = queryParametersUtil.getDoQueryParameters( params );
       if ( parameters.isWrapItUp() ) {
         return wrapQuery( parameters );
       }
@@ -202,47 +211,6 @@ public class CdaUtils {
     final String uuid = getCdaCoreService().wrapQuery( parameters );
 
     return out -> IOUtils.write( uuid, out );
-  }
-
-  private DoQueryParameters getDoQueryParameters( MultivaluedMap<String, String> parameters ) throws Exception {
-    DoQueryParameters doQueryParams = new DoQueryParameters();
-
-    // should populate everything but prefixed parameters TODO: recheck defaults
-    BeanUtils.populate( doQueryParams, parameters );
-
-    Map<String, Object> params = new HashMap<>();
-    Map<String, Object> extraSettings = new HashMap<>();
-
-    for ( String name : parameters.keySet() ) {
-      final Object value = getParam( parameters.get( name ) );
-
-      if ( name.startsWith( PREFIX_PARAMETER ) ) {
-        final String extraParameterName = name.replaceFirst( PREFIX_PARAMETER, "" );
-
-        params.put( extraParameterName, value );
-      } else if ( name.startsWith( PREFIX_SETTING ) ) {
-        final String extraSettingName = name.replaceFirst( PREFIX_SETTING, "" );
-
-        extraSettings.put( extraSettingName, value );
-      }
-    }
-
-    doQueryParams.setParameters( params );
-    doQueryParams.setExtraSettings( extraSettings );
-
-    return doQueryParams;
-  }
-
-  private Object getParam( List<String> paramValues ) {
-    if ( paramValues == null ) {
-      return null;
-    }
-
-    if ( paramValues.size() == 1 ) {
-      return paramValues.get( 0 );
-    }
-
-    return paramValues.toArray();
   }
 
   @GET
@@ -611,13 +579,12 @@ public class CdaUtils {
   @Deprecated
   public void doQueryInterPluginOld( @Context HttpServletResponse servletResponse,
                                      @Context HttpServletRequest servletRequest ) throws Exception {
-    MultivaluedMap<String, String> params = getParameterMapFromRequest( servletRequest );
-    ExportedQueryResult result = doQueryInternal( getDoQueryParameters( params ) );
+    ExportedQueryResult result = doQueryInternal( queryParametersUtil.getDoQueryParameters( getParameterMapFromRequest( servletRequest ) ) );
     result.writeResponse( servletResponse );
   }
 
   public String doQueryInterPlugin( @Context HttpServletRequest servletRequest ) throws Exception {
-    return doQueryInternal( getDoQueryParameters( getParameterMapFromRequest( servletRequest ) ) ).asString();
+    return doQueryInternal( queryParametersUtil.getDoQueryParameters( getParameterMapFromRequest( servletRequest ) ) ).asString();
   }
 
   private MultivaluedMap<String, String> getParameterMapFromRequest( HttpServletRequest servletRequest ) {

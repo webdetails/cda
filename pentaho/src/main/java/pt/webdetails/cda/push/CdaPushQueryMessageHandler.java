@@ -43,7 +43,7 @@ public class CdaPushQueryMessageHandler implements MessageHandler.Whole<String> 
   public CdaPushQueryMessageHandler( Session session, IPentahoRequestContext requestContext ) {
     this.session = session;
     this.requestContext = requestContext;
-    this.websocketJsonQueryEndpoint = new WebsocketJsonQueryEndpoint();
+    this.websocketJsonQueryEndpoint = new WebsocketJsonQueryEndpoint( );
   }
 
   /**
