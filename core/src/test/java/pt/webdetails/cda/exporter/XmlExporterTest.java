@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -22,6 +22,7 @@ import org.junit.Test;
 import pt.webdetails.cda.test.util.TableModelChecker;
 import pt.webdetails.cda.test.util.CdaTestHelper.SimpleTableModel;
 import pt.webdetails.cda.utils.MetadataTableModel;
+import pt.webdetails.cda.utils.Util;
 
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
@@ -116,13 +117,12 @@ public class XmlExporterTest {
     List<Element> rowSet;
     List<Element> columnsMetadata;
 
-    @SuppressWarnings( "unchecked" )
     public XmlStringTable( InputStream input ) throws DocumentException {
       SAXReader reader = new SAXReader( false );
       doc = reader.read( input );
       root = doc.getRootElement();
-      rowSet = doc.selectNodes( "/CdaExport/ResultSet/Row" );
-      columnsMetadata = doc.selectNodes( "/CdaExport/MetaData/ColumnMetaData" );
+      rowSet = Util.selectElements( doc, "/CdaExport/ResultSet/Row" );
+      columnsMetadata = Util.selectElements( doc, "/CdaExport/MetaData/ColumnMetaData" );
     }
 
     @Override
@@ -149,5 +149,4 @@ public class XmlExporterTest {
       return columnsMetadata.get( columnIndex ).attributeValue( "type" );
     }
   }
-
 }
