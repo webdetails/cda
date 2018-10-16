@@ -59,6 +59,14 @@
       <version>${pentaho-json.version}</version>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+
+      <scope>runtime</scope>
+    </dependency>
+
+    
   </dependencies>
   <build>
     <plugins>
