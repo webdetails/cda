@@ -141,16 +141,14 @@ public abstract class AbstractDataAccess implements DataAccess {
 
 
     // Parse parameters
-    @SuppressWarnings( "unchecked" )
-    final List<Element> parameterNodes = element.selectNodes( "Parameters/Parameter" );
+    final List<Element> parameterNodes = Util.selectElements( element, "Parameters/Parameter" );
 
     for ( final Element p : parameterNodes ) {
       parameters.add( new Parameter( p ) );
     }
 
     // Parse outputs
-    @SuppressWarnings( "unchecked" )
-    final List<Element> outputNodes = element.selectNodes( "Output" );
+    final List<Element> outputNodes = Util.selectElements( element, "Output" );
 
     for ( final Element outputNode : outputNodes ) {
       ArrayList<Integer> myOutputs = new ArrayList<Integer>();
@@ -180,8 +178,7 @@ public abstract class AbstractDataAccess implements DataAccess {
     }
 
     // Parse Columns
-    @SuppressWarnings( "unchecked" )
-    final List<Element> columnNodes = element.selectNodes( "Columns/*" );
+    final List<Element> columnNodes = Util.selectElements( element, "Columns/*" );
 
     for ( final Element p : columnNodes ) {
       columnDefinitions.add( new ColumnDefinition( p ) );
