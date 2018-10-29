@@ -23,9 +23,9 @@ import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
+import javax.websocket.CloseReason;
 import javax.websocket.MessageHandler;
 import javax.websocket.Session;
-import java.io.IOException;
 
 /**
  * This is the class that handles messages with queries to execute and then sends the results back to the
@@ -63,29 +63,11 @@ public class CdaPushQueryMessageHandler implements MessageHandler.Whole<String> 
         SecurityHelper.getInstance().becomeUser( principal.getName() );
       }
 
-      this.websocketJsonQueryEndpoint.onMessage( query,
-        outboundMessage -> {
-          try {
-            if ( session.isOpen() ) {
-              session.getBasicRemote().sendText( outboundMessage );
-            }
-          } catch ( Exception e ) {
-            logger.error( "Error sending message. Closing websocket...", e );
-            try {
-              session.close();
-            } catch ( IOException ioException ) {
-              logger.error( "Error writing to websocket", ioException );
-            }
-          }
-        } );
+      this.websocketJsonQueryEndpoint.onMessage( query, this::processOutboundMessage );
 
     } catch ( Exception e ) {
       logger.error( "Error processing message. Closing websocket...", e );
-      try {
-        session.close();
-      } catch ( IOException ioException ) {
-        logger.error( "Error writing to websocket", ioException );
-      }
+      processErrorMessage( e.getMessage() );
     }
   }
 
@@ -96,5 +78,41 @@ public class CdaPushQueryMessageHandler implements MessageHandler.Whole<String> 
    */
   public WebsocketJsonQueryEndpoint getWebsocketJsonQueryEndpoint() {
     return websocketJsonQueryEndpoint;
+  }
+
+  /**
+   * The consumer for the inbound messages received from the web socket.
+   *
+   * @param outboundMessage the message (query) that will be processed.
+   *
+   * @return A String consumer for the messages received.
+   */
+  private void processOutboundMessage( String outboundMessage ) {
+    try {
+      if ( session.isOpen() ) {
+        session.getBasicRemote().sendText( outboundMessage );
+      }
+    } catch ( Exception e ) {
+      logger.error( "Error sending message. Closing websocket...", e );
+      processErrorMessage( "Error sending message" );
+    }
+  }
+
+  /**
+   * The consumer for when a error happens in the query. This handler closes the socket and sends the
+   * consumed String message.
+   *
+   * @param errorMessage the error message that will be sent as the reason message when closing the web socket.
+   *
+   * @return A String consumer that is sent to the web socket as a CloseReason.CloseCodes.UNEXPECTED_CONDITION message.
+   */
+  private void processErrorMessage( String errorMessage ) {
+    try {
+      if ( session.isOpen() ) {
+        session.close( new CloseReason( CloseReason.CloseCodes.UNEXPECTED_CONDITION, errorMessage ) );
+      }
+    } catch ( Exception e ) {
+      logger.error( "Error closing socket while processing error message [" + errorMessage + "]", e );
+    }
   }
 }
