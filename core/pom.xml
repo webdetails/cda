@@ -16,7 +16,6 @@
     </license>
   </licenses>
   <properties>
-    <dependency.jaxen.revision>1.1.1</dependency.jaxen.revision>
     <dependency.poi.revision>3.12</dependency.poi.revision>
     <dependency.commons-io.revision>2.1</dependency.commons-io.revision>
     <dependency.xmlunit.revision>1.3</dependency.xmlunit.revision>
@@ -166,9 +165,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+    </dependency>
+    <dependency>
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
-      <version>${dependency.jaxen.revision}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
