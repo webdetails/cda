@@ -35,6 +35,7 @@ public interface IWebsocketEndpoint {
    * receives a new String message.
    *
    * @param message The message received.
+   * @param outboundMessageConsumer the consumer used for sending messages produced by the message received
    */
   void onMessage( String message, Consumer<String> outboundMessageConsumer );
 
