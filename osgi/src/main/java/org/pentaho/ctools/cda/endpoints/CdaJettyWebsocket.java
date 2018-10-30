@@ -39,7 +39,12 @@ public class CdaJettyWebsocket implements WebSocket.OnTextMessage {
   }
 
   public void onMessage( String query ) {
-    this.websocketJsonQueryEndpoint.onMessage( query, this::processOutboundMessage );
+    try {
+      this.websocketJsonQueryEndpoint.onMessage( query, this::processOutboundMessage );
+    } catch ( Exception e ) {
+      logger.error( "Error processing message.", e );
+      processErrorMessage( e.getMessage() );
+    }
   }
 
   public void onClose( int closeCode, String message ) {
@@ -51,12 +56,21 @@ public class CdaJettyWebsocket implements WebSocket.OnTextMessage {
       this.connection.sendMessage( outboundMessage );
     } catch ( Exception e ) {
       logger.error( "Error sending message. Closing websocket...", e );
+      processErrorMessage( "Error while sending message." );
+    }
+  }
 
-      // 1011: Server error
-      // The server is terminating the connection because
-      // it encountered an unexpected condition that prevented it from
-      // fulfilling the request.
-      this.connection.close( 1011, "Error while sending message." );
+  private void processErrorMessage( String errorMessage ) {
+    try {
+      if ( this.connection.isOpen() ) {
+        // 1011: Server error
+        // The server is terminating the connection because
+        // it encountered an unexpected condition that prevented it from
+        // fulfilling the request.
+        this.connection.close( 1011, errorMessage );
+      }
+    } catch ( Exception e ) {
+      logger.error( "Error closing socket, with message " + errorMessage, e );
     }
   }
 }
