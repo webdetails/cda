@@ -66,7 +66,7 @@
 				});
 				// try to fit height and width to window size
 				var mainContainer = $('.container');
-				var height = $(window).innerHeight() - $('.webdetailsHead').outerHeight(true) - $('.webdetailsFooter').outerHeight(true);
+				var height = $(parent.window).innerHeight() - $('.webdetailsHead').outerHeight(true) - $('.webdetailsFooter').outerHeight(true);
 				height -= mainContainer.outerHeight(true) - externalEditor.height();
 				externalEditor.height(height);
 				// try to fit width if too big
