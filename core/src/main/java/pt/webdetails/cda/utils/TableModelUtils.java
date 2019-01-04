@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2019 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,15 +13,6 @@
 
 package pt.webdetails.cda.utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.swing.table.TableModel;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,6 +25,14 @@ import pt.webdetails.cda.query.QueryOptions;
 import pt.webdetails.cda.utils.kettle.SortException;
 import pt.webdetails.cda.utils.kettle.SortTableModel;
 
+import javax.swing.table.TableModel;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 /**
  * Utility class to handle TableModel operations
  */
@@ -43,7 +42,7 @@ public class TableModelUtils {
   private static final String DT_FILTER = "dtFilter";
   private static final String DT_SEARCHABLE = "dtSearchableColumns";
 
-  private static TableModelUtils _instance;
+  private static TableModelUtils _instance = new TableModelUtils();
 
   /**
    * @deprecated all methods made static
@@ -56,12 +55,7 @@ public class TableModelUtils {
    * @deprecated all methods made static
    */
   @Deprecated
-  public static synchronized TableModelUtils getInstance() {
-
-    if ( _instance == null ) {
-      _instance = new TableModelUtils();
-    }
-
+  public static TableModelUtils getInstance() {
     return _instance;
   }
 
