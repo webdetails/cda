@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2019 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,33 +13,30 @@
 
 package pt.webdetails.cda.cache.monitor;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.pentaho.platform.api.engine.IParameterProvider;
+import org.pentaho.platform.api.engine.IPentahoSession;
+import pt.webdetails.cda.exporter.ExporterException;
+import pt.webdetails.cda.services.CacheMonitor;
+import pt.webdetails.cda.utils.PentahoHelper;
+import pt.webdetails.cda.utils.framework.JsonCallHandler;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 //import org.apache.commons.logging.Log;
 //import org.apache.commons.logging.LogFactory;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.pentaho.platform.api.engine.IParameterProvider;
-import org.pentaho.platform.api.engine.IPentahoSession;
 //import org.pentaho.platform.engine.security.SecurityHelper;
-
-import pt.webdetails.cda.exporter.ExporterException;
-import pt.webdetails.cda.services.CacheMonitor;
-import pt.webdetails.cda.utils.PentahoHelper;
-import pt.webdetails.cda.utils.framework.JsonCallHandler;
 
 //
 public class CacheMonitorHandler extends JsonCallHandler {
   //
   //  private static Log logger = LogFactory.getLog(JsonCallHandler.class);
 
-  private static CacheMonitorHandler _instance;
+  private static CacheMonitorHandler _instance = new CacheMonitorHandler();
 
-  public static synchronized CacheMonitorHandler getInstance() {
-    if ( _instance == null ) {
-      _instance = new CacheMonitorHandler();
-    }
+  public static CacheMonitorHandler getInstance() {
     return _instance;
   }
 

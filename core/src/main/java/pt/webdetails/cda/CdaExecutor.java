@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2019 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,12 +13,8 @@
 
 package pt.webdetails.cda;
 
-import java.io.File;
-import java.io.OutputStream;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import pt.webdetails.cda.dataaccess.QueryException;
 import pt.webdetails.cda.exporter.ExporterException;
 import pt.webdetails.cda.exporter.UnsupportedExporterException;
@@ -29,6 +25,9 @@ import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.settings.UnknownDataAccessException;
 import pt.webdetails.cda.utils.Util;
 
+import java.io.File;
+import java.io.OutputStream;
+
 /**
  * TODO: get tests outta here TODO: what is this? is it used? Main class to test and execute the CDA in standalone mode
  * User: pedro Date: Feb 1, 2010 Time: 12:30:41 PM
@@ -37,7 +36,7 @@ import pt.webdetails.cda.utils.Util;
 public class CdaExecutor {
 
   private static final Log logger = LogFactory.getLog( CdaExecutor.class );
-  private static CdaExecutor _instance;
+  private static CdaExecutor _instance = new CdaExecutor();
 
   protected CdaExecutor() {
 
@@ -105,12 +104,7 @@ public class CdaExecutor {
     engine.doExportQuery( cdaSettings, queryOptions ).writeOut( out );
   }
 
-  public static synchronized CdaExecutor getInstance() {
-
-    if ( _instance == null ) {
-      _instance = new CdaExecutor();
-    }
-
+  public static CdaExecutor getInstance() {
     return _instance;
   }
 
