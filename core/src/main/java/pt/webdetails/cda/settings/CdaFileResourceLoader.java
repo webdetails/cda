@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2019 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -159,10 +159,14 @@ public abstract class CdaFileResourceLoader implements ICdaResourceLoader {
         logger.error( msg );
         throw new ResourceLoadingException( msg );
       }
+      InputStream in = null;
       try {
-        this.contents = IOUtils.toByteArray( file.getContents() );
+        in = file.getContents();
+        this.contents = IOUtils.toByteArray( in );
       } catch ( IOException e ) {
         throw new ResourceLoadingException( e.getLocalizedMessage(), e );
+      } finally {
+        IOUtils.closeQuietly( in );
       }
       this.mimeType = MimeTypes.getMimeTypeFromExt( file.getExtension() );
       this.fileName = file.getName();
