@@ -168,7 +168,7 @@ public class CdaUtils {
 
       return toStreamingOutput( result );
     } catch ( Exception ex ) {
-      throw new WebApplicationException( ex, HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
+      throw new WebApplicationException( ex, Response.Status.INTERNAL_SERVER_ERROR );
     } finally {
       endAudit( path, auditLogger, start, auditUuid );
     }
