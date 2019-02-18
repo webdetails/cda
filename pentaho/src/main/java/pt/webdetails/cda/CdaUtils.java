@@ -325,11 +325,7 @@ public class CdaUtils {
     }
   }
 
-  private void useExporter( final CdaEngine engine, ExportOptions exportOptions,
-                                      final ResponseBuilder responseBuilder ) throws UnsupportedExporterException {
-    // Handle the query itself and its output format...
-    Exporter exporter = engine.getExporter( exportOptions );
-
+  private void setExporterHeaders( final Exporter exporter, final ResponseBuilder responseBuilder ) {
     String mimeType = exporter.getMimeType();
     if ( mimeType != null ) {
       responseBuilder.header( "Content-Type", mimeType );
@@ -413,7 +409,7 @@ public class CdaUtils {
 
     ResponseBuilder responseBuilder =  Response.ok( streamingOutput );
 
-    useExporter( engine, exportOptions, responseBuilder );
+    setExporterHeaders( exporter, responseBuilder );
 
     return responseBuilder.build();
   }
