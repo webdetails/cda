@@ -169,7 +169,7 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- Runtime test dependencies -->
+    <!-- region - Needed for testing -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
@@ -185,7 +185,7 @@
       <artifactId>spring-beans</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- -->
+    <!-- endregion -->
 
     <dependency>
       <groupId>xerces</groupId>
