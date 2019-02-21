@@ -238,7 +238,7 @@ public class CdaUtils {
         }
       };
 
-      return Response.ok( streamingOutput ).build();
+      return Response.ok( streamingOutput ).type( servletResponse.getContentType() ).build();
 
     } catch ( Exception e ) {
       logger.error( e );
