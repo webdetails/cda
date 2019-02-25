@@ -574,7 +574,8 @@ public class CdaUtils {
     return PentahoSessionHolder.getSession();
   }
 
-  private CdaCoreService getCdaCoreService() {
+  @VisibleForTesting
+  CdaCoreService getCdaCoreService() {
     return new CdaCoreService( CdaEngine.getInstance() );
   }
 
@@ -629,7 +630,8 @@ public class CdaUtils {
     return params;
   }
 
-  private void setCorsHeaders( HttpServletRequest request, HttpServletResponse response ) {
+  @VisibleForTesting
+  void setCorsHeaders( HttpServletRequest request, HttpServletResponse response ) {
     CorsUtil.getInstance().setCorsHeaders( request, response );
   }
 

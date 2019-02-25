@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2019 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,16 +13,21 @@
 
 package pt.webdetails.cda;
 
+import com.google.common.net.MediaType;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import pt.webdetails.cda.exporter.ExportedQueryResult;
 import pt.webdetails.cda.services.Previewer;
 import pt.webdetails.cda.settings.CdaSettingsReadException;
 import pt.webdetails.cda.utils.DoQueryParameters;
+import pt.webdetails.cda.utils.HttpServletResponseForTests;
 import pt.webdetails.cda.utils.QueryParameters;
 import pt.webdetails.cpf.messaging.MockHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -33,6 +38,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -70,7 +76,7 @@ public class CdaUtilsTest {
     doReturn( "exported query result" ).when( exportedQueryResult ).asString();
     CdaUtils utils = spyUtilsWithFakePreviewer( "file.cda", "qwerty" );
     utils.setQueryParametersUtil( queryParametersUtil );
-    doReturn( exportedQueryResult).when( utils ).doQueryInternal( any( DoQueryParameters.class ) );
+    doReturn( exportedQueryResult ).when( utils ).doQueryInternal( any( DoQueryParameters.class ) );
 
     HttpServletRequest servletRequest = mock( HttpServletRequest.class );
     Enumeration enumerationParameterNames = Collections.enumeration( Arrays.asList( "param1", "param2", "param3" ) );
@@ -123,5 +129,45 @@ public class CdaUtilsTest {
 
   private HttpServletRequest mockRequest( String file ) {
     return new MockHttpServletRequest( "/previewQuery", Collections.singletonMap( "path", new String[] { file } ) );
+  }
+
+  @Test
+  public void testUnwrapQueryContentType() throws Exception {
+    String path = "dummy/path";
+    String uuid = "1234-56789-101112";
+    String expectedContentType = MediaType.MICROSOFT_EXCEL.toString();
+    HttpServletResponse response = new HttpServletResponseForTests();
+    HttpServletRequest request = mock( HttpServletRequest.class );
+    ExportedQueryResult result = mockExporterThatSetsContentType( expectedContentType );
+
+    CdaUtils utilsSpy = spyUtilsWithFakeCdaCoreServiceAndCorsUtils( result, path, uuid );
+
+    Response queryResult = utilsSpy.unwrapQuery( path, uuid, response, request );
+    String observedContentType = queryResult.getMetadata().getFirst( "Content-Type" ).toString();
+
+    assertEquals( expectedContentType, observedContentType );
+  }
+
+  private CdaUtils spyUtilsWithFakeCdaCoreServiceAndCorsUtils( ExportedQueryResult result, String path, String uuid ) throws Exception {
+    CdaCoreService cdaCoreService = mock( CdaCoreService.class );
+    when( cdaCoreService.unwrapQuery( path, uuid ) ).thenReturn( result );
+
+    CdaUtils utils = spy( new CdaUtils() );
+    doReturn( cdaCoreService ).when( utils ).getCdaCoreService();
+    doNothing().when( utils ).setCorsHeaders( any( HttpServletRequest.class ), any( HttpServletResponse.class ) );
+
+    return utils;
+  }
+
+  private ExportedQueryResult mockExporterThatSetsContentType( String contentType ) throws IOException {
+    ExportedQueryResult result = mock( ExportedQueryResult.class );
+    doAnswer( invocation -> {
+      Object[] args = invocation.getArguments();
+
+      HttpServletResponse response = (HttpServletResponse) args[0];
+      response.setContentType( contentType );
+      return null;
+    } ).when( result ).writeHeaders( any( HttpServletResponse.class ) );
+    return result;
   }
 }
