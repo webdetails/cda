@@ -29,7 +29,6 @@
     <dependency.slf4j-log4j12.revision>1.5.8</dependency.slf4j-log4j12.revision>
     <dependency.jxl.revision>2.6.12</dependency.jxl.revision>
     <dependency.jsr311-api.revision>1.1-ea</dependency.jsr311-api.revision>
-    <dependency.spring.framework.revision>4.3.2.RELEASE</dependency.spring.framework.revision>
     <owasp.encoder.version>1.2</owasp.encoder.version>
     <google.guava.version>17.0</google.guava.version>
     <xercesImpl.version>2.9.1</xercesImpl.version>
@@ -170,6 +169,24 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- region - Needed for testing -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-expression</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- endregion -->
+
     <dependency>
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
@@ -254,18 +271,6 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-expression</artifactId>
-      <version>${dependency.spring.framework.revision}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <version>${dependency.spring.framework.revision}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>
