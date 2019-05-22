@@ -18,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 public class CacheKey implements Serializable {
 
