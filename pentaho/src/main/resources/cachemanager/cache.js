@@ -217,8 +217,8 @@ var refreshCachedTable = function(cdaSettingsId, dataAccessId) {
   UI.clearCacheButton.click(function() {
     var confText = jQuery.i18n.prop('confText') +
       (cdaSettingsId != null?
-        (" where cdaSettingsId='" + cdaSettingsId + "'" +
-          (dataAccessId!=null? "and dataAccessId='"+ dataAccessId+"'" : "")):
+        (jQuery.i18n.prop('confTextWhere') + " cdaSettingsId='" + cdaSettingsId + "'" +
+          (dataAccessId!=null? jQuery.i18n.prop('confTextAnd ') + " dataAccessId='"+ dataAccessId+"'" : "")):
         "");
     confText += jQuery.i18n.prop('confTextConfirm');
     if(confirm(confText)) {
