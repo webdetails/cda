@@ -210,6 +210,16 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>eigenbase</groupId>
+      <artifactId>eigenbase-properties</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>eigenbase</groupId>
+      <artifactId>eigenbase-resgen</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <resources>
