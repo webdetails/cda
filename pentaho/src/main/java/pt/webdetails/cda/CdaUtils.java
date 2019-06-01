@@ -13,6 +13,7 @@
 package pt.webdetails.cda;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +27,8 @@ import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.util.logging.SimpleLogger;
 import org.pentaho.platform.web.http.api.resources.utils.SystemUtils;
+
+import pt.webdetails.cda.connections.InvalidConnectionException;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
 import pt.webdetails.cda.dataaccess.DataAccessConnectionDescriptor;
 import pt.webdetails.cda.exporter.ExportOptions;
@@ -37,8 +40,11 @@ import pt.webdetails.cda.exporter.UnsupportedExporterException;
 import pt.webdetails.cda.services.CacheManager;
 import pt.webdetails.cda.services.Editor;
 import pt.webdetails.cda.services.ExtEditor;
+import pt.webdetails.cda.services.MondrianSchemaFlushService;
 import pt.webdetails.cda.services.Previewer;
+import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.CdaSettingsReadException;
+import pt.webdetails.cda.settings.UnknownConnectionException;
 import pt.webdetails.cda.utils.CorsUtil;
 import pt.webdetails.cda.utils.DoQueryParameters;
 import pt.webdetails.cda.utils.Messages;
@@ -63,6 +69,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -445,6 +452,31 @@ public class CdaUtils {
     return msg;
   }
 
+  /**
+   * Flushes mondrian schema used by MDX connection(s)
+   * @param path CDA file path
+   * @param connectionId MDX connection (optional)
+   * @return schemas flushed
+   */
+  @GET
+  @Path( "flushMondrianSchema" )
+  @Produces( MediaType.TEXT_PLAIN )
+  public Response clearCatalogSchema(
+      @QueryParam( "path" ) String path,
+      @QueryParam( "connectionId" ) String connectionId ) {
+    try {
+      CdaSettings cda = CdaEngine.getInstance().getSettingsManager().parseSettingsFile( path );
+      MondrianSchemaFlushService flusher = new MondrianSchemaFlushService();
+      return Response.ok( flusher.flushCdaMondrianCache( cda, connectionId ) ).build();
+    } catch ( CdaSettingsReadException | AccessDeniedException | UnknownConnectionException e ) {
+      logger.error( e.getMessage(), e );
+      return Response.status( Status.BAD_REQUEST ).entity( e.getLocalizedMessage() ).build();
+    } catch ( InvalidConnectionException e ) {
+      logger.error( e.getMessage(), e );
+      return Response.serverError().entity( e.getLocalizedMessage() ).build();
+    }
+  }
+
   @GET
   @Path( "/editFile" )
   @Produces( MimeTypes.HTML )
@@ -612,9 +644,9 @@ public class CdaUtils {
   private MultivaluedMap<String, String> getParameterMapFromRequest( HttpServletRequest servletRequest ) {
     MultivaluedMap<String, String> params = new MultivaluedMapImpl();
 
-    final Enumeration enumeration = servletRequest.getParameterNames();
+    final Enumeration<String> enumeration = servletRequest.getParameterNames();
     while ( enumeration.hasMoreElements() ) {
-      final String param = (String) enumeration.nextElement();
+      final String param = enumeration.nextElement();
 
       final String[] values = servletRequest.getParameterValues( param );
       if ( values.length == 1 ) {
