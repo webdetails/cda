@@ -14,6 +14,18 @@
 		<script type="text/javascript" src="../static/jquery.i18n.properties.js"></script>
 		<script type="text/javascript" src="../static/jquery.ui.js"></script>
 		<script type="text/javascript" src="../previewer/dataTables/js/jquery.dataTables.js"></script>
+		<script language="JavaScript">
+
+			// Init jQuery i18n plugin
+			loadMessageBundles = function(lang) {
+				jQuery.i18n.properties({
+					name : 'Messages',
+					path : '/pentaho/api/repos/cda/cachemanager/languages/',
+					mode : 'both',
+					language: (lang == 'browser' ? jQuery.i18n.browserLang() : lang)
+				});
+			}
+		</script>
 
 	</head>
 	<body>
@@ -33,7 +45,7 @@
 				</div>
 				<div class="clear"></div>
 				<div id="tabButtons">
-					<span style="color: #999;">Select Queries</span><br>
+					<span id="selectQueriesLabel" style="color: #999;">Select Queries</span><br>
 					<span id="scheduleButton" class="button" onclick="refreshTable()"> Scheduled Queries </span>
 					<span id="cacheButton" class="button" onclick="refreshCachedOverviewTable()"> Cached Queries </span>
 				</div>
@@ -42,33 +54,33 @@
 		<div id='scheduledQueries' class='container'>
 			<!-- MAIN TABLE BODY:  scheduler -->
 			<div class='section span-23 last'>
-				Scheduled Queries
+				<p id="scheduledQueriesTitle">Scheduled Queries</p>
 			</div>
 			<div class='span-23 last'>
 				<div class="tableHeader" id="header">
 					<div class='span-7'>
-						Name
+						<p id="scheduledQueriesName">Name</p>
 					</div>
 					<div class='span-4'>
-						Parameters
+						<p id="scheduledQueriesParameters">Parameters</p>
 					</div>
 					<div class='span-2'>
-						Last Execution
+						<p id="scheduledQueriesLastExecution">Last Execution</p>
 					</div>
 					<div class='span-2'>
-						Next Execution
+						<p id="scheduledQueriesNextExecution">Next Execution</p>
 					</div>
 					<div class='span-2'>
-						Cron
+						<p id="scheduledQueriesCron">Cron</p>
 					</div>
 					<div class='span-2'>
-						Time (ms)
+						<p id="scheduledQueriesTime">Time (ms)</p>
 					</div>
 					<div class='span-2'>
-						Status
+						<p id="scheduledQueriesStatus">Status</p>
 					</div>
 					<div class='span-2 last'>
-						Operations
+						<p id="scheduledQueriesOperations">Operations</p>
 					</div>
 				</div>
 				<div id="lines"></div>
@@ -81,26 +93,26 @@
 			<div id="membersInfo" class="span-23 last"></div>
 
 			<div class='section span-5'>
-				Queries in cache
+				<p id="cachedQueriesTitle">Queries in cache</p>
 			</div>
 			<div class='section span-1'>
 				<img id="loading" style="display:none;" src="img/loading.gif"/>
 			</div>
 			<div class='button' style='text-align:right;'>
-				<span id="clearCacheButton" class="button"> Clear all</span>
+				<span id="clearCacheButton" class="button">Clear all</span>
 			</div>
 			<!-- MAIN TABLE BODY: cache -->
 			<div id="cachedQueriesOverview">
 				<div class='span-23 last'>
 					<div class="tableHeader" id="cachedQueriesOverviewHeader">
 						<div class='span-15'>
-							CDA Settings
+							<p id="cachedQueriesOverviewCdaSettings">CDA Settings</p>
 						</div>
 						<div class='span-6'>
-							Data Access ID
+							<p id="cachedQueriesOverviewDataAccessId">Data Access ID
 						</div>
 						<div class='span-2 last'>
-							# Queries
+							<p id="cachedQueriesOverviewNQueries"># Queries
 						</div>
 					</div>
 					<div id="cachedQueriesOverviewLines"></div>
@@ -111,28 +123,28 @@
 				<div class='span-23 last'>
 					<div class="tableHeader" id="cachedQueriesHeader">
 						<div class='span-8'>
-							Query
+							<p id="cachedQueriesDetailQuery">Query</p>
 						</div>
 						<div class='span-5'>
-							Parameters
+							<p id="cachedQueriesDetailParameters">Parameters</p>
 						</div>
 						<div class='span-1'>
-							Rows
+							<p id="cachedQueriesDetailRows">Rows</p>
 						</div>
 						<div class='span-2'>
-							Mem.Size
+							<p id="cachedQueriesDetailMemSize">Mem.Size</p>
 						</div>
 						<div class='span-2'>
-							Insertion
+							<p id="cachedQueriesDetailInsertion">Insertion</p>
 						</div>
 						<div class='span-2'>
-							Last Access
+							<p id="cachedQueriesDetailLastAccess">Last Access</p>
 						</div>
 						<div class='span-1'>
-							# Hits
+							<p id="cachedQueriesDetailNHits"># Hits</p>
 						</div>
 						<div class='span-2 last'>
-							Actions
+							<p id="cachedQueriesDetailActions">Actions</p>
 						</div>
 					</div>
 					<div id="cachedQueriesLines"></div>
@@ -149,16 +161,53 @@
 		</div>
 		<!-- ROW ICONS -->
 		<div id="icons" style="display:none;">
-                  <img src="img/delete-24x24.png" class="deleteIcon" alt="remove" title="Remove Query">
-                  <img src="img/table.png" class="tableIcon" alt="view results" title="View Results">
-                  <img src="img/loading.gif" class="loadingIcon" alt="loading..." title="Loading">
-                  <img src="img/refresh-24x24.png" class="refreshIcon" alt='refresh' title="Execute Query">
+			<img id="removeQueryIcon" src="img/delete-24x24.png" class="deleteIcon" alt="remove" title="Remove Query">
+			<img id="viewResultsIcon"src="img/table.png" class="tableIcon" alt="view results" title="View Results">
+			<img id="loadingIcon"src="img/loading.gif" class="loadingIcon" alt="loading..." title="Loading">
+			<img id="executeQueryIcon"src="img/refresh-24x24.png" class="refreshIcon" alt='refresh' title="Execute Query">
 		</div>
 	</body>
 	<script>
 		$(document).ready(function() {
 			UI.init();
 			refreshTable();
+			// Initialize jquery.i18n plugin - load message files
+			loadMessageBundles(CacheManagerBackend.LOCALE_locale);
+
+			$('#selectQueriesLabel').text(jQuery.i18n.prop('selectQueriesLabel'));
+			$('#scheduleButton').text(jQuery.i18n.prop('scheduleButton'));
+			$('#cacheButton').text(jQuery.i18n.prop('cacheButton'));
+
+			$('#scheduledQueriesTitle').text(jQuery.i18n.prop('scheduledQueriesTitle'));
+			$('#scheduledQueriesName').text(jQuery.i18n.prop('scheduledQueriesName'));
+			$('#scheduledQueriesParameters').text(jQuery.i18n.prop('scheduledQueriesParameters'));
+			$('#scheduledQueriesLastExecution').text(jQuery.i18n.prop('scheduledQueriesLastExecution'));
+			$('#scheduledQueriesNextExecution').text(jQuery.i18n.prop('scheduledQueriesNextExecution'));
+			$('#scheduledQueriesCron').text(jQuery.i18n.prop('scheduledQueriesCron'));
+			$('#scheduledQueriesTime').text(jQuery.i18n.prop('scheduledQueriesTime'));
+			$('#scheduledQueriesStatus').text(jQuery.i18n.prop('scheduledQueriesStatus'));
+			$('#scheduledQueriesOperations').text(jQuery.i18n.prop('scheduledQueriesOperations'));
+
+			$('#removeQueryIcon').attr('title',jQuery.i18n.prop('removeQueryIcon'));
+			$('#viewResultsIcon').attr('title',jQuery.i18n.prop('viewResultsIcon'));
+			$('#loadingIcon').attr('title',jQuery.i18n.prop('loadingIcon'));
+			$('#executeQueryIcon').attr('title',jQuery.i18n.prop('executeQueryIcon'));
+
+
+			$('#cachedQueriesTitle').text(jQuery.i18n.prop('cachedQueriesTitle'));
+			$('#cachedQueriesOverviewCdaSettings').text(jQuery.i18n.prop('cachedQueriesOverviewCdaSettings'));
+			$('#cachedQueriesOverviewDataAccessId').text(jQuery.i18n.prop('cachedQueriesOverviewDataAccessId'));
+			$('#cachedQueriesOverviewNQueries').text(jQuery.i18n.prop('cachedQueriesOverviewNQueries'));
+			$('#clearCacheButton').text(jQuery.i18n.prop('clearCacheButton'));
+
+			$('#cachedQueriesDetailQuery').text(jQuery.i18n.prop('cachedQueriesDetailQuery'));
+			$('#cachedQueriesDetailParameters').text(jQuery.i18n.prop('cachedQueriesDetailParameters'));
+			$('#cachedQueriesDetailRows').text(jQuery.i18n.prop('cachedQueriesDetailRows'));
+			$('#cachedQueriesDetailMemSize').text(jQuery.i18n.prop('cachedQueriesDetailMemSize'));
+			$('#cachedQueriesDetailInsertion').text(jQuery.i18n.prop('cachedQueriesDetailInsertion'));
+			$('#cachedQueriesDetailLastAccess').text(jQuery.i18n.prop('cachedQueriesDetailLastAccess'));
+			$('#cachedQueriesDetailNHits').text(jQuery.i18n.prop('cachedQueriesDetailNHits'));
+			$('#cachedQueriesDetailActions').text(jQuery.i18n.prop('cachedQueriesDetailActions'));
 		});
 	</script>
 </html>
