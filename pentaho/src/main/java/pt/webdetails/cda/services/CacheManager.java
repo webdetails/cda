@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2015 Webdetails, a Pentaho company. All rights reserved.
+ * Copyright 2002 - 2019 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import org.apache.commons.lang.StringUtils;
 
 import pt.webdetails.cda.AccessDeniedException;
+import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cpf.context.api.IUrlProvider;
 import pt.webdetails.cpf.packager.origin.StaticSystemOrigin;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
@@ -42,6 +43,7 @@ public class CacheManager extends ProcessedHtmlPage {
     ArrayList<Pair<String, String>> pairs = new ArrayList<Pair<String, String>>();
     pairs.add( new Pair<String, String>( "CacheManagerBackend.CACHE_MONITOR", quote( baseApi, "cacheMonitor" ) ) );
     pairs.add( new Pair<String, String>( "CacheManagerBackend.CACHE_SCHEDULER", quote( baseApi, "cacheController" ) ) );
+    pairs.add( new Pair<>( "CacheManagerBackend.LOCALE_locale", quote( CdaEngine.getEnvironment().getLocale().toString() ) ) );
     return pairs;
   }
 
