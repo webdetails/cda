@@ -19,8 +19,14 @@
   <properties>
     <platform.version>9.0.0.0-SNAPSHOT</platform.version>
     <pentaho-report-wizard-core.version>9.0.0.0-SNAPSHOT</pentaho-report-wizard-core.version>
+    <webjars.target.directory>${build.dependenciesDirectory}/META-INF/resources/webjars</webjars.target.directory>
+    <js.project.list>jquery</js.project.list>
   </properties>
   <dependencies>
+    <dependency>
+      <groupId>org.webjars.npm</groupId>
+      <artifactId>jquery</artifactId>
+    </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>cpf-core</artifactId>
@@ -230,5 +236,57 @@
         </includes>
       </resource>
     </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-jquery-ace</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <overwrite>true</overwrite>
+              <outputDirectory>${project.basedir}/src/main/resources/fileEditor/ace</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${webjars.target.directory}/webjars/jquery/${jquery.version}/dist/</directory>
+                  <includes>
+                    <include>jquery.min.js</include>
+                  </includes>
+                </resource>
+              </resources>
+              <supportMultiLineFiltering>false</supportMultiLineFiltering>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-jquery-static</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <overwrite>true</overwrite>
+              <outputDirectory>${project.basedir}/src/main/resources/static</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${webjars.target.directory}/jquery/${jquery.version}/dist/</directory>
+                  <includes>
+                    <include>jquery.js</include>
+                  </includes>
+                </resource>
+              </resources>
+              <supportMultiLineFiltering>false</supportMultiLineFiltering>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 </project>
