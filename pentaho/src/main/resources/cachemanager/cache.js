@@ -1,5 +1,5 @@
 /*!
-* Copyright 2002 - 2014 Webdetails, a Pentaho company.  All rights reserved.
+* Copyright 2002 - 2019 Webdetails, a Hitachi Vantara company.  All rights reserved.
 * 
 * This software was developed by Webdetails and is provided under the terms
 * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -21,6 +21,8 @@ var CacheManagerBackend = {
 
   STATUS_OK: 'ok',
   STATUS_ERROR: 'error',
+
+  LOCALE_locale: 'browser',
 
   defaultErrorHandle: function(status, errorMsg) {
     alert('Error :' + errorMsg);
@@ -178,15 +180,15 @@ var refreshCachedOverviewTable = function() {
   
   UI.setButtonSelected(UI.scheduleButton, false);
   UI.setButtonSelected(UI.cacheButton, true);
-  
-  UI.clearCacheButton.text('Clear Cache');
+
+  UI.clearCacheButton.text(jQuery.i18n.prop('clearCacheButton'));
   UI.clearCacheButton.unbind('click');
   UI.clearCacheButton.click(function() {
-    if(confirm('This will remove ALL items from cache. Are you sure?')) {
+    if(confirm(jQuery.i18n.prop('clearCacheButtonConfirm'))) {
       CacheManagerBackend.postJson(
         {method:'removeAll'},
         function(itemsDeleted) {
-          alert(itemsDeleted + ' items have been removed from cache');
+          alert(itemsDeleted + jQuery.i18n.prop('clearCacheButtonAlert'));
           CacheManagerBackend.getJson({method : 'cacheOverview'},populateCachedQueriesOverview);
         }
       );
@@ -203,9 +205,9 @@ var refreshCachedTable = function(cdaSettingsId, dataAccessId) {
   UI.cachedQueriesOverview.hide();
   UI.cachedQueriesDetail.show();
    
-  var clearBtnText = "Clear all items";
+  var clearBtnText = jQuery.i18n.prop('clearBtnTextInit');
   if(cdaSettingsId != null) {
-    clearBtnText += " for " + cdaSettingsId;
+    clearBtnText += jQuery.i18n.prop('clearBtnTextFor') + cdaSettingsId;
     if(dataAccessId != null) {
       clearBtnText += " (" + dataAccessId + ")";
     }
@@ -213,12 +215,12 @@ var refreshCachedTable = function(cdaSettingsId, dataAccessId) {
   UI.clearCacheButton.text(clearBtnText);
   UI.clearCacheButton.unbind('click');
   UI.clearCacheButton.click(function() {
-    var confText = "This will clear All items" +
+    var confText = jQuery.i18n.prop('confText') +
       (cdaSettingsId != null?
-       (" where cdaSettingsId='" + cdaSettingsId + "'" +
-         (dataAccessId!=null? "and dataAccessId='"+ dataAccessId+"'" : "")):
-       "");
-    confText += ". Are you sure?";
+        (jQuery.i18n.prop('confTextWhere') + " cdaSettingsId='" + cdaSettingsId + "'" +
+          (dataAccessId!=null? jQuery.i18n.prop('confTextAnd ') + " dataAccessId='"+ dataAccessId+"'" : "")):
+        "");
+    confText += jQuery.i18n.prop('confTextConfirm');
     if(confirm(confText)) {
       var callArgs = {method:'removeAll'};
       if(cdaSettingsId!= null) {
@@ -228,25 +230,25 @@ var refreshCachedTable = function(cdaSettingsId, dataAccessId) {
       CacheManagerBackend.postJson(
         callArgs,
         function(itemsDeleted) {
-          alert(itemsDeleted + ' items have been removed from cache');
+          alert(itemsDeleted + jQuery.i18n.prop('itemsDeleteAlert'));
           refreshCachedTable(cdaSettingsId, dataAccessId);
         }
       );
     }
   });
-  
+
   var callArgs = {method:'cached'};
   if(cdaSettingsId!= null) {
     callArgs.cdaSettingsId = cdaSettingsId;
     if(dataAccessId!=null) callArgs.dataAccessId = dataAccessId;
   }
   CacheManagerBackend.getJson(
-            callArgs,
-            populateCachedQueries,
-            function(status, errorMsg){
-              var row = $('<div class="span-23 last"/>').text('Problem accessing cache. Check log for errors or reload to try again.');
-              $("#cachedQueriesOverviewLines").empty().append(row);
-            });
+    callArgs,
+    populateCachedQueries,
+    function(status, errorMsg){
+      var row = $('<div class="span-23 last"/>').text(jQuery.i18n.prop('cacheAccessError'));
+      $("#cachedQueriesOverviewLines").empty().append(row);
+    });
 };
 
 //should be improved
@@ -276,9 +278,9 @@ var populateClusterInfo = function(result) {
   var LENGTH = 12;
   var members = result.otherMembers;
   members.splice(0,0,result.localMember);
-  
+
   var holder = $('#membersInfo');
-  
+
   for(var i=0; i<members.length; i++) {
     $('<div/>').class('span-' + LENGTH + ' row last').text(members[i].address).appendTo(holder);
   }
@@ -286,7 +288,7 @@ var populateClusterInfo = function(result) {
 
 var populateMapInfo = function(result) {
   var holder = $('#mapInfo');
-  
+
   var str = result.entryCount + ' entries, (' + result.ownedCount + ' owned), totalling ' + getHumanReadableSize(result.mapMemSize);
   holder.text(str);
 }
@@ -325,10 +327,10 @@ var populateCachedQueriesOverview = function(results) {
       ph.append(row);
     }
   } else {
-    var row = $('<div class="span-24 last"/>').text('Cache is empty.');
+    var row = $('<div class="span-24 last"/>').text(jQuery.i18n.prop('cacheEmpty'));
     ph.append(row);
   }
-  
+
 };
 
 var removeCachedQuery =  function(key, row, cdaSettingsId, dataAccessId) {
@@ -394,27 +396,27 @@ var populateCachedQueries = function(resp) {
       var tableButton = UI.createButton('.tableIcon');
       var setQueryDetailsAction = function(tableContents, key) {
         tableButton.click(function() {
-            tableContents.toggle();
-            if(tableContents.hasClass('empty')) {
-              tableContents.removeClass('empty');
-              if(key) {
-                tableContents.append( UI.getIcon('.loadingIcon') );
-                CacheManagerBackend.postJson(
-                  {
-                    method: 'getDetails',
-                    key: key
-                  },
-                  function(result) {
-                     renderCachedTable(result, tableContents);
-                  },
-                  function(status, errorMsg) {
-                    tableContents.text('Item could not be retrieved from cache: ' + errorMsg);
-                  }
-                )
-              } else {
-                alert('this cache element is invalid');//TODO: better msg
-              }
-            }
+          tableContents.toggle();
+          if(tableContents.hasClass('empty')) {
+            tableContents.removeClass('empty');
+            if(key) {
+              tableContents.append( UI.getIcon('.loadingIcon') );
+              CacheManagerBackend.postJson(
+                {
+                  method: 'getDetails',
+                  key: key
+                },
+                function(result) {
+                  renderCachedTable(result, tableContents);
+                },
+                function(status, errorMsg) {
+                  tableContents.text(jQuery.i18n.prop('getCacheElemetError') + errorMsg);
+                }
+            )
+          } else {
+            alert(jQuery.i18n.prop('invalidCacheElement'));//TODO: better msg
+          }
+          }
         });
       };
 
@@ -424,15 +426,15 @@ var populateCachedQueries = function(resp) {
 
       ph.append(row);
 
-        //table
+      //table
       var tableContentsId = "tableContents" + i;
       ph.append($('<div id="' + tableContentsId + '" />').addClass('span-22 prepend-1 append-1 empty last queryTable').css('display','none'));
 
       setQueryDetailsAction($('#' + tableContentsId), item.key);
     }
   } else { //no items
-    var row = $('<div class="span-24 last"/>').text('No queries in cache for ' + resp.cdaSettingsId +
-                                                    (resp.dataAccessId!=null?' (' + resp.dataAccessId + ')' : ''));
+    var row = $('<div class="span-24 last"/>').text(jQuery.i18n.prop('noQueriesInCahceFor') + resp.cdaSettingsId +
+      (resp.dataAccessId!=null?' (' + resp.dataAccessId + ')' : ''));
     ph.append(row);
   }
 };
@@ -444,12 +446,12 @@ var renderCachedTable = function(data, container) {
     columnNames.push({"sTitle": data.metadata[column].colName});
   }
   var table = $('<table class="queryTable"></table>');
-  
+
   container.empty();
   container.append(table);
-  
+
   var dTable = table.dataTable({"aaData": tableContents, "aoColumns": columnNames, "bFilter" : false});
-  
+
 };
 
 
