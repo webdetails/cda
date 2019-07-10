@@ -40,7 +40,7 @@
 
 				externalEditor.height($(window).height() - header.height() - 5);
 
-				externalEditor.load(function() {
+				externalEditor.on('load', function() {
 					var editorEnv = getEditorWindow();
 					editorEnv.listeners.onStatusUpdate = setDirty;
 					editorEnv.listeners.notify = function(msg, type) {
