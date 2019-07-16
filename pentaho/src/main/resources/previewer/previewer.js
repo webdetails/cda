@@ -264,7 +264,7 @@ exportFunc = function(dataAccessId) {
 };
 
 getUnwrapQueryUrl = function(parameters) {
-  return PreviewerBackend.PATH_unwrapQuery + "?" + $.param(parameters);
+  return PreviewerBackend.PATH_unwrapQuery + "?" + $.param(parameters, true);
 };
 
 getFullQueryUrl = function(dataAccessId, extraParams) {
@@ -273,7 +273,7 @@ getFullQueryUrl = function(dataAccessId, extraParams) {
   var params = getParams();
   return window.location.protocol + '//' + window.location.host +
       PreviewerBackend.PATH_doQuery + '?path=' + getFileName() +
-      '&' + $.param($.extend({dataAccessId: dataAccessId}, params, extraParams));
+      '&' + $.param($.extend({dataAccessId: dataAccessId}, params, extraParams), true);
 };
 
 updateLastQuery = function(dataAccessId) {
