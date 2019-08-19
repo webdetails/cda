@@ -10,3 +10,4 @@ target/
 # These jquery files are added/replaced by maven on every build
 /pentaho/src/main/resources/static/jquery.js
 /pentaho/src/main/resources/static/jquery.ui.js
+/pentaho/src/main/resources/fileEditor/ace/jquery.min.js
