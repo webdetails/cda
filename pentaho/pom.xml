@@ -19,8 +19,24 @@
   <properties>
     <platform.version>8.3.0.0-SNAPSHOT</platform.version>
     <pentaho-report-wizard-core.version>8.3.0.0-SNAPSHOT</pentaho-report-wizard-core.version>
+    <webjars.target.directory>${build.dependenciesDirectory}/META-INF/resources/webjars</webjars.target.directory>
+    <js.project.list>jquery,jquery-ui</js.project.list>
   </properties>
   <dependencies>
+    <dependency>
+      <groupId>org.webjars.npm</groupId>
+      <artifactId>jquery</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.webjars.bower</groupId><!-- here we are using bower and not npm because the npm version only has source code -->
+      <artifactId>jquery-ui</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.webjars.bower</groupId>
+          <artifactId>jquery</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>cpf-core</artifactId>
@@ -230,5 +246,38 @@
         </includes>
       </resource>
     </resources>
+    <plugins>
+      <!-- copy jquery for tests and lib-->
+      <plugin>
+        <groupId>com.coderplus.maven.plugins</groupId>
+        <artifactId>copy-rename-maven-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+          <execution>
+            <id>copy-jquery</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <fileSets>
+                <set>
+                  <sourceFile>${webjars.target.directory}/jquery/${jquery.version}/dist/jquery.min.js</sourceFile>
+                  <destinationFile>${project.basedir}/src/main/resources/fileEditor/ace/jquery.min.js</destinationFile>
+                </set>
+                <set>
+                  <sourceFile>${webjars.target.directory}/jquery/${jquery.version}/dist/jquery.js</sourceFile>
+                  <destinationFile>${project.basedir}/src/main/resources/static/jquery.js</destinationFile>
+                </set>
+                <set>
+                  <sourceFile>${webjars.target.directory}/jquery-ui/${jquery-ui.version}/jquery-ui.js</sourceFile>
+                  <destinationFile>${project.basedir}/src/main/resources/static/jquery.ui.js</destinationFile>
+                </set>
+              </fileSets>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 </project>
