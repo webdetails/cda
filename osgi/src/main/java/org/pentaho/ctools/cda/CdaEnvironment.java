@@ -1,5 +1,5 @@
 /*!
- * Copyright 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2018-2019 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -44,11 +44,12 @@ import java.util.TimeZone;
 public class CdaEnvironment implements ICdaEnvironment {
 
   private Configuration config;
-  private static final String BASE_PROPERTIES = "cda.properties";
+
 
   //region Initialization
   @Override
   public void init() throws InitializationException {
+    //NO OP
   }
 
   @Override
@@ -244,7 +245,7 @@ public class CdaEnvironment implements ICdaEnvironment {
 
         @Override
         public Object clone() throws CloneNotSupportedException {
-          return null;
+          throw new CloneNotSupportedException();
         }
       };
 

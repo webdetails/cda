@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2019 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -20,6 +20,8 @@ import mondrian.olap.Dimension;
 import mondrian.olap.Member;
 import mondrian.olap.Position;
 import mondrian.olap.Result;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.MetaAttributeNames;
 import org.pentaho.reporting.engine.classic.core.MetaTableModel;
 import org.pentaho.reporting.engine.classic.core.util.CloseableTableModel;
@@ -41,6 +43,8 @@ import java.util.List;
 
 
 public class ExtDenormalizedMDXTableModel extends AbstractTableModel implements CloseableTableModel, MetaTableModel {
+
+  private static final Log logger = LogFactory.getLog( ExtDenormalizedMDXTableModel.class );
 
   private int[] axesSize;
   private IntList columnToAxisPosition;
@@ -196,7 +200,7 @@ public class ExtDenormalizedMDXTableModel extends AbstractTableModel implements 
         }
         return cell.getValue();
       } catch ( NullPointerException pe ) {
-        pe.printStackTrace();
+        logger.error( "Error while getting value from table cell", pe );
       }
     }
 

@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2019 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -84,7 +84,6 @@ public abstract class JsonCallHandler {
   /**
    * Simple overridable method to limit access.
    *
-   * @param session Caller session
    * @param method  Method being executed
    * @return
    */
@@ -117,7 +116,9 @@ public abstract class JsonCallHandler {
           result = createJsonResultFromException( e );
         }
       }
-      IOUtils.write( result.toString( INDENT_FACTOR ), out, CharsetHelper.getEncoding() );
+      if ( result != null ) {
+        IOUtils.write( result.toString( INDENT_FACTOR ), out, CharsetHelper.getEncoding() );
+      }
     } catch ( JSONException e ) {
       logger.error( "Error building JSON response", e );
     } catch ( IOException e ) {

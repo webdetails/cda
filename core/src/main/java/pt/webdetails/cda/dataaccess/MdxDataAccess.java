@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2019 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -129,7 +129,9 @@ public class MdxDataAccess extends GlobalMdxDataAccess {
     CacheKey cacheKey = getCacheKey() != null ? ( (CacheKey) getCacheKey() ).clone() : new CacheKey();
 
     cacheKey.addKeyValuePair( "bandedMode", bandedMode.toString() );
-    cacheKey.addKeyValuePair( "mondrianRole", mci.getMondrianRole() );
+    if ( mci != null ) {
+      cacheKey.addKeyValuePair( "mondrianRole", mci.getMondrianRole() );
+    }
 
     return cacheKey;
   }
