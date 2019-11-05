@@ -231,7 +231,7 @@ public class DynamicTransformation {
     CentralLogStore.discardLines( logChannelId, true );
     // Remove the entries from the registry
 
-    synchronized( this.getClass() ) {
+    synchronized( DynamicTransformation.class ) {
       if ( !hasCheckedForMethod ) {
         hasCheckedForMethod = true;
         Class<?> c = LoggingRegistry.class;
@@ -267,7 +267,8 @@ public class DynamicTransformation {
   public String getReadWriteThroughput() {
     String throughput = null;
     if ( secondsDuration != 0 ) {
-      String readClause = null, writtenClause = null;
+      String readClause = "";
+      String writtenClause = "";
       if ( result.getNrLinesRead() > 0 ) {
         readClause = String.format( "lines read: %d ( %d lines/s)", result.getNrLinesRead(), ( result
           .getNrLinesRead() / secondsDuration ) );
@@ -277,8 +278,7 @@ public class DynamicTransformation {
           : "" ), result.getNrLinesWritten(), ( result.getNrLinesWritten() / secondsDuration ) );
       }
       if ( readClause != null || writtenClause != null ) {
-        throughput = String.format( "Transformation %s%s", ( result.getNrLinesRead() > 0 ? readClause : "" ),
-          ( result.getNrLinesWritten() > 0 ? writtenClause : "" ) );
+        throughput = String.format( "Transformation %s%s", readClause, writtenClause );
       }
     }
     return throughput;

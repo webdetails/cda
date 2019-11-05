@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2019 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -15,6 +15,8 @@ package pt.webdetails.cda.xml;
 
 import java.io.StringWriter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
@@ -23,6 +25,9 @@ import org.dom4j.io.XMLWriter;
  * XML utils, including formatting.
  */
 public class XmlUtils {
+
+  private static Log logger = LogFactory.getLog( XmlUtils.class );
+
   private static XmlFormatter formatter = new XmlFormatter( 2, 80 );
 
   public static String formatXml( String s ) {
@@ -39,6 +44,14 @@ public class XmlUtils {
 
     public XmlFormatter( int indentNumChars, int lineLength ) {
       this.indentNumChars = indentNumChars;
+    }
+
+    private static String buildWhitespace( int numChars ) {
+      StringBuilder sb = new StringBuilder();
+      for ( int i = 0; i < numChars; i++ ) {
+        sb.append( " " );
+      }
+      return sb.toString();
     }
 
     public synchronized String format( String s, int initialIndent ) {
@@ -88,13 +101,7 @@ public class XmlUtils {
     }
   }
 
-  private static String buildWhitespace( int numChars ) {
-    StringBuilder sb = new StringBuilder();
-    for ( int i = 0; i < numChars; i++ ) {
-      sb.append( " " );
-    }
-    return sb.toString();
-  }
+
 
   public static String prettyPrint( final String xml ) {
     StringWriter sw = null;
@@ -106,9 +113,9 @@ public class XmlUtils {
       final XMLWriter writer = new XMLWriter( sw, format );
       writer.write( document );
     } catch ( Exception e ) {
-      System.out.println( "creating beautified xml failed, refer to exc : " + e.getMessage() );
+      logger.warn( "creating beautified xml failed.", e );
     }
-    return sw.toString();
+    return sw != null ? sw.toString() : null;
   }
 
 }

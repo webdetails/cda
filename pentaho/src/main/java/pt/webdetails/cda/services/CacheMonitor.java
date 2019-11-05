@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2019 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -95,10 +95,6 @@ public class CacheMonitor extends BaseService {
     result.put( ResultFields.CDA_SETTINGS_ID, cdaSettingsId );
     result.put( ResultFields.DATA_ACCESS_ID, dataAccessId );
     result.put( ResultFields.ITEMS, results );
-    //    //total stats
-    //    result.put("cacheLength", cdaCache.getSize());
-    //    result.put("memoryStoreLength", cdaCache.getMemoryStoreSize());
-    //    result.put("diskStoreLength", cdaCache.getDiskStoreSize());
 
     JSONObject response = new JSONObject();
     response.put( ResultFields.STATUS, ResponseStatus.OK );

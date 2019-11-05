@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2019 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -69,7 +68,7 @@ public class CdaCacheScheduler extends BaseService {
         logJob( job );
         return new JsonGeneratorSerializable() {
 
-          public void writeToGenerator( JsonGenerator out ) throws JsonGenerationException, IOException {
+          public void writeToGenerator( JsonGenerator out ) throws IOException {
             out.writeStartObject();
             out.writeStringField( STATUS_FIELD, STATUS_OK );
             out.writeStringField( "jobId", job.getJobId() );
@@ -94,7 +93,7 @@ public class CdaCacheScheduler extends BaseService {
     }
     return new JsonGeneratorSerializable() {
 
-      public void writeToGenerator( JsonGenerator out ) throws JsonGenerationException, IOException {
+      public void writeToGenerator( JsonGenerator out ) throws IOException {
         out.writeStartObject();
         out.writeStringField( STATUS_FIELD, STATUS_OK );
         out.writeEndObject();
@@ -112,7 +111,7 @@ public class CdaCacheScheduler extends BaseService {
     }
     return new JsonGeneratorSerializable() {
 
-      public void writeToGenerator( JsonGenerator out ) throws JsonGenerationException, IOException {
+      public void writeToGenerator( JsonGenerator out ) throws IOException {
         out.writeStartObject();
         out.writeStringField( STATUS_FIELD, STATUS_OK );
         out.writeEndObject();
@@ -129,18 +128,13 @@ public class CdaCacheScheduler extends BaseService {
     IScheduler scheduler = getScheduler();
     try {
       List<Job> jobs = scheduler.getJobs( getCdaJobFilter() );
-      final List<JsonGeneratorSerializable> queries = new ArrayList<JsonGeneratorSerializable>();
+      final List<JsonGeneratorSerializable> queries = new ArrayList<>();
       for ( Job job : jobs ) {
-        try {
-          String jsonString = (String) job.getJobParams().get( CdaCacheWarmer.QUERY_INFO_PARAM );
-          queries.add( toCachedQueryJson( new ScheduledQueryExecution( getSettingsManager(), jsonString, job ) ) );
-        } catch ( Exception e ) {
-          getLog().error( "Error reading job info.", e );
-        }
+        addJobInfoToScheduledQueries( queries, job );
       }
 
       return new JsonGeneratorSerializable() {
-        public void writeToGenerator( JsonGenerator out ) throws JsonGenerationException, IOException {
+        public void writeToGenerator( JsonGenerator out ) throws IOException {
           out.writeStartObject();
           out.writeStringField( STATUS_FIELD, STATUS_OK );
           out.writeFieldName( "queries" );
@@ -158,23 +152,28 @@ public class CdaCacheScheduler extends BaseService {
     return null;
   }
 
+  private void addJobInfoToScheduledQueries( List<JsonGeneratorSerializable> queries, Job job ) {
+    try {
+      String jsonString = (String) job.getJobParams().get( CdaCacheWarmer.QUERY_INFO_PARAM );
+      queries.add( toCachedQueryJson( new ScheduledQueryExecution( getSettingsManager(), jsonString, job ) ) );
+    } catch ( Exception e ) {
+      getLog().error( "Error reading job info.", e );
+    }
+  }
+
   private SettingsManager getSettingsManager() {
     return CdaEngine.getInstance().getSettingsManager();
   }
 
   private IJobFilter getCdaJobFilter() {
-    return new IJobFilter() {
-      public boolean accept( Job job ) {
-        return job.getJobName().startsWith( JOB_NAME_PREFIX )
-          && job.getJobParams().containsKey( CdaCacheWarmer.QUERY_INFO_PARAM )
-          // avoid listing temporary one-shot jobs from execute
-          && job.getNextRun() != null && job.getNextRun().getTime() > 0;
-      }
-    };
+    return job -> job.getJobName().startsWith( JOB_NAME_PREFIX )
+      && job.getJobParams().containsKey( CdaCacheWarmer.QUERY_INFO_PARAM )
+      // avoid listing temporary one-shot jobs from execute
+      && job.getNextRun() != null && job.getNextRun().getTime() > 0;
   }
 
   private void checkSchedulerAccess( QueryExecution queryExec, IPentahoSession session ) throws AccessDeniedException {
-    if ( !canSchedule( queryExec ) ) {
+    if ( !canSchedule( ) ) {
       throw new AccessDeniedException(
         String.format( "User %s cannot schedule %s",
           session.getName(),
@@ -195,7 +194,7 @@ public class CdaCacheScheduler extends BaseService {
     }
   }
 
-  private boolean canSchedule( QueryExecution queryExec ) {
+  private boolean canSchedule( ) {
     // access rights to cda already checked by SettingsManager
     IAuthorizationPolicy authPolicy = getAuthorizationPolicy();
     if ( authPolicy == null ) {
@@ -218,7 +217,7 @@ public class CdaCacheScheduler extends BaseService {
     IScheduler scheduler = PentahoSystem.get( IScheduler.class, SUGAR_SCHEDULER_BEAN_ID, null );
     if ( scheduler == null ) {
       // and make sure when it changes we're not caught with our pants down
-      getLog().warn( String.format( "Scheduler bean '%s' not found, falling back to default" ) );
+      getLog().warn( String.format( "Scheduler bean '%s' not found, falling back to default", SUGAR_SCHEDULER_BEAN_ID ) );
       return PentahoSystem.get( IScheduler.class );
     }
     return scheduler;
@@ -233,7 +232,7 @@ public class CdaCacheScheduler extends BaseService {
 
       String jobName = getJobName( cdaSettings, queryOpts );
       IScheduler scheduler = getScheduler();
-      HashMap<String, Serializable> actionParameters = new HashMap<String, Serializable>();
+      HashMap<String, Serializable> actionParameters = new HashMap<>();
       actionParameters.put( CdaCacheWarmer.QUERY_INFO_PARAM, query.getJsonString() );
       IJobTrigger trigger = createTrigger( cron );
       return scheduler.createJob( jobName, ACTION_BEAN_ID, actionParameters, trigger );
@@ -261,7 +260,6 @@ public class CdaCacheScheduler extends BaseService {
   }
 
   private void logJob( Job job ) {
-    //TODO:
     Log log = getLog();
     log.info( String.format( "Job id=\"%s\", name=\"%s\",  ", job.getJobId(), job.getJobName() ) );
     if ( log.isDebugEnabled() ) {
@@ -283,10 +281,9 @@ public class CdaCacheScheduler extends BaseService {
     //
     return new JsonGeneratorSerializable() {
 
-      public void writeToGenerator( JsonGenerator out ) throws JsonGenerationException, IOException {
+      public void writeToGenerator( JsonGenerator out ) throws IOException {
         Job job = query.getJob();
         QueryOptions opts = query.getQueryOptions();
-        //{
         out.writeStartObject();
         // basic info
         out.writeStringField( "id", job.getJobId() );
@@ -306,9 +303,6 @@ public class CdaCacheScheduler extends BaseService {
 
         // TODO: we can cross-ref with cache monitor to get missing fields if worth it
         out.writeNumberField( "timeElapsed", -1 );
-        //these aren't used
-        //out.writeNumberField( "hitCount", -1 );
-        //out.writeNumberField( "missCount", -1 );
 
         //XXX execution errors are not given by job status; only says if it wasn't scheduled properly
         out.writeBooleanField( "success", job.getState() == JobState.NORMAL );
@@ -320,7 +314,7 @@ public class CdaCacheScheduler extends BaseService {
   private JsonGeneratorSerializable getError( final Exception e ) {
     return new JsonGeneratorSerializable() {
 
-      public void writeToGenerator( JsonGenerator out ) throws JsonGenerationException, IOException {
+      public void writeToGenerator( JsonGenerator out ) throws IOException {
         out.writeStartObject();
         out.writeStringField( STATUS_FIELD, STATUS_ERROR );
         out.writeStringField( "errorMsg", e.getLocalizedMessage() );

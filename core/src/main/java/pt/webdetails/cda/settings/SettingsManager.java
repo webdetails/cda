@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2019 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -167,9 +167,6 @@ public class SettingsManager {
   public ResourceManager getResourceManager() {
     final ResourceManager resourceManager = new ResourceManager();
     resourceManager.registerDefaults();
-    //    // Create only default loaders and factories, not the caches
-    //    resourceManager.registerDefaultLoaders();
-    //    resourceManager.registerDefaultFactories();
     resourceManager.registerLoader( this.defaultResourceLoader );
     resourceManager.registerLoader( resourceLoaders.get( SYSTEM_RESOURCE_LOADER_NAME ) );
     return resourceManager;
@@ -233,7 +230,7 @@ public class SettingsManager {
       try {
         clazz = Class.forName( className );
       } catch ( Exception e ) {
-        logger.error( MessageFormat.format( "Couldn\'t load class {0}!", className ) );
+        logger.error( MessageFormat.format( "Couldn''t load class {0}!", className ) );
         continue;
       }
 
@@ -248,12 +245,12 @@ public class SettingsManager {
         } catch ( InvocationTargetException e ) {
           Throwable cause = e.getTargetException();
           if ( cause.getClass() == UnsupportedOperationException.class ) {
-            logger.warn( "DataAccess " + dataAccess + " doesn't support discoverability!" );
+            logger.warn( MessageFormat.format( "DataAccess {0} doesn''t support discoverability!", dataAccess ) );
           } else {
-            logger.error( "DataAccess " + dataAccess + " did something wrong!" );
+            logger.error( MessageFormat.format( "DataAccess {0} did something wrong!", dataAccess ) );
           }
         } catch ( Exception e ) {
-          logger.error( "DataAccess " + dataAccess + " did something wrong!" );
+          logger.error( MessageFormat.format( "DataAccess {0} did something wrong!", dataAccess ) );
         }
       }
 
