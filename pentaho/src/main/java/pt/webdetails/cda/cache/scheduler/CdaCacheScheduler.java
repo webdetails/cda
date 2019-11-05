@@ -130,7 +130,7 @@ public class CdaCacheScheduler extends BaseService {
       List<Job> jobs = scheduler.getJobs( getCdaJobFilter() );
       final List<JsonGeneratorSerializable> queries = new ArrayList<>();
       for ( Job job : jobs ) {
-        addJobInfoToScheduledQueries(queries, job);
+        addJobInfoToScheduledQueries( queries, job );
       }
 
       return new JsonGeneratorSerializable() {
@@ -152,7 +152,7 @@ public class CdaCacheScheduler extends BaseService {
     return null;
   }
 
-  private void addJobInfoToScheduledQueries(List<JsonGeneratorSerializable> queries, Job job) {
+  private void addJobInfoToScheduledQueries( List<JsonGeneratorSerializable> queries, Job job ) {
     try {
       String jsonString = (String) job.getJobParams().get( CdaCacheWarmer.QUERY_INFO_PARAM );
       queries.add( toCachedQueryJson( new ScheduledQueryExecution( getSettingsManager(), jsonString, job ) ) );

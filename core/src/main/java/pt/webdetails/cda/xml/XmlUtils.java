@@ -47,11 +47,11 @@ public class XmlUtils {
     }
 
     private static String buildWhitespace( int numChars ) {
-        StringBuilder sb = new StringBuilder();
-        for ( int i = 0; i < numChars; i++ ) {
-            sb.append( " " );
-        }
-        return sb.toString();
+      StringBuilder sb = new StringBuilder();
+      for ( int i = 0; i < numChars; i++ ) {
+        sb.append( " " );
+      }
+      return sb.toString();
     }
 
     public synchronized String format( String s, int initialIndent ) {

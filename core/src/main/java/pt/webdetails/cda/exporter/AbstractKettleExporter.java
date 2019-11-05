@@ -170,7 +170,7 @@ public abstract class AbstractKettleExporter extends AbstractExporter implements
 
     // temp file not needed anymore - delete it
     if ( !file.delete() ) {
-      logger.warn("Unable to delete temporary file after ktr execution." );
+      logger.warn( "Unable to delete temporary file after ktr execution." );
 
     }
   }
