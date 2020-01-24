@@ -5,11 +5,11 @@
   <parent>
     <groupId>org.pentaho</groupId>
     <artifactId>pentaho-ce-jar-parent-pom</artifactId>
-    <version>7.1-SNAPSHOT</version>
+    <version>7.1.0.32-246</version>
   </parent>
   <groupId>pentaho</groupId>
   <artifactId>cda-plugin</artifactId>
-  <version>7.1-SNAPSHOT</version>
+  <version>7.1.0.32-246</version>
   <packaging>pom</packaging>
   <licenses>
     <license>
@@ -37,19 +37,19 @@
   <properties>
     <marketplace.metadata.sequential.build.id>${sequential.build.id}</marketplace.metadata.sequential.build.id>
     <sequential.build.id>manual-${maven.build.timestamp}</sequential.build.id>
-    <dependency.pentaho-metadata.revision>7.1-SNAPSHOT</dependency.pentaho-metadata.revision>
+    <dependency.pentaho-metadata.revision>7.1.0.32-246</dependency.pentaho-metadata.revision>
     <marketplace.metadata.package_url></marketplace.metadata.package_url>
     <marketplace.metadata.description></marketplace.metadata.description>
     <project.stage>master</project.stage>
     <dependency.mockito-all.revision>1.8.4</dependency.mockito-all.revision>
     <marketplace.metadata.min_parent_version>1.0</marketplace.metadata.min_parent_version>
     <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
-    <dependency.pentaho-reporting.revision>7.1-SNAPSHOT</dependency.pentaho-reporting.revision>
+    <dependency.pentaho-reporting.revision>7.1.0.32-246</dependency.pentaho-reporting.revision>
     <dependency.pentaho-kettle.revision>${project.version}</dependency.pentaho-kettle.revision>
     <dependency.pentaho-library.revision>${project.version}</dependency.pentaho-library.revision>
-    <dependency.pentaho-cpf-plugin.revision>7.1-SNAPSHOT</dependency.pentaho-cpf-plugin.revision>
+    <dependency.pentaho-cpf-plugin.revision>7.1.0.32-246</dependency.pentaho-cpf-plugin.revision>
     <dependency.jackson-mapper-asl.revision>1.9.3</dependency.jackson-mapper-asl.revision>
-    <dependency.mondrian.revision>3.14-SNAPSHOT</dependency.mondrian.revision>
+    <dependency.mondrian.revision>3.14.0.32-246</dependency.mondrian.revision>
     <marketplace.metadata.development_stage.phase>2</marketplace.metadata.development_stage.phase>
     <dependency.jericho-html.revision>3.1</dependency.jericho-html.revision>
     <marketplace.metadata.samples_url>http://nexus.pentaho.org/content/groups/omni/pentaho/cda-samples/6.0.0.0-353/cda-samples-6.0.0.0-353.zip</marketplace.metadata.samples_url>
