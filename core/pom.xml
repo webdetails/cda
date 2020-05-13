@@ -30,6 +30,7 @@
     <dependency.jsr311-api.revision>1.1-ea</dependency.jsr311-api.revision>
     <owasp.encoder.version>1.2</owasp.encoder.version>
     <google.guava.version>17.0</google.guava.version>
+    <encryption-support.version>9.1.0.0-SNAPSHOT</encryption-support.version>
 
   </properties>
   <dependencies>
@@ -151,7 +152,12 @@
       <groupId>xml-apis</groupId>
       <artifactId>xml-apis</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>org.pentaho</groupId>
+      <artifactId>pentaho-encryption-support</artifactId>
+      <version>${encryption-support.version}</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>eigenbase</groupId>
       <artifactId>eigenbase-properties</artifactId>
@@ -220,6 +226,13 @@
     </dependency>
 
     <!-- TEST -->
+    <dependency>
+      <groupId>pentaho-kettle</groupId>
+      <artifactId>kettle-core</artifactId>
+      <version>${project.version}</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
