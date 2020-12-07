@@ -39,17 +39,17 @@ public class CdaContentGenerator extends SimpleContentGenerator {
 
     long start = System.currentTimeMillis();
 
-
     UUID uuid = CpfAuditHelper.startAudit( getPluginName(), path, getObjectName(),
       this.userSession, this, requestParams );
-
+    if ( uuid != null ) {
+      setInstanceId( uuid.toString() );
+    }
 
     if ( edit ) {
       utils.editFile( path, getResponse() );
     } else {
       utils.previewQuery( path, getResponse() );
     }
-
 
     long end = System.currentTimeMillis();
     CpfAuditHelper.endAudit( getPluginName(), path, getObjectName(), this.userSession, this, start, uuid, end );
