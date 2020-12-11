@@ -15,9 +15,6 @@ package pt.webdetails.cda.push;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.engine.IPentahoRequestContext;
-import org.pentaho.platform.engine.core.system.PentahoRequestContextHolder;
-import org.pentaho.platform.web.websocket.WebsocketEndpointConfig;
 
 import javax.websocket.CloseReason;
 import javax.websocket.Endpoint;
@@ -26,7 +23,7 @@ import javax.websocket.Session;
 
 /**
  * Websocket implementation for CDA queries.
- * This Endpoint is registered in plugin.spring.xml fille by means of the {@link org.pentaho.platform.web.websocket.WebsocketEndpointConfig} bean.
+ * This Endpoint is registered in plugin.spring.xml file by means of the {@link org.pentaho.platform.web.websocket.WebsocketEndpointConfig} bean.
  */
 public class CdaPushQueryEndpoint extends Endpoint {
 
@@ -43,19 +40,21 @@ public class CdaPushQueryEndpoint extends Endpoint {
    */
   @Override
   public void onOpen( Session session, EndpointConfig endpointConfig ) {
-    PentahoRequestContextHolder.setRequestContext( () -> (String) endpointConfig.getUserProperties()
-      .get( WebsocketEndpointConfig.getInstanceToReadProperties().getServletContextPathPropertyName() ) );
-    IPentahoRequestContext requestContext = PentahoRequestContextHolder.getRequestContext();
 
-    this.queryHandler = new CdaPushQueryMessageHandler( session, requestContext );
-    this.queryHandler.getWebsocketJsonQueryEndpoint().onOpen( null );
+    PentahoEndpointConfigurationHelper configHelper = new PentahoEndpointConfigurationHelper( endpointConfig );
+    PentahoContext context = configHelper.getPentahoContext();
 
-    session.setMaxTextMessageBufferSize( Integer.parseInt( endpointConfig.getUserProperties()
-      .get( WebsocketEndpointConfig.getInstanceToReadProperties().getMaxMessagePropertyName() ).toString() ) );
-    session.setMaxBinaryMessageBufferSize( Integer.parseInt( endpointConfig.getUserProperties()
-      .get( WebsocketEndpointConfig.getInstanceToReadProperties().getMaxMessagePropertyName() ).toString() ) );
+    context.run( () -> {
+      this.queryHandler = new CdaPushQueryMessageHandler( session, context );
 
-    session.addMessageHandler( queryHandler );
+      queryHandler.getWebsocketJsonQueryEndpoint().onOpen( null );
+
+      int maxMessageLength = configHelper.getMaxMessageLength();
+      session.setMaxTextMessageBufferSize( maxMessageLength );
+      session.setMaxBinaryMessageBufferSize( maxMessageLength );
+
+      session.addMessageHandler( queryHandler );
+    } );
   }
 
   /**

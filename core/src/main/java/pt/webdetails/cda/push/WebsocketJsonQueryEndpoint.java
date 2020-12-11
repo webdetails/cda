@@ -74,12 +74,11 @@ public class WebsocketJsonQueryEndpoint implements IWebsocketEndpoint {
     try {
       Map<String, List<String>> params = queryParametersUtil.getParametersFromJson( message );
       DoQueryParameters parameters = queryParametersUtil.getDoQueryParameters( params );
-      CdaCoreService core = getCdaCoreService();
 
       final String path = parameters.getPath();
       final CdaEngine cdaEngine = CdaEngine.getInstance();
       final CdaSettings cdaSettings = cdaEngine.getSettingsManager().parseSettingsFile( path );
-      final QueryOptions queryOptions = core.getQueryOptions( parameters );
+      final QueryOptions queryOptions = CdaCoreService.getQueryOptions( parameters );
       final TableExporter tableExporter = cdaEngine.getExporter( queryOptions );
 
       StreamingDataservicesDataAccess dataAccess = (StreamingDataservicesDataAccess) cdaSettings.getDataAccess( queryOptions.getDataAccessId() );

@@ -125,7 +125,15 @@ public class SQLKettleAdapter implements DataAccessKettleAdapter {
   private void prepareQuery() throws KettleAdapterException {
     if ( translatedQuery == null ) {
       try {
-        parameters = Parameter.createParameterDataRowFromParameters( dataAccess.getFilledParameters( queryOptions ) );
+        List<Parameter> parameterList = dataAccess.getFilledParameters( queryOptions );
+
+        // There is no explicit hook that represents the query starting.
+        // This method is called as soon as one of `getKettleStepMeta`, `getParameters` or `getParameterNames` is called.
+        // In turn, `DefaultStreamExporter` calls these in its `export` method.
+        // This precedes the query execution in Kettle.
+        dataAccess.logQueryStart( queryOptions, parameterList );
+
+        parameters = Parameter.createParameterDataRowFromParameters( parameterList );
         SQLParameterLookupParser parser = new SQLParameterLookupParser( true );
         translatedQuery = parser.translateAndLookup( dataAccess.getQuery(), parameters );
         parameterNames = parser.getFields();

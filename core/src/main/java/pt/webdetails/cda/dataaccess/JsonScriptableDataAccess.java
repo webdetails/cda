@@ -38,6 +38,12 @@ public class JsonScriptableDataAccess extends ScriptableDataAccess {
     return "jsonScriptable";
   }
 
+  // Do not log the script.
+  @Override
+  protected String getLogQuery() {
+    return null;
+  }
+
   @Override
   public String getQuery() {
     String query = this.query;
