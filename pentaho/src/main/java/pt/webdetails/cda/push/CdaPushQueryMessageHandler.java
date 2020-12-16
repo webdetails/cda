@@ -15,17 +15,17 @@ package pt.webdetails.cda.push;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.engine.IPentahoRequestContext;
-import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.engine.core.system.PentahoRequestContextHolder;
-import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.engine.security.SecurityHelper;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.pentaho.platform.api.engine.IParameterProvider;
+import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
+import pt.webdetails.cda.utils.AuditHelper;
+import pt.webdetails.cda.utils.AuditHelper.QueryAudit;
+import pt.webdetails.cda.utils.QueryParameters;
 
 import javax.websocket.CloseReason;
 import javax.websocket.MessageHandler;
 import javax.websocket.Session;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This is the class that handles messages with queries to execute and then sends the results back to the
@@ -35,40 +35,43 @@ public class CdaPushQueryMessageHandler implements MessageHandler.Whole<String> 
 
   private final Log logger = LogFactory.getLog( CdaPushQueryMessageHandler.class );
 
-  private Session session;
-  private IPentahoRequestContext requestContext;
-
-  private WebsocketJsonQueryEndpoint websocketJsonQueryEndpoint;
-
-  public CdaPushQueryMessageHandler( Session session, IPentahoRequestContext requestContext ) {
+  private final Session session;
+  private final PentahoContext context;
+  private final AuditHelper auditHelper;
+  private final WebsocketJsonQueryEndpoint websocketJsonQueryEndpoint;
+  private final QueryParameters queryParametersUtil;
+  public CdaPushQueryMessageHandler( Session session, PentahoContext context ) {
     this.session = session;
-    this.requestContext = requestContext;
+    this.context = context;
     this.websocketJsonQueryEndpoint = new WebsocketJsonQueryEndpoint( );
+    this.auditHelper = new AuditHelper( CdaPushQueryMessageHandler.class, context.getSession() );
+    this.queryParametersUtil = new QueryParameters();
   }
 
   /**
    * This method executes the query sent by the client of this websocket.
    *
+   * Registers the Query operation with the Pentaho Auditing API.
+   *
    * @param query The query to be executed, and sent over the websocket.
    */
   @Override
   public void onMessage( String query ) {
-    try {
-      PentahoRequestContextHolder.setRequestContext( requestContext );
+    context.run( () -> {
+      try {
+        Map<String, List<String>> params = queryParametersUtil.getParametersFromJson( query );
+        String path = params.get( "path" ).get( 0 );
+        IParameterProvider paramProvider = new SimpleParameterProvider( params );
 
-      AbstractAuthenticationToken principal = (AbstractAuthenticationToken) session.getUserPrincipal();
-      if ( principal.isAuthenticated() ) {
-        IPentahoSession pentahoSession = new StandaloneSession( principal.getName() );
-        PentahoSessionHolder.setSession( pentahoSession );
-        SecurityHelper.getInstance().becomeUser( principal.getName() );
+        try ( QueryAudit qa = auditHelper.startQuery( path, paramProvider ) ) {
+          this.websocketJsonQueryEndpoint.onMessage( query, this::processOutboundMessage );
+        }
+
+      } catch ( Exception e ) {
+        logger.error( "Error processing message. Closing websocket...", e );
+        processErrorMessage( e.getMessage() );
       }
-
-      this.websocketJsonQueryEndpoint.onMessage( query, this::processOutboundMessage );
-
-    } catch ( Exception e ) {
-      logger.error( "Error processing message. Closing websocket...", e );
-      processErrorMessage( e.getMessage() );
-    }
+    } );
   }
 
   /**

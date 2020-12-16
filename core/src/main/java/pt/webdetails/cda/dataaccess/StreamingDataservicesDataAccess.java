@@ -155,6 +155,9 @@ public class StreamingDataservicesDataAccess extends DataservicesDataAccess impl
   private void performStreamingRawQuery( QueryOptions queryOptions, Observer<List<RowMetaAndData>> consumer ) throws QueryException {
     try {
       final List<Parameter> parameters = getFilledParameters( queryOptions );
+
+      logQueryStart( queryOptions, parameters );
+
       final ParameterDataRow parameterDataRow = Parameter.createParameterDataRowFromParameters( parameters );
       performStreamingRawQuery( parameterDataRow, consumer );
     } catch ( InvalidParameterException e ) {

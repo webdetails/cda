@@ -17,10 +17,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.pentaho.platform.api.engine.IParameterProvider;
+import pt.webdetails.cda.utils.AuditHelper;
 import pt.webdetails.cpf.SimpleContentGenerator;
-import pt.webdetails.cpf.audit.CpfAuditHelper;
-
-import java.util.UUID;
 
 public class CdaContentGenerator extends SimpleContentGenerator {
 
@@ -33,26 +31,22 @@ public class CdaContentGenerator extends SimpleContentGenerator {
   @Override
   public void createContent() throws Exception {
     CdaUtils utils = new CdaUtils();
-
-    IParameterProvider requestParams = parameterProviders.get( MethodParams.REQUEST );
     String path = getPathParameterAsString( MethodParams.PATH, "" );
 
-    long start = System.currentTimeMillis();
+    AuditHelper auditHelper = new AuditHelper( CdaContentGenerator.class, userSession, this );
+    IParameterProvider requestParams = parameterProviders.get( MethodParams.REQUEST );
 
-    UUID uuid = CpfAuditHelper.startAudit( getPluginName(), path, getObjectName(),
-      this.userSession, this, requestParams );
-    if ( uuid != null ) {
-      setInstanceId( uuid.toString() );
+    try ( AuditHelper.QueryAudit qa = auditHelper.startQuery( path, requestParams ) ) {
+      if ( qa.getRequestId() != null ) {
+        setInstanceId( qa.getRequestId().toString() );
+      }
+
+      if ( edit ) {
+        utils.editFile( path, getResponse() );
+      } else {
+        utils.previewQuery( path, getResponse() );
+      }
     }
-
-    if ( edit ) {
-      utils.editFile( path, getResponse() );
-    } else {
-      utils.previewQuery( path, getResponse() );
-    }
-
-    long end = System.currentTimeMillis();
-    CpfAuditHelper.endAudit( getPluginName(), path, getObjectName(), this.userSession, this, start, uuid, end );
   }
 
   @Override

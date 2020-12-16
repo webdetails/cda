@@ -39,9 +39,11 @@ import pt.webdetails.cpf.messaging.IEventPublisher;
 import javax.swing.table.TableModel;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the SimpleDataAccess
@@ -110,6 +112,8 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     } catch ( InvalidParameterException e ) {
       throw new QueryException( "Error parsing parameters ", e );
     }
+
+    logQueryStart( queryOptions, parameters );
 
     // create the cache-key which is both query and parameter values
     TableCacheKey key;
@@ -266,6 +270,56 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
     return tm;
   }
 
+  /**
+   * Logs that the query is starting.
+   *
+   * Used for correlating query and parameters with other MDC logging information.
+   *
+   * @param queryOptions The query options.
+   * @param parameters   The query's resolved parameters.
+   */
+  public void logQueryStart( final QueryOptions queryOptions, final List<Parameter> parameters ) {
+
+    if ( logger.isDebugEnabled() ) {
+      StringBuilder logMsgBuilder = new StringBuilder( String.format(
+              "QUERY START path: \"%s\" dataAccessId: \"%s\" dataAccessName: \"%s\" "
+                + "dataAccessType: \"%s\" outputIndex: \"%d\"",
+              this.getCdaSettings().getId(),
+              getId(),
+              getName(),
+              getType(),
+              queryOptions.getOutputIndexId() ) );
+
+      String logQuery = getLogQuery();
+      if ( logQuery != null ) {
+        String queryText = Arrays.stream( logQuery.trim().split( "\r|\n|\r\n" ) )
+                .map( String::trim )
+                .collect( Collectors.joining( "%n\t\t" ) );
+        if ( queryText.length() > 0  ) {
+          logMsgBuilder.append( String.format( "%n\t Query:%n\t\t===%n\t\t%s%n\t\t===", queryText ) );
+        }
+      }
+
+      if ( !parameters.isEmpty() ) {
+        logMsgBuilder.append( "%n\t Parameters:" );
+        for ( Parameter parameter : parameters ) {
+          logMsgBuilder.append( "%n\t\t" ).append( parameter.toString() );
+        }
+      }
+
+      logger.debug( logMsgBuilder.toString() );
+    }
+  }
+
+  /**
+   * Gets the query to be logged, if appropriate.
+   * The default implementation returns {@link #getQuery()}.
+   *
+   * @return The query to log, if any; {@code null} or empty string to not log the query.
+   */
+  protected String getLogQuery() {
+    return getQuery();
+  }
 
   /**
    * Query state.

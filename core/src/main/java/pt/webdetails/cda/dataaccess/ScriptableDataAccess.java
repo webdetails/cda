@@ -52,4 +52,10 @@ public class ScriptableDataAccess extends PREDataAccess {
   public ConnectionType getConnectionType() {
     return ConnectionType.SCRIPTING;
   }
+
+  // Do not log the script.
+  @Override
+  protected String getLogQuery() {
+    return null;
+  }
 }

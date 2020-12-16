@@ -19,13 +19,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.util.logging.SimpleLogger;
 import org.pentaho.platform.web.http.api.resources.utils.SystemUtils;
 
 import pt.webdetails.cda.connections.InvalidConnectionException;
@@ -45,12 +43,13 @@ import pt.webdetails.cda.services.Previewer;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.CdaSettingsReadException;
 import pt.webdetails.cda.settings.UnknownConnectionException;
+import pt.webdetails.cda.utils.AuditHelper;
+import pt.webdetails.cda.utils.AuditHelper.QueryAudit;
 import pt.webdetails.cda.utils.CorsUtil;
 import pt.webdetails.cda.utils.DoQueryParameters;
 import pt.webdetails.cda.utils.Messages;
 import pt.webdetails.cda.utils.QueryParameters;
 import pt.webdetails.cpf.PluginEnvironment;
-import pt.webdetails.cpf.audit.CpfAuditHelper;
 import pt.webdetails.cpf.messaging.JsonGeneratorSerializable;
 import pt.webdetails.cpf.messaging.JsonResult;
 import pt.webdetails.cpf.utils.CharsetHelper;
@@ -81,7 +80,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -156,15 +154,14 @@ public class CdaUtils {
     return core.doQuery( parameters );
   }
 
-
   public StreamingOutput doQuery( MultivaluedMap<String, String> params,
                                   HttpServletResponse servletResponse ) {
-    final long start = System.currentTimeMillis();
-    final ILogger auditLogger = getAuditLogger();
+
+    AuditHelper auditHelper = new AuditHelper( CdaUtils.class, getPentahoSession() );
+
     final String path = params.get( "path" ).get( 0 );
 
-    final UUID auditUuid = startAudit( path, auditLogger, params );
-    try {
+    try ( QueryAudit qa = auditHelper.startQuery( path, getParameterProvider( params ) ) ) {
       final DoQueryParameters parameters = queryParametersUtil.getDoQueryParameters( params );
       if ( parameters.isWrapItUp() ) {
         return wrapQuery( parameters );
@@ -176,40 +173,7 @@ public class CdaUtils {
       return toStreamingOutput( result );
     } catch ( Exception ex ) {
       throw new WebApplicationException( ex, Response.Status.INTERNAL_SERVER_ERROR );
-    } finally {
-      endAudit( path, auditLogger, start, auditUuid );
     }
-  }
-
-  private UUID startAudit( String path, ILogger auditLogger, MultivaluedMap<String, String> params ) {
-    final String pluginName = getPluginName();
-    final String objectName = getObjectName();
-    final IPentahoSession pentahoSession = getPentahoSession();
-    final IParameterProvider requestParams = getParameterProvider( params );
-
-    return CpfAuditHelper.startAudit( pluginName, path, objectName, pentahoSession, auditLogger, requestParams );
-  }
-
-  private void endAudit( String path, ILogger auditLogger, long start, UUID auditUuid ) {
-    final long end = System.currentTimeMillis();
-
-    final String pluginName = getPluginName();
-    final String objectName = getObjectName();
-    final IPentahoSession pentahoSession = getPentahoSession();
-
-    CpfAuditHelper.endAudit( pluginName, path, objectName, pentahoSession, auditLogger, start, auditUuid, end );
-  }
-
-  private String getObjectName() {
-    return CdaUtils.class.getName();
-  }
-
-  private String getPluginName() {
-    return CdaPluginEnvironment.getInstance().getPluginId();
-  }
-
-  private ILogger getAuditLogger() {
-    return new SimpleLogger( CdaUtils.class.getName() );
   }
 
   private IParameterProvider getParameterProvider( MultivaluedMap<String, String> params ) {
