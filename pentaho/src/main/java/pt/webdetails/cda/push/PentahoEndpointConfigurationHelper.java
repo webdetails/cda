@@ -73,8 +73,8 @@ class PentahoEndpointConfigurationHelper {
    * @return The value of the property, cast to {@code TValue}, if set; {@code null}, otherwise.
    */
   @SuppressWarnings( "unchecked" )
-  public <TValue> TValue getUserPropValue(  String name ) {
-    return (TValue) endpointConfig.getUserProperties().get( name );
+  public <V> V getUserPropValue( String name ) {
+    return (V) endpointConfig.getUserProperties().get( name );
   }
 
   /**

@@ -278,32 +278,32 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
    * @param queryOptions The query options.
    * @param parameters   The query's resolved parameters.
    */
-  public void logQueryStart( final QueryOptions queryOptions , final List<Parameter> parameters ) {
+  public void logQueryStart( final QueryOptions queryOptions, final List<Parameter> parameters ) {
 
     if ( logger.isDebugEnabled() ) {
       StringBuilder logMsgBuilder = new StringBuilder( String.format(
-              "QUERY START path: \"%s\" dataAccessId: \"%s\" dataAccessName: \"%s\" " +
-              "dataAccessType: \"%s\" outputIndex: \"%d\"",
+              "QUERY START path: \"%s\" dataAccessId: \"%s\" dataAccessName: \"%s\" "
+                + "dataAccessType: \"%s\" outputIndex: \"%d\"",
               this.getCdaSettings().getId(),
               getId(),
               getName(),
               getType(),
               queryOptions.getOutputIndexId() ) );
 
-      String query = getLogQuery();
-      if ( query != null ) {
-        String queryText = Arrays.stream( query.trim().split("\r|\n|\r\n" ) )
+      String logQuery = getLogQuery();
+      if ( logQuery != null ) {
+        String queryText = Arrays.stream( logQuery.trim().split( "\r|\n|\r\n" ) )
                 .map( String::trim )
-                .collect( Collectors.joining( "\n\t\t" ) );
+                .collect( Collectors.joining( "%n\t\t" ) );
         if ( queryText.length() > 0  ) {
-          logMsgBuilder.append( String.format("\n\t Query:\n\t\t===\n\t\t%s\n\t\t===", queryText ) );
+          logMsgBuilder.append( String.format( "%n\t Query:%n\t\t===%n\t\t%s%n\t\t===", queryText ) );
         }
       }
 
-      if ( parameters.size() > 0 ) {
-        logMsgBuilder.append("\n\t Parameters:");
+      if ( !parameters.isEmpty() ) {
+        logMsgBuilder.append( "%n\t Parameters:" );
         for ( Parameter parameter : parameters ) {
-          logMsgBuilder.append( "\n\t\t" ).append( parameter.toString() );
+          logMsgBuilder.append( "%n\t\t" ).append( parameter.toString() );
         }
       }
 
