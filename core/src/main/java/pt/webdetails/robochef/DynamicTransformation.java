@@ -24,7 +24,7 @@ import java.util.concurrent.Callable;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.Result;
 import org.pentaho.di.core.exception.KettleException;
-import org.pentaho.di.core.logging.CentralLogStore;
+import org.pentaho.di.core.logging.KettleLogStore;
 import org.pentaho.di.core.logging.LogLevel;
 import org.pentaho.di.core.logging.LoggingRegistry;
 import org.pentaho.di.core.variables.VariableSpace;
@@ -227,8 +227,8 @@ public class DynamicTransformation {
 
 
   private void cleanLogs( String logChannelId ) {
-    CentralLogStore.init();
-    CentralLogStore.discardLines( logChannelId, true );
+    KettleLogStore.init();
+    KettleLogStore.discardLines( logChannelId, true );
     // Remove the entries from the registry
 
     synchronized( this.getClass() ) {
