@@ -44,11 +44,6 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.pentaho.di.plugins</groupId>
-      <artifactId>kettle-log4j-core</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
       <groupId>net.htmlparser.jericho</groupId>
       <artifactId>jericho-html</artifactId>
       <scope>runtime</scope>
