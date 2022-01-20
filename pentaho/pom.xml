@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>pentaho</groupId>
     <artifactId>cda-plugin</artifactId>
-    <version>9.3.0.0-SNAPSHOT</version>
+    <version>9.3.0.0-38</version>
   </parent>
   <groupId>pentaho</groupId>
   <artifactId>cda-pentaho</artifactId>
-  <version>9.3.0.0-SNAPSHOT</version>
+  <version>9.3.0.0-38</version>
   <licenses>
     <license>
       <name>Mozilla Public License, Version 2.0</name>
@@ -17,8 +16,8 @@
     </license>
   </licenses>
   <properties>
-    <platform.version>9.3.0.0-SNAPSHOT</platform.version>
-    <pentaho-report-wizard-core.version>9.3.0.0-SNAPSHOT</pentaho-report-wizard-core.version>
+    <platform.version>9.3.0.0-38</platform.version>
+    <pentaho-report-wizard-core.version>9.3.0.0-38</pentaho-report-wizard-core.version>
     <webjars.target.directory>${build.dependenciesDirectory}/META-INF/resources/webjars</webjars.target.directory>
     <js.project.list>jquery,jquery-ui</js.project.list>
   </properties>
@@ -28,7 +27,8 @@
       <artifactId>jquery</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.webjars.bower</groupId><!-- here we are using bower and not npm because the npm version only has source code -->
+      <groupId>org.webjars.bower</groupId>
+<!-- here we are using bower and not npm because the npm version only has source code -->
       <artifactId>jquery-ui</artifactId>
       <exclusions>
         <exclusion>
