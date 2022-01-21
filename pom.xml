@@ -249,11 +249,6 @@
         <version>${dependency.jericho-html.revision}</version>
       </dependency>
       <dependency>
-        <groupId>org.pentaho.di.plugins</groupId>
-        <artifactId>kettle-log4j-core</artifactId>
-        <version>${pdi.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.pentaho</groupId>
         <artifactId>json</artifactId>
         <version>${pentaho-json.version}</version>
