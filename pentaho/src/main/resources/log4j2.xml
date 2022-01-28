@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="DEBUG">
+   <Appenders>
+      <Console name="CONSOLE">
+         <PatternLayout>
+            <Pattern>%-5p [%d{MM-dd HH:mm:ss,SSS}] - %m%n</Pattern>
+         </PatternLayout>
+         <ThresholdFilter level="DEBUG" />
+      </Console>
+   </Appenders>
+   <Loggers>
+      <Logger name="pt.webdetails.cda" level="INFO"/>
+      <Logger name="org.pentaho" level="TRACE"/>
+      <Logger name="com.healthmarketscience.jackcess" level="WARN"/>
+      <Logger name="org.apache.commons.httpclient" level="WARN"/>
+      <Logger name="org.mortbay" level="ERROR"/>
+      <Logger name="mondrian" level="DEBUG"/>
+      <Logger name="java.net" level="NONE"/>
+      <Logger name="org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient" level="WARN"/>
+      <Logger name="org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient.auth" level="WARN"/>
+      <Root level="DEBUG">
+         <AppenderRef ref="CONSOLE"/>
+      </Root>
+   </Loggers>
+</Configuration>
