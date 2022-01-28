@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="ERROR">
+   <Appenders>
+      <Console name="CONSOLE" target="SYSTEM_ERR">
+         <PatternLayout>
+            <Pattern>%-5p [%d{MM-dd HH:mm:ss,SSS}] - %m%n</Pattern>
+         </PatternLayout>
+         <ThresholdFilter level="ERROR" />
+      </Console>
+   </Appenders>
+   <Loggers>
+      <Logger name="pt.webdetails.cda" level="ERROR"/>
+      <Root level="ERROR">
+         <AppenderRef ref="CONSOLE"/>
+      </Root>
+   </Loggers>
+</Configuration>
