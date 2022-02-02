@@ -9,8 +9,8 @@
       </Console>
    </Appenders>
    <Loggers>
-      <Logger name="pt.webdetails.cda" level="INFO"/>
-      <Logger name="org.pentaho" level="TRACE"/>
+      <Logger name="pt.webdetails.cda" level="TRACE"/>
+      <Logger name="org.pentaho" level="INFO"/>
       <Logger name="com.healthmarketscience.jackcess" level="WARN"/>
       <Logger name="org.apache.commons.httpclient" level="WARN"/>
       <Logger name="org.mortbay" level="ERROR"/>
