@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2022 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -17,7 +17,9 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
+import org.pentaho.di.core.plugins.PluginRegistry;
+import org.pentaho.di.core.plugins.StepPluginType;
+import org.pentaho.di.trans.steps.exceloutput.ExcelOutputMeta;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.exporter.CsvExporter;
 import pt.webdetails.cda.query.QueryOptions;
@@ -31,10 +33,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
 public class CsvXslFromSQLTest extends CdaTestCase {
+
+  public void setUp() throws Exception {
+    PluginRegistry.init( true );
+    StepPluginType.getInstance().handlePluginAnnotation(
+      ExcelOutputMeta.class,
+      ExcelOutputMeta.class.getAnnotation( org.pentaho.di.core.annotations.Step.class ),
+      Collections.emptyList(), false, null );
+    super.setUp();
+  }
 
   public void testCsvXlsFromSQLExport() throws Exception {
 
