@@ -213,7 +213,7 @@
       </dependency>
       <dependency>
         <groupId>org.pentaho.di.plugins</groupId>
-        <artifactId>excel-plugins-impl</artifactId>
+        <artifactId>excel-plugins-core</artifactId>
         <version>${pdi.version}</version>
       </dependency>
 
