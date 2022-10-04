@@ -59,6 +59,12 @@
       <artifactId>jackson-mapper-asl</artifactId>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>org.pentaho.di.plugins</groupId>
+      <artifactId>excel-plugins-core</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
