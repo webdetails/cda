@@ -39,9 +39,9 @@ public class CsvExporterTest extends AbstractKettleExporterTestBase {
     TableModel table = BasicExportExamples.getTestTable1();
     final String expected =
       "The Integer;\"The String\";The Numeric;The Date;The Calculation" + System.lineSeparator()
-        + "1;\"One\";1.05;Sun Jan 01 00:01:01 GMT 2012;-12.34567890123456789" + System.lineSeparator()
-        + "-2;\"Two > One\";-1.05;;987654321.12345678900" + System.lineSeparator()
-        + "9223372036854775807;\"Many\";1.7976931348623157E308;Thu Jan 01 00:00:00 GMT 1970;4.9E-325"
+        + "\"1\";\"One\";\"1.05\";\"Sun Jan 01 00:01:01 GMT 2012\";\"-12.34567890123456789\"" + System.lineSeparator()
+        + "\"-2\";\"Two > One\";\"-1.05\";;\"987654321.12345678900\"" + System.lineSeparator()
+        + "\"9223372036854775807\";\"Many\";\"1.7976931348623157E308\";\"Thu Jan 01 00:00:00 GMT 1970\";\"4.9E-325\""
         + System.lineSeparator();
     final String result = getCsvResult( table );
     assertEquals( expected, result );
@@ -79,9 +79,9 @@ public class CsvExporterTest extends AbstractKettleExporterTestBase {
 
   private static final String getCustomExpect1() {
     return "The Integer|'The String'|The Numeric|The Date|The Calculation" + System.lineSeparator()
-      + "1|'One'|1.05|Sun Jan 01 00:01:01 GMT 2012|-12.34567890123456789" + System.lineSeparator()
-      + "-2|'Two > One'|-1.05||987654321.12345678900" + System.lineSeparator()
-      + "9223372036854775807|'Many'|1.7976931348623157E308|Thu Jan 01 00:00:00 GMT 1970|4.9E-325"
+      + "'1'|'One'|'1.05'|'Sun Jan 01 00:01:01 GMT 2012'|'-12.34567890123456789'" + System.lineSeparator()
+      + "'-2'|'Two > One'|'-1.05'||'987654321.12345678900'" + System.lineSeparator()
+      + "'9223372036854775807'|'Many'|'1.7976931348623157E308'|'Thu Jan 01 00:00:00 GMT 1970'|'4.9E-325'"
       + System.lineSeparator();
   }
 
