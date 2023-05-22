@@ -59,7 +59,7 @@
     <marketplace.metadata.samples_url>http://nexus.pentaho.org/content/groups/omni/pentaho/cda-samples/6.0.0.0-353/cda-samples-6.0.0.0-353.zip</marketplace.metadata.samples_url>
     <dependency.jericho-html.revision>3.1</dependency.jericho-html.revision>
     <marketplace.metadata.development_stage.lane>Customer</marketplace.metadata.development_stage.lane>
-    <dependency.hazelcast.revision>2.5</dependency.hazelcast.revision>
+    <dependency.hazelcast.revision>5.3.0</dependency.hazelcast.revision>
     <marketplace.metadata.name>${project.artifactId}</marketplace.metadata.name>
     <rxjava.version>2.0.4</rxjava.version>
     <reactivestreams.version>1.0.2</reactivestreams.version>
