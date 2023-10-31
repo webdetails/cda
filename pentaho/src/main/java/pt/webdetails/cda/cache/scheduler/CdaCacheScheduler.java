@@ -29,12 +29,11 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.scheduler2.IJobFilter;
 import org.pentaho.platform.api.scheduler2.IJobTrigger;
 import org.pentaho.platform.api.scheduler2.IScheduler;
-import org.pentaho.platform.api.scheduler2.Job;
-import org.pentaho.platform.api.scheduler2.Job.JobState;
+import org.pentaho.platform.api.scheduler2.IJob;
+import org.pentaho.platform.api.scheduler2.IJob.JobState;
 import org.pentaho.platform.api.scheduler2.SchedulerException;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.scheduler2.quartz.QuartzScheduler;
 import org.pentaho.platform.security.policy.rolebased.actions.SchedulerAction;
 
 import pt.webdetails.cda.AccessDeniedException;
@@ -63,7 +62,7 @@ public class CdaCacheScheduler extends BaseService {
     try {
       QueryExecution query = new QueryExecution( getSettingsManager(), jsonString );
       checkSchedulerAccess( query, PentahoSessionHolder.getSession() );
-      final Job job = scheduleQuery( query );
+      final IJob job = scheduleQuery( query );
       if ( job != null ) {
         logJob( job );
         return new JsonGeneratorSerializable() {
@@ -127,9 +126,9 @@ public class CdaCacheScheduler extends BaseService {
   public JsonGeneratorSerializable listScheduledQueries() {
     IScheduler scheduler = getScheduler();
     try {
-      List<Job> jobs = scheduler.getJobs( getCdaJobFilter() );
+      List<IJob> jobs = scheduler.getJobs( getCdaJobFilter() );
       final List<JsonGeneratorSerializable> queries = new ArrayList<>();
-      for ( Job job : jobs ) {
+      for ( IJob job : jobs ) {
         addJobInfoToScheduledQueries( queries, job );
       }
 
@@ -152,7 +151,7 @@ public class CdaCacheScheduler extends BaseService {
     return null;
   }
 
-  private void addJobInfoToScheduledQueries( List<JsonGeneratorSerializable> queries, Job job ) {
+  private void addJobInfoToScheduledQueries( List<JsonGeneratorSerializable> queries, IJob job ) {
     try {
       String jsonString = (String) job.getJobParams().get( CdaCacheWarmer.QUERY_INFO_PARAM );
       queries.add( toCachedQueryJson( new ScheduledQueryExecution( getSettingsManager(), jsonString, job ) ) );
@@ -185,7 +184,7 @@ public class CdaCacheScheduler extends BaseService {
   private void checkJobAccess( String jobId, IPentahoSession session )
     throws AccessDeniedException, SchedulerException {
     IScheduler scheduler = getScheduler();
-    Job job = scheduler.getJob( jobId );
+    IJob job = scheduler.getJob( jobId );
     if ( job == null ) {
       throw new IllegalArgumentException( "No such job." );
     }
@@ -223,7 +222,7 @@ public class CdaCacheScheduler extends BaseService {
     return scheduler;
   }
 
-  private Job scheduleQuery( QueryExecution query ) {
+  private IJob scheduleQuery( QueryExecution query ) {
     try {
 
       CdaSettings cdaSettings = query.getCdaSettings();
@@ -259,7 +258,7 @@ public class CdaCacheScheduler extends BaseService {
     return QuartzScheduler.createComplexTrigger( cron );
   }
 
-  private void logJob( Job job ) {
+  private void logJob( IJob job ) {
     Log log = getLog();
     log.info( String.format( "Job id=\"%s\", name=\"%s\",  ", job.getJobId(), job.getJobName() ) );
     if ( log.isDebugEnabled() ) {
@@ -282,7 +281,7 @@ public class CdaCacheScheduler extends BaseService {
     return new JsonGeneratorSerializable() {
 
       public void writeToGenerator( JsonGenerator out ) throws IOException {
-        Job job = query.getJob();
+        IJob job = query.getJob();
         QueryOptions opts = query.getQueryOptions();
         out.writeStartObject();
         // basic info
