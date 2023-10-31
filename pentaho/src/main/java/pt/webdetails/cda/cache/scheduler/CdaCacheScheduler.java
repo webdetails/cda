@@ -13,29 +13,22 @@
 
 package pt.webdetails.cda.cache.scheduler;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
-import com.fasterxml.jackson.core.JsonGenerator;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.pentaho.platform.api.engine.IAuthorizationPolicy;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.scheduler2.IJob;
 import org.pentaho.platform.api.scheduler2.IJobFilter;
 import org.pentaho.platform.api.scheduler2.IJobTrigger;
 import org.pentaho.platform.api.scheduler2.IScheduler;
-import org.pentaho.platform.api.scheduler2.IJob;
-import org.pentaho.platform.api.scheduler2.IJob.JobState;
+import org.pentaho.platform.api.scheduler2.JobState;
 import org.pentaho.platform.api.scheduler2.SchedulerException;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.security.policy.rolebased.actions.SchedulerAction;
-
 import pt.webdetails.cda.AccessDeniedException;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.dataaccess.Parameter;
@@ -45,6 +38,12 @@ import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
 import pt.webdetails.cda.utils.PentahoHelper;
 import pt.webdetails.cpf.messaging.JsonGeneratorSerializable;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class CdaCacheScheduler extends BaseService {
 
@@ -255,7 +254,8 @@ public class CdaCacheScheduler extends BaseService {
     if ( split.length == 6 ) {
       cron += " *";
     }
-    return QuartzScheduler.createComplexTrigger( cron );
+    IScheduler scheduler = getScheduler();
+    return scheduler.createComplexTrigger( cron );
   }
 
   private void logJob( IJob job ) {
