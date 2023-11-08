@@ -65,7 +65,6 @@
     <reactivestreams.version>1.0.2</reactivestreams.version>
     <javax.servlet-api>3.0.1</javax.servlet-api>
     <commons-collections.version>3.2.2</commons-collections.version>
-    <guava.version>17.0</guava.version>
     <metastore.version>10.1.0.0-SNAPSHOT</metastore.version>
     <javax.ws.rs-api.version>2.0</javax.ws.rs-api.version>
     <websocket-api.version>1.0</websocket-api.version>
