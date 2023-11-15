@@ -29,7 +29,6 @@
     <dependency.jxl.revision>2.6.12</dependency.jxl.revision>
     <dependency.jsr311-api.revision>1.1-ea</dependency.jsr311-api.revision>
     <owasp.encoder.version>1.2</owasp.encoder.version>
-    <google.guava.version>17.0</google.guava.version>
     <encryption-support.version>10.1.0.0-SNAPSHOT</encryption-support.version>
 
   </properties>
@@ -211,7 +210,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>${google.guava.version}</version>
+      <version>${guava.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
