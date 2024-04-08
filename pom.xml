@@ -44,7 +44,7 @@
     <marketplace.metadata.package_url></marketplace.metadata.package_url>
     <marketplace.metadata.description></marketplace.metadata.description>
     <project.stage>master</project.stage>
-    <dependency.mockito-all.revision>1.9.5</dependency.mockito-all.revision>
+    <dependency.mockito-core.revision>5.10.0</dependency.mockito-core.revision>
     <marketplace.metadata.min_parent_version>1.0</marketplace.metadata.min_parent_version>
     <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
     <pentaho-reporting.version>10.2.0.0-SNAPSHOT</pentaho-reporting.version>
@@ -299,8 +299,8 @@
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
-        <artifactId>mockito-all</artifactId>
-        <version>${dependency.mockito-all.revision}</version>
+        <artifactId>mockito-core</artifactId>
+        <version>${dependency.mockito-core.revision}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
