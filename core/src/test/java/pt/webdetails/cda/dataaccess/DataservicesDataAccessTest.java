@@ -1,5 +1,5 @@
 /*!
- * Copyright 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2018 - 2024 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -41,8 +41,9 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;

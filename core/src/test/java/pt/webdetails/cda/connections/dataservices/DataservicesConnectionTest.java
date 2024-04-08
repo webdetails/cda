@@ -1,5 +1,5 @@
 /*!
- * Copyright 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2018 - 2024 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -18,7 +18,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.ConnectionProvider;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.DriverConnectionProvider;
 import pt.webdetails.cda.CdaEngine;
@@ -40,11 +40,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+
 
 public class DataservicesConnectionTest {
   @Before
@@ -56,15 +58,15 @@ public class DataservicesConnectionTest {
     ResultSetMetaData resultSetMetaData = mock( ResultSetMetaData.class );
     when( resultSet.next() ).thenReturn( true ).thenReturn( false );
     when( resultSet.getMetaData() ).thenReturn( resultSetMetaData );
-    when( statement.executeQuery( anyString() ) ).thenReturn( resultSet );
-    when( connection.createStatement( Mockito.anyInt(), Mockito.anyInt() ) ).thenReturn( statement );
+    when( statement.executeQuery( any() ) ).thenReturn( resultSet );
+    when( connection.createStatement( anyInt(), anyInt() ) ).thenReturn( statement );
     DriverConnectionProvider dataserviceLocalConnectionProvider = mock( DriverConnectionProvider.class );
-    when( dataserviceLocalConnectionProvider.createConnection( anyString(), anyString() ) ).thenReturn( connection );
+    when( dataserviceLocalConnectionProvider.createConnection( any(), any() ) ).thenReturn( connection );
     Properties properties = new Properties();
-    when( dataserviceLocalConnectionProvider.getProperty( anyString() ) ).thenAnswer(
+    when( dataserviceLocalConnectionProvider.getProperty( any() ) ).thenAnswer(
       invocationOnMock -> properties.getProperty( (String)invocationOnMock.getArguments()[0] )
     );
-    when( dataserviceLocalConnectionProvider.setProperty( anyString(), anyString() ) ).thenAnswer(
+    when( dataserviceLocalConnectionProvider.setProperty( any(), any() ) ).thenAnswer(
       invocationOnMock -> properties.setProperty( (String)invocationOnMock.getArguments()[0], (String)invocationOnMock.getArguments()[1] )
     );
     when( dataserviceLocalConnectionProvider.getPropertyNames() ).thenReturn( properties.keySet().toArray( new String[0] ) );
@@ -110,7 +112,7 @@ public class DataservicesConnectionTest {
   @Test
   public void testNewWithParameters() throws Exception {
     Element connection = mock( Element.class );
-    when( connection.selectObject( anyString() ) ).thenReturn( "" );
+    when( connection.selectObject( any() ) ).thenReturn( "" );
     DataservicesConnection dataservicesConnection = new DataservicesConnection( connection );
     assertNotNull( dataservicesConnection );
   }
@@ -118,7 +120,7 @@ public class DataservicesConnectionTest {
   @Test
   public void testGetInitializedConnectionProviderWithProperties() throws Exception {
     Element connectionElement = mock( Element.class );
-    when( connectionElement.selectObject( anyString() ) ).thenReturn( "" );
+    when( connectionElement.selectObject( any() ) ).thenReturn( "" );
     ArrayList<Element> properties = new ArrayList<>( );
     properties.add( getElementFromSnippet( "<prop name=\"prop1\">will return mock value on test setup</prop>" ) );
     when( connectionElement.elements( "Property" ) ).thenReturn( properties );
@@ -137,7 +139,7 @@ public class DataservicesConnectionTest {
   @Test
   public void testGetInitializedConnectionProvider() throws Exception {
     Element connectionElement = mock( Element.class );
-    when( connectionElement.selectObject( anyString() ) ).thenReturn( "" );
+    when( connectionElement.selectObject( any() ) ).thenReturn( "" );
     DataservicesConnection dataservicesConnection = new DataservicesConnection( connectionElement );
     Map<String, String> dataserviceParameters = new TreeMap<>( );
     ConnectionProvider connectionProvider = dataservicesConnection.getInitializedConnectionProvider( dataserviceParameters );
@@ -155,7 +157,7 @@ public class DataservicesConnectionTest {
     assertFalse( dataservicesConnection.equals( null ) );
 
     Element connection = mock( Element.class );
-    when( connection.selectObject( anyString() ) ).thenReturn( "" );
+    when( connection.selectObject( any() ) ).thenReturn( "" );
     differentDataservicesConnection.initializeConnection( connection );
     assertFalse( differentDataservicesConnection.equals( dataservicesConnection ) );
   }

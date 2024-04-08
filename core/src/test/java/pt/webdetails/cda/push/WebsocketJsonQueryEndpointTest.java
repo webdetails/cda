@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright 2018 Hitachi Vantara. All rights reserved.
+ *  * Copyright 2018 - 2024 Hitachi Vantara. All rights reserved.
  *  *
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
@@ -21,10 +21,12 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.ICdaEnvironment;
 import pt.webdetails.cda.InitializationException;
 import pt.webdetails.cda.dataaccess.StreamingDataservicesDataAccess;
+import pt.webdetails.cda.exporter.ExportOptions;
 import pt.webdetails.cda.exporter.TableExporter;
 import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.SettingsManager;
@@ -35,8 +37,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -64,9 +67,9 @@ public class WebsocketJsonQueryEndpointTest {
     tableExporter = mock( TableExporter.class );
 
     doReturn( settingsManager ).when( engine ).getSettingsManager();
-    doReturn( cdaSettings ).when( settingsManager ).parseSettingsFile( anyString() );
-    doReturn( streamingDataservicesDataAccess ).when( cdaSettings ).getDataAccess( anyString() );
-    doReturn( tableExporter ).when( engine ).getExporter( anyString() );
+    doReturn( cdaSettings ).when( settingsManager ).parseSettingsFile( any() );
+    doReturn( streamingDataservicesDataAccess ).when( cdaSettings ).getDataAccess( any() );
+    doReturn( tableExporter ).when( engine ).getExporter( Mockito.<ExportOptions>any() );
   }
 
   @Test

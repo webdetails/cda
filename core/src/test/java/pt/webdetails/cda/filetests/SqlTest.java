@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2024 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,17 +13,11 @@
 
 package pt.webdetails.cda.filetests;
 
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
-
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.LinkedList;
-
 import javax.swing.table.TableModel;
-
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
-
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.cache.IQueryCache;
 import pt.webdetails.cda.cache.TableCacheKey;
@@ -35,6 +29,11 @@ import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.test.util.CdaTestHelper;
 import pt.webdetails.cda.test.util.CdaTestHelper.SimpleTableModel;
 import pt.webdetails.cda.test.util.TableModelChecker;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class SqlTest extends CdaTestCase {
 
