@@ -1,5 +1,5 @@
 /*!
- * Copyright 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2018 - 2024 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -16,7 +16,6 @@ package pt.webdetails.cda.filetests;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.sql.DriverConnectionProvider;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.connections.dataservices.DataservicesConnection;
@@ -34,7 +33,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -53,10 +53,10 @@ public class DataserviceTest extends CdaTestCase {
     ResultSetMetaData resultSetMetaData = mock( ResultSetMetaData.class );
     when( resultSet.next() ).thenReturn( true ).thenReturn( false );
     when( resultSet.getMetaData() ).thenReturn( resultSetMetaData );
-    when( statement.executeQuery( Mockito.anyString() ) ).thenReturn( resultSet );
-    when( connection.createStatement( Mockito.anyInt(), Mockito.anyInt() ) ).thenReturn( statement );
+    when( statement.executeQuery( any() ) ).thenReturn( resultSet );
+    when( connection.createStatement( anyInt(), anyInt() ) ).thenReturn( statement );
     DriverConnectionProvider dataserviceLocalConnectionProvider = mock( DriverConnectionProvider.class );
-    when( dataserviceLocalConnectionProvider.createConnection( Mockito.anyString(), Mockito.anyString() ) ).thenReturn( connection );
+    when( dataserviceLocalConnectionProvider.createConnection( any(), any() ) ).thenReturn( connection );
     IDataservicesLocalConnection dataserviceLocalConnection = mock( IDataservicesLocalConnection.class );
     when( dataserviceLocalConnection.getDriverConnectionProvider( any() ) ).thenReturn( dataserviceLocalConnectionProvider );
     CdaTestEnvironment testEnvironment = spy( new CdaTestEnvironment( factory ) );
@@ -107,7 +107,7 @@ public class DataserviceTest extends CdaTestCase {
   public void testDatasourceDataserviceCreateConnectionException() throws Exception {
     CdaTestingContentAccessFactory factory = new CdaTestingContentAccessFactory();
     DriverConnectionProvider dataserviceLocalConnectionProvider = mock( DriverConnectionProvider.class );
-    when( dataserviceLocalConnectionProvider.createConnection( Mockito.anyString(), Mockito.anyString() ) )
+    when( dataserviceLocalConnectionProvider.createConnection( any(), any() ) )
             .thenThrow( new SQLException( "couldn't create connection" ) );
     IDataservicesLocalConnection dataserviceLocalConnection = mock( IDataservicesLocalConnection.class );
     when( dataserviceLocalConnection.getDriverConnectionProvider( any() ) ).thenReturn( dataserviceLocalConnectionProvider );

@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2024 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -28,7 +28,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.junit.ComparisonFailure;
-import org.mockito.Matchers;
+
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -50,6 +50,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
+
+import static org.mockito.ArgumentMatchers.any;
 
 public class CdaTestHelper {
 
@@ -141,7 +143,7 @@ public class CdaTestHelper {
   public static ICdaEnvironment getMockEnvironment( final Map<String, String> configurationProperties ) {
     ICdaEnvironment env = Mockito.mock( ICdaEnvironment.class );
     Configuration conf = Mockito.mock( Configuration.class );
-    Mockito.when( conf.getConfigProperty( Matchers.any( String.class ), Matchers.any( String.class ) ) ).thenAnswer(
+    Mockito.when( conf.getConfigProperty( any( String.class ), any( String.class ) ) ).thenAnswer(
       new Answer<String>() {
         @Override
         public String answer( InvocationOnMock invocation ) throws Throwable {
@@ -151,7 +153,7 @@ public class CdaTestHelper {
         }
       }
     );
-    Mockito.when( conf.findPropertyKeys( Matchers.any( String.class ) ) ).thenAnswer(
+    Mockito.when( conf.findPropertyKeys( any( String.class ) ) ).thenAnswer(
       new Answer<Iterator<String>>() {
         @SuppressWarnings( "unchecked" )
         public Iterator<String> answer( final InvocationOnMock invocation ) throws Throwable {
