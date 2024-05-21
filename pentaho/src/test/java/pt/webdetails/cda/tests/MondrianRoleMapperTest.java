@@ -1,5 +1,5 @@
 /*!
- * Copyright 2002 - 2017 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2002 - 2024 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -20,6 +20,10 @@ import org.pentaho.platform.api.engine.IConnectionUserRoleMapper;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
 import pt.webdetails.cda.connections.mondrian.MondrianRoleMapper;
+
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class MondrianRoleMapperTest {
 
@@ -57,11 +61,11 @@ public class MondrianRoleMapperTest {
 
   @Test
   public void testRoleMapperBasic() throws PentahoAccessControlException {
-    IConnectionUserRoleMapper mapper = Mockito.mock( IConnectionUserRoleMapper.class );
+    IConnectionUserRoleMapper mapper = mock( IConnectionUserRoleMapper.class );
 
 
-    Mockito.when( mapper.mapConnectionRoles( Mockito.any( IPentahoSession.class ),
-      Mockito.eq( "mondrian:/SteelWheels" ) ) ).thenReturn( new String[] { "role" } );
+    when( mapper.mapConnectionRoles( Mockito.<IPentahoSession>any(),
+      eq( "mondrian:/SteelWheels" ) ) ).thenReturn( new String[] { "role" } );
 
     MondrianRoleMapperForTest mrmpt = new MondrianRoleMapperForTest( mapper );
 
@@ -73,11 +77,11 @@ public class MondrianRoleMapperTest {
 
   @Test
   public void testRoleMapperNoMatch() throws PentahoAccessControlException {
-    IConnectionUserRoleMapper mapper = Mockito.mock( IConnectionUserRoleMapper.class );
+    IConnectionUserRoleMapper mapper = mock( IConnectionUserRoleMapper.class );
 
 
-    Mockito.when( mapper.mapConnectionRoles( Mockito.any( IPentahoSession.class ),
-      Mockito.eq( "mondrian:/NotSteelWheels" ) ) ).thenReturn( new String[] { "role" } );
+    when( mapper.mapConnectionRoles( Mockito.<IPentahoSession>any(),
+      eq( "mondrian:/NotSteelWheels" ) ) ).thenReturn( new String[] { "role" } );
 
     MondrianRoleMapperForTest mrmpt = new MondrianRoleMapperForTest( mapper );
 
@@ -89,10 +93,10 @@ public class MondrianRoleMapperTest {
 
   @Test
   public void testRoleMapperMultipleRoles() throws PentahoAccessControlException {
-    IConnectionUserRoleMapper mapper = Mockito.mock( IConnectionUserRoleMapper.class );
+    IConnectionUserRoleMapper mapper = mock( IConnectionUserRoleMapper.class );
 
-    Mockito.when( mapper.mapConnectionRoles( Mockito.any( IPentahoSession.class ),
-      Mockito.eq( "mondrian:/SteelWheels" ) ) ).thenReturn( new String[] { "role", "role1" } );
+    when( mapper.mapConnectionRoles( Mockito.<IPentahoSession>any(),
+      eq( "mondrian:/SteelWheels" ) ) ).thenReturn( new String[] { "role", "role1" } );
 
     MondrianRoleMapperForTest mrmpt = new MondrianRoleMapperForTest( mapper );
 
@@ -104,10 +108,10 @@ public class MondrianRoleMapperTest {
 
   @Test
   public void testRoleMapperMultipleRolesWithCommas() throws PentahoAccessControlException {
-    IConnectionUserRoleMapper mapper = Mockito.mock( IConnectionUserRoleMapper.class );
+    IConnectionUserRoleMapper mapper = mock( IConnectionUserRoleMapper.class );
 
-    Mockito.when( mapper.mapConnectionRoles( Mockito.any( IPentahoSession.class ),
-      Mockito.eq( "mondrian:/SteelWheels" ) ) ).thenReturn( new String[] { "ro,le", "role1" } );
+    when( mapper.mapConnectionRoles( Mockito.<IPentahoSession>any(),
+      eq( "mondrian:/SteelWheels" ) ) ).thenReturn( new String[] { "ro,le", "role1" } );
 
     MondrianRoleMapperForTest mrmpt = new MondrianRoleMapperForTest( mapper );
 
@@ -118,10 +122,10 @@ public class MondrianRoleMapperTest {
 
   @Test
   public void testRoleMapperMultipleRolesObjectNotDefined() throws PentahoAccessControlException {
-    IConnectionUserRoleMapper mapper = Mockito.mock( IConnectionUserRoleMapper.class );
+    IConnectionUserRoleMapper mapper = mock( IConnectionUserRoleMapper.class );
 
-    Mockito.when( mapper.mapConnectionRoles( Mockito.any( IPentahoSession.class ),
-      Mockito.eq( "mondrian:/SteelWheels" ) ) ).thenReturn( new String[] { "ro,le", "role1" } );
+    when( mapper.mapConnectionRoles( Mockito.<IPentahoSession>any(),
+      eq( "mondrian:/SteelWheels" ) ) ).thenReturn( new String[] { "ro,le", "role1" } );
 
     MondrianRoleMapperForTest mrmpt = new MondrianRoleMapperForTest( mapper, false );
 
