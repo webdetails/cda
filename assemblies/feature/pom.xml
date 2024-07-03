@@ -7,16 +7,16 @@
     <parent>
         <artifactId>cda-plugin-assemblies</artifactId>
         <groupId>pentaho</groupId>
-        <version>9.3.0.0-SNAPSHOT</version>
+        <version>9.3.0.8-870</version>
     </parent>
 
     <artifactId>pentaho-cda</artifactId>
     <packaging>kar</packaging>
 
     <properties>
-        <pdi-dataservice-client-plugin.version>9.3.0.0-SNAPSHOT</pdi-dataservice-client-plugin.version>
-        <pdi-dataservice-plugin.version>9.3.0.0-SNAPSHOT</pdi-dataservice-plugin.version>
-        <pentaho-osgi-bundles.version>9.3.0.0-SNAPSHOT</pentaho-osgi-bundles.version>
+        <pdi-dataservice-client-plugin.version>9.3.0.8-870</pdi-dataservice-client-plugin.version>
+        <pdi-dataservice-plugin.version>9.3.0.8-870</pdi-dataservice-plugin.version>
+        <pentaho-osgi-bundles.version>9.3.0.8-870</pentaho-osgi-bundles.version>
     </properties>
 
     <dependencyManagement>
