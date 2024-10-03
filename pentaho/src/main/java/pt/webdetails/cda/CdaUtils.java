@@ -13,8 +13,6 @@
 package pt.webdetails.cda;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.sun.jersey.api.client.ClientResponse.Status;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -74,6 +72,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.MultivaluedHashMap;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -434,7 +433,7 @@ public class CdaUtils {
       return Response.ok( flusher.flushCdaMondrianCache( cda, connectionId ) ).build();
     } catch ( CdaSettingsReadException | AccessDeniedException | UnknownConnectionException e ) {
       logger.error( e.getMessage(), e );
-      return Response.status( Status.BAD_REQUEST ).entity( e.getLocalizedMessage() ).build();
+      return Response.status( Response.Status.BAD_REQUEST ).entity( e.getLocalizedMessage() ).build();
     } catch ( InvalidConnectionException e ) {
       logger.error( e.getMessage(), e );
       return Response.serverError().entity( e.getLocalizedMessage() ).build();
@@ -606,7 +605,7 @@ public class CdaUtils {
   }
 
   private MultivaluedMap<String, String> getParameterMapFromRequest( HttpServletRequest servletRequest ) {
-    MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+    MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
 
     final Enumeration<String> enumeration = servletRequest.getParameterNames();
     while ( enumeration.hasMoreElements() ) {
