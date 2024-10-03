@@ -1,5 +1,5 @@
 /*!
- * Copyright 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2018-2024 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -13,6 +13,8 @@
 
 package pt.webdetails.cda;
 
+import javax.ws.rs.client.Client;
+import org.glassfish.jersey.client.ClientConfig;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,7 +29,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.StreamingOutput;
@@ -37,6 +43,8 @@ import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import pt.webdetails.cpf.utils.MimeTypes;
 
 import java.io.IOException;
@@ -44,13 +52,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
-import com.sun.jersey.api.json.JSONConfiguration;
+
 
 
 @Path( "/cda/api" )
@@ -75,10 +77,10 @@ public class CdaUtils {
   }
 
   private Client getClientInitialized() {
-    ClientConfig clientConfig = new DefaultClientConfig();
-    clientConfig.getFeatures().put( JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE );
-    Client client = Client.create( clientConfig );
-    client.addFilter( new HTTPBasicAuthFilter( USER, PASS ) );
+    ClientConfig clientConfig = new ClientConfig();
+    clientConfig.register( MultiPartFeature.class );
+    Client client = ClientBuilder.newClient( clientConfig );
+    client.register( HttpAuthenticationFeature.basic( USER, PASS ) );
     return client;
   }
 
@@ -94,7 +96,7 @@ public class CdaUtils {
     Client client = getClientInitialized();
 
     //Invoke Rest endpoint with same params
-    WebResource webResource = client.resource( url );
+    WebTarget webResource = client.target( url );
 
     // add parameters
     if ( urii != null && urii.getQueryParameters() != null ) {
@@ -107,11 +109,11 @@ public class CdaUtils {
     }
 
     try {
-      ClientResponse response = webResource.type( MediaType.APPLICATION_FORM_URLENCODED )
-        .get( ClientResponse.class );
+      Response response = webResource.request( MediaType.APPLICATION_FORM_URLENCODED )
+        .get( Response.class );
 
-      if ( response.getStatus() == ClientResponse.Status.OK.getStatusCode() ) {
-        InputStream in = response.getEntityInputStream();
+      if ( response.getStatus() == Response.Status.OK.getStatusCode() ) {
+        InputStream in = response.readEntity( InputStream.class );
 
         return new StreamingOutput() {
           @Override
@@ -127,7 +129,7 @@ public class CdaUtils {
     } catch ( Exception ex ) {
       logger.fatal( ex );
     } finally {
-      client.destroy();
+      client.close();
     }
 
     return null;
@@ -148,14 +150,14 @@ public class CdaUtils {
     Client client = getClientInitialized();
 
     //Invoke Rest endpoint with same params
-    WebResource webResource = client.resource( url );
+    WebTarget webResource = client.target( url );
 
     try {
-      ClientResponse response = webResource.type( MediaType.APPLICATION_FORM_URLENCODED )
-        .post( ClientResponse.class, formParams );
+      Response response = webResource.request( MediaType.APPLICATION_FORM_URLENCODED )
+        .post( Entity.form( formParams ), Response.class);
 
-      if ( response.getStatus() == ClientResponse.Status.OK.getStatusCode() ) {
-        InputStream in = response.getEntityInputStream();
+      if ( response.getStatus() == Response.Status.OK.getStatusCode() ) {
+        InputStream in = response.readEntity( InputStream.class );
 
         return new StreamingOutput() {
           @Override
@@ -171,7 +173,7 @@ public class CdaUtils {
     } catch ( Exception ex ) {
       logger.fatal( ex );
     } finally {
-      client.destroy();
+      client.close();
     }
 
     return null;
@@ -194,15 +196,15 @@ public class CdaUtils {
     //Init
     Client client = getClientInitialized();
 
-    WebResource webResource = client.resource( url );
+    WebTarget webResource = client.target( url );
     webResource = webResource.queryParam( "refreshCache", refreshCache.toString() );
 
     try {
-      ClientResponse response = webResource.type( MediaType.APPLICATION_JSON )
-        .get( ClientResponse.class );
+      Response response = webResource.request( MediaType.APPLICATION_JSON )
+        .get( Response.class );
 
-      if ( response.getStatus() == ClientResponse.Status.OK.getStatusCode() ) {
-        InputStream in = response.getEntityInputStream();
+      if ( response.getStatus() == Response.Status.OK.getStatusCode() ) {
+        InputStream in = response.readEntity( InputStream.class );
         try {
           return IOUtils.toString( in );
         } finally {
@@ -212,7 +214,7 @@ public class CdaUtils {
     } catch ( Exception ex ) {
       logger.fatal( ex );
     } finally {
-      client.destroy();
+      client.close();
     }
 
     return null;
