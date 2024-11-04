@@ -19,7 +19,7 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.web.websocket.WebsocketEndpointConfig;
 import org.springframework.security.core.Authentication;
 
-import javax.websocket.EndpointConfig;
+import jakarta.websocket.EndpointConfig;
 
 /**
  * The {@code PentahoEndpointConfigurationHelper} helps reading both general and

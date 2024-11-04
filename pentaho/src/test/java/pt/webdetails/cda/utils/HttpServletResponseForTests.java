@@ -13,9 +13,9 @@
 
 package pt.webdetails.cda.utils;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Locale;
@@ -132,6 +132,11 @@ public class HttpServletResponseForTests implements HttpServletResponse {
 
   @Override
   public void setContentLength( int len ) {  }
+
+  @Override
+  public void setContentLengthLong(long l) {
+
+  }
 
   @Override
   public void setContentType( String type ) {
