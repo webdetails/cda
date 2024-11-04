@@ -21,9 +21,9 @@ import pt.webdetails.cda.utils.AuditHelper;
 import pt.webdetails.cda.utils.AuditHelper.QueryAudit;
 import pt.webdetails.cda.utils.QueryParameters;
 
-import javax.websocket.CloseReason;
-import javax.websocket.MessageHandler;
-import javax.websocket.Session;
+import jakarta.websocket.CloseReason;
+import jakarta.websocket.MessageHandler;
+import jakarta.websocket.Session;
 import java.util.List;
 import java.util.Map;
 
