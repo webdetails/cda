@@ -12,12 +12,15 @@
  */
 package org.pentaho.ctools.cda.endpoints;
 
-import org.eclipse.jetty.websocket.WebSocket;
+import org.eclipse.jetty.websocket.api.RemoteEndpoint;
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.junit.Before;
 import org.junit.Test;
 import pt.webdetails.cda.push.IWebsocketEndpoint;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.function.Consumer;
 
@@ -25,10 +28,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-
+@WebSocket
 public class CdaJettyWebsocketTest {
   public static final String OUTBOUND_MESSAGE_1 = "Outbound Message 1";
   public static final String OUTBOUND_MESSAGE_2 = "Outbound Message 2";
@@ -48,10 +52,9 @@ public class CdaJettyWebsocketTest {
     this.websocket = new CdaJettyWebsocket( this.mockRequest, this.mockPlatformWebsocketEndpoint );
   }
 
-  @Test
-  public void onOpen() {
-    WebSocket.Connection mockConnection = mock( WebSocket.Connection.class );
-    this.websocket.onOpen( mockConnection );
+  @OnWebSocketConnect
+  public void onConnect( Session session ) {
+    this.websocket.onConnect( session );
 
     verify( this.mockPlatformWebsocketEndpoint, times( 1 ) ).onOpen( any( Consumer.class ) );
   }
@@ -66,17 +69,19 @@ public class CdaJettyWebsocketTest {
       return null;
     } ).when( this.mockPlatformWebsocketEndpoint ).onOpen( any( Consumer.class ) );
 
-    WebSocket.Connection mockConnection = mock( WebSocket.Connection.class );
-    this.websocket.onOpen( mockConnection );
+    Session mockSession = mock( Session.class );
+    RemoteEndpoint mockRemote = mock( RemoteEndpoint.class );
+    when(mockSession.getRemote()).thenReturn( mockRemote );
+    this.websocket.onConnect( mockSession );
 
-    verify( mockConnection, times( 1 ) ).sendMessage( OUTBOUND_MESSAGE_1 );
-    verify( mockConnection, times( 1 ) ).sendMessage( OUTBOUND_MESSAGE_2 );
+    verify( mockRemote, times( 1 ) ).sendString( OUTBOUND_MESSAGE_1 );
+    verify( mockRemote, times( 1 ) ).sendString( OUTBOUND_MESSAGE_2 );
   }
 
   @Test
   public void onMessage() {
-    WebSocket.Connection mockConnection = mock( WebSocket.Connection.class );
-    this.websocket.onOpen( mockConnection );
+    Session mockSession = mock( Session.class );
+    this.websocket.onConnect( mockSession );
 
     this.websocket.onMessage( INBOUND_MESSAGE );
 

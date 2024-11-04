@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2024 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -19,7 +19,7 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.web.websocket.WebsocketEndpointConfig;
 import org.springframework.security.core.Authentication;
 
-import javax.websocket.EndpointConfig;
+import jakarta.websocket.EndpointConfig;
 
 /**
  * The {@code PentahoEndpointConfigurationHelper} helps reading both general and
