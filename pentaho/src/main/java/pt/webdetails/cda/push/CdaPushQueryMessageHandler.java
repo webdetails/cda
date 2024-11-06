@@ -1,5 +1,5 @@
 /*!
- * Copyright 2018 Webdetails, a Hitachi Vantara company. All rights reserved.
+ * Copyright 2024 Webdetails, a Hitachi Vantara company. All rights reserved.
  *
  * This software was developed by Webdetails and is provided under the terms
  * of the Mozilla Public License, Version 2.0, or any later version. You may not use
@@ -21,9 +21,9 @@ import pt.webdetails.cda.utils.AuditHelper;
 import pt.webdetails.cda.utils.AuditHelper.QueryAudit;
 import pt.webdetails.cda.utils.QueryParameters;
 
-import javax.websocket.CloseReason;
-import javax.websocket.MessageHandler;
-import javax.websocket.Session;
+import jakarta.websocket.CloseReason;
+import jakarta.websocket.MessageHandler;
+import jakarta.websocket.Session;
 import java.util.List;
 import java.util.Map;
 
