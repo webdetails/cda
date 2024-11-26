@@ -12,8 +12,8 @@
 
 package org.pentaho.ctools.cda.endpoints;
 
-import org.eclipse.jetty.websocket.server.JettyWebSocketServlet;
-import org.eclipse.jetty.websocket.server.JettyWebSocketServletFactory;
+import org.eclipse.jetty.ee10.websocket.server.JettyWebSocketServlet;
+import org.eclipse.jetty.ee10.websocket.server.JettyWebSocketServletFactory;
 import pt.webdetails.cda.push.WebsocketJsonQueryEndpoint;
 
 import jakarta.servlet.http.HttpServletRequest;

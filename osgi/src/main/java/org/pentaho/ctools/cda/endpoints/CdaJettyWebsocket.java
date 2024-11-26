@@ -14,9 +14,10 @@ package org.pentaho.ctools.cda.endpoints;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jetty.websocket.api.Callback;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketOpen;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import pt.webdetails.cda.push.IWebsocketEndpoint;
@@ -37,7 +38,7 @@ public class CdaJettyWebsocket {
     this.websocketJsonQueryEndpoint = websocketJsonQueryEndpoint;
   }
 
-  @OnWebSocketConnect
+  @OnWebSocketOpen
   public void onConnect( Session session ) {
     this.session = session;
     this.websocketJsonQueryEndpoint.onOpen( this::processOutboundMessage );
@@ -60,7 +61,7 @@ public class CdaJettyWebsocket {
 
   private void processOutboundMessage( String outboundMessage ) {
     try {
-      this.session.getRemote().sendString( outboundMessage );
+      this.session.sendText( outboundMessage, Callback.NOOP );
     } catch ( Exception e ) {
       logger.error( "Error sending message. Closing websocket...", e );
       processErrorMessage( "Error while sending message." );
@@ -74,7 +75,7 @@ public class CdaJettyWebsocket {
         // The server is terminating the connection because
         // it encountered an unexpected condition that prevented it from
         // fulfilling the request.
-        this.session.close( 1011, errorMessage );
+        this.session.close( 1011, errorMessage, Callback.NOOP );
       }
     } catch ( Exception e ) {
       logger.error( "Error closing socket, with message " + errorMessage, e );
