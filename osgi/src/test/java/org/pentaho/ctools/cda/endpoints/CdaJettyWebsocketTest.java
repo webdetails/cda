@@ -12,9 +12,9 @@
 
 package org.pentaho.ctools.cda.endpoints;
 
-import org.eclipse.jetty.websocket.api.RemoteEndpoint;
+import org.eclipse.jetty.websocket.api.Callback;
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketOpen;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +52,7 @@ public class CdaJettyWebsocketTest {
     this.websocket = new CdaJettyWebsocket( this.mockRequest, this.mockPlatformWebsocketEndpoint );
   }
 
-  @OnWebSocketConnect
+  @OnWebSocketOpen
   public void onConnect( Session session ) {
     this.websocket.onConnect( session );
 
@@ -70,12 +70,10 @@ public class CdaJettyWebsocketTest {
     } ).when( this.mockPlatformWebsocketEndpoint ).onOpen( any( Consumer.class ) );
 
     Session mockSession = mock( Session.class );
-    RemoteEndpoint mockRemote = mock( RemoteEndpoint.class );
-    when(mockSession.getRemote()).thenReturn( mockRemote );
     this.websocket.onConnect( mockSession );
 
-    verify( mockRemote, times( 1 ) ).sendString( OUTBOUND_MESSAGE_1 );
-    verify( mockRemote, times( 1 ) ).sendString( OUTBOUND_MESSAGE_2 );
+    verify( mockSession, times( 1 ) ).sendText( OUTBOUND_MESSAGE_1 , Callback.NOOP);
+    verify( mockSession, times( 1 ) ).sendText( OUTBOUND_MESSAGE_2 , Callback.NOOP );
   }
 
   @Test
