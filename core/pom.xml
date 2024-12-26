@@ -138,9 +138,14 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache-core</artifactId>
-      <version>${dependency.ehcache-core.revision}</version>
+      <groupId>org.ehcache</groupId>
+      <artifactId>ehcache</artifactId>
+      <version>${ehcache-core.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.cache</groupId>
+      <artifactId>cache-api</artifactId>
+      <version>${cache-api.version}</version>
     </dependency>
     <dependency>
       <groupId>com.hazelcast</groupId>
