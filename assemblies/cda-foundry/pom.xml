@@ -5,16 +5,16 @@
   <parent>
     <groupId>pentaho</groupId>
     <artifactId>cda-plugin-assemblies</artifactId>
-    <version>10.2.0.0-SNAPSHOT</version>
+    <version>10.2.0.2-295</version>
   </parent>
 
   <artifactId>cda-foundry</artifactId>
   <packaging>pom</packaging>
 
   <properties>
-    <pdi-pur-plugin.version>10.2.0.0-SNAPSHOT</pdi-pur-plugin.version>
-    <pentaho-osgi-bundles.version>10.2.0.0-SNAPSHOT</pentaho-osgi-bundles.version>
-    <pdi-plugins-ee.version>10.2.0.0-SNAPSHOT</pdi-plugins-ee.version>
+    <pdi-pur-plugin.version>10.2.0.2-295</pdi-pur-plugin.version>
+    <pentaho-osgi-bundles.version>10.2.0.2-295</pentaho-osgi-bundles.version>
+    <pdi-plugins-ee.version>10.2.0.2-295</pdi-plugins-ee.version>
     <camel.karaf.version>2.17.7</camel.karaf.version>
   </properties>
 
