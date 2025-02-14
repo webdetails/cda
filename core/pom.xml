@@ -5,7 +5,7 @@
   <parent>
     <groupId>pentaho</groupId>
     <artifactId>cda-plugin</artifactId>
-    <version>10.3.0.0-SNAPSHOT</version>
+    <version>10.3.0.0-255</version>
   </parent>
 
   <artifactId>cda-core</artifactId>
@@ -29,7 +29,7 @@
     <dependency.jxl.revision>2.6.12</dependency.jxl.revision>
     <dependency.jsr311-api.revision>1.1-ea</dependency.jsr311-api.revision>
     <owasp.encoder.version>1.2</owasp.encoder.version>
-    <encryption-support.version>10.3.0.0-SNAPSHOT</encryption-support.version>
+    <encryption-support.version>10.3.0.0-255</encryption-support.version>
 
   </properties>
   <dependencies>
