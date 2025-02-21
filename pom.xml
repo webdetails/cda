@@ -10,7 +10,7 @@
 
   <groupId>pentaho</groupId>
   <artifactId>cda-plugin</artifactId>
-
+<!-- -->
   <packaging>pom</packaging>
   <licenses>
     <license>
