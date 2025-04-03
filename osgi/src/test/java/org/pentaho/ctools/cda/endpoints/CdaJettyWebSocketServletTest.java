@@ -14,7 +14,6 @@ package org.pentaho.ctools.cda.endpoints;
 
 import org.eclipse.jetty.websocket.api.Session;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import pt.webdetails.cda.push.WebsocketJsonQueryEndpoint;
 
@@ -36,14 +35,14 @@ public class CdaJettyWebSocketServletTest {
 
     this.servlet = new CdaJettyWebSocketServlet();
   }
-  @Ignore
-  @Test
+
+ @Test
   public void doWebSocketConnectKnownSubprotocol() {
     String subprotocol = WebsocketJsonQueryEndpoint.ACCEPTED_SUB_PROTOCOL;
 
-    Session session = (Session) this.servlet.doWebSocketConnect( this.mockRequest, subprotocol );
+    CdaJettyWebsocket websocket = this.servlet.doWebSocketConnect( this.mockRequest, subprotocol );
 
-    assertNotNull( session );
+    assertNotNull( websocket );
   }
 
   @Test
