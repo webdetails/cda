@@ -22,6 +22,7 @@ import pt.webdetails.cda.dataaccess.Parameter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -40,7 +41,7 @@ public class TableCacheKey implements Serializable {
   private String queryType;
   private Parameter[] parameters;
 
-  private Serializable extraCacheKey;
+  private CacheKey extraCacheKey;
 
   /**
    * For serialization
@@ -50,7 +51,7 @@ public class TableCacheKey implements Serializable {
 
 
   public TableCacheKey( final Connection connection, final String query,
-                        final List<Parameter> parameters, final Serializable extraCacheKey ) {
+                        final List<Parameter> parameters, final CacheKey extraCacheKey ) {
     if ( connection == null ) {
       throw new NullPointerException();
     }
@@ -69,7 +70,7 @@ public class TableCacheKey implements Serializable {
   }
 
   public TableCacheKey( final Connection connection, final String query, final String queryType,
-                        final List<Parameter> parameters, final Serializable extraCacheKey ) {
+                        final List<Parameter> parameters, final CacheKey extraCacheKey ) {
     if ( connection == null ) {
       throw new NullPointerException();
     }
@@ -123,7 +124,6 @@ public class TableCacheKey implements Serializable {
     return parameters;
   }
 
-
   public void setParameterDataRow( ParameterDataRow parameterDataRow ) {
     //this.parameterDataRow = parameterDataRow;
     this.parameters = createParametersFromParameterDataRow( parameterDataRow );
@@ -135,7 +135,7 @@ public class TableCacheKey implements Serializable {
   }
 
 
-  public void setExtraCacheKey( Serializable extraCacheKey ) {
+  public void setExtraCacheKey( CacheKey extraCacheKey ) {
     this.extraCacheKey = extraCacheKey;
   }
 
@@ -147,9 +147,18 @@ public class TableCacheKey implements Serializable {
     //connection
     connectionHash = in.readInt();
     //query
-    query = (String) in.readObject();
+    query = in.readUTF();
     //queryTpe
-    queryType = (String) in.readObject();
+    queryType = in.readUTF();
+
+    // We add this filter allow only Parameter and CacheKey and block everything else from readObject.
+    // This is important because readObject can allow injection attacks.
+    ObjectInputFilter paramFilter = ObjectInputFilter.Config.createFilter(
+      "pt.webdetails.cda.dataaccess.Parameter;"
+        + "pt.webdetails.cda.cache.CacheKey;"
+        + "!*"
+    );
+    in.setObjectInputFilter( paramFilter );
 
     int len = in.readInt();
     Parameter[] params = new Parameter[ len ];
@@ -160,7 +169,7 @@ public class TableCacheKey implements Serializable {
       params[ i ] = param;
     }
     parameters = params;
-    extraCacheKey = (Serializable) in.readObject();
+    extraCacheKey = (CacheKey) in.readObject();
   }
 
   //Hazelcast will use serialized version to perform comparisons and hashcodes
@@ -169,8 +178,8 @@ public class TableCacheKey implements Serializable {
     //binary comparison/hash will be used
 
     out.writeInt( connectionHash );
-    out.writeObject( query );
-    out.writeObject( queryType );
+    out.writeUTF( query );
+    out.writeUTF( queryType );
 
     out.writeInt( parameters.length );
     for ( Parameter param : parameters ) {

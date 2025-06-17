@@ -14,6 +14,7 @@
 package pt.webdetails.cda.dataaccess;
 
 import java.io.IOException;
+import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.ParseException;
@@ -404,12 +405,19 @@ public class Parameter implements java.io.Serializable {
 
   public void readObject( ObjectInputStream in ) throws IOException {
     try {
-      this.setName( (String) in.readObject() );
+      this.setName( in.readUTF() );
       this.setType( (Type) in.readObject() );
-      //if(isDateType()) this.setPattern((String) in.readObject());
-      this.setStringValue( (String) in.readObject(), this.getType() );
-      this.setSeparator( (String) in.readObject() );
-      this.setQuoteCharacter( (String) in.readObject() );
+
+      // We add this filter allow only Type and block everything else from readObject.
+      // This is important because readObject can allow injection attacks.
+      ObjectInputFilter filter = ObjectInputFilter.Config.createFilter(
+        "pt.webdetails.cda.dataaccess.Parameter$Type;!*"
+      );
+      in.setObjectInputFilter(filter);
+      this.setStringValue( in.readUTF(), this.getType() );
+
+      this.setSeparator( in.readUTF() );
+      this.setQuoteCharacter( in.readUTF() );
     } catch ( ClassNotFoundException e ) {
       throw new IOException( "Error casting read object.", e );
     }
@@ -419,12 +427,11 @@ public class Parameter implements java.io.Serializable {
    * Should only be called on evaluated parameters
    */
   public void writeObject( ObjectOutputStream out ) throws IOException {
-    out.writeObject( this.getName() );
+    out.writeUTF( this.getName() );
     out.writeObject( this.getType() );
-    //if(isDateType()) out.writeObject(this.pattern);
-    out.writeObject( this.getStringValue() );
-    out.writeObject( this.getSeparator() );
-    out.writeObject( this.getQuoteCharacter() );
+    out.writeUTF( this.getStringValue() );
+    out.writeUTF( this.getSeparator() );
+    out.writeUTF( this.getQuoteCharacter() );
   }
 
 

@@ -48,7 +48,7 @@ public class DenormalizedMdxDataAccess extends GlobalMdxDataAccess {
   }
 
   @Override
-  protected Serializable getExtraCacheKey() { //TODO: is this necessary after role assembly in EvaluableConnection
+  protected CacheKey getExtraCacheKey() { //TODO: is this necessary after role assembly in EvaluableConnection
     // .evaluate()?
     MondrianConnectionInfo mci;
     try {
@@ -58,7 +58,7 @@ public class DenormalizedMdxDataAccess extends GlobalMdxDataAccess {
       mci = null;
     }
 
-    CacheKey cacheKey = getCacheKey() != null ? ( (CacheKey) getCacheKey() ).clone() : new CacheKey();
+    CacheKey cacheKey = getCacheKey() != null ? ( getCacheKey() ).clone() : new CacheKey();
 
     cacheKey.addKeyValuePair( "roles", mci.getMondrianRole() );
 

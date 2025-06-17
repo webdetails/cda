@@ -36,7 +36,6 @@ import pt.webdetails.cda.utils.Util;
 import pt.webdetails.cda.utils.kettle.SortException;
 
 import javax.swing.table.TableModel;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -232,7 +231,7 @@ public abstract class AbstractDataAccess implements DataAccess {
 
   public static synchronized void clearCache() {
     IQueryCache cache = getCdaCache();
-    cache.clearCache();
+      cache.clearCache();
   }
 
 
@@ -666,7 +665,7 @@ public abstract class AbstractDataAccess implements DataAccess {
     return columnDefinitions;
   }
 
-  public Serializable getCacheKey() {
+  public CacheKey getCacheKey() {
     String cacheKeyInfo =
       "Getting Cache Key for file: " + this.getCdaSettings().getId() + ", DataAccessID: " + this.getId() + "\n";
     CacheKey systemWideCacheKey = getSystemCacheKeys();
@@ -720,7 +719,7 @@ public abstract class AbstractDataAccess implements DataAccess {
    *
    * @return
    */
-  protected Serializable getExtraCacheKey() {
+  protected CacheKey getExtraCacheKey() {
     return getCacheKey();
   }
 }
