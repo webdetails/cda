@@ -27,6 +27,7 @@ import pt.webdetails.cda.utils.mondrian.ExtBandedMDXDataFactory;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Implementation of a DataAccess that will get data from a SQL database
@@ -116,7 +117,7 @@ public class MdxDataAccess extends GlobalMdxDataAccess {
 
 
   @Override
-  protected CacheKey getExtraCacheKey() { //TODO: is this necessary after role assembly in EvaluableConnection
+  protected CacheKey getExtraCacheKey() {
     // .evaluate()?
     MondrianConnectionInfo mci;
     try {
@@ -159,13 +160,7 @@ public class MdxDataAccess extends GlobalMdxDataAccess {
         return false;
       }
       final ExtraCacheKey other = (ExtraCacheKey) obj;
-      if ( this.bandedMode != other.bandedMode && ( this.bandedMode == null || !this.bandedMode
-        .equals( other.bandedMode ) ) ) {
-        return false;
-      } else if ( this.roles == null ? other.roles != null : !this.roles.equals( other.roles ) ) {
-        return false;
-      }
-      return true;
+      return Objects.equals( this.bandedMode, other.bandedMode ) && Objects.equals( this.roles, other.roles );
     }
 
 

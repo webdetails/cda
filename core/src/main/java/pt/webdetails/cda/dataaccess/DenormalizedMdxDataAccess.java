@@ -24,6 +24,7 @@ import pt.webdetails.cda.utils.mondrian.ExtDenormalizedMDXDataFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Implementation of a DataAccess that will get data from a SQL database
@@ -48,7 +49,7 @@ public class DenormalizedMdxDataAccess extends GlobalMdxDataAccess {
   }
 
   @Override
-  protected CacheKey getExtraCacheKey() { //TODO: is this necessary after role assembly in EvaluableConnection
+  protected CacheKey getExtraCacheKey() {
     // .evaluate()?
     MondrianConnectionInfo mci;
     try {
@@ -85,10 +86,7 @@ public class DenormalizedMdxDataAccess extends GlobalMdxDataAccess {
       }
       final ExtraCacheKey other = (ExtraCacheKey) obj;
 
-      if ( this.roles == null ? other.roles != null : !this.roles.equals( other.roles ) ) {
-        return false;
-      }
-      return true;
+      return Objects.equals( this.roles, other.roles );
     }
 
 
