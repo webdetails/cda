@@ -116,7 +116,7 @@ public class MdxDataAccess extends GlobalMdxDataAccess {
 
 
   @Override
-  protected Serializable getExtraCacheKey() { //TODO: is this necessary after role assembly in EvaluableConnection
+  protected CacheKey getExtraCacheKey() { //TODO: is this necessary after role assembly in EvaluableConnection
     // .evaluate()?
     MondrianConnectionInfo mci;
     try {
