@@ -69,6 +69,9 @@ public abstract class AbstractDataAccess implements DataAccess {
   private static final String PARAM_ITERATOR_END = ")";
   private static final String PARAM_ITERATOR_ARG_SEPARATOR = ",";
   private static final String EXTRA_CACHE_KEYS_PROPERTY = "pt.webdetails.cda.cache.extraCacheKeys";
+  private static final String CACHE_DURATION_ATTRIBUTE = "cacheDuration";
+  private static final String CACHE_ATTRIBUTE = "cache";
+  private static final String ACCESS_ATTRIBUTE = "access";
 
   protected AbstractDataAccess() {
   }
@@ -76,12 +79,12 @@ public abstract class AbstractDataAccess implements DataAccess {
 
   protected AbstractDataAccess( final Element element ) {
     name = "";
-    columnDefinitionIndexMap = new HashMap<Integer, ColumnDefinition>();
-    columnDefinitions = new ArrayList<ColumnDefinition>();
-    parameters = new ArrayList<Parameter>();
-    outputs = new HashMap<Integer, ArrayList<Integer>>();
-    outputs.put( 1, new ArrayList<Integer>() );
-    outputMode = new HashMap<Integer, OutputMode>();
+    columnDefinitionIndexMap = new HashMap<>();
+    columnDefinitions = new ArrayList<>();
+    parameters = new ArrayList<>();
+    outputs = new HashMap<>();
+    outputs.put( 1, new ArrayList<>() );
+    outputMode = new HashMap<>();
     outputMode.put( 1, OutputMode.INCLUDE );
 
     parseOptions( element );
@@ -97,12 +100,12 @@ public abstract class AbstractDataAccess implements DataAccess {
     this.name = name;
     this.id = id;
 
-    columnDefinitionIndexMap = new HashMap<Integer, ColumnDefinition>();
-    columnDefinitions = new ArrayList<ColumnDefinition>();
-    parameters = new ArrayList<Parameter>();
-    outputs = new HashMap<Integer, ArrayList<Integer>>();
-    outputs.put( 1, new ArrayList<Integer>() );
-    outputMode = new HashMap<Integer, OutputMode>();
+    columnDefinitionIndexMap = new HashMap<>();
+    columnDefinitions = new ArrayList<>();
+    parameters = new ArrayList<>();
+    outputs = new HashMap<>();
+    outputs.put( 1, new ArrayList<>() );
+    outputMode = new HashMap<>();
     outputMode.put( 1, OutputMode.INCLUDE );
   }
 
@@ -125,41 +128,48 @@ public abstract class AbstractDataAccess implements DataAccess {
       name = nameElement.getTextTrim();
     }
 
-    if ( element.attributeValue( "access" ) != null && element.attributeValue( "access" ).equals( "private" ) ) {
+    if ( element.attributeValue( ACCESS_ATTRIBUTE ) != null && element.attributeValue( ACCESS_ATTRIBUTE )
+      .equals( "private" ) ) {
       access = DataAccessEnums.ACCESS_TYPE.PRIVATE;
     }
 
-    if ( element.attributeValue( "cache" ) != null && element.attributeValue( "cache" ).equals( "true" ) ) {
+    if ( element.attributeValue( CACHE_ATTRIBUTE ) != null && element.attributeValue( CACHE_ATTRIBUTE )
+      .equals( "true" ) ) {
       cacheEnabled = true;
     }
 
-    if ( element.attribute( "cacheDuration" ) != null && !element.attribute( "cacheDuration" ).toString()
-      .equals( "" ) ) {
-      cacheDuration = Integer.parseInt( element.attributeValue( "cacheDuration" ) );
+    if ( element.attribute( CACHE_DURATION_ATTRIBUTE ) != null && !element.attribute( CACHE_DURATION_ATTRIBUTE )
+      .toString().isEmpty() ) {
+      cacheDuration = Integer.parseInt( element.attributeValue( CACHE_DURATION_ATTRIBUTE ) );
     }
 
+    parseParameters( element, parameters );
+    parseOutputs( element );
+    parseColumns( element );
+    buildColumnDefinitionIndexMap();
+    parseCdaCacheKey( element );
+  }
 
-    // Parse parameters
+  private void parseParameters( final Element element, ArrayList<Parameter> parameters ) {
     final List<Element> parameterNodes = Util.selectElements( element, "Parameters/Parameter" );
 
     for ( final Element p : parameterNodes ) {
       parameters.add( new Parameter( p ) );
     }
+  }
 
-    // Parse outputs
+  private void parseOutputs( final Element element ) {
     final List<Element> outputNodes = Util.selectElements( element, "Output" );
 
     for ( final Element outputNode : outputNodes ) {
-      ArrayList<Integer> myOutputs = new ArrayList<Integer>();
+      ArrayList<Integer> myOutputs = new ArrayList<>();
       if ( outputNode != null ) {
         int localId = 1;
-        if ( outputNode.attribute( "id" ) != null && !outputNode.attribute( "id" ).toString().equals( "" ) ) {
+        if ( outputNode.attribute( "id" ) != null && !outputNode.attribute( "id" ).toString().isEmpty() ) {
           // if parseInt fails an exception will be thrown and the cda file will not be accepted
           localId = Integer.parseInt( outputNode.attributeValue( "id" ) );
-        } else {
-          // if an output has not a defined or empty id then it will have key = 1
-          localId = 1;
         }
+        // if an output has not a defined or empty id then it will have key = 1
 
         try {
           outputMode.put( localId, OutputMode.valueOf( outputNode.attributeValue( "mode" ).toUpperCase() ) );
@@ -175,21 +185,25 @@ public abstract class AbstractDataAccess implements DataAccess {
         outputs.put( localId, myOutputs );
       }
     }
+  }
 
-    // Parse Columns
+  private void parseColumns( Element element ) {
     final List<Element> columnNodes = Util.selectElements( element, "Columns/*" );
 
     for ( final Element p : columnNodes ) {
       columnDefinitions.add( new ColumnDefinition( p ) );
     }
+  }
 
+  private void buildColumnDefinitionIndexMap() {
     // Build the columnDefinitionIndexMap
     final ArrayList<ColumnDefinition> cols = getColumns();
     for ( final ColumnDefinition columnDefinition : cols ) {
       columnDefinitionIndexMap.put( columnDefinition.getIndex(), columnDefinition );
     }
+  }
 
-    // parse cda cache key
+  private void parseCdaCacheKey( Element element ) {
     final Element cdaCache = (Element) element.selectSingleNode( "Cache" );
     if ( cdaCache != null ) {
       cdaCacheParser = new DataAccessCacheElementParser( cdaCache );
@@ -231,7 +245,9 @@ public abstract class AbstractDataAccess implements DataAccess {
 
   public static synchronized void clearCache() {
     IQueryCache cache = getCdaCache();
+    if ( cache != null ) {
       cache.clearCache();
+    }
   }
 
 
@@ -248,7 +264,7 @@ public abstract class AbstractDataAccess implements DataAccess {
      *  1. Sort
      *  2. Show only the output columns
      *  3. Paginate
-     *  
+     *
      *
      */
 
@@ -280,7 +296,7 @@ public abstract class AbstractDataAccess implements DataAccess {
 
   public ArrayList<ColumnDefinition> getColumns() {
 
-    final ArrayList<ColumnDefinition> list = new ArrayList<ColumnDefinition>();
+    final ArrayList<ColumnDefinition> list = new ArrayList<>();
 
     for ( final ColumnDefinition definition : columnDefinitions ) {
       if ( definition.getType() == ColumnDefinition.TYPE.COLUMN ) {
@@ -294,7 +310,7 @@ public abstract class AbstractDataAccess implements DataAccess {
 
   public ColumnDefinition getColumnDefinition( final int idx ) {
 
-    return columnDefinitionIndexMap.get( new Integer( idx ) );
+    return columnDefinitionIndexMap.get( idx );
 
   }
 
@@ -408,7 +424,7 @@ public abstract class AbstractDataAccess implements DataAccess {
 
   public List<PropertyDescriptor> getInterface() {
 
-    ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
+    ArrayList<PropertyDescriptor> properties = new ArrayList<>();
     properties
       .add( new PropertyDescriptor( "id", PropertyDescriptor.Type.STRING, PropertyDescriptor.Placement.ATTRIB ) );
     properties
@@ -565,10 +581,10 @@ public abstract class AbstractDataAccess implements DataAccess {
                                                   Map<String, Iterable<String>> iterableParameters )
     throws QueryException {
     //all iterators need to have at least one value..
-    List<String> names = new ArrayList<String>();
-    List<Iterator<String>> iterators = new ArrayList<Iterator<String>>();
-    List<Iterable<String>> iterables = new ArrayList<Iterable<String>>();
-    List<String> values = new ArrayList<String>();
+    List<String> names = new ArrayList<>();
+    List<Iterator<String>> iterators = new ArrayList<>();
+    List<Iterable<String>> iterables = new ArrayList<>();
+    List<String> values = new ArrayList<>();
     TableModel result = null;
 
     try {
@@ -672,14 +688,14 @@ public abstract class AbstractDataAccess implements DataAccess {
     if ( cdaCacheParser != null ) {
       if ( cdaCacheParser.parseKeys() ) {
         CacheKey mergedCacheKey = mergeCacheKeys( cdaCacheParser.getCacheKey(), systemWideCacheKey );
-        if ( mergedCacheKey.getKeyValuePairs().size() > 0 ) {
+        if ( !mergedCacheKey.getKeyValuePairs().isEmpty() ) {
           cacheKeyInfo += mergedCacheKey.toString();
         }
         logger.info( cacheKeyInfo );
         return mergedCacheKey;
       }
     }
-    if ( systemWideCacheKey.getKeyValuePairs().size() > 0 ) {
+    if ( !systemWideCacheKey.getKeyValuePairs().isEmpty() ) {
       cacheKeyInfo += systemWideCacheKey.toString();
     }
     logger.info( cacheKeyInfo );

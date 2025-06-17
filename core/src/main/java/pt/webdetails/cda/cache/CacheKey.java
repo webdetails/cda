@@ -18,12 +18,13 @@ import org.apache.commons.lang.StringUtils;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class CacheKey implements Serializable {
 
   private static final long serialVersionUID = -1273843592305584696L;
 
-  private ArrayList<KeyValuePair> keyValuePairs = new ArrayList<KeyValuePair>();
+  private ArrayList<KeyValuePair> keyValuePairs = new ArrayList<>();
 
   public CacheKey() {
   }
@@ -34,7 +35,7 @@ public class CacheKey implements Serializable {
 
   public ArrayList<KeyValuePair> getKeyValuePairs() {
     if ( keyValuePairs == null ) {
-      keyValuePairs = new ArrayList<KeyValuePair>();
+      keyValuePairs = new ArrayList<>();
     }
     return keyValuePairs;
   }
@@ -47,11 +48,7 @@ public class CacheKey implements Serializable {
 
   public void removeByKey( String key ) {
     if ( !StringUtils.isEmpty( key ) ) {
-      for ( KeyValuePair pair : getKeyValuePairs() ) {
-        if ( key.equals( pair.getKey() ) ) {
-          getKeyValuePairs().remove( pair );
-        }
-      }
+      getKeyValuePairs().removeIf( pair -> key.equals( pair.getKey() ) );
     }
   }
 
@@ -77,11 +74,7 @@ public class CacheKey implements Serializable {
 
     final CacheKey other = (CacheKey) o;
 
-    if ( keyValuePairs != null ? !keyValuePairs.equals( other.keyValuePairs ) : other.keyValuePairs != null ) {
-      return false;
-    }
-
-    return true;
+    return Objects.equals( keyValuePairs, other.keyValuePairs );
   }
 
   @Override
@@ -155,15 +148,7 @@ public class CacheKey implements Serializable {
 
       final KeyValuePair other = (KeyValuePair) o;
 
-      if ( this.key == null ? other.key != null : !this.key.equals( other.key ) ) {
-        return false;
-      }
-
-      if ( this.value == null ? other.value != null : !this.value.equals( other.value ) ) {
-        return false;
-      }
-
-      return true;
+      return Objects.equals( this.key, other.key ) && Objects.equals( this.value, other.value );
     }
 
     @Override
@@ -180,13 +165,13 @@ public class CacheKey implements Serializable {
         + "]\n";
     }
 
-  /*
-   * Serializable classes that require special handling during the serialization and deserialization process should
-   * implement the following methods: writeObject(java.io.ObjectOutputStream stream),
-   * readObject(java.io.ObjectInputStream stream)
-   *
-   * @see http://docs.oracle.com/javase/6/docs/api/java/io/ObjectInputStream.html
-   */
+    /*
+     * Serializable classes that require special handling during the serialization and deserialization process should
+     * implement the following methods: writeObject(java.io.ObjectOutputStream stream),
+     * readObject(java.io.ObjectInputStream stream)
+     *
+     * @see http://docs.oracle.com/javase/6/docs/api/java/io/ObjectInputStream.html
+     */
 
     private void readObject( java.io.ObjectInputStream in ) throws IOException, ClassNotFoundException {
       key = (String) in.readObject();

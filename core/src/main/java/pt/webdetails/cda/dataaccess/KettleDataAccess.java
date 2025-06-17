@@ -115,7 +115,7 @@ public class KettleDataAccess extends PREDataAccess {
 
   @Override
   protected IDataSourceQuery performRawQuery( ParameterDataRow parameterDataRow ) throws QueryException {
-    if ( getParameters().size() == 0 ) {
+    if ( getParameters().isEmpty() ) {
       return super.performRawQuery( parameterDataRow );
     }
 

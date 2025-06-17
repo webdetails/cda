@@ -26,11 +26,12 @@ import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class TableCacheKey implements Serializable {
 
@@ -193,12 +194,11 @@ public class TableCacheKey implements Serializable {
    * Serialize as printable <code>String</code>.
    */
   public static String getTableCacheKeyAsString( TableCacheKey cacheKey )
-    throws IOException, UnsupportedEncodingException {
+    throws IOException {
     ByteArrayOutputStream keyStream = new ByteArrayOutputStream();
     ObjectOutputStream objStream = new ObjectOutputStream( keyStream );
     cacheKey.writeObject( objStream );
-    String identifier = new String( Base64.encodeBase64( keyStream.toByteArray() ), "UTF-8" );
-    return identifier;
+    return new String( Base64.encodeBase64( keyStream.toByteArray() ), StandardCharsets.UTF_8 );
   }
 
   /**
@@ -229,14 +229,10 @@ public class TableCacheKey implements Serializable {
     if ( parameters != null ? !Arrays.equals( parameters, that.parameters ) : that.parameters != null ) {
       return false;
     }
-    if ( query != null ? !query.equals( that.query ) : that.query != null ) {
+    if ( !Objects.equals( query, that.query ) ) {
       return false;
     }
-    if ( extraCacheKey != null ? !extraCacheKey.equals( that.extraCacheKey ) : that.extraCacheKey != null ) {
-      return false;
-    }
-
-    return true;
+    return Objects.equals( extraCacheKey, that.extraCacheKey );
   }
 
 
@@ -273,11 +269,11 @@ public class TableCacheKey implements Serializable {
    * for serialization
    */
   private static Parameter[] createParametersFromParameterDataRow( final ParameterDataRow row ) {
-    ArrayList<Parameter> parameters = new ArrayList<Parameter>();
+    ArrayList<Parameter> parameters = new ArrayList<>();
     if ( row != null ) {
       for ( String name : row.getColumnNames() ) {
         Object value = row.get( name );
-        Parameter param = new Parameter( name, value != null ? value : null );
+        Parameter param = new Parameter( name, value );
         Parameter.Type type = Parameter.Type.inferTypeFromObject( value );
         param.setType( type );
         parameters.add( param );
