@@ -171,7 +171,7 @@ public class EHCacheQueryCache implements IQueryCache {
       Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
       final Element element = cache.get( key );
       if ( element != null ) {
-        final TableModel cachedTableModel = (TableModel) ( (CacheElement) element.getObjectValue() ).getTable();
+        final TableModel cachedTableModel = ( (CacheElement) element.getObjectValue() ).getTable();
         if ( cachedTableModel != null ) {
           if ( logger.isDebugEnabled() ) {
             // we have a entry in the cache ... great!
