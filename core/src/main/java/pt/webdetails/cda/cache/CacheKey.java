@@ -174,13 +174,13 @@ public class CacheKey implements Serializable {
      */
 
     private void readObject( java.io.ObjectInputStream in ) throws IOException, ClassNotFoundException {
-      key = (String) in.readObject();
-      value = (String) in.readObject();
+      key = in.readUTF();
+      value = in.readUTF();
     }
 
     private void writeObject( java.io.ObjectOutputStream out ) throws IOException {
-      out.writeObject( key );
-      out.writeObject( value );
+      out.writeUTF( key );
+      out.writeUTF( value );
     }
   }
 }

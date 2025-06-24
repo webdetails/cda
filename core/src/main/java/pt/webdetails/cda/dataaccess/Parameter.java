@@ -405,12 +405,6 @@ public class Parameter implements java.io.Serializable {
       this.setName( in.readUTF() );
       this.setType( (Type) in.readObject() );
 
-      // We add this filter allow only Type and block everything else from readObject.
-      // This is important because readObject can allow injection attacks.
-      ObjectInputFilter filter = ObjectInputFilter.Config.createFilter(
-        "pt.webdetails.cda.dataaccess.Parameter$Type;!*"
-      );
-      in.setObjectInputFilter( filter );
       this.setStringValue( in.readUTF(), this.getType() );
 
       this.setSeparator( in.readUTF() );

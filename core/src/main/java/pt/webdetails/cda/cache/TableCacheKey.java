@@ -22,6 +22,7 @@ import pt.webdetails.cda.dataaccess.Parameter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -152,15 +153,6 @@ public class TableCacheKey implements Serializable {
     //queryTpe
     queryType = in.readUTF();
 
-    // We add this filter allow only Parameter and CacheKey and block everything else from readObject.
-    // This is important because readObject can allow injection attacks.
-    ObjectInputFilter paramFilter = ObjectInputFilter.Config.createFilter(
-      "pt.webdetails.cda.dataaccess.Parameter;"
-        + "pt.webdetails.cda.cache.CacheKey;"
-        + "!*"
-    );
-    in.setObjectInputFilter( paramFilter );
-
     int len = in.readInt();
     Parameter[] params = new Parameter[ len ];
 
@@ -207,11 +199,30 @@ public class TableCacheKey implements Serializable {
   public static TableCacheKey getTableCacheKeyFromString( String encodedCacheKey )
     throws IOException, ClassNotFoundException {
     ByteArrayInputStream keyStream = new ByteArrayInputStream( Base64.decodeBase64( encodedCacheKey.getBytes() ) );
-    ObjectInputStream objStream = new ObjectInputStream( keyStream );
+
+    // We add this filter allow only Parameter, Type and CacheKey, and block everything else from readObject.
+    // This is important because readObject can allow injection attacks.
+    ObjectInputFilter paramFilter = ObjectInputFilter.Config.createFilter(
+      "pt.webdetails.cda.dataaccess.Parameter;"
+        + "pt.webdetails.cda.dataaccess.Parameter$Type;"
+        + "pt.webdetails.cda.cache.CacheKey;"
+        + "!*"
+    );
+    ObjectInputStream objStream = new FilteredObjectInputStream( keyStream, paramFilter );
     TableCacheKey cacheKey = new TableCacheKey();
     cacheKey.readObject( objStream );
     return cacheKey;
   }
+
+  // We set the filter in this custom class, because it cannot be applied after read operations have already happened,
+  // which was the case when using the normal constructor and applying the filter after class instantiation.
+  private static class FilteredObjectInputStream extends ObjectInputStream {
+    FilteredObjectInputStream( InputStream in, ObjectInputFilter filter ) throws IOException {
+      super( in );
+      setObjectInputFilter( filter );
+    }
+  }
+
 
   public boolean equals( final Object o ) {
     if ( this == o ) {
