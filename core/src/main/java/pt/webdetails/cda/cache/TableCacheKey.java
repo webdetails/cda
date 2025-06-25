@@ -200,12 +200,14 @@ public class TableCacheKey implements Serializable {
     throws IOException, ClassNotFoundException {
     ByteArrayInputStream keyStream = new ByteArrayInputStream( Base64.decodeBase64( encodedCacheKey.getBytes() ) );
 
-    // We add this filter allow only Parameter, Type and CacheKey, and block everything else from readObject.
-    // This is important because readObject can allow injection attacks.
+    // We add this filter to allow only the specific classes that will be read further ahead,
+    // and block everything else from readObject. This is important because readObject can allow injection attacks.
     ObjectInputFilter paramFilter = ObjectInputFilter.Config.createFilter(
       "pt.webdetails.cda.dataaccess.Parameter;"
         + "pt.webdetails.cda.dataaccess.Parameter$Type;"
         + "pt.webdetails.cda.cache.CacheKey;"
+        + "javax.swing.table.TableModel;"
+        + "pt.webdetails.cda.cache.monitor.ExtraCacheInfo;"
         + "!*"
     );
     ObjectInputStream objStream = new FilteredObjectInputStream( keyStream, paramFilter );

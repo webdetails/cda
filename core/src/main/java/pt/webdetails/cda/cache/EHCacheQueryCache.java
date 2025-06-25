@@ -67,7 +67,11 @@ public class EHCacheQueryCache implements IQueryCache {
     }
 
     private void writeObject( ObjectOutputStream out ) throws IOException {
-      out.writeObject( table );
+      if ( table instanceof Serializable ) {
+        out.writeObject( table );
+      } else {
+        throw new IOException("Cannot call writeObject on TableModel (object is not serializable)");
+      }
       out.writeObject( info );
     }
 
@@ -112,7 +116,12 @@ public class EHCacheQueryCache implements IQueryCache {
       }
     }
 
-    if ( cacheManager.cacheExists( CACHE_NAME ) == false ) {
+    if ( cacheManager == null ) {
+      logger.error( "Cache manager is null" );
+      return null;
+    }
+
+    if ( !cacheManager.cacheExists( CACHE_NAME ) ) {
       cacheManager.addCache( CACHE_NAME );
     }
 
