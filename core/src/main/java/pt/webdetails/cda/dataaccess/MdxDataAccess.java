@@ -127,7 +127,7 @@ public class MdxDataAccess extends GlobalMdxDataAccess {
       mci = null;
     }
 
-    CacheKey cacheKey = getCacheKey() != null ? ( (CacheKey) getCacheKey() ).clone() : new CacheKey();
+    CacheKey cacheKey = getCacheKey() != null ? ( getCacheKey() ).clone() : new CacheKey();
 
     cacheKey.addKeyValuePair( "bandedMode", bandedMode.toString() );
     if ( mci != null ) {
@@ -166,13 +166,13 @@ public class MdxDataAccess extends GlobalMdxDataAccess {
 
     private void readObject( java.io.ObjectInputStream in ) throws IOException, ClassNotFoundException {
       this.bandedMode = (BANDED_MODE) in.readObject();
-      this.roles = (String) in.readObject();
+      this.roles = in.readUTF();
     }
 
 
     private void writeObject( java.io.ObjectOutputStream out ) throws IOException {
       out.writeObject( this.bandedMode );
-      out.writeObject( this.roles );
+      out.writeUTF( this.roles );
     }
 
 
