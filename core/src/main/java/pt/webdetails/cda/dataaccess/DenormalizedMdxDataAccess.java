@@ -40,6 +40,7 @@ public class DenormalizedMdxDataAccess extends GlobalMdxDataAccess {
   public DenormalizedMdxDataAccess() {
   }
 
+  @Override
   protected AbstractNamedMDXDataFactory createDataFactory() {
     return new ExtDenormalizedMDXDataFactory();
   }
@@ -61,8 +62,11 @@ public class DenormalizedMdxDataAccess extends GlobalMdxDataAccess {
 
     CacheKey cacheKey = getCacheKey() != null ? ( getCacheKey() ).clone() : new CacheKey();
 
-    cacheKey.addKeyValuePair( "roles", mci.getMondrianRole() );
-
+    if ( mci != null) {
+      cacheKey.addKeyValuePair( "roles", mci.getMondrianRole() );
+    } else {
+      logger.warn( "No Mondrian connection info was found for cache key, roles were not included." );
+    }
     return cacheKey;
   }
 
@@ -91,12 +95,12 @@ public class DenormalizedMdxDataAccess extends GlobalMdxDataAccess {
 
 
     private void readObject( java.io.ObjectInputStream in ) throws IOException, ClassNotFoundException {
-      this.roles = (String) in.readObject();
+      this.roles = in.readUTF();
     }
 
 
     private void writeObject( java.io.ObjectOutputStream out ) throws IOException {
-      out.writeObject( this.roles );
+      out.writeUTF( this.roles );
     }
 
 

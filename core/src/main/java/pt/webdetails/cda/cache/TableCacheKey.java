@@ -208,6 +208,7 @@ public class TableCacheKey implements Serializable {
         + "pt.webdetails.cda.cache.CacheKey;"
         + "javax.swing.table.TableModel;"
         + "pt.webdetails.cda.cache.monitor.ExtraCacheInfo;"
+        + "pt.webdetails.cda.dataaccess.MdxDataAccess$BANDED_MODE;"
         + "!*"
     );
     ObjectInputStream objStream = new FilteredObjectInputStream( keyStream, paramFilter );
