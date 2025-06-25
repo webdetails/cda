@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.pentaho</groupId>
     <artifactId>pentaho-ce-bundle-parent-pom</artifactId>
-    <version>10.3.0.0-SNAPSHOT</version>
+    <version>10.3.0.0-393</version>
   </parent>
 
   <groupId>pentaho</groupId>
@@ -40,21 +40,21 @@
   <properties>
     <marketplace.metadata.sequential.build.id>${sequential.build.id}</marketplace.metadata.sequential.build.id>
     <sequential.build.id>manual-${maven.build.timestamp}</sequential.build.id>
-    <pentaho-metadata.version>10.3.0.0-SNAPSHOT</pentaho-metadata.version>
+    <pentaho-metadata.version>10.3.0.0-393</pentaho-metadata.version>
     <marketplace.metadata.package_url></marketplace.metadata.package_url>
     <marketplace.metadata.description></marketplace.metadata.description>
     <project.stage>master</project.stage>
     <dependency.mockito-core.revision>5.10.0</dependency.mockito-core.revision>
     <marketplace.metadata.min_parent_version>1.0</marketplace.metadata.min_parent_version>
     <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
-    <pentaho-reporting.version>10.3.0.0-SNAPSHOT</pentaho-reporting.version>
-    <pdi-dataservice-client-plugin.version>10.3.0.0-SNAPSHOT</pdi-dataservice-client-plugin.version>
-    <pdi-dataservice-plugin.version>10.3.0.0-SNAPSHOT</pdi-dataservice-plugin.version>
-    <pdi.version>10.3.0.0-SNAPSHOT</pdi.version>
-    <pentaho-cpf-plugin.version>10.3.0.0-SNAPSHOT</pentaho-cpf-plugin.version>
-    <pentaho-json.version>10.3.0.0-SNAPSHOT</pentaho-json.version>
-    <pentaho-karaf.version>10.3.0.0-SNAPSHOT</pentaho-karaf.version>
-    <mondrian.version>10.3.0.0-SNAPSHOT</mondrian.version>
+    <pentaho-reporting.version>10.3.0.0-393</pentaho-reporting.version>
+    <pdi-dataservice-client-plugin.version>10.3.0.0-393</pdi-dataservice-client-plugin.version>
+    <pdi-dataservice-plugin.version>10.3.0.0-393</pdi-dataservice-plugin.version>
+    <pdi.version>10.3.0.0-393</pdi.version>
+    <pentaho-cpf-plugin.version>10.3.0.0-393</pentaho-cpf-plugin.version>
+    <pentaho-json.version>10.3.0.0-393</pentaho-json.version>
+    <pentaho-karaf.version>10.3.0.0-393</pentaho-karaf.version>
+    <mondrian.version>10.3.0.0-393</mondrian.version>
     <marketplace.metadata.development_stage.phase>2</marketplace.metadata.development_stage.phase>
     <marketplace.metadata.samples_url>http://nexus.pentaho.org/content/groups/omni/pentaho/cda-samples/6.0.0.0-353/cda-samples-6.0.0.0-353.zip</marketplace.metadata.samples_url>
     <dependency.jericho-html.revision>3.1</dependency.jericho-html.revision>
@@ -65,7 +65,7 @@
     <reactivestreams.version>1.0.2</reactivestreams.version>
     <javax.servlet-api>3.0.1</javax.servlet-api>
     <commons-collections.version>3.2.2</commons-collections.version>
-    <metastore.version>10.3.0.0-SNAPSHOT</metastore.version>
+    <metastore.version>10.3.0.0-393</metastore.version>
     <javax.ws.rs-api.version>2.0</javax.ws.rs-api.version>
     <websocket-api.version>1.0</websocket-api.version>
     <eigenbase-properties.version>1.1.2</eigenbase-properties.version>
