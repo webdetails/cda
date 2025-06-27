@@ -32,7 +32,6 @@ import pt.webdetails.cda.settings.CdaSettings;
 import pt.webdetails.cda.settings.UnknownConnectionException;
 import pt.webdetails.cda.utils.ParameterArrayToStringEncoder;
 
-import java.io.Serializable;
 import java.util.List;
 
 public class KettleDataAccess extends PREDataAccess {
@@ -88,9 +87,9 @@ public class KettleDataAccess extends PREDataAccess {
    * paths, only the path needs to be stored.
    */
   @Override
-  public Serializable getExtraCacheKey() {
+  public CacheKey getExtraCacheKey() {
 
-    CacheKey cacheKey = getCacheKey() != null ? ( (CacheKey) getCacheKey() ).clone() : new CacheKey();
+    CacheKey cacheKey = getCacheKey() != null ? ( getCacheKey() ).clone() : new CacheKey();
 
     cacheKey.addKeyValuePair( "path", path );
 
@@ -116,7 +115,7 @@ public class KettleDataAccess extends PREDataAccess {
 
   @Override
   protected IDataSourceQuery performRawQuery( ParameterDataRow parameterDataRow ) throws QueryException {
-    if ( getParameters().size() == 0 ) {
+    if ( getParameters().isEmpty() ) {
       return super.performRawQuery( parameterDataRow );
     }
 

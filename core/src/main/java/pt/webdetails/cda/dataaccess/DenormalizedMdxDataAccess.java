@@ -24,6 +24,7 @@ import pt.webdetails.cda.utils.mondrian.ExtDenormalizedMDXDataFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Implementation of a DataAccess that will get data from a SQL database
@@ -39,6 +40,7 @@ public class DenormalizedMdxDataAccess extends GlobalMdxDataAccess {
   public DenormalizedMdxDataAccess() {
   }
 
+  @Override
   protected AbstractNamedMDXDataFactory createDataFactory() {
     return new ExtDenormalizedMDXDataFactory();
   }
@@ -48,7 +50,7 @@ public class DenormalizedMdxDataAccess extends GlobalMdxDataAccess {
   }
 
   @Override
-  protected Serializable getExtraCacheKey() { //TODO: is this necessary after role assembly in EvaluableConnection
+  protected CacheKey getExtraCacheKey() {
     // .evaluate()?
     MondrianConnectionInfo mci;
     try {
@@ -58,10 +60,13 @@ public class DenormalizedMdxDataAccess extends GlobalMdxDataAccess {
       mci = null;
     }
 
-    CacheKey cacheKey = getCacheKey() != null ? ( (CacheKey) getCacheKey() ).clone() : new CacheKey();
+    CacheKey cacheKey = getCacheKey() != null ? ( getCacheKey() ).clone() : new CacheKey();
 
-    cacheKey.addKeyValuePair( "roles", mci.getMondrianRole() );
-
+    if ( mci != null) {
+      cacheKey.addKeyValuePair( "roles", mci.getMondrianRole() );
+    } else {
+      logger.warn( "No Mondrian connection info was found for cache key, roles were not included." );
+    }
     return cacheKey;
   }
 
@@ -85,20 +90,17 @@ public class DenormalizedMdxDataAccess extends GlobalMdxDataAccess {
       }
       final ExtraCacheKey other = (ExtraCacheKey) obj;
 
-      if ( this.roles == null ? other.roles != null : !this.roles.equals( other.roles ) ) {
-        return false;
-      }
-      return true;
+      return Objects.equals( this.roles, other.roles );
     }
 
 
     private void readObject( java.io.ObjectInputStream in ) throws IOException, ClassNotFoundException {
-      this.roles = (String) in.readObject();
+      this.roles = in.readUTF();
     }
 
 
     private void writeObject( java.io.ObjectOutputStream out ) throws IOException {
-      out.writeObject( this.roles );
+      out.writeUTF( this.roles );
     }
 
 

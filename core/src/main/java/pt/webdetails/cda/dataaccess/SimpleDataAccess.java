@@ -190,7 +190,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
     // Get parameters from definition and apply their values
     //TODO: use queryOptions' parameters instead of copying?
-    final List<Parameter> parameters = new ArrayList<Parameter>( getParameters().size() );
+    final List<Parameter> parameters = new ArrayList<>( getParameters().size() );
     for ( Parameter param : getParameters() ) {
       parameters.add( new Parameter( param ) );
     }
@@ -253,7 +253,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
       //log query and duration
       String logMsg = "Query " + queryId + " took " + duration + "s.\n";
       logMsg += "\t Query contents: << " + query.trim() + " >>\n";
-      if ( parameters.size() > 0 ) {
+      if ( !parameters.isEmpty() ) {
         logMsg += "\t Parameters: \n";
         for ( Parameter parameter : parameters ) {
           logMsg += "\t\t" + parameter.toString() + "\n";
@@ -272,7 +272,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
   /**
    * Logs that the query is starting.
-   *
+   * <p>
    * Used for correlating query and parameters with other MDC logging information.
    *
    * @param queryOptions The query options.
@@ -282,20 +282,20 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
     if ( logger.isDebugEnabled() ) {
       StringBuilder logMsgBuilder = new StringBuilder( String.format(
-              "QUERY START path: \"%s\" dataAccessId: \"%s\" dataAccessName: \"%s\" "
-                + "dataAccessType: \"%s\" outputIndex: \"%d\"",
-              this.getCdaSettings().getId(),
-              getId(),
-              getName(),
-              getType(),
-              queryOptions.getOutputIndexId() ) );
+        "QUERY START path: \"%s\" dataAccessId: \"%s\" dataAccessName: \"%s\" "
+          + "dataAccessType: \"%s\" outputIndex: \"%d\"",
+        this.getCdaSettings().getId(),
+        getId(),
+        getName(),
+        getType(),
+        queryOptions.getOutputIndexId() ) );
 
       String logQuery = getLogQuery();
       if ( logQuery != null ) {
         String queryText = Arrays.stream( logQuery.trim().split( "\r|\n|\r\n" ) )
-                .map( String::trim )
-                .collect( Collectors.joining( "%n\t\t" ) );
-        if ( queryText.length() > 0  ) {
+          .map( String::trim )
+          .collect( Collectors.joining( "%n\t\t" ) );
+        if ( !queryText.isEmpty() ) {
           logMsgBuilder.append( String.format( "%n\t Query:%n\t\t===%n\t\t%s%n\t\t===", queryText ) );
         }
       }
@@ -331,7 +331,6 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
     public void closeDataSource() throws QueryException;
   }
-
 
   protected abstract IDataSourceQuery performRawQuery( ParameterDataRow parameterDataRow ) throws QueryException;
 
@@ -382,7 +381,7 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
 
   public void accept( DomVisitor xmlVisitor, Element root ) {
-    xmlVisitor.visit( (SimpleDataAccess) this, root );
+    xmlVisitor.visit( this, root );
   }
 
 
@@ -396,18 +395,19 @@ public abstract class SimpleDataAccess extends AbstractDataAccess implements Dom
 
   /**
    * Parses the text content of an xml node defensively.
-   * @param element base node
-   * @param nodePath path from {@code element}
-   * @param parse convert string to value
+   *
+   * @param element      base node
+   * @param nodePath     path from {@code element}
+   * @param parse        convert string to value
    * @param defaultValue default value in case of not found, empty or error
    * @return
    */
   protected <T> T parseNode( Element element, String nodePath, Function<String, T> parse, T defaultValue ) {
     try {
       return Optional.ofNullable( element.selectSingleNode( nodePath ) )
-          .map( Node::getText )
-          .map( parse )
-          .orElse( defaultValue );
+        .map( Node::getText )
+        .map( parse )
+        .orElse( defaultValue );
     } catch ( Exception e ) {
       logger.error( " parse error in " + this.getName() + ": " + e.getMessage() );
       return defaultValue;

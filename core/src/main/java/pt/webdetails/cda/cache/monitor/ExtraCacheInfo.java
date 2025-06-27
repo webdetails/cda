@@ -116,25 +116,25 @@ public class ExtraCacheInfo implements Serializable {
   }
 
   private void writeObject( ObjectOutputStream out ) throws IOException {
-    out.writeObject( cdaSettingsId );
-    out.writeObject( dataAccessId );
+    out.writeUTF( cdaSettingsId );
+    out.writeUTF( dataAccessId );
     out.writeLong( queryDurationMs );
     out.writeInt( nbrRows );
     out.writeLong( entryTime );
     out.writeInt( timeToLive );
-    out.writeObject( tableSnapshot != null ? tableSnapshot.toString() : null );
+    out.writeUTF( tableSnapshot != null ? tableSnapshot.toString() : null );
   }
 
   private void readObject( ObjectInputStream in ) throws IOException, ClassNotFoundException {
-    cdaSettingsId = (String) in.readObject();
-    dataAccessId = (String) in.readObject();
+    cdaSettingsId = in.readUTF();
+    dataAccessId = in.readUTF();
     queryDurationMs = in.readLong();
     nbrRows = in.readInt();
     entryTime = in.readLong();
     timeToLive = in.readInt();
 
     try {
-      tableSnapshot = new JSONObject( (String) in.readObject() );
+      tableSnapshot = new JSONObject( in.readUTF() );
     } catch ( Exception e ) {
       tableSnapshot = null;
     }
