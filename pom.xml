@@ -6,7 +6,7 @@
     <groupId>org.pentaho</groupId>
     <artifactId>pentaho-ce-bundle-parent-pom</artifactId>
     <version>10.3.0.0-SNAPSHOT</version>
-  </parent>
+  </parent> 
 
   <groupId>pentaho</groupId>
   <artifactId>cda-plugin</artifactId>
