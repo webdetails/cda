@@ -111,8 +111,8 @@ public class Parameter implements java.io.Serializable {
   public static ParameterDataRow createParameterDataRowFromParameters( final Parameter[] parameters )
     throws InvalidParameterException {
 
-    final ArrayList<String> names = new ArrayList<String>();
-    final ArrayList<Object> values = new ArrayList<Object>();
+    final ArrayList<String> names = new ArrayList<>();
+    final ArrayList<Object> values = new ArrayList<>();
 
     if ( parameters != null ) {
       for ( final Parameter parameter : parameters ) {
@@ -121,10 +121,7 @@ public class Parameter implements java.io.Serializable {
       }
     }
 
-    final ParameterDataRow parameterDataRow =
-      new ParameterDataRow( names.toArray( new String[] {} ), values.toArray() );
-
-    return parameterDataRow;
+    return new ParameterDataRow( names.toArray( new String[] {} ), values.toArray() );
   }
 
   public void inheritDefaults( Parameter defaultParameter ) {
@@ -161,31 +158,34 @@ public class Parameter implements java.io.Serializable {
       */
     }
 
-    if ( objValue instanceof String ) { //may be a string or a parsed value
-      final String strValue = (String) objValue;
-      //check if it is a formula
-      if ( strValue != null && strValue.trim().startsWith( FORMULA_BEGIN ) ) {
-        String formula = Util.getContentsBetween( strValue, FORMULA_BEGIN, FORMULA_END );
-        if ( formula == null ) {
-          throw new InvalidParameterException( "Malformed formula expression", null );
-        }
-        Object value = FormulaEvaluator.processFormula( formula );
-        if ( getType() == Type.STRING && !( value instanceof String ) ) {
-          return getValueAsString( value );
-        } else {
-          return value;
-        }
-      }
-
-      Type valueType = getType();
-      if ( valueType == null ) {
-        throw new InvalidParameterException( "Parameter type " + getType() + " unknown, can't continue", null );
-      }
-      value = getValueFromString( strValue, valueType );
-      return value;
+    if ( objValue instanceof String ) {
+      return handleStringValue( (String) objValue ); //may be a string or a parsed value
     } else {
       return objValue;
     }
+  }
+
+  private Object handleStringValue( String strValue ) throws InvalidParameterException {
+    //check if it is a formula
+    if ( strValue.trim().startsWith( FORMULA_BEGIN ) ) {
+      String formula = Util.getContentsBetween( strValue, FORMULA_BEGIN, FORMULA_END );
+      if ( formula == null ) {
+        throw new InvalidParameterException( "Malformed formula expression", null );
+      }
+      Object evaluatedValue = FormulaEvaluator.processFormula( formula );
+      if ( getType() == Type.STRING && !( evaluatedValue instanceof String ) ) {
+        return getValueAsString( evaluatedValue );
+      } else {
+        return evaluatedValue;
+      }
+    }
+
+    Type valueType = getType();
+    if ( valueType == null ) {
+      throw new InvalidParameterException( "Parameter type " + getType() + " unknown, can't continue", null );
+    }
+    value = getValueFromString( strValue, valueType );
+    return value;
   }
 
   public void setValue( final Object value ) {
@@ -200,7 +200,7 @@ public class Parameter implements java.io.Serializable {
    */
   private Object getValueFromString( final String localValue, Type valueType ) throws InvalidParameterException {
 
-    switch( valueType ) {
+    switch ( valueType ) {
       case STRING:
         return localValue;
       case INTEGER:
@@ -236,7 +236,7 @@ public class Parameter implements java.io.Serializable {
   private <T> T[] parseToArray( String arrayAsString, Type elementType, T[] array ) throws InvalidParameterException {
     CSVTokenizer tokenizer = new CSVTokenizer( arrayAsString, getSeparator() );
 
-    ArrayList<T> result = new ArrayList<T>();
+    ArrayList<T> result = new ArrayList<>();
     while ( tokenizer.hasMoreTokens() ) {
       result.add( (T) getValueFromString( tokenizer.nextToken(), elementType ) );
     }
@@ -284,9 +284,7 @@ public class Parameter implements java.io.Serializable {
   }
 
   private String getValueAsString( Object value ) {
-    String separator = getSeparator();
-
-    ParameterArrayToStringEncoder encoder = new ParameterArrayToStringEncoder( separator, getQuoteCharacter() );
+    ParameterArrayToStringEncoder encoder = new ParameterArrayToStringEncoder( getSeparator(), getQuoteCharacter() );
     if ( value == null ) {
       if ( getDefaultValue() != null ) {
         return getDefaultValue().toString();
@@ -296,7 +294,7 @@ public class Parameter implements java.io.Serializable {
     } else if ( value instanceof String ) {
       return (String) value;
     } else if ( type != null ) {
-      switch( type ) {
+      switch ( type ) {
         case STRING_ARRAY://csvTokenizer compatible
           return encoder.encodeParameterArray( value, type );
         case DATE:
@@ -404,12 +402,13 @@ public class Parameter implements java.io.Serializable {
 
   public void readObject( ObjectInputStream in ) throws IOException {
     try {
-      this.setName( (String) in.readObject() );
+      this.setName( in.readUTF() );
       this.setType( (Type) in.readObject() );
-      //if(isDateType()) this.setPattern((String) in.readObject());
-      this.setStringValue( (String) in.readObject(), this.getType() );
-      this.setSeparator( (String) in.readObject() );
-      this.setQuoteCharacter( (String) in.readObject() );
+
+      this.setStringValue( in.readUTF(), this.getType() );
+
+      this.setSeparator( in.readUTF() );
+      this.setQuoteCharacter( in.readUTF() );
     } catch ( ClassNotFoundException e ) {
       throw new IOException( "Error casting read object.", e );
     }
@@ -419,12 +418,11 @@ public class Parameter implements java.io.Serializable {
    * Should only be called on evaluated parameters
    */
   public void writeObject( ObjectOutputStream out ) throws IOException {
-    out.writeObject( this.getName() );
+    out.writeUTF( this.getName() );
     out.writeObject( this.getType() );
-    //if(isDateType()) out.writeObject(this.pattern);
-    out.writeObject( this.getStringValue() );
-    out.writeObject( this.getSeparator() );
-    out.writeObject( this.getQuoteCharacter() );
+    out.writeUTF( this.getStringValue() );
+    out.writeUTF( this.getSeparator() );
+    out.writeUTF( this.getQuoteCharacter() );
   }
 
 
@@ -451,6 +449,7 @@ public class Parameter implements java.io.Serializable {
       return PUBLIC; //default
     }
 
+    @Override
     public String toString() {
       return this.name;
     }
@@ -516,7 +515,7 @@ public class Parameter implements java.io.Serializable {
     }
 
     public boolean isArrayType() {
-      switch( this ) {
+      switch ( this ) {
         case STRING_ARRAY:
         case INTEGER_ARRAY:
         case NUMERIC_ARRAY:
