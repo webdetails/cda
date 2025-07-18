@@ -14,10 +14,6 @@
   <artifactId>cda-osgi-impl</artifactId>
   <packaging>bundle</packaging>
 
-  <properties>
-    <jetty.version>8.1.15.v20140411</jetty.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>pentaho</groupId>
@@ -82,8 +78,18 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-websocket</artifactId>
+      <groupId>org.eclipse.jetty.ee10.websocket</groupId>
+      <artifactId>jetty-ee10-websocket-jetty-server</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty.ee10.websocket</groupId>
+      <artifactId>jetty-ee10-websocket-jakarta-client</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty.ee10.websocket</groupId>
+      <artifactId>jetty-ee10-websocket-jakarta-server</artifactId>
       <version>${jetty.version}</version>
     </dependency>
 
@@ -94,6 +100,12 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>${jakarta.servlet.version}</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

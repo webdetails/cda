@@ -13,8 +13,6 @@
 package pt.webdetails.cda;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.sun.jersey.api.client.ClientResponse.Status;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -56,24 +54,25 @@ import pt.webdetails.cpf.utils.CharsetHelper;
 import pt.webdetails.cpf.utils.JsonHelper;
 import pt.webdetails.cpf.utils.MimeTypes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.StreamingOutput;
-import javax.ws.rs.core.UriInfo;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DefaultValue;
+import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.ResponseBuilder;
+import jakarta.ws.rs.core.StreamingOutput;
+import jakarta.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.MultivaluedHashMap;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,9 +82,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.MediaType.APPLICATION_XML;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_XML;
 
 @Path( "/{plugin}/api" )
 public class CdaUtils {
@@ -434,7 +433,7 @@ public class CdaUtils {
       return Response.ok( flusher.flushCdaMondrianCache( cda, connectionId ) ).build();
     } catch ( CdaSettingsReadException | AccessDeniedException | UnknownConnectionException e ) {
       logger.error( e.getMessage(), e );
-      return Response.status( Status.BAD_REQUEST ).entity( e.getLocalizedMessage() ).build();
+      return Response.status( Response.Status.BAD_REQUEST ).entity( e.getLocalizedMessage() ).build();
     } catch ( InvalidConnectionException e ) {
       logger.error( e.getMessage(), e );
       return Response.serverError().entity( e.getLocalizedMessage() ).build();
@@ -606,7 +605,7 @@ public class CdaUtils {
   }
 
   private MultivaluedMap<String, String> getParameterMapFromRequest( HttpServletRequest servletRequest ) {
-    MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+    MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
 
     final Enumeration<String> enumeration = servletRequest.getParameterNames();
     while ( enumeration.hasMoreElements() ) {
