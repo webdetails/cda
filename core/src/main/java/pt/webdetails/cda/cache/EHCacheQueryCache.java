@@ -214,7 +214,7 @@ public class EHCacheQueryCache implements IQueryCache {
   @Override
   public Iterable<TableCacheKey> getKeys() {
     List<TableCacheKey> keys = new ArrayList<>();
-    cache.iterator().forEachRemaining(entry -> keys.add(((javax.cache.Cache.Entry<TableCacheKey,?>) entry).getKey()));
+    cache.iterator().forEachRemaining( entry -> keys.add( ( ( javax.cache.Cache.Entry<TableCacheKey,?> ) entry).getKey() ) );
     return keys;
   }
 
