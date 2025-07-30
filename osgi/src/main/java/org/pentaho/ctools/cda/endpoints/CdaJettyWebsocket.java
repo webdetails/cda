@@ -14,30 +14,37 @@ package org.pentaho.ctools.cda.endpoints;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.jetty.websocket.WebSocket;
+import org.eclipse.jetty.websocket.api.Callback;
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketOpen;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import pt.webdetails.cda.push.IWebsocketEndpoint;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
-public class CdaJettyWebsocket implements WebSocket.OnTextMessage {
+@WebSocket
+public class CdaJettyWebsocket {
   private static final Log logger = LogFactory.getLog( CdaJettyWebsocket.class );
 
-  private Connection connection;
+  private Session session;
 
   private final HttpServletRequest request;
   private final IWebsocketEndpoint websocketJsonQueryEndpoint;
 
-  CdaJettyWebsocket( HttpServletRequest request, IWebsocketEndpoint websocketJsonQueryEndpoint ) {
+  public CdaJettyWebsocket( HttpServletRequest request, IWebsocketEndpoint websocketJsonQueryEndpoint ) {
     this.request = request;
     this.websocketJsonQueryEndpoint = websocketJsonQueryEndpoint;
   }
 
-  public void onOpen( Connection connection ) {
-    this.connection = connection;
-
+  @OnWebSocketOpen
+  public void onConnect( Session session ) {
+    this.session = session;
     this.websocketJsonQueryEndpoint.onOpen( this::processOutboundMessage );
   }
 
+  @OnWebSocketMessage
   public void onMessage( String query ) {
     try {
       this.websocketJsonQueryEndpoint.onMessage( query, this::processOutboundMessage );
@@ -47,13 +54,14 @@ public class CdaJettyWebsocket implements WebSocket.OnTextMessage {
     }
   }
 
-  public void onClose( int closeCode, String message ) {
+  @OnWebSocketClose
+  public void onClose( int statusCode, String reason ) {
     this.websocketJsonQueryEndpoint.onClose();
   }
 
   private void processOutboundMessage( String outboundMessage ) {
     try {
-      this.connection.sendMessage( outboundMessage );
+      this.session.sendText( outboundMessage, Callback.NOOP );
     } catch ( Exception e ) {
       logger.error( "Error sending message. Closing websocket...", e );
       processErrorMessage( "Error while sending message." );
@@ -62,12 +70,12 @@ public class CdaJettyWebsocket implements WebSocket.OnTextMessage {
 
   private void processErrorMessage( String errorMessage ) {
     try {
-      if ( this.connection.isOpen() ) {
+      if ( this.session.isOpen() ) {
         // 1011: Server error
         // The server is terminating the connection because
         // it encountered an unexpected condition that prevented it from
         // fulfilling the request.
-        this.connection.close( 1011, errorMessage );
+        this.session.close( 1011, errorMessage, Callback.NOOP );
       }
     } catch ( Exception e ) {
       logger.error( "Error closing socket, with message " + errorMessage, e );
