@@ -5,7 +5,7 @@
   <parent>
     <groupId>pentaho</groupId>
     <artifactId>cda-plugin-assemblies</artifactId>
-    <version>11.0.0.0-SNAPSHOT</version>
+    <version>11.0.0.0-44</version>
   </parent>
 
   <artifactId>cda-plugin-assemblies-platform</artifactId>
@@ -17,7 +17,7 @@
     <module>cda-samples</module>
   </modules>
   <properties>
-    <pentaho-json.version>11.0.0.0-SNAPSHOT</pentaho-json.version>
+    <pentaho-json.version>11.0.0.0-44</pentaho-json.version>
   </properties>
 
   <dependencies>
