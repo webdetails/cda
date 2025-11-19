@@ -19,6 +19,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import javax.cache.Cache;
@@ -38,6 +39,7 @@ import org.apache.commons.logging.LogFactory;
 import pt.webdetails.cda.CdaEngine;
 import pt.webdetails.cda.cache.monitor.CacheElementInfo;
 import pt.webdetails.cda.cache.monitor.ExtraCacheInfo;
+import pt.webdetails.cda.cache.monitor.ExtraCacheStats;
 
 public class EHCacheQueryCache implements IQueryCache {
 
@@ -55,10 +57,12 @@ public class EHCacheQueryCache implements IQueryCache {
 
     private TableModel table;
     private ExtraCacheInfo info;
+    private ExtraCacheStats stats;
 
-    public CacheElement( TableModel table, ExtraCacheInfo info ) {
+    public CacheElement( TableModel table, ExtraCacheInfo info, ExtraCacheStats stats ) {
       this.table = table;
       this.info = info;
+      this.stats = stats;
     }
 
     public TableModel getTable() {
@@ -69,18 +73,24 @@ public class EHCacheQueryCache implements IQueryCache {
       return info;
     }
 
-    private void writeObject( ObjectOutputStream out ) throws IOException {
+    public ExtraCacheStats getStats() {
+      return stats;
+    }
+
+    private void writeObject(ObjectOutputStream out ) throws IOException {
       if ( table instanceof Serializable ) {
         out.writeObject( table );
       } else {
         throw new IOException("Cannot call writeObject on TableModel (object is not serializable)");
       }
       out.writeObject( info );
+      out.writeObject( stats );
     }
 
     private void readObject( ObjectInputStream in ) throws IOException, ClassNotFoundException {
       table = (TableModel) in.readObject();
       info = (ExtraCacheInfo) in.readObject();
+      stats = (ExtraCacheStats) in.readObject();
     }
 
   }
@@ -165,7 +175,19 @@ public class EHCacheQueryCache implements IQueryCache {
   }
 
   public void putTableModel( TableCacheKey key, TableModel table, int ttlSec, ExtraCacheInfo info ) {
-    final CacheElement cacheElement = new CacheElement( table, info );
+    // EhCache2 use to provide the stats per cache entry. JCache/EhCache3 doesn't support that anymore.
+    // So manually updating the Cache element with inserted/updated time
+    ExtraCacheStats stats;
+    // Quiet retrieval of cache element (Hit count isn't incremented).
+    Object object = cache.get( key );
+    if ( object == null ) {
+      stats = new ExtraCacheStats( 0, 0, Instant.now().toEpochMilli() );
+    } else {
+      stats = ( ( CacheElement ) object).getStats();
+      stats.setInsertOrUpdateTime( Instant.now().toEpochMilli() );
+    }
+
+    final CacheElement cacheElement = new CacheElement( table, info, stats );
     cache.put( key, cacheElement );
   }
 
@@ -178,7 +200,12 @@ public class EHCacheQueryCache implements IQueryCache {
       Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
       final Object element = cache.get( key );
       if ( element != null ) {
-        final TableModel cachedTableModel = (TableModel) ( (CacheElement) element ).getTable();
+        // EhCache2 use to provide the stats per cache entry. JCache/EhCache3 doesn't support that anymore.
+        // So manually updating the hits and last accessed time when table model is retrieved
+        ExtraCacheStats stats = ( (CacheElement) element ).getStats();
+        stats.setHits( stats.getHits() + 1 );
+        stats.setLastAccessTime( Instant.now().toEpochMilli() );
+        final TableModel cachedTableModel = ( (CacheElement) element ).getTable();
         if ( cachedTableModel != null ) {
           if ( logger.isDebugEnabled() ) {
             // we have a entry in the cache ... great!
@@ -220,6 +247,7 @@ public class EHCacheQueryCache implements IQueryCache {
 
   @Override
   public ExtraCacheInfo getCacheEntryInfo( TableCacheKey key ) {
+    // Quiet retrieval of cache element.
     Object element = cache.get( key );
     if ( element == null ) {
       logger.warn( "Null element in cache, removing." );
@@ -239,14 +267,16 @@ public class EHCacheQueryCache implements IQueryCache {
 
   @Override
   public CacheElementInfo getElementInfo( TableCacheKey key ) {
-
+    // Quiet retrieval of cache element.
     Object element = cache.get( key );
     CacheElementInfo info = new CacheElementInfo();
     info.setKey( key );
     if ( element != null ) {
-
       Object val = element;
       if ( val instanceof CacheElement ) {
+        info.setHits( ( (CacheElement) val ).getStats().getHits() );
+        info.setAccessTime( ( (CacheElement) val ).getStats().getLastAccessTime() );
+        info.setInsertTime( ( (CacheElement) val ).getStats().getInsertOrUpdateTime() );
         info.setRows( ( (CacheElement) val ).getTable().getRowCount() );
       }
     }
@@ -263,6 +293,7 @@ public class EHCacheQueryCache implements IQueryCache {
     }
 
     for ( TableCacheKey key : getKeys() ) {
+      // Quiet retrieval of cache element.
       ExtraCacheInfo info = ( (CacheElement) cache.get( key ) ).getInfo();
 
       if ( StringUtils.equals( cdaSettingsId, info.getCdaSettingsId() )

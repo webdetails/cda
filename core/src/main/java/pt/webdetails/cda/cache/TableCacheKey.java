@@ -206,6 +206,8 @@ public class TableCacheKey implements Serializable {
       "pt.webdetails.cda.dataaccess.Parameter;"
         + "pt.webdetails.cda.dataaccess.Parameter$Type;"
         + "pt.webdetails.cda.cache.CacheKey;"
+        + "pt.webdetails.cda.cache.CacheKey$KeyValuePair;"
+        + "java.util.ArrayList;"
         + "javax.swing.table.TableModel;"
         + "pt.webdetails.cda.cache.monitor.ExtraCacheInfo;"
         + "pt.webdetails.cda.dataaccess.MdxDataAccess$BANDED_MODE;"
