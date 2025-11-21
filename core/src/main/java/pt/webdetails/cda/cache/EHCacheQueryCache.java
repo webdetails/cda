@@ -181,7 +181,8 @@ public class EHCacheQueryCache implements IQueryCache {
     // Quiet retrieval of cache element (Hit count isn't incremented).
     Object object = cache.get( key );
     if ( object == null ) {
-      stats = new ExtraCacheStats( 0, 0, Instant.now().toEpochMilli() );
+      long insertTime = Instant.now().toEpochMilli();
+      stats = new ExtraCacheStats( 0, insertTime, insertTime );
     } else {
       stats = ( ( CacheElement ) object).getStats();
       stats.setInsertOrUpdateTime( Instant.now().toEpochMilli() );
