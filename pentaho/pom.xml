@@ -20,7 +20,7 @@
     <platform.version>11.1.0.0-SNAPSHOT</platform.version>
     <pentaho-report-wizard-core.version>11.1.0.0-SNAPSHOT</pentaho-report-wizard-core.version>
     <webjars.target.directory>${build.dependenciesDirectory}/META-INF/resources/webjars</webjars.target.directory>
-    <js.project.list>jquery,jquery-ui</js.project.list>
+    <js.project.list>jquery,jquery-ui,datatables</js.project.list>
   </properties>
   <dependencies>
     <dependency>
@@ -230,6 +230,10 @@
       <artifactId>spring-security-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>datatables</artifactId>
+    </dependency>
+    <dependency>
       <groupId>eigenbase</groupId>
       <artifactId>eigenbase-properties</artifactId>
       <scope>test</scope>
@@ -250,7 +254,75 @@
       </resource>
     </resources>
     <plugins>
-      <!-- copy jquery for tests and lib-->
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <!-- copy jquery -->
+        <executions>
+          <execution>
+            <id>copy-jquery</id>
+            <phase>${javascript_unpack-dependencies-phase}</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.basedir}/src/main/resources/static</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${webjars.target.directory}/jquery/${jquery.version}/dist</directory>
+                  <includes>
+                    <include>jquery.js</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-jquery-min</id>
+            <phase>${javascript_unpack-dependencies-phase}</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.basedir}/src/main/resources/fileEditor/ace</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${webjars.target.directory}/jquery/${jquery.version}/dist</directory>
+                  <includes>
+                    <include>jquery.min.js</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+
+          <!-- copy dataTables -->
+          <execution>
+            <id>copy-datatables</id>
+            <phase>${javascript_unpack-dependencies-phase}</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.basedir}/src/main/resources/previewer/dataTables</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${webjars.target.directory}/datatables/${datatables.version}</directory>
+                  <includes>
+                    <include>/css/jquery.dataTables_themeroller.css</include>
+                    <include>/css/jquery.dataTables.css</include>
+                    <include>/images/*</include>
+                    <include>/js/jquery.dataTables.js</include>
+                    <include>/js/jquery.dataTables.min.js</include>
+                    <include>license.txt</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- copy AND RENAME jquery-ui -->
       <plugin>
         <groupId>com.coderplus.maven.plugins</groupId>
         <artifactId>copy-rename-maven-plugin</artifactId>
@@ -264,14 +336,6 @@
             </goals>
             <configuration>
               <fileSets>
-                <set>
-                  <sourceFile>${webjars.target.directory}/jquery/${jquery.version}/dist/jquery.min.js</sourceFile>
-                  <destinationFile>${project.basedir}/src/main/resources/fileEditor/ace/jquery.min.js</destinationFile>
-                </set>
-                <set>
-                  <sourceFile>${webjars.target.directory}/jquery/${jquery.version}/dist/jquery.js</sourceFile>
-                  <destinationFile>${project.basedir}/src/main/resources/static/jquery.js</destinationFile>
-                </set>
                 <set>
                   <sourceFile>${webjars.target.directory}/jquery-ui/${jquery-ui.version}/jquery-ui.js</sourceFile>
                   <destinationFile>${project.basedir}/src/main/resources/static/jquery.ui.js</destinationFile>
