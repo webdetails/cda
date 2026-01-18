@@ -18,7 +18,6 @@
     </license>
   </licenses>
   <properties>
-    <dependency.poi.revision>3.12</dependency.poi.revision>
     <commons-lang.version>2.6</commons-lang.version>
     <dependency.xmlunit.revision>1.3</dependency.xmlunit.revision>
     <dependency.hsqldb.revision>2.3.2</dependency.hsqldb.revision>
@@ -294,7 +293,7 @@
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
-      <version>${dependency.poi.revision}</version>
+      <version>${poi.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
