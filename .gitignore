@@ -11,3 +11,7 @@ target/
 /pentaho/src/main/resources/static/jquery.js
 /pentaho/src/main/resources/static/jquery.ui.js
 /pentaho/src/main/resources/fileEditor/ace/jquery.min.js
+/pentaho/src/main/resources/previewer/dataTables/js/
+/pentaho/src/main/resources/previewer/dataTables/images/
+/pentaho/src/main/resources/previewer/dataTables/css/
+/pentaho/src/main/resources/previewer/dataTables/license.txt
