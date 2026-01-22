@@ -17,6 +17,8 @@ import java.util.concurrent.Callable;
 
 import javax.swing.table.TableModel;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.row.RowMeta;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaInterface;
@@ -28,6 +30,7 @@ import org.pentaho.di.core.row.value.ValueMetaNumber;
 import org.pentaho.di.core.row.value.ValueMetaString;
 
 public class TableModelInput extends RowProducerBridge {
+  private static final Log logger = LogFactory.getLog( TableModelInput.class );
   public synchronized Callable<Boolean> getCallableRowProducer( final TableModel tableModel,
                                                                 final boolean markFinished ) {
     final Callable<Boolean> callable = new Callable<Boolean>() {
@@ -60,42 +63,48 @@ public class TableModelInput extends RowProducerBridge {
     }
 
     Object newValue;
-    switch( valueMeta.getType() ) {
-      case ValueMetaInterface.TYPE_STRING:
-        newValue = String.valueOf( value );
-        break;
-      case ValueMetaInterface.TYPE_NUMBER:
-        if ( value instanceof Double ) {
+    try {
+      switch ( valueMeta.getType() ) {
+        case ValueMetaInterface.TYPE_STRING:
+          newValue = String.valueOf( value );
+          break;
+        case ValueMetaInterface.TYPE_NUMBER:
+          if ( value instanceof Double ) {
+            newValue = value;
+          } else {
+            newValue = Double.valueOf( value.toString() );
+          }
+          break;
+        case ValueMetaInterface.TYPE_INTEGER:
+          if ( value instanceof Long ) {
+            newValue = value;
+          } else {
+            newValue = Long.valueOf( value.toString() );
+          }
+          break;
+        case ValueMetaInterface.TYPE_DATE:
           newValue = value;
-        } else {
-          newValue = Double.valueOf( value.toString() );
-        }
-        break;
-      case ValueMetaInterface.TYPE_INTEGER:
-        if ( value instanceof Long ) {
+          break;
+        case ValueMetaInterface.TYPE_BIGNUMBER:
+          if ( value instanceof java.math.BigDecimal ) {
+            newValue = value;
+          } else {
+            newValue = java.math.BigDecimal.valueOf( ( (java.math.BigInteger) value ).doubleValue() );
+          }
+          break;
+        case ValueMetaInterface.TYPE_BOOLEAN:
           newValue = value;
-        } else {
-          newValue = Long.valueOf( value.toString() );
-        }
-        break;
-      case ValueMetaInterface.TYPE_DATE:
-        newValue = value;
-        break;
-      case ValueMetaInterface.TYPE_BIGNUMBER:
-        if ( value instanceof java.math.BigDecimal ) {
-          newValue = value;
-        } else {
-          newValue = java.math.BigDecimal.valueOf( ( (java.math.BigInteger) value ).doubleValue() );
-        }
-        break;
-      case ValueMetaInterface.TYPE_BOOLEAN:
-        newValue = value;
-        break;
-      default:
-        throw new IllegalArgumentException(
-          String.format( "ValueMeta mismatch %s (%s)", valueMeta.toString(), value ) );
+          break;
+        default:
+          throw new IllegalArgumentException(
+                  String.format( "ValueMeta mismatch %s (%s)", valueMeta.toString(), value ) );
+      }
+      return newValue;
+    } catch ( NumberFormatException e ) {
+      logger.error( "type mismatch in column '" + valueMeta.getName() + "' expecting '" + valueMeta.getTypeDesc()
+              + "' received '" + value.getClass().getName() + "'" );
+      throw e;
     }
-    return newValue;
   }
 
   private RowMetaInterface getRowMetaForTableModel( final TableModel tableModel ) throws IllegalArgumentException {
