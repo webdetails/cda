@@ -52,6 +52,9 @@ public class DataserviceTest extends CdaTestCase {
     ResultSet resultSet = mock( ResultSet.class );
     ResultSetMetaData resultSetMetaData = mock( ResultSetMetaData.class );
     when( resultSet.next() ).thenReturn( true ).thenReturn( false );
+    java.sql.DatabaseMetaData dbMetaData = mock( java.sql.DatabaseMetaData.class );
+    when( dbMetaData.getDriverName() ).thenReturn( "testDriver" );
+    when( connection.getMetaData() ).thenReturn( dbMetaData );
     when( resultSet.getMetaData() ).thenReturn( resultSetMetaData );
     when( statement.executeQuery( any() ) ).thenReturn( resultSet );
     when( connection.createStatement( anyInt(), anyInt() ) ).thenReturn( statement );
