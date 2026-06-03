@@ -229,8 +229,8 @@ public class SettingsManager {
       String className = DATA_ACCESS_PACKAGE + '.' + dataAccess;
       try {
         clazz = Class.forName( className );
-      } catch ( Exception e ) {
-        logger.error( MessageFormat.format( "Couldn''t load class {0}!", className ) );
+      } catch ( Exception | LinkageError e ) {
+        logger.warn( "Skipping data access '" + className + "': " + e );
         continue;
       }
 
@@ -249,8 +249,8 @@ public class SettingsManager {
           } else {
             logger.error( MessageFormat.format( "DataAccess {0} did something wrong!", dataAccess ) );
           }
-        } catch ( Exception e ) {
-          logger.error( MessageFormat.format( "DataAccess {0} did something wrong!", dataAccess ) );
+        } catch ( Exception | LinkageError e ) {
+          logger.error( MessageFormat.format( "DataAccess {0} did something wrong!", dataAccess ), e );
         }
       }
 
