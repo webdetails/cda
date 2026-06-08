@@ -465,6 +465,12 @@ public class TableModelUtils {
     final TypedTableModel typedTableModel = new TypedTableModel( colNames, colTypes, rowCount );
     for ( int r = 0; r < tableModelA.getRowCount(); r++ ) {
       for ( int c = 0; c < colTypes.length; c++ ) {
+        if ( c < typedTableModel.getColumnCount() && c < tableModelA.getColumnCount() ) {
+          if ( !typedTableModel.getColumnClass( c ).equals( tableModelA.getColumnClass( c ) ) ) {
+            logger.error( "type mismatch, appending '" + tableModelA.getColumnClass( c ).getName() + "' to '"
+                    + typedTableModel.getColumnClass( c ).getName() + "'" );
+          }
+        }
         typedTableModel.setValueAt( tableModelA.getValueAt( r, c ), r, c );
       }
     }
@@ -473,6 +479,12 @@ public class TableModelUtils {
     int rowCountOffset = tableModelA.getRowCount();
     for ( int r = 0; r < tableModelB.getRowCount(); r++ ) {
       for ( int c = 0; c < colTypes.length; c++ ) {
+        if ( c < typedTableModel.getColumnCount() && c < tableModelB.getColumnCount() ) {
+          if ( !typedTableModel.getColumnClass( c ).equals( tableModelB.getColumnClass( c ) ) ) {
+            logger.error( "type mismatch, appending '" + tableModelB.getColumnClass( c ).getName() + "' to '"
+                    + typedTableModel.getColumnClass( c ).getName() + "'" );
+          }
+        }
         typedTableModel.setValueAt( tableModelB.getValueAt( r, c ), r + rowCountOffset, c );
       }
     }
