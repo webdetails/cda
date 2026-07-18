@@ -2,13 +2,14 @@
  *
  * Pentaho
  *
- * Copyright (C) 2024 by Hitachi Vantara, LLC : http://www.pentaho.com
+ * Copyright (C) 2024 - 2026 by Pentaho Canada Inc. : http://www.pentaho.com
  *
  * Use of this software is governed by the Business Source License included
  * in the LICENSE.TXT file.
  *
- * Change Date: 2029-07-20
+ * Change Date: 2030-06-15
  ******************************************************************************/
+
 
 
 package pt.webdetails.cda;
@@ -28,7 +29,7 @@ import org.pentaho.platform.engine.security.SecurityParameterProvider;
 import org.pentaho.platform.plugin.services.connections.javascript.JavaScriptResultSet;
 
 /**
- * Provides access to Hitachi Vantara parameter providers for formula reference resolution, accessible as
+ * Provides access to Pentaho parameter providers for formula reference resolution, accessible as
  * [&lt;prefix&gt:&lt;parameter_name&gt;]<br><br> Available prefixes are: <ul> <li> security: {@link
  * SecurityParameterProvider} </li> <li> session: {@link PentahoSessionParameterProvider}</li> <li> system: {@link
  * SystemSettingsParameterProvider} </li> </ul>
