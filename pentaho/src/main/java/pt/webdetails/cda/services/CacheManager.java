@@ -17,7 +17,7 @@ package pt.webdetails.cda.services;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import pt.webdetails.cda.AccessDeniedException;
 import pt.webdetails.cda.CdaEngine;

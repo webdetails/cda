@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.table.TableModel;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class NaturalOrderComparator implements Comparator<Integer> {
 

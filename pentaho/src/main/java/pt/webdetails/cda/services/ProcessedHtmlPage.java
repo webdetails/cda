@@ -28,7 +28,7 @@ import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTag;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

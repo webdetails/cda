@@ -14,7 +14,7 @@
 
 package pt.webdetails.cda.dataaccess.kettle;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.database.GenericDatabaseMeta;
 import org.pentaho.di.trans.step.StepMeta;

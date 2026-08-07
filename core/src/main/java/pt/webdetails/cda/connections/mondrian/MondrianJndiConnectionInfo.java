@@ -15,7 +15,7 @@
 package pt.webdetails.cda.connections.mondrian;
 
 import org.dom4j.Element;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class MondrianJndiConnectionInfo extends pt.webdetails.cda.connections.mondrian.OlapJndiConnectionInfo implements
   MondrianConnectionInfo {

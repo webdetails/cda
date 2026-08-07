@@ -69,7 +69,7 @@ public class JoinCompoundDataAccess extends CompoundDataAccess implements RowPro
     super( element );
 
     Element joinTypeNode = (Element) element.selectSingleNode( "JoinType" );
-    if ( joinTypeNode != null && org.apache.commons.lang.StringUtils.isNotBlank( joinTypeNode.getText() ) ) {
+    if ( joinTypeNode != null && org.apache.commons.lang3.StringUtils.isNotBlank( joinTypeNode.getText() ) ) {
       joinType = JoinType.valueOf( joinTypeNode.getText() );
     } else {
       joinType = JoinType.FULL_OUTER;

@@ -14,7 +14,7 @@
 
 package pt.webdetails.cda.xml;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.pentaho.reporting.engine.classic.core.ParameterMapping;
 import pt.webdetails.cda.connections.AbstractConnection;
