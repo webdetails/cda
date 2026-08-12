@@ -19,7 +19,7 @@ import java.io.OutputStream;
 
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import pt.webdetails.cpf.Util;
 import pt.webdetails.cpf.utils.MimeTypes;

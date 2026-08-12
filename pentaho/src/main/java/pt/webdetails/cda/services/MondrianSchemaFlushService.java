@@ -21,7 +21,7 @@ import mondrian.olap.DriverManager;
 import mondrian.olap.Schema;
 import mondrian.olap.Util;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;

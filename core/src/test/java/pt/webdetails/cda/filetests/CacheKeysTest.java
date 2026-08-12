@@ -16,7 +16,7 @@ package pt.webdetails.cda.filetests;
 
 import javax.swing.table.TableModel;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;

@@ -15,7 +15,7 @@
 package pt.webdetails.cda.cache;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.dataaccess.Parameter;

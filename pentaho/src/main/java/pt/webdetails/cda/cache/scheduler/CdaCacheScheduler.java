@@ -15,7 +15,7 @@
 package pt.webdetails.cda.cache.scheduler;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
